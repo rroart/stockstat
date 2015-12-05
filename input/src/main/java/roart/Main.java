@@ -29,59 +29,90 @@ public class Main {
 	    Node node = nl.item(i);
 	    Element elem = (Element) node;
 	    Element idElem = (Element) elem.getElementsByTagName(Constants.ID).item(0);
+        Element marketidElem = (Element) elem.getElementsByTagName(Constants.MARKETID).item(0);
 	    Element nameElem = (Element) elem.getElementsByTagName(Constants.NAME).item(0);
 	    Element dateElem = (Element) elem.getElementsByTagName(Constants.DATE).item(0);
 	    Element priceElem = (Element) elem.getElementsByTagName(Constants.PRICE).item(0);
 	    Element currElem = (Element) elem.getElementsByTagName(Constants.CURRENCY).item(0);
-	    Element dayElem = (Element) elem.getElementsByTagName(Constants.DAY).item(0);
-	    Element weekElem = (Element) elem.getElementsByTagName(Constants.WEEK).item(0);
-	    Element monthElem = (Element) elem.getElementsByTagName(Constants.MONTH).item(0);
-	    Element thisyearElem = (Element) elem.getElementsByTagName(Constants.THISYEAR).item(0);
+	    Element period1Elem = (Element) elem.getElementsByTagName(Constants.PERIOD1).item(0);
+	    Element period2Elem = (Element) elem.getElementsByTagName(Constants.PERIOD2).item(0);
+	    Element period3Elem = (Element) elem.getElementsByTagName(Constants.PERIOD3).item(0);
+	    Element period4Elem = (Element) elem.getElementsByTagName(Constants.PERIOD4).item(0);
+        Element period5Elem = (Element) elem.getElementsByTagName(Constants.PERIOD5).item(0);
 	    String id = idElem.getTextContent();
 	    if (id == null || id.isEmpty()) {
 	    	continue;
 	    }
+        String marketid = marketidElem.getTextContent();
 	    String name = nameElem.getTextContent();
 	    String datestr = dateElem.getTextContent();
-	    String price = priceElem.getTextContent().replace(",", ".").replace(" ", "");
-	    String currency = currElem.getTextContent();
-	    String day = dayElem.getTextContent().replace(",", ".").replace(" ", "");
-	    String week = weekElem.getTextContent().replace(",", ".").replace(" ", "");
-	    String month = monthElem.getTextContent().replace(",", ".").replace(" ", "");
-	    String thisyear = thisyearElem.getTextContent().replace(",", ".").replace(" ", "");
+	    String price = null;
+	    if (priceElem != null) {
+	      price = reformat(priceElem.getTextContent());
+	    }
+	    String currency = null;
+	    if (currElem != null) {
+	        currency = currElem.getTextContent();
+	    }
+	    String period1 = null;
+	    if (period1Elem != null) {
+	    period1 = reformat(period1Elem.getTextContent());
+	    }
+	    String period2 = null;
+        if (period2Elem != null) {
+	    period2 = reformat(period2Elem.getTextContent());
+        }
+	    String period3 = null;
+        if (period3Elem != null) {
+	    period3 = reformat(period3Elem.getTextContent());
+        }
+	    String period4 = null;
+        if (period4Elem != null) {
+	    period4 = reformat(period4Elem.getTextContent());
+        }
+        String period5 = null;
+        if (period5Elem != null) {
+        period5 = reformat(period5Elem.getTextContent());
+        }
 	    String dbid = id + "_" + datestr;
 	    Stock stock = Stock.ensureExistence(dbid);
 	    stock.setId(id);
+	    stock.setMarketid(marketid);
 	    stock.setName(name);
 	    SimpleDateFormat dt = new SimpleDateFormat("dd.MM.yyyy"); 
 	    Date date = dt.parse(datestr); 
 	    stock.setDate(date);
 	    stock.setCurrency(currency);
-	    if (price.equals("-")) {
+	    if (price == null || price.equals("-")) {
 	    	stock.setPrice(null);
 	    } else {
 	    	stock.setPrice(new Double(price));
 	    }
-	    if (day.equals("-")) {
-	    	stock.setDay(null);
+	    if (period1 == null || period1.equals("-")) {
+	    	stock.setPeriod1(null);
 	    } else {
-	    	stock.setDay(new Double(day));
+	    	stock.setPeriod1(new Double(period1));
 	    }
-	    if (week.equals("-")) {
-	    	stock.setWeek(null);
+	    if (period2 == null || period2.equals("-")) {
+	    	stock.setPeriod2(null);
 	    } else {
-	    	stock.setWeek(new Double(week));
+	    	stock.setPeriod2(new Double(period2));
 	    }
-	    if (month.equals("-")) {
-	    	stock.setMonth(null);
+	    if (period3 == null || period3.equals("-")) {
+	    	stock.setPeriod3(null);
 	    } else {
-	    	stock.setMonth(new Double(month));
+	    	stock.setPeriod3(new Double(period3));
 	    }
-	    if (thisyear.equals("-")) {
-	    	stock.setThisyear(null);
+	    if (period4 == null || period4.equals("-")) {
+	    	stock.setPeriod4(null);
 	    } else {
-	    	stock.setThisyear(new Double(thisyear));
+	    	stock.setPeriod4(new Double(period4));
 	    }
+        if (period5 == null || period5.equals("-")) {
+            stock.setPeriod5(null);
+        } else {
+            stock.setPeriod5(new Double(period5));
+        }
 	    //String  = Elem.getTextContent();
 	    //Element Elem = elem.getElementsByTagName();
 	} 
@@ -93,4 +124,11 @@ public class Main {
     	System.exit(0);
     }
 
+    static String reformat(String str) {
+        if (str != null) {
+            str = str.replace(",", ".").replace(" ", "");
+        }
+        return str;
+    }
+    
 }
