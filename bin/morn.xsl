@@ -19,17 +19,17 @@
 
     <xsl:template match="body">
       <body>
-      <xsl:apply-templates select="//div[@id='resultatdiv']"/>
+      <xsl:apply-templates select="div//table[@id='IndexOverviewTable']/tbody"/>
       </body>
     </xsl:template>
 
-    <xsl:template match="div[@class='navigation']"/>
+    <!--xsl:template match="div[@class='navigation']"/-->
 
-    <xsl:template match="tr[@class='sort']"/>
+    <!--xsl:template match="tr[@class='sort']"/-->
 
-    <xsl:template match="tfoot/tr"/>
+    <!--xsl:template match="tfoot/tr"/-->
 
-    <xsl:template match="thead/tr"/>
+    <!--xsl:template match="thead/tr"/-->
 
     <xsl:template match="div">
       <xsl:apply-templates select="*"/>
@@ -47,38 +47,39 @@
     <xsl:template match="tr">
       <row>
 	<id>
-	  <xsl:variable name="firstpart" select="substring-after(td[2]/div/a/@href, '=')"/>
-	  <xsl:value-of select="substring-before($firstpart, '&amp;')"/>
+	  <xsl:copy-of select="td[1]/text()"/>
 	</id>
-	<marketid>1</marketid>
+	<marketid>2</marketid>
 	<date>
-	  <xsl:copy-of select="td[10]/text()"/>
+	  <xsl:copy-of select="td[6]/text()"/>
 	</date>
 	<name>
-	  <xsl:copy-of select="td[2]/div/a/text()"/>
+	  <xsl:copy-of select="td[1]/text()"/>
 	</name>
 	<period1>
-	  <xsl:copy-of select="td[5]/span/text()"/>
+	  <xsl:copy-of select="td[2]/text()"/>
 	</period1>
 	<period2>
-	  <xsl:copy-of select="td[6]/span/text()"/>
+	  <xsl:copy-of select="td[3]/text()"/>
 	</period2>
 	<period3>
-	  <xsl:copy-of select="td[7]/span/text()"/>
+	  <xsl:copy-of select="td[4]/text()"/>
 	</period3>
 	<period4>
-	  <xsl:copy-of select="td[8]/span/text()"/>
+	  <xsl:copy-of select="td[5]/text()"/>
 	</period4>
 	<!--period5/-->
-	<price>
+	<!--price>
 	  <xsl:copy-of select="td[3]/text()"/>
 	</price>
 	<currency>
 	  <xsl:copy-of select="td[4]/text()"/>
-	</currency>
+	</currency-->
       </row>
     </xsl:template>
 
     <xsl:template match="script"/>
+
+    <!--xsl:template match="span"/-->
 
 </xsl:stylesheet>
