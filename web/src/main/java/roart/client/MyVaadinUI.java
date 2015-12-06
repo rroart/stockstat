@@ -1,6 +1,7 @@
 package roart.client;
 
 import roart.model.ResultItem;
+import roart.model.Stock;
 import roart.util.Constants;
 import roart.service.ControlService;
 
@@ -14,6 +15,8 @@ import java.util.Date;
 import java.util.TreeSet;
 import java.io.File;
 import java.io.InputStream;
+
+
 
 
 //import roart.beans.session.misc.Unit;
@@ -59,6 +62,8 @@ import com.vaadin.shared.communication.PushMode;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.shared.ui.label.ContentMode;
+
+
 
 
 //import org.slf4j.Logger;
@@ -144,8 +149,6 @@ public class MyVaadinUI extends UI
 	HorizontalLayout horDb = new HorizontalLayout();
 	horDb.setHeight("20%");
 	horDb.setWidth("60%");
-	horDb.addComponent(getDbItem());
-	horDb.addComponent(getDbSearch());
 	
 	/*
 	tab.addComponent(getCleanup());
@@ -175,8 +178,10 @@ public class MyVaadinUI extends UI
     horDb.setHeight("20%");
     horDb.setWidth("60%");
     horDb.addComponent(getDate());
+    horDb.addComponent(getResetDate());
     horDb.addComponent(getDbItem());
-    horDb.addComponent(getDbSearch());
+    horDb.addComponent(getMarkets());
+    horDb.addComponent(getDays());
     
     tab.addComponent(horNewInd);
     tab.addComponent(horStat);
@@ -207,13 +212,14 @@ public class MyVaadinUI extends UI
                     time = time / 1000;
                     time = time * 1000;
                     date = new Date(time);
-                    //System.out.println("bla " + time + " " +date);
+                    System.out.println("bla " + time + " " +date);
                     try {
                         maininst.setdate(date);
                         Notification.show("Request sent");
                         List list = ControlService.getContent();
                         displayResultListsTab(list);
-                    } catch (Exception e) {
+                   } catch (Exception e) {
+                       e.printStackTrace();
                         log.error(Constants.EXCEPTION, e);
                     }
                 }
@@ -223,7 +229,25 @@ public class MyVaadinUI extends UI
         return tf;
     }
 
-    private Button getOverlapping() {
+    private Button getResetDate() {
+        Button button = new Button("Reset date");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+        ControlService maininst = new ControlService();
+        try {
+            maininst.setdate(null);
+            Notification.show("Request sent");
+            List list = ControlService.getContent();
+            displayResultListsTab(list);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+            }
+        });
+    return button;
+    }
+
+   private Button getOverlapping() {
         Button button = new Button("Overlapping");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -258,8 +282,48 @@ public class MyVaadinUI extends UI
 	return tf;
     }
 
-    private TextField getDbSearch() {
-	TextField tf = new TextField("Database search");
+    private ListSelect getMarkets() {
+        ListSelect ls = new ListSelect("Get market");
+        Set<String> languages = null;
+        try {
+            List<String> langs = Stock.getMarkets();
+            langs.remove(null);
+            languages = new TreeSet<String>(langs);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return ls;
+        }
+        log.info("languages " + languages);
+        if (languages == null ) {
+            return ls;
+        }
+        ls.addItems(languages);
+        ls.setNullSelectionAllowed(false);
+        // Show 5 items and a scrollbar if there are more                       
+        ls.setRows(5);
+        ls.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String                 
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value                              
+                ControlService maininst = new ControlService();
+                try {
+                maininst.setMarket(value);
+                Notification.show("Request sent");
+                List list = ControlService.getContent();
+                displayResultListsTab(list);
+                 } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+                }
+            }
+            });
+        // Fire value changes immediately when the field loses focus
+        ls.setImmediate(true);
+        return ls;
+    }
+    
+    private TextField getDays() {
+	TextField tf = new TextField("Interval days");
 
 	// Handle changes in the value
 	tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -269,10 +333,8 @@ public class MyVaadinUI extends UI
 		    // Do something with the value
 		    ControlService maininst = new ControlService();
 		    try {
-			maininst.dbsearch(value);
+			maininst.setDays(new Integer(value));
 			Notification.show("Request sent");
-	        List list = ControlService.getContent();
-	        displayResultListsTab(list);
 		    } catch (Exception e) {
 			log.error(Constants.EXCEPTION, e);
 		    }
@@ -299,11 +361,26 @@ public class MyVaadinUI extends UI
 	    }
 	}
 	for (int i = 0; i < columns; i++) {
-	    switch (strarr.get(1).get().get(i).getClass().getName()) {
+	    Object object = null;
+	    for (int j = 1; j < strarr.size(); j++) {
+	        object = strarr.get(j).get().get(i);
+	        if (object != null) {
+	            break;
+	        }
+	    }
+	    //Object object = strarr.get(1).get().get(i);
+	    if (object == null) {
+	        table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+	        continue;
+	    }
+	    switch (object.getClass().getName()) {
 	        case "java.lang.String":
 	            table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
 	        break;
-            case "java.lang.Double":
+	           case "java.lang.Integer":
+	                table.addContainerProperty(strarr.get(0).get().get(i), Integer.class, null);
+	            break;
+	            case "java.lang.Double":
                 table.addContainerProperty(strarr.get(0).get().get(i), Double.class, null);
             break;
             case "java.util.Date":
@@ -313,7 +390,7 @@ public class MyVaadinUI extends UI
                 table.addContainerProperty(strarr.get(0).get().get(i), Timestamp.class, null);
             break;
 	        default:
-	        System.out.println("not found" + strarr.get(0).get().get(i).getClass().getName());
+	        System.out.println("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
 	        break;
 	    }
 	    //table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
@@ -321,7 +398,12 @@ public class MyVaadinUI extends UI
 for (int i = 1; i < strarr.size(); i++) {
 	    ResultItem str = strarr.get(i);
 	    //System.out.println("" + );
+	    try {
 	    table.addItem(str.getarr(), i);
+	    } catch (Exception e) {
+	        System.out.println("the i " + i + " " + str.get().get(0));
+	        e.printStackTrace();
+	    }
 	}
 	//table.setPageLength(table.size());
 	ts.addComponent(table);
