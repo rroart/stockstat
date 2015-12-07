@@ -12,6 +12,6 @@ cd /tmp
 
 touch xhtml1-transitional.dtd
 
-xsltproc -v --encoding ISO-8859-1 --novalid --html $D -o morn.xml /home/roart/src/stockstat/bin/morn.xsl indexoverview.aspx
+xsltproc --encoding UTF-8 --novalid --html $D -o morncat.xml /home/roart/src/stockstat/bin/morncat.xsl categoryoverview.aspx
 
 # --encoding ISO-8859-1 -v

@@ -12,6 +12,6 @@ cd /tmp
 
 touch xhtml1-transitional.dtd
 
-xsltproc --encoding ISO-8859-1 --novalid --html $D -o bors.xml /home/roart/src/stockstat/bin/bors.xsl sok.html\?sok\=1
+xsltproc --encoding ISO-8859-1 --novalid --html $D -o nordfund.xml /home/roart/src/stockstat/bin/nordfund.xsl sok.html\?sok\=1
 
 # --encoding ISO-8859-1 -v
