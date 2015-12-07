@@ -79,7 +79,7 @@ import org.slf4j.LoggerFactory;
 public class MyVaadinUI extends UI
 {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static Logger log = LoggerFactory.getLogger(MyVaadinUI.class);
     //private static final Logger log = LoggerFactory.getLogger(MyVaadinUI.class);
 
     @WebServlet(value = "/*", asyncSupported = true)
@@ -212,7 +212,7 @@ public class MyVaadinUI extends UI
                     time = time / 1000;
                     time = time * 1000;
                     date = new Date(time);
-                    System.out.println("bla " + time + " " +date);
+                    //System.out.println("bla " + time + " " +date);
                     try {
                         maininst.setdate(date);
                         Notification.show("Request sent");
@@ -335,6 +335,8 @@ public class MyVaadinUI extends UI
 		    try {
 			maininst.setDays(new Integer(value));
 			Notification.show("Request sent");
+                List list = ControlService.getContent();
+                displayResultListsTab(list);
 		    } catch (Exception e) {
 			log.error(Constants.EXCEPTION, e);
 		    }
@@ -401,7 +403,7 @@ for (int i = 1; i < strarr.size(); i++) {
 	    try {
 	    table.addItem(str.getarr(), i);
 	    } catch (Exception e) {
-	        System.out.println("the i " + i + " " + str.get().get(0));
+	        log.error("i " + i + " " + str.get().get(0));
 	        e.printStackTrace();
 	    }
 	}

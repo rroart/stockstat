@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ControlService {
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
     public enum Config { REINDEXLIMIT, INDEXLIMIT, FAILEDLIMIT, OTHERTIMEOUT, TIKATIMEOUT, MLTCOUNT, MLTMINTF, MLTMINDF };
     public static Map<Config, Integer> configMap = new HashMap<Config, Integer>();
@@ -86,18 +86,20 @@ public class ControlService {
         List<ResultItem> retList = new ArrayList<ResultItem>();
         ResultItem ri = new ResultItem();
         //ri.add("Id");
+	String delta = "Delta";
+	delta = "Δ";
         ri.add("Name");
         ri.add("Date");
         ri.add("Period1");
-        ri.add("Period1 move");
+        ri.add(delta + "1");
         ri.add("Period2");
-        ri.add("Period2 move");
+        ri.add(delta + "2");
         ri.add("Period3");
-        ri.add("Period3 move");
+        ri.add(delta + "3");
         ri.add("Period4");
-        ri.add("Period4 move");
+        ri.add(delta + "4");
        ri.add("Period5");
-       ri.add("Period5 move");
+       ri.add(delta + "5");
         ri.add("Price");
         ri.add("Currency");
         retList.add(ri);
@@ -118,39 +120,80 @@ public class ControlService {
             datedstocks.add(stock);
             }
         }
+
+	boolean hasPeriod1 = hasStockPeriod1(datedstocks);
+	boolean hasPeriod2 = hasStockPeriod2(datedstocks);
+	boolean hasPeriod3 = hasStockPeriod3(datedstocks);
+	boolean hasPeriod4 = hasStockPeriod4(datedstocks);
+	boolean hasPeriod5 = hasStockPeriod5(datedstocks);
+
         // make sorted period1, sorted current day
         List<Stock> stocklistPeriod1Day0 = new ArrayList<Stock>(datedstocks);
+	if (hasPeriod1) {
         stocklistPeriod1Day0.sort(StockPeriod1Comparator);
+	}
         List<Stock> stocklistPeriod2Day0 = new ArrayList<Stock>(datedstocks);
+	if (hasPeriod2) {
         stocklistPeriod2Day0.sort(StockPeriod2Comparator);
+	}
         List<Stock> stocklistPeriod3Day0 = new ArrayList<Stock>(datedstocks);
+	if (hasPeriod3) {
         stocklistPeriod3Day0.sort(StockPeriod3Comparator);
+	}
         List<Stock> stocklistPeriod4Day0 = new ArrayList<Stock>(datedstocks);
+	if (hasPeriod4) {
         stocklistPeriod4Day0.sort(StockPeriod4Comparator);
-        printstock(stocklistPeriod4Day0, 10);
+	}
+        //printstock(stocklistPeriod4Day0, 10);
         List<Stock> stocklistPeriod5Day0 = new ArrayList<Stock>(datedstocks);
+	if (hasPeriod5) {
         stocklistPeriod5Day0.sort(StockPeriod5Comparator);
+	}
         // make sorted period1, sorted day offset
         List<Stock> datedstocksoffset = getOffsetList(stockmap);
         List<Stock> stocklistPeriod1Day1 = new ArrayList<Stock>(datedstocksoffset);
+	if (hasPeriod1) {
         stocklistPeriod1Day1.sort(StockPeriod1Comparator);
+	}
         List<Stock> stocklistPeriod2Day1 = new ArrayList<Stock>(datedstocksoffset);
+	if (hasPeriod2) {
         stocklistPeriod2Day1.sort(StockPeriod2Comparator);
+	}
        List<Stock> stocklistPeriod3Day1 = new ArrayList<Stock>(datedstocksoffset);
+	if (hasPeriod3) {
         stocklistPeriod3Day1.sort(StockPeriod3Comparator);
+	}
        List<Stock> stocklistPeriod4Day1 = new ArrayList<Stock>(datedstocksoffset);
+	if (hasPeriod4) {
         stocklistPeriod4Day1.sort(StockPeriod4Comparator);
-        printstock(stocklistPeriod4Day1, 10);
+	}
+        //printstock(stocklistPeriod4Day1, 10);
        List<Stock> stocklistPeriod5Day1 = new ArrayList<Stock>(datedstocksoffset);
+	if (hasPeriod5) {
         stocklistPeriod5Day1.sort(StockPeriod5Comparator);
+	}
        
-        HashMap<String, Integer> period1map = getPeriodmap(stocklistPeriod1Day0, stocklistPeriod1Day1);
-        HashMap<String, Integer> period2map = getPeriodmap(stocklistPeriod2Day0, stocklistPeriod2Day1);
-        HashMap<String, Integer> period3map = getPeriodmap(stocklistPeriod3Day0, stocklistPeriod3Day1);
-        HashMap<String, Integer> period4map = getPeriodmap(stocklistPeriod4Day0, stocklistPeriod4Day1);
-        System.out.println("size0 " + datedstocks.size());
-        System.out.println("size0 " + datedstocksoffset.size());
-        System.out.println("size1 " + stocks.size());
+        HashMap<String, Integer> period1map = new HashMap<String, Integer>();
+	if (hasPeriod1) {
+	    period1map = getPeriodmap(stocklistPeriod1Day0, stocklistPeriod1Day1);
+	}
+HashMap<String, Integer> period2map = new HashMap<String, Integer>();
+	if (hasPeriod2) {
+	    period2map = getPeriodmap(stocklistPeriod2Day0, stocklistPeriod2Day1);
+	}
+HashMap<String, Integer> period3map = new HashMap<String, Integer>();
+	if (hasPeriod3) {
+ period3map = getPeriodmap(stocklistPeriod3Day0, stocklistPeriod3Day1);
+	}
+ HashMap<String, Integer> period4map = new HashMap<String, Integer>();
+	if (hasPeriod4) {
+	    period4map = getPeriodmap(stocklistPeriod4Day0, stocklistPeriod4Day1);
+	}
+HashMap<String, Integer> period5map = new HashMap<String, Integer>();
+	if (hasPeriod5) {
+	    period5map = getPeriodmap(stocklistPeriod5Day0, stocklistPeriod5Day1);
+	}
+        log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
         for (Stock stock : datedstocks) {
             //System.out.println("" + mydate.getTime() + "|" + stock.getDate().getTime());
             if (mymarket == null) {
@@ -176,16 +219,17 @@ public class ControlService {
             r.add(period4map.get(stock.getId()));
 //            r.add(null);
             r.add(stock.getPeriod5());
-            r.add(null);
+            r.add(period5map.get(stock.getId()));
+	    //            r.add(null);
             r.add(stock.getPrice());
             r.add(stock.getCurrency());
             //r.add(stock.get());
             retList.add(r);
             
         }
-        System.out.println("size2 " +retList.size());
+        log.info("retlist " +retList.size());
         } catch (Exception e) {
-            System.out.println("except ");
+            log.error("Exception", e);
            e.printStackTrace();
             //log.error(Constants.EXCEPTION, e);
         }
@@ -197,7 +241,7 @@ public class ControlService {
     private static void printstock(List<Stock> stocklistPeriod4Day1, int imax) {
         int i = 0;
         for (Stock s : stocklistPeriod4Day1) {
-            System.out.println(s.getId() + " : " + s.getName() + " : " + s.getPeriod4());
+            log.debug(s.getId() + " : " + s.getName() + " : " + s.getPeriod4());
             i++;
             if (i > imax) {
                 return;
@@ -223,10 +267,10 @@ public class ControlService {
         for (int i = 0; i < stocklistPeriod1Day1.size(); i++) {
             for (int j = 0; j < stocklistPeriod1Day0.size(); j++) {
                 if (stocklistPeriod1Day0.get(i).getId() == null) {
-                    System.out.println("null0 " + stocklistPeriod1Day0.get(i));
+                    log.error("null0 " + stocklistPeriod1Day0.get(i));
                 }
                 if (stocklistPeriod1Day1.get(i).getId() == null) {
-                    System.out.println("null0 " + stocklistPeriod1Day1.get(i));
+                    log.error("null0 " + stocklistPeriod1Day1.get(i));
                 }
                 if (stocklistPeriod1Day1.get(i).getId().equals(stocklistPeriod1Day0.get(j).getId())) {
                     periodmap.put(stocklistPeriod1Day1.get(i).getId(), i-j);
@@ -246,7 +290,6 @@ public class ControlService {
                 if (stocklist.size() > mydays) {
                 stock = stocklist.get(mydays);
                 } else {
-                    //System.out.println("skip1");
                     continue;
                 }
             } else {
@@ -256,7 +299,7 @@ public class ControlService {
                         stock = stocklist.get(mydays + i);
                     }
                 } else {
-		    System.out.println(stocklist.get(0).getName() + " " + stocklist.size() + " " + mydays + " " +i);
+		    //System.out.println(stocklist.get(0).getName() + " " + stocklist.size() + " " + mydays + " " +i);
 		}
             }
             if (stock != null) {
@@ -380,5 +423,50 @@ static Integer mydays = 2;
 public void setDays(Integer integer) {
     mydays = integer;
 }
+
+    public static boolean hasStockPeriod1(List<Stock> stocks) {
+	for (Stock s : stocks) {
+	    if (s.getPeriod1() != null) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    public static boolean hasStockPeriod2(List<Stock> stocks) {
+	for (Stock s : stocks) {
+	    if (s.getPeriod2() != null) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    public static boolean hasStockPeriod3(List<Stock> stocks) {
+	for (Stock s : stocks) {
+	    if (s.getPeriod3() != null) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    public static boolean hasStockPeriod4(List<Stock> stocks) {
+	for (Stock s : stocks) {
+	    if (s.getPeriod4() != null) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    public static boolean hasStockPeriod5(List<Stock> stocks) {
+	for (Stock s : stocks) {
+	    if (s.getPeriod5() != null) {
+		return true;
+	    }
+	}
+	return false;
+    }
 
 }
