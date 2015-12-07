@@ -150,7 +150,7 @@ public class ControlService {
         stocklistPeriod5Day0.sort(StockPeriod5Comparator);
 	}
         // make sorted period1, sorted day offset
-        List<Stock> datedstocksoffset = getOffsetList(stockmap);
+        List<Stock> datedstocksoffset = getOffsetList(stockmap, mydays);
         List<Stock> stocklistPeriod1Day1 = new ArrayList<Stock>(datedstocksoffset);
 	if (hasPeriod1) {
         stocklistPeriod1Day1.sort(StockPeriod1Comparator);
@@ -281,7 +281,7 @@ HashMap<String, Integer> period5map = new HashMap<String, Integer>();
     }
 
     private static List<Stock> getOffsetList(
-            HashMap<String, List<Stock>> stockmap) {
+            HashMap<String, List<Stock>> stockmap, int mydays) {
         List<Stock> retstocklist = new ArrayList<Stock>();
         for (String key : stockmap.keySet()) {
             Stock stock = null;
