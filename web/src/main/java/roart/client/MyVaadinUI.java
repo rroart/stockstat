@@ -145,7 +145,7 @@ public class MyVaadinUI extends UI
 	HorizontalLayout horStat = new HorizontalLayout();
 	horStat.setHeight("20%");
 	horStat.setWidth("90%");
-	horStat.addComponent(getOverlapping());
+	//horStat.addComponent(getOverlapping());
 	HorizontalLayout horDb = new HorizontalLayout();
 	horDb.setHeight("20%");
 	horDb.setWidth("60%");
@@ -173,19 +173,25 @@ public class MyVaadinUI extends UI
     HorizontalLayout horStat = new HorizontalLayout();
     horStat.setHeight("20%");
     horStat.setWidth("90%");
-    horStat.addComponent(getOverlapping());
+    horStat.addComponent(getDate());
+    horStat.addComponent(getResetDate());
+    //horStat.addComponent(getOverlapping());
     HorizontalLayout horDb = new HorizontalLayout();
     horDb.setHeight("20%");
     horDb.setWidth("60%");
-    horDb.addComponent(getDate());
-    horDb.addComponent(getResetDate());
-    horDb.addComponent(getDbItem());
+    //horDb.addComponent(getDbItem());
     horDb.addComponent(getMarkets());
-    horDb.addComponent(getDays());
+
+    HorizontalLayout horDb2 = new HorizontalLayout();
+    horDb2.setHeight("20%");
+    horDb2.setWidth("60%");
+    //horDb.addComponent(getDbItem());
+    horDb2.addComponent(getDays());
     
-    tab.addComponent(horNewInd);
+    //tab.addComponent(horNewInd);
     tab.addComponent(horStat);
-    tab.addComponent(horDb);
+    tab.addComponent(horDb); 
+    tab.addComponent(horDb2);
     return tab;
     }
 
@@ -324,6 +330,7 @@ public class MyVaadinUI extends UI
     
     private TextField getDays() {
 	TextField tf = new TextField("Interval days");
+	tf.setValue("" + new ControlService().getDays());
 
 	// Handle changes in the value
 	tf.addValueChangeListener(new Property.ValueChangeListener() {

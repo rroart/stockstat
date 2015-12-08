@@ -241,7 +241,7 @@ HashMap<String, Integer> period5map = new HashMap<String, Integer>();
     private static void printstock(List<Stock> stocklistPeriod4Day1, int imax) {
         int i = 0;
         for (Stock s : stocklistPeriod4Day1) {
-            log.debug(s.getId() + " : " + s.getName() + " : " + s.getPeriod4());
+            //log.info(s.getId() + " : " + s.getName() + " : " + s.getPeriod4());
             i++;
             if (i > imax) {
                 return;
@@ -422,6 +422,10 @@ static Integer mydays = 2;
 
 public void setDays(Integer integer) {
     mydays = integer;
+}
+
+public int getDays() {
+    return mydays;
 }
 
     public static boolean hasStockPeriod1(List<Stock> stocks) {
