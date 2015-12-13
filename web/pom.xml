@@ -297,7 +297,7 @@
     <curator.version>3.0.0</curator.version>
     <hazelcast.version>3.5.3</hazelcast.version>
     <dbunit.dataTypeFactoryName>org.dbunit.ext.h2.H2DataTypeFactory</dbunit.dataTypeFactoryName>
-    <hibernate.version>5.0.3.Final</hibernate.version>
+    <hibernate.version>5.0.5.Final</hibernate.version>
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <hibernate.hbm2ddl.auto>create</hibernate.hbm2ddl.auto>
     <h2.version>1.4.187</h2.version>
