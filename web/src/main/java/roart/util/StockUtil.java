@@ -403,12 +403,12 @@ public class StockUtil {
             int topbottom, List<Stock>[][] stocklistPeriod, int period) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
            for (int j = periods - 1; j >= 0; j--) {
-           List<Stock> list = stocklistPeriod[period][j];
+           List<Stock> list = StockUtil.listFilterBottom(stocklistPeriod[period][0], stocklistPeriod[period][0], topbottom, period);
            if (list.isEmpty()) {
                continue;
            }
            if (j > 0) {
-               list = StockUtil.listFilterBottom(stocklistPeriod[period][j], stocklistPeriod[period][0], topbottom);
+               list = StockUtil.listFilterBottom(stocklistPeriod[period][j], stocklistPeriod[period][0], topbottom, period);
            }
            for (int i = list.size() - 1; i >= (list.size() - topbottom); i--) {
                if (i >= 0) {
@@ -505,16 +505,32 @@ public class StockUtil {
         return retlist;
     }
 
-    public static List<Stock> listFilterBottom(List<Stock> list, List<Stock> listmain, int size) {
+    public static List<Stock> listFilterBottom(List<Stock> list, List<Stock> listmain, int size, int period) {
         List<Stock> retlist = new ArrayList<Stock>();
         int max = Math.min(size, listmain.size());
-        for (int i = listmain.size() -1; i >= listmain.size() - size; i --) {
+        int start;
+        for (start = listmain.size() -1; start >= 0; start --) {
+            if (start >= 0) {
+            Stock stock = listmain.get(start);
+            try {
+                if (StockDao.getPeriod(stock, period + 1) != null) {
+                    start--;
+                    break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //System.out.println("skipping");
+            }
+        }
+        //System.out.println("start size " + start + " " + listmain.size());
+        for (int i = start; i > start - size; i--) {
             if (i >= 0) {
             String id = listmain.get(i).getId();
             for (int j = list.size() - 1; j >= 0; j --) {
                  if (id.equals(list.get(j).getId())) {
                      retlist.add(list.get(j));
-                     break;
+                     //System.out.println("name " + list.get(j).getName());
                  }
             }
             }
