@@ -3,6 +3,7 @@ package roart.client;
 import roart.model.ResultItem;
 import roart.model.Stock;
 import roart.util.Constants;
+import roart.util.SvgUtil;
 import roart.service.ControlService;
 
 import java.sql.Timestamp;
@@ -13,8 +14,32 @@ import java.util.TreeMap;
 import java.util.Map;
 import java.util.Date;
 import java.util.TreeSet;
+import java.awt.Rectangle;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+
+
+
+
+import java.io.OutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -28,15 +53,16 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Alignment;
-import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
@@ -55,6 +81,7 @@ import com.vaadin.server.FileResource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.FileDownloader;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.themes.BaseTheme;
 import com.vaadin.ui.Window;
 import com.vaadin.annotations.Push;
@@ -62,6 +89,26 @@ import com.vaadin.shared.communication.PushMode;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.server.Sizeable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -70,6 +117,10 @@ import com.vaadin.shared.ui.label.ContentMode;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
 
 
 @Push
@@ -159,12 +210,23 @@ public class MyVaadinUI extends UI
 	tab.addComponent(horNewInd);
 	tab.addComponent(horStat);
 	tab.addComponent(horDb);
+	/*
+	HorizontalLayout bla2 = new HorizontalLayout();
+	tab.addComponent(bla2);
+	JFreeChart c = SvgUtil.bla();
+	//OutputStream out = null;
+	//InputStream in = null
+    StreamResource resource = SvgUtil.chartToResource(c, "/tmp/svg.svg");
+	SvgUtil.bla2(bla2, resource);
+	SvgUtil.bla3(tab, resource);
+	SvgUtil.bla4(tab);
+	SvgUtil.bla5(tab, resource);
+	*/
 	return tab;
     }
 
-    private VerticalLayout getSearchTab() {
-        List list = ControlService.getContent();
-        displayResultListsTab(list);
+     private VerticalLayout getSearchTab() {
+         //displayResults(new ControlService());
         VerticalLayout tab = new VerticalLayout();
     tab.setCaption("Search");
     HorizontalLayout horNewInd = new HorizontalLayout();
@@ -187,7 +249,11 @@ public class MyVaadinUI extends UI
     horDb2.setWidth("60%");
     //horDb.addComponent(getDbItem());
     horDb2.addComponent(getDays());
-    
+    horDb2.addComponent(getTableDays());
+    horDb2.addComponent(getTableIntervalDays());
+    horDb2.addComponent(getTopBottom());
+    horDb2.addComponent(getTodayZero());
+   
     //tab.addComponent(horNewInd);
     tab.addComponent(horStat);
     tab.addComponent(horDb); 
@@ -222,9 +288,8 @@ public class MyVaadinUI extends UI
                     try {
                         maininst.setdate(date);
                         Notification.show("Request sent");
-                        List list = ControlService.getContent();
-                        displayResultListsTab(list);
-                   } catch (Exception e) {
+                        displayResults(maininst);
+                  } catch (Exception e) {
                        e.printStackTrace();
                         log.error(Constants.EXCEPTION, e);
                     }
@@ -243,8 +308,7 @@ public class MyVaadinUI extends UI
         try {
             maininst.setdate(null);
             Notification.show("Request sent");
-            List list = ControlService.getContent();
-            displayResultListsTab(list);
+            displayResults(maininst);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -316,8 +380,7 @@ public class MyVaadinUI extends UI
                 try {
                 maininst.setMarket(value);
                 Notification.show("Request sent");
-                List list = ControlService.getContent();
-                displayResultListsTab(list);
+                displayResults(maininst);
                  } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 }
@@ -329,30 +392,152 @@ public class MyVaadinUI extends UI
     }
     
     private TextField getDays() {
-	TextField tf = new TextField("Interval days");
-	tf.setValue("" + new ControlService().getDays());
+    TextField tf = new TextField("Single interval days");
+    tf.setValue("" + new ControlService().getDays());
 
-	// Handle changes in the value
-	tf.addValueChangeListener(new Property.ValueChangeListener() {
-		public void valueChange(ValueChangeEvent event) {
-		    // Assuming that the value type is a String
-		    String value = (String) event.getProperty().getValue();
-		    // Do something with the value
-		    ControlService maininst = new ControlService();
-		    try {
-			maininst.setDays(new Integer(value));
-			Notification.show("Request sent");
-                List list = ControlService.getContent();
-                displayResultListsTab(list);
-		    } catch (Exception e) {
-			log.error(Constants.EXCEPTION, e);
-		    }
-		}
-	    });
-	// Fire value changes immediately when the field loses focus
-	tf.setImmediate(true);
-	return tf;
+    // Handle changes in the value
+    tf.addValueChangeListener(new Property.ValueChangeListener() {
+        public void valueChange(ValueChangeEvent event) {
+            // Assuming that the value type is a String
+            String value = (String) event.getProperty().getValue();
+            // Do something with the value
+            ControlService maininst = new ControlService();
+            try {
+            maininst.setDays(new Integer(value));
+            Notification.show("Request sent");
+            displayResults(maininst);
+            } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            }
+        }
+        });
+    // Fire value changes immediately when the field loses focus
+    tf.setImmediate(true);
+    return tf;
     }
+
+    private TextField getTableIntervalDays() {
+    TextField tf = new TextField("Table interval days");
+    tf.setValue("" + new ControlService().getTableIntervalDays());
+
+    // Handle changes in the value
+    tf.addValueChangeListener(new Property.ValueChangeListener() {
+        public void valueChange(ValueChangeEvent event) {
+            // Assuming that the value type is a String
+            String value = (String) event.getProperty().getValue();
+            // Do something with the value
+            ControlService maininst = new ControlService();
+            try {
+            maininst.setTableIntervalDays(new Integer(value));
+            Notification.show("Request sent");
+            displayResults(maininst);
+           } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            }
+        }
+        });
+    // Fire value changes immediately when the field loses focus
+    tf.setImmediate(true);
+    return tf;
+    }
+
+    private TextField getTableDays() {
+    TextField tf = new TextField("Table days");
+    tf.setValue("" + new ControlService().getTableDays());
+
+    // Handle changes in the value
+    tf.addValueChangeListener(new Property.ValueChangeListener() {
+        public void valueChange(ValueChangeEvent event) {
+            // Assuming that the value type is a String
+            String value = (String) event.getProperty().getValue();
+            // Do something with the value
+            ControlService maininst = new ControlService();
+            try {
+            maininst.setTableDays(new Integer(value));
+            Notification.show("Request sent");
+            displayResults(maininst);
+           } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            }
+        }
+        });
+    // Fire value changes immediately when the field loses focus
+    tf.setImmediate(true);
+    return tf;
+    }
+
+    private TextField getTopBottom() {
+        TextField tf = new TextField("Table top/bottom");
+        tf.setValue("" + new ControlService().getTopBottom());
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value
+                ControlService maininst = new ControlService();
+                try {
+                maininst.setTopBottom(new Integer(value));
+                Notification.show("Request sent");
+                    displayResults(maininst);
+                } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+                }
+            }
+
+             });
+        // Fire value changes immediately when the field loses focus
+        tf.setImmediate(true);
+        return tf;
+        }
+
+    private void displayResults(ControlService maininst) {
+        List list = maininst.getContent();
+        Layout layout = displayResultListsTab(list);
+        List listGraph = maininst.getContentGraph();
+        displayListGraphTab(layout, listGraph);
+   }
+    protected void displayListGraphTab(Layout layout, List<StreamResource> listGraph) {
+        if (listGraph == null) {
+            return;
+        }
+        for (StreamResource resource : listGraph) {
+            //SvgUtil. bla3(layout, resource);
+            //SvgUtil. bla5(layout, resource);
+            //if (true) continue;
+            Image image = new Image ("Image", resource);
+            //Embedded image = new Embedded("1", img);
+            image.setHeight(200 + 400 + 10 * ControlService.getTopBottom(), Sizeable.Unit.PIXELS );
+            image.setWidth(100 + 300 + 10 * ControlService.getTableDays(), Sizeable.Unit.PIXELS );
+            layout.addComponent(image);
+        }
+    }
+
+    private TextField getTodayZero() {
+        TextField tf = new TextField("Use today or zero days as base");
+        tf.setValue("" + new ControlService().getTodayZero());
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value
+                ControlService maininst = new ControlService();
+                try {
+                maininst.setTodayZero(new Integer(value));
+                Notification.show("Request sent");
+                displayResults(maininst);
+               } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+                }
+            }
+            });
+        // Fire value changes immediately when the field loses focus
+        tf.setImmediate(true);
+        return tf;
+        }
 
     void addListTable(VerticalLayout ts, List<ResultItem> strarr) {
 	if (strarr.size() <= 1) {
@@ -418,6 +603,72 @@ for (int i = 1; i < strarr.size(); i++) {
 	ts.addComponent(table);
     }
 
+    void addListTableImages(VerticalLayout ts, List<ResultItem> strarr) {
+    if (strarr.size() <= 1) {
+        return;
+    }
+
+    Table table = new Table("Table");
+    table.setWidth("90%");
+    int columns = strarr.get(0).get().size();
+    int mdcolumn = 0;
+    for (int i=0; i<strarr.size(); i++) {
+        if (strarr.get(i).get().size() != columns) {
+        System.out.println("column differs " + columns + " found " + strarr.get(i).get().size());
+        break;
+        }
+    }
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+    dataset.addValue( 15 , "schools" , "1970" );
+    for (int i = 0; i < columns; i++) {
+        Object object = null;
+        for (int j = 1; j < strarr.size(); j++) {
+            object = strarr.get(j).get().get(i);
+            if (object != null) {
+                break;
+            }
+        }
+        //Object object = strarr.get(1).get().get(i);
+        if (object == null) {
+            table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+            continue;
+        }
+        switch (object.getClass().getName()) {
+            case "java.lang.String":
+                table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+            break;
+               case "java.lang.Integer":
+                    table.addContainerProperty(strarr.get(0).get().get(i), Integer.class, null);
+                break;
+                case "java.lang.Double":
+                table.addContainerProperty(strarr.get(0).get().get(i), Double.class, null);
+            break;
+            case "java.util.Date":
+                table.addContainerProperty(strarr.get(0).get().get(i), Date.class, null);
+            break;
+            case "java.sql.Timestamp":
+                table.addContainerProperty(strarr.get(0).get().get(i), Timestamp.class, null);
+            break;
+            default:
+            System.out.println("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
+            break;
+        }
+        //table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+    }
+for (int i = 1; i < strarr.size(); i++) {
+        ResultItem str = strarr.get(i);
+        //System.out.println("" + );
+        try {
+        table.addItem(str.getarr(), i);
+        } catch (Exception e) {
+            log.error("i " + i + " " + str.get().get(0));
+            e.printStackTrace();
+        }
+    }
+    //table.setPageLength(table.size());
+    ts.addComponent(table);
+    }
+
     void addList(VerticalLayout ts, List<String> strarr) {
 	for (int i=0; i<strarr.size(); i++) {
 	    String str = strarr.get(i);
@@ -464,7 +715,7 @@ for (int i = 1; i < strarr.size(); i++) {
     }
 
     @SuppressWarnings("rawtypes")
-	public void displayResultListsTab(List<List> lists) {
+	public Layout displayResultListsTab(List<List> lists) {
 	VerticalLayout tab = new VerticalLayout();
         tab.setCaption("Results");
 
@@ -472,13 +723,14 @@ for (int i = 1; i < strarr.size(); i++) {
 	if (lists != null) {
 	    for (List<ResultItem> list : lists) {
 		addListTable(result, list);
-	    }
+ 	    }
 	}
 	tab.addComponent(result);
 
 	tabsheet.addComponent(tab);
 	tabsheet.getTab(tab).setClosable(true);
 	Notification.show("New result available");
+	return tab;
     }
 
     public void notify(String text) {
