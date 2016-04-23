@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.jfree.chart.ChartFactory;
@@ -19,6 +18,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -35,6 +36,20 @@ import com.vaadin.ui.VerticalLayout;
 
 public class SvgUtil {
 
+    private static Logger log = LoggerFactory.getLogger(SvgUtil.class);
+
+    /**
+     * Make a chart out of the dataset
+     * 
+     * @param dataset Dataset
+     * @param title Main title
+     * @param titleX X axis title
+     * @param titleY Y axis title
+     * @param xsize deprecated
+     * @param ysize deprecated
+     * @return
+     */
+
     public static JFreeChart getChart(DefaultCategoryDataset dataset, String title, String titleX, String titleY, int xsize, int ysize) {
         JFreeChart lineChart = ChartFactory.createLineChart(
                 title,
@@ -45,18 +60,28 @@ public class SvgUtil {
         return lineChart;
     }
 
-   public static OutputStream exportChartAsSVG(JFreeChart chart, Rectangle bounds, File svgFile) throws IOException {
+    /**
+     * Create an SVG image stream from a chart
+     * 
+     * @param chart The input chart
+     * @param bounds The suggested 2D size
+     * @param svgFile The written debug file
+     * @return an output stream to the SVG image
+     * @throws IOException
+     */
+
+    public static OutputStream exportChartAsSVG(JFreeChart chart, Rectangle bounds, File svgFile) throws IOException {
         // Get a DOMImplementation and create an XML document
         DOMImplementation domImpl =
-            GenericDOMImplementation.getDOMImplementation();
+                GenericDOMImplementation.getDOMImplementation();
         Document document = domImpl.createDocument(null, "svg", null);
-    
+
         // Create an instance of the SVG Generator
         SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-    
+
         // draw the chart in the SVG generator
         chart.draw(svgGenerator, bounds);
-        
+
         // Write svg file
         OutputStream outputStream = new FileOutputStream(svgFile);
         Writer out = new OutputStreamWriter(outputStream, "UTF-8");
@@ -66,10 +91,10 @@ public class SvgUtil {
         outputStream = new ByteArrayOutputStream();
         out = new OutputStreamWriter(outputStream, "UTF-8");
         svgGenerator = new SVGGraphics2D(document);
-    
+
         // draw the chart in the SVG generator
         chart.draw(svgGenerator, bounds);
-       svgGenerator.stream(out, true /* use css */);                       
+        svgGenerator.stream(out, true /* use css */);                       
         outputStream.flush();
         outputStream.close();
         return outputStream;
@@ -77,16 +102,16 @@ public class SvgUtil {
 
     public static void bla2(Layout layout, Resource res) {
         //Resource res = new ThemeResource("images/pygame_icon.svg");
-    
-     // Display the object
+
+        // Display the object
         System.out.println("bla " + res.toString());
-     Embedded object = new Embedded("My SVG", res);
-     object.setMimeType("image/svg+xml"); // Unnecessary
-     //object.setHeight(480, Sizeable.Unit.PIXELS );
-     //object.setWidth(800, Sizeable.Unit.PIXELS );
-     System.out.println("isze" + object.getWidth() + " " + object.getHeight());
-     System.out.println("tostr "+object.getSource().getMIMEType());
-     layout.addComponent(object);
+        Embedded object = new Embedded("My SVG", res);
+        object.setMimeType("image/svg+xml"); // Unnecessary
+        //object.setHeight(480, Sizeable.Unit.PIXELS );
+        //object.setWidth(800, Sizeable.Unit.PIXELS );
+        System.out.println("isze" + object.getWidth() + " " + object.getHeight());
+        System.out.println("tostr "+object.getSource().getMIMEType());
+        layout.addComponent(object);
     }
 
     public static void bla3(Layout layout, Resource res) {
@@ -95,16 +120,16 @@ public class SvgUtil {
         //embedded.setHeight(480, Sizeable.Unit.PIXELS );
         //embedded.setWidth(800, Sizeable.Unit.PIXELS );
         //embedded.setHeight("200");
-       embedded.setVisible(true);
+        embedded.setVisible(true);
         System.out.println("isze" + embedded.getWidth() + " " + embedded.getHeight());
-       layout.addComponent(embedded);
+        layout.addComponent(embedded);
     }
 
     public static void bla4(VerticalLayout tab) {
         ExternalResource img = new ExternalResource ("http://vignette2.wikia.nocookie.net/farscape/images/0/04/Moya1.jpg");
         Embedded image = new Embedded("1", img);
         System.out.println("isze" + image.getWidth() + " " + image.getHeight());
-       tab.addComponent(image);
+        tab.addComponent(image);
     }
 
     public static void bla5(Layout tab,Resource res) {
@@ -115,11 +140,21 @@ public class SvgUtil {
         System.out.println("isze" + image.getWidth() + " " + image.getHeight());
         tab.addComponent(image);
     }
-   
-    public static StreamResource chartToResource(JFreeChart c, String name, int xsize, int ysize) {
+
+    /**
+     * Create a stream resource from the chart, and write a debug image file
+     * 
+     * @param chart Chart
+     * @param name Filename for the debug image
+     * @param xsize Suggested X axis size
+     * @param ysize Suggested Y axis size
+     * @return a stream resource for the image
+     */
+
+    public static StreamResource chartToResource(JFreeChart chart, String name, int xsize, int ysize) {
         StreamResource resource = null;
         try {
-            final OutputStream out = SvgUtil.exportChartAsSVG(c, new Rectangle(300 + 10 * xsize, 400 + 10 * ysize), new File(name));
+            final OutputStream out = SvgUtil.exportChartAsSVG(chart, new Rectangle(300 + 10 * xsize, 400 + 10 * ysize), new File(name));
             byte[] bytes = ((ByteArrayOutputStream) out).toByteArray();
             //System.out.println("bytes " + bytes.length + " "+ new String(bytes));
             //System.out.println("size " + (300 + 10 * xsize) + " " + (400 + 10 * ysize));
@@ -136,11 +171,10 @@ public class SvgUtil {
             }, "/tmp/svg3.svg");
 
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
         return resource;
     }
 
-   
+
 }

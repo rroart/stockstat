@@ -37,40 +37,40 @@ public class ControlService {
     public enum Config { REINDEXLIMIT, INDEXLIMIT, FAILEDLIMIT, OTHERTIMEOUT, TIKATIMEOUT, MLTCOUNT, MLTMINTF, MLTMINDF };
     public static Map<Config, Integer> configMap = new HashMap<Config, Integer>();
     public static Map<Config, String> configStrMap = new HashMap<Config, String>();
-    
+
     private static volatile Integer writelock = new Integer(-1);
 
     private static int dirsizelimit = 100;
 
     private static volatile int mycounter = 0;
-    
+
     public static int getMyCounter() {
         return mycounter++;
     }
-    
+
     // called from ui
     public void overlapping() {
     }
 
     @SuppressWarnings("rawtypes")
-	public List<List> overlappingDo() {
-	List<ResultItem> retList = new ArrayList<ResultItem>();
-	ResultItem ri = new ResultItem();
-	ri.add("Percent");
-	ri.add("Count");
-	ri.add("Directory 1");
-	ri.add("Directory 2");
-	retList.add(ri);
+    public List<List> overlappingDo() {
+        List<ResultItem> retList = new ArrayList<ResultItem>();
+        ResultItem ri = new ResultItem();
+        ri.add("Percent");
+        ri.add("Count");
+        ri.add("Directory 1");
+        ri.add("Directory 2");
+        retList.add(ri);
 
-	try {
-        List<Stock> stock = Stock.getAll();
-    } catch (Exception e) {
-        log.error(Constants.EXCEPTION, e);
+        try {
+            List<Stock> stock = Stock.getAll();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
         }
-	
-	List<List> retlistlist = new ArrayList<List>();
-	retlistlist.add(retList);
-	return retlistlist;
+
+        List<List> retlistlist = new ArrayList<List>();
+        retlistlist.add(retList);
+        return retlistlist;
     }
 
     public void dbindex(String md5) throws Exception {
@@ -80,7 +80,7 @@ public class ControlService {
     }
 
     public static Date mydate = null; //new Date();
-    
+
     public void setdate(Date date) {
         this.mydate = date;
     }
@@ -89,6 +89,12 @@ public class ControlService {
         return mydate;
     }
 
+    /**
+     * Create result lists
+     * 
+     * @return the tabular result lists
+     */
+
     public static List getContent() {
         //mydate.setHours(0);
         //mydate.setMinutes(0);
@@ -96,8 +102,8 @@ public class ControlService {
         List<ResultItem> retList = new ArrayList<ResultItem>();
         ResultItem ri = new ResultItem();
         //ri.add("Id");
-	String delta = "Delta";
-	delta = "Δ";
+        String delta = "Delta";
+        delta = "Δ";
         ri.add("Name");
         ri.add("Date");
         ri.add("Period1");
@@ -108,69 +114,73 @@ public class ControlService {
         ri.add(delta + "3");
         ri.add("Period4");
         ri.add(delta + "4");
-       ri.add("Period5");
-       ri.add(delta + "5");
+        ri.add("Period5");
+        ri.add(delta + "5");
         ri.add("Price");
         ri.add("Currency");
         retList.add(ri);
         try {
-        List<Stock> stocks = Stock.getAll(mymarket);
-        System.out.println("stocks " + stocks.size());
-        HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
-        HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
-        
-        // sort based on date
-        for (String key : stockidmap.keySet()) {
-            List<Stock> stocklist = stockidmap.get(key);
-            stocklist.sort(StockUtil.StockDateComparator);
-        }
-        // the main list, based on freshest or specific date.
-        List<Stock>[] datedstocklists = new ArrayList[2];
+            List<Stock> stocks = Stock.getAll(mymarket);
+            log.info("stocks " + stocks.size());
+            HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
+            HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
 
-        //List<Stock> datedstocksoffset = new ArrayList<Stock>();
+            // sort based on date
+            for (String key : stockidmap.keySet()) {
+                List<Stock> stocklist = stockidmap.get(key);
+                stocklist.sort(StockUtil.StockDateComparator);
+            }
+            // the main list, based on freshest or specific date.
+            List<Stock>[] datedstocklists = new ArrayList[2];
 
-        HashMap<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, stockidmap, stockdatemap, 2, mydays, null);
-        HashMap<String, Integer>[] periodmap = periodmaps[0];
-        
-        List<Stock> datedstocks = datedstocklists[0];
-        List<Stock> datedstocksoffset = datedstocklists[1];
-        if (datedstocks == null) {
-            return null;
-        }
-       //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
-        for (Stock stock : datedstocks) {
-            //System.out.println("" + mydate.getTime() + "|" + stock.getDate().getTime());
-            if (mymarket == null) {
-                continue;
+            //List<Stock> datedstocksoffset = new ArrayList<Stock>();
+
+            HashMap<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, stockidmap, stockdatemap, 2, mydays, null);
+            HashMap<String, Integer>[] periodmap = periodmaps[0];
+
+            List<Stock> datedstocks = datedstocklists[0];
+            List<Stock> datedstocksoffset = datedstocklists[1];
+            if (datedstocks == null) {
+                return null;
             }
-            if (false &&  mydate != null && mydate.getTime() != stock.getDate().getTime()) {
-                continue;
+            //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
+            for (Stock stock : datedstocks) {
+                //System.out.println("" + mydate.getTime() + "|" + stock.getDate().getTime());
+                if (mymarket == null) {
+                    continue;
+                }
+                if (false &&  mydate != null && mydate.getTime() != stock.getDate().getTime()) {
+                    continue;
+                }
+                ResultItem r = new ResultItem();
+                //r.add(stock.getId());
+                r.add(stock.getName());
+                SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
+                r.add(dt.format(stock.getDate()));
+                for (int i = 0; i < StockUtil.PERIODS; i++) {
+                    r.add(StockDao.getPeriod(stock, i + 1));
+                    r.add(periodmap[i].get(stock.getId()));
+                }
+                r.add(stock.getPrice());
+                r.add(stock.getCurrency());
+                //r.add(stock.get());
+                retList.add(r);
+
             }
-            ResultItem r = new ResultItem();
-            //r.add(stock.getId());
-            r.add(stock.getName());
-            SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
-            r.add(dt.format(stock.getDate()));
-            for (int i = 0; i < StockUtil.PERIODS; i++) {
-                r.add(StockDao.getPeriod(stock, i + 1));
-                r.add(periodmap[i].get(stock.getId()));
-            }
-            r.add(stock.getPrice());
-            r.add(stock.getCurrency());
-            //r.add(stock.get());
-            retList.add(r);
-            
-        }
-        log.info("retlist " +retList.size());
+            log.info("retlist " +retList.size());
         } catch (Exception e) {
-            log.error("Exception", e);
-           e.printStackTrace();
-            //log.error(Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
         }
-      List<List> retlistlist = new ArrayList<List>();
+        List<List> retlistlist = new ArrayList<List>();
         retlistlist.add(retList);
         return retlistlist;
     }
+
+    /**
+     * Create result graphs
+     * 
+     * @return the image list
+     */
 
     public static List getContentGraph() {
         //mydate.setHours(0);
@@ -179,10 +189,10 @@ public class ControlService {
         List retlist = new ArrayList<>();
         try {
             List<Stock> stocks = Stock.getAll(mymarket);
-            System.out.println("stocks " + stocks.size());
+            log.info("stocks " + stocks.size());
             HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
             HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
-            
+
             // sort based on date
             for (String key : stockidmap.keySet()) {
                 List<Stock> stocklist = stockidmap.get(key);
@@ -203,36 +213,36 @@ public class ControlService {
             String date0 = null;
             String date1 = null;
             if (!stocklistPeriod[0][days - 1].isEmpty()) {
-            date0 = dt.format(stocklistPeriod[0][days - 1].get(0).getDate());
+                date0 = dt.format(stocklistPeriod[0][days - 1].get(0).getDate());
             }
             if (!stocklistPeriod[0][0].isEmpty()) {
-            date1 = dt.format(stocklistPeriod[0][0].get(0).getDate());
+                date1 = dt.format(stocklistPeriod[0][0].get(0).getDate());
             }
-            
+
             List<Stock> datedstocks = datedstocklists[0];
             List<Stock> datedstocksoffset = datedstocklists[1];
-           //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
+            //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
 
             for (int i = 0; i < StockUtil.PERIODS; i++) {
-           DefaultCategoryDataset dataset = StockUtil.getTopChart(days, topbottom,
-                stocklistPeriod, i);
-           if (dataset != null) {
-            JFreeChart c = SvgUtil.getChart(dataset, "Top period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
-           StreamResource r = SvgUtil.chartToResource(c, "/tmp/new2"+i+".svg", days, topbottom);
-           retlist.add(r);
-           }
+                DefaultCategoryDataset dataset = StockUtil.getTopChart(days, topbottom,
+                        stocklistPeriod, i);
+                if (dataset != null) {
+                    JFreeChart c = SvgUtil.getChart(dataset, "Top period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new2"+i+".svg", days, topbottom);
+                    retlist.add(r);
+                }
             }
-           
+
             for (int i = 0; i < StockUtil.PERIODS; i++) {
-           DefaultCategoryDataset dataset = StockUtil.getBottomChart(days, topbottom,
-                stocklistPeriod, i);
-           if (dataset != null) {
-           JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
-           StreamResource r = SvgUtil.chartToResource(c, "/tmp/new3"+i+".svg", days, topbottom);
-           retlist.add(r);
+                DefaultCategoryDataset dataset = StockUtil.getBottomChart(days, topbottom,
+                        stocklistPeriod, i);
+                if (dataset != null) {
+                    JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new3"+i+".svg", days, topbottom);
+                    retlist.add(r);
+                }
             }
-            }
-           
+
             /*
             DefaultCategoryDataset dataset4 = new DefaultCategoryDataset( );
            for (int j = 0; j < days - 1; j++) {
@@ -248,37 +258,37 @@ public class ControlService {
            JFreeChart c3 = SvgUtil.getChart(dataset4, "Top change", "Time", "Percent", days, topbottom);
            StreamResource r4 = SvgUtil.chartToResource(c3, "/tmp/new4.svg", days, topbottom);
            retlist.add(r4);
-          */
-            
+             */
+
             for (int i = 0; i < StockUtil.PERIODS; i++) {
-           HashMap<String, Integer> mymap = new HashMap<String, Integer>();
-           for (int j = 0; j < days - 1; j++) {
-          for (String id : periodmaps[j][i].keySet()) {
-                Integer rise = mymap.get(id);
-               if (rise == null) {
-                   rise = new Integer(0);
-                   mymap.put(id, rise);
-               }
-               rise = rise + periodmaps[j][i].get(id);
-               mymap.put(id, rise);
-           }
-           }
-           
-           DefaultCategoryDataset dataset = StockUtil.getRisingChart(days, topbottom,
-                stocklistPeriod, mymap, i);
-           if (dataset != null) {
-           JFreeChart c = SvgUtil.getChart(dataset, "Top climber period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
-           StreamResource r = SvgUtil.chartToResource(c, "/tmp/new5" + i +".svg", days, topbottom);
-           retlist.add(r);
-           }
+                HashMap<String, Integer> mymap = new HashMap<String, Integer>();
+                for (int j = 0; j < days - 1; j++) {
+                    for (String id : periodmaps[j][i].keySet()) {
+                        Integer rise = mymap.get(id);
+                        if (rise == null) {
+                            rise = new Integer(0);
+                            mymap.put(id, rise);
+                        }
+                        rise = rise + periodmaps[j][i].get(id);
+                        mymap.put(id, rise);
+                    }
+                }
+
+                DefaultCategoryDataset dataset = StockUtil.getRisingChart(days, topbottom,
+                        stocklistPeriod, mymap, i);
+                if (dataset != null) {
+                    JFreeChart c = SvgUtil.getChart(dataset, "Top climber period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new5" + i +".svg", days, topbottom);
+                    retlist.add(r);
+                }
             }
 
-      boolean percentage = true;
-        int percent = 0;
-        if (percentage) {
-            percent = 100;
-        }
-        /*
+            boolean percentage = true;
+            int percent = 0;
+            if (percentage) {
+                percent = 100;
+            }
+            /*
         int j = 0;
         List<Stock> datedstocks2 = new ArrayList<Stock>();
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
@@ -303,15 +313,13 @@ public class ControlService {
         }
         JFreeChart c = SvgUtil.getChart(dataset);
         StreamResource r2 = SvgUtil.chartToResource(c, "/tmp/new.svg");
-        */
-        
+             */
+
         } catch (Exception e) {
-            log.error("Exception", e);
-           e.printStackTrace();
-            //log.error(Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
         }
         return retlist;
-        }
+    }
 
     private static void printstock(List<Stock> stocklistPeriod4Day1, int imax) {
         int i = 0;
@@ -325,59 +333,59 @@ public class ControlService {
     }
 
     static String mymarket = "0";
-    
+
     public void setMarket(String value) {
         mymarket = value;
-        }
-    
+    }
+
     static Integer mydays = 2;
 
-public void setDays(Integer integer) {
-    mydays = integer;
-}
+    public void setDays(Integer integer) {
+        mydays = integer;
+    }
 
-public int getDays() {
-    return mydays;
-}
+    public int getDays() {
+        return mydays;
+    }
 
-static Integer mytopbottom = 10;
+    static Integer mytopbottom = 10;
 
-public void setTopBottom(Integer integer) {
-    mytopbottom = integer;
-}
+    public void setTopBottom(Integer integer) {
+        mytopbottom = integer;
+    }
 
-public static int getTopBottom() {
-    return mytopbottom;
-}
+    public static int getTopBottom() {
+        return mytopbottom;
+    }
 
-static Integer mytabledays = 10;
+    static Integer mytabledays = 10;
 
-public void setTableDays(Integer integer) {
-    mytabledays = integer;
-}
+    public void setTableDays(Integer integer) {
+        mytabledays = integer;
+    }
 
-public static int getTableDays() {
-    return mytabledays;
-}
+    public static int getTableDays() {
+        return mytabledays;
+    }
 
-static Integer mytableintervaldays = 1;
+    static Integer mytableintervaldays = 1;
 
-public void setTableIntervalDays(Integer integer) {
-    mytableintervaldays = integer;
-}
+    public void setTableIntervalDays(Integer integer) {
+        mytableintervaldays = integer;
+    }
 
-public static int getTableIntervalDays() {
-    return mytableintervaldays;
-}
+    public static int getTableIntervalDays() {
+        return mytableintervaldays;
+    }
 
-static Integer mytodayzero = 1;
+    static Integer mytodayzero = 1;
 
-public void setTodayZero(Integer integer) {
-    mytodayzero = integer;
-}
+    public void setTodayZero(Integer integer) {
+        mytodayzero = integer;
+    }
 
-public static int getTodayZero() {
-    return mytodayzero;
-}
+    public static int getTodayZero() {
+        return mytodayzero;
+    }
 
 }
