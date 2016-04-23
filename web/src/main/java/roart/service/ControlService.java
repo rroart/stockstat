@@ -199,6 +199,15 @@ public class ControlService {
             HashMap<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, stockidmap, stockdatemap, days, getTableIntervalDays(), arr);
             HashMap<String, Integer>[] periodmap = periodmaps[0];
             List<Stock>[][] stocklistPeriod = (List<Stock>[][]) arr[0];
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
+            String date0 = null;
+            String date1 = null;
+            if (!stocklistPeriod[0][days - 1].isEmpty()) {
+            date0 = dt.format(stocklistPeriod[0][days - 1].get(0).getDate());
+            }
+            if (!stocklistPeriod[0][0].isEmpty()) {
+            date1 = dt.format(stocklistPeriod[0][0].get(0).getDate());
+            }
             
             List<Stock> datedstocks = datedstocklists[0];
             List<Stock> datedstocksoffset = datedstocklists[1];
@@ -208,7 +217,7 @@ public class ControlService {
            DefaultCategoryDataset dataset = StockUtil.getTopChart(days, topbottom,
                 stocklistPeriod, i);
            if (dataset != null) {
-           JFreeChart c = SvgUtil.getChart(dataset, "Top period " + (i + 1), "Time", "Percent", days, topbottom);
+            JFreeChart c = SvgUtil.getChart(dataset, "Top period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
            StreamResource r = SvgUtil.chartToResource(c, "/tmp/new2"+i+".svg", days, topbottom);
            retlist.add(r);
            }
@@ -218,7 +227,7 @@ public class ControlService {
            DefaultCategoryDataset dataset = StockUtil.getBottomChart(days, topbottom,
                 stocklistPeriod, i);
            if (dataset != null) {
-           JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + (i + 1), "Time", "Percent", days, topbottom);
+           JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
            StreamResource r = SvgUtil.chartToResource(c, "/tmp/new3"+i+".svg", days, topbottom);
            retlist.add(r);
             }
@@ -258,7 +267,7 @@ public class ControlService {
            DefaultCategoryDataset dataset = StockUtil.getRisingChart(days, topbottom,
                 stocklistPeriod, mymap, i);
            if (dataset != null) {
-           JFreeChart c = SvgUtil.getChart(dataset, "Top climber period " + (i + 1), "Time", "Percent", days, topbottom);
+           JFreeChart c = SvgUtil.getChart(dataset, "Top climber period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
            StreamResource r = SvgUtil.chartToResource(c, "/tmp/new5" + i +".svg", days, topbottom);
            retlist.add(r);
            }
