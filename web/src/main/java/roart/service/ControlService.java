@@ -23,6 +23,7 @@ import roart.util.Constants;
 import roart.util.StockDao;
 import roart.util.StockUtil;
 import roart.util.SvgUtil;
+import roart.util.Math3Util;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -199,7 +200,7 @@ public class ControlService {
                 stocklist.sort(StockUtil.StockDateComparator);
             }
             // the main list, based on freshest or specific date.
-            List<Stock>[] datedstocklists = new ArrayList[10];
+            List<Stock>[] datedstocklists = new ArrayList[getTableDays()];
 
             //List<Stock> datedstocksoffset = new ArrayList<Stock>();
 
@@ -318,7 +319,67 @@ public class ControlService {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        
         return retlist;
+    }
+
+    /**
+     * Create stat result lists
+     * 
+     * @return the tabular result lists
+     */
+
+    public static List getContentStat() {
+        //mydate.setHours(0);
+        //mydate.setMinutes(0);
+        //mydate.setSeconds(0);
+        List<ResultItem> retList = new ArrayList<ResultItem>();
+        ResultItem ri = new ResultItem();
+        //ri.add("Id");
+        String delta = "Delta";
+        delta = "Δ";
+        ri.add("Name 1");
+        ri.add("Name 2");
+        //ri.add("Date");
+        ri.add("Period");
+        ri.add("Size");
+        ri.add("t1");
+        ri.add("t2");
+        retList.add(ri);
+        try {
+            List<Stock> stocks = Stock.getAll(mymarket);
+            log.info("stocks " + stocks.size());
+            HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
+            HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
+
+            // sort based on date
+            for (String key : stockidmap.keySet()) {
+                List<Stock> stocklist = stockidmap.get(key);
+                stocklist.sort(StockUtil.StockDateComparator);
+            }
+            // the main list, based on freshest or specific date.
+            List<Stock>[] datedstocklists = new ArrayList[getTableDays()];
+
+            //List<Stock> datedstocksoffset = new ArrayList<Stock>();
+            int days = getTableDays();
+
+            HashMap<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, stockidmap, stockdatemap, days, getTableIntervalDays(), null);
+            HashMap<String, Integer>[] periodmap = periodmaps[0];
+
+            List<Stock> datedstocks = datedstocklists[0];
+            List<Stock> datedstocksoffset = datedstocklists[1];
+            if (datedstocks == null) {
+                return null;
+            }
+            Math3Util.getStats(retList, periodmaps, days, stockidmap);
+            
+            log.info("retlist " +retList.size());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        List<List> retlistlist = new ArrayList<List>();
+        retlistlist.add(retList);
+        return retlistlist;
     }
 
     private static void printstock(List<Stock> stocklistPeriod4Day1, int imax) {

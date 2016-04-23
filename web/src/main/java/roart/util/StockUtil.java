@@ -584,23 +584,25 @@ public class StockUtil {
         return retlist;
     }
 
-    private static double getMax(List<Stock> stocklist, int pos, boolean percent) {
+    public static double getMax(List<Stock> stocklist, int period) {
         double max = -1000000;
         for (int i = 0; i < stocklist.size() ; i++) {
             double cur = -1000000;
-            if (pos == 0) {
-                Stock stock = stocklist.get(i);
-                if (stock != null) {
-                    Double period = stock.getPeriod1();
-                    if (period != null) {
-                        cur = period;
-                    }
+            if (period == 0) {
+                Double periodval = null;
+                try {
+                    periodval = StockDao.getPeriod(stocklist.get(i), period + 1);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
                 }
+                if (periodval != null) {
+                    cur = periodval;
+                }  
             }
             if (cur > max) {
                 max = cur;
             }
         }
-        return max + 100;
+        return max;
     }
 }

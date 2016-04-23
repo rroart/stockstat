@@ -237,7 +237,8 @@ public class MyVaadinUI extends UI
         horStat.setWidth("90%");
         horStat.addComponent(getDate());
         horStat.addComponent(getResetDate());
-        //horStat.addComponent(getOverlapping());
+        horStat.addComponent(getStat());
+       //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
         horDb.setHeight("20%");
         horDb.setWidth("60%");
@@ -307,6 +308,22 @@ public class MyVaadinUI extends UI
                     maininst.setdate(null);
                     Notification.show("Request sent");
                     displayResults(maininst);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getStat() {
+        Button button = new Button("Get stats");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                ControlService maininst = new ControlService();
+                try {
+                    Notification.show("Request sent");
+                    displayResultsStat(maininst);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -496,6 +513,13 @@ public class MyVaadinUI extends UI
         List listGraph = maininst.getContentGraph();
         displayListGraphTab(layout, listGraph);
     }
+
+
+    private void displayResultsStat(ControlService maininst) {
+        List list = maininst.getContentStat();
+        Layout layout = displayResultListsTab(list);
+    }
+
     protected void displayListGraphTab(Layout layout, List<StreamResource> listGraph) {
         if (listGraph == null) {
             return;

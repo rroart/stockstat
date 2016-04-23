@@ -295,6 +295,11 @@
     <artifactId>jfreechart</artifactId>
     <version>${jfreechart.version}</version>
   </dependency>
+  <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-math3</artifactId>
+    <version>${commons.math3.version}</version>
+  </dependency>
   </dependencies>
   <properties>
     <jetty.version>9.2.2.v20140723</jetty.version>
@@ -314,6 +319,7 @@
     <batik.version>1.8</batik.version>
     <jfreesvg.version>3.0</jfreesvg.version>
     <jfreechart.version>1.0.19</jfreechart.version>
+    <commons.math3.version>3.6.1</commons.math3.version>
     <dbunit.dataTypeFactoryName>org.dbunit.ext.h2.H2DataTypeFactory</dbunit.dataTypeFactoryName>
     <hibernate.version>5.0.5.Final</hibernate.version>
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
