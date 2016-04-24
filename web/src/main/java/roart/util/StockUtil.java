@@ -42,7 +42,7 @@ public class StockUtil {
         for (int i = 0; i < count; i ++) {
             datedstocklists[i] = new ArrayList<Stock>();          
         }
-        if (ControlService.getTodayZero() == 0) {
+        if (!ControlService.isTodayZero()) {
             //List<Stock >datedstocks = datedstocklists[0];
             for (String key : stockidmap.keySet()) {
                 List<Stock> stocklist = stockidmap.get(key);
@@ -70,7 +70,7 @@ public class StockUtil {
             String date = null;
             Date datedate = ControlService.getdate();
             if (datedate != null) {
-                SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
+                SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
                 date = dt.format(datedate);                
             }
             int index = getStockDate(list, date);
@@ -227,7 +227,7 @@ public class StockUtil {
     public static HashMap<String, List<Stock>> splitDate(List<Stock> stocks) {
         HashMap<String, List<Stock>> mymap = new HashMap<String, List<Stock>>();
         for (Stock stock : stocks) {
-            SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String date = dt.format(stock.getDate());
             List<Stock> stocklist = mymap.get(date);
             if (stocklist == null) {

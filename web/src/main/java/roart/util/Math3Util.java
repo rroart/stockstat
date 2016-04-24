@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.model.ResultItem;
 import roart.model.Stock;
+import roart.service.ControlService;
 
 public class Math3Util {
 
@@ -81,8 +82,13 @@ public class Math3Util {
                 log.error(Constants.EXCEPTION, e);
             }
             if (periodval != null) {
-                ret[i] = periodval;
-                //ret[i] = 100*periodval/max;
+                if (!ControlService.isEqualize()) {
+                    ret[i] = periodval;
+                } else {
+                    ret[i] = 100*periodval/max;
+                }
+            } else {
+                log.error("periodval null");
             }
         }
         return ret;

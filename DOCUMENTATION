@@ -4,3 +4,9 @@ Stock statistics
 For making simple stats and graphs
 
 There are two phases, data acquisition and usage
+
+The input format is
+body: row*
+row: id marketid name date price currency period1 period2 period3 period4 period5
+
+then run target/stockstat-input-0.2-SNAPSHOT-jar-with-dependencies.jar with a param file of that format

@@ -44,6 +44,7 @@ import java.io.ByteArrayOutputStream;
 
 
 
+
 //import roart.beans.session.misc.Unit;
 import javax.servlet.annotation.WebServlet;
 
@@ -53,6 +54,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Layout;
@@ -90,6 +92,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.server.Sizeable;
+
 
 
 
@@ -253,12 +256,15 @@ public class MyVaadinUI extends UI
         horDb2.addComponent(getTableDays());
         horDb2.addComponent(getTableIntervalDays());
         horDb2.addComponent(getTopBottom());
-        horDb2.addComponent(getTodayZero());
+        HorizontalLayout horDb3 = new HorizontalLayout();
+        horDb3.addComponent(getTodayZero());
+        horDb3.addComponent(getEqualize());
 
         //tab.addComponent(horNewInd);
         tab.addComponent(horStat);
         tab.addComponent(horDb); 
         tab.addComponent(horDb2);
+        tab.addComponent(horDb3);
         return tab;
     }
 
@@ -545,29 +551,50 @@ public class MyVaadinUI extends UI
         }
     }
 
-    private TextField getTodayZero() {
-        TextField tf = new TextField("Use today or zero days as base");
-        tf.setValue("" + new ControlService().getTodayZero());
+    private CheckBox getTodayZero() {
+        CheckBox cb = new CheckBox("Use today or zero days as base");
+        cb.setValue(new ControlService().isTodayZero());
 
         // Handle changes in the value
-        tf.addValueChangeListener(new Property.ValueChangeListener() {
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
             public void valueChange(ValueChangeEvent event) {
                 // Assuming that the value type is a String
-                String value = (String) event.getProperty().getValue();
+                boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 ControlService maininst = new ControlService();
                 try {
-                    maininst.setTodayZero(new Integer(value));
-                    Notification.show("Request sent");
-                    displayResults(maininst);
+                    maininst.setTodayZero(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
         });
         // Fire value changes immediately when the field loses focus
-        tf.setImmediate(true);
-        return tf;
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getEqualize() {
+        CheckBox cb = new CheckBox("Equalize sample sets");
+        cb.setValue(new ControlService().isEqualize());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                ControlService maininst = new ControlService();
+                try {
+                    maininst.setEqualize(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
     }
 
     void addListTable(VerticalLayout ts, List<ResultItem> strarr) {

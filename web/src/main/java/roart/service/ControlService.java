@@ -507,14 +507,24 @@ public class ControlService {
         return mytableintervaldays;
     }
 
-    static Integer mytodayzero = 1;
+    static boolean mytodayzero = true;
 
-    public void setTodayZero(Integer integer) {
+    public void setTodayZero(Boolean integer) {
         mytodayzero = integer;
     }
 
-    public static int getTodayZero() {
+    public static boolean isTodayZero() {
         return mytodayzero;
+    }
+
+    static boolean myequalize = false;
+
+    public void setEqualize(Boolean integer) {
+        myequalize = integer;
+    }
+
+    public static boolean isEqualize() {
+        return myequalize;
     }
 
 }
