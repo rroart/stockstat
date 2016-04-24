@@ -32,8 +32,8 @@ public class Math3Util {
                     List<Stock> stockstrunc3 = listtrunc(stockstrunc1, stockstrunc2, i);
                     double[] sample1 = getSample(stockstrunc3, i);
                     double[] sample2 = getSample(stockstrunc2, i);
-                    if (sample1.length == 0 || sample2.length == 0) {
-                        log.error("sample 0 " + stocks1.get(0).getName() + " " + stocks2.get(0).getName() + " " + sample1.length + " " + sample2.length);
+                    if (sample1.length < 2 || sample2.length < 2) {
+                        log.error("sample too small " + stocks1.get(0).getName() + " " + stocks2.get(0).getName() + " " + sample1.length + " " + sample2.length);
                         continue;
                     }
                     if (sample1.length != sample2.length) {
@@ -43,9 +43,10 @@ public class Math3Util {
                     TTest ttest = new TTest();
                     double t1 = ttest.pairedT(sample1, sample2);
                     double t2 = ttest.pairedTTest(sample1, sample2);
-                    //log.info("ttest " + stockstrunc2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + t1 + " " + t2 + " " + sample1.length + " " + sample2.length);
+                    boolean b = ttest.pairedTTest(sample1, sample2, 0.05);
+                                       //log.info("ttest " + stockstrunc2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + t1 + " " + t2 + " " + sample1.length + " " + sample2.length);
                     ResultItem r = new ResultItem();
-                    //r.add(stock.getId());
+                    r.add(stocks1.get(0).getId() + "," + stocks2.get(0).getId());
                     r.add(stocks1.get(0).getName());
                     r.add(stocks2.get(0).getName());
                     //SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
@@ -54,6 +55,7 @@ public class Math3Util {
                     r.add(sample1.length);
                     r.add(t1);
                     r.add(t2);
+                    r.add("" + b);
                    //r.add(stock.get());
                     retList.add(r);
                 }
@@ -79,7 +81,8 @@ public class Math3Util {
                 log.error(Constants.EXCEPTION, e);
             }
             if (periodval != null) {
-                ret[i] = periodval/max;
+                ret[i] = periodval;
+                //ret[i] = 100*periodval/max;
             }
         }
         return ret;

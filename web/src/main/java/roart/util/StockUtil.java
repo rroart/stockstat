@@ -78,8 +78,10 @@ public class StockUtil {
                 datedstocklists[0] = stockdatemap.get(date);
                 for (int j = 1; j < count; j++) {
                     index = index - mytableintervaldays;
-                    date = list.get(index);
-                    datedstocklists[j] = stockdatemap.get(date);
+                    if (index >= 0) {
+                        date = list.get(index);
+                        datedstocklists[j] = stockdatemap.get(date);
+                    }
                 }
             }
         }
@@ -443,6 +445,29 @@ public class StockUtil {
                         dataset.addValue(StockDao.getPeriod(stock, period + 1), stock.getName() , new Integer(-j));
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
+                    }
+                }
+            }
+        }
+        if (dataset.getColumnCount() == 0) {
+            return null;
+        }
+        return dataset;
+    }
+
+    public static DefaultCategoryDataset getFilterChart(int days,
+            List<String> ids, List<Stock>[][] stocklistPeriod, int period) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        for (int j = days - 1; j >= 0; j--) {
+            List<Stock> list = stocklistPeriod[period][j];
+            for (int i = 0; i < list.size(); i++) {
+                Stock stock = list.get(i);
+                if (ids.contains(stock.getId())) {
+                    try {
+                        dataset.addValue(StockDao.getPeriod(stock, period + 1), stock.getName() , new Integer(-j));
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                
                     }
                 }
             }

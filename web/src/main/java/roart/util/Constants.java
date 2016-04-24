@@ -23,4 +23,8 @@ public static final String FILESCONTENTTYPE = "Files-Content-Type";
 
 public static final String INDEXCOUNT = "indexcount";
 
+public static final String MYDATEFORMAT = "yyyy.MM.dd";
+
+public static final String IMG = "Img";
+
 }

@@ -520,6 +520,15 @@ public class MyVaadinUI extends UI
         Layout layout = displayResultListsTab(list);
     }
 
+    private void displayResultsGraph(ControlService maininst, List<String> idlist) {
+        VerticalLayout tab = new VerticalLayout();
+        tab.setCaption("Graph results");
+        tabsheet.addComponent(tab);
+        tabsheet.getTab(tab).setClosable(true);
+        List listGraph = maininst.getContentGraph(idlist);
+        displayListGraphTab(tab, listGraph);
+    }
+
     protected void displayListGraphTab(Layout layout, List<StreamResource> listGraph) {
         if (listGraph == null) {
             return;
@@ -592,7 +601,11 @@ public class MyVaadinUI extends UI
             }
             switch (object.getClass().getName()) {
             case "java.lang.String":
-                table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+                if (i == 0 && strarr.get(0).get().get(0).equals(Constants.IMG)) {
+                    table.addContainerProperty(strarr.get(0).get().get(i), Button.class, null);
+                } else {
+                    table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+                }
                 break;
             case "java.lang.Integer":
                 table.addContainerProperty(strarr.get(0).get().get(i), Integer.class, null);
@@ -616,7 +629,12 @@ public class MyVaadinUI extends UI
         for (int i = 1; i < strarr.size(); i++) {
             ResultItem str = strarr.get(i);
             try {
-                table.addItem(str.getarr(), i);
+                if (strarr.get(0).get().get(0).equals(Constants.IMG)) {
+                    String id = (String) str.get().get(0);
+                    str.get().set(0, getImage(id));
+                    table.addItem(str.getarr(), i);                    
+                }
+                table.addItem(str.getarr(), i);                    
             } catch (Exception e) {
                 log.error("i " + i + " " + str.get().get(0));
                 log.error(Constants.EXCEPTION, e);
@@ -624,6 +642,24 @@ public class MyVaadinUI extends UI
         }
         //table.setPageLength(table.size());
         ts.addComponent(table);
+    }
+
+    private Button getImage(final String id) {
+        Button button = new Button("Img");
+        button.setHtmlContentAllowed(true);
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                ControlService maininst = new ControlService();
+                String idarr[] = id.split(",");
+                List<String> idlist = new ArrayList<String>();
+                for (String id : idarr) {
+                    idlist.add(id);
+                }
+                displayResultsGraph(maininst, idlist);
+                Notification.show("Request sent");
+            }
+        });
+        return button;
     }
 
     void addList(VerticalLayout ts, List<String> strarr) {
