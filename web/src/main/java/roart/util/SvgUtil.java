@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
+import roart.client.MyVaadinUI;
+import roart.service.ControlService;
+
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable;
@@ -151,10 +154,22 @@ public class SvgUtil {
      * @return a stream resource for the image
      */
 
-    public static StreamResource chartToResource(JFreeChart chart, String name, int xsize, int ysize) {
+    public static StreamResource chartToResource(JFreeChart chart, String name, int xsize2, int ysize2) {
         StreamResource resource = null;
         try {
-            final OutputStream out = SvgUtil.exportChartAsSVG(chart, new Rectangle(300 + 10 * xsize, 400 + 10 * ysize), new File(name));
+            int xsize = 0*200 + 1*100 + 300 + 10 * ControlService.getTableDays();
+            int ysize = 0*200 + 1*200 + 400 + 10 * ControlService.getTopBottom();
+            System.out.println("xys3 " + xsize + " " + ysize);
+            if (xsize + 0*100 > MyVaadinUI.x) {
+                xsize = MyVaadinUI.x - 0*100 - 200;
+            }
+            /*
+            if (ysize + 200 > MyVaadinUI.y) {
+                ysize = MyVaadinUI.y - 200 - 200;
+            }
+            */
+            System.out.println("xys4 " + xsize + " " + ysize);
+            final OutputStream out = SvgUtil.exportChartAsSVG(chart, new Rectangle(xsize, ysize), new File(name));
             byte[] bytes = ((ByteArrayOutputStream) out).toByteArray();
             //System.out.println("bytes " + bytes.length + " "+ new String(bytes));
             //System.out.println("size " + (300 + 10 * xsize) + " " + (400 + 10 * ysize));

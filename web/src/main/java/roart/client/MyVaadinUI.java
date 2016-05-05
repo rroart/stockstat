@@ -144,9 +144,14 @@ public class MyVaadinUI extends UI
     private TabSheet tabsheet = null;
     public Label statLabel = null;
 
+    public static int x = 0, y = 0;
+    
     @Override
     protected void init(VaadinRequest request) {
+        
         final VerticalLayout layout = new VerticalLayout();
+        x = com.vaadin.server.Page.getCurrent().getBrowserWindowWidth();
+        y = com.vaadin.server.Page.getCurrent().getBrowserWindowHeight();
         VerticalLayout searchTab = null, controlPanelTab = null;
 
         com.vaadin.server.Page.getCurrent().setTitle("Stock statistics by Roar Thronæs");
@@ -545,8 +550,20 @@ public class MyVaadinUI extends UI
             //if (true) continue;
             Image image = new Image ("Image", resource);
             //Embedded image = new Embedded("1", img);
-            image.setHeight(200 + 400 + 10 * ControlService.getTopBottom(), Sizeable.Unit.PIXELS );
-            image.setWidth(100 + 300 + 10 * ControlService.getTableDays(), Sizeable.Unit.PIXELS );
+            int xsize = 100 + 300 + 10 * ControlService.getTableDays();
+            int ysize = 200 + 400 + 10 * ControlService.getTopBottom();
+            System.out.println("xys1 " + xsize + " " + ysize);
+            if (xsize + 100 > x) {
+                xsize = x - 100;
+            }
+            /*
+            if (ysize + 200 > y) {
+                ysize = y - 200;
+            }
+            */
+            System.out.println("xys2 " + xsize + " " + ysize);
+            image.setHeight(ysize, Sizeable.Unit.PIXELS );
+            image.setWidth(xsize, Sizeable.Unit.PIXELS );
             layout.addComponent(image);
         }
     }
