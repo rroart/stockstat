@@ -2,6 +2,9 @@ package roart.util;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,12 +20,22 @@ public class Math3Util {
 
     private static Logger log = LoggerFactory.getLogger(Math3Util.class);
 
-    public static void getStats(List<ResultItem> retList, HashMap<String, Integer>[][] periodmaps, int count, HashMap<String, List<Stock>> stockidmap) {
+    public static void getStats(List<ResultItem> retList, HashMap<String, Integer>[][] periodmaps, int count, HashMap<String, List<Stock>> stockidmap, HashMap<String, List<Stock>> stockdatemap) {
+        List<String> list = new ArrayList(stockdatemap.keySet());
+        Collections.sort(list);
+        String date = null;
+        Date datedate = ControlService.getdate();
+        if (datedate != null) {
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            date = dt.format(datedate);                
+        }
+        int index = list.size() - 1 - StockUtil.getStockDate(list, date);
+        System.out.println("index " + index);
         for (String id1 : stockidmap.keySet()) {
             List<Stock> stocks1 = stockidmap.get(id1);
             stocks1.sort(StockUtil.StockDateComparator);
             for (int i = 0; i < StockUtil.PERIODS; i++) {
-                List<Stock> stockstrunc1 = listtrunc(stocks1, count, i);
+                List<Stock> stockstrunc1 = listtrunc(stocks1, count, i, index);
                 for (String id2 : stockidmap.keySet()) {
                     if (id2.equals(id1)) {
                         continue;
@@ -31,8 +44,10 @@ public class Math3Util {
                     stocks2.sort(StockUtil.StockDateComparator);
                     List<Stock> stockstrunc2 = listtrunc(stocks2, stockstrunc1, i);
                     List<Stock> stockstrunc3 = listtrunc(stockstrunc1, stockstrunc2, i);
-                    double[] sample1 = getSample(stockstrunc3, i);
-                    double[] sample2 = getSample(stockstrunc2, i);
+                    double[] sample1 = getSample(stockstrunc3, i, false);
+                    double[] sample2 = getSample(stockstrunc2, i, false);
+                    double[] sample1e = getSample(stockstrunc3, i, true);
+                    double[] sample2e = getSample(stockstrunc2, i, true);
                     if (sample1.length < 2 || sample2.length < 2) {
                         log.error("sample too small " + stocks1.get(0).getName() + " " + stocks2.get(0).getName() + " " + sample1.length + " " + sample2.length);
                         continue;
@@ -45,18 +60,30 @@ public class Math3Util {
                     double t1 = ttest.pairedT(sample1, sample2);
                     double t2 = ttest.pairedTTest(sample1, sample2);
                     boolean b = ttest.pairedTTest(sample1, sample2, 0.05);
-                                       //log.info("ttest " + stockstrunc2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + t1 + " " + t2 + " " + sample1.length + " " + sample2.length);
+                    double t1e = ttest.pairedT(sample1e, sample2e);
+                    double t2e = ttest.pairedTTest(sample1e, sample2e);
+                    boolean be = ttest.pairedTTest(sample1e, sample2e, 0.05);
+                    if (false /*sample1.length < 10*/) {
+                        log.info("ttest " + stockstrunc2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + t1 + " " + t2 + " " + sample1.length + " " + b + Arrays.toString(sample1) + " and "+ Arrays.toString(sample2) + " " + i + " " + stockstrunc2.get(0).getDate() + " " + stockstrunc3.get(0).getDate() + stockstrunc3.get(stockstrunc3.size() - 1).getDate());
+                        log.info("ttest " + stockstrunc2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + t1e + " " + t2e + " " + sample1.length + " " + be + Arrays.toString(sample1e) + " and "+ Arrays.toString(sample2e) + " " + i + " " + stockstrunc2.get(0).getDate() + " " + stockstrunc3.get(0).getDate() + stockstrunc3.get(stockstrunc3.size() - 1).getDate());
+                        if (b != be) {
+                            log.info("ttestdiff " + stockstrunc2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + i); 
+                        }
+                    }
                     ResultItem r = new ResultItem();
                     r.add(stocks1.get(0).getId() + "," + stocks2.get(0).getId());
                     r.add(stocks1.get(0).getName());
                     r.add(stocks2.get(0).getName());
                     //SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
                     //r.add(dt.format(stock.getDate()));
-                    r.add(i);
+                    r.add(i + 1);
                     r.add(sample1.length);
                     r.add(t1);
                     r.add(t2);
                     r.add("" + b);
+                    r.add(t1e);
+                    r.add(t2e);
+                    r.add("" + be);
                    //r.add(stock.get());
                     retList.add(r);
                 }
@@ -71,7 +98,7 @@ public class Math3Util {
      * @return sample for t test
      */
     
-    private static double[] getSample(List<Stock> stockstrunc, int period) {
+    private static double[] getSample(List<Stock> stockstrunc, int period, boolean equalize) {
         double[] ret = new double[stockstrunc.size()];
         double max = StockUtil.getMax(stockstrunc, period);
         for (int i = 0; i < stockstrunc.size(); i++) {
@@ -82,7 +109,7 @@ public class Math3Util {
                 log.error(Constants.EXCEPTION, e);
             }
             if (periodval != null) {
-                if (!ControlService.isEqualize()) {
+                if (!equalize) {
                     ret[i] = periodval;
                 } else {
                     ret[i] = 100*periodval/max;
@@ -126,23 +153,24 @@ public class Math3Util {
 
     /**
      * Return truncated list by count
-     * 
-     * @param stocks1 input list
      * @param count return count
+     * @param startoffset for other than recent date
+     * @param stocks1 input list
+     * 
      * @return truncated list
      */
     
-    private static List<Stock> listtrunc(List<Stock> stocks, int count, int period) {
+    private static List<Stock> listtrunc(List<Stock> stocks, int count, int period, int startoffset) {
         List<Stock> newList = new ArrayList<Stock>();
-        for (int i = 0, j = 0; i < stocks.size() && j < count ; i++) {
+        for (int i = 0, j = 0; (i + startoffset) < stocks.size() && j < count ; i++) {
             Double periodval = null;
             try {
-                periodval = StockDao.getPeriod(stocks.get(i), period + 1);
+                periodval = StockDao.getPeriod(stocks.get(i + startoffset), period + 1);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
             if (periodval != null) {
-                newList.add(stocks.get(i));
+                newList.add(stocks.get(i + startoffset));
                 j++;
             }
         }
