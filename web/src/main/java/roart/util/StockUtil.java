@@ -464,6 +464,7 @@ public class StockUtil {
                 Stock stock = list.get(i);
                 if (ids.contains(stock.getId())) {
                     try {
+                        //log.info("info " + stock.getName() + " " + StockDao.getPeriod(stock, period + 1) + " " + new Integer(-j));
                         dataset.addValue(StockDao.getPeriod(stock, period + 1), stock.getName() , new Integer(-j));
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
