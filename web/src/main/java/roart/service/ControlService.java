@@ -57,7 +57,7 @@ public class ControlService {
     public List<List> overlappingDo() {
         List<ResultItem> retList = new ArrayList<ResultItem>();
         ResultItem ri = new ResultItem();
-        ri.add("Percent");
+        ri.add("Value");
         ri.add("Count");
         ri.add("Directory 1");
         ri.add("Directory 2");
@@ -229,7 +229,7 @@ public class ControlService {
                 DefaultCategoryDataset dataset = StockUtil.getTopChart(days, topbottom,
                         stocklistPeriod, i);
                 if (dataset != null) {
-                    JFreeChart c = SvgUtil.getChart(dataset, "Top period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, "Top period " + (i + 1), "Time " + date0 + " - " + date1, "Value", days, topbottom);
                     StreamResource r = SvgUtil.chartToResource(c, "/tmp/new2"+i+".svg", days, topbottom);
                     retlist.add(r);
                 }
@@ -239,7 +239,7 @@ public class ControlService {
                 DefaultCategoryDataset dataset = StockUtil.getBottomChart(days, topbottom,
                         stocklistPeriod, i);
                 if (dataset != null) {
-                    JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + (i + 1), "Time " + date0 + " - " + date1, "Value", days, topbottom);
                     StreamResource r = SvgUtil.chartToResource(c, "/tmp/new3"+i+".svg", days, topbottom);
                     retlist.add(r);
                 }
@@ -257,7 +257,7 @@ public class ControlService {
                }
            }
            }
-           JFreeChart c3 = SvgUtil.getChart(dataset4, "Top change", "Time", "Percent", days, topbottom);
+           JFreeChart c3 = SvgUtil.getChart(dataset4, "Top change", "Time", "Value", days, topbottom);
            StreamResource r4 = SvgUtil.chartToResource(c3, "/tmp/new4.svg", days, topbottom);
            retlist.add(r4);
              */
@@ -279,7 +279,7 @@ public class ControlService {
                 DefaultCategoryDataset dataset = StockUtil.getRisingChart(days, topbottom,
                         stocklistPeriod, mymap, i);
                 if (dataset != null) {
-                    JFreeChart c = SvgUtil.getChart(dataset, "Top climber period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, "Top climber period " + (i + 1), "Time " + date0 + " - " + date1, "Value", days, topbottom);
                     StreamResource r = SvgUtil.chartToResource(c, "/tmp/new5" + i +".svg", days, topbottom);
                     retlist.add(r);
                 }
@@ -337,6 +337,7 @@ public class ControlService {
         //mydate.setSeconds(0);
         //System.out.println("here0"+myid);
         List retlist = new ArrayList<>();
+        System.out.println("size " + ids.size());
         try {
             List<Stock> stocks = Stock.getAll(mymarket);
             log.info("stocks " + stocks.size());
@@ -377,7 +378,7 @@ public class ControlService {
                 DefaultCategoryDataset dataset = StockUtil.getFilterChart(days, ids,
                         stocklistPeriod, i);
                 if (dataset != null) {
-                    JFreeChart c = SvgUtil.getChart(dataset, "Period " + (i + 1), "Time " + date0 + " - " + date1, "Percent", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, "Period " + (i + 1), "Time " + date0 + " - " + date1, "Value", days, topbottom);
                     StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+i+".svg", days, topbottom);
                     retlist.add(r);
                 }
@@ -413,6 +414,9 @@ public class ControlService {
         ri.add("Paired t");
         ri.add("P-value");
         ri.add("Alpha 0.05");
+        ri.add("Paired t (e)");
+        ri.add("P-value (e)");
+        ri.add("Alpha 0.05 (e)");
         retList.add(ri);
         try {
             List<Stock> stocks = Stock.getAll(mymarket);
@@ -439,7 +443,7 @@ public class ControlService {
             if (datedstocks == null) {
                 return null;
             }
-            Math3Util.getStats(retList, periodmaps, days, stockidmap);
+            Math3Util.getStats(retList, periodmaps, days, stockidmap, stockdatemap);
             
             log.info("retlist " +retList.size());
         } catch (Exception e) {
