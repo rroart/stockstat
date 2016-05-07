@@ -97,7 +97,7 @@ getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableinte
 #	print("here3");
 #	str(list2)
 #	   cat("here", i);
-#	   periodmaps[i][j - 1] <- getperiodmap(list1, list2)
+#	   periodmaps[i][j - 1] <- getperiodlist(list1, list2)
 #print("bla1")
 #str(df1)
 #print("bla2")
@@ -195,7 +195,7 @@ getlistanddiffperiod <- function(datedstocklists, listid, listdate, count, mytab
 #	print("here3");
 #	str(list2)
 #	   cat("here", i);
-#	   periodmaps[i][j - 1] <- getperiodmap(list1, list2)
+#	   periodmaps[i][j - 1] <- getperiodlist(list1, list2)
 #print("bla1")
 #str(df1)
 #print("bla2")
@@ -218,8 +218,8 @@ getlistanddiffperiod <- function(datedstocklists, listid, listdate, count, mytab
   return(list(periodmap, stocklistperiod))
 }
 
-#getperiodmap <- function(df1, df2) {
-getperiodmap <- function(list1, list2) {
+#getperiodlist <- function(df1, df2) {
+getperiodlist <- function(list1, list2) {
 #  print("here4");
 #  str(list2)
   c <- 0
@@ -236,6 +236,32 @@ getperiodmap <- function(list1, list2) {
      	#cat("ids ", df1[j, "id"], df2[i, "id"]);
       if (identical(df1[j, "id"], df2[i, "id"])) {
         list[c] <- i - j
+#     	 cat("ident", i-j)
+#	 print("")
+      }
+    }
+  }
+  cat("here2 ", length(list))
+  return (list)
+}
+
+
+getperiodmap <- function(list1, list2) {
+#  print("here4");
+#  str(list2)
+  list <- list()
+  df1 <- data.frame(list1[1])
+  df2 <- data.frame(list2[1])
+#  str(df1)
+#  str(df2)
+  cat("len ", nrow(df2), nrow(df1))
+  for (j in 1:nrow(df2)) {
+    id <- df2[j, "id"]
+    list[id] <- NA
+      for (i in 1:nrow(df1)) {
+     	#cat("ids ", df1[j, "id"], id);
+      if (identical(df1[j, "id"], df2[i, "id"])) {
+        list[id] <- i - j
 #     	 cat("ident", i-j)
 #	 print("")
       }
@@ -309,13 +335,15 @@ list11=stocklistperiod[[1]][[1]]
 list12=stocklistperiod[[1]][[2]]
 #str(list211[1])
 for (i in 1:max) {
-print(sprintf("%3d %-40s %12s %3.2f\n", i, strtrim(list12$name[i],38), as.POSIXct(list12$date[i], origin="1970-01-01"), list12$period1[i]))
+print(sprintf("%3d %-40s %12s %3.2f\n", i, strtrim(list12$name[i],38), as.POSIXct(list12$date[i], origin="1970-01-01"), listperiod(list12, period, i)))
 }
 for (i in 1:max) {
 #print(list11[[1]]$name[i])
 #cat(strtrim(list11[[1]]$name[i],38), as.POSIXct(list11[[1]]$date[i], origin="1970-01-01"), list11[[1]]$period1[i], list2[i])
 #print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[i],33), as.POSIXct(list11$date[i], origin="1970-01-01"), list11$period1[i], list2[[i]], list11$id[[i]]))
-print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[i],33), as.POSIXct(list11$date[i], origin="1970-01-01"), listperiod(list11, period, i), list2[[i]], list11$id[[i]]))
+id <- list12$id[i]
+#cat("myid",id)
+print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[i],33), as.POSIXct(list11$date[i], origin="1970-01-01"), listperiod(list11, period, i), list2[[id]], list11$id[[i]]))
 #cat(list11[[1]]$name[i], " ", as.POSIXct(list11[[1]]$date[i], origin="1970-01-01"), " ", list11[[1]]$period1[i], " ", list2[[1]][[i]], "\n")
 }
 #print(list1[[1]$name[1])
@@ -413,8 +441,8 @@ id <- df[j, "id"]
 if (is.null(retl[[id]])) {
 retl[[id]] <- 0
 }
-if (!is.na(p[[j]])) {
-retl[[id]] <- retl[[id]] + p[[j]]
+if (!is.na(p[[id]])) {
+retl[[id]] <- retl[[id]] + p[[id]]
 }
 }
 }
