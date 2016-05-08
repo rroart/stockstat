@@ -552,7 +552,7 @@ public class MyVaadinUI extends UI
             //Embedded image = new Embedded("1", img);
             int xsize = 100 + 300 + 10 * ControlService.getTableDays();
             int ysize = 200 + 400 + 10 * ControlService.getTopBottom();
-            System.out.println("xys1 " + xsize + " " + ysize);
+            //System.out.println("xys1 " + xsize + " " + ysize);
             if (xsize + 100 > x) {
                 xsize = x - 100;
             }
@@ -561,7 +561,7 @@ public class MyVaadinUI extends UI
                 ysize = y - 200;
             }
             */
-            System.out.println("xys2 " + xsize + " " + ysize);
+            //System.out.println("xys2 " + xsize + " " + ysize);
             image.setHeight(ysize, Sizeable.Unit.PIXELS );
             image.setWidth(xsize, Sizeable.Unit.PIXELS );
             layout.addComponent(image);

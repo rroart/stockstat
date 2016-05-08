@@ -159,7 +159,7 @@ public class SvgUtil {
         try {
             int xsize = 0*200 + 1*100 + 300 + 10 * ControlService.getTableDays();
             int ysize = 0*200 + 1*200 + 400 + 10 * ControlService.getTopBottom();
-            System.out.println("xys3 " + xsize + " " + ysize);
+            //System.out.println("xys3 " + xsize + " " + ysize);
             if (xsize + 0*100 > MyVaadinUI.x) {
                 xsize = MyVaadinUI.x - 0*100 - 200;
             }
@@ -168,7 +168,7 @@ public class SvgUtil {
                 ysize = MyVaadinUI.y - 200 - 200;
             }
             */
-            System.out.println("xys4 " + xsize + " " + ysize);
+            //System.out.println("xys4 " + xsize + " " + ysize);
             final OutputStream out = SvgUtil.exportChartAsSVG(chart, new Rectangle(xsize, ysize), new File(name));
             byte[] bytes = ((ByteArrayOutputStream) out).toByteArray();
             //System.out.println("bytes " + bytes.length + " "+ new String(bytes));
