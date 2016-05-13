@@ -529,7 +529,7 @@ public class StockUtil {
             }
         }
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
-        if (list0.isEmpty()) {
+        if (false && list0.isEmpty()) {
             List<Stock> list2 = stocklistPeriod[period][9];
             int max = Math.min(topbottom, list2.size());
             for (int i = 0; i < max; i++) {
@@ -586,7 +586,7 @@ public class StockUtil {
                 Stock stock = listmain.get(start);
                 try {
                     if (StockDao.getPeriod(stock, period + 1) != null) {
-                        start--;
+                        //start--;
                         break;
                     }
                 } catch (Exception e) {
