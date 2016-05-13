@@ -5,6 +5,8 @@ require("ggplot2")
 #require("tabplot")
 require("gridExtra")
 
+periods <- 5
+
 splitdate <- function(stocks) {
   list <- list()
   j <- 0
@@ -52,60 +54,27 @@ return (ds)
 }
 
 getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableintervaldays) {
-  periodmaps <- matrix(list(), nrow = 5, ncol = (count - 1))
-  stocklistperiod <- matrix(list(), nrow = 5, ncol = count)
+  periodmaps <- matrix(list(), nrow = periods, ncol = (count - 1))
+  stocklistperiod <- matrix(list(), nrow = periods, ncol = count)
   for (j in 1:count) {
-    print(j);
-    for (i in 1:5) {
+    for (i in 1:periods) {
       hasperiod <- FALSE
       # fix later
       hasperiod <- TRUE
       if (hasperiod) {
       	df <- data.frame(datedstocklists[j])
 	ds <- getdforderperiod(df, i)
-#        cat("herenr0 ", (nrow(ds)))
-#	print("")
 	tmp <- list(ds)
-#	tmp <- ds
-#	cat(i,j)
-#	print("here2");
-#	str(tmp)
-	print(100 + j*10 + i)
         stocklistperiod[i, j] <- tmp
-#        list2 <- list(ds)
 	if (j > 1) {
-#	list1 <- stocklistperiod[i][j - 1]
-	df1 <- stocklistperiod[i][j - 1]
-#        stocklistperiod[i][j] <- list2
-#	list2 <- stocklistperiod[i][j]
-#	df2 <- stocklistperiod[i][j]
-	df2 <- stocklistperiod[i + (j-1)*5]
+	df1 <- stocklistperiod[i, j - 1]
 	df2 <- tmp
-#	cat(i,j)
-#	print("here3");
-#	str(list2)
-#	   cat("here", i);
-#	   periodmaps[i][j - 1] <- getperiodlist(list1, list2)
-#print("bla1")
-#str(df1)
-#print("bla2")
-#str(df2)
-#print("bla1")
-#print(nrow(data.frame(df1)))
-#print("bla2")
-#print(nrow(df2))
 	   tmplist <- getperiodmap(df1, df2)
-#	   print("tmplist")
-#	   str(tmplist)
 	   periodmaps[i, j - 1] <- list(tmplist)
 	}
       }
     }
   }
-#  str(stocklistperiod)
-#  str(stocklistperiod2)
-#  str(periodmaps)
-#  str(periodmaps[1][1])
   return(list(periodmaps, stocklistperiod))
 }
 
@@ -122,125 +91,65 @@ return (length(listdate))
 
 getlistanddiffperiod <- function(datedstocklists, listid, listdate, count, mytableintervaldays, period) {
   periodmap <- list()
-  stocklistperiod <- matrix(list(), nrow = 5, ncol = count)
+  stocklistperiod <- matrix(list(), nrow = periods, ncol = count)
   for (j in 1:count) {
-    print(j);
       hasperiod <- FALSE
       # fix later
       hasperiod <- TRUE
       if (hasperiod) {
       	df <- data.frame(datedstocklists[j])
 	ds <- getdforderperiod(df, i)
-#	cat("herenr ", (nrow(ds)))
 	print("")
 	tmp <- list(ds)
-#	tmp <- ds
-#	cat(period,",",j)
-#	print("here2");
-#	str(tmp)
-#        stocklistperiod3[i][j] <- list(tmp)
-# TODO period
         stocklistperiod[[1]][[j]] <- tmp
-#        list2 <- list(ds)
 	if (j > 1) {
-#	list1 <- stocklistperiod[[1]][[j - 1]]
 	df1 <- stocklistperiod[j - 1]
-#        stocklistperiod[i][j] <- list2
+        stocklistperiod[i][j] <- list2
 	df2 <- tmp
-#	cat(i,j)
-#	print("here3");
-#	str(list2)
-#	   cat("here", i);
-#	   periodmaps[i][j - 1] <- getperiodlist(list1, list2)
-#print("bla1")
-#str(df1)
-#print("bla2")
-#str(df2)
-#print("bla1")
-#print(nrow(data.frame(df1)))
-#print("bla2")
-#print(nrow(df2))
-#print("h1")
-#str(df1)
 	   tmplist <- getperiodmap(df1, df2)
-print("h2")
-	   print("tmplist")
-#	   str(tmplist)
-#	   periodmap[j - 1] <- list(tmplist)
 	}
       }
   }
-  str(stocklistperiod)
-#  str(stocklistperiod2)
-#  str(periodmaps)
-#  str(periodmaps[1][1])
   return(list(periodmap, stocklistperiod))
 }
 
-#getperiodlist <- function(df1, df2) {
 getperiodlist <- function(list1, list2) {
-#  print("here4");
-#  str(list2)
   c <- 0
   list <- list()
   df1 <- data.frame(list1[1])
   df2 <- data.frame(list2[1])
-#  str(df1)
-#  str(df2)
-#  cat("len ", nrow(df2), nrow(df1))
   for (j in 1:nrow(df2)) {
     c <- c + 1
     list[c] <- NA
       for (i in 1:nrow(df1)) {
-     	#cat("ids ", df1[j, "id"], df2[i, "id"]);
       if (identical(df1[j, "id"], df2[i, "id"])) {
         list[c] <- i - j
-#     	 cat("ident", i-j)
-#	 print("")
       }
     }
   }
-#  cat("here2 ", length(list))
   return (list)
 }
 
 
 getperiodmap <- function(list1, list2) {
-#  print("here4");
-#  str(list1)
-#  str(list2)
   list <- list()
   df1 <- data.frame(list1[1])
   df2 <- data.frame(list2[1])
-#  str(df1)
-#  str(df2)
-#  cat("len ", nrow(df2), nrow(df1))
   for (j in 1:nrow(df2)) {
     id <- df2[j, "id"]
     list[id] <- NA
       for (i in 1:nrow(df1)) {
-     	#cat("ids ", df1[j, "id"], id);
       if (identical(df1[i, "id"], id)) {
-        list[id] <- i - j
-#     	 cat("ident", i-j)
-#	 print("")
+        list[id] <- j - i
       }
     }
   }
-#  cat("here2 ", length(list))
   return (list)
 }
 
 mytop <- function(datedstocklists, stocklistperiod, periodmaps, period, max) {
-#str(stocklistperiod)
 list1 <- stocklistperiod
 list2 <- periodmaps[[period]][[1]]
-#print("len ")
-#cat(length(list1),length(list2))
-#print("mer")
-#str(list2)
-#print(class(list2[1][[1]]))
-#str(list2[1][1])
 list11=stocklistperiod[[1]][1]
 list12=stocklistperiod[[1]][2]
 list13=stocklistperiod[[1]][3]
@@ -252,12 +161,9 @@ list22=list2[2]
 list23=list2[3]
 list24=list2[4]
 list25=list2[5]
-#str(list211[1])
 for (i in 1:max) {
 print(sprintf("%-40s %12s %3.2f %3d %3.2f %3d\n", strtrim(list11[[1]]$name[i],38), as.POSIXct(list11[[1]]$date[i], origin="1970-01-01"), list11[[1]]$period1[i], list2[[1]][[i]], list12[[1]]$period1[i], list2[[2]][[i]]))
-#cat(list11[[1]]$name[i], " ", as.POSIXct(list11[[1]]$date[i], origin="1970-01-01"), " ", list11[[1]]$period1[i], " ", list2[[1]][[i]], "\n")
 }
-#print(list1[[1]$name[1])
 }
 
 listperiod <- function(list, period, index) {
@@ -288,7 +194,7 @@ for (i in 1:max) {
 print(sprintf("%3d %-40s %12s %3.2f\n", i, strtrim(list12$name[i],38), as.POSIXct(list12$date[i], origin="1970-01-01"), listperiod(list12, period, i)))
 }
 for (i in 1:max) {
-id <- list12$id[i]
+id <- list11$id[i]
 print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[i],33), as.POSIXct(list11$date[i], origin="1970-01-01"), listperiod(list11, period, i), list2[[id]], list11$id[[i]]))
 }
 }
@@ -311,7 +217,7 @@ len <- nrow(list11)
 len <- len + 1
 
 for (i in 1:max) {
-id <- list12$id[len - i]
+id <- list11$id[len - i]
 print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[len - i],33), as.POSIXct(list11$date[len - i], origin="1970-01-01"), listperiod(list11, period, len - i), list2[[id]], list11$id[[len - i]]))
 }
 }
@@ -364,14 +270,12 @@ names <- list()
 c <- 0
 for (i in 1:topbottom) {
 l <- getelem(ids[[i]], days, stocklistperiod, period, topbottom)
-str(l[1])
 c <- c + 1
 ls[c] <- list(l)
 listdf <- getelemtup(ids[[i]], days, stocklistperiod, period, topbottom)
 df <- data.frame(listdf[[1]])
 names[c] <- df$name
 }
-#cat("names", names)
 displaychart(ls, names, topbottom, period, maindate, olddate)
 if (topbottom == 2) {
 c1 <- c(unlist(ls[1]))
@@ -460,8 +364,6 @@ return (df[index, "period5"])
 
 getelem <- function(id, days, stocklistperiod, period, size) {
 retl <- list()
-#str(elem)
-#str(elem[[10000]])
 c <- 0
 for (i in days:1) {
 c <- c + 1
@@ -478,9 +380,6 @@ retl[c] <- c(getdfperiod(df, j, period))
 }
 }
 }
-#cat("retlen ", length(retl), c)
-#str(retl)
-#str(unlist(retl))
 return(unlist(retl))
 }
 
@@ -567,38 +466,10 @@ listid2 <- splitid(data_3)
 listdate2 <- splitdate(data_3)
 listdate <- split(data_3, data_3$date)
 listid <- split(data_3, data_3$id)
-#str(listdate2[1])
-#print(length(listdate[1]))
-#print(length(listdate[104]))
 
 l <- listdate[[104]]
-#str(l)
-#plot.table(l, format(as.Date(Sys.time()), '%d %b %Y'))
-#plot.table(l)
-#tableplot(l)
-print("herex")
-#grid.table(l)
-#str(l)
-#s <- l[order(l$period1)]
-#s <- l
-#h <- head(s)
-#grid.table(h)
-#plot(l)
-#print("herey")
-#str(l)
-#data(l)
-#summary(l)
-#data(data_3)
-#summary(data_3)
-#ggplot(as.data.frame(table(l)))
-#plot (l$date, l$name)
-#lines(l$period1, l$period2, col="blue")
-#print(l$date[1])
-#print(length(l$date))
-#print(length(l))
-print("hello")
 datedstocklists <- list()
-days <- 8
+days <- 3
 topbottom <- 5
 count <- days
 mytableintervaldays <- 5
@@ -616,16 +487,10 @@ index <- dateindex
     c <- c + 1
     datedstocklists[c] <- listdate[index]
   }
-print(length(datedstocklists))
 period <- 3
-alist <- getlistanddiff(datedstocklists, listid, listdate, days, 5)
-#print("h3")
+alist <- getlistanddiff(datedstocklists, listid, listdate, days, periods)
 periodmaps <- alist[[1]]
 stocklistperiod <- alist[[2]]
-#str(periodmaps[1][1])
-#print("hello")
-#print(length(datedstocklists))
-#str(datedstocklists[1])
 mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
 mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
 
