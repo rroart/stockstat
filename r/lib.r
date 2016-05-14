@@ -7,6 +7,7 @@ require("gridExtra")
 
 periods <- 5
 
+# out of use
 splitdate <- function(stocks) {
   list <- list()
   j <- 0
@@ -20,6 +21,7 @@ splitdate <- function(stocks) {
   return (list)
 }
 
+# out of use
 splitid <- function(stocks) {
   list <- list()
   j <- 0
@@ -78,6 +80,7 @@ getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableinte
   return(list(periodmaps, stocklistperiod))
 }
 
+# out of use
 getstockdate <- function(listdate, date) {
 c <- 0
 for (i in names(listdate)) {
@@ -299,7 +302,8 @@ c = c(unlist(ls[1]))
 str(c)
 plot(c, type="o", ylim=g_range, axes=FALSE, ann=FALSE)
 axis(1, at=1:days, lab=c(-(days-1):0))
-axis(2, las=1, at=4*0:g_range[2])
+axis(2, las=2)
+grid(NULL,NULL)
 box()
 #l2 <- getc(l, period)
 #str(l[[1]]$period1)
@@ -362,6 +366,24 @@ return (df[index, "period5"])
 }
 }
 
+getonedfperiod <- function(df, period) {
+if (period == 1) {
+return (df$period1)
+}
+if (period == 2) {
+return (df$period2)
+}
+if (period == 3) {
+return (df$period3)
+}
+if (period == 4) {
+return (df$period4)
+}
+if (period == 5) {
+return (df$period5)
+}
+}
+
 getelem <- function(id, days, stocklistperiod, period, size) {
 retl <- list()
 c <- 0
@@ -371,13 +393,11 @@ retl[c] <- NA
 l <- stocklistperiod[period, i]
 df <- data.frame(l[[1]])
 #cat("mylen ", nrow(df))
-for (j in 1:nrow(df)) {
-if (identical(id, df[j, "id"])) {
-#cat(" ident " , id, ":",  df[j, "id"], ":");
-#retl[c] <- list(df[j,])
-#retl[c] <- c(df[j, "period1"])
-retl[c] <- c(getdfperiod(df, j, period))
-}
+el <- df[which(df$id == id),]
+if (nrow(el) == 1) {
+retl[c] <- c(getonedfperiod(el, period))
+} else {
+print("err")
 }
 }
 return(unlist(retl))
@@ -389,16 +409,20 @@ retl <- list()
 for (i in days:1) {
 l <- stocklistperiod[period, i]
 df <- data.frame(l[[1]])
-for (j in 1:nrow(df)) {
-if (identical(id, df[j, "id"])) {
-return(list(df[j,]))
+
+el <- df[which(df$id == id),]
+if (nrow(el) == 1) {
+return(list(el))
+} else {
+print("err")
 }
-}
+
 }
 #TODO
 return()
 }
 
+# out of use
 listfiltertop <- function(list, listmain, size) {
 retl <- list()
 max <- max(size, length(listmain))
@@ -474,7 +498,7 @@ topbottom <- 5
 count <- days
 mytableintervaldays <- 5
 date <- "2016-05-02"
-dateindex <- getstockdate(listdate, date)
+dateindex <- match(date, names(listdate))
 str(dateindex)
 index <- dateindex
 #index <- length(listdate)
