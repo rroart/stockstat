@@ -422,6 +422,8 @@ public class StockUtil {
         if (date == null) {
             return stocklist.size() - 1;
         }
+        if (true)
+        return stocklist.indexOf(date);
         for (int i = 0; i < stocklist.size() ; i++) {
             if (date.equals(stocklist.get(i))) {
                 return i;
