@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.io.*;
 
@@ -82,8 +83,8 @@ public class ControlService {
 
     public static Date mydate = null; //new Date();
 
-    public void setdate(Date date) {
-        this.mydate = date;
+    public static void setdate(Date date) {
+        mydate = date;
     }
 
     public static Date getdate() {
@@ -126,7 +127,16 @@ public class ControlService {
             log.info("stocks " + stocks.size());
             HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
             HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
-
+            if (getdate() == null) {
+                SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+                String date = null;
+                TreeSet set = new TreeSet<String>(stockdatemap.keySet());
+                List<String> list = new ArrayList(set);
+                int size = list.size();
+                date = list.get(size - 1);
+                setdate(dt.parse(date));
+            }
+            
             // sort based on date
             for (String key : stockidmap.keySet()) {
                 List<Stock> stocklist = stockidmap.get(key);
