@@ -60,11 +60,10 @@ getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableinte
   stocklistperiod <- matrix(list(), nrow = periods, ncol = count)
   for (j in 1:count) {
     for (i in 1:periods) {
+      df <- data.frame(datedstocklists[j])
       hasperiod <- FALSE
-      # fix later
-      hasperiod <- TRUE
+      hasperiod <- !is.na(max(getonedfperiod(df, i)))
       if (hasperiod) {
-      	df <- data.frame(datedstocklists[j])
 	ds <- getdforderperiod(df, i)
 	tmp <- list(ds)
         stocklistperiod[i, j] <- tmp
@@ -497,8 +496,12 @@ days <- 3
 topbottom <- 5
 count <- days
 mytableintervaldays <- 5
-date <- "2016-05-02"
+#date <- "2016-05-02"
+if (is.null(date)) {
 dateindex <- match(date, names(listdate))
+} else {
+dateindex <- length(listdate)
+}
 str(dateindex)
 index <- dateindex
 #index <- length(listdate)
