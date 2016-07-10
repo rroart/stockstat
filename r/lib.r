@@ -193,7 +193,7 @@ list2 <- periodmaps[period, 1][[1]]
 list11 <- stocklistperiod[period, 1][[1]]
 list12 <- stocklistperiod[period, 2][[1]]
 for (i in 1:max) {
-print(sprintf("%3d %-40s %12s %3.2f\n", i, strtrim(list12$name[i],38), as.POSIXct(list12$date[i], origin="1970-01-01"), listperiod(list12, period, i)))
+print(sprintf("%3d %-35s %12s %3.2f", i, strtrim(list12$name[i],33), as.POSIXct(list12$date[i], origin="1970-01-01"), listperiod(list12, period, i)))
 }
 for (i in 1:max) {
 id <- list11$id[i]
@@ -212,7 +212,7 @@ len <- nrow(list12)
 len <- len + 1
 
 for (i in 1:max) {
-print(sprintf("%3d %-40s %12s %3.2f\n", i, strtrim(list12$name[len - i],38), as.POSIXct(list12$date[len - i], origin="1970-01-01"), listperiod(list12, period, len - i)))
+print(sprintf("%3d %-35s %12s %3.2f", i, strtrim(list12$name[len - i],33), as.POSIXct(list12$date[len - i], origin="1970-01-01"), listperiod(list12, period, len - i)))
 }
 
 len <- nrow(list11)
@@ -286,6 +286,9 @@ print("here1")
 t.test(c1,c2,paired=TRUE)
 print("here2")
 #t.test(c1,c1,paired=TRUE)
+cor.test(c1, c2, method = c("pearson"))
+str(c1)
+str(c2)
 }
 }
 
@@ -515,7 +518,7 @@ index <- dateindex
     datedstocklists[c] <- listdate[index]
   }
 period <- 3
-alist <- getlistanddiff(datedstocklists, listid, listdate, days, periods)
+alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
 periodmaps <- alist[[1]]
 stocklistperiod <- alist[[2]]
 mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
