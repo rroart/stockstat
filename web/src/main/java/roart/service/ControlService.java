@@ -119,6 +119,7 @@ public class ControlService {
         ri.add(delta + "4");
         ri.add("Period5");
         ri.add(delta + "5");
+        ri.add("Index");
         ri.add("Price");
         ri.add("Currency");
         retList.add(ri);
@@ -173,6 +174,7 @@ public class ControlService {
                     r.add(StockDao.getPeriod(stock, i + 1));
                     r.add(periodmap[i].get(stock.getId()));
                 }
+                r.add(stock.getIndexvalue());
                 r.add(stock.getPrice());
                 r.add(stock.getCurrency());
                 //r.add(stock.get());
@@ -427,6 +429,9 @@ public class ControlService {
         ri.add("Paired t (e)");
         ri.add("P-value (e)");
         ri.add("Alpha 0.05 (e)");
+        ri.add("Spearman (e)");
+        ri.add("Kendall (e)");
+        ri.add("Pearson (e)");
         retList.add(ri);
         try {
             List<Stock> stocks = Stock.getAll(mymarket);

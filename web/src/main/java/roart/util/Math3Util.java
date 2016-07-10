@@ -8,6 +8,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +66,12 @@ public class Math3Util {
                     double t1e = ttest.pairedT(sample1e, sample2e);
                     double t2e = ttest.pairedTTest(sample1e, sample2e);
                     boolean be = ttest.pairedTTest(sample1e, sample2e, 0.05);
+                    SpearmansCorrelation sc = new SpearmansCorrelation();
+                    double sp = sc.correlation(sample1e, sample2e);
+                    KendallsCorrelation kc = new KendallsCorrelation();
+                    double ke = kc.correlation(sample1e, sample2e);
+                    PearsonsCorrelation pc = new PearsonsCorrelation();
+                    double pe = pc.correlation(sample1e, sample2e);
                     if (false /*sample1.length < 10*/) {
                         log.info("ttest " + stockstrunc2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + t1 + " " + t2 + " " + sample1.length + " " + b + Arrays.toString(sample1) + " and "+ Arrays.toString(sample2) + " " + i + " " + stockstrunc2.get(0).getDate() + " " + stockstrunc3.get(0).getDate() + stockstrunc3.get(stockstrunc3.size() - 1).getDate());
                         log.info("ttest " + stockstrunc2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + t1e + " " + t2e + " " + sample1.length + " " + be + Arrays.toString(sample1e) + " and "+ Arrays.toString(sample2e) + " " + i + " " + stockstrunc2.get(0).getDate() + " " + stockstrunc3.get(0).getDate() + stockstrunc3.get(stockstrunc3.size() - 1).getDate());
@@ -84,6 +93,9 @@ public class Math3Util {
                     r.add(t1e);
                     r.add(t2e);
                     r.add("" + be);
+                    r.add(sp);
+                    r.add(ke);
+                    r.add(pe);
                    //r.add(stock.get());
                     retList.add(r);
                 }
