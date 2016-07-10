@@ -32,6 +32,7 @@ public class Main {
         Element marketidElem = (Element) elem.getElementsByTagName(Constants.MARKETID).item(0);
 	    Element nameElem = (Element) elem.getElementsByTagName(Constants.NAME).item(0);
 	    Element dateElem = (Element) elem.getElementsByTagName(Constants.DATE).item(0);
+	    Element indexvalueElem = (Element) elem.getElementsByTagName(Constants.INDEXVALUE).item(0);
 	    Element priceElem = (Element) elem.getElementsByTagName(Constants.PRICE).item(0);
 	    Element currElem = (Element) elem.getElementsByTagName(Constants.CURRENCY).item(0);
 	    Element period1Elem = (Element) elem.getElementsByTagName(Constants.PERIOD1).item(0);
@@ -46,6 +47,10 @@ public class Main {
         String marketid = marketidElem.getTextContent();
 	    String name = nameElem.getTextContent();
 	    String datestr = dateElem.getTextContent();
+	    String indexvalue = null;
+	    if (indexvalueElem != null) {
+	      indexvalue = reformat(indexvalueElem.getTextContent());
+	    }
 	    String price = null;
 	    if (priceElem != null) {
 	      price = reformat(priceElem.getTextContent());
@@ -82,6 +87,11 @@ public class Main {
 	    SimpleDateFormat dt = new SimpleDateFormat("dd.MM.yyyy"); 
 	    Date date = dt.parse(datestr); 
 	    stock.setDate(date);
+	    if (indexvalue == null || indexvalue.equals("-")) {
+	    	stock.setIndexvalue(null);
+	    } else {
+	    	stock.setIndexvalue(new Double(indexvalue));
+	    }
 	    stock.setCurrency(currency);
 	    if (price == null || price.equals("-")) {
 	    	stock.setPrice(null);

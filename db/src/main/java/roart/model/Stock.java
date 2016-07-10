@@ -38,6 +38,8 @@ private String name;
 @Column
 private Date date;
 @Column
+private Double indexvalue;
+@Column
 private Double price;
 @Column
 private String currency;
@@ -105,6 +107,14 @@ public Date getDate() {
 
 public void setDate(Date date) {
 	this.date = date;
+}
+
+public Double getIndexvalue() {
+    return indexvalue;
+}
+
+public void setIndexvalue(Double indexvalue) {
+    this.indexvalue = indexvalue;
 }
 
 public Double getPrice() {

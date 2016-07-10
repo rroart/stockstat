@@ -4,12 +4,12 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-db</artifactId>
   <packaging>jar</packaging>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <name>Stock Statistics Database</name>
   <dependencies>
     <dependency>

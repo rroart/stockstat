@@ -6,14 +6,14 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <!--artifactId>myweb</artifactId-->
   <artifactId>stockstat-web</artifactId>
   <!--artifactId>disksearchengine</artifactId-->
   <!--artifactId>akashic-disk-search-engine</artifactId-->
-  <version>0.2-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>Stock Statistics Web</name>
   <!--name>Vaadin Web Application</name-->
@@ -131,7 +131,7 @@
 	<groupId>org.mortbay.jetty</groupId>
 	<artifactId>jetty-maven-plugin</artifactId>
 	<configuration>
-	  <war>${project.basedir}/web/target/stockstat-web-0.2-SNAPSHOT.war</war>
+	  <war>${project.basedir}/web/target/stockstat-web-0.3-SNAPSHOT.war</war>
 	</configuration>
 	<!--version>${jetty.version}</version-->
       </plugin>
@@ -204,7 +204,7 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-db</artifactId>
-      <version>0.2-SNAPSHOT</version>
+      <version>0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>jdk.tools</groupId>

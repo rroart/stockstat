@@ -7,6 +7,14 @@ There are two phases, data acquisition and usage
 
 The input format is
 body: row*
-row: id marketid name date price currency period1 period2 period3 period4 period5
+row: id marketid name date indexvalue price currency period1 period2 period3 period4 period5
 
-then run target/stockstat-input-0.2-SNAPSHOT-jar-with-dependencies.jar with a param file of that format
+then run target/stockstat-input-0.3-SNAPSHOT-jar-with-dependencies.jar with a param file of that format
+
+Database:
+Need to provide postgres with a database stockstat, and username/password stockstat/password.
+
+Single interval days: (R mytableintervaldays)
+Table days (R days): how many days to use for the graph or statistics
+Table interval days (R mytableintervaldays): interval between days for above
+Table top/bottom (R topbottom): number to show in top/bottom chart

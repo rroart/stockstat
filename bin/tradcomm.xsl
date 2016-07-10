@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xsl:stylesheet [
+<!ENTITY SPACES "'&#x20;&#x9;&#xD;&#xA;'" >
+<!ENTITY SPACESPERCENT "'&#x20;&#x9;&#xD;&#xA;&#x25;'" >
 ]>
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -7,6 +9,8 @@
     exclude-result-prefixes="xs"
     version="1.0">
 
+  <xsl:include href="trad.xsl"/>
+  
     <xsl:output method="xml"
         indent="yes"
         xml:space="preserve"
@@ -19,7 +23,7 @@
 
     <xsl:template match="body">
       <body>
-      <xsl:apply-templates select=".//div/tr[@class='alt']"/>
+      <xsl:apply-templates select=".//div/table"/>
       </body>
     </xsl:template>
 
@@ -45,21 +49,38 @@
     </xsl:template>
 
     <xsl:template match="tr">
+      <xsl:if test="@data-symbol">
       <row>
 	<id>
-	  <xsl:copy-of select="td[1]/a/text()"/>
+	  <xsl:value-of select="@data-symbol"/>
 	</id>
-	<marketid>cboevol</marketid>
+	<marketid>tradcomm</marketid>
 	<date>
-	  <xsl:copy-of select="$current-date"/>
+	  <xsl:call-template name="fixdate">
+	    <xsl:with-param name="indate" select="translate(td[9]/text(), '&#x20;&#x9;&#xD;&#xA;', '')"/>
+	  </xsl:call-template>
 	</date>
 	<name>
-	  <xsl:copy-of select="td[1]/a/text()"/>
+	  <xsl:copy-of select="td[1]/a/b/text()"/>
 	</name>
-	<indexvalue>
-	  <xsl:copy-of select="td[2]/text()"/>
-	</indexvalue>
+	<price>
+	  <xsl:copy-of select="translate(td[3]/text(), '&#x20;&#x9;&#xD;&#xA;&#x2c;', '')"/>
+	</price>
+	<currency>USD</currency>
+	<period1>
+	  <xsl:copy-of select="translate(td[5]/text(), '&#x20;&#x9;&#xD;&#xA;&#x25;&#x2c;', '')"/>
+	</period1>
+	<period2>
+	  <xsl:copy-of select="translate(td[6]/text(), '&#x20;&#x9;&#xD;&#xA;&#x25;&#x2c;', '')"/>
+	</period2>
+	<period3>
+	  <xsl:copy-of select="translate(td[7]/text(), '&#x20;&#x9;&#xD;&#xA;&#x25;&#x2c;', '')"/>
+	</period3>
+	<period4>
+	  <xsl:copy-of select="translate(td[8]/text(), '&#x20;&#x9;&#xD;&#xA;&#x25;&#x2c;', '')"/>
+	</period4>
       </row>
+      </xsl:if>
     </xsl:template>
 
     <xsl:template match="script"/>

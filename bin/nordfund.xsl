@@ -50,7 +50,7 @@
 	  <xsl:variable name="firstpart" select="substring-after(td[2]/div/a/@href, '=')"/>
 	  <xsl:value-of select="substring-before($firstpart, '&amp;')"/>
 	</id>
-	<marketid>1</marketid>
+	<marketid>nordfund</marketid>
 	<date>
 	  <xsl:copy-of select="td[10]/text()"/>
 	</date>

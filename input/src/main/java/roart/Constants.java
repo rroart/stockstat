@@ -6,6 +6,7 @@ public class Constants {
     public final static String MARKETID = "marketid";
     public final static String NAME = "name";
     public final static String DATE = "date";
+    public final static String INDEXVALUE = "indexvalue";
     public final static String CURRENCY = "currency";
     public final static String PRICE = "price";
     public final static String PERIOD1 = "period1";
