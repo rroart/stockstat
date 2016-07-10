@@ -50,7 +50,7 @@
 	<id>
 	  <xsl:value-of select="substring-after(td[1]/a/@href, '=')"/>
 	</id>
-	<marketid>3</marketid>
+	<marketid>morncat</marketid>
 	<date>
 	  <xsl:copy-of select="td[8]/text()"/>
 	</date>
