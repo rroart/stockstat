@@ -65,25 +65,8 @@ public class StockUtil {
              * Make stock lists based on the intervals
              */
 
-            List<String> list = new ArrayList(stockdatemap.keySet());
-            Collections.sort(list);
-            String date = null;
-            Date datedate = ControlService.getdate();
-            if (datedate != null) {
-                SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-                date = dt.format(datedate);                
-            }
-            int index = getStockDate(list, date);
-            if (index >= 0) {
-                datedstocklists[0] = stockdatemap.get(date);
-                for (int j = 1; j < count; j++) {
-                    index = index - mytableintervaldays;
-                    if (index >= 0) {
-                        date = list.get(index);
-                        datedstocklists[j] = stockdatemap.get(date);
-                    }
-                }
-            }
+            getDatedstocklists(datedstocklists, stockdatemap, count,
+                    mytableintervaldays);
         }
         Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator };
 
@@ -140,6 +123,30 @@ public class StockUtil {
             }
         }
         return periodmaps;
+    }
+
+    private static void getDatedstocklists(List<Stock>[] datedstocklists,
+            HashMap<String, List<Stock>> stockdatemap, int count,
+            int mytableintervaldays) {
+        List<String> list = new ArrayList(stockdatemap.keySet());
+        Collections.sort(list);
+        String date = null;
+        Date datedate = ControlService.getdate();
+        if (datedate != null) {
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            date = dt.format(datedate);                
+        }
+        int index = getStockDate(list, date);
+        if (index >= 0) {
+            datedstocklists[0] = stockdatemap.get(date);
+            for (int j = 1; j < count; j++) {
+                index = index - mytableintervaldays;
+                if (index >= 0) {
+                    date = list.get(index);
+                    datedstocklists[j] = stockdatemap.get(date);
+                }
+            }
+        }
     }
 
     /**
@@ -458,6 +465,30 @@ public class StockUtil {
     }
 
     public static DefaultCategoryDataset getFilterChart(int days,
+            List<String> ids, List<Stock>[][] stocklistPeriod, int period) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        for (int j = days - 1; j >= 0; j--) {
+            List<Stock> list = stocklistPeriod[period][j];
+            for (int i = 0; i < list.size(); i++) {
+                Stock stock = list.get(i);
+                if (ids.contains(stock.getId())) {
+                    try {
+                        //log.info("info " + stock.getName() + " " + StockDao.getPeriod(stock, period + 1) + " " + new Integer(-j));
+                        dataset.addValue(StockDao.getPeriod(stock, period + 1), stock.getName() , new Integer(-j));
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                
+                    }
+                }
+            }
+        }
+        if (dataset.getColumnCount() == 0) {
+            return null;
+        }
+        return dataset;
+    }
+
+    public static DefaultCategoryDataset getFilterChart2(int days,
             List<String> ids, List<Stock>[][] stocklistPeriod, int period) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         for (int j = days - 1; j >= 0; j--) {

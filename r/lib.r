@@ -62,7 +62,7 @@ getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableinte
     for (i in 1:periods) {
       df <- data.frame(datedstocklists[j])
       hasperiod <- FALSE
-      hasperiod <- !is.na(max(getonedfperiod(df, i)))
+      hasperiod <- !is.infinite(max(getonedfperiod(df, i), na.rm = TRUE))
       if (hasperiod) {
 	ds <- getdforderperiod(df, i)
 	tmp <- list(ds)
@@ -73,6 +73,8 @@ getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableinte
 	   tmplist <- getperiodmap(df1, df2)
 	   periodmaps[i, j - 1] <- list(tmplist)
 	}
+      } else {
+      	cat("no period day ", i, " period ", j)
       }
     }
   }
@@ -331,7 +333,13 @@ for (i in 1:(days - 1)) {
 p <- periodmaps[period, i][[1]]
 l <- stocklistperiod[period, i + 1]
 df <- data.frame(l[[1]])
+#str(i)
+#str(period)
+#str(df)
+#str(nrow(df))
+if (nrow(df) > 0) {
 for (j in 1:nrow(df)) {
+#str(j)
 id <- df[j, "id"]
 #cat("id",id)
 if (is.null(retl[[id]])) {
@@ -340,6 +348,9 @@ retl[[id]] <- 0
 if (!is.na(p[[id]])) {
 retl[[id]] <- retl[[id]] + p[[id]]
 }
+}
+} else {
+cat("empty df for ",i)
 }
 }
 return(list(sort(data.frame(retl), decreasing = TRUE)))
@@ -366,6 +377,7 @@ return (df[index, "period4"])
 if (period == 5) {
 return (df[index, "period5"])
 }
+cat("should not be here")
 }
 
 getonedfperiod <- function(df, period) {
@@ -384,6 +396,7 @@ return (df$period4)
 if (period == 5) {
 return (df$period5)
 }
+cat("should not be here")
 }
 
 getelem <- function(id, days, stocklistperiod, period, size) {
@@ -438,6 +451,28 @@ retl.add(list[j])
 }
 }
 
+getdatedstocklists <- function(listdate, date, mytableintervaldays) {
+datedstocklists <- list()
+if (is.null(date)) {
+dateindex <- match(date, names(listdate))
+} else {
+dateindex <- length(listdate)
+}
+str(dateindex)
+index <- dateindex
+#index <- length(listdate)
+  c <- 0
+  c <- c + 1
+  datedstocklists[c] <- listdate[index]
+
+  for (j in 1:count) {
+    index <- index - mytableintervaldays
+    c <- c + 1
+    datedstocklists[c] <- listdate[index]
+  }
+  return(datedstocklists)
+}
+
 # create a connection
 # save the password that we can "hide" it as best as we can by collapsing it
 pw <- {
@@ -474,7 +509,7 @@ dbExistsTable(con, "stock")
 # TRUE
 
 data <- dbGetQuery(con, "select * from stock")
-data_3 <- dbGetQuery(con, "select * from stock where marketid = '3'")
+data_3 <- dbGetQuery(con, "select * from stock where marketid = 'morncat'")
 names(data_3)
 s <- subset(data_3, "id" == "EUCA000749");
 
@@ -493,31 +528,25 @@ listdate2 <- splitdate(data_3)
 listdate <- split(data_3, data_3$date)
 listid <- split(data_3, data_3$id)
 
-l <- listdate[[104]]
-datedstocklists <- list()
+#l <- listdate[[104]]
+if (!exists("days")) {
 days <- 3
-topbottom <- 5
-count <- days
-mytableintervaldays <- 5
-#date <- "2016-05-02"
-if (is.null(date)) {
-dateindex <- match(date, names(listdate))
-} else {
-dateindex <- length(listdate)
 }
-str(dateindex)
-index <- dateindex
-#index <- length(listdate)
-  c <- 0
-  c <- c + 1
-  datedstocklists[c] <- listdate[index]
+if (!exists("topbottom")) {
+topbottom <- 5
+}
+count <- days
+if (!exists("mytableintervaldays")) {
+mytableintervaldays <- 5
+}
+#date <- "2016-05-02"
 
-  for (j in 1:count) {
-    index <- index - mytableintervaldays
-    c <- c + 1
-    datedstocklists[c] <- listdate[index]
-  }
+datedstocklists <- getdatedstocklists(listdate, date, mytableintervaldays)
+
+if (!exists("period")) {
 period <- 3
+}
+
 alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
 periodmaps <- alist[[1]]
 stocklistperiod <- alist[[2]]
@@ -533,6 +562,8 @@ risetopids <- head(names(rise[[1]]))
 dbDisconnect(con)
 dbUnloadDriver(drv)
 #rm(list = ls())
+rm(con)
+rm(drv)
 print("ending")
 #return
 
