@@ -465,11 +465,11 @@ getonedfvalue <- function(df, type) {
 }
 
 getelem3 <- function(id, days, datedstocklist, period, size) {
-                                        #    str("her")
-                                        #    str(id)
-                                        #    str(days)
-                                        #    str(period)
-                                        #    str(datedstocklist)
+#                                            str("her")
+#                                            str(id)
+#                                            str(days)
+#                                            str(period)
+#                                            str(datedstocklist)
     retl <- list()
     c <- 0
     for (i in days:1) {
@@ -613,35 +613,38 @@ getcontentgraph <- function(con, date, ids, periodtext) {
                                         #str("bla")
                                         #str(perioddatamap);
                                         #str("bla2")
+    ls <- list()
+    names <- list()
     for (text in names(perioddatamap)) {
         if (text == periodtext) {
                                         #        str(text)
+            c <- 0
             perioddata <- perioddatamap[[text]]
             pairs <- perioddata[["text"]]
-            pair <- pairs[[pairkey]]
-            market <- pair[[1]]
-            period <- pair[[2]]
+            for (pairkey in names(pairs)) {
+                pair <- pairs[[pairkey]]
+                market <- pair[[1]]
+                period <- pair[[2]]
                                         #        str("mark")
                                         #        str(market)
                                         #        str(period)
-            marketdata <- marketdatamap[market]
-            datedstocklists <- marketdata[[1]][3]
-            ls <- list()
-            names <- list()
-            c <- 0
-            for (i in 1:length(ids)) {
-                idpair <- ids[[i]]
-                idmarket <- idpair[1]
-                id <- idpair[2]
+                marketdata <- marketdatamap[market]
+                datedstocklists <- marketdata[[1]][3]
+                for (i in 1:length(ids)) {
+                    idpair <- ids[[i]]
+                    idmarket <- idpair[1]
+                    id <- idpair[2]
                                         #           str("for")
-                cat(market, idmarket, id)
-                if (market == idmarket) {
-                    cat("per", text, " ", id, " ", period, " ")
-                    c <- c + 1
-                    l <- getelem3(id, days, datedstocklists, period, topbottom)
-                    ls[c] <- list(l)
-                    names[c] <- "test"
-                                        #                str(l)
+                    cat(market, idmarket, id)
+                    str("")
+                    if (market == idmarket) {
+                        cat("per", text, " ", id, " ", period, " ")
+                        str("")
+                        c <- c + 1
+                        l <- getelem3(id, days, datedstocklists, period, topbottom)
+                        ls[c] <- list(l)
+                        names[c] <- id
+                    }
                 }
             }
         }
