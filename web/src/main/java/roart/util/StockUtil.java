@@ -6,10 +6,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.math3.util.Pair;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,54 +24,21 @@ public class StockUtil {
 
     private static Logger log = LoggerFactory.getLogger(StockUtil.class);
 
-    public final static int PERIODS = 5;
+    public final static int PERIODS = 6;
 
     /**
      * Create sorted tables for all periods in a time interval
      * 
      * @param datedstocklists returned lists based on date
-     * @param stockidmap a map to stock lists, based on unit id
-     * @param stockdatemap a map to stock lists, based on the date
      * @param count number of days to measure
-     * @param mytableintervaldays interval between each measure
      * @param arr also for return sorted tables
      * @return sorted tables
      * @throws Exception
      */
 
-    public static HashMap<String, Integer>[][] getListAndDiff(
-            List<Stock> datedstocklists[], HashMap<String, List<Stock>> stockidmap, HashMap<String, List<Stock>> stockdatemap, int count, int mytableintervaldays, Object[] arr)
+    public static Map<String, Integer>[][] getListAndDiff(List<Stock> datedstocklists[], int count, Object[] arr)
                     throws Exception {
-        for (int i = 0; i < count; i ++) {
-            datedstocklists[i] = new ArrayList<Stock>();          
-        }
-        if (!ControlService.isTodayZero()) {
-            //List<Stock >datedstocks = datedstocklists[0];
-            for (String key : stockidmap.keySet()) {
-                List<Stock> stocklist = stockidmap.get(key);
-                int index = getStockDate(stocklist, ControlService.getdate());
-                if (index >= 0) {
-                    Stock stock = stocklist.get(index);
-                    datedstocklists[0].add(stock);
-                    for (int j = 1; j < count; j++) {
-                        index = index + mytableintervaldays;
-                        if (index < stocklist.size()) {
-                            stock = stocklist.get(index);
-                            datedstocklists[j].add(stock);
-                        }
-                    }
-                }
-            }
-        } else {
-            /*
-             * For all days with intervals
-             * Make stock lists based on the intervals
-             */
-
-            getDatedstocklists(datedstocklists, stockdatemap, count,
-                    mytableintervaldays);
-        }
-        Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator };
+        Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator, StockUtil.StockPeriod6Comparator };
 
         // make sorted period1, sorted current day
         // make sorted period1, sorted day offset
@@ -125,9 +95,21 @@ public class StockUtil {
         return periodmaps;
     }
 
-    private static void getDatedstocklists(List<Stock>[] datedstocklists,
-            HashMap<String, List<Stock>> stockdatemap, int count,
-            int mytableintervaldays) {
+    /**
+     * Create an array of stocklists based on the desired date and intervals
+     * 
+     * @param stockdatemap a map of dates to stock lists
+     * @param count the number of lists to return
+     * @param mytableintervaldays the interval between the dates
+     * @return array of stock lists based on date
+     */
+    
+    public static List<Stock>[] getDatedstocklists(Map<String, List<Stock>> stockdatemap, int count, int mytableintervaldays) {
+        List<Stock>[] datedstocklists = new ArrayList[count];
+        for (int i = 0; i < count; i ++) {
+            datedstocklists[i] = new ArrayList();          
+        }
+
         List<String> list = new ArrayList(stockdatemap.keySet());
         Collections.sort(list);
         String date = null;
@@ -147,6 +129,7 @@ public class StockUtil {
                 }
             }
         }
+        return datedstocklists;
     }
 
     /**
@@ -246,6 +229,26 @@ public class StockUtil {
         return mymap;
     }
 
+    public static boolean hasSpecial(Map<String, MarketData> marketdatamap, int i) throws Exception {
+        for (String market : marketdatamap.keySet()) { 
+            MarketData marketdata = marketdatamap.get(market);
+            List<Stock> stocks = marketdata.stocks;
+            if (hasSpecial(stocks, i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean hasSpecial(List<Stock> stocks, int i) throws Exception {
+        for (Stock s : stocks) {
+            if (StockDao.getSpecial(s, i) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean hasStockPeriod(List<Stock> stocks, int i) throws Exception {
         for (Stock s : stocks) {
             if (StockDao.getPeriod(s, i) != null) {
@@ -317,6 +320,15 @@ public class StockUtil {
         return false;
     }
 
+    public static boolean hasStockPeriod6(List<Stock> stocks) {
+        for (Stock s : stocks) {
+            if (s.getPeriod6() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static Comparator<Stock> StockDateComparator = new Comparator<Stock>() {
 
         public int compare(Stock stock1, Stock stock2) {
@@ -379,6 +391,17 @@ public class StockUtil {
 
             Double comp1 = stock1.getPeriod5();
             Double comp2 = stock2.getPeriod5();
+
+            return compDoubleInner(comp1, comp2);
+        }
+
+    };
+    public static Comparator<Stock> StockPeriod6Comparator = new Comparator<Stock>() {
+
+        public int compare(Stock stock1, Stock stock2) {
+
+            Double comp1 = stock1.getPeriod6();
+            Double comp2 = stock2.getPeriod6();
 
             return compDoubleInner(comp1, comp2);
         }
@@ -464,7 +487,7 @@ public class StockUtil {
         return dataset;
     }
 
-    public static DefaultCategoryDataset getFilterChart(int days,
+    public static DefaultCategoryDataset getFilterChartPeriod(int days,
             List<String> ids, List<Stock>[][] stocklistPeriod, int period) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         for (int j = days - 1; j >= 0; j--) {
@@ -488,17 +511,87 @@ public class StockUtil {
         return dataset;
     }
 
-    public static DefaultCategoryDataset getFilterChart2(int days,
-            List<String> ids, List<Stock>[][] stocklistPeriod, int period) {
+    private static Integer getPeriodByMarket(String market, Set<Pair<String, Integer>> pairs) {
+        Integer periodInt = null;
+        for (Pair pair : pairs) {
+            String tmpMarket = (String) pair.getFirst();
+            if (market.equals(tmpMarket)) {
+                return (Integer) pair.getSecond();
+            }
+        }
+        //System.out.println("null mark " + market + " " + pairs.size());
+        return null;
+    }
+    
+    /**
+     * Create dataset for given ids
+     * 
+     * @param days number to display
+     * @param ids for the dataset
+     * @param marketdatamap for data related to given marked
+     * @param perioddata for the given period
+     * @return
+     */
+    
+    public static DefaultCategoryDataset getFilterChartPeriod(int days,
+            Set<Pair> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata) {
+        Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+        Set<String> dateset = new HashSet();
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        for (String market : marketdatamap.keySet()) {
+            Integer periodInt = getPeriodByMarket(market, pairs);
+            if (periodInt == null) {
+                continue;
+            }
+            int period = periodInt;
+            MarketData marketdata = marketdatamap.get(market);
+            for (int j = days - 1; j >= 0; j--) {
+                List<Stock>[] datedstocklists = marketdata.datedstocklists;
+                List<Stock> list = datedstocklists[j];
+                if (list == null) {
+                    System.out.println("listnull " + market + " " + " " + j);
+                    continue;
+                }
+                for (int i = 0; i < list.size(); i++) {
+                    Stock stock = list.get(i);
+                    Pair<String, String> pair = new Pair(market, stock.getId());
+                    if (ids.contains(pair)) {
+                        try {
+                            Double value = StockDao.getPeriod(stock, period + 1);
+                            if (value == null) {
+                                continue;
+                            }
+                            //log.info("info " + stock.getName() + " " + value + " " + new Integer(-j));
+                            dataset.addValue(value, stock.getName() , new Integer(-j));
+                            dateset.add(dt.format(stock.getDate()));
+                        } catch (Exception e) {
+                            log.error(Constants.EXCEPTION, e);
+
+                        }
+                    }
+                }
+            }
+        }
+        if (dataset.getColumnCount() == 0) {
+            return null;
+        }
+        perioddata.date0 = Collections.min(dateset);
+        perioddata.date1 = Collections.max(dateset);
+        return dataset;
+    }
+
+    public static DefaultCategoryDataset getFilterChartDated(int days,
+            List<String> ids, List<Stock>[] datedstocklists, int type) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         for (int j = days - 1; j >= 0; j--) {
-            List<Stock> list = stocklistPeriod[period][j];
+            List<Stock> list = datedstocklists[j];
             for (int i = 0; i < list.size(); i++) {
                 Stock stock = list.get(i);
                 if (ids.contains(stock.getId())) {
                     try {
-                        //log.info("info " + stock.getName() + " " + StockDao.getPeriod(stock, period + 1) + " " + new Integer(-j));
-                        dataset.addValue(StockDao.getPeriod(stock, period + 1), stock.getName() , new Integer(-j));
+                        //log.info("info " + stock.getName() + " " + StockDao.getSpecial(stock, type) + " " + new Integer(-j));
+                        dataset.addValue(StockDao.getSpecial(stock, type), stock.getName() , new Integer(-j));
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                 
@@ -510,6 +603,143 @@ public class StockUtil {
             return null;
         }
         return dataset;
+    }
+
+    public static DefaultCategoryDataset getFilterChartDated(int days,
+            Set<Pair> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, int type, boolean equalize, DefaultCategoryDataset dataseteq) {
+        Map<String, Set<Pair<Double, Integer>>> map= null;
+        if (equalize) {
+            map = new HashMap();
+        }
+        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+        Set<String> dateset = new HashSet();
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        for (int j = days - 1; j >= 0; j--) {
+            for (String market : marketdatamap.keySet()) {
+                MarketData marketdata = marketdatamap.get(market);
+                List<Stock>[] datedstocklists = marketdata.datedstocklists;
+                List<Stock> list = datedstocklists[j];
+                if (list == null) {
+                    continue;
+                }
+                for (int i = 0; i < list.size(); i++) {
+                    Stock stock = list.get(i);
+                    Pair<String, String> pair = new Pair(market, stock.getId());
+                    if (ids.contains(pair)) {
+                        try {
+                            Double value = StockDao.getSpecial(stock, type);
+                            if (value == null) {
+                                continue;
+                            }
+                            String stockName = stock.getName();
+                            log.info("info " + stockName + " " + value + " " + new Integer(-j));
+                            dataset.addValue(value, stockName , new Integer(-j));
+                            dateset.add(dt.format(stock.getDate()));
+                            if (map != null) {
+                                Set<Pair<Double, Integer>> set = map.get(stockName);
+                                if (set == null) {
+                                    set = new HashSet();
+                                    map.put(stockName, set);
+                                }
+                                set.add(new Pair(value, -j));
+                            }
+                       } catch (Exception e) {
+                            log.error(Constants.EXCEPTION, e);
+                        }
+                    }
+                }
+            }
+        }
+        if (dataset.getColumnCount() == 0) {
+            return null;
+        }
+        perioddata.date0 = Collections.min(dateset);
+        perioddata.date1 = Collections.max(dateset);
+        if (map != null) {
+            createEqualizedDataset(dataseteq, map);
+        }
+        return dataset;
+    }
+
+    /**
+     * Create a dataset with stock value equalized to the 100%
+     * 
+     * @param dataseteq the dataset to be filled
+     * @param map of stocks and their set of ordered valued
+     */
+    
+    private static void createEqualizedDataset(DefaultCategoryDataset dataseteq,
+            Map<String, Set<Pair<Double, Integer>>> map) {
+        Map<Integer, Set<Pair<Double, String>>> newMap = createNewMap(map);
+        List<Integer> numList = new ArrayList(newMap.keySet());
+        Collections.sort(numList);
+        for (Integer numOrder : numList) {
+            Set<Pair<Double, String>> newSet = newMap.get(numOrder);
+            for (Pair<Double, String> newPair : newSet) {
+                Double value = (Double) newPair.getFirst();
+                String stockName = (String) newPair.getSecond();
+                dataseteq.addValue(value, stockName , numOrder);
+            }
+        }
+    }
+
+    /**
+     * Create a new map for the chart, with stock values set for max 100%
+     * 
+     * @param map of the stocks with the ordered value set
+     * @return a map structured for making a new chart
+     */
+    
+    private static Map<Integer, Set<Pair<Double, String>>> createNewMap(
+            Map<String, Set<Pair<Double, Integer>>> map) {
+        Map<String, Double> maxMap = getMaxMap(map);
+        Map<Integer, Set<Pair<Double, String>>> newMap = new HashMap();
+        for (String stockName : map.keySet()) {
+            Double max = maxMap.get(stockName);
+            Set<Pair<Double, Integer>> set = map.get(stockName);
+            for (Pair pair : set) {
+                double value = (double) pair.getFirst();
+                value = value * 100 / max;
+                Pair<Double, String> newPair = new Pair(value, stockName);
+                Integer numOrder = (Integer) pair.getSecond();
+                Set<Pair<Double, String>> newSet = newMap.get(numOrder);
+                if (newSet == null) {
+                    newSet = new HashSet();
+                    newMap.put(numOrder, newSet);
+                }
+                newSet.add(newPair);
+            }
+        }
+        return newMap;
+    }
+
+    /**
+     * Get a map of max values of each stock
+     * 
+     * @returns the map of stock to max
+     * @param a map of stock to it's value set
+     * 
+     */
+    
+    private static Map<String, Double> getMaxMap(
+            Map<String, Set<Pair<Double, Integer>>> map) {
+        Map<String, Double> maxMap = new HashMap();
+        for (String stockName : map.keySet()) {
+            Set<Double> valueSet = new HashSet();
+            Set<Pair<Double, Integer>> set = map.get(stockName);
+            for (Pair pair : set) {
+                valueSet.add((Double) pair.getFirst());
+            }
+            Double min = Collections.min(valueSet);
+            Double max = Collections.max(valueSet);
+            min = Math.abs(min);
+            max = Math.abs(max);
+            if (min > max) {
+                max = min;
+            }
+            maxMap.put(stockName, max);
+        }
+        return maxMap;
     }
 
     public static DefaultCategoryDataset getBottomChart(int periods,
@@ -592,6 +822,9 @@ public class StockUtil {
                 }
             }
         }
+        if (dataset.getColumnCount() == 0) {
+            return null;
+        }
         return dataset;
     }
 
@@ -643,6 +876,13 @@ public class StockUtil {
         return retlist;
     }
 
+    /**
+     * Get maximal value for period in stocklist
+     * 
+     * @param stocklist the list of stocks
+     * @param period for the given period
+     */
+    
     public static double getMax(List<Stock> stocklist, int period) {
         double max = -1000000;
         for (int i = 0; i < stocklist.size() ; i++) {
@@ -663,5 +903,63 @@ public class StockUtil {
             }
         }
         return max;
+    }
+
+    /**
+     * Get maximal value for period in stocklist
+     * 
+     * @param stocklist the list of stocks
+     * @param period for the given period/special
+     */
+    
+    public static double getMax2(List<Stock> stocklist, int period) {
+        double max = -1000000;
+        for (int i = 0; i < stocklist.size() ; i++) {
+            double cur = -1000000;
+            if (period == 0) {
+                Double periodval = null;
+                try {
+                    periodval = StockDao.getValue(stocklist.get(i), period);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+                if (periodval != null) {
+                    cur = periodval;
+                }  
+            }
+            if (cur > max) {
+                max = cur;
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Get minimal value for period in stocklist
+     * 
+     * @param stocklist the list of stocks
+     * @param period for the given period/special
+     */
+    
+    public static double getMin(List<Stock> stocklist, int period) {
+        double min = 1000000;
+        for (int i = 0; i < stocklist.size() ; i++) {
+            double cur = 1000000;
+            if (period == 0) {
+                Double periodval = null;
+                try {
+                    periodval = StockDao.getValue(stocklist.get(i), period);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+                if (periodval != null) {
+                    cur = periodval;
+                }  
+            }
+            if (cur < min) {
+                min = cur;
+            }
+        }
+        return min;
     }
 }

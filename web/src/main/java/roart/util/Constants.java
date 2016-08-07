@@ -27,4 +27,7 @@ public static final String MYDATEFORMAT = "yyyy.MM.dd";
 
 public static final String IMG = "Img";
 
+public static int PRICE = -1;
+public static int INDEXVALUE = -2;
+
 }

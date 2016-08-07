@@ -1,5 +1,6 @@
 package roart.service;
 
+import roart.model.Meta;
 import roart.model.ResultItem;
 import roart.model.Stock;
 
@@ -16,16 +17,21 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.io.*;
 
 import roart.util.Constants;
+import roart.util.MarketData;
 import roart.util.StockDao;
 import roart.util.StockUtil;
 import roart.util.SvgUtil;
 import roart.util.Math3Util;
+import roart.util.MetaDao;
+import roart.util.PeriodData;
 
+import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
@@ -98,9 +104,14 @@ public class ControlService {
      */
 
     public static List getContent() {
-        //mydate.setHours(0);
-        //mydate.setMinutes(0);
-        //mydate.setSeconds(0);
+        List<Stock> stocks = null;
+        try {
+            stocks = Stock.getAll(mymarket);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        log.info("stocks " + stocks.size());
+        String[] periodText = getPeriodText(mymarket);
         List<ResultItem> retList = new ArrayList<ResultItem>();
         ResultItem ri = new ResultItem();
         //ri.add("Id");
@@ -109,23 +120,32 @@ public class ControlService {
         ri.add(Constants.IMG);
         ri.add("Name");
         ri.add("Date");
-        ri.add("Period1");
-        ri.add(delta + "1");
-        ri.add("Period2");
-        ri.add(delta + "2");
-        ri.add("Period3");
-        ri.add(delta + "3");
-        ri.add("Period4");
-        ri.add(delta + "4");
-        ri.add("Period5");
-        ri.add(delta + "5");
-        ri.add("Index");
-        ri.add("Price");
-        ri.add("Currency");
+        try {
+            for (int i = 0; i < StockUtil.PERIODS; i++) {
+                if (StockUtil.hasStockPeriod(stocks, i + 1)) {
+                    ri.add(periodText[i]);
+                    ri.add(delta + periodText[i]);
+                }
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        
+        
+        try {
+            if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUE)) {
+                ri.add("Index");
+            }
+            if (StockUtil.hasSpecial(stocks, Constants.PRICE)) {
+                ri.add("Price");
+                ri.add("Currency");
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        
         retList.add(ri);
         try {
-            List<Stock> stocks = Stock.getAll(mymarket);
-            log.info("stocks " + stocks.size());
             HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
             HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
             if (getdate() == null) {
@@ -137,19 +157,24 @@ public class ControlService {
                 date = list.get(size - 1);
                 setdate(dt.parse(date));
             }
-            
+
             // sort based on date
             for (String key : stockidmap.keySet()) {
                 List<Stock> stocklist = stockidmap.get(key);
                 stocklist.sort(StockUtil.StockDateComparator);
             }
+
             // the main list, based on freshest or specific date.
-            List<Stock>[] datedstocklists = new ArrayList[2];
-
-            //List<Stock> datedstocksoffset = new ArrayList<Stock>();
-
-            HashMap<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, stockidmap, stockdatemap, 2, mydays, null);
-            HashMap<String, Integer>[] periodmap = periodmaps[0];
+ 
+            /*
+             * For all days with intervals
+             * Make stock lists based on the intervals
+             */
+            
+            List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, 2, mytableintervaldays);
+            
+            Map<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, 2, null);
+            Map<String, Integer>[] periodmap = periodmaps[0];
 
             List<Stock> datedstocks = datedstocklists[0];
             List<Stock> datedstocksoffset = datedstocklists[1];
@@ -170,13 +195,30 @@ public class ControlService {
                 r.add(stock.getName());
                 SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
                 r.add(dt.format(stock.getDate()));
-                for (int i = 0; i < StockUtil.PERIODS; i++) {
-                    r.add(StockDao.getPeriod(stock, i + 1));
-                    r.add(periodmap[i].get(stock.getId()));
-                }
-                r.add(stock.getIndexvalue());
-                r.add(stock.getPrice());
-                r.add(stock.getCurrency());
+		try {
+		    for (int i = 0; i < StockUtil.PERIODS; i++) {
+			if (StockUtil.hasStockPeriod(stocks, i + 1)) {
+			    r.add(StockDao.getPeriod(stock, i + 1));
+			    r.add(periodmap[i].get(stock.getId()));
+			}
+		    }
+		} catch (Exception e) {
+		    log.error(Constants.EXCEPTION, e);
+		}
+
+		try {
+		    if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUE)) {
+			r.add(stock.getIndexvalue());
+		    }
+
+		    if (StockUtil.hasSpecial(stocks, Constants.PRICE)) {
+			r.add(stock.getPrice());
+			r.add(stock.getCurrency());
+		    }
+		} catch (Exception e) {
+		    log.error(Constants.EXCEPTION, e);
+		}
+		
                 //r.add(stock.get());
                 retList.add(r);
 
@@ -191,19 +233,46 @@ public class ControlService {
     }
 
     /**
+     * Get the period field text based on the eventual metadata
+     * 
+     * @return the period text fields
+     * @param market
+     */
+    
+    private static String[] getPeriodText(String market) {
+        String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6" };
+        Meta meta = null;
+        try {
+            meta = Meta.getById(market);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        try {
+            if (meta != null) {
+                for (int i = 0; i < StockUtil.PERIODS; i++) {
+                    if (MetaDao.getPeriod(meta, i + 1) != null) {
+                        periodText[i] = MetaDao.getPeriod(meta, i + 1);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return periodText;
+    }
+
+    /**
      * Create result graphs
      * 
      * @return the image list
      */
 
     public static List getContentGraph() {
-        //mydate.setHours(0);
-        //mydate.setMinutes(0);
-        //mydate.setSeconds(0);
         List retlist = new ArrayList<>();
         try {
             List<Stock> stocks = Stock.getAll(mymarket);
             log.info("stocks " + stocks.size());
+            String[] periodText = getPeriodText(mymarket);
             HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
             HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
 
@@ -212,36 +281,41 @@ public class ControlService {
                 List<Stock> stocklist = stockidmap.get(key);
                 stocklist.sort(StockUtil.StockDateComparator);
             }
-            // the main list, based on freshest or specific date.
-            List<Stock>[] datedstocklists = new ArrayList[getTableDays()];
 
             //List<Stock> datedstocksoffset = new ArrayList<Stock>();
 
             Object[] arr = new Object[1];
             int days = getTableDays();
             int topbottom = getTopBottom();
-            HashMap<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, stockidmap, stockdatemap, days, getTableIntervalDays(), arr);
-            HashMap<String, Integer>[] periodmap = periodmaps[0];
+
+            // the main list, based on freshest or specific date.
+
+            /*
+             * For all days with intervals
+             * Make stock lists based on the intervals
+             */
+            
+            List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, days, mytableintervaldays);
+            
+            Map<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, days, arr);
             List<Stock>[][] stocklistPeriod = (List<Stock>[][]) arr[0];
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String date0 = null;
             String date1 = null;
-            if (!stocklistPeriod[0][days - 1].isEmpty()) {
-                date0 = dt.format(stocklistPeriod[0][days - 1].get(0).getDate());
+            for (int i = days - 1; i > 0; i--) {
+                if (!stocklistPeriod[0][i].isEmpty()) {
+                    date0 = dt.format(stocklistPeriod[0][i].get(0).getDate());
+                }
             }
             if (!stocklistPeriod[0][0].isEmpty()) {
                 date1 = dt.format(stocklistPeriod[0][0].get(0).getDate());
             }
 
-            List<Stock> datedstocks = datedstocklists[0];
-            List<Stock> datedstocksoffset = datedstocklists[1];
-            //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
-
             for (int i = 0; i < StockUtil.PERIODS; i++) {
                 DefaultCategoryDataset dataset = StockUtil.getTopChart(days, topbottom,
                         stocklistPeriod, i);
                 if (dataset != null) {
-                    JFreeChart c = SvgUtil.getChart(dataset, "Top period " + (i + 1), "Time " + date0 + " - " + date1, "Value", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, "Top period " + periodText[i], "Time " + date0 + " - " + date1, "Value", days, topbottom);
                     StreamResource r = SvgUtil.chartToResource(c, "/tmp/new2"+i+".svg", days, topbottom);
                     retlist.add(r);
                 }
@@ -251,7 +325,7 @@ public class ControlService {
                 DefaultCategoryDataset dataset = StockUtil.getBottomChart(days, topbottom,
                         stocklistPeriod, i);
                 if (dataset != null) {
-                    JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + (i + 1), "Time " + date0 + " - " + date1, "Value", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + periodText[i], "Time " + date0 + " - " + date1, "Value", days, topbottom);
                     StreamResource r = SvgUtil.chartToResource(c, "/tmp/new3"+i+".svg", days, topbottom);
                     retlist.add(r);
                 }
@@ -291,7 +365,7 @@ public class ControlService {
                 DefaultCategoryDataset dataset = StockUtil.getRisingChart(days, topbottom,
                         stocklistPeriod, mymap, i);
                 if (dataset != null) {
-                    JFreeChart c = SvgUtil.getChart(dataset, "Top climber period " + (i + 1), "Time " + date0 + " - " + date1, "Value", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, "Top climber period " + periodText[i], "Time " + date0 + " - " + date1, "Value", days, topbottom);
                     StreamResource r = SvgUtil.chartToResource(c, "/tmp/new5" + i +".svg", days, topbottom);
                     retlist.add(r);
                 }
@@ -343,57 +417,159 @@ public class ControlService {
      * @return the image list
      */
 
-    public static List getContentGraph(List<String> ids) {
-        //mydate.setHours(0);
-        //mydate.setMinutes(0);
-        //mydate.setSeconds(0);
-        //System.out.println("here0"+myid);
+    public static List getContentGraph(Set<Pair> ids) {
         List retlist = new ArrayList<>();
-        System.out.println("size " + ids.size());
+        //List<String> ids = new ArrayList<String>();
+        Set<String> markets = new HashSet<String>();
+        for (Pair idpair : ids) {
+            markets.add((String) idpair.getFirst());
+            //ids.add((String) idpair.getSecond());
+        }
+        int days = getTableDays();
+        /*
+        String date0 = null;
+        String date1 = null;
+        */
         try {
-            List<Stock> stocks = Stock.getAll(mymarket);
-            log.info("stocks " + stocks.size());
-            HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
-            HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
-
-            // sort based on date
-            for (String key : stockidmap.keySet()) {
-                List<Stock> stocklist = stockidmap.get(key);
-                stocklist.sort(StockUtil.StockDateComparator);
-            }
-            // the main list, based on freshest or specific date.
-            List<Stock>[] datedstocklists = new ArrayList[getTableDays()];
-
-            //List<Stock> datedstocksoffset = new ArrayList<Stock>();
-
-            Object[] arr = new Object[1];
-            int days = getTableDays();
-            int topbottom = getTopBottom();
-            HashMap<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, stockidmap, stockdatemap, days, getTableIntervalDays(), arr);
-            HashMap<String, Integer>[] periodmap = periodmaps[0];
-            List<Stock>[][] stocklistPeriod = (List<Stock>[][]) arr[0];
+            /*
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-            String date0 = null;
-            String date1 = null;
-            if (!stocklistPeriod[0][days - 1].isEmpty()) {
-                date0 = dt.format(stocklistPeriod[0][days - 1].get(0).getDate());
+            List<Date> stockdatelist2 = StockDao.getDates();
+            List<String> stockdatelist = new ArrayList();
+            for (Date date : stockdatelist2) {
+                stockdatelist.add(dt.format(date));
             }
-            if (!stocklistPeriod[0][0].isEmpty()) {
-                date1 = dt.format(stocklistPeriod[0][0].get(0).getDate());
+            Collections.sort(stockdatelist);
+            String date = null;
+            if (getdate() != null) {
+                date = dt.format(getdate());
             }
+            System.out.println("grr " + stockdatelist.size()  + " " + stockdatelist.get(0) + " " + stockdatelist.get(stockdatelist.size()-1) + " " + date);
+            int index = StockUtil.getStockDate(stockdatelist, date);
+            System.out.println("index " + index);
+            if (index >= 0) {
+                date1 = stockdatelist.get(index);
+                for (int j = 1; j < getTableDays(); j++) {
+                    index = index - mytableintervaldays;
+                    if (index >= 0) {
+                        date0 = stockdatelist.get(index);
+                    }
+                }
+            }
+            */
+            Map<String, MarketData> marketdatamap = new HashMap();
+            for (String market : markets) {
+                log.info("prestocks");
+                List<Stock> stocks = Stock.getAll(market);
+                log.info("stocks " + stocks.size());
+                MarketData marketdata = new MarketData();
+                marketdata.stocks = stocks;
+                String[] periodText = getPeriodText(market);
+                marketdata.periodtext = periodText;
+                //Map<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
+                Map<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
+                //marketdata.stockidmap = stockidmap;
+                //marketdata.stockdatemap = stockdatemap;
+                
+                /*
+                // sort based on date
+                for (String key : stockidmap.keySet()) {
+                    List<Stock> stocklist = stockidmap.get(key);
+                    stocklist.sort(StockUtil.StockDateComparator);
+                }
+                */
+                // the main list, based on freshest or specific date.
 
-            List<Stock> datedstocks = datedstocklists[0];
-            List<Stock> datedstocksoffset = datedstocklists[1];
-            //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
+                /*
+                 * For all days with intervals
+                 * Make stock lists based on the intervals
+                 */
+                
+                List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, days, mytableintervaldays);
+                marketdata.datedstocklists = datedstocklists;
+                
+                //Object[] arr = new Object[1];
+                //Map<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, stockidmap, stockdatemap, days, getTableIntervalDays(), arr);
+                //HashMap<String, Integer>[] periodmap = periodmaps[0];
+                //List<Stock>[][] stocklistPeriod = (List<Stock>[][]) arr[0];
+                //marketdata.stocklistperiod = stocklistPeriod;
 
-            for (int i = 0; i < StockUtil.PERIODS; i++) {
-                DefaultCategoryDataset dataset = StockUtil.getFilterChart(days, ids,
-                        stocklistPeriod, i);
+                marketdatamap.put(market,  marketdata);
+            }
+            //System.out.println("siz " + marketdatamap.size());
+            Map<String, PeriodData> periodDataMap = new HashMap();
+            for (String market : markets) {
+                //System.out.println("market " + market);
+                String[] periodText = marketdatamap.get(market).periodtext;
+                for (int i = 0; i < StockUtil.PERIODS; i++) {
+                    String text = periodText[i];
+                    //System.out.println("text " + market + " " + i + " " + text);
+                    Pair<String, Integer> pair = new Pair(market, i);
+                    PeriodData perioddata = periodDataMap.get(text);
+                    if (perioddata == null) {
+                        perioddata = new PeriodData();
+                        periodDataMap.put(text, perioddata);
+                        //System.out.println("new " + text);
+                    }
+                    Set<Pair<String, Integer>> pairs = perioddata.pairs;
+                    pairs.add(pair);
+                }
+            }
+            int topbottom = getTopBottom();
+            for (String periodText : periodDataMap.keySet()) {
+                PeriodData perioddata = periodDataMap.get(periodText);
+                //System.out.println("pairsize " + periodText + " " + perioddata.pairs.size());
+                DefaultCategoryDataset dataset = StockUtil.getFilterChartPeriod(days, ids, marketdatamap, perioddata);
                 if (dataset != null) {
-                    JFreeChart c = SvgUtil.getChart(dataset, "Period " + (i + 1), "Time " + date0 + " - " + date1, "Value", days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+i+".svg", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, "Period " + periodText, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+".svg", days, topbottom);
                     retlist.add(r);
                 }
+            }
+            if (StockUtil.hasSpecial(marketdatamap, Constants.INDEXVALUE)) {
+                PeriodData perioddata = new PeriodData();
+                DefaultCategoryDataset dataseteq = null;
+                if (isGraphEqualize()) {    
+                    dataseteq = new DefaultCategoryDataset( );
+                }
+                DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.INDEXVALUE, isGraphEqualize(), dataseteq);
+                if (dataset != null) {
+                    JFreeChart c = SvgUtil.getChart(dataset, "Index", "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom);
+                    retlist.add(r);
+                }
+                if (dataset != null && dataseteq != null) {
+                    JFreeChart c = SvgUtil.getChart(dataseteq, "Index", "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom);
+                    retlist.add(r);
+                }
+            }
+            if (StockUtil.hasSpecial(marketdatamap, Constants.PRICE)) {
+                PeriodData perioddata = new PeriodData();
+                DefaultCategoryDataset dataseteq = null;
+                if (isGraphEqualize()) {    
+                    dataseteq = new DefaultCategoryDataset( );
+                }
+                DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.PRICE, isGraphEqualize(), dataseteq);
+                if (dataset != null) {
+                    String currency = null; //datedstocklists[0].get(0).getCurrency();
+                    if (currency == null) {
+                        currency = "Value";
+                    }
+                    JFreeChart c = SvgUtil.getChart(dataset, "Price", "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom);
+                    retlist.add(r);
+                }
+                if (dataset != null && dataseteq != null) {
+                    String currency = null; //datedstocklists[0].get(0).getCurrency();
+                    if (currency == null) {
+                        currency = "Value";
+                    }
+                    JFreeChart c = SvgUtil.getChart(dataseteq, "Price", "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom);
+                    retlist.add(r);
+                }
+            }
+            if (isGraphEqualize()) {
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -444,21 +620,23 @@ public class ControlService {
                 List<Stock> stocklist = stockidmap.get(key);
                 stocklist.sort(StockUtil.StockDateComparator);
             }
-            // the main list, based on freshest or specific date.
-            List<Stock>[] datedstocklists = new ArrayList[getTableDays()];
 
-            //List<Stock> datedstocksoffset = new ArrayList<Stock>();
             int days = getTableDays();
 
-            HashMap<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, stockidmap, stockdatemap, days, getTableIntervalDays(), null);
-            HashMap<String, Integer>[] periodmap = periodmaps[0];
+            // the main list, based on freshest or specific date.
 
+            /*
+             * For all days with intervals
+             * Make stock lists based on the intervals
+             */
+            
+            List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, days, mytableintervaldays);
+            
             List<Stock> datedstocks = datedstocklists[0];
-            List<Stock> datedstocksoffset = datedstocklists[1];
             if (datedstocks == null) {
                 return null;
             }
-            Math3Util.getStats(retList, periodmaps, days, stockidmap, stockdatemap);
+            Math3Util.getStats(retList, days, stockidmap, stockdatemap);
             
             log.info("retlist " +retList.size());
         } catch (Exception e) {
@@ -486,7 +664,11 @@ public class ControlService {
         mymarket = value;
     }
 
-    static Integer mydays = 2;
+    public static String getMarket() {
+        return mymarket;
+    }
+    
+    static Integer mydays = 5;
 
     public void setDays(Integer integer) {
         mydays = integer;
@@ -516,7 +698,7 @@ public class ControlService {
         return mytabledays;
     }
 
-    static Integer mytableintervaldays = 1;
+    static Integer mytableintervaldays = 5;
 
     public void setTableIntervalDays(Integer integer) {
         mytableintervaldays = integer;
@@ -524,16 +706,6 @@ public class ControlService {
 
     public static int getTableIntervalDays() {
         return mytableintervaldays;
-    }
-
-    static boolean mytodayzero = true;
-
-    public void setTodayZero(Boolean integer) {
-        mytodayzero = integer;
-    }
-
-    public static boolean isTodayZero() {
-        return mytodayzero;
     }
 
     static boolean myequalize = false;
@@ -544,6 +716,26 @@ public class ControlService {
 
     public static boolean isEqualize() {
         return myequalize;
+    }
+
+    static boolean mygraphequalize = false;
+
+    public void setGraphEqualize(Boolean integer) {
+        mygraphequalize = integer;
+    }
+
+    public static boolean isGraphEqualize() {
+        return mygraphequalize;
+    }
+
+    static boolean mygraphequalizeunify = false;
+
+    public void setGraphEqUnify(Boolean integer) {
+        mygraphequalizeunify = integer;
+    }
+
+    public static boolean isGraphEqUnify() {
+        return mygraphequalizeunify;
     }
 
 }

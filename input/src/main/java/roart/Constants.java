@@ -14,6 +14,10 @@ public class Constants {
     public final static String PERIOD3 = "period3";
     public final static String PERIOD4 = "period4";
     public final static String PERIOD5 = "period5";
-    //    public final static String 
-    
+    public final static String PERIOD6 = "period6";
+    //    public final static String
+    public final static String MARKET = "market";
+    public final static String META = "meta";
+    public final static String ROWS = "rows";
+    public final static String ROW = "row";
 }

@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.TreeSet;
 import java.awt.Rectangle;
 import java.io.File;
@@ -63,6 +64,7 @@ import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
@@ -120,6 +122,7 @@ import com.vaadin.server.Sizeable;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.ApplicationFrame;
@@ -262,14 +265,37 @@ public class MyVaadinUI extends UI
         horDb2.addComponent(getTableIntervalDays());
         horDb2.addComponent(getTopBottom());
         HorizontalLayout horDb3 = new HorizontalLayout();
+        /*
         horDb3.addComponent(getTodayZero());
+        */
         horDb3.addComponent(getEqualize());
+
+        VerticalLayout verManualList = new VerticalLayout();
+        verManualList.setHeight("20%");
+        verManualList.setWidth("60%");
+        
+        HorizontalLayout horManual = new HorizontalLayout();
+        horManual.setHeight("20%");
+        horManual.setWidth("60%");
+        //horDb.addComponent(getDbItem());
+        horManual.addComponent(getMarkets2(horManual, verManualList));
+
+        HorizontalLayout horChooseGraph = new HorizontalLayout();
+        horChooseGraph.setHeight("20%");
+        horChooseGraph.setWidth("60%");
+        //horDb.addComponent(getDbItem());
+        horChooseGraph.addComponent(getEqualizeGraph());
+        horChooseGraph.addComponent(getEqualizeUnify());
+       horChooseGraph.addComponent(getChooseGraph(verManualList));
 
         //tab.addComponent(horNewInd);
         tab.addComponent(horStat);
         tab.addComponent(horDb); 
         tab.addComponent(horDb2);
         tab.addComponent(horDb3);
+        tab.addComponent(horManual);
+        tab.addComponent(verManualList);
+        tab.addComponent(horChooseGraph);
         return tab;
     }
 
@@ -417,7 +443,121 @@ public class MyVaadinUI extends UI
         return ls;
     }
 
-    private TextField getDays() {
+    Set<Pair> chosen = new HashSet<Pair>();
+    
+    private Button getChooseGraph(VerticalLayout ver) {
+        Button button = new Button("Choose graph");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                ControlService maininst = new ControlService();
+                try {
+                    
+                    Notification.show("Request sent");
+                    displayResultsGraph(maininst, chosen);
+                    chosen.clear();
+                    ver.removeAllComponents();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private ListSelect getMarkets2(HorizontalLayout horManual, VerticalLayout verManualList) {
+        ListSelect ls = new ListSelect("Market");
+        Set<String> languages = null;
+        try {
+            List<String> langs = Stock.getMarkets();
+            langs.remove(null);
+            languages = new TreeSet<String>(langs);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return ls;
+        }
+        log.info("languages " + languages);
+        if (languages == null ) {
+            return ls;
+        }
+        ls.addItems(languages);
+        ls.setNullSelectionAllowed(false);
+        // Show 5 items and a scrollbar if there are more                       
+        ls.setRows(5);
+        ls.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String                 
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value                              
+                ControlService maininst = new ControlService();
+                try {
+                    ListSelect ls2 = getUnits(value, ls, verManualList);
+                    horManual.addComponent(ls2);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        ls.setImmediate(true);
+        return ls;
+    }
+
+    private ListSelect getUnits(String market, ListSelect ls2, VerticalLayout verManualList) {
+        ListSelect ls = new ListSelect("Units");
+        Set<String> languages = null;
+        System.out.println("m " + market);
+        List<Stock> stocks = null;
+        try {
+            stocks = Stock.getAll(market);
+            stocks.remove(null);
+            languages = new TreeSet<String>();
+            for (Stock stock : stocks) {
+                languages.add(stock.getName());
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return ls;
+        }
+        final List<Stock> finalstocks = stocks;
+        log.info("languages " + languages);
+        if (languages == null ) {
+            return ls;
+        }
+        ls.addItems(languages);
+        ls.setNullSelectionAllowed(false);
+        // Show 5 items and a scrollbar if there are more                       
+        ls.setRows(5);
+        ls.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String                 
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value                              
+                ControlService maininst = new ControlService();
+                try {
+                    String id = null;
+                    for (Stock stock : finalstocks) {
+                        if (value.equals(stock.getName())) {
+                            id = stock.getId();
+                            break;
+                        }
+                    }
+                    Pair pair = new Pair(market, id);
+                    chosen.add(pair);
+                    verManualList.addComponent(new Label(market + " " + id + " " + value));
+                    ComponentContainer parent = (ComponentContainer) ls.getParent();
+                    parent.removeComponent(ls);
+                    System.out.println("value " +value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        ls.setImmediate(true);
+        return ls;
+    }
+
+   private TextField getDays() {
         TextField tf = new TextField("Single interval days");
         tf.setValue("" + new ControlService().getDays());
 
@@ -531,12 +671,12 @@ public class MyVaadinUI extends UI
         Layout layout = displayResultListsTab(list);
     }
 
-    private void displayResultsGraph(ControlService maininst, List<String> idlist) {
+    private void displayResultsGraph(ControlService maininst, Set<Pair> ids) {
         VerticalLayout tab = new VerticalLayout();
         tab.setCaption("Graph results");
         tabsheet.addComponent(tab);
         tabsheet.getTab(tab).setClosable(true);
-        List listGraph = maininst.getContentGraph(idlist);
+        List listGraph = maininst.getContentGraph(ids);
         displayListGraphTab(tab, listGraph);
     }
 
@@ -568,29 +708,6 @@ public class MyVaadinUI extends UI
         }
     }
 
-    private CheckBox getTodayZero() {
-        CheckBox cb = new CheckBox("Use today or zero days as base");
-        cb.setValue(new ControlService().isTodayZero());
-
-        // Handle changes in the value
-        cb.addValueChangeListener(new Property.ValueChangeListener() {
-            public void valueChange(ValueChangeEvent event) {
-                // Assuming that the value type is a String
-                boolean value = (Boolean) event.getProperty().getValue();
-                // Do something with the value
-                ControlService maininst = new ControlService();
-                try {
-                    maininst.setTodayZero(value);
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
-            }
-        });
-        // Fire value changes immediately when the field loses focus
-        cb.setImmediate(true);
-        return cb;
-    }
-
     private CheckBox getEqualize() {
         CheckBox cb = new CheckBox("Equalize sample sets");
         cb.setValue(new ControlService().isEqualize());
@@ -604,6 +721,52 @@ public class MyVaadinUI extends UI
                 ControlService maininst = new ControlService();
                 try {
                     maininst.setEqualize(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getEqualizeGraph() {
+        CheckBox cb = new CheckBox("Equalize graphic table");
+        cb.setValue(new ControlService().isGraphEqualize());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                ControlService maininst = new ControlService();
+                try {
+                    maininst.setGraphEqualize(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getEqualizeUnify() {
+        CheckBox cb = new CheckBox("Equalize merge price and index table");
+        cb.setValue(new ControlService().isGraphEqUnify());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                ControlService maininst = new ControlService();
+                try {
+                    maininst.setGraphEqUnify(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -695,11 +858,11 @@ public class MyVaadinUI extends UI
             public void buttonClick(ClickEvent event) {
                 ControlService maininst = new ControlService();
                 String idarr[] = id.split(",");
-                List<String> idlist = new ArrayList<String>();
+                Set<Pair> ids = new HashSet<Pair>();
                 for (String id : idarr) {
-                    idlist.add(id);
+                    ids.add(new Pair(ControlService.getMarket(), id));
                 }
-                displayResultsGraph(maininst, idlist);
+                displayResultsGraph(maininst, ids);
                 Notification.show("Request sent");
             }
         });

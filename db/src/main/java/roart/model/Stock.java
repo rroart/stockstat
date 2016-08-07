@@ -53,6 +53,8 @@ private Double period3;
 private Double period4;
 @Column
 private Double period5;
+@Column
+private Double period6;
 
 /*
 	public Stock(String dbid, String id, String name, Date date, Double kurs, String currency, Double day, Double week, Double month, Double sofaryear) {
@@ -171,6 +173,14 @@ public Double getPeriod5() {
 
 public void setPeriod5(Double period5) {
     this.period5 = period5;
+}
+
+public Double getPeriod6() {
+    return period6;
+}
+
+public void setPeriod6(Double period6) {
+    this.period6 = period6;
 }
 
 @Transient

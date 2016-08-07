@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.math3.stat.correlation.KendallsCorrelation;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
@@ -23,7 +24,7 @@ public class Math3Util {
 
     private static Logger log = LoggerFactory.getLogger(Math3Util.class);
 
-    public static void getStats(List<ResultItem> retList, HashMap<String, Integer>[][] periodmaps, int count, HashMap<String, List<Stock>> stockidmap, HashMap<String, List<Stock>> stockdatemap) {
+    public static void getStats(List<ResultItem> retList, int count, Map<String, List<Stock>> stockidmap, Map<String, List<Stock>> stockdatemap) {
         List<String> list = new ArrayList(stockdatemap.keySet());
         Collections.sort(list);
         String date = null;
@@ -43,6 +44,7 @@ public class Math3Util {
                     if (id2.equals(id1)) {
                         continue;
                     }
+                    try {
                     List<Stock> stocks2 = stockidmap.get(id2);
                     stocks2.sort(StockUtil.StockDateComparator);
                     List<Stock> stockstrunc2 = listtrunc(stocks2, stockstrunc1, i);
@@ -98,6 +100,9 @@ public class Math3Util {
                     r.add(pe);
                    //r.add(stock.get());
                     retList.add(r);
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                    }
                 }
             }
         } 
