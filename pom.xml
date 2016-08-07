@@ -3,7 +3,7 @@
   <groupId>roart</groupId>
   <artifactId>stockstat-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.4-SNAPSHOT</version>
   <name>Stock Statistics Parent</name>
   <modules>
     <module>db</module>
