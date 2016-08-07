@@ -5,7 +5,9 @@ require("ggplot2")
 #require("tabplot")
 require("gridExtra")
 
-periods <- 5
+pricetype <- -1
+indextype <- -2
+periods <- 6
 
 # out of use
 splitdate <- function(stocks) {
@@ -52,6 +54,9 @@ getdforderperiod <- function(df, period) {
 	if (period == 5) {
 	  ds <- df[order(-df$period5),]
 	}
+	if (period == 6) {
+	  ds <- df[order(-df$period6),]
+	}
 return (ds)
 }
 
@@ -74,7 +79,7 @@ getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableinte
 	   periodmaps[i, j - 1] <- list(tmplist)
 	}
       } else {
-      	cat("no period day ", i, " period ", j)
+      	cat("no period day ", j, " period ", i)
       }
     }
   }
@@ -186,6 +191,9 @@ return (list$period4[index])
 if (period == 5) {
 return (list$period5[index])
 }
+if (period == 6) {
+return (list$period6[index])
+}
 }
 
 mytopperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, max) {
@@ -294,6 +302,28 @@ str(c2)
 }
 }
 
+getperiodtext <- function(meta, period) {
+if (period == 1) {
+return (meta$period1)
+}
+if (period == 2) {
+return (meta$period2)
+}
+if (period == 3) {
+return (meta$period3)
+}
+if (period == 4) {
+return (meta$period4)
+}
+if (period == 5) {
+return (meta$period5)
+}
+if (period == 6) {
+return (meta$period6)
+}
+cat("should not be here")
+}
+
 displaychart <- function(ls, names, topbottom, period, maindate, olddate) {
 g_range = range(0, ls, na.rm=TRUE)
 print("g_range")
@@ -318,7 +348,16 @@ c = c(unlist(ls[i]))
 #str(c)
 lines(c, type="o")
 }
-title(main=sprintf("Period %d", period))
+periodtext <- period
+
+if (period >= 0) {
+newtext <- getperiodtext(mymeta, period)
+if (!is.na(newtext)) {
+periodtext <- newtext
+}
+}
+
+title(main=sprintf("Period %s", periodtext))
 title(xlab=sprintf("Time %s - %s", olddate, maindate))
 title(ylab="Value")
 n = c(unlist(names[1]))
@@ -377,6 +416,9 @@ return (df[index, "period4"])
 if (period == 5) {
 return (df[index, "period5"])
 }
+if (period == 6) {
+return (df[index, "period6"])
+}
 cat("should not be here")
 }
 
@@ -396,7 +438,57 @@ return (df$period4)
 if (period == 5) {
 return (df$period5)
 }
+if (period == 6) {
+return (df$period6)
+}
 cat("should not be here")
+}
+
+getonedfspecial <- function(df, type) {
+if (period == pricetype) {
+return (df$price)
+}
+if (period == indextype) {
+return (df$index)
+}
+cat("should not be here")
+}
+
+getonedfvalue <- function(df, type) {
+if (type > 0) {
+return(getonedfperiod(df, type))
+}
+if (type < 0) {
+return(getonedfspecial(df, type))
+}
+cat("should not be here")
+}
+
+getelem3 <- function(id, days, datedstocklist, period, size) {
+#    str("her")
+#    str(id)
+#    str(days)
+#    str(period)
+#    str(datedstocklist)
+retl <- list()
+c <- 0
+for (i in days:1) {
+c <- c + 1
+retl[c] <- NA
+l <- datedstocklist[[1]][i]
+#str(l[[1]])
+df <- data.frame(l[[1]])
+#str(df)
+                                        #cat("mylen ", nrow(df))
+el <- df[which(df$id == id),]
+#str(i)
+if (nrow(el) == 1) {
+retl[c] <- c(getonedfvalue(el, period))
+} else {
+print("err")
+}
+}
+return(unlist(retl))
 }
 
 getelem <- function(id, days, stocklistperiod, period, size) {
@@ -473,6 +565,111 @@ index <- dateindex
   return(datedstocklists)
 }
 
+getcontentgraph <- function(con, date, ids, periodtext) {
+    markets <- list()
+    for (id in ids) {
+#        str(id)
+        markets[id[1]] <- id[1]
+    }
+    marketdatamap <- list()
+    for (market in names(markets)) {
+        stocks <- getmarket(con, market)
+        listdate <- split(stocks, stocks$date)
+                                        #listid <- split(stocks, stocks$id)
+        periodtexts <- getperiodtexts(market)
+        datedstocklists <- getdatedstocklists(listdate, date, mytableintervaldays)
+        marketdatamap[market] <- list(list(stocks, periodtexts, datedstocklists))
+                                        #for (j in 1:count) {
+                                        #stocks <- datedstocklist[j]
+                                        #df <- data.frame(stocks[[1]])
+                                        #el <- df[which(df$id == id),]
+                                        #}
+    }
+    perioddatamap <- list()
+    for (market in names(markets)) {
+        marketdata <- marketdatamap[market]
+        periodtexts <- marketdata[[1]][2]
+        for (i in 1:periods) {
+            text <- periodtexts[[1]][[i]]
+            pair <- list(market, i)
+            pairkey <- paste(1, market)
+#            str(text)
+            if (is.null(perioddatamap[[text]])) {
+#                str("new")
+                perioddata <- list()
+                perioddata[["text"]] <- list()
+                perioddatamap[text] <- perioddata
+            }
+            perioddata <- perioddatamap[[text]]
+            pairs <- perioddata[["text"]]
+            pairs[[pairkey]] <- pair
+            perioddata[["text"]] <- pairs
+            perioddatamap[[text]] <- perioddata
+        }
+    }
+    retl <- list()
+    #perioddata <- perioddatamap[periodtext]
+    #pairs <- perioddata["text"]
+    #str("bla")
+    #str(perioddatamap);
+    #str("bla2")
+    for (text in names(perioddatamap)) {
+        if (text == periodtext) {
+#        str(text)
+        perioddata <- perioddatamap[[text]]
+        pairs <- perioddata[["text"]]
+        pair <- pairs[[pairkey]]
+        market <- pair[[1]]
+        period <- pair[[2]]
+#        str("mark")
+#        str(market)
+#        str(period)
+        marketdata <- marketdatamap[market]
+            datedstocklists <- marketdata[[1]][3]
+            ls <- list()
+            names <- list()
+            c <- 0
+        for (i in 1:length(ids)) {
+            idpair <- ids[[i]]
+            idmarket <- idpair[1]
+            id <- idpair[2]
+ #           str("for")
+            cat(market, idmarket, id)
+            if (market == idmarket) {
+                cat("per", text, " ", id, " ", period, " ")
+                c <- c + 1
+                l <- getelem3(id, days, datedstocklists, period, topbottom)
+                ls[c] <- list(l)
+                names[c] <- "test"
+#                str(l)
+            }
+        }
+        }
+    }
+    maindate <- "1"
+    olddate <- "2"
+    displaychart(ls, names, 5, period, maindate, olddate)
+}
+
+getperiodtexts <- function(market) {
+periodtext = list("Period1", "Period2", "Period3", "Period4", "Period5", "Period6")
+meta <- dbGetQuery(con, "select * from meta")
+mymeta <- subset(meta, marketid == market)
+if (nrow(mymeta) > 0) {
+for (i in 1:periods) {
+if (!is.na(getperiodtext(mymeta, i))) {
+periodtext[i] = getperiodtext(mymeta, i)
+}
+}
+}
+return(periodtext)
+}
+
+getmarket <- function(con, market) {
+query <- paste("select * from stock where marketid = '", market, "'", sep = "")
+return(dbGetQuery(con, query))
+}
+
 # create a connection
 # save the password that we can "hide" it as best as we can by collapsing it
 pw <- {
@@ -508,10 +705,16 @@ dbExistsTable(con, "stockstat")
 dbExistsTable(con, "stock")
 # TRUE
 
+if (!exists("marketid")) {
+marketid <- "morncat"
+}
+
 data <- dbGetQuery(con, "select * from stock")
-data_3 <- dbGetQuery(con, "select * from stock where marketid = 'morncat'")
+meta <- dbGetQuery(con, "select * from meta")
+mymeta <- subset(meta, marketid == mymarketid)
+data_3 <- getmarket(con, marketid)
 names(data_3)
-s <- subset(data_3, "id" == "EUCA000749");
+s <- subset(data_3, "id" == "EUCA000749")
 
 for (i in 1:nrow(data_3)) {
 #print(data_3[i,"date"])
@@ -530,7 +733,7 @@ listid <- split(data_3, data_3$id)
 
 #l <- listdate[[104]]
 if (!exists("days")) {
-days <- 3
+days <- 10
 }
 if (!exists("topbottom")) {
 topbottom <- 5
@@ -547,16 +750,18 @@ if (!exists("period")) {
 period <- 3
 }
 
-alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
-periodmaps <- alist[[1]]
-stocklistperiod <- alist[[2]]
-mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
-mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
+#alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
+#periodmaps <- alist[[1]]
+#stocklistperiod <- alist[[2]]
+#mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
+#mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
 
 #gettopchart(days, topbottom, stocklistperiod, period)
-getbottomchart(days, topbottom, stocklistperiod, period)
-rise <- getrising(days, periodmaps, stocklistperiod, period)
-risetopids <- head(names(rise[[1]]))
+#getbottomchart(days, topbottom, stocklistperiod, period)
+#rise <- getrising(days, periodmaps, stocklistperiod, period)
+#risetopids <- head(names(rise[[1]]))
+
+getcontentgraph(con, date, ids, "1y")
 
 # close the connection
 dbDisconnect(con)
