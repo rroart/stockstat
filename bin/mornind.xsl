@@ -18,9 +18,18 @@
     </xsl:template>
 
     <xsl:template match="body">
-      <body>
+      <market>
+	<meta>
+	  <marketid>mornind</marketid>
+	  <period1>c y</period1>
+	  <period2>1 y</period2>
+	  <period3>3 y</period3>
+	  <period4>5 y</period4>
+	</meta>
+      <rows>
       <xsl:apply-templates select="div//table[@id='IndexOverviewTable']/tbody"/>
-      </body>
+      </rows>
+      </market>
     </xsl:template>
 
     <!--xsl:template match="div[@class='navigation']"/-->

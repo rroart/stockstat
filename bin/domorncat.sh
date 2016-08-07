@@ -1,4 +1,4 @@
 #!/bin/sh
-cd /home/roart/src/stockstat/bin
-./morncat.sh
-JAVA_HOME=/opt/jdk8 java -jar /home/roart/src/stockstat/input/target/stockstat-input-0.3-SNAPSHOT-jar-with-dependencies.jar /tmp/morncat.xml
+DIRNAME=`dirname $0`
+$DIRNAME/morncat.sh
+JAVA_HOME=/opt/jdk8 java -jar $DIRNAME/../input/target/stockstat-input-0.4-SNAPSHOT-jar-with-dependencies.jar /tmp/morncat.xml

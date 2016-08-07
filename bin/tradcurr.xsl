@@ -22,9 +22,18 @@
     </xsl:template>
 
     <xsl:template match="body">
-      <body>
+      <market>
+	<meta>
+	  <marketid>tradcurr</marketid>
+	  <period1>1 d</period1>
+	  <period2>1 w</period2>
+	  <period3>1 m</period3>
+	  <period4>1 y</period4>
+	</meta>
+      <rows>
       <xsl:apply-templates select=".//div/table"/>
-      </body>
+      </rows>
+      </market>
     </xsl:template>
 
     <!--xsl:template match="div[@class='navigation']"/-->

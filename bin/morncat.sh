@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DIRNAME=`dirname $0`
+
 while getopts d FLAG; do
   case $FLAG in
   d)
@@ -12,6 +14,6 @@ cd /tmp
 
 touch xhtml1-transitional.dtd
 
-xsltproc --encoding UTF-8 --novalid --html $D -o morncat.xml /home/roart/src/stockstat/bin/morncat.xsl categoryoverview.aspx
+xsltproc --encoding UTF-8 --novalid --html $D -o morncat.xml $DIRNAME/morncat.xsl categoryoverview.aspx
 
 # --encoding ISO-8859-1 -v

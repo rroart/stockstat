@@ -14,6 +14,6 @@ cd /tmp
 
 touch xhtml1-transitional.dtd
 
-xsltproc --encoding ISO-8859-1 --novalid --html $D -o nordfund.xml $DIRNAME/nordfund.xsl sok.html\?sok\=1
+xsltproc --encoding ISO-8859-1 --novalid --html $D -o nordhist.xml $DIRNAME/nordhist.xsl sok.html\?sok\=1\&flik\=historik
 
 # --encoding ISO-8859-1 -v

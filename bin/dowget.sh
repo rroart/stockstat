@@ -1,7 +1,21 @@
 #!/bin/sh
 cd /tmp
+domv="0";
+while getopts 'm' flag; do
+    case "${flag}" in
+	m) domv="1" ;;
+    esac
+done
+if [ "$domv" = "1" ]; then
+DATE=`date +%H.%d.%m.%Y`
+DIRNAME=`dirname $0`
+mkdir $DIRNAME/$DATE
+mv /tmp/*.xml $DIRNAME/$DATE
+fi
 mv sok.html\?sok\=1 sok.html\?sok\=1.old
 wget "https://www.nordnet.no/mux/web/fonder/sok.html?sok=1"
+mv sok.html\?sok\=1\&flik\=historik sok.html\?sok\=1\&flik\=historik.old
+wget "http://www.nordnet.no/mux/web/fonder/sok.html?sok=1&flik=historik"
 mv indexoverview.aspx indexoverview.aspx.old
 wget http://www.morningstar.no/no/tools/indexoverview.aspx
 mv categoryoverview.aspx categoryoverview.aspx.old

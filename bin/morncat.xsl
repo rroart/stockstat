@@ -18,9 +18,19 @@
     </xsl:template>
 
     <xsl:template match="body">
-      <body>
+      <market>
+	<meta>
+	  <marketid>morncat</marketid>
+	  <period1>c y</period1>
+	  <period2>1 m</period2>
+	  <period3>1 y</period3>
+	  <period4>3 y</period4>
+	  <period5>5 y</period5>
+	</meta>
+      <rows>
       <xsl:apply-templates select="div//table[@id='CategoryOverviewTable']/tbody"/>
-      </body>
+      </rows>
+      </market>
     </xsl:template>
 
     <!--xsl:template match="div[@class='navigation']"/-->

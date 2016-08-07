@@ -19,19 +19,28 @@
 
     <xsl:template match="body">
       <market>
+	<meta>
+	  <marketid>nordhist</marketid>
+	  <period1>3 m</period1>
+	  <period2>6 m</period2>
+	  <period3>1 y</period3>
+	  <period4>3 y</period4>
+	  <period5>5 y</period5>
+	  <period6>10 y</period6>
+	</meta>
       <rows>
-      <xsl:apply-templates select=".//div/tr[@class='alt']"/>
+      <xsl:apply-templates select="//div[@id='resultatdiv']"/>
       </rows>
       </market>
     </xsl:template>
 
-    <!--xsl:template match="div[@class='navigation']"/-->
+    <xsl:template match="div[@class='navigation']"/>
 
-    <!--xsl:template match="tr[@class='sort']"/-->
+    <xsl:template match="tr[@class='sort']"/>
 
-    <!--xsl:template match="tfoot/tr"/-->
+    <xsl:template match="tfoot/tr"/>
 
-    <!--xsl:template match="thead/tr"/-->
+    <xsl:template match="thead/tr"/>
 
     <xsl:template match="div">
       <xsl:apply-templates select="*"/>
@@ -49,23 +58,37 @@
     <xsl:template match="tr">
       <row>
 	<id>
-	  <xsl:copy-of select="td[1]/a/text()"/>
+	  <xsl:variable name="firstpart" select="substring-after(td[2]/div/a/@href, '=')"/>
+	  <xsl:value-of select="substring-before($firstpart, '&amp;')"/>
 	</id>
-	<marketid>cboevol</marketid>
+	<marketid>nordhist</marketid>
 	<date>
-	  <xsl:copy-of select="$current-date"/>
+	  <xsl:copy-of select="td[9]/text()"/>
 	</date>
 	<name>
-	  <xsl:copy-of select="td[1]/a/text()"/>
+	  <xsl:copy-of select="td[2]/div/a/text()"/>
 	</name>
-	<indexvalue>
-	  <xsl:copy-of select="td[2]/text()"/>
-	</indexvalue>
+	<period1>
+	  <xsl:copy-of select="td[3]/span/text()"/>
+	</period1>
+	<period2>
+	  <xsl:copy-of select="td[4]/span/text()"/>
+	</period2>
+	<period3>
+	  <xsl:copy-of select="td[5]/span/text()"/>
+	</period3>
+	<period4>
+	  <xsl:copy-of select="td[6]/span/text()"/>
+	</period4>
+	<period5>
+	  <xsl:copy-of select="td[7]/span/text()"/>
+	</period5>
+	<period6>
+	  <xsl:copy-of select="td[8]/span/text()"/>
+	</period6>
       </row>
     </xsl:template>
 
     <xsl:template match="script"/>
-
-    <!--xsl:template match="span"/-->
 
 </xsl:stylesheet>

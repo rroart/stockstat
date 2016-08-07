@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DIRNAME=`dirname $0`
+
 while getopts d FLAG; do
   case $FLAG in
   d)
@@ -16,6 +18,6 @@ YEAR=`date +%Y`
 MONTH=`date +%m`
 DAY=`date +%d`
 
-xsltproc --stringparam current-year $YEAR --stringparam current-month $MONTH --encoding UTF-8 --novalid --html $D -o tradcurr.xml /home/roart/src/stockstat/bin/tradcurr.xsl currencies
+xsltproc --stringparam current-year $YEAR --stringparam current-month $MONTH --encoding UTF-8 --novalid --html $D -o tradcurr.xml $DIRNAME/tradcurr.xsl currencies
 
 # --encoding ISO-8859-1 -v
