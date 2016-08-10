@@ -248,7 +248,8 @@ gettopchart <- function(days, topbottom, stocklistperiod, period) {
         ls[c] <- list(l)
         names[c] <- mainlist$name[i]
     }
-    displaychart(ls, names, topbottom, period, maindate, olddate)
+    periodtext <- getmyperiodtext(period)
+    displaychart(ls, names, topbottom, periodtext, maindate, olddate)
 }
 
 getbottomchart <- function(days, topbottom, stocklistperiod, period) {
@@ -268,7 +269,8 @@ getbottomchart <- function(days, topbottom, stocklistperiod, period) {
         ls[c] <- list(l)
         names[c] <- mainlist$name[len - i]
     }
-    displaychart(ls, names, topbottom, period, maindate, olddate)
+    periodtext <- getmyperiodtext(period)
+    displaychart(ls, names, topbottom, periodtext, maindate, olddate)
 }
 
 getchart <- function(days, stocklistperiod, period, ids) {
@@ -288,13 +290,12 @@ getchart <- function(days, stocklistperiod, period, ids) {
         df <- data.frame(listdf[[1]])
         names[c] <- df$name
     }
-    displaychart(ls, names, topbottom, period, maindate, olddate)
+    periodtext <- getmyperiodtext(period)
+    displaychart(ls, names, topbottom, periodtext, maindate, olddate)
     if (topbottom == 2) {
         c1 <- c(unlist(ls[1]))
         c2 <- c(unlist(ls[2]))
-        print("here1")
         t.test(c1,c2,paired=TRUE)
-        print("here2")
                                         #t.test(c1,c1,paired=TRUE)
         cor.test(c1, c2, method = c("pearson"))
         str(c1)
@@ -324,7 +325,7 @@ getperiodtext <- function(meta, period) {
     cat("should not be here")
 }
 
-displaychart <- function(ls, names, topbottom, period, maindate, olddate) {
+displaychart <- function(ls, names, topbottom, periodtext, maindate, olddate) {
     g_range = range(0, ls, na.rm=TRUE)
     print("g_range")
     str(g_range)
@@ -348,14 +349,6 @@ displaychart <- function(ls, names, topbottom, period, maindate, olddate) {
                                         #str(c)
             lines(c, type="o")
         }
-        periodtext <- period
-
-        if (period >= 0) {
-            newtext <- getperiodtext(mymeta, period)
-            if (!is.na(newtext)) {
-                periodtext <- newtext
-            }
-        }
 
         title(main=sprintf("Period %s", periodtext))
         title(xlab=sprintf("Time %s - %s", olddate, maindate))
@@ -364,6 +357,17 @@ displaychart <- function(ls, names, topbottom, period, maindate, olddate) {
         legend(1, g_range[2], names, cex=0.8, pch=21:22, lty=1:2) 
     }
                                         #}
+}
+
+getmyperiodtext <- function(period) {
+    periodtext <- period
+    if (period >= 0) {
+        newtext <- getperiodtext(mymeta, period)
+        if (!is.na(newtext)) {
+            periodtext <- newtext
+        }
+    }
+    return(periodtext)
 }
 
 getrising <- function(days, periodmaps, stocklistperiod, period) {
@@ -465,11 +469,7 @@ getonedfvalue <- function(df, type) {
 }
 
 getelem3 <- function(id, days, datedstocklist, period, size) {
-#                                            str("her")
-#                                            str(id)
-#                                            str(days)
-#                                            str(period)
-#                                            str(datedstocklist)
+    dayset <- list()
     retl <- list()
     c <- 0
     for (i in days:1) {
@@ -484,6 +484,30 @@ getelem3 <- function(id, days, datedstocklist, period, size) {
                                         #str(i)
         if (nrow(el) == 1) {
             retl[c] <- c(getonedfvalue(el, period))
+            str2 <- as.character(el$date)
+            dayset[str2] <- 1
+        } else {
+            print("err")
+        }
+    }
+    return(list(retl, dayset))
+}
+
+getelem3tup <- function(id, days, datedstocklist, period, size) {
+    retl <- list()
+    c <- 0
+    for (i in days:1) {
+        c <- c + 1
+        retl[c] <- NA
+        l <- datedstocklist[[1]][i]
+                                        #str(l[[1]])
+        df <- data.frame(l[[1]])
+                                        #str(df)
+                                        #cat("mylen ", nrow(df))
+        el <- df[which(df$id == id),]
+                                        #str(i)
+        if (nrow(el) == 1) {
+            return(list(el))
         } else {
             print("err")
         }
@@ -613,6 +637,8 @@ getcontentgraph <- function(con, date, ids, periodtext) {
                                         #str("bla")
                                         #str(perioddatamap);
                                         #str("bla2")
+    olddate <- "old"
+    newdate <- "new"
     ls <- list()
     names <- list()
     for (text in names(perioddatamap)) {
@@ -641,17 +667,22 @@ getcontentgraph <- function(con, date, ids, periodtext) {
                         cat("per", text, " ", id, " ", period, " ")
                         str("")
                         c <- c + 1
-                        l <- getelem3(id, days, datedstocklists, period, topbottom)
+                        bigretl <- getelem3(id, days, datedstocklists, period, topbottom)
+                        l <- unlist(bigretl[[1]])
+                        dayset <- bigretl[[2]]
+                        daynames <- names(dayset)
+                        olddate <- min(daynames)
+                        newdate <- max(daynames)
                         ls[c] <- list(l)
-                        names[c] <- id
+                        listdf <- getelem3tup(id, days, datedstocklists, period, topbottom)
+                        df <- data.frame(listdf[[1]])
+                        names[c] <- df$name
                     }
                 }
             }
         }
     }
-    maindate <- "1"
-    olddate <- "2"
-    displaychart(ls, names, 5, period, maindate, olddate)
+    displaychart(ls, names, 5, periodtext, newdate, olddate)
 }
 
 getperiodtexts <- function(market) {
