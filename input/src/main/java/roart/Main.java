@@ -139,6 +139,7 @@ public class Main {
 	    //Element Elem = elem.getElementsByTagName();
 	} 
 		HibernateUtil.commit();
+        System.out.println("Added for length " + nl.getLength());
     	} catch (Exception e) {
     		System.out.println("Exception " +e);
     		e.printStackTrace();
