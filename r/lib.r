@@ -87,11 +87,11 @@ getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableinte
 }
 
                                         # out of use
-getstockdate <- function(listdate, date) {
+getstockdate <- function(listdate, mydate) {
     c <- 0
     for (i in names(listdate)) {
         c <- c + 1
-        if (date == i) {
+        if (mydate == i) {
             return(c)
         }
     }
@@ -234,6 +234,34 @@ mybottomperiod <- function(datedstocklists, stocklistperiod, periodmaps, period,
     }
 }
 
+gettopgraph <- function(market, mydate, days, topbottom, periodtext) {
+    periodtexts <- getperiodtexts(market)
+    period <- match(periodtext, periodtexts)
+#    cat("perind ", period)
+    stocks <- getstockmarket(allstocks, market)
+    listdate <- split(stocks, stocks$date)
+    datedstocklists <- getdatedstocklists(listdate, mydate, mytableintervaldays)
+    alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
+    periodmaps <- alist[[1]]
+    stocklistperiod <- alist[[2]]
+    mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
+    gettopchart(days, topbottom, stocklistperiod, period)
+}
+
+getbottomgraph <- function(market, mydate, days, topbottom, periodtext) {
+    periodtexts <- getperiodtexts(market)
+    period <- match(periodtext, periodtexts)
+#    cat("perind ", period)
+    stocks <- getstockmarket(allstocks, market)
+    listdate <- split(stocks, stocks$date)
+    datedstocklists <- getdatedstocklists(listdate, mydate, mytableintervaldays)
+    alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
+    periodmaps <- alist[[1]]
+    stocklistperiod <- alist[[2]]
+    mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
+    getbottomchart(days, topbottom, stocklistperiod, period)
+}
+
 gettopchart <- function(days, topbottom, stocklistperiod, period) {
     mainlist <- stocklistperiod[period, 1][[1]]
     oldlist <- stocklistperiod[period, days][[1]]
@@ -271,6 +299,26 @@ getbottomchart <- function(days, topbottom, stocklistperiod, period) {
     }
     periodtext <- getmyperiodtext(period)
     displaychart(ls, names, topbottom, periodtext, maindate, olddate)
+}
+
+getrisinggraph <- function(market, mydate, days, topbottom, periodtext) {
+    periodtexts <- getperiodtexts(market)
+    period <- match(periodtext, periodtexts)
+#    cat("perind ", period)
+    stocks <- getstockmarket(allstocks, market)
+    listdate <- split(stocks, stocks$date)
+    datedstocklists <- getdatedstocklists(listdate, mydate, mytableintervaldays)
+    alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
+    periodmaps <- alist[[1]]
+    stocklistperiod <- alist[[2]]
+    rise <- getrising(days, periodmaps, stocklistperiod, period)
+#    str("riserise")
+#    str(names(rise[[1]]))
+    risetopids <- head(names(rise[[1]]))
+    maindate <- "new"
+    olddate <- "old"
+    getchart(days, stocklistperiod, period, risetopids)
+    #displaychart(ls, names, topbottom, periodtext, maindate, olddate)
 }
 
 getchart <- function(days, stocklistperiod, period, ids) {
@@ -567,14 +615,14 @@ listfiltertop <- function(list, listmain, size) {
     }
 }
 
-getdatedstocklists <- function(listdate, date, mytableintervaldays) {
+getdatedstocklists <- function(listdate, mydate, mytableintervaldays) {
+#    str(mydate)
     datedstocklists <- list()
-    if (is.null(date)) {
-        dateindex <- match(date, names(listdate))
+    if (!is.null(mydate)) {
+        dateindex <- match(mydate, names(listdate))
     } else {
         dateindex <- length(listdate)
     }
-    str(dateindex)
     index <- dateindex
                                         #index <- length(listdate)
     c <- 0
@@ -589,7 +637,7 @@ getdatedstocklists <- function(listdate, date, mytableintervaldays) {
     return(datedstocklists)
 }
 
-getcontentgraph <- function(con, date, ids, periodtext) {
+getcontentgraph <- function(mydate, ids, periodtext) {
     markets <- list()
     for (id in ids) {
                                         #        str(id)
@@ -597,11 +645,11 @@ getcontentgraph <- function(con, date, ids, periodtext) {
     }
     marketdatamap <- list()
     for (market in names(markets)) {
-        stocks <- getmarket(con, market)
+        stocks <- getstockmarket(allstocks, market)
         listdate <- split(stocks, stocks$date)
                                         #listid <- split(stocks, stocks$id)
         periodtexts <- getperiodtexts(market)
-        datedstocklists <- getdatedstocklists(listdate, date, mytableintervaldays)
+        datedstocklists <- getdatedstocklists(listdate, mydate, mytableintervaldays)
         marketdatamap[market] <- list(list(stocks, periodtexts, datedstocklists))
                                         #for (j in 1:count) {
                                         #stocks <- datedstocklist[j]
@@ -687,8 +735,8 @@ getcontentgraph <- function(con, date, ids, periodtext) {
 
 getperiodtexts <- function(market) {
     periodtext = list("Period1", "Period2", "Period3", "Period4", "Period5", "Period6")
-    meta <- dbGetQuery(con, "select * from meta")
-    mymeta <- subset(meta, marketid == market)
+                                        #    meta <- dbGetQuery(con, "select * from meta")
+    mymeta <- getmarketmeta(allmetas, market)
     if (nrow(mymeta) > 0) {
         for (i in 1:periods) {
             if (!is.na(getperiodtext(mymeta, i))) {
@@ -699,7 +747,29 @@ getperiodtexts <- function(market) {
     return(periodtext)
 }
 
-getmarket <- function(con, market) {
+getmetas <- function() {
+    return(dbGetQuery(con, "select * from meta"))
+}
+
+# not used
+
+getmarketmeta <- function(metas, market) {
+    return(subset(metas, marketid == market))
+}
+
+getstocks <- function() {
+    return(dbGetQuery(con, "select * from stock"))
+}
+
+# not used
+
+getstockmarket <- function(stocks, market) {
+    return(subset(stocks, marketid == market))
+}
+
+# not in use now
+
+getmarketold <- function(con, market) {
     query <- paste("select * from stock where marketid = '", market, "'", sep = "")
     return(dbGetQuery(con, query))
 }
@@ -743,27 +813,29 @@ if (!exists("marketid")) {
     marketid <- "morncat"
 }
 
-data <- dbGetQuery(con, "select * from stock")
-meta <- dbGetQuery(con, "select * from meta")
-mymeta <- subset(meta, marketid == mymarketid)
-data_3 <- getmarket(con, marketid)
-names(data_3)
-s <- subset(data_3, "id" == "EUCA000749")
+if (!exists("mydate")) {
+    mydate <- NULL
+}
 
-for (i in 1:nrow(data_3)) {
+allstocks <- getstocks()
+allmetas <- getmetas()
+#mymeta <- getmarketmeta(allmetas, marketid)
+#data_3 <- getstockmarket(allstocks, marketid)
+
+#for (i in 1:nrow(data_3)) {
                                         #print(data_3[i,"date"])
                                         #return()
-}
+#}
 
                                         #for (i in data_3) {
                                         #print(i["date"])
                                         #return
                                         #}
 
-listid2 <- splitid(data_3)
-listdate2 <- splitdate(data_3)
-listdate <- split(data_3, data_3$date)
-listid <- split(data_3, data_3$id)
+#listid2 <- splitid(data_3)
+#listdate2 <- splitdate(data_3)
+#listdate <- split(data_3, data_3$date)
+#listid <- split(data_3, data_3$id)
 
                                         #l <- listdate[[104]]
 if (!exists("days")) {
@@ -778,7 +850,7 @@ if (!exists("mytableintervaldays")) {
 }
                                         #date <- "2016-05-02"
 
-datedstocklists <- getdatedstocklists(listdate, date, mytableintervaldays)
+#datedstocklists <- getdatedstocklists(listdate, date, mytableintervaldays)
 
 if (!exists("period")) {
     period <- 3
@@ -795,7 +867,7 @@ if (!exists("period")) {
                                         #rise <- getrising(days, periodmaps, stocklistperiod, period)
                                         #risetopids <- head(names(rise[[1]]))
 
-getcontentgraph(con, date, ids, "1y")
+#getcontentgraph(date, ids, "1y")
 
                                         # close the connection
 dbDisconnect(con)
