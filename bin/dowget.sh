@@ -7,7 +7,7 @@ while getopts 'm' flag; do
     esac
 done
 if [ "$domv" = "1" ]; then
-DATE=`date +%H.%d.%m.%Y`
+DATE=`date +%Y.%m.%d.%H`
 DIRNAME=`dirname $0`
 mkdir $DIRNAME/$DATE
 mv /tmp/*.xml $DIRNAME/$DATE
