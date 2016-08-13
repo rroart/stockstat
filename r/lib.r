@@ -245,7 +245,7 @@ gettopgraph <- function(market, mydate, days, topbottom, periodtext) {
     periodmaps <- alist[[1]]
     stocklistperiod <- alist[[2]]
     mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
-    gettopchart(days, topbottom, stocklistperiod, period)
+    gettopchart(market, days, topbottom, stocklistperiod, period)
 }
 
 getbottomgraph <- function(market, mydate, days, topbottom, periodtext) {
@@ -259,10 +259,10 @@ getbottomgraph <- function(market, mydate, days, topbottom, periodtext) {
     periodmaps <- alist[[1]]
     stocklistperiod <- alist[[2]]
     mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
-    getbottomchart(days, topbottom, stocklistperiod, period)
+    getbottomchart(market, days, topbottom, stocklistperiod, period)
 }
 
-gettopchart <- function(days, topbottom, stocklistperiod, period) {
+gettopchart <- function(market, days, topbottom, stocklistperiod, period) {
     mainlist <- stocklistperiod[period, 1][[1]]
     oldlist <- stocklistperiod[period, days][[1]]
     maindate <- mainlist$date[1]
@@ -276,11 +276,11 @@ gettopchart <- function(days, topbottom, stocklistperiod, period) {
         ls[c] <- list(l)
         names[c] <- mainlist$name[i]
     }
-    periodtext <- getmyperiodtext(period)
+    periodtext <- getmyperiodtext(market, period)
     displaychart(ls, names, topbottom, periodtext, maindate, olddate)
 }
 
-getbottomchart <- function(days, topbottom, stocklistperiod, period) {
+getbottomchart <- function(market, days, topbottom, stocklistperiod, period) {
     mainlist <- stocklistperiod[period, 1][[1]]
     oldlist <- stocklistperiod[period, days][[1]]
     maindate <- mainlist$date[1]
@@ -297,7 +297,7 @@ getbottomchart <- function(days, topbottom, stocklistperiod, period) {
         ls[c] <- list(l)
         names[c] <- mainlist$name[len - i]
     }
-    periodtext <- getmyperiodtext(period)
+    periodtext <- getmyperiodtext(market, period)
     displaychart(ls, names, topbottom, periodtext, maindate, olddate)
 }
 
@@ -317,11 +317,11 @@ getrisinggraph <- function(market, mydate, days, topbottom, periodtext) {
     risetopids <- head(names(rise[[1]]))
     maindate <- "new"
     olddate <- "old"
-    getchart(days, stocklistperiod, period, risetopids)
+    getchart(market, days, stocklistperiod, period, risetopids)
     #displaychart(ls, names, topbottom, periodtext, maindate, olddate)
 }
 
-getchart <- function(days, stocklistperiod, period, ids) {
+getchart <- function(market, days, stocklistperiod, period, ids) {
     topbottom <- length(ids)
     mainlist <- stocklistperiod[period, 1][[1]]
     oldlist <- stocklistperiod[period, days][[1]]
@@ -338,7 +338,7 @@ getchart <- function(days, stocklistperiod, period, ids) {
         df <- data.frame(listdf[[1]])
         names[c] <- df$name
     }
-    periodtext <- getmyperiodtext(period)
+    periodtext <- getmyperiodtext(market, period)
     displaychart(ls, names, topbottom, periodtext, maindate, olddate)
     if (topbottom == 2) {
         c1 <- c(unlist(ls[1]))
@@ -407,9 +407,10 @@ displaychart <- function(ls, names, topbottom, periodtext, maindate, olddate) {
                                         #}
 }
 
-getmyperiodtext <- function(period) {
+getmyperiodtext <- function(market, period) {
     periodtext <- period
     if (period >= 0) {
+        mymeta <- getmarketmeta(allmetas, market)
         newtext <- getperiodtext(mymeta, period)
         if (!is.na(newtext)) {
             periodtext <- newtext
@@ -809,8 +810,8 @@ dbExistsTable(con, "stockstat")
 dbExistsTable(con, "stock")
                                         # TRUE
 
-if (!exists("marketid")) {
-    marketid <- "morncat"
+if (!exists("mymarketid")) {
+    mymarketid <- "morncat"
 }
 
 if (!exists("mydate")) {
