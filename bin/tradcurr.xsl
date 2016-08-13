@@ -60,10 +60,10 @@
     </xsl:template>
 
     <xsl:template match="tr">
-      <xsl:if test="@data-ticker">
+      <xsl:if test="@data-symbol">
       <row>
 	<id>
-	  <xsl:value-of select="@data-ticker"/>
+	  <xsl:value-of select="@data-symbol"/>
 	</id>
 	<marketid>tradcurr</marketid>
 	<date>
@@ -78,7 +78,7 @@
 	  <xsl:copy-of select="translate(td[3]/text(), '&#x20;&#x9;&#xD;&#xA;&#x2c;', '')"/>
 	</price>
 	<currency>
-	  <xsl:value-of select="@data-ticker"/>
+	  <xsl:value-of select="@data-symbol"/>
 	</currency>
 	<period1>
 	  <xsl:copy-of select="translate(td[5]/text(), '&#x20;&#x9;&#xD;&#xA;&#x25;&#x2c;', '')"/>
