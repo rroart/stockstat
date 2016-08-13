@@ -86,7 +86,7 @@ public class Main {
         if (period6Elem != null) {
         period6 = reformat(period6Elem.getTextContent());
         }
-	    String dbid = id + "_" + datestr;
+	    String dbid = marketid + "_" + id + "_" + datestr;
 	    Stock stock = Stock.ensureExistence(dbid);
 	    stock.setId(id);
 	    stock.setMarketid(marketid);
