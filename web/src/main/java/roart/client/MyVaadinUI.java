@@ -268,7 +268,7 @@ public class MyVaadinUI extends UI
         /*
         horDb3.addComponent(getTodayZero());
         */
-        horDb3.addComponent(getEqualize());
+        //horDb3.addComponent(getEqualize());
 
         VerticalLayout verManualList = new VerticalLayout();
         verManualList.setHeight("20%");
