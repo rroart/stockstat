@@ -763,7 +763,7 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
             }
         }
     }
-    displaychart(ls, names, 5, periodtext, newdate, olddate)
+    displaychart(ls, names, 5, periodtext, newdate, olddate, days)
 }
 
 getperiodtexts <- function(market) {
@@ -784,8 +784,6 @@ getmetas <- function() {
     return(dbGetQuery(con, "select * from meta"))
 }
 
-# not used
-
 getmarketmeta <- function(metas, market) {
     return(subset(metas, marketid == market))
 }
@@ -793,8 +791,6 @@ getmarketmeta <- function(metas, market) {
 getstocks <- function() {
     return(dbGetQuery(con, "select * from stock"))
 }
-
-# not used
 
 getstockmarket <- function(stocks, market) {
     return(subset(stocks, marketid == market))
@@ -842,65 +838,8 @@ dbExistsTable(con, "stockstat")
 dbExistsTable(con, "stock")
                                         # TRUE
 
-if (!exists("mymarketid")) {
-    mymarketid <- "morncat"
-}
-
-if (!exists("mydate")) {
-    mydate <- NULL
-}
-
 allstocks <- getstocks()
 allmetas <- getmetas()
-#mymeta <- getmarketmeta(allmetas, marketid)
-#data_3 <- getstockmarket(allstocks, marketid)
-
-#for (i in 1:nrow(data_3)) {
-                                        #print(data_3[i,"date"])
-                                        #return()
-#}
-
-                                        #for (i in data_3) {
-                                        #print(i["date"])
-                                        #return
-                                        #}
-
-#listid2 <- splitid(data_3)
-#listdate2 <- splitdate(data_3)
-#listdate <- split(data_3, data_3$date)
-#listid <- split(data_3, data_3$id)
-
-                                        #l <- listdate[[104]]
-#if (!exists("days")) {
-#    days <- 10
-#}
-#if (!exists("topbottom")) {
-#    topbottom <- 5
-#}
-#count <- days
-#if (!exists("mytableintervaldays")) {
-#    mytableintervaldays <- 5
-#}
-                                        #date <- "2016-05-02"
-
-#datedstocklists <- getdatedstocklists(listdate, date, mytableintervaldays)
-
-#if (!exists("period")) {
-#    period <- 3
-#}
-
-                                        #alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
-                                        #periodmaps <- alist[[1]]
-                                        #stocklistperiod <- alist[[2]]
-                                        #mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
-                                        #mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
-
-                                        #gettopchart(days, topbottom, stocklistperiod, period)
-                                        #getbottomchart(days, topbottom, stocklistperiod, period)
-                                        #rise <- getrising(days, periodmaps, stocklistperiod, period)
-                                        #risetopids <- head(names(rise[[1]]))
-
-#getcontentgraph(date, ids, "1y")
 
                                         # close the connection
 dbDisconnect(con)
