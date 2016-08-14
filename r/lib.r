@@ -60,7 +60,7 @@ getdforderperiod <- function(df, period) {
     return (ds)
 }
 
-getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableintervaldays) {
+getlistanddiff <- function(datedstocklists, listid, listdate, count, tableintervaldays) {
     periodmaps <- matrix(list(), nrow = periods, ncol = (count - 1))
     stocklistperiod <- matrix(list(), nrow = periods, ncol = count)
     for (j in 1:count) {
@@ -79,7 +79,7 @@ getlistanddiff <- function(datedstocklists, listid, listdate, count, mytableinte
                     periodmaps[i, j - 1] <- list(tmplist)
                 }
             } else {
-                cat("no period day ", j, " period ", i)
+                #cat("no period day ", j, " period ", i)
             }
         }
     }
@@ -98,7 +98,7 @@ getstockdate <- function(listdate, mydate) {
     return (length(listdate))
 }
 
-getlistanddiffperiod <- function(datedstocklists, listid, listdate, count, mytableintervaldays, period) {
+getlistanddiffperiod <- function(datedstocklists, listid, listdate, count, tableintervaldays, period) {
     periodmap <- list()
     stocklistperiod <- matrix(list(), nrow = periods, ncol = count)
     for (j in 1:count) {
@@ -234,32 +234,60 @@ mybottomperiod <- function(datedstocklists, stocklistperiod, periodmaps, period,
     }
 }
 
-gettopgraph <- function(market, mydate, days, topbottom, periodtext) {
-    periodtexts <- getperiodtexts(market)
-    period <- match(periodtext, periodtexts)
-#    cat("perind ", period)
-    stocks <- getstockmarket(allstocks, market)
-    listdate <- split(stocks, stocks$date)
-    datedstocklists <- getdatedstocklists(listdate, mydate, mytableintervaldays)
-    alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
-    periodmaps <- alist[[1]]
-    stocklistperiod <- alist[[2]]
-    mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
-    gettopchart(market, days, topbottom, stocklistperiod, period)
+myperiodtextslist <- function(myperiodtexts, periodtexts) {
+    retlist <- myperiodtexts
+    if (is.null(myperiodtexts)) {
+        retlist <- periodtexts
+    }
+    if (!is.list(myperiodtexts)) {
+        retlist <- list(myperiodtexts)
+    }
+    return(retlist)
 }
 
-getbottomgraph <- function(market, mydate, days, topbottom, periodtext) {
+gettopgraph <- function(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) {
     periodtexts <- getperiodtexts(market)
-    period <- match(periodtext, periodtexts)
-#    cat("perind ", period)
-    stocks <- getstockmarket(allstocks, market)
-    listdate <- split(stocks, stocks$date)
-    datedstocklists <- getdatedstocklists(listdate, mydate, mytableintervaldays)
-    alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
-    periodmaps <- alist[[1]]
-    stocklistperiod <- alist[[2]]
-    mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
-    getbottomchart(market, days, topbottom, stocklistperiod, period)
+    myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
+    for (i in 1:length(myperiodtexts)) {
+        periodtext <- myperiodtexts[i]
+        period <- match(periodtext, periodtexts)
+                                        #    cat("perind ", period)
+        stocks <- getstockmarket(allstocks, market)
+        listdate <- split(stocks, stocks$date)
+        datedstocklists <- getdatedstocklists(listdate, mydate, days, tableintervaldays)
+        alist <- getlistanddiff(datedstocklists, listid, listdate, days, tableintervaldays)
+        periodmaps <- alist[[1]]
+        stocklistperiod <- alist[[2]]
+        mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
+        dev.new()
+        gettopchart(market, days, topbottom, stocklistperiod, period)
+    }
+}
+
+devoffs <- function() {
+    devs <- dev.list()
+    for (i in 1:length(devs)) {
+        dev.off(devs[i])
+    }
+}
+
+getbottomgraph <- function(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) {
+    periodtexts <- getperiodtexts(market)
+    myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
+    for (i in 1:length(myperiodtexts)) {
+        periodtext <- myperiodtexts[i]
+        period <- match(periodtext, periodtexts)
+                                        #    cat("perind ", period)
+        stocks <- getstockmarket(allstocks, market)
+        listdate <- split(stocks, stocks$date)
+        datedstocklists <- getdatedstocklists(listdate, mydate, days, tableintervaldays)
+        alist <- getlistanddiff(datedstocklists, listid, listdate, days, tableintervaldays)
+        periodmaps <- alist[[1]]
+        stocklistperiod <- alist[[2]]
+        mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
+        dev.new()
+        getbottomchart(market, days, topbottom, stocklistperiod, period)
+    }
 }
 
 gettopchart <- function(market, days, topbottom, stocklistperiod, period) {
@@ -277,7 +305,7 @@ gettopchart <- function(market, days, topbottom, stocklistperiod, period) {
         names[c] <- mainlist$name[i]
     }
     periodtext <- getmyperiodtext(market, period)
-    displaychart(ls, names, topbottom, periodtext, maindate, olddate)
+    displaychart(ls, names, topbottom, periodtext, maindate, olddate, days)
 }
 
 getbottomchart <- function(market, days, topbottom, stocklistperiod, period) {
@@ -298,27 +326,31 @@ getbottomchart <- function(market, days, topbottom, stocklistperiod, period) {
         names[c] <- mainlist$name[len - i]
     }
     periodtext <- getmyperiodtext(market, period)
-    displaychart(ls, names, topbottom, periodtext, maindate, olddate)
+    displaychart(ls, names, topbottom, periodtext, maindate, olddate, days)
 }
 
-getrisinggraph <- function(market, mydate, days, topbottom, periodtext) {
+getrisinggraph <- function(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) {
     periodtexts <- getperiodtexts(market)
-    period <- match(periodtext, periodtexts)
-#    cat("perind ", period)
-    stocks <- getstockmarket(allstocks, market)
-    listdate <- split(stocks, stocks$date)
-    datedstocklists <- getdatedstocklists(listdate, mydate, mytableintervaldays)
-    alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
-    periodmaps <- alist[[1]]
-    stocklistperiod <- alist[[2]]
-    rise <- getrising(days, periodmaps, stocklistperiod, period)
-#    str("riserise")
-#    str(names(rise[[1]]))
-    risetopids <- head(names(rise[[1]]))
-    maindate <- "new"
-    olddate <- "old"
-    getchart(market, days, stocklistperiod, period, risetopids)
-    #displaychart(ls, names, topbottom, periodtext, maindate, olddate)
+    myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
+    for (i in 1:length(myperiodtexts)) {
+        periodtext <- myperiodtexts[i]
+        period <- match(periodtext, periodtexts)
+                                        #    cat("perind ", period)
+        stocks <- getstockmarket(allstocks, market)
+        listdate <- split(stocks, stocks$date)
+        datedstocklists <- getdatedstocklists(listdate, mydate, days, tableintervaldays)
+        alist <- getlistanddiff(datedstocklists, listid, listdate, days, tableintervaldays)
+        periodmaps <- alist[[1]]
+        stocklistperiod <- alist[[2]]
+        rise <- getrising(days, periodmaps, stocklistperiod, period)
+                                        #    str("riserise")
+                                        #    str(names(rise[[1]]))
+        risetopids <- head(names(rise[[1]]))
+        maindate <- "new"
+        olddate <- "old"
+        getchart(market, days, stocklistperiod, period, risetopids)
+                                        #displaychart(ls, names, topbottom, periodtext, maindate, olddate)
+    }
 }
 
 getchart <- function(market, days, stocklistperiod, period, ids) {
@@ -339,7 +371,7 @@ getchart <- function(market, days, stocklistperiod, period, ids) {
         names[c] <- df$name
     }
     periodtext <- getmyperiodtext(market, period)
-    displaychart(ls, names, topbottom, periodtext, maindate, olddate)
+    displaychart(ls, names, topbottom, periodtext, maindate, olddate, days)
     if (topbottom == 2) {
         c1 <- c(unlist(ls[1]))
         c2 <- c(unlist(ls[2]))
@@ -373,7 +405,7 @@ getperiodtext <- function(meta, period) {
     cat("should not be here")
 }
 
-displaychart <- function(ls, names, topbottom, periodtext, maindate, olddate) {
+displaychart <- function(ls, names, topbottom, periodtext, maindate, olddate, days) {
     g_range = range(0, ls, na.rm=TRUE)
     print("g_range")
     str(g_range)
@@ -616,7 +648,7 @@ listfiltertop <- function(list, listmain, size) {
     }
 }
 
-getdatedstocklists <- function(listdate, mydate, mytableintervaldays) {
+getdatedstocklists <- function(listdate, mydate, days, tableintervaldays) {
 #    str(mydate)
     datedstocklists <- list()
     if (!is.null(mydate)) {
@@ -630,15 +662,15 @@ getdatedstocklists <- function(listdate, mydate, mytableintervaldays) {
     c <- c + 1
     datedstocklists[c] <- listdate[index]
 
-    for (j in 1:count) {
-        index <- index - mytableintervaldays
+    for (j in 1:days) {
+        index <- index - tableintervaldays
         c <- c + 1
         datedstocklists[c] <- listdate[index]
     }
     return(datedstocklists)
 }
 
-getcontentgraph <- function(mydate, ids, periodtext) {
+getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
     markets <- list()
     for (id in ids) {
                                         #        str(id)
@@ -650,7 +682,7 @@ getcontentgraph <- function(mydate, ids, periodtext) {
         listdate <- split(stocks, stocks$date)
                                         #listid <- split(stocks, stocks$id)
         periodtexts <- getperiodtexts(market)
-        datedstocklists <- getdatedstocklists(listdate, mydate, mytableintervaldays)
+        datedstocklists <- getdatedstocklists(listdate, mydate, days, tableintervaldays)
         marketdatamap[market] <- list(list(stocks, periodtexts, datedstocklists))
                                         #for (j in 1:count) {
                                         #stocks <- datedstocklist[j]
@@ -839,23 +871,23 @@ allmetas <- getmetas()
 #listid <- split(data_3, data_3$id)
 
                                         #l <- listdate[[104]]
-if (!exists("days")) {
-    days <- 10
-}
-if (!exists("topbottom")) {
-    topbottom <- 5
-}
-count <- days
-if (!exists("mytableintervaldays")) {
-    mytableintervaldays <- 5
-}
+#if (!exists("days")) {
+#    days <- 10
+#}
+#if (!exists("topbottom")) {
+#    topbottom <- 5
+#}
+#count <- days
+#if (!exists("mytableintervaldays")) {
+#    mytableintervaldays <- 5
+#}
                                         #date <- "2016-05-02"
 
 #datedstocklists <- getdatedstocklists(listdate, date, mytableintervaldays)
 
-if (!exists("period")) {
-    period <- 3
-}
+#if (!exists("period")) {
+#    period <- 3
+#}
 
                                         #alist <- getlistanddiff(datedstocklists, listid, listdate, days, mytableintervaldays)
                                         #periodmaps <- alist[[1]]
