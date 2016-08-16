@@ -196,18 +196,27 @@ listperiod <- function(list, period, index) {
     }
 }
 
-mytopperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, max) {
+mytopperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, max, days) {
     list1 <- stocklistperiod
-    list2 <- periodmaps[period, 1][[1]]
+    for (j in 1:days) {
+        list2 <- list()
+        if (j < days) {
+            list2 <- periodmaps[period, j][[1]]
+        }
 
-    list11 <- stocklistperiod[period, 1][[1]]
-    list12 <- stocklistperiod[period, 2][[1]]
-    for (i in 1:max) {
-        print(sprintf("%3d %-35s %12s %3.2f", i, strtrim(list12$name[i],33), as.POSIXct(list12$date[i], origin="1970-01-01"), listperiod(list12, period, i)))
-    }
-    for (i in 1:max) {
-        id <- list11$id[i]
-        print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[i],33), as.POSIXct(list11$date[i], origin="1970-01-01"), listperiod(list11, period, i), list2[[id]], list11$id[[i]]))
+        list11 <- stocklistperiod[period, j][[1]]
+#        list12 <- stocklistperiod[period, 2][[1]]
+#        for (i in 1:max) {
+#            print(sprintf("%3d %-35s %12s %3.2f", i, strtrim(list12$name[i],33), as.POSIXct(list12$date[i], origin="1970-01-01"), listperiod(list12, period, i)))
+#        }
+        for (i in 1:max) {
+            id <- list11$id[i]
+            rise <- 0
+            if (j < days) {
+                rise <- list2[[id]]
+            }
+            print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[i],33), as.POSIXct(list11$date[i], origin="1970-01-01"), listperiod(list11, period, i), rise, list11$id[[i]]))
+        }
     }
 }
 
@@ -258,8 +267,7 @@ gettopgraph <- function(market, mydate, days, tableintervaldays, topbottom, mype
         alist <- getlistanddiff(datedstocklists, listid, listdate, days, tableintervaldays)
         periodmaps <- alist[[1]]
         stocklistperiod <- alist[[2]]
-        mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
-        dev.new()
+        mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom, days)
         gettopchart(market, days, topbottom, stocklistperiod, period)
     }
 }
@@ -285,7 +293,6 @@ getbottomgraph <- function(market, mydate, days, tableintervaldays, topbottom, m
         periodmaps <- alist[[1]]
         stocklistperiod <- alist[[2]]
         mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
-        dev.new()
         getbottomchart(market, days, topbottom, stocklistperiod, period)
     }
 }
@@ -406,6 +413,7 @@ getperiodtext <- function(meta, period) {
 }
 
 displaychart <- function(ls, names, topbottom, periodtext, maindate, olddate, days) {
+    dev.new()
     g_range = range(0, ls, na.rm=TRUE)
     print("g_range")
     str(g_range)
@@ -530,10 +538,10 @@ getonedfperiod <- function(df, period) {
 }
 
 getonedfspecial <- function(df, type) {
-    if (period == pricetype) {
+    if (type == pricetype) {
         return (df$price)
     }
-    if (period == indextype) {
+    if (type == indextype) {
         return (df$index)
     }
     cat("should not be here")
@@ -671,6 +679,16 @@ getdatedstocklists <- function(listdate, mydate, days, tableintervaldays) {
 }
 
 getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
+    normalize <- 0
+    if (length(ids) > 0) {
+        if (periodtext == "price") {
+            normalize <- 1
+        }
+        if (periodtext == "index") {
+            normalize <- 1
+        }
+    }
+    
     markets <- list()
     for (id in ids) {
                                         #        str(id)
@@ -711,6 +729,18 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
             perioddata[["text"]] <- pairs
             perioddatamap[[text]] <- perioddata
         }
+        {
+        perioddata <- list()
+        pairs[[paste(1, market)]] <- list(market, pricetype)
+        perioddata[["text"]] <- pairs
+        perioddatamap[["price"]] <- perioddata
+        }
+        {
+        perioddata <- list()
+        pairs[[paste(1, market)]] <- list(market, indextype)
+        perioddata[["text"]] <- pairs
+        perioddatamap[["index"]] <- perioddata
+        }
     }
     retl <- list()
                                         #perioddata <- perioddatamap[periodtext]
@@ -750,6 +780,20 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
                         c <- c + 1
                         bigretl <- getelem3(id, days, datedstocklists, period, topbottom)
                         l <- unlist(bigretl[[1]])
+                        if (normalize == 1) {
+                            str("minmax")
+                            str(l)
+                            mymin <- abs(min(l))
+                            mymax <- abs(max(l))
+                            if (mymin > mymax) {
+                                mymax <- mymin
+                            }
+                            for (j in 1:length(l)) {
+                                l[j] <- l[j] * 100 / mymax;
+                            }
+                            str(l)
+                        }
+                        
                         dayset <- bigretl[[2]]
                         daynames <- names(dayset)
                         olddate <- min(daynames)
