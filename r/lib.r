@@ -414,6 +414,7 @@ getperiodtext <- function(meta, period) {
 
 displaychart <- function(ls, mynames, topbottom, periodtext, maindate, olddate, days) {
     dev.new()
+    colours <- rainbow(topbottom)
     g_range = range(0, ls, na.rm=TRUE)
     print("g_range")
     str(g_range)
@@ -423,7 +424,7 @@ displaychart <- function(ls, mynames, topbottom, periodtext, maindate, olddate, 
                                         #str(l$name[[2]])
             c = c(unlist(ls[1]))
             str(c)
-            plot(c, type="o", ylim=g_range, axes=FALSE, ann=FALSE)
+            plot(c, type="o", ylim=g_range, axes=FALSE, ann=FALSE, col = colours[i], pch = i)
             axis(1, at=1:days, lab=c(-(days-1):0))
             axis(2, las=2)
             grid(NULL,NULL)
@@ -435,14 +436,14 @@ displaychart <- function(ls, mynames, topbottom, periodtext, maindate, olddate, 
                                         #cat("count", i)
             c = c(unlist(ls[i]))
                                         #str(c)
-            lines(c, type="o")
+            lines(c, type="o", lty = i, col = colours[i], pch = i)
         }
 
         title(main=sprintf("Period %s", periodtext))
         title(xlab=sprintf("Time %s - %s", olddate, maindate))
         title(ylab="Value")
         n = c(unlist(mynames[1]))
-        legend(1, g_range[2], mynames, cex=0.8, pch=21:22, lty=1:2) 
+        legend(1, g_range[2], mynames, cex=0.8, lty=1:6, pch=1:25, col=colours) 
     }
                                         #}
 }
