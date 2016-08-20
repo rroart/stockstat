@@ -750,6 +750,7 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
                                         #str("bla2")
     olddate <- "old"
     newdate <- "new"
+    dayset <- list()
     ls <- list()
     mynames <- list()
     for (text in names(perioddatamap)) {
@@ -794,10 +795,7 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
                             str(l)
                         }
                         
-                        dayset <- bigretl[[2]]
-                        daynames <- names(dayset)
-                        olddate <- min(daynames)
-                        newdate <- max(daynames)
+                        dayset <- append(dayset, bigretl[[2]])
                         ls[c] <- list(l)
                         listdf <- getelem3tup(id, days, datedstocklists, period, topbottom)
                         df <- data.frame(listdf[[1]])
@@ -807,6 +805,9 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
             }
         }
     }
+    daynames <- names(dayset)
+    olddate <- min(daynames)
+    newdate <- max(daynames)
     displaychart(ls, mynames, 5, periodtext, newdate, olddate, days)
 }
 
