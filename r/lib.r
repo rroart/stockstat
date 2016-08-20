@@ -412,7 +412,7 @@ getperiodtext <- function(meta, period) {
     cat("should not be here")
 }
 
-displaychart <- function(ls, names, topbottom, periodtext, maindate, olddate, days) {
+displaychart <- function(ls, mynames, topbottom, periodtext, maindate, olddate, days) {
     dev.new()
     g_range = range(0, ls, na.rm=TRUE)
     print("g_range")
@@ -441,8 +441,8 @@ displaychart <- function(ls, names, topbottom, periodtext, maindate, olddate, da
         title(main=sprintf("Period %s", periodtext))
         title(xlab=sprintf("Time %s - %s", olddate, maindate))
         title(ylab="Value")
-        n = c(unlist(names[1]))
-        legend(1, g_range[2], names, cex=0.8, pch=21:22, lty=1:2) 
+        n = c(unlist(mynames[1]))
+        legend(1, g_range[2], mynames, cex=0.8, pch=21:22, lty=1:2) 
     }
                                         #}
 }
@@ -751,7 +751,7 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
     olddate <- "old"
     newdate <- "new"
     ls <- list()
-    names <- list()
+    mynames <- list()
     for (text in names(perioddatamap)) {
         if (text == periodtext) {
                                         #        str(text)
@@ -801,13 +801,13 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
                         ls[c] <- list(l)
                         listdf <- getelem3tup(id, days, datedstocklists, period, topbottom)
                         df <- data.frame(listdf[[1]])
-                        names[c] <- df$name
+                        mynames[c] <- df$name
                     }
                 }
             }
         }
     }
-    displaychart(ls, names, 5, periodtext, newdate, olddate, days)
+    displaychart(ls, mynames, 5, periodtext, newdate, olddate, days)
 }
 
 getperiodtexts <- function(market) {
