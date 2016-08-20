@@ -305,6 +305,7 @@ public class ControlService {
             for (int i = days - 1; i > 0; i--) {
                 if (!stocklistPeriod[0][i].isEmpty()) {
                     date0 = dt.format(stocklistPeriod[0][i].get(0).getDate());
+                    break;
                 }
             }
             if (!stocklistPeriod[0][0].isEmpty()) {
