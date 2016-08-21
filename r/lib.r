@@ -681,7 +681,7 @@ getdatedstocklists <- function(listdate, mydate, days, tableintervaldays) {
 
 getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
     normalize <- 0
-    if (length(ids) > 0) {
+    if (length(ids) > 1) {
         if (periodtext == "price") {
             normalize <- 1
         }
