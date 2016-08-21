@@ -220,26 +220,38 @@ mytopperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, ma
     }
 }
 
-mybottomperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, max) {
+mybottomperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, max, days) {
     list1 <- stocklistperiod
-    list2 <- periodmaps[period, 1][[1]]
+    for (j in 1:days) {
+        list2 <- list()
+        if (j < days) {
+            list2 <- periodmaps[period, j][[1]]
+        }
 
-    list11 <- stocklistperiod[period, 1][[1]]
-    list12 <- stocklistperiod[period, 2][[1]]
+        list11 <- stocklistperiod[period, j][[1]]
+                                        #    list12 <- stocklistperiod[period, 2][[1]]
+                                        #
+                                        #    len <- nrow(list12)
+                                        #    len <- len + 1
 
-    len <- nrow(list12)
-    len <- len + 1
+                                        #    for (i in 1:max) {
+                                        #        print(sprintf("%3d %-35s %12s %3.2f", i, strtrim(list12$name[len - i],33), as.POSIXct(list12$date[len - i], origin="1970-01-01"), listperiod(list12, period, len - i)))
+                                        #    }
 
-    for (i in 1:max) {
-        print(sprintf("%3d %-35s %12s %3.2f", i, strtrim(list12$name[len - i],33), as.POSIXct(list12$date[len - i], origin="1970-01-01"), listperiod(list12, period, len - i)))
-    }
+                                        #    len <- nrow(list11)
+                                        #    len <- len + 1
 
-    len <- nrow(list11)
-    len <- len + 1
-
-    for (i in 1:max) {
-        id <- list11$id[len - i]
-        print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[len - i],33), as.POSIXct(list11$date[len - i], origin="1970-01-01"), listperiod(list11, period, len - i), list2[[id]], list11$id[[len - i]]))
+        len <- nrow(list11)
+        len <- len + 1
+        for (i in 1:max) {
+            id <- list11$id[len - i]
+            rise <- 0
+            if (j < days) {
+                rise <- list2[[id]]
+            }
+            
+            print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[len - i],33), as.POSIXct(list11$date[len - i], origin="1970-01-01"), listperiod(list11, period, len - i), rise, list11$id[[len - i]]))
+        }
     }
 }
 
@@ -292,7 +304,7 @@ getbottomgraph <- function(market, mydate, days, tableintervaldays, topbottom, m
         alist <- getlistanddiff(datedstocklists, listid, listdate, days, tableintervaldays)
         periodmaps <- alist[[1]]
         stocklistperiod <- alist[[2]]
-        mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom)
+        mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom, days)
         getbottomchart(market, days, topbottom, stocklistperiod, period)
     }
 }
