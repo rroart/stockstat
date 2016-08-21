@@ -229,6 +229,15 @@ public class StockUtil {
         return mymap;
     }
 
+    /**
+     * Find out whether the special (price/index) is present
+     * 
+     * @param marketdatamap a map of market names to marketdata
+     * @param i the special type
+     * @return boolean true if present
+     * @throws Exception
+     */
+    
     public static boolean hasSpecial(Map<String, MarketData> marketdatamap, int i) throws Exception {
         for (String market : marketdatamap.keySet()) { 
             MarketData marketdata = marketdatamap.get(market);
@@ -240,6 +249,15 @@ public class StockUtil {
         return false;
     }
     
+    /**
+     * Find out whether the special (price/index) is present
+     * 
+     * @param stocks list
+     * @param i the period
+     * @return boolean true if present
+     * @throws Exception
+     */
+    
     public static boolean hasSpecial(List<Stock> stocks, int i) throws Exception {
         for (Stock s : stocks) {
             if (StockDao.getSpecial(s, i) != null) {
@@ -249,6 +267,15 @@ public class StockUtil {
         return false;
     }
 
+    /**
+     * Find out whether the period is present
+     * 
+     * @param stocks list
+     * @param i the period
+     * @return boolean true if present
+     * @throws Exception
+     */
+    
     public static boolean hasStockPeriod(List<Stock> stocks, int i) throws Exception {
         for (Stock s : stocks) {
             if (StockDao.getPeriod(s, i) != null) {
@@ -275,6 +302,13 @@ public class StockUtil {
         return false;
     }
 
+    /**
+     * Not used
+     * 
+     * @param stocks
+     * @return
+     */
+    
     public static boolean hasStockPeriod1(List<Stock> stocks) {
         for (Stock s : stocks) {
             if (s.getPeriod1() != null) {
@@ -284,6 +318,13 @@ public class StockUtil {
         return false;
     }
 
+    /**
+     * Not used
+     * 
+     * @param stocks
+     * @return
+     */
+    
     public static boolean hasStockPeriod2(List<Stock> stocks) {
         for (Stock s : stocks) {
             if (s.getPeriod2() != null) {
@@ -293,6 +334,13 @@ public class StockUtil {
         return false;
     }
 
+    /**
+     * Not used
+     * 
+     * @param stocks
+     * @return
+     */
+    
     public static boolean hasStockPeriod3(List<Stock> stocks) {
         for (Stock s : stocks) {
             if (s.getPeriod3() != null) {
@@ -302,6 +350,13 @@ public class StockUtil {
         return false;
     }
 
+    /**
+     * Not used
+     * 
+     * @param stocks
+     * @return
+     */
+    
     public static boolean hasStockPeriod4(List<Stock> stocks) {
         for (Stock s : stocks) {
             if (s.getPeriod4() != null) {
@@ -311,6 +366,13 @@ public class StockUtil {
         return false;
     }
 
+    /**
+     * Not used
+     * 
+     * @param stocks
+     * @return
+     */
+    
     public static boolean hasStockPeriod5(List<Stock> stocks) {
         for (Stock s : stocks) {
             if (s.getPeriod5() != null) {
@@ -320,6 +382,13 @@ public class StockUtil {
         return false;
     }
 
+    /**
+     * Not used
+     * 
+     * @param stocks
+     * @return
+     */
+    
     public static boolean hasStockPeriod6(List<Stock> stocks) {
         for (Stock s : stocks) {
             if (s.getPeriod6() != null) {
@@ -408,6 +477,14 @@ public class StockUtil {
 
     };
 
+    /**
+     * Compare two values
+     * 
+     * @param comp1 value
+     * @param comp2 value
+     * @return compareTo result
+     */
+    
     public static int compDoubleInner(Double comp1, Double comp2) {
         if (comp1 == null && comp2 == null) {
             return 0;
@@ -425,9 +502,10 @@ public class StockUtil {
         return comp2.compareTo(comp1);
     }
 
-    /*
-     * Get table id for given date
+    /**
+     * Not used
      */
+    
     public static int getStockDate(List<Stock> stocklist, Date mydate2) {
         if (mydate2 == null) {
             return 0;
@@ -511,6 +589,14 @@ public class StockUtil {
         return dataset;
     }
 
+    /**
+     * Given a market and the market set pairs, return the related period for that market
+     * 
+     * @param market
+     * @param pairs set
+     * @return period
+     */
+    
     private static Integer getPeriodByMarket(String market, Set<Pair<String, Integer>> pairs) {
         Integer periodInt = null;
         for (Pair pair : pairs) {
@@ -581,6 +667,16 @@ public class StockUtil {
         return dataset;
     }
 
+    /**
+     * Not in use
+     * 
+     * @param days
+     * @param ids
+     * @param datedstocklists
+     * @param type
+     * @return
+     */
+    
     public static DefaultCategoryDataset getFilterChartDated(int days,
             List<String> ids, List<Stock>[] datedstocklists, int type) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
@@ -605,6 +701,18 @@ public class StockUtil {
         return dataset;
     }
 
+    /**
+     * Create a dataset with the given ids
+     * @param days to use for the graph
+     * @param ids to display
+     * @param marketdatamap map from market to marketdata
+     * @param perioddata data for period
+     * @param type period or special (price/index)
+     * @param equalize to a 100% graph
+     * @param dataseteq equalized data set
+     * @return dataset
+     */
+    
     public static DefaultCategoryDataset getFilterChartDated(int days,
             Set<Pair> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, int type, boolean equalize, DefaultCategoryDataset dataseteq) {
         Map<String, Set<Pair<Double, Integer>>> map= null;
@@ -770,15 +878,26 @@ public class StockUtil {
         return dataset;
     }
 
+    /**
+     * 
+     * @param days the number of days sample used to compute the rising
+     * @param topbottom the number we want on our chart
+     * @param stocklistPeriod
+     * @param mymap a map of ids, and the rise number
+     * @param period the period we want
+     * @return a dataset with the best chart risers
+     */
+    
     public static DefaultCategoryDataset getRisingChart(int days,
             int topbottom, List<Stock>[][] stocklistPeriod,
-            HashMap<String, Integer> mymap, int period) {
+            Map<String, Integer> mymap, int period) {
         List<String> list0 = new ArrayList<String>();
         List<Integer> list1 = new ArrayList<Integer>();
         for (String key : mymap.keySet()) {
             list0.add(key);
             list1.add(mymap.get(key));
         }
+        // make sorted lists over the best risers
         for(int i = 0; i < list0.size(); i++) {
             for(int j = 1; j < list0.size(); j++) {
                 if (list1.get(j-1) < list1.get(j)) {
@@ -828,6 +947,16 @@ public class StockUtil {
         return dataset;
     }
 
+    /**
+     * Given listmain, size and a period, return the same number of elements from list
+     * 
+     * @param list the list we will search for the listmain elements in
+     * @param listmain the list we want to find represented in list
+     * @param size of the top part of listmain
+     * @param period we want
+     * @return a list of size from list
+     */
+    
     public static List<Stock> listFilterTop(List<Stock> list, List<Stock> listmain, int size) {
         List<Stock> retlist = new ArrayList<Stock>();
         int max = Math.min(size, listmain.size());
@@ -843,6 +972,16 @@ public class StockUtil {
         return retlist;
     }
 
+    /**
+     * Given listmain, size and a period, return the same number of elements from list
+     * 
+     * @param list the list we will search for the listmain elements in
+     * @param listmain the list we want to find represented in list
+     * @param size of the bottom part of listmain
+     * @param period we want
+     * @return a list of size from list
+     */
+    
     public static List<Stock> listFilterBottom(List<Stock> list, List<Stock> listmain, int size, int period) {
         List<Stock> retlist = new ArrayList<Stock>();
         int max = Math.min(size, listmain.size());

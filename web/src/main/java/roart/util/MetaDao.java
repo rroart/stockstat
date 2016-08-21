@@ -4,7 +4,24 @@ import javax.persistence.Transient;
 
 import roart.model.Meta;
 
+/**
+ * 
+ * @author roart
+ *
+ * A DAO for Metadata
+ */
+
 public class MetaDao {
+    
+    /**
+     * Get the string for numbered period
+     * 
+     * @param meta metadata
+     * @param i period
+     * @return string for period
+     * @throws Exception
+     */
+    
     @Transient
     public static String getPeriod(Meta meta, int i) throws Exception {
         if (i == 1) {

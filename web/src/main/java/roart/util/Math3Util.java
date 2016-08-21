@@ -20,10 +20,26 @@ import roart.model.ResultItem;
 import roart.model.Stock;
 import roart.service.ControlService;
 
+/**
+ * 
+ * @author roart
+ *
+ * Statistical utilities
+ */
+
 public class Math3Util {
 
     private static Logger log = LoggerFactory.getLogger(Math3Util.class);
 
+    /**
+     * Create a big table of statistics, based on pairwise statistical test between each pair of items in a market
+     * 
+     * @param retList the returned item list
+     * @param count number of days to use in a sample for comparison
+     * @param stockidmap a map of ids to stocklists
+     * @param stockdatemap a map of date to stocklists
+     */
+    
     public static void getStats(List<ResultItem> retList, int count, Map<String, List<Stock>> stockidmap, Map<String, List<Stock>> stockdatemap) {
         List<String> list = new ArrayList(stockdatemap.keySet());
         Collections.sort(list);
