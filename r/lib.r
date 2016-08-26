@@ -98,6 +98,8 @@ getstockdate <- function(listdate, mydate) {
     return (length(listdate))
 }
 
+# not used
+
 getlistanddiffperiod <- function(datedstocklists, listid, listdate, count, tableintervaldays, period) {
     periodmap <- list()
     stocklistperiod <- matrix(list(), nrow = periods, ncol = count)
@@ -122,6 +124,8 @@ getlistanddiffperiod <- function(datedstocklists, listid, listdate, count, table
     return(list(periodmap, stocklistperiod))
 }
 
+# not used. and slow
+
 getperiodlist <- function(list1, list2) {
     c <- 0
     list <- list()
@@ -141,6 +145,25 @@ getperiodlist <- function(list1, list2) {
 
 
 getperiodmap <- function(list1, list2) {
+    list <- list()
+    df1 <- data.frame(list1[1])
+    df2 <- data.frame(list2[1])
+    list1 <- df1$id
+    list2 <- df2$id
+    for (j in 1:length(list2)) {
+        id <- list2[j]
+        list[id] <- NA
+        i <- match(id, list1)
+        if (!is.na(i)) {
+            list[id] <- j - i
+        }
+    }
+    return (list)
+}
+
+# slow. not used
+
+getperiodmapold <- function(list1, list2) {
     list <- list()
     df1 <- data.frame(list1[1])
     df2 <- data.frame(list2[1])
