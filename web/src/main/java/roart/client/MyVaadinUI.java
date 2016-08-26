@@ -369,41 +369,6 @@ public class MyVaadinUI extends UI
         return button;
     }
 
-    private Button getOverlapping() {
-        Button button = new Button("Overlapping");
-        button.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                ControlService maininst = new ControlService();
-                maininst.overlapping();
-                Notification.show("Request sent");
-            }
-        });
-        return button;
-    }
-
-    private TextField getDbItem() {
-        TextField tf = new TextField("Database md5 id");
-
-        // Handle changes in the value
-        tf.addValueChangeListener(new Property.ValueChangeListener() {
-            public void valueChange(ValueChangeEvent event) {
-                // Assuming that the value type is a String
-                String value = (String) event.getProperty().getValue();
-                // Do something with the value
-                ControlService maininst = new ControlService();
-                try {
-                    maininst.dbindex(value);
-                    Notification.show("Request sent");
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
-            }
-        });
-        // Fire value changes immediately when the field loses focus
-        tf.setImmediate(true);
-        return tf;
-    }
-
     private ListSelect getMarkets() {
         ListSelect ls = new ListSelect("Get market");
         Set<String> languages = null;

@@ -42,59 +42,107 @@ import com.vaadin.server.StreamResource;
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
-    public enum Config { REINDEXLIMIT, INDEXLIMIT, FAILEDLIMIT, OTHERTIMEOUT, TIKATIMEOUT, MLTCOUNT, MLTMINTF, MLTMINDF };
-    public static Map<Config, Integer> configMap = new HashMap<Config, Integer>();
-    public static Map<Config, String> configStrMap = new HashMap<Config, String>();
+    private static Date mydate = null;
 
-    private static volatile Integer writelock = new Integer(-1);
+    static String mymarket = "0";
 
-    private static int dirsizelimit = 100;
+    static Integer mydays = 5;
 
-    private static volatile int mycounter = 0;
+    static Integer mytopbottom = 10;
 
-    public static int getMyCounter() {
-        return mycounter++;
-    }
+    static Integer mytabledays = 10;
 
-    // called from ui
-    public void overlapping() {
-    }
+    static Integer mytableintervaldays = 5;
 
-    @SuppressWarnings("rawtypes")
-    public List<List> overlappingDo() {
-        List<ResultItem> retList = new ArrayList<ResultItem>();
-        ResultItem ri = new ResultItem();
-        ri.add("Value");
-        ri.add("Count");
-        ri.add("Directory 1");
-        ri.add("Directory 2");
-        retList.add(ri);
+    static boolean myequalize = false;
 
-        try {
-            List<Stock> stock = Stock.getAll();
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
+    static boolean mygraphequalize = false;
 
-        List<List> retlistlist = new ArrayList<List>();
-        retlistlist.add(retList);
-        return retlistlist;
-    }
+    static boolean mygraphequalizeunify = false;
 
-    public void dbindex(String md5) throws Exception {
-    }
-
-    public void dbsearch(String md5) throws Exception {
-    }
-
-    public static Date mydate = null; //new Date();
-
+    /**
+     * Set current date
+     * 
+     * @param date
+     */
+    
     public static void setdate(Date date) {
         mydate = date;
     }
 
+    /**
+     * Get current date
+     * 
+     * @return date
+     */
+    
     public static Date getdate() {
         return mydate;
+    }
+
+
+    public void setMarket(String value) {
+        mymarket = value;
+    }
+
+    public static String getMarket() {
+        return mymarket;
+    }
+    
+    public void setDays(Integer integer) {
+        mydays = integer;
+    }
+
+    public int getDays() {
+        return mydays;
+    }
+
+    public void setTopBottom(Integer integer) {
+        mytopbottom = integer;
+    }
+
+    public static int getTopBottom() {
+        return mytopbottom;
+    }
+
+    public void setTableDays(Integer integer) {
+        mytabledays = integer;
+    }
+
+    public static int getTableDays() {
+        return mytabledays;
+    }
+
+    public void setTableIntervalDays(Integer integer) {
+        mytableintervaldays = integer;
+    }
+
+    public static int getTableIntervalDays() {
+        return mytableintervaldays;
+    }
+
+    public void setEqualize(Boolean integer) {
+        myequalize = integer;
+    }
+
+    public static boolean isEqualize() {
+        return myequalize;
+    }
+
+    public void setGraphEqualize(Boolean integer) {
+        mygraphequalize = integer;
+    }
+
+    public static boolean isGraphEqualize() {
+        return mygraphequalize;
+    }
+
+    public void setGraphEqUnify(Boolean integer) {
+        mygraphequalizeunify = integer;
+    }
+
+    public static boolean isGraphEqUnify() {
+        return mygraphequalizeunify;
     }
 
     /**
@@ -146,8 +194,8 @@ public class ControlService {
         
         retList.add(ri);
         try {
-            HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
-            HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
+            Map<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
+            Map<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
             if (getdate() == null) {
                 SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
                 String date = null;
@@ -273,8 +321,8 @@ public class ControlService {
             List<Stock> stocks = Stock.getAll(mymarket);
             log.info("stocks " + stocks.size());
             String[] periodText = getPeriodText(mymarket);
-            HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
-            HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
+            Map<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
+            Map<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
 
             // sort based on date
             for (String key : stockidmap.keySet()) {
@@ -350,7 +398,7 @@ public class ControlService {
              */
 
             for (int i = 0; i < StockUtil.PERIODS; i++) {
-                HashMap<String, Integer> mymap = new HashMap<String, Integer>();
+                Map<String, Integer> mymap = new HashMap<String, Integer>();
                 for (int j = 0; j < days - 1; j++) {
                     for (String id : periodmaps[j][i].keySet()) {
                         Integer rise = mymap.get(id);
@@ -613,8 +661,8 @@ public class ControlService {
         try {
             List<Stock> stocks = Stock.getAll(mymarket);
             log.info("stocks " + stocks.size());
-            HashMap<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
-            HashMap<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
+            Map<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
+            Map<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
 
             // sort based on date
             for (String key : stockidmap.keySet()) {
@@ -657,86 +705,6 @@ public class ControlService {
                 return;
             }
         }
-    }
-
-    static String mymarket = "0";
-
-    public void setMarket(String value) {
-        mymarket = value;
-    }
-
-    public static String getMarket() {
-        return mymarket;
-    }
-    
-    static Integer mydays = 5;
-
-    public void setDays(Integer integer) {
-        mydays = integer;
-    }
-
-    public int getDays() {
-        return mydays;
-    }
-
-    static Integer mytopbottom = 10;
-
-    public void setTopBottom(Integer integer) {
-        mytopbottom = integer;
-    }
-
-    public static int getTopBottom() {
-        return mytopbottom;
-    }
-
-    static Integer mytabledays = 10;
-
-    public void setTableDays(Integer integer) {
-        mytabledays = integer;
-    }
-
-    public static int getTableDays() {
-        return mytabledays;
-    }
-
-    static Integer mytableintervaldays = 5;
-
-    public void setTableIntervalDays(Integer integer) {
-        mytableintervaldays = integer;
-    }
-
-    public static int getTableIntervalDays() {
-        return mytableintervaldays;
-    }
-
-    static boolean myequalize = false;
-
-    public void setEqualize(Boolean integer) {
-        myequalize = integer;
-    }
-
-    public static boolean isEqualize() {
-        return myequalize;
-    }
-
-    static boolean mygraphequalize = false;
-
-    public void setGraphEqualize(Boolean integer) {
-        mygraphequalize = integer;
-    }
-
-    public static boolean isGraphEqualize() {
-        return mygraphequalize;
-    }
-
-    static boolean mygraphequalizeunify = false;
-
-    public void setGraphEqUnify(Boolean integer) {
-        mygraphequalizeunify = integer;
-    }
-
-    public static boolean isGraphEqUnify() {
-        return mygraphequalizeunify;
     }
 
 }

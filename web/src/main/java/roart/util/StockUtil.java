@@ -42,7 +42,7 @@ public class StockUtil {
 
         // make sorted period1, sorted current day
         // make sorted period1, sorted day offset
-        HashMap<String, Integer>[][] periodmaps = new HashMap[count - 1][PERIODS];
+        Map<String, Integer>[][] periodmaps = new HashMap[count - 1][PERIODS];
         List<Stock>[][] stocklistPeriod = new ArrayList[PERIODS][count];
         if (arr != null) {
             arr[0] = stocklistPeriod;
@@ -51,7 +51,7 @@ public class StockUtil {
         // Do for all wanted days
 
         for (int j = 0; j < count; j++) {
-            HashMap<String, Integer>[] periodmap = new HashMap[PERIODS];
+            Map<String, Integer>[] periodmap = new HashMap[PERIODS];
             //List<Stock> datedstocksoffset = getOffsetList(stockidmap, mydays);
             //datedstocklists[j] = datedstocksoffset;
             boolean hasPeriod[] = new boolean[PERIODS];
@@ -140,9 +140,9 @@ public class StockUtil {
      * @return a list of chart differences, indicating rise or decline
      */
 
-    public static HashMap<String, Integer> getPeriodmap(
+    public static Map<String, Integer> getPeriodmap(
             List<Stock> stocklistPeriod1Day0, List<Stock> stocklistPeriod1Day1) {
-        HashMap<String, Integer> periodmap = new HashMap<String, Integer>();
+        Map<String, Integer> periodmap = new HashMap<String, Integer>();
         for (int i = 0; i < stocklistPeriod1Day1.size(); i++) {
             for (int j = 0; j < stocklistPeriod1Day0.size(); j++) {
                 if (stocklistPeriod1Day0.get(j).getId() == null) {
@@ -160,19 +160,19 @@ public class StockUtil {
     }
 
     private static List<Stock> getOffsetList(
-            HashMap<String, List<Stock>> stockmap, int mydays) {
+            Map<String, List<Stock>> stockmap, int mydays) {
         List<Stock> retstocklist = new ArrayList<Stock>();
         for (String key : stockmap.keySet()) {
             Stock stock = null;
             List<Stock> stocklist = stockmap.get(key);
-            if (ControlService.mydate == null) {
+            if (ControlService.getdate() == null) {
                 if (stocklist.size() > mydays) {
                     stock = stocklist.get(mydays);
                 } else {
                     continue;
                 }
             } else {
-                int i = StockUtil.getStockDate(stocklist, ControlService.mydate);
+                int i = StockUtil.getStockDate(stocklist, ControlService.getdate());
                 if (i >= 0) {
                     if (stocklist.size() > (mydays + i)) {
                         stock = stocklist.get(mydays + i);
@@ -194,8 +194,8 @@ public class StockUtil {
      * @return the split list
      */
 
-    public static HashMap<String, List<Stock>> splitId(List<Stock> stocks) {
-        HashMap<String, List<Stock>> mymap = new HashMap<String, List<Stock>>();
+    public static Map<String, List<Stock>> splitId(List<Stock> stocks) {
+        Map<String, List<Stock>> mymap = new HashMap<String, List<Stock>>();
         for (Stock stock : stocks) {
             List<Stock> stocklist = mymap.get(stock.getId());
             if (stocklist == null) {
@@ -214,8 +214,8 @@ public class StockUtil {
      * @return the split list
      */
 
-    public static HashMap<String, List<Stock>> splitDate(List<Stock> stocks) {
-        HashMap<String, List<Stock>> mymap = new HashMap<String, List<Stock>>();
+    public static Map<String, List<Stock>> splitDate(List<Stock> stocks) {
+        Map<String, List<Stock>> mymap = new HashMap<String, List<Stock>>();
         for (Stock stock : stocks) {
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String date = dt.format(stock.getDate());
@@ -598,14 +598,12 @@ public class StockUtil {
      */
     
     private static Integer getPeriodByMarket(String market, Set<Pair<String, Integer>> pairs) {
-        Integer periodInt = null;
-        for (Pair pair : pairs) {
+        for (Pair<String, Integer> pair : pairs) {
             String tmpMarket = (String) pair.getFirst();
             if (market.equals(tmpMarket)) {
                 return (Integer) pair.getSecond();
             }
         }
-        //System.out.println("null mark " + market + " " + pairs.size());
         return null;
     }
     
