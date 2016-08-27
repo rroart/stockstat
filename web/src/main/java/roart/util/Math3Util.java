@@ -35,16 +35,16 @@ public class Math3Util {
      * Create a big table of statistics, based on pairwise statistical test between each pair of items in a market
      * 
      * @param retList the returned item list
+     * @param datedate the desired date
      * @param count number of days to use in a sample for comparison
      * @param stockidmap a map of ids to stocklists
      * @param stockdatemap a map of date to stocklists
      */
     
-    public static void getStats(List<ResultItem> retList, int count, Map<String, List<Stock>> stockidmap, Map<String, List<Stock>> stockdatemap) {
+    public static void getStats(List<ResultItem> retList, Date datedate, int count, Map<String, List<Stock>> stockidmap, Map<String, List<Stock>> stockdatemap) {
         List<String> list = new ArrayList(stockdatemap.keySet());
         Collections.sort(list);
         String date = null;
-        Date datedate = ControlService.getdate();
         if (datedate != null) {
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             date = dt.format(datedate);                

@@ -99,12 +99,13 @@ public class StockUtil {
      * Create an array of stocklists based on the desired date and intervals
      * 
      * @param stockdatemap a map of dates to stock lists
+     * @param datedate TODO
      * @param count the number of lists to return
      * @param mytableintervaldays the interval between the dates
      * @return array of stock lists based on date
      */
     
-    public static List<Stock>[] getDatedstocklists(Map<String, List<Stock>> stockdatemap, int count, int mytableintervaldays) {
+    public static List<Stock>[] getDatedstocklists(Map<String, List<Stock>> stockdatemap, Date datedate, int count, int mytableintervaldays) {
         List<Stock>[] datedstocklists = new ArrayList[count];
         for (int i = 0; i < count; i ++) {
             datedstocklists[i] = new ArrayList();          
@@ -113,7 +114,6 @@ public class StockUtil {
         List<String> list = new ArrayList(stockdatemap.keySet());
         Collections.sort(list);
         String date = null;
-        Date datedate = ControlService.getdate();
         if (datedate != null) {
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             date = dt.format(datedate);                
@@ -160,19 +160,19 @@ public class StockUtil {
     }
 
     private static List<Stock> getOffsetList(
-            Map<String, List<Stock>> stockmap, int mydays) {
+            Map<String, List<Stock>> stockmap, Date datedate, int mydays) {
         List<Stock> retstocklist = new ArrayList<Stock>();
         for (String key : stockmap.keySet()) {
             Stock stock = null;
             List<Stock> stocklist = stockmap.get(key);
-            if (ControlService.getdate() == null) {
+            if (datedate == null) {
                 if (stocklist.size() > mydays) {
                     stock = stocklist.get(mydays);
                 } else {
                     continue;
                 }
             } else {
-                int i = StockUtil.getStockDate(stocklist, ControlService.getdate());
+                int i = StockUtil.getStockDate(stocklist, datedate);
                 if (i >= 0) {
                     if (stocklist.size() > (mydays + i)) {
                         stock = stocklist.get(mydays + i);

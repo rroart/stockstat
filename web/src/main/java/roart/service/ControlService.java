@@ -42,23 +42,23 @@ import com.vaadin.server.StreamResource;
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
-    private static Date mydate = null;
+    private Date mydate = null;
 
-    static String mymarket = "0";
+    private String mymarket = "0";
 
-    static Integer mydays = 5;
+    private Integer mydays = 5;
 
-    static Integer mytopbottom = 10;
+    private Integer mytopbottom = 10;
 
-    static Integer mytabledays = 10;
+    private Integer mytabledays = 10;
 
-    static Integer mytableintervaldays = 5;
+    private Integer mytableintervaldays = 5;
 
-    static boolean myequalize = false;
+    private boolean myequalize = false;
 
-    static boolean mygraphequalize = false;
+    private boolean mygraphequalize = false;
 
-    static boolean mygraphequalizeunify = false;
+    private boolean mygraphequalizeunify = false;
 
     /**
      * Set current date
@@ -66,7 +66,7 @@ public class ControlService {
      * @param date
      */
     
-    public static void setdate(Date date) {
+    public void setdate(Date date) {
         mydate = date;
     }
 
@@ -76,7 +76,7 @@ public class ControlService {
      * @return date
      */
     
-    public static Date getdate() {
+    public Date getdate() {
         return mydate;
     }
 
@@ -85,7 +85,7 @@ public class ControlService {
         mymarket = value;
     }
 
-    public static String getMarket() {
+    public String getMarket() {
         return mymarket;
     }
     
@@ -101,7 +101,7 @@ public class ControlService {
         mytopbottom = integer;
     }
 
-    public static int getTopBottom() {
+    public int getTopBottom() {
         return mytopbottom;
     }
 
@@ -109,7 +109,7 @@ public class ControlService {
         mytabledays = integer;
     }
 
-    public static int getTableDays() {
+    public int getTableDays() {
         return mytabledays;
     }
 
@@ -117,7 +117,7 @@ public class ControlService {
         mytableintervaldays = integer;
     }
 
-    public static int getTableIntervalDays() {
+    public int getTableIntervalDays() {
         return mytableintervaldays;
     }
 
@@ -125,7 +125,7 @@ public class ControlService {
         myequalize = integer;
     }
 
-    public static boolean isEqualize() {
+    public boolean isEqualize() {
         return myequalize;
     }
 
@@ -133,7 +133,7 @@ public class ControlService {
         mygraphequalize = integer;
     }
 
-    public static boolean isGraphEqualize() {
+    public boolean isGraphEqualize() {
         return mygraphequalize;
     }
 
@@ -141,7 +141,7 @@ public class ControlService {
         mygraphequalizeunify = integer;
     }
 
-    public static boolean isGraphEqUnify() {
+    public boolean isGraphEqUnify() {
         return mygraphequalizeunify;
     }
 
@@ -151,15 +151,15 @@ public class ControlService {
      * @return the tabular result lists
      */
 
-    public static List getContent() {
+    public List getContent() {
         List<Stock> stocks = null;
         try {
-            stocks = Stock.getAll(mymarket);
+            stocks = Stock.getAll(getMarket());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         log.info("stocks " + stocks.size());
-        String[] periodText = getPeriodText(mymarket);
+        String[] periodText = getPeriodText(getMarket());
         List<ResultItem> retList = new ArrayList<ResultItem>();
         ResultItem ri = new ResultItem();
         //ri.add("Id");
@@ -219,7 +219,7 @@ public class ControlService {
              * Make stock lists based on the intervals
              */
             
-            List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, 2, mytableintervaldays);
+            List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, getdate(), 2, getTableIntervalDays());
             
             Map<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, 2, null);
             Map<String, Integer>[] periodmap = periodmaps[0];
@@ -232,10 +232,10 @@ public class ControlService {
             //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
             for (Stock stock : datedstocks) {
                 //System.out.println("" + mydate.getTime() + "|" + stock.getDate().getTime());
-                if (mymarket == null) {
+                if (getMarket() == null) {
                     continue;
                 }
-                if (false &&  mydate != null && mydate.getTime() != stock.getDate().getTime()) {
+                if (false &&  getdate() != null && getdate().getTime() != stock.getDate().getTime()) {
                     continue;
                 }
                 ResultItem r = new ResultItem();
@@ -287,7 +287,7 @@ public class ControlService {
      * @param market
      */
     
-    private static String[] getPeriodText(String market) {
+    private String[] getPeriodText(String market) {
         String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6" };
         Meta meta = null;
         try {
@@ -315,12 +315,12 @@ public class ControlService {
      * @return the image list
      */
 
-    public static List getContentGraph() {
+    public List getContentGraph() {
         List retlist = new ArrayList<>();
         try {
-            List<Stock> stocks = Stock.getAll(mymarket);
+            List<Stock> stocks = Stock.getAll(getMarket());
             log.info("stocks " + stocks.size());
-            String[] periodText = getPeriodText(mymarket);
+            String[] periodText = getPeriodText(getMarket());
             Map<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
 
@@ -343,7 +343,7 @@ public class ControlService {
              * Make stock lists based on the intervals
              */
             
-            List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, days, mytableintervaldays);
+            List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, getdate(), days, getTableIntervalDays());
             
             Map<String, Integer>[][] periodmaps = StockUtil.getListAndDiff(datedstocklists, days, arr);
             List<Stock>[][] stocklistPeriod = (List<Stock>[][]) arr[0];
@@ -365,7 +365,7 @@ public class ControlService {
                         stocklistPeriod, i);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Top period " + periodText[i], "Time " + date0 + " - " + date1, "Value", days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new2"+i+".svg", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new2"+i+".svg", days, topbottom, getTableDays(), getTopBottom());
                     retlist.add(r);
                 }
             }
@@ -375,7 +375,7 @@ public class ControlService {
                         stocklistPeriod, i);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + periodText[i], "Time " + date0 + " - " + date1, "Value", days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new3"+i+".svg", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new3"+i+".svg", days, topbottom, getTableDays(), getTopBottom());
                     retlist.add(r);
                 }
             }
@@ -415,7 +415,7 @@ public class ControlService {
                         stocklistPeriod, mymap, i);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Top climber period " + periodText[i], "Time " + date0 + " - " + date1, "Value", days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new5" + i +".svg", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new5" + i +".svg", days, topbottom, getTableDays(), getTopBottom());
                     retlist.add(r);
                 }
             }
@@ -466,7 +466,7 @@ public class ControlService {
      * @return the image list
      */
 
-    public static List getContentGraph(Set<Pair> ids) {
+    public List getContentGraph(Set<Pair> ids) {
         List retlist = new ArrayList<>();
         //List<String> ids = new ArrayList<String>();
         Set<String> markets = new HashSet<String>();
@@ -533,7 +533,7 @@ public class ControlService {
                  * Make stock lists based on the intervals
                  */
                 
-                List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, days, mytableintervaldays);
+                List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, getdate(), days, getTableIntervalDays());
                 marketdata.datedstocklists = datedstocklists;
                 
                 //Object[] arr = new Object[1];
@@ -570,7 +570,7 @@ public class ControlService {
                 DefaultCategoryDataset dataset = StockUtil.getFilterChartPeriod(days, ids, marketdatamap, perioddata);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Period " + periodText, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+".svg", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+".svg", days, topbottom, getTableDays(), getTopBottom());
                     retlist.add(r);
                 }
             }
@@ -583,12 +583,12 @@ public class ControlService {
                 DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.INDEXVALUE, isGraphEqualize(), dataseteq);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Index", "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom, getTableDays(), getTopBottom());
                     retlist.add(r);
                 }
                 if (dataset != null && dataseteq != null) {
                     JFreeChart c = SvgUtil.getChart(dataseteq, "Index", "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom, getTableDays(), getTopBottom());
                     retlist.add(r);
                 }
             }
@@ -605,7 +605,7 @@ public class ControlService {
                         currency = "Value";
                     }
                     JFreeChart c = SvgUtil.getChart(dataset, "Price", "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom, getTableDays(), getTopBottom());
                     retlist.add(r);
                 }
                 if (dataset != null && dataseteq != null) {
@@ -614,7 +614,7 @@ public class ControlService {
                         currency = "Value";
                     }
                     JFreeChart c = SvgUtil.getChart(dataseteq, "Price", "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom);
+                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom, getTableDays(), getTopBottom());
                     retlist.add(r);
                 }
             }
@@ -633,7 +633,7 @@ public class ControlService {
      * @return the tabular result lists
      */
 
-    public static List getContentStat() {
+    public List getContentStat() {
         //mydate.setHours(0);
         //mydate.setMinutes(0);
         //mydate.setSeconds(0);
@@ -659,7 +659,7 @@ public class ControlService {
         ri.add("Pearson (e)");
         retList.add(ri);
         try {
-            List<Stock> stocks = Stock.getAll(mymarket);
+            List<Stock> stocks = Stock.getAll(getMarket());
             log.info("stocks " + stocks.size());
             Map<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
@@ -679,13 +679,13 @@ public class ControlService {
              * Make stock lists based on the intervals
              */
             
-            List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, days, mytableintervaldays);
+            List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, getdate(), days, getTableIntervalDays());
             
             List<Stock> datedstocks = datedstocklists[0];
             if (datedstocks == null) {
                 return null;
             }
-            Math3Util.getStats(retList, days, stockidmap, stockdatemap);
+            Math3Util.getStats(retList, getdate(), days, stockidmap, stockdatemap);
             
             log.info("retlist " +retList.size());
         } catch (Exception e) {
@@ -696,7 +696,7 @@ public class ControlService {
         return retlistlist;
     }
 
-    private static void printstock(List<Stock> stocklistPeriod4Day1, int imax) {
+    private void printstock(List<Stock> stocklistPeriod4Day1, int imax) {
         int i = 0;
         for (Stock s : stocklistPeriod4Day1) {
             //log.info(s.getId() + " : " + s.getName() + " : " + s.getPeriod4());

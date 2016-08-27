@@ -149,13 +149,17 @@ public class MyVaadinUI extends UI
 
     public static int x = 0, y = 0;
     
+    ControlService controlService = null;
+    
     @Override
     protected void init(VaadinRequest request) {
         
+        controlService = new ControlService();
         final VerticalLayout layout = new VerticalLayout();
         x = com.vaadin.server.Page.getCurrent().getBrowserWindowWidth();
         y = com.vaadin.server.Page.getCurrent().getBrowserWindowHeight();
-        VerticalLayout searchTab = null, controlPanelTab = null;
+        VerticalLayout searchTab;
+        VerticalLayout controlPanelTab;
 
         com.vaadin.server.Page.getCurrent().setTitle("Stock statistics by Roar Thronæs");
 
@@ -316,16 +320,15 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String                 
                 Date date = (Date) event.getProperty().getValue();
                 // Do something with the value                              
-                ControlService maininst = new ControlService();
                 long time = date.getTime();
                 // get rid of millis garbage
                 time = time / 1000;
                 time = time * 1000;
                 date = new Date(time);
                 try {
-                    maininst.setdate(date);
+                    controlService.setdate(date);
                     Notification.show("Request sent");
-                    displayResults(maininst);
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -340,11 +343,10 @@ public class MyVaadinUI extends UI
         Button button = new Button("Reset date");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-                ControlService maininst = new ControlService();
                 try {
-                    maininst.setdate(null);
+                    controlService.setdate(null);
                     Notification.show("Request sent");
-                    displayResults(maininst);
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -357,10 +359,9 @@ public class MyVaadinUI extends UI
         Button button = new Button("Get stats");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-                ControlService maininst = new ControlService();
                 try {
                     Notification.show("Request sent");
-                    displayResultsStat(maininst);
+                    displayResultsStat();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -393,11 +394,10 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String                 
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value                              
-                ControlService maininst = new ControlService();
                 try {
-                    maininst.setMarket(value);
+                    controlService.setMarket(value);
                     Notification.show("Request sent");
-                    displayResults(maininst);
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -414,11 +414,10 @@ public class MyVaadinUI extends UI
         Button button = new Button("Choose graph");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-                ControlService maininst = new ControlService();
                 try {
                     
                     Notification.show("Request sent");
-                    displayResultsGraph(maininst, chosen);
+                    displayResultsGraph(chosen);
                     chosen.clear();
                     ver.removeAllComponents();
                 } catch (Exception e) {
@@ -453,7 +452,6 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String                 
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value                              
-                ControlService maininst = new ControlService();
                 try {
                     ListSelect ls2 = getUnits(value, ls, verManualList);
                     horManual.addComponent(ls2);
@@ -497,7 +495,6 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String                 
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value                              
-                ControlService maininst = new ControlService();
                 try {
                     String id = null;
                     for (Stock stock : finalstocks) {
@@ -532,11 +529,10 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
-                ControlService maininst = new ControlService();
                 try {
-                    maininst.setDays(new Integer(value));
+                    controlService.setDays(new Integer(value));
                     Notification.show("Request sent");
-                    displayResults(maininst);
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -557,11 +553,10 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
-                ControlService maininst = new ControlService();
                 try {
-                    maininst.setTableIntervalDays(new Integer(value));
+                    controlService.setTableIntervalDays(new Integer(value));
                     Notification.show("Request sent");
-                    displayResults(maininst);
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -582,11 +577,10 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
-                ControlService maininst = new ControlService();
                 try {
-                    maininst.setTableDays(new Integer(value));
+                    controlService.setTableDays(new Integer(value));
                     Notification.show("Request sent");
-                    displayResults(maininst);
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -607,11 +601,10 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
-                ControlService maininst = new ControlService();
                 try {
-                    maininst.setTopBottom(new Integer(value));
+                    controlService.setTopBottom(new Integer(value));
                     Notification.show("Request sent");
-                    displayResults(maininst);
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -623,25 +616,25 @@ public class MyVaadinUI extends UI
         return tf;
     }
 
-    private void displayResults(ControlService maininst) {
-        List list = maininst.getContent();
+    private void displayResults() {
+        List list = controlService.getContent();
         Layout layout = displayResultListsTab(list);
-        List listGraph = maininst.getContentGraph();
+        List listGraph = controlService.getContentGraph();
         displayListGraphTab(layout, listGraph);
     }
 
 
-    private void displayResultsStat(ControlService maininst) {
-        List list = maininst.getContentStat();
+    private void displayResultsStat() {
+        List list = controlService.getContentStat();
         Layout layout = displayResultListsTab(list);
     }
 
-    private void displayResultsGraph(ControlService maininst, Set<Pair> ids) {
+    private void displayResultsGraph(Set<Pair> ids) {
         VerticalLayout tab = new VerticalLayout();
         tab.setCaption("Graph results");
         tabsheet.addComponent(tab);
         tabsheet.getTab(tab).setClosable(true);
-        List listGraph = maininst.getContentGraph(ids);
+        List listGraph = controlService.getContentGraph(ids);
         displayListGraphTab(tab, listGraph);
     }
 
@@ -655,8 +648,8 @@ public class MyVaadinUI extends UI
             //if (true) continue;
             Image image = new Image ("Image", resource);
             //Embedded image = new Embedded("1", img);
-            int xsize = 100 + 300 + 10 * ControlService.getTableDays();
-            int ysize = 200 + 400 + 10 * ControlService.getTopBottom();
+            int xsize = 100 + 300 + 10 * controlService.getTableDays();
+            int ysize = 200 + 400 + 10 * controlService.getTopBottom();
             //System.out.println("xys1 " + xsize + " " + ysize);
             if (xsize + 100 > x) {
                 xsize = x - 100;
@@ -683,9 +676,8 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
-                ControlService maininst = new ControlService();
                 try {
-                    maininst.setEqualize(value);
+                    controlService.setEqualize(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -706,9 +698,8 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
-                ControlService maininst = new ControlService();
                 try {
-                    maininst.setGraphEqualize(value);
+                    controlService.setGraphEqualize(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -729,9 +720,8 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
-                ControlService maininst = new ControlService();
                 try {
-                    maininst.setGraphEqUnify(value);
+                    controlService.setGraphEqUnify(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -821,13 +811,12 @@ public class MyVaadinUI extends UI
         button.setHtmlContentAllowed(true);
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
-                ControlService maininst = new ControlService();
                 String idarr[] = id.split(",");
                 Set<Pair> ids = new HashSet<Pair>();
                 for (String id : idarr) {
-                    ids.add(new Pair(ControlService.getMarket(), id));
+                    ids.add(new Pair(controlService.getMarket(), id));
                 }
-                displayResultsGraph(maininst, ids);
+                displayResultsGraph(ids);
                 Notification.show("Request sent");
             }
         });

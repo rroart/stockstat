@@ -149,16 +149,20 @@ public class SvgUtil {
      * 
      * @param chart Chart
      * @param name Filename for the debug image
-     * @param xsize Suggested X axis size
-     * @param ysize Suggested Y axis size
+     * @param days TODO
+     * @param topbottom TODO
+     * @param xsize2 Suggested X axis size
+     * @param ysize2 Suggested Y axis size
+     * @param days how many days to display
+     * @param topbottom how many items
      * @return a stream resource for the image
      */
 
-    public static StreamResource chartToResource(JFreeChart chart, String name, int xsize2, int ysize2) {
+    public static StreamResource chartToResource(JFreeChart chart, String name, int xsize2, int ysize2, int days, int topbottom) {
         StreamResource resource = null;
         try {
-            int xsize = 0*200 + 1*100 + 300 + 10 * ControlService.getTableDays();
-            int ysize = 0*200 + 1*200 + 400 + 10 * ControlService.getTopBottom();
+            int xsize = 0*200 + 1*100 + 300 + 10 * days;
+            int ysize = 0*200 + 1*200 + 400 + 10 * topbottom;
             //System.out.println("xys3 " + xsize + " " + ysize);
             if (xsize + 0*100 > MyVaadinUI.x) {
                 xsize = MyVaadinUI.x - 0*100 - 200;
