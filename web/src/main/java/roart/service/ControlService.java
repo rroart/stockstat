@@ -158,6 +158,9 @@ public class ControlService {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        if (stocks == null) {
+            return null;
+        }
         log.info("stocks " + stocks.size());
         String[] periodText = getPeriodText(getMarket());
         List<ResultItem> retList = new ArrayList<ResultItem>();
