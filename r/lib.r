@@ -237,6 +237,9 @@ mytopperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, ma
             rise <- 0
             if (j < days) {
                 rise <- list2[[id]]
+                if (is.null(rise)) {
+                    rise <- 0
+                }
             }
             print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[i],33), as.POSIXct(list11$date[i], origin="1970-01-01"), listperiod(list11, period, i), rise, list11$id[[i]]))
         }
@@ -271,6 +274,9 @@ mybottomperiod <- function(datedstocklists, stocklistperiod, periodmaps, period,
             rise <- 0
             if (j < days) {
                 rise <- list2[[id]]
+                if (is.null(rise)) {
+                    rise <- 0
+                }
             }
             
             print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[len - i],33), as.POSIXct(list11$date[len - i], origin="1970-01-01"), listperiod(list11, period, len - i), rise, list11$id[[len - i]]))
