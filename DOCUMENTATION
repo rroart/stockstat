@@ -208,7 +208,7 @@ Table days (R days): how many days to use for the graph or statistics
     </listitem>
     <listitem>
       <para>
-    date: the recent date
+    mydate: the recent date, alternative NULL for getting the most recent, or a number for the previous days.
       </para>
     </listitem>
     <listitem>
