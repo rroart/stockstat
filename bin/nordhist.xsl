@@ -56,6 +56,7 @@
     </xsl:template>
 
     <xsl:template match="tr">
+      <xsl:if test="not(td[9]/text() = '&#160;')">
       <row>
 	<id>
 	  <xsl:variable name="firstpart" select="substring-after(td[2]/div/a/@href, '=')"/>
@@ -87,6 +88,7 @@
 	  <xsl:copy-of select="td[8]/span/text()"/>
 	</period6>
       </row>
+      </xsl:if>
     </xsl:template>
 
     <xsl:template match="script"/>
