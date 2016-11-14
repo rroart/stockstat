@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.persistence.Transient;
 
-import roart.model.HibernateUtil;
-import roart.model.Stock;
+import javax.jdo.Query;
+
+import roart.database.DataNucleusUtil;
+import roart.database.Stock;
 
 public class StockDao {
     @Transient
@@ -54,7 +56,8 @@ public class StockDao {
 
     @Transient
     public static List<Date> getDates() throws Exception {
-        return (List<Date>) HibernateUtil.convert(HibernateUtil.currentSession().createQuery("select distinct(date) from Stock").list(), Date.class);
+        Query query = DataNucleusUtil.currentSession().getPm().newQuery("select distinct(date) from Stock");
+	return (List<Date>) query.execute();
     }
 
 }

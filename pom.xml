@@ -3,49 +3,13 @@
   <groupId>roart</groupId>
   <artifactId>stockstat-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.4-HBASE</version>
   <name>Stock Statistics Parent</name>
   <modules>
     <module>db</module>
     <module>input</module>
     <module>web</module>
   </modules>
-  <build>
-	<plugins>
-      <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <configuration>
-                <archive>
-                    <manifest>
-                        <mainClass>roart.Main</mainClass>
-                    </manifest>
-                </archive>
-            </configuration>
-        </plugin>
-     <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-                <archive>
-                    <manifest>
-                        <mainClass>roart.Main</mainClass>
-                    </manifest>
-                </archive>
-        </configuration>
-     </plugin>
-	</plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -89,6 +53,47 @@
       <version>${ehcache.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-core</artifactId>
+      <version>${datanucleus.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hbase</groupId>
+      <artifactId>hbase-client</artifactId>
+      <version>${hbase.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-hbase</artifactId>
+      <version>${datanucleus.version}</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>org.apache.hbase</groupId>
+	  <artifactId>hbase</artifactId>
+	</exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-rdbms</artifactId>
+      <version>${datanucleus.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-api-jdo</artifactId>
+      <version>${datanucleus.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo-api</artifactId>
+      <version>${jdo.version}</version>
+    </dependency>
+    <!--dependency>
+	<groupId>org.apache.zookeeper</groupId>
+	<artifactId>zookeeper</artifactId>
+	<version>${zookeeper.version}</version>
+    </dependency-->
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>${slf4j.version}</version>
@@ -107,6 +112,10 @@
     <ehcache.version>2.6.11</ehcache.version>
     <slf4j.version>1.7.13</slf4j.version>
     <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
+    <datanucleus.version>4.1.0-release</datanucleus.version>
+    <hbase.version>1.2.1</hbase.version>
+    <zookeeper.version>3.4.6</zookeeper.version>
+    <jdo.version>3.0.1</jdo.version>
     <junit.version>4.12</junit.version>
     <log4j.version>1.2.17</log4j.version>
   </properties>

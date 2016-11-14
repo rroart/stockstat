@@ -5,9 +5,9 @@ import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import roart.model.Stock;
-import roart.model.HibernateUtil;
-import roart.model.Meta;
+import roart.database.Stock;
+import roart.database.DataNucleusUtil;
+import roart.database.Meta;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -138,7 +138,7 @@ public class Main {
 	    //String  = Elem.getTextContent();
 	    //Element Elem = elem.getElementsByTagName();
 	} 
-		HibernateUtil.commit();
+		DataNucleusUtil.commit();
         System.out.println("Added for length " + nl.getLength());
     	} catch (Exception e) {
     		System.out.println("Exception " +e);

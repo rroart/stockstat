@@ -4,14 +4,77 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4-HBASE</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-db</artifactId>
   <packaging>jar</packaging>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.4-HBASE</version>
   <name>Stock Statistics Database</name>
+  <build>
+    <plugins>
+           <plugin>
+       <groupId>org.datanucleus</groupId>
+       <artifactId>datanucleus-maven-plugin</artifactId>
+       <version>4.0.0-release</version>
+       <configuration>
+	 <api>JDO</api>
+	 <log4jConfiguration>${basedir}/datanucleus/log4j.properties</log4jConfiguration>
+	 <verbose>true</verbose>
+       </configuration>
+       <executions>
+	 <execution>
+	   <phase>process-classes</phase>
+	   <goals>
+	     <goal>enhance</goal>
+	   </goals>
+	 </execution>
+       </executions>
+     </plugin>
+    </plugins>
+  </build>
   <dependencies>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-api-jdo</artifactId>
+      <version>${datanucleus.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-core</artifactId>
+      <version>${datanucleus.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hbase</groupId>
+      <artifactId>hbase-client</artifactId>
+      <version>${hbase.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-hbase</artifactId>
+      <version>${datanucleus.version}</version>
+      <exclusions>
+	<exclusion>
+	  <groupId>org.apache.hbase</groupId>
+	  <artifactId>hbase</artifactId>
+	</exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-rdbms</artifactId>
+      <version>${datanucleus.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.datanucleus</groupId>
+      <artifactId>datanucleus-api-jdo</artifactId>
+      <version>${datanucleus.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo-api</artifactId>
+      <version>${jdo.version}</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

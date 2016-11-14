@@ -1,7 +1,7 @@
 package roart.client;
 
 import roart.model.ResultItem;
-import roart.model.Stock;
+import roart.database.Stock;
 import roart.util.Constants;
 import roart.util.SvgUtil;
 import roart.service.ControlService;
@@ -375,7 +375,7 @@ public class MyVaadinUI extends UI
         Set<String> languages = null;
         try {
             List<String> langs = Stock.getMarkets();
-            langs.remove(null);
+            //langs.remove(null);
             languages = new TreeSet<String>(langs);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -433,7 +433,7 @@ public class MyVaadinUI extends UI
         Set<String> languages = null;
         try {
             List<String> langs = Stock.getMarkets();
-            langs.remove(null);
+            //langs.remove(null);
             languages = new TreeSet<String>(langs);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

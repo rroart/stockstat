@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.model.ResultItem;
-import roart.model.Stock;
+import roart.database.Stock;
 import roart.service.ControlService;
 
 /**

@@ -1,8 +1,8 @@
 package roart.service;
 
-import roart.model.Meta;
+import roart.database.Meta;
 import roart.model.ResultItem;
-import roart.model.Stock;
+import roart.database.Stock;
 
 import javax.servlet.http.*;
 

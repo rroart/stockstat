@@ -2,7 +2,7 @@ package roart.util;
 
 import javax.persistence.Transient;
 
-import roart.model.Meta;
+import roart.database.Meta;
 
 /**
  * 
