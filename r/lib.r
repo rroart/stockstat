@@ -700,13 +700,18 @@ listfiltertop <- function(list, listmain, size) {
 
 getdatedstocklists <- function(listdate, mydate, days, tableintervaldays) {
 #    str(mydate)
+    offset <- 0
+    if (is.double(mydate)) {
+        offset <- round(mydate)
+        mydate <- NULL
+    }
     datedstocklists <- list()
     if (!is.null(mydate)) {
         dateindex <- match(mydate, names(listdate))
     } else {
         dateindex <- length(listdate)
     }
-    index <- dateindex
+    index <- dateindex - offset
                                         #index <- length(listdate)
     c <- 0
     c <- c + 1
