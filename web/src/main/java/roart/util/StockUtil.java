@@ -36,7 +36,57 @@ public class StockUtil {
      * @throws Exception
      */
 
-    public static Map<String, Integer>[][] getListAndDiff(List<Stock> datedstocklists[], int count, Object[] arr)
+    public static Map<String, Integer>[][] getListMove(List<Stock> datedstocklists[], int count, List<Stock>[][] stocklistPeriod)
+                    throws Exception {
+        Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator, StockUtil.StockPeriod6Comparator };
+
+        // make sorted period1, sorted current day
+        // make sorted period1, sorted day offset
+        Map<String, Integer>[][] periodmaps = new HashMap[count - 1][PERIODS];
+
+        // Do for all wanted days
+
+        for (int j = 0; j < count; j++) {
+            Map<String, Integer>[] periodmap = new HashMap[PERIODS];
+            //List<Stock> datedstocksoffset = getOffsetList(stockidmap, mydays);
+            //datedstocklists[j] = datedstocksoffset;
+            for (int i = 0; i < PERIODS; i++) {
+                // Check if the period for the wanted day has any content
+
+                boolean hasPeriod = !stocklistPeriod[i][j].isEmpty();
+
+                /*
+                 *  If not the first, get a periodmap, which is a list of differences, indicating rise or decline
+                 */
+
+                if (hasPeriod) {
+                    if (j > 0) {
+                        periodmap[i] = StockUtil.getPeriodmap(stocklistPeriod[i][j - 1], stocklistPeriod[i][j]);
+                    }
+                } else {
+                    if (j > 0) {
+                        periodmap[i] = new HashMap<String, Integer>();
+                    }
+                }
+            }
+            if (j > 0) {
+                periodmaps[j - 1] = periodmap;
+            }
+        }
+        return periodmaps;
+    }
+
+    /**
+     * Create sorted tables for all periods in a time interval
+     * 
+     * @param datedstocklists returned lists based on date
+     * @param count number of days to measure
+     * @param arr also for return sorted tables
+     * @return sorted tables
+     * @throws Exception
+     */
+
+    public static List<Stock>[][] getListSorted(List<Stock> datedstocklists[], int count)
                     throws Exception {
         Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator, StockUtil.StockPeriod6Comparator };
 
@@ -44,14 +94,10 @@ public class StockUtil {
         // make sorted period1, sorted day offset
         Map<String, Integer>[][] periodmaps = new HashMap[count - 1][PERIODS];
         List<Stock>[][] stocklistPeriod = new ArrayList[PERIODS][count];
-        if (arr != null) {
-            arr[0] = stocklistPeriod;
-        }
 
         // Do for all wanted days
 
         for (int j = 0; j < count; j++) {
-            Map<String, Integer>[] periodmap = new HashMap[PERIODS];
             //List<Stock> datedstocksoffset = getOffsetList(stockidmap, mydays);
             //datedstocklists[j] = datedstocksoffset;
             boolean hasPeriod[] = new boolean[PERIODS];
@@ -68,31 +114,14 @@ public class StockUtil {
 
                 if (datedstocklists[j] != null && hasPeriod[i]) {
                     stocklistPeriod[i][j] = new ArrayList<Stock>(datedstocklists[j]);
+                    stocklistPeriod[i][j].sort(comparators[i]);
                 } else {
                     stocklistPeriod[i][j] = new ArrayList<Stock>();
                 }
 
-                /*
-                 *  If it has, first sort it
-                 *  If not the first, get a periodmap, which is a list of differences, indicating rise or decline
-                 */
-
-                if (hasPeriod[i]) {
-                    stocklistPeriod[i][j].sort(comparators[i]);
-                    if (j > 0) {
-                        periodmap[i] = StockUtil.getPeriodmap(stocklistPeriod[i][j - 1], stocklistPeriod[i][j]);
-                    }
-                } else {
-                    if (j > 0) {
-                        periodmap[i] = new HashMap<String, Integer>();
-                    }
-                }
-            }
-            if (j > 0) {
-                periodmaps[j - 1] = periodmap;
             }
         }
-        return periodmaps;
+        return stocklistPeriod;
     }
 
     /**
@@ -597,7 +626,7 @@ public class StockUtil {
      * @return period
      */
     
-    private static Integer getPeriodByMarket(String market, Set<Pair<String, Integer>> pairs) {
+    public static Integer getPeriodByMarket(String market, Set<Pair<String, Integer>> pairs) {
         for (Pair<String, Integer> pair : pairs) {
             String tmpMarket = (String) pair.getFirst();
             if (market.equals(tmpMarket)) {
@@ -634,7 +663,7 @@ public class StockUtil {
                 List<Stock>[] datedstocklists = marketdata.datedstocklists;
                 List<Stock> list = datedstocklists[j];
                 if (list == null) {
-                    System.out.println("listnull " + market + " " + " " + j);
+                    log.info("listnull " + market + " " + " " + j);
                     continue;
                 }
                 for (int i = 0; i < list.size(); i++) {

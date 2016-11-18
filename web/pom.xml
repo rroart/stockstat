@@ -305,7 +305,13 @@
     <artifactId>xml-apis</artifactId>
     <version>${xmlapis.version}</version>
   </dependency>
-  </dependencies>
+  <!-- https://mvnrepository.com/artifact/com.tictactec/ta-lib -->
+  <dependency>
+    <groupId>com.tictactec</groupId>
+    <artifactId>ta-lib</artifactId>
+    <version>0.4.0</version>
+  </dependency>
+    </dependencies>
   <properties>
     <jetty.version>9.2.2.v20140723</jetty.version>
     <jdk.version>1.8</jdk.version>

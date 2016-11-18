@@ -205,9 +205,12 @@ public class MyVaadinUI extends UI
     private VerticalLayout getControlPanelTab() {
         VerticalLayout tab = new VerticalLayout();
         tab.setCaption("Control Panel");
-        HorizontalLayout horNewInd = new HorizontalLayout();
-        horNewInd.setHeight("20%");
-        horNewInd.setWidth("90%");
+        HorizontalLayout horMACD = new HorizontalLayout();
+        horMACD.setHeight("20%");
+        horMACD.setWidth("90%");
+        horMACD.addComponent(getMACD());
+        horMACD.addComponent(getMove());
+        horMACD.addComponent(getRSI());
         HorizontalLayout horStat = new HorizontalLayout();
         horStat.setHeight("20%");
         horStat.setWidth("90%");
@@ -222,7 +225,7 @@ public class MyVaadinUI extends UI
 	tab.addComponent(getCleanupfs());
          */
 
-        tab.addComponent(horNewInd);
+        tab.addComponent(horMACD);
         tab.addComponent(horStat);
         tab.addComponent(horDb);
         /*
@@ -269,6 +272,9 @@ public class MyVaadinUI extends UI
         horDb2.addComponent(getTableIntervalDays());
         horDb2.addComponent(getTopBottom());
         HorizontalLayout horDb3 = new HorizontalLayout();
+        horDb3.setHeight("20%");
+        horDb3.setWidth("60%");
+        horDb3.addComponent(getTableMoveIntervalDays());
         /*
         horDb3.addComponent(getTodayZero());
         */
@@ -346,7 +352,7 @@ public class MyVaadinUI extends UI
                 try {
                     controlService.setdate(null);
                     Notification.show("Request sent");
-                    displayResults();
+                    //displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -545,7 +551,7 @@ public class MyVaadinUI extends UI
 
     private TextField getTableIntervalDays() {
         TextField tf = new TextField("Table interval days");
-        tf.setValue("" + new ControlService().getTableIntervalDays());
+        tf.setValue("" + controlService.getTableIntervalDays());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -555,6 +561,30 @@ public class MyVaadinUI extends UI
                 // Do something with the value
                 try {
                     controlService.setTableIntervalDays(new Integer(value));
+                    Notification.show("Request sent");
+                    displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        tf.setImmediate(true);
+        return tf;
+    }
+
+    private TextField getTableMoveIntervalDays() {
+        TextField tf = new TextField("Table move interval days");
+        tf.setValue("" + controlService.getTableMoveIntervalDays());
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.setTableMoveIntervalDays(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -678,6 +708,72 @@ public class MyVaadinUI extends UI
                 // Do something with the value
                 try {
                     controlService.setEqualize(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getMove() {
+        CheckBox cb = new CheckBox("Enable chart move");
+        cb.setValue(new ControlService().isMoveEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.setMoveEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getMACD() {
+        CheckBox cb = new CheckBox("Enable MACD");
+        cb.setValue(new ControlService().isMACDenabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.setMACDenabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getRSI() {
+        CheckBox cb = new CheckBox("Enable RSI");
+        cb.setValue(new ControlService().isRSIenabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.setRSIenabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

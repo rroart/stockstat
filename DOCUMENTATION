@@ -124,7 +124,8 @@ There are two phases, data acquisition and usage.
     Webapp
   </title>
   <para>
-    The webapp is pretty basic. Control panel is not currently used. You can choose a market under get market, then set the wanted date, or reset the date (then it will choose the most recent day). If getting stats, all elements in the markets will be statistically compared. There are a number of parameter settings.
+    The webapp is pretty basic. You can choose a market under get market, then set the wanted date, or reset the date (then it will choose the most recent day). If getting stats, all elements in the markets will be statistically compared. There are a number of parameter settings.
+    The control panel have options for choosing whether to show plain movements, MACD or RSI.
     <itemizedlist>
       <title>
 	Parameters
@@ -132,6 +133,11 @@ There are two phases, data acquisition and usage.
       <listitem>
 	<para>
 	  Single interval days (R tableintervaldays): for the resulting list, a base for the delta of moving up compared to the previous time.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Table move interval days (R tablemoveintervaldays): for the resulting list, a base for the delta of moving up compared to the previous time.
 	</para>
       </listitem>
       <listitem>
@@ -165,7 +171,7 @@ Table days (R days): how many days to use for the graph or statistics
       source r/libr.r
     </programlisting>
     This is defining variables, functions and reading in all of the database.
-    After this is done, the following functions may be used:
+    After this is done, the following functions may be used (with =? parameters as optional with default):
     <itemizedlist>
       <title>
 	Functions
@@ -182,61 +188,146 @@ Table days (R days): how many days to use for the graph or statistics
     </listitem>
     <listitem>
       <para>
-    getrisinggraph(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) : show a graph over best risers
+	out
+    getrisinggraph(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) : show a graph over best risers (outdated)
       </para>
     </listitem>
     <listitem>
       <para>
-    getbottomgraph(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) : show the bottom for period
+    getbottomgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=?, macddays=?, wantrise=?, wantmacd=?, wantrsi=?) : show the bottom for period
       </para>
     </listitem>
     <listitem>
       <para>
-    gettopgraph(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) : show the top for period
+    gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=?, macddays=?, reverse=?, wantrise=?, wantmacd=?, wantrsi=?) : show the top for period
       </para>
     </listitem>
     </itemizedlist>
     The parameters used for this are:
-    <itemizedlist>
+    <table>
       <title>
 	Parameters
       </title>
-      <listitem>
-	<para>
-    market: the chosen market
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-    mydate: the recent date, alternative NULL for getting the most recent, or a number for the previous days.
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-    days: the number of days to display
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-    tableintervaldays: the interval between them
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-    topbottom: number to show
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-    myperiodtexts/periodtext: a list or single periods to display
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-    ids: specific ids to display
-      </para>
-    </listitem>
-    </itemizedlist>
+      <tgroup cols="2">
+	<colspec colnum="1" colname="col1" colwidth="1*"/>
+	<colspec colnum="2" colname="col2" colwidth="1*"/>
+	<thead>
+	  <row>
+	    <entry>
+	      Parameter
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+      <row>
+	<entry>
+	  market
+	</entry>
+	<entry>the chosen market
+      </entry>
+    </row>
+    <row>
+      <entry>
+    mydate	</entry>
+	<entry>the recent date, alternative NULL for getting the most recent, or a number for the previous days.
+      </entry>
+    </row>
+    <row>
+      <entry>
+    days	</entry>
+	<entry>the number of days to display
+      </entry>
+    </row>
+    <row>
+      <entry>
+    tableintervaldays	</entry>
+	<entry>the interval between the days for the graph (1 is recommended)
+      </entry>
+    </row>
+    <row>
+      <entry>
+    tablemoveintervaldays	</entry>
+	<entry>the interval between the days
+      </entry>
+    </row>
+    <row>
+      <entry>
+    topbottom	</entry>
+	<entry>number to show
+      </entry>
+    </row>
+    <row>
+      <entry>
+    myperiodtexts/periodtext	</entry>
+	<entry>a list or single periods to display
+      </entry>
+    </row>
+    <row>
+      <entry>
+    ids	</entry>
+	<entry>specific ids to display
+      </entry>
+    </row>
+    <row>
+      <entry>
+	wantrise
+    </entry>
+    <entry>
+      boolean for whether to display rise in tablemoveintervaldays between days
+      </entry>
+    </row>
+    <row>
+      <entry>
+	reverse
+    </entry>
+    <entry>
+      boolean for whether to show reversed order, default FALSE
+      </entry>
+    </row>
+    <row>
+      <entry>
+	wantmacd
+    </entry>
+    <entry>
+      boolean for whether to display the MACD momementum, default FALSE
+      </entry>
+    </row>
+    <row>
+      <entry>
+	wantrsi
+    </entry>
+    <entry>
+      boolean for whether to display the RSI, default FALSE
+      </entry>
+    </row>
+    <row>
+      <entry>
+	macddays
+    </entry>
+    <entry>
+      number of days used for computing MACD and RSI, default 60
+      </entry>
+    </row>
+    <row>
+      <entry>
+	sort
+    </entry>
+    <entry>
+      for what to sort on (PERIOD, MACD, RSI), default PERIOD
+      </entry>
+    </row>
+    <row>
+      <entry>
+    </entry>
+	<entry>
+      </entry>
+    </row>
+	</tbody>
+      </tgroup>
+    </table>
   </para>
 </chapter>
 </book>

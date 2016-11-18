@@ -1,13 +1,18 @@
                                         # rm(list=ls())
                                         # install.packages("RPostgreSQL")
 require("RPostgreSQL")
-require("ggplot2")
+require("TTR")
+                                        #require("ggplot2")
                                         #require("tabplot")
-require("gridExtra")
+                                        #require("gridExtra")
 
 pricetype <- -1
 indextype <- -2
 periods <- 6
+
+PERIOD <- 1
+MACD <- 2
+RSI <- 3
 
                                         # out of use
 splitdate <- function(stocks) {
@@ -60,8 +65,52 @@ getdforderperiod <- function(df, period) {
     return (ds)
 }
 
-getlistanddiff <- function(datedstocklists, listid, listdate, count, tableintervaldays) {
+getdforderperiodreverse <- function(df, period) {
+    ds <- df
+    if (period == 1) {
+        ds <- df[order(df$period1),]
+    }
+    if (period == 2) {
+        ds <- df[order(df$period2),]
+    }
+    if (period == 3) {
+        ds <- df[order(df$period3),]
+    }
+    if (period == 4) {
+        ds <- df[order(df$period4),]
+    }
+    if (period == 5) {
+        ds <- df[order(df$period5),]
+    }
+    if (period == 6) {
+        ds <- df[order(df$period6),]
+    }
+    return (ds)
+}
+
+                                        # listid is not used, remove
+
+getlistmove <- function(datedstocklists, listid, listdate, count, tableintervaldays, stocklistperiod) {
     periodmaps <- matrix(list(), nrow = periods, ncol = (count - 1))
+    for (j in 1:count) {
+        for (i in 1:periods) {
+            hasperiod <- !is.null(stocklistperiod[i, j][[1]])
+            if (hasperiod) {
+                if (j > 1) {
+                    df1 <- stocklistperiod[i, j - 1]
+                    df2 <- stocklistperiod[i, j]
+                    tmplist <- getperiodmap(df1, df2)
+                    periodmaps[i, j - 1] <- list(tmplist)
+                }
+            } else {
+                                        #cat("no period day ", j, " period ", i)
+            }
+        }
+    }
+    return(periodmaps)
+}
+
+getlistsorted <- function(datedstocklists, listid, listdate, count, tableintervaldays, wantrise = TRUE, reverse = FALSE) {
     stocklistperiod <- matrix(list(), nrow = periods, ncol = count)
     for (j in 1:count) {
         for (i in 1:periods) {
@@ -69,23 +118,21 @@ getlistanddiff <- function(datedstocklists, listid, listdate, count, tableinterv
             hasperiod <- FALSE
             hasperiod <- !is.infinite(max(getonedfperiod(df, i), na.rm = TRUE))
             if (hasperiod) {
-                ds <- getdforderperiod(df, i)
+                ds <- NULL
+                if (reverse) {
+                    ds <- getdforderperiodreverse(df, i)
+                } else {
+                    ds <- getdforderperiod(df, i)
+                }
                 tmp <- list(ds)
                 stocklistperiod[i, j] <- tmp
-                if (j > 1) {
-                    df1 <- stocklistperiod[i, j - 1]
-                    df2 <- tmp
-                    tmplist <- getperiodmap(df1, df2)
-                    periodmaps[i, j - 1] <- list(tmplist)
-                }
             } else {
-                #cat("no period day ", j, " period ", i)
+                                        #cat("no period day ", j, " period ", i)
             }
         }
     }
-    return(list(periodmaps, stocklistperiod))
+    return(stocklistperiod)
 }
-
                                         # out of use
 getstockdate <- function(listdate, mydate) {
     c <- 0
@@ -98,7 +145,7 @@ getstockdate <- function(listdate, mydate) {
     return (length(listdate))
 }
 
-# not used
+                                        # not used
 
 getlistanddiffperiod <- function(datedstocklists, listid, listdate, count, tableintervaldays, period) {
     periodmap <- list()
@@ -124,7 +171,7 @@ getlistanddiffperiod <- function(datedstocklists, listid, listdate, count, table
     return(list(periodmap, stocklistperiod))
 }
 
-# not used. and slow
+                                        # not used. and slow
 
 getperiodlist <- function(list1, list2) {
     c <- 0
@@ -161,7 +208,7 @@ getperiodmap <- function(list1, list2) {
     return (list)
 }
 
-# slow. not used
+                                        # slow. not used
 
 getperiodmapold <- function(list1, list2) {
     list <- list()
@@ -228,10 +275,10 @@ mytopperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, ma
         }
 
         list11 <- stocklistperiod[period, j][[1]]
-#        list12 <- stocklistperiod[period, 2][[1]]
-#        for (i in 1:max) {
-#            print(sprintf("%3d %-35s %12s %3.2f", i, strtrim(list12$name[i],33), as.POSIXct(list12$date[i], origin="1970-01-01"), listperiod(list12, period, i)))
-#        }
+                                        #        list12 <- stocklistperiod[period, 2][[1]]
+                                        #        for (i in 1:max) {
+                                        #            print(sprintf("%3d %-35s %12s %3.2f", i, strtrim(list12$name[i],33), as.POSIXct(list12$date[i], origin="1970-01-01"), listperiod(list12, period, i)))
+                                        #        }
         for (i in 1:max) {
             id <- list11$id[i]
             rise <- 0
@@ -243,6 +290,32 @@ mytopperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, ma
             }
             print(sprintf("%3d %-35s %12s %3.2f %3d %s", i, strtrim(list11$name[i],33), as.POSIXct(list11$date[i], origin="1970-01-01"), listperiod(list11, period, i), rise, list11$id[[i]]))
         }
+    }
+}
+
+mytopperiod2 <- function(dflist, period, max, days, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
+    for (j in 1:days) {
+        df <- dflist[[j]]
+        if (max < nrow(df)) {
+            #max <- nrow(df)
+        }
+        for (i in 1:max) {
+            rsi <- NA
+            if (wantrsi) {
+                rsi <- df$rsic[[i]]
+            }
+            macd <- NA
+            if (wantmacd) {
+                macd <- df$momc[[i]]
+            }
+            rise <- NA
+            if (wantrise) {
+                rise <- df$risec[[i]]
+            }
+            
+            print(sprintf("%3d %-35s %12s %3.2f %3d %3.2f %3.2f %s", i, strtrim(df$name[[i]],33), as.POSIXct(df$date[[i]], origin="1970-01-01"), listperiod(df, period, i), rise, macd, rsi, df$id[[i]]))
+        }
+                                        #        str(df$id[[1]])
     }
 }
 
@@ -295,7 +368,11 @@ myperiodtextslist <- function(myperiodtexts, periodtexts) {
     return(retlist)
 }
 
-gettopgraph <- function(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) {
+getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=PERIOD, macddays=60) {
+    return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=TRUE))
+}
+
+gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=PERIOD, macddays=60, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
     periodtexts <- getperiodtexts(market)
     myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
     for (i in 1:length(myperiodtexts)) {
@@ -304,12 +381,133 @@ gettopgraph <- function(market, mydate, days, tableintervaldays, topbottom, mype
                                         #    cat("perind ", period)
         stocks <- getstockmarket(allstocks, market)
         listdate <- split(stocks, stocks$date)
-        datedstocklists <- getdatedstocklists(listdate, mydate, days, tableintervaldays)
-        alist <- getlistanddiff(datedstocklists, listid, listdate, days, tableintervaldays)
-        periodmaps <- alist[[1]]
-        stocklistperiod <- alist[[2]]
-        mytopperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom, days)
-        gettopchart(market, days, topbottom, stocklistperiod, period)
+        listid <- split(stocks, stocks$id)
+        datedstocklists <- getdatedstocklists(listdate, mydate, days, tablemoveintervaldays)
+        stocklistperiod <- getlistsorted(datedstocklists, listid, listdate, days, tablemoveintervaldays, reverse=reverse)
+        if (wantrise) {
+            periodmaps <- getlistmove(datedstocklists, listid, listdate, days, tablemoveintervaldays, stocklistperiod)
+        }
+        dflist <- list()
+        headskiprsi <- 0
+        if (!is.null(mydate)) {
+            headskiprsi <- mydate
+        }
+        headskipmacd <- 0
+        if (!is.null(mydate)) {
+            headskipmacd <- mydate
+        }
+        for (j in 1:days) {
+            df <- stocklistperiod[period, j][[1]]
+                                        #            df <- head(df, n=topbottom)
+            if (wantrise) {
+                list2 <- list()
+                if (j < days) {
+                    list2 <- periodmaps[period, j][[1]]
+                }
+                riselist <- list()
+                                        #            str(length(df))
+                for (i in 1:nrow(df)) {
+                    id <- df$id[i]
+                    rise <- 0
+                    if (j < days) {
+                        rise <- list2[[id]]
+                        if (is.null(rise)) {
+                            rise <- 0
+                        }
+                    }
+                    riselist[i] <- rise
+                }
+                risec <- c(unlist(riselist))
+                df <- cbind(df, risec)
+            }
+            idc <- df[,"id"]
+            namec <- df[,"name"]
+            datec <- df[,"date"]
+            periodc <- getonedfperiod(df, period)
+            if (wantmacd) {
+                momlist <- list()
+                                        #            str("nrow")
+                                        #            str(nrow(df))
+                for (i in 1:nrow(df)) {
+                    mydf <- df[i,]
+                    el <- listid[[mydf$id]]
+                    el <- el[order(el$date),]
+                    if (mydf$id == "F00000M1AHH") {
+                                        #                    cat(el$date)
+                    }
+                    myc <- c(getonedfvalue(el, period))
+                    if (mydf$id == "F00000IRBFF") {
+                        str(" gr3 ")
+                        cat(myc)
+                    }
+                    myclen <- length(myc)
+                    myc <- head(myc, n=(myclen-headskipmacd))
+                    myc <- tail(myc, n=macddays)
+                                        #str(myc)
+                    mom <- getmom(myc)
+                                        #str(mom)
+                    momlist[i] <- mom
+                }
+                headskipmacd <- headskipmacd + tablemoveintervaldays
+                momc <- c(unlist(momlist))
+                df <- cbind(df, momc)
+                if (sort == MACD) {
+                    if (reverse) {
+                        df <- df[order(df$momc),]
+                    } else {
+                        df <- df[order(-df$momc),]
+                    }
+                }
+            }
+            if (wantrsi) {
+                rsilist <- list()
+                headskip <- 0
+                for (i in 1:nrow(df)) {
+                    mydf <- df[i,]
+                    el <- listid[[mydf$id]]
+                    el <- el[order(el$date),]
+                    if (mydf$id == "F00000M1AHH") {
+                                        #                    cat(el$date)
+                    }
+                    myc <- c(getonedfvalue(el, period))
+                    if (mydf$id == "F00000IRBFF") {
+                        str(" gr2 ")
+                        cat(myc)
+                    }
+                    myclen <- length(myc)
+                    myc <- head(myc, n=(myclen-headskiprsi))
+                    myc <- tail(myc, n=macddays)
+                                        #str(myc)
+                                        #                str(mydf$id)
+                    rsi <- getrsi(myc)
+                                        #str(mom)
+                    rsilist[i] <- rsi
+
+                }
+                headskiprsi <- headskiprsi + tablemoveintervaldays
+                rsic <- c(unlist(rsilist))
+                df <- cbind(df, rsic)
+                if (sort == RSI) {
+                    if (reverse) {
+                        df <- df[order(df$rsic),]
+                    } else {
+                        df <- df[order(-df$rsic),]
+                    }
+                }
+            }
+                                        #str("bla")
+                                        #str(length(momc))
+                                        #str(length(risec))
+                                        #str(df)
+            dflist[j] <- list(df)
+        }
+        mytopperiod2(dflist, period, topbottom, days, wantrise=wantrise, wantmacd=wantmacd, wantrsi=wantrsi)
+                                        #        str(head(dflist, n=2))
+        if (reverse) {
+            getbottomchart(market, days, topbottom, stocklistperiod, period)
+        } else {
+            gettopchart(market, days, topbottom, stocklistperiod, period)
+        }
     }
 }
 
@@ -320,7 +518,7 @@ devoffs <- function() {
     }
 }
 
-getbottomgraph <- function(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) {
+getbottomgraph2 <- function(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) {
     periodtexts <- getperiodtexts(market)
     myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
     for (i in 1:length(myperiodtexts)) {
@@ -330,7 +528,7 @@ getbottomgraph <- function(market, mydate, days, tableintervaldays, topbottom, m
         stocks <- getstockmarket(allstocks, market)
         listdate <- split(stocks, stocks$date)
         datedstocklists <- getdatedstocklists(listdate, mydate, days, tableintervaldays)
-        alist <- getlistanddiff(datedstocklists, listid, listdate, days, tableintervaldays)
+        alist <- getlistmove(datedstocklists, listid, listdate, days, tableintervaldays)
         periodmaps <- alist[[1]]
         stocklistperiod <- alist[[2]]
         mybottomperiod(datedstocklists, stocklistperiod, periodmaps, period, topbottom, days)
@@ -387,9 +585,8 @@ getrisinggraph <- function(market, mydate, days, tableintervaldays, topbottom, m
         stocks <- getstockmarket(allstocks, market)
         listdate <- split(stocks, stocks$date)
         datedstocklists <- getdatedstocklists(listdate, mydate, days, tableintervaldays)
-        alist <- getlistanddiff(datedstocklists, listid, listdate, days, tableintervaldays)
-        periodmaps <- alist[[1]]
-        stocklistperiod <- alist[[2]]
+        stocklistperiod <- getlistsorted(datedstocklists, listid, listdate, days, tableintervaldays)
+        periodmaps <- getlistmove(datedstocklists, listid, listdate, days, tableintervaldays, stocklistperiod)
         rise <- getrising(days, periodmaps, stocklistperiod, period)
                                         #    str("riserise")
                                         #    str(names(rise[[1]]))
@@ -454,6 +651,72 @@ getperiodtext <- function(meta, period) {
 }
 
 displaychart <- function(ls, mynames, topbottom, periodtext, maindate, olddate, days) {
+    dev.new()
+    colours <- rainbow(topbottom)
+    g_range = range(0, ls, na.rm=TRUE)
+    print("g_range")
+    str(g_range)
+    for (i in 1:topbottom) {
+        if (i == 1) {
+                                        #str(l$id[[1]])
+                                        #str(l$name[[2]])
+            c = c(unlist(ls[1]))
+            str(c)
+            plot(c, type="o", ylim=g_range, axes=FALSE, ann=FALSE, col = colours[i], pch = i)
+            axis(1, at=1:days, lab=c(-(days-1):0))
+            axis(2, las=2)
+            grid(NULL,NULL)
+            box()
+                                        #l2 <- getc(l, period)
+                                        #str(l[[1]]$period1)
+                                        #str(l2)
+        } else {
+                                        #cat("count", i)
+            c = c(unlist(ls[i]))
+                                        #str(c)
+            lines(c, type="o", lty = i, col = colours[i], pch = i)
+        }
+
+        title(main=sprintf("Period %s", periodtext))
+        title(xlab=sprintf("Time %s - %s", olddate, maindate))
+        title(ylab="Value")
+        n = c(unlist(mynames[1]))
+        legend(1, g_range[2], mynames, cex=0.8, lty=1:6, pch=1:25, col=colours) 
+    }
+                                        #}
+}
+
+getmacd <- function(m) {
+    l <- length(m) / 2
+                                        #    cat("hei\n")
+                                        #    str(l)
+                                        #    cat("\nhei2\n")
+                                        #    m
+    c <- 1
+    retlist1 <- list();
+    retlist2 <- list();
+    retlist3 <- list();
+    for (i in 1:l) {
+        elem <- m[i,]
+        first <- elem[1]
+        second <- elem[2]
+        if (!is.na(first) && !is.na(second)) {
+            retlist1[c] <- first
+            retlist2[c] <- second
+            retlist3[c] <- first - second
+            c <- c + 1
+        }
+    }
+                                        #    str(retlist1)
+    #cat(unlist(retlist1))
+    #str("")
+    #cat(unlist(retlist2))
+    #str("")
+    #cat(unlist(retlist3))
+    return(list(retlist1, retlist2, retlist3))
+}
+
+displaymacd <- function(ls, mynames, topbottom, periodtext, maindate, olddate, days) {
     dev.new()
     colours <- rainbow(topbottom)
     g_range = range(0, ls, na.rm=TRUE)
@@ -619,6 +882,8 @@ getelem3 <- function(id, days, datedstocklist, period, size) {
             dayset[str2] <- 1
         } else {
             print("err")
+                                        #            str(nrow(df))
+                                        #            str(df)
         }
     }
     return(list(retl, dayset))
@@ -699,7 +964,7 @@ listfiltertop <- function(list, listmain, size) {
 }
 
 getdatedstocklists <- function(listdate, mydate, days, tableintervaldays) {
-#    str(mydate)
+                                        #    str(mydate)
     offset <- 0
     if (is.double(mydate)) {
         offset <- round(mydate)
@@ -725,7 +990,7 @@ getdatedstocklists <- function(listdate, mydate, days, tableintervaldays) {
     return(datedstocklists)
 }
 
-getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
+getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wantmacd=FALSE, wantrsi=FALSE) {
     normalize <- 0
     if (length(ids) > 1) {
         if (periodtext == "price") {
@@ -777,16 +1042,16 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
             perioddatamap[[text]] <- perioddata
         }
         {
-        perioddata <- list()
-        pairs[[paste(1, market)]] <- list(market, pricetype)
-        perioddata[["text"]] <- pairs
-        perioddatamap[["price"]] <- perioddata
+            perioddata <- list()
+            pairs[[paste(1, market)]] <- list(market, pricetype)
+            perioddata[["text"]] <- pairs
+            perioddatamap[["price"]] <- perioddata
         }
         {
-        perioddata <- list()
-        pairs[[paste(1, market)]] <- list(market, indextype)
-        perioddata[["text"]] <- pairs
-        perioddatamap[["index"]] <- perioddata
+            perioddata <- list()
+            pairs[[paste(1, market)]] <- list(market, indextype)
+            perioddata[["text"]] <- pairs
+            perioddatamap[["index"]] <- perioddata
         }
     }
     retl <- list()
@@ -856,6 +1121,205 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext) {
     olddate <- min(daynames)
     newdate <- max(daynames)
     displaychart(ls, mynames, 5, periodtext, newdate, olddate, days)
+    if (wantmacd) {
+        for (i in 1:length(ls)) {
+    myma <- c(unlist(ls[i]))
+                                        #    myma <- fixna(myma)
+                                        #    str(tail(myma, n=10L))
+                                        #    cat("\nsize ", length(myma), "\n")
+                                        #                cat(myma)
+    lses <- getmylses(myma)
+    days2 <- length(lses[[1]])
+    olddate2 <- daynames[days - days2]
+                                        #    cat(" tata ")
+                                        #    cat(length(lses[[1]]))
+                                        #    cat(" tata ")
+                                        #    cat(days2)
+#    posneg <- getposneg(lses)
+#    ls1 <- lses[[1]]
+#    ls2 <- lses[[2]]
+#    cat("\ndays ", days2, " lastpos ", posneg[[1]], " lastneg ", posneg[[2]], " macd ", ls1[[days2]], " signal ", ls2[[days2]], "\n")
+    mynames2 <- list("macd", "signal", "diff")
+    text <- paste(mynames[i], periodtext, sep=" ")
+    displaychart(lses, mynames2, 3, text, newdate, olddate2, days2)
+    }
+                                        #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
+    }
+    if (wantrsi) {
+        rsis <- list()
+        for (i in 1:length(ls)) {
+            myma <- c(unlist(ls[i]))
+            str("ere")
+            str(myma)
+                                        #    myma <- fixna(myma)
+                                        #    str(tail(myma, n=10L))
+                                        #    cat("\nsize ", length(myma), "\n")
+                                        #                cat(myma)
+            rsi <- getmyrsi(myma)
+            str(rsi)
+            cat(unlist(rsi))
+            rsis[i] <- rsi
+#    days2 <- length(ls[[1]])
+#    olddate2 <- daynames[days - days2]
+                                        #    cat(" tata ")
+                                        #    cat(length(lses[[1]]))
+                                        #    cat(" tata ")
+                                        #    cat(days2)
+#    posneg <- getposneg(ls)
+#    ls1 <- lses[[1]]
+#    ls2 <- lses[[2]]
+#    cat("\ndays ", days2, " lastpos ", posneg[[1]], " lastneg ", posneg[[2]], " macd ", ls1[[days2]], " signal ", ls2[[days2]], "\n")
+#    mynames2 <- list("macd", "signal", "diff")
+    }
+    displaychart(rsis, mynames, 5, periodtext, newdate, olddate, days)
+#    displaychart(lses, mynames2, 3, periodtext, newdate, olddate2, days2)
+                                        #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
+    }
+}
+
+getmom <- function(myma) {
+    lses <- getmylses(myma)
+    if (is.null(lses)) {
+        return(0)
+    }
+    ls <- lses[[3]]
+    return(ls[[length(ls)]])
+}
+
+getmylses <- function(myma) {
+                                        #    cat(myma)
+                                        #    cat("bla\n")
+    myma <- fixna(myma)
+    if (length(myma) < 40) {
+        return(NULL)
+    }
+    normalize <- 0
+    if (normalize == 0) {
+                                        #        this does not matter?
+                                        #        myma <- fixpercent(myma)
+    }
+                                        #    cat(myma)
+    maType <- 'EMA'
+    fast <- 12
+    slow <- 26
+    sig <- 9
+    m <- MACD(myma, nFast=fast, nSlow=slow, nSig=sig, maType = maType, percent = FALSE )
+                                        #    str(m)
+                                        #    cat(m)
+                                        #    cat("\ngrr\n")
+    lses <- getmacd(m)
+    l <- length(myma)
+    if (myma[l] < 448.1 && myma[l] > 440.0) {
+#    if (retlist3[c-1] < 1.27 && retlist3[c-1] > 1.25) {
+        str(l)
+        str(length(m))
+        str("grr")
+    cat(myma)
+    cat(m)
+    }
+    return(lses)
+}
+
+getrsi <- function(myma) {
+    lses <- getmyrsi(myma)
+    if (is.null(lses)) {
+        return(0)
+    }
+    ls <- lses[[1]]
+    return(ls[[length(ls)]])
+}
+
+getmyrsi <- function(myma) {
+                                        #    cat(myma)
+                                        #    cat("bla\n")
+    myma <- fixna(myma)
+    if (length(myma) < 40) {
+        return(NULL)
+    }
+    normalize <- 0
+    if (normalize == 0) {
+                                        #        this does not matter?
+                                        #        myma <- fixpercent(myma)
+    }
+                                        #    cat(myma)
+    num <- 14
+    m <- RSI(myma)
+                                        #    str(m)
+                                        #    cat(m)
+                                        #    cat("\ngrr\n")
+    l <- length(myma)
+#    str(myma[l])
+    if (myma[l] < 448.1 && myma[l] > 440.0) {
+        str(l)
+        str(length(m))
+        str("grr")
+    cat(myma)
+    cat(m)
+    }
+    return(list(m))
+}
+
+fixna <- function(v) {
+    return(v[!is.na(v)])
+}
+
+fixpercent <- function(v) {
+    return(v + 100)
+}
+
+# not used
+
+getposneg <- function(lses) {
+    retl <- list()
+    retl[1] <- NA
+    retl[2] <- NA
+    ls <- lses[[3]]
+                                        #    cat(unlist(ls))
+                                        #    str(ls)
+    len <- length(ls)
+    if (ls[len] >= 0) {
+        lastpos <- len
+        for (i in len:1) {
+            if (ls[i] < 0) {
+                break
+            }
+            lastpos <- i
+        }
+        retl[1] <- lastpos
+        if (lastpos > 1) {
+            lastneg <- lastpos - 1
+            for (i in (lastpos - 1):1) {
+                if (ls[i] >= 0) {
+                    break
+                }
+                lastneg <- i
+            }
+            retl[2] <- lastneg
+        }
+    } else {
+        lastneg <- len
+        for (i in len:1) {
+            if (ls[i] >= 0) {
+                break
+            }
+            lastneg <- i
+        }
+        retl[1] <- lastneg
+        if (lastneg > 1) {
+            lastpos <- lastneg - 1
+            for (i in (lastneg - 1):1) {
+                if (ls[i] < 0) {
+                    break
+                }
+                lastpos <- i
+            }
+            retl[2] <- lastpos
+        }
+    }
+                                        #    cat("\nretl ", retl[1], " ", retl[2],"\n")
+                                        #    str(retl[1])
+                                        #    str(retl[2])
+    return(retl)
 }
 
 getperiodtexts <- function(market) {
@@ -888,7 +1352,7 @@ getstockmarket <- function(stocks, market) {
     return(subset(stocks, marketid == market))
 }
 
-# not in use now
+                                        # not in use now
 
 getmarketold <- function(con, market) {
     query <- paste("select * from stock where marketid = '", market, "'", sep = "")
