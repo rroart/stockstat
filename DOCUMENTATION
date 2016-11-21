@@ -77,6 +77,34 @@ Need to provide postgres with a database stockstat, and username/password stocks
 </chapter>
 <chapter>
   <title>
+    Configuration
+  </title>
+  <para>
+    Sample files are not yet available.
+  </para>
+  <para>
+    Configure with stockstat.prop:
+  </para>
+  <sect1>
+    <title>
+      Non-mandatory
+    </title>
+    <sect2>
+      <title>
+	Spark
+      </title>
+      <para>
+	Not yet in active use
+	<programlisting>
+	  spark=true
+	  sparkmaster=...
+	</programlisting>
+    </para>
+</sect2>
+  </sect1>
+</chapter>
+<chapter>
+  <title>
     Data acquisition
   </title>
 <para>
@@ -161,6 +189,26 @@ Table days (R days): how many days to use for the graph or statistics
     Then, below, there is a possibility of choosing elements from different markets, and the displaying them, as best as is possible. When choosing a market, it is possible to choose an item from that market, and add to a list that is to be displayed by clicking choose graph. There is a choice for equalizing the graphich table for price and index in an additional table, setting each max value to 100%. This is to ensure a more meaningful comparison, since the meanings/scales for each dataset may be different. The merge choice is not yet in use.
   </para>
 </chapter>
+<chapter>
+  <title>
+    External software configuration
+  </title>
+  <sect1 id="spark">
+    <title id="sparkterm">
+      Spark
+    </title>
+    <para>
+      Not yet in use
+    </para>
+    <para>
+      My current has no configuration. The only configuration lies in my current startup scripts, which goes:
+      <programlisting>
+	SPARK_MASTER_IP=127.0.0.1  ./sbin/start-master.sh --webui-port 8088 &amp;
+	./sbin/start-slave.sh  -c 1 -m 1G spark://127.0.0.1:7077 &amp;
+      </programlisting>
+    </para>
+  </sect1>
+</chapter>  
 <chapter id="R">
   <title>
     R

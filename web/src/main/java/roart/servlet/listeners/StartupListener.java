@@ -1,5 +1,7 @@
 package roart.servlet.listeners;
 
+import roart.config.MyConfig;
+import roart.config.MyPropertyConfig;
 import roart.model.ResultItem;
 import roart.service.ControlService;
 import sun.rmi.rmic.newrmic.Constants;
@@ -19,8 +21,15 @@ public class StartupListener implements javax.servlet.ServletContextListener {
     private static final Logger log = LoggerFactory.getLogger(StartupListener.class);
 
     public void contextInitialized(ServletContextEvent context)  {
-	System.out.println("config done");
-	log.info("config done");
+        MyConfig conf = MyPropertyConfig.instance();
+        try {
+            conf.config();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+
+        System.out.println("config done");
+        log.info("config done");
     }
 
     private Integer getInteger(String str) {
