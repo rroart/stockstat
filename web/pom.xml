@@ -316,6 +316,16 @@
     <artifactId>commons-configuration</artifactId>
     <version>${commons.version}</version>
   </dependency>
+  <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-core_2.10</artifactId>
+      <version>${spark.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-sql_2.10</artifactId>
+    <version>${spark.version}</version>
+  </dependency>
     </dependencies>
   <properties>
     <jetty.version>9.2.2.v20140723</jetty.version>
@@ -358,6 +368,7 @@
     <guava.version>16.0.1</guava.version>
     <xmlapis.version>1.4.01</xmlapis.version>
     <commons.version>1.10</commons.version>
+    <spark.version>2.0.2</spark.version>
   </properties>
 	<repositories>
 		<repository>
