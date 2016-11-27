@@ -128,8 +128,9 @@
 	</executions>
       </plugin>
       <plugin>
-	<groupId>org.mortbay.jetty</groupId>
+	<groupId>org.eclipse.jetty</groupId>
 	<artifactId>jetty-maven-plugin</artifactId>
+	<version>${jetty.version}</version>
 	<configuration>
 	  <war>${project.basedir}/web/target/stockstat-web-0.4-SNAPSHOT.war</war>
 	</configuration>
@@ -328,7 +329,7 @@
   </dependency>
     </dependencies>
   <properties>
-    <jetty.version>9.2.2.v20140723</jetty.version>
+    <jetty.version>9.3.14.v20161028</jetty.version>
     <jdk.version>1.8</jdk.version>
     <lucene.version>5.1.0</lucene.version>
     <solr.version>5.1.0</solr.version>
@@ -368,7 +369,7 @@
     <guava.version>16.0.1</guava.version>
     <xmlapis.version>1.4.01</xmlapis.version>
     <commons.version>1.10</commons.version>
-    <spark.version>2.0.2</spark.version>
+    <spark.version>1.5.2</spark.version>
   </properties>
 	<repositories>
 		<repository>
