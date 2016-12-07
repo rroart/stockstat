@@ -35,6 +35,7 @@ public class DbSpark {
     public DbSpark() {
 	try {
 	    String sparkmaster = "spark://127.0.0.1:7077";
+	    sparkmaster = MyConfig.instance().sparkMaster;
 	    SparkConf sparkconf = new SparkConf();
  	    String master = sparkmaster;
 	    sparkconf.setMaster(master);
