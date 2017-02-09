@@ -137,7 +137,7 @@ public class Math3Util {
         for (int i = 0; i < stockstrunc.size(); i++) {
             Double periodval = null;
             try {
-                periodval = StockDao.getPeriod(stockstrunc.get(i), period + 1);
+                periodval = StockDao.getPeriod(stockstrunc.get(i), period);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -170,7 +170,7 @@ public class Math3Util {
                  if (stocks1.get(i).getDate().equals(stocks2.get(k).getDate())) {
                      Double periodval = null;
                      try {
-                         periodval = StockDao.getPeriod(stocks2.get(k), period + 1);
+                         periodval = StockDao.getPeriod(stocks2.get(k), period);
                      } catch (Exception e) {
                          log.error(Constants.EXCEPTION, e);
                      }
@@ -198,7 +198,7 @@ public class Math3Util {
         for (int i = 0, j = 0; (i + startoffset) < stocks.size() && j < count ; i++) {
             Double periodval = null;
             try {
-                periodval = StockDao.getPeriod(stocks.get(i + startoffset), period + 1);
+                periodval = StockDao.getPeriod(stocks.get(i + startoffset), period);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }

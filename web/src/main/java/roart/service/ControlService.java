@@ -216,7 +216,7 @@ public class ControlService {
         ri.add("Date");
         try {
             for (int i = 0; i < StockUtil.PERIODS; i++) {
-                if (StockUtil.hasStockPeriod(stocks, i + 1)) {
+                if (StockUtil.hasStockPeriod(stocks, i)) {
                     ri.add(periodText[i]);
                     if (isMoveEnabled()) {
                         String delta = "Delta";
@@ -242,6 +242,12 @@ public class ControlService {
             }
             if (StockUtil.hasSpecial(stocks, Constants.PRICE)) {
                 ri.add("Price");
+		if (isMACDenabled()) {
+		    ri.add("Price" + " mom");
+		}
+		if (isRSIenabled()) {
+		    ri.add("Price" + " RSI");
+		}
                 ri.add("Currency");
             }
         } catch (Exception e) {
@@ -312,8 +318,8 @@ public class ControlService {
                 r.add(dt.format(stock.getDate()));
                 try {
                     for (int i = 0; i < StockUtil.PERIODS; i++) {
-                        if (StockUtil.hasStockPeriod(stocks, i + 1)) {
-                            r.add(StockDao.getPeriod(stock, i + 1));
+                        if (StockUtil.hasStockPeriod(stocks, i)) {
+                            r.add(StockDao.getPeriod(stock, i));
                             if (isMoveEnabled()) {
                                 r.add(periodmap[i].get(stock.getId()));
                             }
@@ -354,6 +360,30 @@ public class ControlService {
 
                     if (StockUtil.hasSpecial(stocks, Constants.PRICE)) {
                         r.add(stock.getPrice());
+                        if (isMACDenabled()) {
+                            TaUtil tu = new TaUtil();
+                            String market = getMarket();
+                            String id = stock.getId();
+                            Pair pair = new Pair(market, id);
+                            Set ids = new HashSet();
+                            ids.add(pair);
+                            String periodstr = "price";
+                            PeriodData perioddata = periodDataMap.get(periodstr);
+                            double momentum = tu.getMom(days, market, id, ids, marketdatamap, perioddata, periodstr);
+                            r.add(momentum);
+                        }
+                        if (isRSIenabled()) {
+                            TaUtil tu = new TaUtil();
+                            String market = getMarket();
+                            String id = stock.getId();
+                            Pair pair = new Pair(market, id);
+                            Set ids = new HashSet();
+                            ids.add(pair);
+                            String periodstr = "price";
+                            PeriodData perioddata = periodDataMap.get(periodstr);
+                            double rsi = tu.getRSI2(days, market, id, ids, marketdatamap, perioddata, periodstr);
+                            r.add(rsi);
+                        }
                         r.add(stock.getCurrency());
                     }
                 } catch (Exception e) {
@@ -573,7 +603,9 @@ public class ControlService {
             Map<String, PeriodData> periodDataMap = getPerioddatamap(markets,
                     marketdatamap);
             int topbottom = getTopBottom();
+            System.out.println("per2 " + periodDataMap.keySet());
             for (String periodText : periodDataMap.keySet()) {
+                System.out.println("per3 " + periodText);
                 PeriodData perioddata = periodDataMap.get(periodText);
                 //System.out.println("pairsize " + periodText + " " + perioddata.pairs.size());
                 DefaultCategoryDataset dataset = StockUtil.getFilterChartPeriod(days, ids, marketdatamap, perioddata);
@@ -652,6 +684,32 @@ public class ControlService {
                     StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom, getTableDays(), getTopBottom());
                     retlist.add(r);
                 }
+                if (isMACDenabled()) {
+                    TaUtil tu = new TaUtil();
+                    for (Pair id : ids) {
+                        String market = (String) id.getFirst();
+                        String stockid = (String) id.getSecond();
+                        dataset = tu.getMACDChart(days, market, stockid, ids, marketdatamap, perioddata, "price");
+                        if (dataset != null) {
+                            JFreeChart c = SvgUtil.getChart(dataset, "price", "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, 1);
+                            StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+".svg", days, topbottom, getTableDays(), 1);
+                            retlist.add(r);
+                        }
+                    }
+                }
+                if (isRSIenabled()) {
+                    TaUtil tu = new TaUtil();
+                    for (Pair id : ids) {
+                        String market = (String) id.getFirst();
+                        String stockid = (String) id.getSecond();
+                        dataset = tu.getRSIChart(days, market, stockid, ids, marketdatamap, perioddata, "price");
+                        if (dataset != null) {
+                            JFreeChart c = SvgUtil.getChart(dataset, "price", "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, 1);
+                            StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+".svg", days, topbottom, getTableDays(), 1);
+                            retlist.add(r);
+                        }
+                    }
+                }
             }
             if (isGraphEqualize()) {
             }
@@ -667,7 +725,7 @@ public class ControlService {
         //System.out.println("siz " + marketdatamap.size());
         Map<String, PeriodData> periodDataMap = new HashMap();
         for (String market : markets) {
-            //System.out.println("market " + market);
+            System.out.println("market " + market);
             String[] periodText = marketdatamap.get(market).periodtext;
             for (int i = 0; i < StockUtil.PERIODS; i++) {
                 String text = periodText[i];
@@ -682,7 +740,20 @@ public class ControlService {
                 Set<Pair<String, Integer>> pairs = perioddata.pairs;
                 pairs.add(pair);
             }
+            if (true) {
+                String text = "price";
+                Pair<String, Integer> pair = new Pair(market, Constants.PRICE);
+                PeriodData perioddata = periodDataMap.get(text);
+                if (perioddata == null) {
+                    perioddata = new PeriodData();
+                    periodDataMap.put(text, perioddata);
+                    //System.out.println("new " + text);
+                }
+                Set<Pair<String, Integer>> pairs = perioddata.pairs;
+                pairs.add(pair);                
+            }
         }
+        System.out.println("per " + periodDataMap.keySet());
         return periodDataMap;
     }
 
