@@ -242,12 +242,12 @@ public class ControlService {
             }
             if (StockUtil.hasSpecial(stocks, Constants.PRICE)) {
                 ri.add("Price");
-		if (isMACDenabled()) {
-		    ri.add("Price" + " mom");
-		}
-		if (isRSIenabled()) {
-		    ri.add("Price" + " RSI");
-		}
+                if (isMACDenabled()) {
+                    ri.add("Price" + " mom");
+                }
+                if (isRSIenabled()) {
+                    ri.add("Price" + " RSI");
+                }
                 ri.add("Currency");
             }
         } catch (Exception e) {
