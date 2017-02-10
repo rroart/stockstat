@@ -364,7 +364,7 @@ Table days (R days): how many days to use for the graph or statistics
 	sort
     </entry>
     <entry>
-      for what to sort on (PERIOD, MACD, RSI), default PERIOD
+      for what to sort on (VALUE, MACD, RSI), default VALUE
       </entry>
     </row>
     <row>
