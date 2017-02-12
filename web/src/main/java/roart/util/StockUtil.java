@@ -25,6 +25,7 @@ public class StockUtil {
     private static Logger log = LoggerFactory.getLogger(StockUtil.class);
 
     public final static int PERIODS = 6;
+    public final static int ALLPERIODS = 8;
 
     /**
      * Create sorted tables for all periods in a time interval
