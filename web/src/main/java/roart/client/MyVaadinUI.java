@@ -840,7 +840,7 @@ public class MyVaadinUI extends UI
         for (int i=0; i<strarr.size(); i++) {
             if (strarr.get(i).get().size() != columns) {
                 log.error("column differs " + columns + " found " + strarr.get(i).get().size());
-                System.out.println("column differs " + columns + " found " + strarr.get(i).get().size());
+                System.out.println("column differs " + columns + " found " + strarr.get(i).get().size() + " " + i + " : " + strarr.get(i).get().get(1) + " " +strarr.get(i).get() );
                 break;
             }
         }
