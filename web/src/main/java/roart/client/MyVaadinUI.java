@@ -255,6 +255,7 @@ public class MyVaadinUI extends UI
         horStat.setWidth("90%");
         horStat.addComponent(getDate());
         horStat.addComponent(getResetDate());
+        horStat.addComponent(getReload());
         horStat.addComponent(getStat());
        //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
@@ -353,6 +354,21 @@ public class MyVaadinUI extends UI
                     controlService.setdate(null);
                     Notification.show("Request sent");
                     //displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getReload() {
+        Button button = new Button("Reload");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
