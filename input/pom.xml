@@ -11,6 +11,42 @@
   <packaging>jar</packaging>
   <version>0.4-SNAPSHOT</version>
   <name>Stock Statistics Input</name>
+  <build>
+    <plugins>
+      <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>roart.Main</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+     <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+                <archive>
+                    <manifest>
+                        <mainClass>roart.Main</mainClass>
+                    </manifest>
+                </archive>
+        </configuration>
+     </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>roart</groupId>
