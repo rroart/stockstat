@@ -6,11 +6,13 @@ require("TTR")
                                         #require("tabplot")
                                         #require("gridExtra")
 
+# 2 not used?
 pricetype <- -1
 indextype <- -2
-periods <- 6
+metaperiods <- 6
+periods <- 8
 
-PERIOD <- 1
+VALUE <- 1
 MACD <- 2
 RSI <- 3
 
@@ -62,6 +64,12 @@ getdforderperiod <- function(df, period) {
     if (period == 6) {
         ds <- df[order(-df$period6),]
     }
+    if (period == 7) {
+        ds <- df[order(-df$price),]
+    }
+    if (period == 8) {
+        ds <- df[order(-df$indexvalue),]
+    }
     return (ds)
 }
 
@@ -84,6 +92,12 @@ getdforderperiodreverse <- function(df, period) {
     }
     if (period == 6) {
         ds <- df[order(df$period6),]
+    }
+    if (period == 7) {
+        ds <- df[order(df$price),]
+    }
+    if (period == 8) {
+        ds <- df[order(df$indexvalue),]
     }
     return (ds)
 }
@@ -264,6 +278,12 @@ listperiod <- function(list, period, index) {
     if (period == 6) {
         return (list$period6[index])
     }
+    if (period == 7) {
+        return (list$price[index])
+    }
+    if (period == 8) {
+        return (list$indexvalue[index])
+    }
 }
 
 mytopperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, max, days) {
@@ -368,11 +388,11 @@ myperiodtextslist <- function(myperiodtexts, periodtexts) {
     return(retlist)
 }
 
-getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=PERIOD, macddays=60) {
+getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=VALUE, macddays=60) {
     return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=TRUE))
 }
 
-gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=PERIOD, macddays=60, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
+gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=60, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
     periodtexts <- getperiodtexts(market)
     myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
     for (i in 1:length(myperiodtexts)) {
@@ -817,6 +837,12 @@ getdfperiod <- function(df, index, period) {
     if (period == 6) {
         return (df[index, "period6"])
     }
+    if (period == 7) {
+        return(df[index, "price"])
+    }
+    if (period == 8) {
+        return (df[index, "indexvalue"])
+    }
     cat("should not be here")
 }
 
@@ -838,6 +864,12 @@ getonedfperiod <- function(df, period) {
     }
     if (period == 6) {
         return (df$period6)
+    }
+    if (period == 7) {
+        return(df$price)
+    }
+    if (period == 8) {
+        return (df$indexvalue)
     }
     cat("should not be here")
 }
@@ -1041,13 +1073,13 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wa
             perioddata[["text"]] <- pairs
             perioddatamap[[text]] <- perioddata
         }
-        {
+        if (FALSE) {
             perioddata <- list()
             pairs[[paste(1, market)]] <- list(market, pricetype)
             perioddata[["text"]] <- pairs
             perioddatamap[["price"]] <- perioddata
         }
-        {
+        if (FALSE) {
             perioddata <- list()
             pairs[[paste(1, market)]] <- list(market, indextype)
             perioddata[["text"]] <- pairs
@@ -1327,12 +1359,14 @@ getperiodtexts <- function(market) {
                                         #    meta <- dbGetQuery(con, "select * from meta")
     mymeta <- getmarketmeta(allmetas, market)
     if (nrow(mymeta) > 0) {
-        for (i in 1:periods) {
+        for (i in 1:metaperiods) {
             if (!is.na(getperiodtext(mymeta, i))) {
                 periodtext[i] = getperiodtext(mymeta, i)
             }
         }
     }
+    periodtext[metaperiods + 1] = "Price";
+    periodtext[metaperiods + 2] = "Index";
     return(periodtext)
 }
 

@@ -35,13 +35,16 @@ public class TaUtil {
                 log.info("listnull " + market + " " + " " + j);
                 continue;
             }
+            if (periodInt == null) {
+                continue;
+            }
             int period = periodInt;
             grr:  for (int i = 0; i < list.size(); i++) {
                 Stock stock = list.get(i);
                 Pair<String, String> pair = new Pair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
-                        Double value = StockDao.getPeriod(stock, period + 1);
+                        Double value = StockDao.getValue(stock, period);
                         if (value == null) {
                             continue;
                         }
@@ -108,7 +111,7 @@ public class TaUtil {
                 Pair<String, String> pair = new Pair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
-                        Double value = StockDao.getPeriod(stock, period + 1);
+                        Double value = StockDao.getPeriod(stock, period);
                         if (value == null) {
                             continue;
                         }
@@ -212,13 +215,17 @@ public class TaUtil {
                 log.info("listnull " + market + " " + " " + j);
                 continue;
             }
+            if (periodInt == null) {
+                //System.out.println("tata " + market + " " + periodstr);
+                continue;
+            }
             int period = periodInt;
             grr:  for (int i = 0; i < list.size(); i++) {
                 Stock stock = list.get(i);
                 Pair<String, String> pair = new Pair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
-                        Double value = StockDao.getPeriod(stock, period + 1);
+                        Double value = StockDao.getValue(stock, period);
                         if (value == null) {
                             if (false || "F00000M1AHH".equals(id) || "F00000IRBFF".equals(id)) {
                                 System.out.println("grr5");
@@ -291,7 +298,7 @@ public class TaUtil {
                 Pair<String, String> pair = new Pair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
-                        Double value = StockDao.getPeriod(stock, period + 1);
+                        Double value = StockDao.getPeriod(stock, period);
                         if (value == null) {
                             if (false || "F00000M1AH".equals(id)) {
                                 System.out.println("grr5");
@@ -362,6 +369,7 @@ public class TaUtil {
             Set<Pair> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        System.out.println("parsize " + pairs.size());
         Object objs[] = getMACD(days, market, id, ids, marketdatamap, perioddata, periodstr);
         double macd[] = (double[]) objs[0];
         double sig[] = (double[]) objs[1];

@@ -255,6 +255,7 @@ public class MyVaadinUI extends UI
         horStat.setWidth("90%");
         horStat.addComponent(getDate());
         horStat.addComponent(getResetDate());
+        horStat.addComponent(getReload());
         horStat.addComponent(getStat());
        //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
@@ -353,6 +354,21 @@ public class MyVaadinUI extends UI
                     controlService.setdate(null);
                     Notification.show("Request sent");
                     //displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getReload() {
+        Button button = new Button("Reload");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -840,7 +856,7 @@ public class MyVaadinUI extends UI
         for (int i=0; i<strarr.size(); i++) {
             if (strarr.get(i).get().size() != columns) {
                 log.error("column differs " + columns + " found " + strarr.get(i).get().size());
-                System.out.println("column differs " + columns + " found " + strarr.get(i).get().size());
+                System.out.println("column differs " + columns + " found " + strarr.get(i).get().size() + " " + i + " : " + strarr.get(i).get().get(1) + " " +strarr.get(i).get() );
                 break;
             }
         }

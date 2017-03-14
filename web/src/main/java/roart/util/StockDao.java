@@ -11,22 +11,22 @@ import roart.model.Stock;
 public class StockDao {
     @Transient
     public static Double getPeriod(Stock stock, int i) throws Exception {
-        if (i == 1) {
+        if (i == 0) {
             return stock.getPeriod1();
         }
-        if (i == 2) {
+        if (i == 1) {
             return stock.getPeriod2();
         }
-        if (i == 3) {
+        if (i == 2) {
             return stock.getPeriod3();
         }
-        if (i == 4) {
+        if (i == 3) {
             return stock.getPeriod4();
         }
-        if (i == 5) {
+        if (i == 4) {
             return stock.getPeriod5();
         }
-        if (i == 6) {
+        if (i == 5) {
             return stock.getPeriod6();
         }
         throw new Exception("Out of range " + i);
@@ -34,7 +34,7 @@ public class StockDao {
 
     @Transient
     public static Double getValue(Stock stock, int i) throws Exception {
-        if (i > 0) {
+        if (i >= 0) {
             return getPeriod(stock, i);
         } else {
             return getSpecial(stock, i);

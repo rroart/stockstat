@@ -152,7 +152,7 @@ There are two phases, data acquisition and usage.
     Webapp
   </title>
   <para>
-    The webapp is pretty basic. You can choose a market under get market, then set the wanted date, or reset the date (then it will choose the most recent day). If getting stats, all elements in the markets will be statistically compared. There are a number of parameter settings.
+    The webapp is pretty basic. You can choose a market under get market, then set the wanted date, reset the date (then it will choose the most recent day), or reload (in case date reset, or new data loaded). If getting stats, all elements in the markets will be statistically compared. There are a number of parameter settings.
     The control panel have options for choosing whether to show plain movements, MACD or RSI.
     <itemizedlist>
       <title>
@@ -364,7 +364,7 @@ Table days (R days): how many days to use for the graph or statistics
 	sort
     </entry>
     <entry>
-      for what to sort on (PERIOD, MACD, RSI), default PERIOD
+      for what to sort on (VALUE, MACD, RSI), default VALUE
       </entry>
     </row>
     <row>

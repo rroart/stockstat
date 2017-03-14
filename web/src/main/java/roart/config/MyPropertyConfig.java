@@ -31,6 +31,9 @@ public class MyPropertyConfig extends MyConfig {
     }
 
     public void config() throws Exception {
+        if (config == null) {
+            return;
+        }
         configSpark();
  
     }
