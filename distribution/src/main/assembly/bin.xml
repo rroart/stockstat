@@ -4,7 +4,7 @@
   <id>bin</id>
   <formats>
     <format>dir</format>
-    <format>tar.gz</format>
+    <!--format>tar.gz</format-->
   </formats>
   <fileSets>
     <fileSet>
@@ -27,6 +27,20 @@
 	<include>*</include>
       </includes>
       <outputDirectory>bin</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/</directory>
+      <includes>
+	<include>COPYING</include>
+      </includes>
+      <outputDirectory/>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/</directory>
+      <includes>
+	<include>DOCUMENTATION.pdf</include>
+      </includes>
+      <outputDirectory/>
     </fileSet>
   </fileSets>
   <!--files>
