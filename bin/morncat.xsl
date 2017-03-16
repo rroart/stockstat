@@ -22,7 +22,7 @@
 	<meta>
 	  <marketid>morncat</marketid>
 	  <period1>c y</period1>
-	  <period2>1 m</period2>
+	  <period2>3 m</period2>
 	  <period3>1 y</period3>
 	  <period4>3 y</period4>
 	  <period5>5 y</period5>
