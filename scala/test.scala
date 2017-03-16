@@ -1,3 +1,4 @@
+import org.apache.spark.sql.SparkSession
 import java.sql.Timestamp
 import java.sql.Date
 import org.apache.spark.sql.DataFrame
@@ -7,8 +8,6 @@ import org.apache.spark.sql.Row
 val prop = new java.util.Properties
 prop.setProperty("driver", "org.postgresql.Driver")
 //val df = spark.read.jdbc("jdbc:postgresql://stockstat:password@localhost:5432/stockstat", "meta", prop)
-//val df = sqlContext.sql("select * from meta")
-//val df = sqlContext.read.jdbc("jdbc:postgresql://stockstat:password@localhost:5432/stockstat", "meta", prop)
 
 val pricetype = -1
 val indextype = -2
@@ -21,8 +20,8 @@ val RSI = 3
 
 val mydateformat = "yyyy.MM.dd"
 
-val allmetas = sqlContext.read.jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "meta", prop)
-val allstocks = sqlContext.read.jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "stock", prop)
+val allmetas = spark.read.jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "meta", prop)
+val allstocks = spark.read.jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "stock", prop)
 
 def getstockdate(stocklist: List[String], mydate : String) : Int = {
 if (mydate == 0) {
