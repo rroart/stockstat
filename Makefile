@@ -1,7 +1,7 @@
 all: xhtml pdf
 
-xhtml: DOCUMENTATION
-	xmlto xhtml DOCUMENTATION
+xhtml: DOCUMENTATION.xml
+	xmlto xhtml DOCUMENTATION.xml
 
 pdf: DOCUMENTATION.pdf
 
