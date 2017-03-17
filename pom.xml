@@ -6,6 +6,7 @@
   <version>0.4-SNAPSHOT</version>
   <name>Stock Statistics Parent</name>
   <modules>
+    <module>common</module>
     <module>db</module>
     <module>input</module>
     <module>web</module>

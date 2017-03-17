@@ -9,10 +9,7 @@
     <version>0.4-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
-  <!--artifactId>myweb</artifactId-->
   <artifactId>stockstat-web</artifactId>
-  <!--artifactId>disksearchengine</artifactId-->
-  <!--artifactId>akashic-disk-search-engine</artifactId-->
   <version>0.4-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>Stock Statistics Web</name>
@@ -202,6 +199,11 @@
     </pluginManagement>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-model</artifactId>
+      <version>0.4-SNAPSHOT</version>
+    </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-db</artifactId>
