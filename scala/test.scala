@@ -1,8 +1,10 @@
 import org.apache.spark.sql.SparkSession
 import java.sql.Timestamp
 import java.sql.Date
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.Row
+import scala.collection.mutable.MutableList
+import scala.collection.mutable.ListBuffer
 //import org.apache.spark.sql.SparkSession
 //val spark: SparkSession = SparkSession.builder.master("local[*]").appName("My Spark Application").getOrCreate
 val prop = new java.util.Properties
@@ -24,13 +26,13 @@ val allmetas = spark.read.jdbc("jdbc:postgresql://localhost:5432/stockstat?user=
 val allstocks = spark.read.jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "stock", prop)
 
 def getstockdate(stocklist: List[String], mydate : String) : Int = {
-if (mydate == 0) {
+if (mydate == null) {
 return 0
 }
 stocklist.indexOf(mydate)
 }
 
-def getdforderperiod (df: DataFrame, period : Int) : DataFrame = {
+def getdforderperiod (df: Dataset[Row], period : Int) : Dataset[Row] = {
     var ds = df
     if (period == 1) {
         ds = df.sort($"period1")
@@ -59,7 +61,7 @@ def getdforderperiod (df: DataFrame, period : Int) : DataFrame = {
     ds
 }
 
-def getdforderperiodreverse (df: DataFrame, period : Int) : DataFrame = {
+def getdforderperiodreverse (df: Dataset[Row], period : Int) : Dataset[Row] = {
     var ds = df
     if (period == 1) {
         ds = df.sort($"period1".desc)
@@ -88,7 +90,7 @@ def getdforderperiodreverse (df: DataFrame, period : Int) : DataFrame = {
     ds
 }
 
-def getonedfperiod (df: DataFrame, period : Int) : DataFrame = {
+def getonedfperiod (df: Dataset[Row], period : Int) : Dataset[Row] = {
     var ds = df
     if (period == 1) {
         ds = df.select($"period1")
@@ -117,7 +119,7 @@ def getonedfperiod (df: DataFrame, period : Int) : DataFrame = {
     ds
 }
 
-def getmaxonedfperiod (df: DataFrame, period : Int) : Double = {
+def getmaxonedfperiod (df: Dataset[Row], period : Int) : Double = {
     var ds = -1.0
     try {
     if (period == 1) {
@@ -149,7 +151,7 @@ def getmaxonedfperiod (df: DataFrame, period : Int) : Double = {
     ds
 }
 
-def getperiodmap(list1 : DataFrame, list2 : DataFrame) : Map[String, Int] = {
+def getperiodmap(list1 : Dataset[Row], list2 : Dataset[Row]) : Map[String, Int] = {
     val map = Map
     val df1 = list1
     val df2 = list2
@@ -159,10 +161,10 @@ def getperiodmap(list1 : DataFrame, list2 : DataFrame) : Map[String, Int] = {
     common.map(x => (x.toString -> (l2.indexOf(x) - l1.indexOf(x)))).toMap
 }
 
-def getlistmove(datedstocklists : List[DataFrame], listid : Map[String, DataFrame], listdate : Map[String, DataFrame], count : Int, tableintervaldays : Int, stocklistperiod : Array[Array[DataFrame]]) : Array[Array[Map[String, Int]]] = {
+def getlistmove(datedstocklists : List[Dataset[Row]], listid : Map[String, Dataset[Row]], listdate : Map[String, Dataset[Row]], count : Int, tableintervaldays : Int, stocklistperiod : Array[Array[Dataset[Row]]]) : Array[Array[Map[String, Int]]] = {
     val periodmaps = Array.ofDim[Map[String, Int]](periods, count - 1)
-    for (j <- 1 to count) {
-        for (i <- 1 to periods) {
+    for (j <- 0 to count - 1) {
+        for (i <- 0 to periods - 1) {
             val hasperiod = stocklistperiod(i)(j) != null
             if (hasperiod) {
                 if (j > 1) {
@@ -179,16 +181,16 @@ def getlistmove(datedstocklists : List[DataFrame], listid : Map[String, DataFram
     periodmaps
 }
 
-def getlistsorted(datedstocklists: List[DataFrame], listid : Map[String, DataFrame], listdate : Map[String, DataFrame], count : Int, tableintervaldays : Int, wantrise : Boolean = true, reverse : Boolean = false) : Array[Array[DataFrame]] = {
-    val stocklistperiod = Array.ofDim[DataFrame](periods, count)
-    for (j <- 1 to count) {
-        for (i <- 1 to periods) {
+def getlistsorted(datedstocklists: List[Dataset[Row]], listid : Map[String, Dataset[Row]], listdate : Map[String, Dataset[Row]], count : Int, tableintervaldays : Int, wantrise : Boolean = true, reverse : Boolean = false) : Array[Array[Dataset[Row]]] = {
+    val stocklistperiod = Array.ofDim[Dataset[Row]](periods, count)
+    for (j <- 0 to count - 1) {
+        for (i <- 0 to periods - 1) {
             val df = datedstocklists(j)
             var hasperiod = false
 // TODO get better val
             hasperiod = getmaxonedfperiod(df, i) != -1
             if (hasperiod) {
-                var ds : DataFrame = null;
+                var ds : Dataset[Row] = null;
                 if (reverse) {
                     ds = getdforderperiodreverse(df, i)
                 } else {
@@ -208,24 +210,24 @@ def getlistsorted(datedstocklists: List[DataFrame], listid : Map[String, DataFra
 //val mymap = marketids.map(marketid => (marketid -> df.where($"marketid" <=> marketid))).toMap
 
 // Timestamp
-def getstocksdatemap(df : DataFrame) : Map[String, DataFrame] = {
+def getstocksdatemap(df : Dataset[Row]) : Map[String, Dataset[Row]] = {
 val dt = new java.text.SimpleDateFormat(mydateformat)
 val dates = df.select("date").distinct.collect.flatMap(_.toSeq)
 val mymap = dates.map(date => (dt.format(date) -> df.where($"date" <=> date))).toMap
 mymap
 }
 
-def getstocksidmap(df : DataFrame) : Map[String, DataFrame] = {
+def getstocksidmap(df : Dataset[Row]) : Map[String, Dataset[Row]] = {
 val ids = df.select("id").distinct.collect.flatMap(_.toSeq)
 val mymap = ids.map(id => (id.toString -> df.where($"id" <=> id))).toMap
 mymap
 }
 
-def getmarketmeta(df: DataFrame, marketid: String) : DataFrame = {
+def getmarketmeta(df: Dataset[Row], marketid: String) : Dataset[Row] = {
 df.filter($"marketid" === marketid)
 }
 
-def getstockmarket(df: DataFrame, marketid: String) : DataFrame = {
+def getstockmarket(df: Dataset[Row], marketid: String) : Dataset[Row] = {
 df.filter($"marketid" === marketid)
 }
     
@@ -253,20 +255,21 @@ return null
 }
 
 def getperiodtexts(market: String) : List[String] = {
-val periodtext: List[String] = List("Period1", "Period2", "Period3", "Period4", "Period5", "Period6")
+var periodtext: List[String] = List("Period1", "Period2", "Period3", "Period4", "Period5", "Period6")
 val mymeta = getmarketmeta(allmetas, market)
 if (mymeta.count > 0) {
-for (i <- 1 to periods) {
+for (i <- 0 to periods - 1) {
 val txt = getperiodtext(mymeta.first, i)
+println("c"+txt)
 if (txt != null) {
-periodtext.updated(i - 1, txt)
+periodtext = periodtext.updated(i, txt)
 }
 }
 }
 periodtext
 }
 
-def getdatedstocklists(listdate : Map[String, DataFrame], mydate : Int, days : Int, tableintervaldays : Int) : List[DataFrame] = {
+def getdatedstocklists(listdate : Map[String, Dataset[Row]], mydate : Int, days : Int, tableintervaldays : Int) : List[Dataset[Row]] = {
                                         //    str(mydate)
     val dt = new java.text.SimpleDateFormat(mydateformat)
 //    val mydate = dt.format(adate)          
@@ -274,25 +277,33 @@ def getdatedstocklists(listdate : Map[String, DataFrame], mydate : Int, days : I
     var offset = mydate
     var dateindex : Int = 0
     if (mydate != 0) {
-        dateindex = listdate.size - offset
+        dateindex = listdate.size - offset - 1
     } else {
-        dateindex = listdate.size
+        dateindex = listdate.size - 1
     }
     var index = dateindex - offset
+println("" + index + " " + datelist.size + " " + offset)
     var date = datelist(index)
+println("d0 " + date)
                                         //index <- length(listdate)
 // TODO fix list handling
-    val datedstocklists = List[DataFrame](listdate(date))
+    val datedstocklists = ListBuffer[Dataset[Row]](listdate(date))
+println("d0 " + datedstocklists)
 
-    for (j <- 1 to days) {
+    for (j <- 0 to days - 1) {
         index = index - tableintervaldays
+println("" + index + " " + datelist.size)
         date = datelist(index)
+println("d1 " + date)
+println("" + index + " " + datelist.size)
+println("d2 " + listdate(date))
         datedstocklists :+ listdate(date)
     }
-    datedstocklists
+println("d3 " + datedstocklists)
+    datedstocklists.toList
 }
 
-def getdatedstocklists1(listdate : Map[String, DataFrame], adate : String, days : Int, tableintervaldays : Int) : List[DataFrame] = {
+def getdatedstocklists1(listdate : Map[String, Dataset[Row]], adate : String, days : Int, tableintervaldays : Int) : List[Dataset[Row]] = {
     val dt = new java.text.SimpleDateFormat(mydateformat)
 //    val mydate = dt.format(adate)          
     val datelist = collection.mutable.SortedSet(listdate.keySet.toList: _*).toList
@@ -300,30 +311,110 @@ def getdatedstocklists1(listdate : Map[String, DataFrame], adate : String, days 
     getdatedstocklists(listdate, index, days, tableintervaldays)
 }
 
-def gettopgraph(market: String, mydate: String, days: Int, tablemoveintervaldays: Int, topbottom: Int, myperiodtexts2: String, sort: String, macddays: Int = 60, reverse: Boolean = false, wantrise: Boolean = false, wantmacd: Boolean = false, wantrsi: Boolean = false) : String = {
-val periodtexts = getperiodtexts(market)
-val myperiodtexts : List[String] = List(myperiodtexts2)
-for(i <- 1 to myperiodtexts.size) {
-val periodtext = myperiodtexts(i - 1)
-val period = periodtexts.indexOf(periodtext)
-val stocks = getstockmarket(allstocks, market)
-val listdate = getstocksdatemap(stocks)
-val listid = getstocksidmap(stocks)
+def listperiodRow(row : Row, period : Int) : Double = {
+    if (period < 7) {
+return row.getAs("period"+period)
+    }
+    if (period == 7) {
+return row.getAs("price")
+    }
+    if (period == 8) {
+return row.getAs("indexvalue")
+    }
+return 0.0
+}
 
-val datedstocklists = getdatedstocklists1(listdate, mydate, days, tablemoveintervaldays)
-val stocklistperiod = getlistsorted(datedstocklists, listid, listdate, days, tablemoveintervaldays, reverse=reverse)
-if (wantrise) {
-val periodmaps = getlistmove(datedstocklists, listid, listdate, days, tablemoveintervaldays, stocklistperiod)
+def mytopperiod2(dflist : List[Dataset[Row]], period : Int, max : Int, days : Int, wantrise : Boolean = false, wantmacd : Boolean = false, wantrsi : Boolean = false) {
+    for (j <- 0 to days - 1) {
+        val df = dflist(j)
+/*
+        if (max < nrow(df)) {
+            //max <- nrow(df)
+        }
+	*/
+println("e0")
+val alist = df.limit(max).collectAsList
+        for (i <- 0 to max - 1) {
+/*
+            rsi <- NA
+            if (wantrsi) {
+                rsi <- df$rsic[[i]]
+            }
+            macd <- NA
+            if (wantmacd) {
+                macd <- df$momc[[i]]
+            }
+            rise <- NA
+            if (wantrise) {
+                rise <- df$risec[[i]]
+            }
+  */         
+val id : String = alist.get(i).getAs("id") 
+val name0 : String = alist.get(i).getAs("name")
+val mymax = math.min(33, name0.size)
+val name = name0.substring(0, mymax)
+val date : Timestamp = alist.get(i).getAs("date")
+val per = listperiodRow(alist.get(i), period)
+val rise = 0
+val macd = 0
+val rsi = 0
+println(f"$i%3d $name%-35s $date%12s $per%3.2f $rise%3d $macd%3.2f $rsi%3.2f $id%s")
+        }
+                                        //        str(df$id[[1]])
+    }
 }
-val dflist = List
-var headskiprsi = 0
-if (mydate != null) {
-//headskiprsi = mydate
-}
-val headskipmacd = 0
-if (mydate != null) {
-//headskipmacd = mydate
-}
-}
-return "test"
+
+
+def gettopgraph(market: String, mydate: String, days: Int, tablemoveintervaldays: Int, topbottom: Int, myperiodtexts2: String, sort: String, macddays: Int = 60, reverse: Boolean = false, wantrise: Boolean = false, wantmacd: Boolean = false, wantrsi: Boolean = false) : String = {
+ val periodtexts = getperiodtexts(market)
+ val myperiodtexts : List[String] = List(myperiodtexts2)
+ for(i <- 0 to myperiodtexts.size - 1) {
+  val periodtext = myperiodtexts(i)
+println("p " + periodtext + " " + periodtexts)
+  val period = periodtexts.indexOf(periodtext)
+  val stocks = getstockmarket(allstocks, market)
+  val listdate = getstocksdatemap(stocks)
+  val listid = getstocksidmap(stocks)
+
+  val datedstocklists = getdatedstocklists1(listdate, mydate, days, tablemoveintervaldays)
+  val stocklistperiod = getlistsorted(datedstocklists, listid, listdate, days, tablemoveintervaldays, reverse=reverse)
+  //var periodmaps = Array[Array[Map[String, Int]]]
+  if (wantrise) {
+   //periodmaps = getlistmove(datedstocklists, listid, listdate, days, tablemoveintervaldays, stocklistperiod)
+  }
+println("d")
+  var dflist = ListBuffer[Dataset[Row]](stocklistperiod(period)(0))
+println("d")
+  val datelist = collection.mutable.SortedSet(listdate.keySet.toList: _*).toList
+println("d")
+
+  var index = getstockdate(datelist, mydate)
+
+  var headskiprsi = 0
+  if (mydate != null) {
+   headskiprsi = index
+  }
+  var headskipmacd = 0
+  if (mydate != null) {
+   headskipmacd = index
+  }
+println("d")
+  for (j <- 0 to days - 1) {
+println("d1 " + j)
+   val df = stocklistperiod(period)(j)
+   if (wantrise) {
+    var list2 = List
+    if (j < days) {
+     //list2 = periodmaps(period)(j)
+    }
+    var riselist = List
+   }
+println("d4")
+   dflist :+ df
+println("d5")
+  }
+  mytopperiod2(dflist.toList, period, topbottom, days, wantrise=wantrise, wantmacd=wantmacd, wantrsi=wantrsi)
+ }
+
+ "test"
 }
