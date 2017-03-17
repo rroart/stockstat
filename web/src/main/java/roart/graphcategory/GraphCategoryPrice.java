@@ -1,5 +1,6 @@
 package roart.graphcategory;
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +14,7 @@ import com.vaadin.server.StreamResource;
 import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorMACD;
 import roart.graphindicator.GraphIndicatorRSI;
+import roart.model.GUISize;
 import roart.model.ResultItem;
 import roart.model.Stock;
 import roart.service.ControlService;
@@ -40,7 +42,7 @@ public class GraphCategoryPrice extends GraphCategory {
     }
 
     @Override
-    public void addResult(List retlist, Set<Pair> ids) {
+    public void addResult(List retlist, Set<Pair> ids, GUISize guiSize) {
         try {
             if (StockUtil.hasSpecial(marketdatamap, Constants.PRICE)) {
                 String periodText = title;
@@ -61,7 +63,7 @@ public class GraphCategoryPrice extends GraphCategory {
                         currency = "Value";
                     }
                     JFreeChart c = SvgUtil.getChart(dataset, "Price", "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom, controlService.getTableDays(), controlService.getTopBottom());
+                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, controlService.getTableDays(), controlService.getTopBottom(), guiSize);
                     retlist.add(r);
                 }
                 if (dataset != null && dataseteq != null) {
@@ -70,12 +72,12 @@ public class GraphCategoryPrice extends GraphCategory {
                         currency = "Value";
                     }
                     JFreeChart c = SvgUtil.getChart(dataseteq, "Price", "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+ 1 +".svg", days, topbottom, controlService.getTableDays(), controlService.getTopBottom());
+                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, controlService.getTableDays(), controlService.getTopBottom(), guiSize);
                     retlist.add(r);
                 }
                 for (GraphIndicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        indicator.getResult(retlist, ids);
+                        indicator.getResult(retlist, ids, guiSize);
                     }
                 }
             }

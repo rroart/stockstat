@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.graphindicator.GraphIndicator;
+import roart.model.GUISize;
 import roart.service.ControlService;
 
 public abstract class GraphCategory {
@@ -24,6 +25,6 @@ public abstract class GraphCategory {
         title = periodText;
     }
 
-    abstract public void addResult(List retlist, Set<Pair> ids);
+    abstract public void addResult(List retlist, Set<Pair> ids, GUISize guiSize);
 }
 

@@ -1,5 +1,6 @@
 package roart.service;
 
+import roart.model.GUISize;
 import roart.model.Meta;
 import roart.model.ResultItem;
 import roart.model.Stock;
@@ -424,11 +425,12 @@ public class ControlService {
 
     /**
      * Create result graphs
+     * @param guiSize TODO
      * 
      * @return the image list
      */
 
-    public List getContentGraph() {
+    public List getContentGraph(GUISize guiSize) {
         List retlist = new ArrayList<>();
         try {
             List<Stock> stocks = Stock.getAll(getMarket());
@@ -462,7 +464,7 @@ public class ControlService {
             }
 
             for (GraphCategory category : categories) {
-                category.addResult(retlist, null);
+                category.addResult(retlist, null, guiSize);
             }
 
         } catch (Exception e) {
@@ -476,10 +478,11 @@ public class ControlService {
      * Create result graphs for one
      * 
      * myid the id of the unit
+     * @param guiSize TODO
      * @return the image list
      */
 
-    public List getContentGraph(Set<Pair> ids) {
+    public List getContentGraph(Set<Pair> ids, GUISize guiSize) {
         List retlist = new ArrayList<>();
         try {
             log.info("mydate " + getdate());
@@ -494,7 +497,7 @@ public class ControlService {
 
             try {
                 for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
-                    categories[i].addResult(retlist, ids);
+                    categories[i].addResult(retlist, ids, guiSize);
                 }
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);

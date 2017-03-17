@@ -7,6 +7,7 @@ import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.model.GUISize;
 import roart.service.ControlService;
 
 public abstract class GraphIndicator {
@@ -27,7 +28,7 @@ public abstract class GraphIndicator {
         return title;
     }
 
-    abstract public void getResult(List retlist, Set<Pair> ids);
+    abstract public void getResult(List retlist, Set<Pair> ids, GUISize guiSize);
 
 }
 

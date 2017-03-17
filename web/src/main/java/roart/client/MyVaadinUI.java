@@ -1,5 +1,6 @@
 package roart.client;
 
+import roart.model.GUISize;
 import roart.model.ResultItem;
 import roart.model.Stock;
 import roart.util.Constants;
@@ -147,7 +148,7 @@ public class MyVaadinUI extends UI
     private TabSheet tabsheet = null;
     public Label statLabel = null;
 
-    public static int x = 0, y = 0;
+    public static GUISize guiSize = new GUISize();
     
     ControlService controlService = null;
     
@@ -156,8 +157,8 @@ public class MyVaadinUI extends UI
         
         controlService = new ControlService();
         final VerticalLayout layout = new VerticalLayout();
-        x = com.vaadin.server.Page.getCurrent().getBrowserWindowWidth();
-        y = com.vaadin.server.Page.getCurrent().getBrowserWindowHeight();
+        guiSize.x = com.vaadin.server.Page.getCurrent().getBrowserWindowWidth();
+        guiSize.y = com.vaadin.server.Page.getCurrent().getBrowserWindowHeight();
         VerticalLayout searchTab;
         VerticalLayout controlPanelTab;
 
@@ -665,7 +666,7 @@ public class MyVaadinUI extends UI
     private void displayResults() {
         List list = controlService.getContent();
         Layout layout = displayResultListsTab(list);
-        List listGraph = controlService.getContentGraph();
+        List listGraph = controlService.getContentGraph(guiSize);
         displayListGraphTab(layout, listGraph);
     }
 
@@ -680,25 +681,44 @@ public class MyVaadinUI extends UI
         tab.setCaption("Graph results");
         tabsheet.addComponent(tab);
         tabsheet.getTab(tab).setClosable(true);
-        List listGraph = controlService.getContentGraph(ids);
+        List listGraph = controlService.getContentGraph(ids, guiSize);
         displayListGraphTab(tab, listGraph);
     }
+    
+    private StreamResource getStreamResource(final OutputStream stream) {
+    	byte[] bytes = ((ByteArrayOutputStream) stream).toByteArray();
+        //System.out.println("bytes " + bytes.length + " "+ new String(bytes));
+        //System.out.println("size " + (300 + 10 * xsize) + " " + (400 + 10 * ysize));
+       StreamResource resource = new StreamResource(new StreamSource() {
+            @Override
+            public InputStream getStream() {
+                try {
+                    return new ByteArrayInputStream(bytes);
+                } catch (Exception e) {
+                    //log.error(Constants.EXCEPTION, e);
+                    return null;
+                }
+            }
+        }, "/tmp/svg3.svg");
+       return resource;
+    }
 
-    protected void displayListGraphTab(Layout layout, List<StreamResource> listGraph) {
+    protected void displayListGraphTab(Layout layout, List<OutputStream> listGraph) {
         if (listGraph == null) {
             return;
         }
-        for (StreamResource resource : listGraph) {
+        for (OutputStream stream : listGraph) {
             //SvgUtil. bla3(layout, resource);
             //SvgUtil. bla5(layout, resource);
             //if (true) continue;
+        	StreamResource resource = getStreamResource(stream);
             Image image = new Image ("Image", resource);
             //Embedded image = new Embedded("1", img);
             int xsize = 100 + 300 + 10 * controlService.getTableDays();
             int ysize = 200 + 400 + 10 * controlService.getTopBottom();
             //System.out.println("xys1 " + xsize + " " + ysize);
-            if (xsize + 100 > x) {
-                xsize = x - 100;
+            if (xsize + 100 > guiSize.x) {
+                xsize = guiSize.x - 100;
             }
             /*
             if (ysize + 200 > y) {

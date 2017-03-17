@@ -1,5 +1,6 @@
 package roart.graphindicator;
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.vaadin.server.StreamResource;
 
+import roart.model.GUISize;
 import roart.service.ControlService;
 import roart.util.Constants;
 import roart.util.MarketData;
@@ -36,7 +38,7 @@ public class GraphIndicatorRSI extends GraphIndicator {
     }
 
     @Override
-    public void getResult(List retlist, Set<Pair> ids) {
+    public void getResult(List retlist, Set<Pair> ids, GUISize guiSize) {
         try {
             String periodText = key;
             int days = controlService.getTableDays();
@@ -49,7 +51,7 @@ public class GraphIndicatorRSI extends GraphIndicator {
                 DefaultCategoryDataset dataset = tu.getRSIChart(days, market, stockid, ids, marketdatamap, perioddata, periodText);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Period " + periodText, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, 1);
-                    StreamResource r = SvgUtil.chartToResource(c, "/tmp/new20"+".svg", days, topbottom, controlService.getTableDays(), 1);
+                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+".svg", days, topbottom, controlService.getTableDays(), 1, guiSize);
                     retlist.add(r);
                 }
             }
