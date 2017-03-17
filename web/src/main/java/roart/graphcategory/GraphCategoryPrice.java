@@ -9,8 +9,6 @@ import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import com.vaadin.server.StreamResource;
-
 import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorMACD;
 import roart.graphindicator.GraphIndicatorRSI;

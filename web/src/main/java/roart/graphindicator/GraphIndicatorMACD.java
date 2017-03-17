@@ -10,8 +10,6 @@ import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import com.vaadin.server.StreamResource;
-
 import roart.model.GUISize;
 import roart.model.Stock;
 import roart.service.ControlService;

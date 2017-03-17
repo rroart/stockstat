@@ -49,8 +49,6 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.server.StreamResource;
-
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
