@@ -5,6 +5,8 @@ import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.Row
 import scala.collection.mutable.MutableList
 import scala.collection.mutable.ListBuffer
+import com.tictactec.ta.lib.Core
+import com.tictactec.ta.lib.MInteger
 //import org.apache.spark.sql.SparkSession
 //val spark: SparkSession = SparkSession.builder.master("local[*]").appName("My Spark Application").getOrCreate
 val prop = new java.util.Properties
@@ -325,6 +327,8 @@ return 0.0
 }
 
 def mytopperiod2(dflist : List[Dataset[Row]], period : Int, max : Int, days : Int, wantrise : Boolean = false, wantmacd : Boolean = false, wantrsi : Boolean = false) {
+    val dt = new java.text.SimpleDateFormat(mydateformat)
+
     for (j <- 0 to days - 1) {
         val df = dflist(j)
 /*
@@ -353,12 +357,13 @@ val id : String = alist.get(i).getAs("id")
 val name0 : String = alist.get(i).getAs("name")
 val mymax = math.min(33, name0.size)
 val name = name0.substring(0, mymax)
-val date : Timestamp = alist.get(i).getAs("date")
+val date0 : Timestamp = alist.get(i).getAs("date")
+val date = dt.format(date0)
 val per = listperiodRow(alist.get(i), period)
 val rise = 0
 val macd = 0
 val rsi = 0
-println(f"$i%3d $name%-35s $date%12s $per%3.2f $rise%3d $macd%3.2f $rsi%3.2f $id%s")
+println(f"$j%3d $name%-35s $date%12s $per%3.2f $rise%3d $macd%3.2f $rsi%3.2f $id%s")
         }
                                         //        str(df$id[[1]])
     }

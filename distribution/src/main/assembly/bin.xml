@@ -22,6 +22,20 @@
       <outputDirectory>lib</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>${project.basedir}/../core/target</directory>
+      <includes>
+	<include>stockstat*.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../eureka/target</directory>
+      <includes>
+	<include>stockstat*.war</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/../bin</directory>
       <includes>
 	<include>*</include>

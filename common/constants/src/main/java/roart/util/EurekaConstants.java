@@ -1,0 +1,10 @@
+package roart.util;
+
+public class EurekaConstants {
+	public static final String STOCKSTAT = "STOCKSTAT";
+	public static final String CONFIGURE = "configure";
+	public static final String GETCONTENTSTAT = "getcontentstat";
+	public static final String GETCONTENT = "getcontent";
+	public static final String GETCONTENTGRAPH = "getcontentgraph";
+	public static final String GETCONTENTGRAPH2 = "getcontentgraph2";
+}

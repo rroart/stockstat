@@ -140,7 +140,7 @@ There are two phases, data acquisition and usage.
   This have so far been used for gathering info from web on a daily basis. It may also be used for entering historic data. Typically, web pages (choose a name based on this) for markets contain rows with stocks, commodities etc, and the price, currency, index and increased value for given periods. The given periods are named in the meta to indicate the time period, be it one day, one week, one month. The included xslts show how to transform from the web to this xml format.
   Then run
   <programlisting>
-    java -jar target/stockstat-input-0.4-SNAPSHOT-jar-with-dependencies.jar my.xml
+    java -jar target/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar my.xml
   </programlisting>
   with a param file of that format, here my.xml.
   This may be run from cron, or once if importing historical data.

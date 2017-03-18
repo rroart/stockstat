@@ -1,10 +1,14 @@
 package roart.client;
 
 import roart.model.GUISize;
+import roart.model.ResultItemNot;
+import roart.model.ResultItemBytes;
+import roart.model.ResultItemTable;
+import roart.model.ResultItemTableRow;
+import roart.model.ResultItemText;
 import roart.model.ResultItem;
 import roart.model.Stock;
 import roart.util.Constants;
-import roart.util.SvgUtil;
 import roart.service.ControlService;
 
 import java.sql.Timestamp;
@@ -334,7 +338,7 @@ public class MyVaadinUI extends UI
                 time = time * 1000;
                 date = new Date(time);
                 try {
-                    controlService.setdate(date);
+                    controlService.conf.setdate(date);
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -352,7 +356,7 @@ public class MyVaadinUI extends UI
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {
-                    controlService.setdate(null);
+                    controlService.conf.setdate(null);
                     Notification.show("Request sent");
                     //displayResults();
                 } catch (Exception e) {
@@ -418,7 +422,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value                              
                 try {
-                    controlService.setMarket(value);
+                    controlService.conf.setMarket(value);
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -431,7 +435,7 @@ public class MyVaadinUI extends UI
         return ls;
     }
 
-    Set<Pair> chosen = new HashSet<Pair>();
+    Set<Pair<String, String>> chosen = new HashSet<>();
     
     private Button getChooseGraph(VerticalLayout ver) {
         Button button = new Button("Choose graph");
@@ -544,7 +548,7 @@ public class MyVaadinUI extends UI
 
    private TextField getDays() {
         TextField tf = new TextField("Single interval days");
-        tf.setValue("" + new ControlService().getDays());
+        tf.setValue("" + controlService.conf.getDays());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -553,7 +557,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setDays(new Integer(value));
+                    controlService.conf.setDays(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -568,7 +572,7 @@ public class MyVaadinUI extends UI
 
     private TextField getTableIntervalDays() {
         TextField tf = new TextField("Table interval days");
-        tf.setValue("" + controlService.getTableIntervalDays());
+        tf.setValue("" + controlService.conf.getTableIntervalDays());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -577,7 +581,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setTableIntervalDays(new Integer(value));
+                    controlService.conf.setTableIntervalDays(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -592,7 +596,7 @@ public class MyVaadinUI extends UI
 
     private TextField getTableMoveIntervalDays() {
         TextField tf = new TextField("Table move interval days");
-        tf.setValue("" + controlService.getTableMoveIntervalDays());
+        tf.setValue("" + controlService.conf.getTableMoveIntervalDays());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -601,7 +605,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setTableMoveIntervalDays(new Integer(value));
+                    controlService.conf.setTableMoveIntervalDays(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -616,7 +620,7 @@ public class MyVaadinUI extends UI
 
     private TextField getTableDays() {
         TextField tf = new TextField("Table days");
-        tf.setValue("" + new ControlService().getTableDays());
+        tf.setValue("" + controlService.conf.getTableDays());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -625,7 +629,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setTableDays(new Integer(value));
+                    controlService.conf.setTableDays(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -640,7 +644,7 @@ public class MyVaadinUI extends UI
 
     private TextField getTopBottom() {
         TextField tf = new TextField("Table top/bottom");
-        tf.setValue("" + new ControlService().getTopBottom());
+        tf.setValue("" + controlService.conf.getTopBottom());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -649,7 +653,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setTopBottom(new Integer(value));
+                    controlService.conf.setTopBottom(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -664,29 +668,42 @@ public class MyVaadinUI extends UI
     }
 
     private void displayResults() {
-        List list = controlService.getContent();
-        Layout layout = displayResultListsTab(list);
+        List<ResultItem> list = controlService.getContent();
+        log.info("listsize " + list.size());
+        VerticalLayout layout = new VerticalLayout();
+        layout.setCaption("Results");
+        displayResultListsTab(layout, list);
         List listGraph = controlService.getContentGraph(guiSize);
-        displayListGraphTab(layout, listGraph);
-    }
+        displayResultListsTab(layout, listGraph);
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
+        Notification.show("New result available");
+     }
 
 
     private void displayResultsStat() {
         List list = controlService.getContentStat();
-        Layout layout = displayResultListsTab(list);
-    }
+        VerticalLayout layout = new VerticalLayout();
+        layout.setCaption("Results");
+        displayResultListsTab(layout, list);
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
+        Notification.show("New result available");
+   }
 
-    private void displayResultsGraph(Set<Pair> ids) {
-        VerticalLayout tab = new VerticalLayout();
-        tab.setCaption("Graph results");
-        tabsheet.addComponent(tab);
-        tabsheet.getTab(tab).setClosable(true);
+    private void displayResultsGraph(Set<Pair<String, String>> ids) {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setCaption("Graph results");
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
         List listGraph = controlService.getContentGraph(ids, guiSize);
-        displayListGraphTab(tab, listGraph);
+        displayResultListsTab(layout, listGraph);
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
+        Notification.show("New result available");       
     }
     
-    private StreamResource getStreamResource(final OutputStream stream) {
-    	byte[] bytes = ((ByteArrayOutputStream) stream).toByteArray();
+    private StreamResource getStreamResource(byte[] bytes) {
         //System.out.println("bytes " + bytes.length + " "+ new String(bytes));
         //System.out.println("size " + (300 + 10 * xsize) + " " + (400 + 10 * ysize));
        StreamResource resource = new StreamResource(new StreamSource() {
@@ -703,19 +720,16 @@ public class MyVaadinUI extends UI
        return resource;
     }
 
-    protected void displayListGraphTab(Layout layout, List<OutputStream> listGraph) {
-        if (listGraph == null) {
-            return;
-        }
-        for (OutputStream stream : listGraph) {
+    protected void addListStream(Layout layout, ResultItemBytes item) {
+    	byte[] bytes = item.bytes;
             //SvgUtil. bla3(layout, resource);
             //SvgUtil. bla5(layout, resource);
             //if (true) continue;
-        	StreamResource resource = getStreamResource(stream);
+        	StreamResource resource = getStreamResource(bytes);
             Image image = new Image ("Image", resource);
             //Embedded image = new Embedded("1", img);
-            int xsize = 100 + 300 + 10 * controlService.getTableDays();
-            int ysize = 200 + 400 + 10 * controlService.getTopBottom();
+            int xsize = 100 + 300 + 10 * controlService.conf.getTableDays();
+            int ysize = 200 + 400 + 10 * controlService.conf.getTopBottom();
             //System.out.println("xys1 " + xsize + " " + ysize);
             if (xsize + 100 > guiSize.x) {
                 xsize = guiSize.x - 100;
@@ -729,12 +743,11 @@ public class MyVaadinUI extends UI
             image.setHeight(ysize, Sizeable.Unit.PIXELS );
             image.setWidth(xsize, Sizeable.Unit.PIXELS );
             layout.addComponent(image);
-        }
     }
 
     private CheckBox getEqualize() {
         CheckBox cb = new CheckBox("Equalize sample sets");
-        cb.setValue(new ControlService().isEqualize());
+        cb.setValue(controlService.conf.isEqualize());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -743,7 +756,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setEqualize(value);
+                    controlService.conf.setEqualize(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -756,7 +769,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getMove() {
         CheckBox cb = new CheckBox("Enable chart move");
-        cb.setValue(new ControlService().isMoveEnabled());
+        cb.setValue(controlService.conf.isMoveEnabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -765,7 +778,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setMoveEnabled(value);
+                    controlService.conf.setMoveEnabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -778,7 +791,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getMACD() {
         CheckBox cb = new CheckBox("Enable MACD");
-        cb.setValue(new ControlService().isMACDenabled());
+        cb.setValue(controlService.conf.isMACDenabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -787,7 +800,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setMACDenabled(value);
+                    controlService.conf.setMACDenabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -800,7 +813,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getRSI() {
         CheckBox cb = new CheckBox("Enable RSI");
-        cb.setValue(new ControlService().isRSIenabled());
+        cb.setValue(controlService.conf.isRSIenabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -809,7 +822,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setRSIenabled(value);
+                    controlService.conf.setRSIenabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -822,7 +835,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getEqualizeGraph() {
         CheckBox cb = new CheckBox("Equalize graphic table");
-        cb.setValue(new ControlService().isGraphEqualize());
+        cb.setValue(controlService.conf.isGraphEqualize());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -831,7 +844,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setGraphEqualize(value);
+                    controlService.conf.setGraphEqualize(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -844,7 +857,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getEqualizeUnify() {
         CheckBox cb = new CheckBox("Equalize merge price and index table");
-        cb.setValue(new ControlService().isGraphEqUnify());
+        cb.setValue(controlService.conf.isGraphEqUnify());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -853,7 +866,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setGraphEqUnify(value);
+                    controlService.conf.setGraphEqUnify(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -864,7 +877,11 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
-    void addListTable(VerticalLayout ts, List<ResultItem> strarr) {
+    void addListText(VerticalLayout ts, ResultItemText str) {
+            ts.addComponent(new Label(str.text));
+     }
+
+    void addListTable(VerticalLayout ts, ResultItemTable strarr) {
         if (strarr.size() <= 1) {
             return;
         }
@@ -921,7 +938,7 @@ public class MyVaadinUI extends UI
             //table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
         }
         for (int i = 1; i < strarr.size(); i++) {
-            ResultItem str = strarr.get(i);
+            ResultItemTableRow str = strarr.get(i);
             try {
                 if (strarr.get(0).get().get(0).equals(Constants.IMG)) {
                     String id = (String) str.get().get(0);
@@ -938,15 +955,92 @@ public class MyVaadinUI extends UI
         ts.addComponent(table);
     }
 
+    /*
+    void addListTable(VerticalLayout ts, ResultItemTable resulttable) {
+    	log.info("t " + resulttable.size());
+    	if (resulttable.size() <= 1) {
+            return;
+        }
+
+        Table table = new Table("Table");
+        table.setWidth("90%");
+        int columns = resulttable.get(0).get().size();
+        int mdcolumn = 0;
+        for (int i=0; i<resulttable.size(); i++) {
+            if (resulttable.get(i).get().size() != columns) {
+                log.error("column differs " + columns + " found " + resulttable.get(i).get().size());
+                System.out.println("column differs " + columns + " found " + resulttable.get(i).get().size() + " " + i + " : " + resulttable.get(i).get().get(1) + " " +resulttable.get(i).get() );
+                break;
+            }
+        }
+        for (int i = 0; i < columns; i++) {
+            Object object = null;
+            for (int j = 1; j < resulttable.size(); j++) {
+                object = resulttable.get(j).get().get(i);
+                if (object != null) {
+                    break;
+                }
+            }
+            //Object object = strarr.get(1).get().get(i);
+            if (object == null) {
+                table.addContainerProperty(resulttable.get(0).get().get(i), String.class, null);
+                continue;
+            }
+            switch (object.getClass().getName()) {
+            case "java.lang.String":
+                if (i == 0 && resulttable.get(0).get().get(0).equals(Constants.IMG)) {
+                    table.addContainerProperty(resulttable.get(0).get().get(i), Button.class, null);
+                } else {
+                    table.addContainerProperty(resulttable.get(0).get().get(i), String.class, null);
+                }
+                break;
+            case "java.lang.Integer":
+                table.addContainerProperty(resulttable.get(0).get().get(i), Integer.class, null);
+                break;
+            case "java.lang.Double":
+                table.addContainerProperty(resulttable.get(0).get().get(i), Double.class, null);
+                break;
+            case "java.util.Date":
+                table.addContainerProperty(resulttable.get(0).get().get(i), Date.class, null);
+                break;
+            case "java.sql.Timestamp":
+                table.addContainerProperty(resulttable.get(0).get().get(i), Timestamp.class, null);
+                break;
+            default:
+                log.error("not found" + resulttable.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
+                System.out.println("not found" + resulttable.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
+                break;
+            }
+            //table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+        }
+        for (int i = 1; i < resulttable.size(); i++) {
+            ResultItemTableRow str = resulttable.get(i);
+            try {
+                if (resulttable.get(0).get().get(0).equals(Constants.IMG)) {
+                    String id = (String) str.get().get(0);
+                    str.get().set(0, getImage(id));
+                    table.addItem(str.getarr(), i);                    
+                }
+                table.addItem(str.getarr(), i);                    
+            } catch (Exception e) {
+                log.error("i " + i + " " + str.get().get(0));
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        //table.setPageLength(table.size());
+        ts.addComponent(table);
+    }
+*/
+    
     private Button getImage(final String id) {
         Button button = new Button("Img");
         button.setHtmlContentAllowed(true);
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 String idarr[] = id.split(",");
-                Set<Pair> ids = new HashSet<Pair>();
+                Set<Pair<String, String>> ids = new HashSet<>();
                 for (String id : idarr) {
-                    ids.add(new Pair(controlService.getMarket(), id));
+                    ids.add(new Pair(controlService.conf.getMarket(), id));
                 }
                 displayResultsGraph(ids);
                 Notification.show("Request sent");
@@ -979,40 +1073,28 @@ public class MyVaadinUI extends UI
     }
 
     @SuppressWarnings("rawtypes")
-    public void displayResultLists(List<List> lists) {
-        VerticalLayout tab = new VerticalLayout();
-        tab.setCaption("Search results");
+    public void displayResultListsTab(Layout tab, List<ResultItem>/*<List>*/ lists) {
 
+        final String table = (new ResultItemTable()).getClass().getName();
+        final String text = (new ResultItemText()).getClass().getName();
+        final String stream = (new ResultItemBytes()).getClass().getName();
+        
         VerticalLayout result = getResultTemplate();
         if (lists != null) {
-            for (List<ResultItem> list : lists) {
-                addListTable(result, list);
+            for (ResultItem item : lists) {
+            	if (table.equals(item.getClass().getName())) {
+            		addListTable(result, (ResultItemTable) item);
+            	}
+            	if (text.equals(item.getClass().getName())) {
+            		addListText(result, (ResultItemText) item);
+            	}
+            	if (stream.equals(item.getClass().getName())) {
+            		addListStream(result, (ResultItemBytes) item);
+            	}
             }
-        }
+       }
         tab.addComponent(result);
-
-        tabsheet.addComponent(tab);
-        tabsheet.getTab(tab).setClosable(true);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public Layout displayResultListsTab(List<List> lists) {
-        VerticalLayout tab = new VerticalLayout();
-        tab.setCaption("Results");
-
-        VerticalLayout result = getResultTemplate();
-        if (lists != null) {
-            for (List<ResultItem> list : lists) {
-                addListTable(result, list);
-            }
-        }
-        tab.addComponent(result);
-
-        tabsheet.addComponent(tab);
-        tabsheet.getTab(tab).setClosable(true);
-        Notification.show("New result available");
-        return tab;
-    }
+   }
 
     public void notify(String text) {
         Notification.show(text);

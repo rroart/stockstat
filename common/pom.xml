@@ -6,15 +6,18 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-common</artifactId>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Stock Statistics Common</name>
 <modules>
+  <module>constants</module>
+  <module>config</module>
   <module>model</module>
+  <module>service</module>
 </modules>
 </project>
 

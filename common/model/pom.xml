@@ -2,14 +2,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>roart</groupId>
-    <artifactId>stockstat-parent</artifactId>
+    <artifactId>stockstat-common</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-common-model</artifactId>
   <packaging>jar</packaging>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <name>Stock Statistics Common Model</name>
   <dependencies>
     <dependency>
@@ -63,5 +63,11 @@
       <artifactId>log4j</artifactId>
       <version>${log4j.version}</version>
     </dependency>
+    <dependency>
+	<groupId>com.fasterxml.jackson.core</groupId>
+	<artifactId>jackson-annotations</artifactId>
+	<version>2.5.4</version>
+	</dependency>
+	
   </dependencies>
 </project>

@@ -3,11 +3,13 @@
   <groupId>roart</groupId>
   <artifactId>stockstat-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <name>Stock Statistics Parent</name>
   <modules>
     <module>common</module>
+    <module>core</module>
     <module>db</module>
+    <module>eureka</module>
     <module>input</module>
     <module>web</module>
     <module>distribution</module>
