@@ -7,7 +7,6 @@ import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.ResultItemText;
 import roart.model.ResultItem;
-import roart.model.Stock;
 import roart.util.Constants;
 import roart.service.ControlService;
 
@@ -399,20 +398,20 @@ public class MyVaadinUI extends UI
 
     private ListSelect getMarkets() {
         ListSelect ls = new ListSelect("Get market");
-        Set<String> languages = null;
+        Set<String> marketSet = null;
         try {
-            List<String> langs = Stock.getMarkets();
-            langs.remove(null);
-            languages = new TreeSet<String>(langs);
+            List<String> markets = controlService.getMarkets();
+            markets.remove(null);
+            marketSet = new TreeSet<String>(markets);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return ls;
         }
-        log.info("languages " + languages);
-        if (languages == null ) {
+        log.info("languages " + marketSet);
+        if (marketSet == null ) {
             return ls;
         }
-        ls.addItems(languages);
+        ls.addItems(marketSet);
         ls.setNullSelectionAllowed(false);
         // Show 5 items and a scrollbar if there are more                       
         ls.setRows(5);
@@ -457,20 +456,20 @@ public class MyVaadinUI extends UI
 
     private ListSelect getMarkets2(HorizontalLayout horManual, VerticalLayout verManualList) {
         ListSelect ls = new ListSelect("Market");
-        Set<String> languages = null;
+        Set<String> marketSet = null;
         try {
-            List<String> langs = Stock.getMarkets();
-            langs.remove(null);
-            languages = new TreeSet<String>(langs);
+            List<String> markets = controlService.getMarkets();
+            markets.remove(null);
+            marketSet = new TreeSet<String>(markets);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return ls;
         }
-        log.info("languages " + languages);
-        if (languages == null ) {
+        log.info("languages " + marketSet);
+        if (marketSet == null ) {
             return ls;
         }
-        ls.addItems(languages);
+        ls.addItems(marketSet);
         ls.setNullSelectionAllowed(false);
         // Show 5 items and a scrollbar if there are more                       
         ls.setRows(5);
@@ -494,26 +493,14 @@ public class MyVaadinUI extends UI
 
     private ListSelect getUnits(String market, ListSelect ls2, VerticalLayout verManualList) {
         ListSelect ls = new ListSelect("Units");
-        Set<String> languages = null;
+        Set<String> stockSet = null;
         System.out.println("m " + market);
-        List<Stock> stocks = null;
-        try {
-            stocks = Stock.getAll(market);
-            stocks.remove(null);
-            languages = new TreeSet<String>();
-            for (Stock stock : stocks) {
-                languages.add(stock.getName());
-            }
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
+        final Map<String, String> stockMap = controlService.getStocks(market);
+        log.info("stocks " + stockSet);
+        if (stockSet == null ) {
             return ls;
         }
-        final List<Stock> finalstocks = stocks;
-        log.info("languages " + languages);
-        if (languages == null ) {
-            return ls;
-        }
-        ls.addItems(languages);
+        ls.addItems(stockSet);
         ls.setNullSelectionAllowed(false);
         // Show 5 items and a scrollbar if there are more                       
         ls.setRows(5);
@@ -524,9 +511,10 @@ public class MyVaadinUI extends UI
                 // Do something with the value                              
                 try {
                     String id = null;
-                    for (Stock stock : finalstocks) {
-                        if (value.equals(stock.getName())) {
-                            id = stock.getId();
+                    for (String stockid : stockMap.keySet()) {
+                    	String stockname = stockMap.get(stockid);
+                        if (value.equals(stockname)) {
+                            id = stockid;
                             break;
                         }
                     }

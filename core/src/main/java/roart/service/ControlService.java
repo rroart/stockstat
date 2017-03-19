@@ -57,6 +57,30 @@ import org.slf4j.LoggerFactory;
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
+    public List<String> getMarkets() {
+    	try {
+			return Stock.getMarkets();
+		} catch (Exception e) {
+			log.error(Constants.EXCEPTION, e);
+		}
+    	return null;
+    }
+    
+    public Map<String, String> getStocks(String market) {
+        try {
+        	Map<String, String> stockMap = new HashMap();
+            List<Stock> stocks = Stock.getAll(market);
+            stocks.remove(null);
+            for (Stock stock : stocks) {
+                stockMap.put(stock.getId(), stock.getName());
+            }
+            return stockMap;
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+    
     /**
      * Create result lists
      * 

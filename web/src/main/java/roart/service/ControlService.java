@@ -1,10 +1,8 @@
 package roart.service;
 
 import roart.model.GUISize;
-import roart.model.Meta;
 import roart.model.ResultItemNot;
 import roart.model.ResultItem;
-import roart.model.Stock;
 
 import roart.config.MyConfig;
 import roart.config.MyPropertyConfig;
@@ -44,6 +42,21 @@ public class ControlService {
     
     public ControlService() {
     	conf = new MyPropertyConfig();
+    }
+  
+    public List<String> getMarkets() {
+        ServiceParam param = new ServiceParam();
+        param.config = conf;
+        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETMARKETS);
+        return result.markets;    	
+    }
+    
+    public Map<String, String> getStocks(String market) {
+        ServiceParam param = new ServiceParam();
+        param.config = conf;
+        param.market = market;
+        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETSTOCKS);
+        return result.stocks;   	
     }
     
     /**
@@ -122,17 +135,6 @@ public class ControlService {
         param.config = conf;
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTSTAT);
         return result.list;
-    }
-
-    private void printstock(List<Stock> stocklistPeriod4Day1, int imax) {
-        int i = 0;
-        for (Stock s : stocklistPeriod4Day1) {
-            //log.info(s.getId() + " : " + s.getName() + " : " + s.getPeriod4());
-            i++;
-            if (i > imax) {
-                return;
-            }
-        }
     }
 
 }

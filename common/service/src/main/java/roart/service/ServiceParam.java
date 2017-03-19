@@ -11,4 +11,5 @@ public class ServiceParam {
 public MyPropertyConfig config;
 public GUISize guiSize;
 public Set<String> ids;
+public String market;
 }

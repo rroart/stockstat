@@ -220,11 +220,6 @@
       <version>0.5-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-db</artifactId>
-      <version>0.5-SNAPSHOT</version>
-    </dependency>
-    <dependency>
       <groupId>com.netflix.eureka</groupId>
       <artifactId>eureka-client</artifactId>
       <version>1.6.1</version>
@@ -260,11 +255,6 @@
 	<version>1.8</version>
         <scope>system</scope>
         <systemPath>${java.home}/../lib/tools.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>${hibernate.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

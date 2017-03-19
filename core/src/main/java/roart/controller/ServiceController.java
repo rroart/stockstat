@@ -34,6 +34,34 @@ public class ServiceController {
 		return instance;
 	}
 	
+	@RequestMapping(value = "/" + EurekaConstants.GETMARKETS,
+			method = RequestMethod.POST)
+	public ServiceResult getMarkets(@RequestBody ServiceParam param)
+			throws Exception {
+		ServiceResult result = new ServiceResult();
+		try {
+			result.markets = getInstance().getMarkets();
+		} catch (Exception e) {
+			log.error(roart.util.Constants.EXCEPTION, e);
+			result.error = e.getMessage();
+		}
+		return result;
+	}
+
+	@RequestMapping(value = "/" + EurekaConstants.GETSTOCKS,
+			method = RequestMethod.POST)
+	public ServiceResult getStocks(@RequestBody ServiceParam param)
+			throws Exception {
+		ServiceResult result = new ServiceResult();
+		try {
+			result.stocks = getInstance().getStocks(param.market);
+		} catch (Exception e) {
+			log.error(roart.util.Constants.EXCEPTION, e);
+			result.error = e.getMessage();
+		}
+		return result;
+	}
+
 	@RequestMapping(value = "/" + EurekaConstants.GETCONTENT,
 			method = RequestMethod.POST)
 	public ServiceResult getContent(@RequestBody ServiceParam param)
