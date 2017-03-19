@@ -126,6 +126,7 @@ public class ServiceController {
 	}
 
 	public static void main(String[] args) throws Exception {
+		new roart.db.DbSpark();
 		SpringApplication.run(ServiceController.class, args);
 	}
 
