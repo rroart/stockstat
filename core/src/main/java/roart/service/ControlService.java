@@ -187,46 +187,6 @@ public class ControlService {
                     log.error(Constants.EXCEPTION, e);
                 }
 
-                /*
-                try {
-                    if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUE)) {
-                        r.add(stock.getIndexvalue());
-                    }
-
-                    if (StockUtil.hasSpecial(stocks, Constants.PRICE)) {
-                        r.add(stock.getPrice());
-                        if (isMACDenabled()) {
-                            TaUtil tu = new TaUtil();
-                            String market = getMarket();
-                            String id = stock.getId();
-                            Pair pair = new Pair(market, id);
-                            Set ids = new HashSet();
-                            ids.add(pair);
-                            String periodstr = "price";
-                            PeriodData perioddata = periodDataMap.get(periodstr);
-                            double momentum = tu.getMom(days, market, id, ids, marketdatamap, perioddata, periodstr);
-                            r.add(momentum);
-                        }
-                        if (isRSIenabled()) {
-                            TaUtil tu = new TaUtil();
-                            String market = getMarket();
-                            String id = stock.getId();
-                            Pair pair = new Pair(market, id);
-                            Set ids = new HashSet();
-                            ids.add(pair);
-                            String periodstr = "price";
-                            PeriodData perioddata = periodDataMap.get(periodstr);
-                            double rsi = tu.getRSI2(days, market, id, ids, marketdatamap, perioddata, periodstr);
-                            r.add(rsi);
-                        }
-                        r.add(stock.getCurrency());
-                    }
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
-                 */
-
-                //r.add(stock.get());
                  table.add(row);
 
             }
@@ -478,35 +438,6 @@ public class ControlService {
 	
     private Map<String, MarketData> getMarketdatamap(int days,
             Set<String> markets, MyConfig conf) throws Exception {
-        /*
-        String date0 = null;
-        String date1 = null;
-        */
-        /*
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        List<Date> stockdatelist2 = StockDao.getDates();
-        List<String> stockdatelist = new ArrayList();
-        for (Date date : stockdatelist2) {
-            stockdatelist.add(dt.format(date));
-        }
-        Collections.sort(stockdatelist);
-        String date = null;
-        if (getdate() != null) {
-            date = dt.format(getdate());
-        }
-        System.out.println("grr " + stockdatelist.size()  + " " + stockdatelist.get(0) + " " + stockdatelist.get(stockdatelist.size()-1) + " " + date);
-        int index = StockUtil.getStockDate(stockdatelist, date);
-        System.out.println("index " + index);
-        if (index >= 0) {
-            date1 = stockdatelist.get(index);
-            for (int j = 1; j < getTableDays(); j++) {
-                index = index - mytableintervaldays;
-                if (index >= 0) {
-                    date0 = stockdatelist.get(index);
-                }
-            }
-        }
-        */
         Map<String, MarketData> marketdatamap = new HashMap();
         for (String market : markets) {
             log.info("prestocks");
@@ -518,16 +449,6 @@ public class ControlService {
             marketdata.periodtext = periodText;
             //Map<String, List<Stock>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<Stock>> stockdatemap = StockUtil.splitDate(stocks);
-            //marketdata.stockidmap = stockidmap;
-            //marketdata.stockdatemap = stockdatemap;
-            
-            /*
-            // sort based on date
-            for (String key : stockidmap.keySet()) {
-                List<Stock> stocklist = stockidmap.get(key);
-                stocklist.sort(StockUtil.StockDateComparator);
-            }
-            */
             // the main list, based on freshest or specific date.
 
             /*
