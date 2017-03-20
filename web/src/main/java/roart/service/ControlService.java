@@ -1,37 +1,19 @@
 package roart.service;
 
 import roart.model.GUISize;
-import roart.model.ResultItemNot;
 import roart.model.ResultItem;
 
-import roart.config.MyConfig;
 import roart.config.MyPropertyConfig;
 
-import javax.servlet.http.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.TreeMap;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
-import java.io.*;
 
-import roart.util.Constants;
 import roart.util.EurekaConstants;
 import roart.util.EurekaUtil;
 
 import org.apache.commons.math3.util.Pair;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

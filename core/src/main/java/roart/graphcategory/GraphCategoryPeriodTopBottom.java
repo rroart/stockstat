@@ -3,9 +3,7 @@ package roart.graphcategory;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
@@ -13,21 +11,13 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import roart.config.MyConfig;
-import roart.graphindicator.GraphIndicator;
-import roart.graphindicator.GraphIndicatorMACD;
-import roart.graphindicator.GraphIndicatorRSI;
 import roart.model.GUISize;
-import roart.model.ResultItemNot;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItem;
 import roart.model.Stock;
 import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.StockUtil;
 import roart.util.SvgUtil;
-import roart.util.TaUtil;
 
 public class GraphCategoryPeriodTopBottom extends GraphCategory {
 

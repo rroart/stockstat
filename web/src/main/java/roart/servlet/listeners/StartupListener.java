@@ -2,17 +2,10 @@ package roart.servlet.listeners;
 
 import roart.config.MyConfig;
 import roart.config.MyPropertyConfig;
-import roart.model.ResultItemNot;
-import roart.service.ControlService;
+import roart.util.Constants;
 import roart.util.EurekaUtil;
-import sun.rmi.rmic.newrmic.Constants;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
 
 import javax.servlet.*;
-import javax.servlet.http.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.config.MyConfig;
 import roart.indicator.Indicator;
-import roart.model.ResultItemNot;
+import roart.model.ResultItemTableRow;
 import roart.model.Stock;
 import roart.service.ControlService;
 import roart.util.MarketData;
@@ -30,8 +30,8 @@ public abstract class Category {
         this.stocks = stocks;
     }
 
-    abstract public void addResultItemTitle(ResultItemNot ri);
+    abstract public void addResultItemTitle(ResultItemTableRow r);
 
-    abstract public void addResultItem(ResultItemNot ri, Stock stock);
+    abstract public void addResultItem(ResultItemTableRow r, Stock stock);
 }
 

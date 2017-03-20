@@ -79,6 +79,9 @@ public class DbSpark {
 	    Dataset<Row> allmetas = spark.read().jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "meta", prop);
 	    	Dataset<Row> allstocks = spark.read().jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "stock", prop);
 	    	allmetas.show();
+	    	String market = "cboevol";
+	    	Dataset<Row> allstocksCboevol = allstocks.filter(allstocks.col("marketid").equalTo(market));
+	    	Dataset<Row> allstocksID = allstocksCboevol.groupBy(allstocksCboevol.col("id")).count();
 	} catch (Exception e) {
 	    log.error(Constants.EXCEPTION, e);
 	}

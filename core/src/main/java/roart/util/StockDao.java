@@ -43,10 +43,10 @@ public class StockDao {
     
     @Transient
     public static Double getSpecial(Stock stock, int i) throws Exception {
-        if (i == Constants.INDEXVALUE) {
+        if (i == Constants.INDEXVALUECOLUMN) {
             return stock.getIndexvalue();
         }
-        if (i == Constants.PRICE) {
+        if (i == Constants.PRICECOLUMN) {
             return stock.getPrice();
         }
         throw new Exception("Out of range " + i);

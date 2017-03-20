@@ -1,7 +1,6 @@
 package roart.client;
 
 import roart.model.GUISize;
-import roart.model.ResultItemNot;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;

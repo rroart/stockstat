@@ -15,7 +15,6 @@ import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorMACD;
 import roart.graphindicator.GraphIndicatorRSI;
 import roart.model.GUISize;
-import roart.model.ResultItemNot;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItem;
 import roart.model.Stock;
@@ -44,7 +43,7 @@ public class GraphCategoryIndex extends GraphCategory {
     @Override
     public void addResult(List<ResultItem> retlist, Set<Pair<String, String>> ids, GUISize guiSize) {
         try {
-            if (StockUtil.hasSpecial(marketdatamap, Constants.INDEXVALUE)) {
+            if (StockUtil.hasSpecial(marketdatamap, Constants.INDEXVALUECOLUMN)) {
                 String periodText = title;
                 int days = conf.getTableDays();
                 int topbottom = conf.getTopBottom();
@@ -55,16 +54,16 @@ public class GraphCategoryIndex extends GraphCategory {
                 if (conf.isGraphEqualize()) {    
                     dataseteq = new DefaultCategoryDataset( );
                 }
-                DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.INDEXVALUE, conf.isGraphEqualize(), dataseteq);
+                DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.INDEXVALUECOLUMN, conf.isGraphEqualize(), dataseteq);
                 if (dataset != null) {
-                    JFreeChart c = SvgUtil.getChart(dataset, "Index", "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, Constants.INDEX, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
                     OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize);
                     ResultItemBytes stream = new ResultItemBytes();
                     stream.bytes = ((ByteArrayOutputStream) r).toByteArray();
                     retlist.add(stream);
                 }
                 if (dataset != null && dataseteq != null) {
-                    JFreeChart c = SvgUtil.getChart(dataseteq, "Index", "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataseteq, Constants.INDEX, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
                     OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize);
                     ResultItemBytes stream = new ResultItemBytes();
                     stream.bytes = ((ByteArrayOutputStream) r).toByteArray();

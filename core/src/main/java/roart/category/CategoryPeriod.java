@@ -12,7 +12,7 @@ import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorMove;
 import roart.indicator.IndicatorRSI;
-import roart.model.ResultItemNot;
+import roart.model.ResultItemTableRow;
 import roart.model.Stock;
 import roart.util.Constants;
 import roart.util.MarketData;
@@ -42,13 +42,13 @@ public class CategoryPeriod extends Category {
     }
 
     @Override
-    public void addResultItemTitle(ResultItemNot ri) {
+    public void addResultItemTitle(ResultItemTableRow r) {
         try {
             if (StockUtil.hasStockPeriod(stocks, period)) {
-                ri.add(title);
+                r.add(title);
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        ri.add(indicator.getResultItemTitle());
+                        r.add(indicator.getResultItemTitle());
                     }
                 }
             }
@@ -58,18 +58,18 @@ public class CategoryPeriod extends Category {
     }
 
     @Override
-    public void addResultItem(ResultItemNot ri, Stock stock) {
+    public void addResultItem(ResultItemTableRow r, Stock stock) {
         try {
             //System.out.print("0"+period+"0 ");
 
             if (StockUtil.hasStockPeriod(stocks, period)) {
                 //System.out.print("1");
-                ri.add(StockDao.getPeriod(stock, period));
+                r.add(StockDao.getPeriod(stock, period));
                 for (Indicator indicator : indicators) {
                     //System.out.print("2");
                     if (indicator.isEnabled()) {
                         //System.out.print("ri");
-                        ri.add(indicator.getResultItem(stock));
+                        r.add(indicator.getResultItem(stock));
                     }
                     else { System.out.println("not"); }
                 }

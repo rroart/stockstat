@@ -15,17 +15,13 @@ import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorMACD;
 import roart.graphindicator.GraphIndicatorRSI;
 import roart.model.GUISize;
-import roart.model.ResultItemNot;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItem;
-import roart.model.Stock;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.StockUtil;
 import roart.util.SvgUtil;
-import roart.util.TaUtil;
 
 public class GraphCategoryPrice extends GraphCategory {
 
@@ -45,7 +41,7 @@ public class GraphCategoryPrice extends GraphCategory {
     @Override
     public void addResult(List<ResultItem> retlist, Set<Pair<String, String>> ids, GUISize guiSize) {
         try {
-            if (StockUtil.hasSpecial(marketdatamap, Constants.PRICE)) {
+            if (StockUtil.hasSpecial(marketdatamap, Constants.PRICECOLUMN)) {
                 String periodText = title;
                 int days = conf.getTableDays();
                 int topbottom = conf.getTopBottom();
@@ -57,13 +53,13 @@ public class GraphCategoryPrice extends GraphCategory {
                 if (conf.isGraphEqualize()) {    
                     dataseteq = new DefaultCategoryDataset( );
                 }
-                DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.PRICE, conf.isGraphEqualize(), dataseteq);
+                DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.PRICECOLUMN, conf.isGraphEqualize(), dataseteq);
                 if (dataset != null) {
                     String currency = null; //datedstocklists[0].get(0).getCurrency();
                     if (currency == null) {
                         currency = "Value";
                     }
-                    JFreeChart c = SvgUtil.getChart(dataset, "Price", "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataset, Constants.PRICE, "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
                     OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize);
                     ResultItemBytes stream = new ResultItemBytes();
                     stream.bytes = ((ByteArrayOutputStream) r).toByteArray();
@@ -74,7 +70,7 @@ public class GraphCategoryPrice extends GraphCategory {
                     if (currency == null) {
                         currency = "Value";
                     }
-                    JFreeChart c = SvgUtil.getChart(dataseteq, "Price", "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
+                    JFreeChart c = SvgUtil.getChart(dataseteq, Constants.PRICE, "Time " + perioddata.date0 + " - " + perioddata.date1, currency, days, topbottom);
                     OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize);
                     ResultItemBytes stream = new ResultItemBytes();
                     stream.bytes = ((ByteArrayOutputStream) r).toByteArray();

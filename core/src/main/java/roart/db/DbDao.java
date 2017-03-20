@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.HashSet;
 
 import roart.config.ConfigConstants;
-import roart.model.ResultItemNot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

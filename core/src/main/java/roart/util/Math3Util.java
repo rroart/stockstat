@@ -16,11 +16,9 @@ import org.apache.commons.math3.stat.inference.TTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.model.ResultItemNot;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.Stock;
-import roart.service.ControlService;
 
 /**
  * 
@@ -99,26 +97,24 @@ public class Math3Util {
                             log.info("ttestdiff " + stockstrunc2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + i); 
                         }
                     }
-                    ResultItemNot r = new ResultItemNot();
-                    r.add(stocks1.get(0).getId() + "," + stocks2.get(0).getId());
-                    r.add(stocks1.get(0).getName());
-                    r.add(stocks2.get(0).getName());
+                    ResultItemTableRow row = new ResultItemTableRow();
+                    row.add(stocks1.get(0).getId() + "," + stocks2.get(0).getId());
+                    row.add(stocks1.get(0).getName());
+                    row.add(stocks2.get(0).getName());
                     //SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
                     //r.add(dt.format(stock.getDate()));
-                    r.add(i + 1);
-                    r.add(sample1.length);
-                    r.add(t1);
-                    r.add(t2);
-                    r.add("" + b);
-                    r.add(t1e);
-                    r.add(t2e);
-                    r.add("" + be);
-                    r.add(sp);
-                    r.add(ke);
-                    r.add(pe);
+                    row.add(i + 1);
+                    row.add(sample1.length);
+                    row.add(t1);
+                    row.add(t2);
+                    row.add("" + b);
+                    row.add(t1e);
+                    row.add(t2e);
+                    row.add("" + be);
+                    row.add(sp);
+                    row.add(ke);
+                    row.add(pe);
                    //r.add(stock.get());
-                    ResultItemTableRow row = new ResultItemTableRow();
-                    row.cols = r.get();
                     table.add(row);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);

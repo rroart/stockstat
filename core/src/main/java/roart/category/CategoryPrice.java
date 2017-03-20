@@ -5,7 +5,7 @@ import java.util.Map;
 
 import roart.config.MyConfig;
 import roart.indicator.Indicator;
-import roart.model.ResultItemNot;
+import roart.model.ResultItemTableRow;
 import roart.model.Stock;
 import roart.util.Constants;
 import roart.util.MarketData;
@@ -30,16 +30,16 @@ public class CategoryPrice extends Category {
     }
 
     @Override
-    public void addResultItemTitle(ResultItemNot ri) {
+    public void addResultItemTitle(ResultItemTableRow r) {
         try {
-            if (StockUtil.hasSpecial(stocks, Constants.PRICE)) {
-                ri.add(title);
+            if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
+                r.add(title);
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        ri.add(indicator.getResultItemTitle());
+                        r.add(indicator.getResultItemTitle());
                     }
                 }
-                ri.add("Currency");
+                r.add("Currency");
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -47,16 +47,16 @@ public class CategoryPrice extends Category {
     }
 
     @Override
-    public void addResultItem(ResultItemNot ri, Stock stock) {
+    public void addResultItem(ResultItemTableRow r, Stock stock) {
         try {
-            if (StockUtil.hasSpecial(stocks, Constants.PRICE)) {
-                ri.add(stock.getPrice());
+            if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
+                r.add(stock.getPrice());
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        ri.add(indicator.getResultItem(stock));
+                        r.add(indicator.getResultItem(stock));
                     }
                 }
-                ri.add(stock.getCurrency());
+                r.add(stock.getCurrency());
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

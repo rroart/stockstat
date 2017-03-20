@@ -7,7 +7,7 @@ import roart.config.MyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorRSI;
-import roart.model.ResultItemNot;
+import roart.model.ResultItemTableRow;
 import roart.model.Stock;
 import roart.util.Constants;
 import roart.util.MarketData;
@@ -34,13 +34,13 @@ public class CategoryIndex extends Category {
     }
 
     @Override
-    public void addResultItemTitle(ResultItemNot ri) {
+    public void addResultItemTitle(ResultItemTableRow r) {
         try {
-            if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUE)) {
-                ri.add(title);
+            if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUECOLUMN)) {
+                r.add(title);
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        ri.add(indicator.getResultItemTitle());
+                        r.add(indicator.getResultItemTitle());
                     }
                 }
             }
@@ -50,13 +50,13 @@ public class CategoryIndex extends Category {
     }
 
     @Override
-    public void addResultItem(ResultItemNot ri, Stock stock) {
+    public void addResultItem(ResultItemTableRow r, Stock stock) {
         try {
-            if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUE)) {
-                ri.add(stock.getIndexvalue());
+            if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUECOLUMN)) {
+                r.add(stock.getIndexvalue());
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        ri.add(indicator.getResultItem(stock));
+                        r.add(indicator.getResultItem(stock));
                     }
                 }
             }

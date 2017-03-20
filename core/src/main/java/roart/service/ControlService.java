@@ -2,7 +2,6 @@ package roart.service;
 
 import roart.model.GUISize;
 import roart.model.Meta;
-import roart.model.ResultItemNot;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.ResultItem;
@@ -104,7 +103,6 @@ public class ControlService {
         markets.add(conf.getMarket());
         Integer days = conf.getDays();
 
-        List<ResultItemNot> retList = new ArrayList<ResultItemNot>();
         ResultItemTable table = new ResultItemTable();
         
         try {
@@ -151,24 +149,21 @@ public class ControlService {
             Category[] categories = getCategories(conf, stocks,
                     periodText, marketdatamap, periodDataMap, periodmap);
 
-            ResultItemNot ri = new ResultItemNot();
+            ResultItemTableRow headrow = new ResultItemTableRow();
             //ri.add("Id");
-            ri.add(Constants.IMG);
-            ri.add("Name");
-            ri.add("Date");
+            headrow.add(Constants.IMG);
+            headrow.add("Name");
+            headrow.add("Date");
             try {
                 for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
-                    categories[i].addResultItemTitle(ri);
+                    categories[i].addResultItemTitle(headrow);
                     //System.out.print("first " + ri.get().size());
                 }
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
 
-            retList.add(ri);
-            ResultItemTableRow ri2head = new ResultItemTableRow();
-            ri2head.cols = ri.get();
-            table.add(ri2head);
+            table.add(headrow);
             //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
             for (Stock stock : datedstocks) {
                 //System.out.println("" + mydate.getTime() + "|" + stock.getDate().getTime());
@@ -178,14 +173,14 @@ public class ControlService {
                 if (false &&  conf.getdate() != null && conf.getdate().getTime() != stock.getDate().getTime()) {
                     continue;
                 }
-                ResultItemNot r = new ResultItemNot();
-                r.add(stock.getId());
-                r.add(stock.getName());
+                ResultItemTableRow row = new ResultItemTableRow();
+                row.add(stock.getId());
+                row.add(stock.getName());
                 SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-                r.add(dt.format(stock.getDate()));
+                row.add(dt.format(stock.getDate()));
                 try {
                     for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
-                        categories[i].addResultItem(r, stock);
+                        categories[i].addResultItem(row, stock);
                         //System.out.print("others " + r.get().size());
                     }
                 } catch (Exception e) {
@@ -232,22 +227,16 @@ public class ControlService {
                  */
 
                 //r.add(stock.get());
-                retList.add(r);
-                ResultItemTableRow ri2 = new ResultItemTableRow();
-                ri2.cols = r.get();
-                table.add(ri2);
+                 table.add(row);
 
             }
-            log.info("retlist " +retList.size());
             log.info("retlist2 " +table.size());
                     } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<List> retlistlist = new ArrayList<List>();
-        retlistlist.add(retList);
-        List<ResultItem> retlistlist2 = new ArrayList<ResultItem>();
-        retlistlist2.add(table);
-        return retlistlist2;
+        List<ResultItem> retlist = new ArrayList<ResultItem>();
+        retlist.add(table);
+        return retlist;
     }
 
 	private void getCurrentDate(MyConfig conf, Map<String, List<Stock>> stockdatemap) throws ParseException {
@@ -266,8 +255,8 @@ public class ControlService {
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) {
         Category[] categories = new Category[StockUtil.PERIODS + 2];
-        categories[0] = new CategoryIndex(conf, "Index", stocks, marketdatamap, periodDataMap, periodmap);
-        categories[1] = new CategoryPrice(conf, "Price", stocks, marketdatamap, periodDataMap, periodmap);
+        categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap);
+        categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap);
         for (int i = 0; i < StockUtil.PERIODS; i++) {
             categories[i + 2] = new CategoryPeriod(conf, i, periodText[i], stocks, marketdatamap, periodDataMap, periodmap);
         }
@@ -278,12 +267,12 @@ public class ControlService {
             String[] periodTextNot,
             Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap) {
         GraphCategory[] categories = new GraphCategory[StockUtil.PERIODS + 2];
-        categories[0] = new GraphCategoryIndex(conf, "Index", marketdatamap, periodDataMap);
-        categories[1] = new GraphCategoryPrice(conf, "Price", marketdatamap, periodDataMap);
+        categories[0] = new GraphCategoryIndex(conf, Constants.INDEX, marketdatamap, periodDataMap);
+        categories[1] = new GraphCategoryPrice(conf, Constants.PRICE, marketdatamap, periodDataMap);
         int i = 2;
         Set<String> keys = new TreeSet(periodDataMap.keySet());
-        keys.remove("Index");
-        keys.remove("Price");
+        keys.remove(Constants.INDEX);
+        keys.remove(Constants.PRICE);
         for (String periodText : keys) {
         // periodDataMap.keySet
         //for (int i = 0; i < StockUtil.PERIODS; i++) {
@@ -412,6 +401,17 @@ public class ControlService {
         return retlist;
     }
 
+    /**
+     * Creates map from period name to period data
+     * it gets the periodtexts from the marketdata
+     * creates a pair of (market id, period id)
+     * and adds it to the set of pairs in perioddata
+     * 
+     * @param markets to iterate through
+     * @param marketdatamap
+     * @return period name map
+     */
+    
     private Map<String, PeriodData> getPerioddatamap(Set<String> markets,
             Map<String, MarketData> marketdatamap) {
         //System.out.println("siz " + marketdatamap.size());
@@ -421,46 +421,61 @@ public class ControlService {
             String[] periodText = marketdatamap.get(market).periodtext;
             for (int i = 0; i < StockUtil.PERIODS; i++) {
                 String text = periodText[i];
-                //System.out.println("text " + market + " " + i + " " + text);
+                System.out.println("text " + market + " " + i + " " + text);
                 Pair<String, Integer> pair = new Pair(market, i);
-                PeriodData perioddata = periodDataMap.get(text);
-                if (perioddata == null) {
-                    perioddata = new PeriodData();
-                    periodDataMap.put(text, perioddata);
-                    //System.out.println("new " + text);
-                }
-                Set<Pair<String, Integer>> pairs = perioddata.pairs;
-                pairs.add(pair);
+                addPairToPeriodDataMap(periodDataMap, text, pair);
+             }
+            if (true) {
+                Pair<String, Integer> pair = new Pair(market, Constants.PRICECOLUMN);
+                addPairToPeriodDataMap(periodDataMap, Constants.PRICE, pair);                
             }
             if (true) {
-                String text = "Price";
-                Pair<String, Integer> pair = new Pair(market, Constants.PRICE);
-                PeriodData perioddata = periodDataMap.get(text);
-                if (perioddata == null) {
-                    perioddata = new PeriodData();
-                    periodDataMap.put(text, perioddata);
-                    //System.out.println("new " + text);
-                }
-                Set<Pair<String, Integer>> pairs = perioddata.pairs;
-                pairs.add(pair);                
-            }
-            if (true) {
-                String text = "Index";
-                Pair<String, Integer> pair = new Pair(market, Constants.INDEXVALUE);
-                PeriodData perioddata = periodDataMap.get(text);
-                if (perioddata == null) {
-                    perioddata = new PeriodData();
-                    periodDataMap.put(text, perioddata);
-                    //System.out.println("new " + text);
-                }
-                Set<Pair<String, Integer>> pairs = perioddata.pairs;
-                pairs.add(pair);                
+                Pair<String, Integer> pair = new Pair(market, Constants.INDEXVALUECOLUMN);
+                addPairToPeriodDataMap(periodDataMap, Constants.INDEX, pair);                
             }
         }
         System.out.println("per " + periodDataMap.keySet());
         return periodDataMap;
     }
 
+	private void addPairToPeriodDataMap(Map<String, PeriodData> periodDataMap, String text,
+			Pair<String, Integer> pair) {
+		PeriodData perioddata = getPeriodData(periodDataMap, text);
+		Set<Pair<String, Integer>> pairs = perioddata.pairs;
+		pairs.add(pair);
+	}
+
+    /**
+     * return perioddata for periodtext, or new one if not existing
+     *
+     * @param periodDataMap map from periodtext to perioddata
+     * @param text periodtext
+     * @return perioddata
+     */
+    
+	private PeriodData getPeriodData(Map<String, PeriodData> periodDataMap, String text) {
+		PeriodData perioddata = periodDataMap.get(text);
+		if (perioddata == null) {
+		    perioddata = new PeriodData();
+		    periodDataMap.put(text, perioddata);
+		    //System.out.println("new " + text);
+		}
+		return perioddata;
+	}
+
+	/**
+	 * For a given set of markets
+	 * Create a map to the marketdata
+	 * the marketdata being the periodtexts, all stocks and 
+	 * datedstocklist
+	 * 
+	 * @param days
+	 * @param markets to iterate
+	 * @param conf
+	 * @return
+	 * @throws Exception
+	 */
+	
     private Map<String, MarketData> getMarketdatamap(int days,
             Set<String> markets, MyConfig conf) throws Exception {
         /*
@@ -520,6 +535,7 @@ public class ControlService {
              * Make stock lists based on the intervals
              */
             
+            // TODO check out the 15 days
             List<Stock> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), days + 15, conf.getTableIntervalDays());
             marketdata.datedstocklists = datedstocklists;
             
@@ -556,28 +572,26 @@ public class ControlService {
         //mydate.setSeconds(0);
         List<ResultItem> retList = new ArrayList<ResultItem>();
         ResultItemTable table = new ResultItemTable();
-        ResultItemNot ri = new ResultItemNot();
+        ResultItemTableRow row = new ResultItemTableRow();
         //ri.add("Id");
         String delta = "Delta";
         delta = "Δ";
-        ri.add(Constants.IMG);
-        ri.add("Name 1");
-        ri.add("Name 2");
+        row.add(Constants.IMG);
+        row.add("Name 1");
+        row.add("Name 2");
         //ri.add("Date");
-        ri.add("Period");
-        ri.add("Size");
-        ri.add("Paired t");
-        ri.add("P-value");
-        ri.add("Alpha 0.05");
-        ri.add("Paired t (e)");
-        ri.add("P-value (e)");
-        ri.add("Alpha 0.05 (e)");
-        ri.add("Spearman (e)");
-        ri.add("Kendall (e)");
-        ri.add("Pearson (e)");
-        ResultItemTableRow ri2head = new ResultItemTableRow();
-        ri2head.cols = ri.get();
-        table.add(ri2head);
+        row.add("Period");
+        row.add("Size");
+        row.add("Paired t");
+        row.add("P-value");
+        row.add("Alpha 0.05");
+        row.add("Paired t (e)");
+        row.add("P-value (e)");
+        row.add("Alpha 0.05 (e)");
+        row.add("Spearman (e)");
+        row.add("Kendall (e)");
+        row.add("Pearson (e)");
+        table.add(row);
         try {
             List<Stock> stocks = Stock.getAll(conf.getMarket());
             log.info("stocks " + stocks.size());
