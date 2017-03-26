@@ -6,7 +6,7 @@ import java.util.Map;
 import roart.config.MyConfig;
 import roart.indicator.Indicator;
 import roart.model.ResultItemTableRow;
-import roart.model.Stock;
+import roart.model.StockItem;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
@@ -19,7 +19,7 @@ public class CategoryPrice extends Category {
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
 
-    public CategoryPrice(MyConfig conf, String string, List<Stock> stocks,
+    public CategoryPrice(MyConfig conf, String string, List<StockItem> stocks,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
             Map<String, Integer>[] periodmap) {
@@ -47,7 +47,7 @@ public class CategoryPrice extends Category {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow r, Stock stock) {
+    public void addResultItem(ResultItemTableRow r, StockItem stock) {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
                 r.add(stock.getPrice());

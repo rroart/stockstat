@@ -8,7 +8,7 @@ import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorRSI;
 import roart.model.ResultItemTableRow;
-import roart.model.Stock;
+import roart.model.StockItem;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
@@ -21,16 +21,16 @@ public class CategoryIndex extends Category {
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
 
-    public CategoryIndex(MyConfig conf, String string, List<Stock> stocks,
+    public CategoryIndex(MyConfig conf, String string, List<StockItem> stocks,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
-            Map<String, Integer>[] periodmap) {
+            Map<String, Integer>[] periodmap) throws Exception {
         super(conf, string, stocks);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
-        indicators.add(new IndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, periodmap, title));
-        indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title));
+        indicators.add(new IndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
+        indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
     }
 
     @Override
@@ -50,10 +50,10 @@ public class CategoryIndex extends Category {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow r, Stock stock) {
+    public void addResultItem(ResultItemTableRow r, StockItem stock) {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUECOLUMN)) {
-                r.add(stock.getIndexvalue());
+                r.add(StockDao.getValue(stock, Constants.INDEXVALUECOLUMN));
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.add(indicator.getResultItem(stock));

@@ -2,7 +2,6 @@ package roart.category;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import roart.config.MyConfig;
 import roart.indicator.Indicator;
 import roart.model.ResultItemTableRow;
-import roart.model.Stock;
-import roart.service.ControlService;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.model.StockItem;
 
 public abstract class Category {
 
@@ -21,10 +17,10 @@ public abstract class Category {
 
     protected String title;
     protected MyConfig conf;
-    protected List<Stock> stocks;
+    protected List<StockItem> stocks;
     protected List<Indicator> indicators = new ArrayList();
 
-    public Category(MyConfig conf, String periodText, List<Stock> stocks) {
+    public Category(MyConfig conf, String periodText, List<StockItem> stocks) {
         this.conf = conf;
         title = periodText;
         this.stocks = stocks;
@@ -32,6 +28,6 @@ public abstract class Category {
 
     abstract public void addResultItemTitle(ResultItemTableRow r);
 
-    abstract public void addResultItem(ResultItemTableRow r, Stock stock);
+    abstract public void addResultItem(ResultItemTableRow r, StockItem stock);
 }
 

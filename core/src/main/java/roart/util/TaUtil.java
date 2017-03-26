@@ -13,24 +13,24 @@ import org.slf4j.LoggerFactory;
 import com.tictactec.ta.lib.Core;
 import com.tictactec.ta.lib.MInteger;
 
-import roart.model.Stock;
+import roart.model.StockItem;
 
 public class TaUtil {
 
     private static Logger log = LoggerFactory.getLogger(TaUtil.class);
 
-    Object[] getRSI(int days, String market, String id,
-            Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+    Object[] getRSI(int days, String market,
+            String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         MarketData marketdata = marketdatamap.get(market);
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
-        List<Stock> datedstocklists[] = marketdata.datedstocklists;
+        List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
         int size = 0;
         int count = days - 1;
         int downcount = Math.min(days, datedstocklists.length);
         for (int j = 0; j < datedstocklists.length && downcount > 0 ; j++) {
-            List<Stock> list = datedstocklists[j];
+            List<StockItem> list = datedstocklists[j];
             if (list == null) {
                 log.info("listnull " + market + " " + " " + j);
                 continue;
@@ -40,7 +40,7 @@ public class TaUtil {
             }
             int period = periodInt;
             grr:  for (int i = 0; i < list.size(); i++) {
-                Stock stock = list.get(i);
+                StockItem stock = list.get(i);
                 Pair<String, String> pair = new Pair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
@@ -49,7 +49,6 @@ public class TaUtil {
                             continue;
                         }
                         double val = value;
-                        //log.info("info " + stock.getName() + " " + value + " " + new Integer(-j));
                         values[count] = value;
                         count--;
                         downcount--;
@@ -57,36 +56,11 @@ public class TaUtil {
                         break grr;
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
-                        log.info("grr6 " + count + " " + downcount + " " + days + " " + datedstocklists.length);
                     }
                 }
             }    
         }
-        Core core = new Core();
-        MInteger beg = new MInteger();
-        MInteger end = new MInteger();
-        double rsi[] = new double[values.length];
-        //log.info("grr " + count);
-        core.rsi(0, size - 1, values, 14, beg, end, rsi);
-        Object[] objs = new Object[3];
-        objs[0] = rsi;
-        objs[1] = beg;
-        objs[2] = end;
-        if (false || "F00000M1AH".equals(id)) {
-            System.out.print("RSI count " + size + " " + end.value);
-            for (int i = 0; i < size; i++) {
-                System.out.print(" " + values[i]);
-            }
-            System.out.print(" grr ");
-            for (int i = 0; i < end.value; i++) {
-                System.out.print(" " + rsi[i]);
-            }
-            System.out.println("");
-        }
-        //log.info("grr2 " + beg.value + " " + end.value);
-        if ("EUCA000699".equals(id)) {
-            log.info("grr4 " + days + " " + size + " " + beg.value + " " + end.value + " " + periodstr);
-        }
+        Object[] objs = getInnerRSI(values, size);
         return objs;
 
     }
@@ -96,18 +70,18 @@ public class TaUtil {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         MarketData marketdata = marketdatamap.get(market);
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
-        List<Stock> datedstocklists[] = marketdata.datedstocklists;
+        List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
-        int count = 0;
+        int size = 0;
         for (int j = days - 1; j >= 0; j--) {
-            List<Stock> list = datedstocklists[j];
+            List<StockItem> list = datedstocklists[j];
             if (list == null) {
                 log.info("listnull " + market + " " + " " + j);
                 continue;
             }
             int period = periodInt;
             for (int i = 0; i < list.size(); i++) {
-                Stock stock = list.get(i);
+                StockItem stock = list.get(i);
                 Pair<String, String> pair = new Pair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
@@ -116,9 +90,8 @@ public class TaUtil {
                             continue;
                         }
                         double val = value;
-                        //log.info("info " + stock.getName() + " " + value + " " + new Integer(-j));
-                        values[count] = value;
-                        count++;
+                        values[size] = value;
+                        size++;
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
 
@@ -126,34 +99,23 @@ public class TaUtil {
                 }
             }    
         }
-        Core core = new Core();
+        Object[] objs = getInnerRSI(values, size);
+        return objs;
+
+    }
+
+	private Object[] getInnerRSI(double[] values, int size) {
+		Core core = new Core();
         MInteger beg = new MInteger();
         MInteger end = new MInteger();
         double rsi[] = new double[values.length];
-        //log.info("grr " + count);
-        core.rsi(0, count - 1, values, 14, beg, end, rsi);
+        core.rsi(0, size - 1, values, 14, beg, end, rsi);
         Object[] objs = new Object[3];
         objs[0] = rsi;
         objs[1] = beg;
         objs[2] = end;
-        if (false || "F00000M1AH".equals(id)) {
-            System.out.print("count " + count + " " + end.value);
-            for (int i = 0; i < count; i++) {
-                System.out.print(" " + values[i]);
-            }
-            System.out.print(" grr ");
-            for (int i = 0; i < end.value; i++) {
-                System.out.print(" " + rsi[i]);
-            }
-            System.out.println("");
-        }
-        //log.info("grr2 " + beg.value + " " + end.value);
-        if ("EUCA000699".equals(id)) {
-            log.info("grr4 " + days + " " + count + " " + beg.value + " " + end.value + " " + periodstr);
-        }
-        return objs;
-
-    }
+		return objs;
+	}
 
     public double getRSI2(int days, String market, String id,
             Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
@@ -198,19 +160,27 @@ public class TaUtil {
         return dataset;
     }
 
-    Object[] getMACD(int days, String market, String id,
-            Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+    Object[] getMACD(int days, String market,
+            String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         MarketData marketdata = marketdatamap.get(market);
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
-        List<Stock> datedstocklists[] = marketdata.datedstocklists;
+        List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
-        int size = 0;
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, values);
+        log.info("india " + java.util.Arrays.toString(values));
+        Object[] objs = getInnerMACD(values, size);
+        return objs;
+    }
+
+	private int getArr(int days, String market, String id, Set<Pair<String, String>> ids, Integer periodInt,
+			List<StockItem>[] datedstocklists, double[] values) {
+		int size = 0;
         int count = days - 1;
         int downcount = Math.min(days, datedstocklists.length);
         for (int j = 0; j < datedstocklists.length && downcount > 0 ; j++) {
             //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
-            List<Stock> list = datedstocklists[j];
+            List<StockItem> list = datedstocklists[j];
             if (list == null) {
                 log.info("listnull " + market + " " + " " + j);
                 continue;
@@ -221,19 +191,15 @@ public class TaUtil {
             }
             int period = periodInt;
             grr:  for (int i = 0; i < list.size(); i++) {
-                Stock stock = list.get(i);
+                StockItem stock = list.get(i);
                 Pair<String, String> pair = new Pair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
                         Double value = StockDao.getValue(stock, period);
                         if (value == null) {
-                            if (false || "F00000M1AHH".equals(id) || "F00000IRBFF".equals(id)) {
-                                System.out.println("grr5");
-                            }
                             continue;
                         }
                         double val = value;
-                        //log.info("info " + stock.getName() + " " + value + " " + new Integer(-j));
                         values[count] = value;
                         count--;
                         downcount--;
@@ -246,69 +212,36 @@ public class TaUtil {
                 }
             }    
         }
-        Core core = new Core();
-        MInteger beg = new MInteger();
-        MInteger end = new MInteger();
-        double macd[] = new double[values.length];
-        double sig[] = new double[values.length];
-        double hist[] = new double[values.length];
-        //log.info("grr " + count);
-        core.macd(0, size - 1, values, 26, 12, 9, beg, end, macd, sig, hist);
-        Object[] objs = new Object[5];
-        objs[0] = macd;
-        objs[1] = sig;
-        objs[2] = hist;
-        objs[3] = beg;
-        objs[4] = end;
-        //log.info("grr2 " + beg.value + " " + end.value);
-        if (false || "F00000M1AHH".equals(id) || "F00000IRBFF".equals(id)) {
-            System.out.print("count " + size + " " + end.value);
-            for (int i = 0; i < size; i++) {
-                System.out.print(" " + values[i]);
-            }
-            System.out.print(" grr ");
-            for (int i = 0; i < end.value; i++) {
-                System.out.print(" " + hist[i]);
-            }
-            System.out.println("");
-        }
-        if ("EUCA000699".equals(id)) {
-            log.info("grr4 " + days + " " + size + " " + beg.value + " " + end.value + " " + periodstr);
-        }
-        return objs;
-    }
+		return size;
+	}
 
     Object[] getMACD_orig(int days, String market, String id,
             Set<Pair> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         MarketData marketdata = marketdatamap.get(market);
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
-        List<Stock> datedstocklists[] = marketdata.datedstocklists;
+        List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
-        int count = 0;
+        int size = 0;
         for (int j = days - 1; j >= 0; j--) {
-            List<Stock> list = datedstocklists[j];
+            List<StockItem> list = datedstocklists[j];
             if (list == null) {
                 log.info("listnull " + market + " " + " " + j);
                 continue;
             }
             int period = periodInt;
             for (int i = 0; i < list.size(); i++) {
-                Stock stock = list.get(i);
+                StockItem stock = list.get(i);
                 Pair<String, String> pair = new Pair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
                         Double value = StockDao.getPeriod(stock, period);
                         if (value == null) {
-                            if (false || "F00000M1AH".equals(id)) {
-                                System.out.println("grr5");
-                            }
                             continue;
                         }
                         double val = value;
-                        //log.info("info " + stock.getName() + " " + value + " " + new Integer(-j));
-                        values[count] = value;
-                        count++;
+                        values[size] = value;
+                        size++;
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
 
@@ -316,40 +249,29 @@ public class TaUtil {
                 }
             }    
         }
-        Core core = new Core();
+        Object[] objs = getInnerMACD(values, size);
+        return objs;
+    }
+
+	private Object[] getInnerMACD(double[] values, int size) {
+		Core core = new Core();
         MInteger beg = new MInteger();
         MInteger end = new MInteger();
         double macd[] = new double[values.length];
         double sig[] = new double[values.length];
         double hist[] = new double[values.length];
-        //log.info("grr " + count);
-        core.macd(0, count - 1, values, 26, 12, 9, beg, end, macd, sig, hist);
+        core.macd(0, size - 1, values, 26, 12, 9, beg, end, macd, sig, hist);
         Object[] objs = new Object[5];
         objs[0] = macd;
         objs[1] = sig;
         objs[2] = hist;
         objs[3] = beg;
         objs[4] = end;
-        //log.info("grr2 " + beg.value + " " + end.value);
-        if (false || "F00000M1AH".equals(id)) {
-            System.out.print("count " + count + " " + end.value);
-            for (int i = 0; i < count; i++) {
-                System.out.print(" " + values[i]);
-            }
-            System.out.print(" grr ");
-            for (int i = 0; i < end.value; i++) {
-                System.out.print(" " + hist[i]);
-            }
-            System.out.println("");
-        }
-        if ("EUCA000699".equals(id)) {
-            log.info("grr4 " + days + " " + count + " " + beg.value + " " + end.value + " " + periodstr);
-        }
-        return objs;
-    }
+		return objs;
+	}
 
-    public double getMom(int days, String market, String id,
-            Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+    public double getMom(int days, String market,
+            String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Object objs[] = getMACD(days, market, id, ids, marketdatamap, perioddata, periodstr);
         double hist[] = (double[]) objs[2];
         MInteger beg = (MInteger) objs[3];
@@ -365,8 +287,8 @@ public class TaUtil {
         return hist[end.value - 1];
     }
 
-    public DefaultCategoryDataset getMACDChart(int days, String market, String id,
-            Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+    public DefaultCategoryDataset getMACDChart(int days, String market,
+            String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         System.out.println("parsize " + pairs.size());
@@ -390,10 +312,53 @@ public class TaUtil {
             dataset.addValue(macd[i], "macd" , new Integer(i + beg.value - size));
             dataset.addValue(sig[i], "sig" , new Integer(i + beg.value - size));
             dataset.addValue(hist[i], "hist" , new Integer(i + beg.value - size));
-            if ("EUCA000699".equals(id)) {
-                log.info("hist i " + i + " " + hist[i]);
-            }
         }
         return dataset;
     }
+
+	public double getRSI(List<Double> list, int days) {
+		double values[] = new double[days];
+	    int size = getArrayNonNullReverse(list, values);
+	    Object[] objs = getInnerRSI(values, size);
+        double rsi[] = (double[]) objs[0];
+        MInteger end = (MInteger) objs[2];
+        if (end.value == 0) {
+            return 0;
+        }
+        return rsi[end.value - 1];
+	}
+
+	private int getArrayNonNullReverse(List<Double> list, double[] values) {
+		int count = values.length;
+		for (Double val : list) {
+			// TODO bounds check
+	    	if (val != null && count > 0) {
+	    		values[--count] = val;
+	    	}
+	    }
+		return values.length - count;
+	}
+
+	private int getArrayNonNull(List<Double> list, double[] values) {
+		int size = 0;
+		for (Double val : list) {
+			// TODO bounds check
+	    	if (val != null && size < values.length) {
+	    		values[size++] = val;
+	    	}
+	    }
+		return size;
+	}
+
+	public double getMom(List<Double> list, int days) {
+		double values[] = new double[days];
+	    int size = getArrayNonNullReverse(list, values);
+	    Object[] objs = getInnerMACD(values, size);
+        double hist[] = (double[]) objs[2];
+        MInteger end = (MInteger) objs[4];
+        if (end.value == 0) {
+            return 0;
+        }
+        return hist[end.value - 1];
+	}
 }

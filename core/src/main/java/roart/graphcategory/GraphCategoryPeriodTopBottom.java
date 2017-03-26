@@ -14,19 +14,19 @@ import roart.config.MyConfig;
 import roart.model.GUISize;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItem;
-import roart.model.Stock;
+import roart.model.StockItem;
 import roart.util.Constants;
 import roart.util.StockUtil;
 import roart.util.SvgUtil;
 
 public class GraphCategoryPeriodTopBottom extends GraphCategory {
 
-    List<Stock>[][] stocklistPeriod;
+    List<StockItem>[][] stocklistPeriod;
 
     private int period;
 
     public GraphCategoryPeriodTopBottom(MyConfig conf, int i,
-            String periodText, List<Stock>[][] stocklistPeriod) {
+            String periodText, List<StockItem>[][] stocklistPeriod) {
         super(conf, periodText);
         period = i;
         this.stocklistPeriod = stocklistPeriod;

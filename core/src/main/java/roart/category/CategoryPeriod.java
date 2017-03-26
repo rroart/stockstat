@@ -13,7 +13,8 @@ import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorMove;
 import roart.indicator.IndicatorRSI;
 import roart.model.ResultItemTableRow;
-import roart.model.Stock;
+import roart.model.StockItem;
+//import roart.model.Stock;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
@@ -29,15 +30,15 @@ public class CategoryPeriod extends Category {
 
     private int period;
 
-    public CategoryPeriod(MyConfig conf, int i, String periodText, List<Stock> stocks,             Map<String, MarketData> marketdatamap,
+    public CategoryPeriod(MyConfig conf, int i, String periodText, List<StockItem> stocks,             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
-            Map<String, Integer>[] periodmap) {
+            Map<String, Integer>[] periodmap) throws Exception {
         super(conf, periodText, stocks);
         this.periodmap = periodmap;
         period = i;
         indicators.add(new IndicatorMove(conf, "Δ" + title, periodmap, period));
-        indicators.add(new IndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, periodmap, title));
-        indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title));
+        indicators.add(new IndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, periodmap, title, i));
+        indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, i));
 
     }
 
@@ -58,7 +59,7 @@ public class CategoryPeriod extends Category {
     }
 
     @Override
-    public void addResultItem(ResultItemTableRow r, Stock stock) {
+    public void addResultItem(ResultItemTableRow r, StockItem stock) {
         try {
             //System.out.print("0"+period+"0 ");
 

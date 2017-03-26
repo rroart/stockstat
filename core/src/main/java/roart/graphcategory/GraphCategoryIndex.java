@@ -17,7 +17,7 @@ import roart.graphindicator.GraphIndicatorRSI;
 import roart.model.GUISize;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItem;
-import roart.model.Stock;
+//import roart.model.Stock;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
