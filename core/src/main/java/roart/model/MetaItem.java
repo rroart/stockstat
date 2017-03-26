@@ -1,5 +1,7 @@
 package roart.model;
 
+import roart.db.DbDao;
+
 public class MetaItem {
 
 	private String marketid;
@@ -16,8 +18,7 @@ public class MetaItem {
 	}
 
 	public static MetaItem getById(String market) throws Exception {
-		Meta meta = Meta.getById(market);
-		return new MetaItem(meta);
+		return DbDao.instance().getMarket(market);
 	}
 	public String getperiod(int i) {
 		return period[i];

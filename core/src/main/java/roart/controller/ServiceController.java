@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import roart.db.DbDao;
 import roart.service.ControlService;
 import roart.service.ServiceParam;
 import roart.service.ServiceResult;
@@ -126,7 +127,7 @@ public class ServiceController {
 	}
 
 	public static void main(String[] args) throws Exception {
-		new roart.db.DbSpark();
+		DbDao.instance("hibernate");
 		SpringApplication.run(ServiceController.class, args);
 	}
 

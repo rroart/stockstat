@@ -3,6 +3,8 @@ package roart.db;
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.config.MyPropertyConfig;
+import roart.model.MetaItem;
+import roart.model.StockItem;
 import roart.util.Constants;
 import scala.Tuple2;
 import scala.collection.JavaConversions;
@@ -10,6 +12,7 @@ import scala.collection.JavaConversions;
 import java.util.Map;
 import java.util.Properties;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.io.StringReader;
 
@@ -96,6 +99,16 @@ public class DbSpark {
 	}
 	return null;
     }
+
+	public static List<StockItem> getAll(String market) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static MetaItem getMarket(String market) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
 

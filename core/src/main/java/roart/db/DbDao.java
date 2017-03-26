@@ -9,36 +9,42 @@ import java.util.List;
 import java.util.HashSet;
 
 import roart.config.ConfigConstants;
+import roart.model.StockItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DbDao {
-    private static Logger log = LoggerFactory.getLogger(DbDao.class);
+	private static Logger log = LoggerFactory.getLogger(DbDao.class);
 
-    private static DbAccess classify = null;
+	private static DbAccess access = null;
 
-    public static void instance(String type) {
-	System.out.println("instance " + type);
-	log.info("instance " + type);
-	if (type == null) {
-	  return;
+	public static void instance(String type) {
+		System.out.println("instance " + type);
+		log.info("instance " + type);
+		if (type == null) {
+			return;
+		}
+		if (access == null) {
+			if (type.equals(ConfigConstants.SPARK)) {
+				access = new DbSparkAccess();
+				new DbSpark();
+			}
+			if (type.equals(ConfigConstants.HIBERNATE)) {
+				access = new DbHibernateAccess();
+			}
+		}
 	}
-	if (classify == null) {
-	    if (type.equals(ConfigConstants.SPARK)) {
-		classify = new DbSparkAccess();
-	    }
-        if (type.equals(ConfigConstants.SPARK)) {
-        classify = new DbSparkAccess();
-        }
-	}
-    }
 
-    public static String classify(String type, String language) {
-	if (classify == null) {
-	    return null;
+	public static DbAccess instance() {
+		return access;
 	}
-	return classify.classify(type, language);
-    }
+
+	public static List<StockItem> getAll(String type, String language) throws Exception {
+		if (access == null) {
+			return null;
+		}
+		return access.getAll(type);
+	}
 
 }

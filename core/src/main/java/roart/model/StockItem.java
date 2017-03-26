@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import roart.db.DbDao;
 import roart.util.StockDao;
 import roart.util.StockUtil;
 
@@ -104,13 +105,7 @@ public class StockItem {
 	}
 
 	public static List<StockItem> getAll(String market) throws Exception {
-		List<Stock> stocks = Stock.getAll(market);
-		List<StockItem> stockitems = new ArrayList();
-		for (Stock stock : stocks) {
-			StockItem stockItem = new StockItem(stock);
-			stockitems.add(stockItem);
-		}
-		return stockitems;
+		return DbDao.instance().getAll(market);
 	}
 
 	public static List<String> getMarkets() throws Exception {
