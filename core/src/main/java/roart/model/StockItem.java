@@ -27,9 +27,12 @@ public class StockItem {
 		this.date = stock.getDate();
 		this.indexvalue = stock.getIndexvalue();
 		this.price = stock.getPrice();
-		for (int i = 0; i < StockUtil.PERIODS; i++) {
-			this.period[i] = StockDao.getPeriod(stock, i);
-		}
+		this.period[0] = stock.getPeriod1();
+		this.period[1] = stock.getPeriod2();
+		this.period[2] = stock.getPeriod3();
+		this.period[3] = stock.getPeriod4();
+		this.period[4] = stock.getPeriod5();
+		this.period[5] = stock.getPeriod6();
 	}
 
 	public String getDbid() {
