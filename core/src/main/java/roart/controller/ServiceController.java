@@ -127,7 +127,8 @@ public class ServiceController {
 	}
 
 	public static void main(String[] args) throws Exception {
-		DbDao.instance("hibernate");
+		//DbDao.instance("hibernate");
+		DbDao.instance("spark");
 		SpringApplication.run(ServiceController.class, args);
 	}
 

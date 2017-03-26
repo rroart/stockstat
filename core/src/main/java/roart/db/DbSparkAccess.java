@@ -13,7 +13,7 @@ public class DbSparkAccess extends DbAccess {
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public List<StockItem> getAll(String market) {
+	public List<StockItem> getAll(String market) throws Exception {
 		return DbSpark.getAll(market);
 	}
 

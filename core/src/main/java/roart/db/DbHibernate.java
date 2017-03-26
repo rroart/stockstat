@@ -19,18 +19,20 @@ public class DbHibernate {
     }
 
     public static List<StockItem> getAll(String market) throws Exception {
-		List<Stock> stocks = Stock.getAll(market);
+    	long time0 = System.currentTimeMillis();
+    	List<Stock> stocks = Stock.getAll(market);
 		List<StockItem> stockitems = new ArrayList<>();
 		for (Stock stock : stocks) {
-			StockItem stockItem = new StockItem(stock);
+			StockItem stockItem = new StockItem(stock.getDbid(), stock.getMarketid(), stock.getId(), stock.getName(), stock.getDate(), stock.getIndexvalue(), stock.getPrice(), stock.getCurrency(), stock.getPeriod1(), stock.getPeriod2(), stock.getPeriod3(), stock.getPeriod4(), stock.getPeriod5(), stock.getPeriod6());
 			stockitems.add(stockItem);
 		}
+		log.info("time0 " + (System.currentTimeMillis() - time0));
 		return stockitems;
     }
 
     public static MetaItem getMarket(String market) throws Exception {
 		Meta meta = Meta.getById(market);
-		return new MetaItem(meta);
+		return new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6());
     }
 }
 

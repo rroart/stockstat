@@ -7,14 +7,14 @@ public class MetaItem {
 	private String marketid;
 	private String[] period = new String[6];
 
-	public MetaItem(Meta meta) {
-		this.marketid = meta.getMarketid();
-		this.period[0] = meta.getPeriod1();
-		this.period[1] = meta.getPeriod2();
-		this.period[2] = meta.getPeriod3();
-		this.period[3] = meta.getPeriod4();
-		this.period[4] = meta.getPeriod5();
-		this.period[5] = meta.getPeriod6();
+	public MetaItem(String marketid, String period1, String period2, String period3, String period4, String period5, String period6) {
+		this.marketid = marketid;
+		this.period[0] = period1;
+		this.period[1] = period2;
+		this.period[2] = period3;
+		this.period[3] = period4;
+		this.period[4] = period5;
+		this.period[5] = period6;
 	}
 
 	public static MetaItem getById(String market) throws Exception {
