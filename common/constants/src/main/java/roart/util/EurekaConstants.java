@@ -9,4 +9,5 @@ public class EurekaConstants {
 	public static final String GETCONTENTGRAPH2 = "getcontentgraph2";
 	public static final String GETMARKETS = "getmarkets";
 	public static final String GETSTOCKS = "getstocks";
+	public static final String CONFIG = "config";
 }

@@ -35,6 +35,20 @@ public class ServiceController {
 		return instance;
 	}
 	
+	@RequestMapping(value = "/" + EurekaConstants.CONFIG,
+			method = RequestMethod.POST)
+	public ServiceResult configDb(@RequestBody ServiceParam param)
+			throws Exception {
+		ServiceResult result = new ServiceResult();
+		try {
+			getInstance().config(param.config);
+		} catch (Exception e) {
+			log.error(roart.util.Constants.EXCEPTION, e);
+			result.error = e.getMessage();
+		}
+		return result;
+	}
+
 	@RequestMapping(value = "/" + EurekaConstants.GETMARKETS,
 			method = RequestMethod.POST)
 	public ServiceResult getMarkets(@RequestBody ServiceParam param)
@@ -127,8 +141,6 @@ public class ServiceController {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//DbDao.instance("hibernate");
-		DbDao.instance("spark");
 		SpringApplication.run(ServiceController.class, args);
 	}
 

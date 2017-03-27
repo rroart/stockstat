@@ -2,7 +2,7 @@ package roart.service;
 
 import roart.model.GUISize;
 import roart.model.ResultItem;
-
+import roart.config.ConfigConstants;
 import roart.config.MyPropertyConfig;
 
 import java.util.List;
@@ -119,4 +119,11 @@ public class ControlService {
         return result.list;
     }
 
+    public void dbengine(Boolean useSpark) throws Exception {
+    	MyPropertyConfig property = (MyPropertyConfig) MyPropertyConfig.instance();
+    	property.configSpark(useSpark);
+        ServiceParam param = new ServiceParam();
+        param.config = conf;
+        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.CONFIG);
+    }
 }

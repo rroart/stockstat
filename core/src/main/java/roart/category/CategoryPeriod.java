@@ -10,6 +10,7 @@ import org.apache.commons.math3.util.Pair;
 import roart.config.MyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
+import roart.indicator.IndicatorMACDderiv;
 import roart.indicator.IndicatorMove;
 import roart.indicator.IndicatorRSI;
 import roart.model.ResultItemTableRow;
@@ -38,6 +39,7 @@ public class CategoryPeriod extends Category {
         period = i;
         indicators.add(new IndicatorMove(conf, "Δ" + title, periodmap, period));
         indicators.add(new IndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, periodmap, title, i));
+        indicators.add(new IndicatorMACDderiv(conf, title + " md", marketdatamap, periodDataMap, periodmap, title, i));
         indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, i));
 
     }

@@ -29,11 +29,11 @@ public abstract class MyConfig {
 
 	private String mymarket = "0";
 
-	private Integer mydays = 60;
+	private Integer mydays = 180;
 
 	private Integer mytopbottom = 10;
 
-	private Integer mytabledays = 60;
+	private Integer mytabledays = 180;
 
 	private Integer mytablemoveintervaldays = 5;
 
@@ -47,10 +47,14 @@ public abstract class MyConfig {
 
 	private boolean macdEnabled = true;
 
+	private boolean macdDerivEnabled = true;
+
 	private boolean moveEnabled = true;
 
 	private boolean rsiEnabled = true;
     
+	private int macdderivdays = 3;
+
     public abstract void config() throws Exception;
 
 	/**
@@ -145,6 +149,14 @@ public abstract class MyConfig {
 	    return macdEnabled;
 	}
 
+	public void setMACDderivenabled(Boolean bool) {
+	    macdDerivEnabled = bool;
+	}
+
+	public boolean isMACDderivenabled() {
+	    return macdDerivEnabled;
+	}
+
 	public void setRSIenabled(Boolean bool) {
 	    rsiEnabled = bool;
 	}
@@ -169,4 +181,12 @@ public abstract class MyConfig {
 	    return mygraphequalizeunify;
 	}
 
+	public int getMACDderivDays() {
+		return macdderivdays;
+	}
+    
+	public void setMACDderivDays(Integer integer) {
+		this.macdderivdays = integer;
+	}
+    
 }

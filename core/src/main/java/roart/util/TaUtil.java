@@ -350,6 +350,29 @@ public class TaUtil {
 		return size;
 	}
 
+	public double getMomderiv(List<Double> list, int days, int derivdays) {
+		double values[] = new double[days];
+	    int size = getArrayNonNullReverse(list, values);
+	    Object[] objs = getInnerMACD(values, size);
+        double hist[] = (double[]) objs[2];
+        MInteger end = (MInteger) objs[4];
+        if (end.value == 0) {
+            return 0;
+        }
+        double sum = 0;
+        for (int i = end.value - 1; i >= end.value - derivdays && i >= 1; i--) {
+        	double deriv = hist[i] - hist[i - 1];
+        	if (deriv < 0 && sum >= 0) {
+        		return 0;
+        	}
+        	if (deriv >= 0 && sum < 0) {
+        		return 0;
+        	}
+        	sum += deriv;
+        }
+        return sum/(derivdays - 1);
+	}
+	
 	public double getMom(List<Double> list, int days) {
 		double values[] = new double[days];
 	    int size = getArrayNonNullReverse(list, values);

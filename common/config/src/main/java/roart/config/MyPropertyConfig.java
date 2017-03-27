@@ -20,6 +20,8 @@ public class MyPropertyConfig extends MyConfig {
     
     private static Configuration config = null;
     
+    public static String[] dbvalues = { ConfigConstants.HIBERNATE, ConfigConstants.SPARK };
+
     public MyPropertyConfig() {
         super();
 	try {
@@ -34,12 +36,12 @@ public class MyPropertyConfig extends MyConfig {
         if (config == null) {
             return;
         }
-        configSpark();
+        Boolean spark = getBoolean(ConfigConstants.SPARK, false, false, false);
+        configSpark(spark);
  
     }
 
-    private void configSpark() throws Exception {
-        Boolean spark = getBoolean(ConfigConstants.SPARK, false, false, false);
+    public void configSpark(Boolean spark) throws Exception {
         this.useSpark = spark;
         if (spark != null && spark) {
             String master = getString(ConfigConstants.SPARKMASTER);
@@ -48,7 +50,7 @@ public class MyPropertyConfig extends MyConfig {
             } else {
                 throw new Exception("No Spark master");
             }
-        }
+         }
     }
 
     public String getString(String string) {
@@ -199,5 +201,5 @@ public class MyPropertyConfig extends MyConfig {
         
         return value;
     }
-    
+
 }

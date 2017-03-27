@@ -1,5 +1,7 @@
 package roart.client;
 
+import roart.config.ConfigConstants;
+import roart.config.MyPropertyConfig;
 import roart.model.GUISize;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItemTable;
@@ -55,6 +57,7 @@ import javax.servlet.annotation.WebServlet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -206,14 +209,20 @@ public class MyVaadinUI extends UI
     }
 
     private VerticalLayout getControlPanelTab() {
+    	boolean isProductionMode = VaadinService.getCurrent()
+    		    .getDeploymentConfiguration().isProductionMode();
         VerticalLayout tab = new VerticalLayout();
         tab.setCaption("Control Panel");
         HorizontalLayout horMACD = new HorizontalLayout();
         horMACD.setHeight("20%");
         horMACD.setWidth("90%");
         horMACD.addComponent(getMACD());
+        horMACD.addComponent(getMACDbonus());
         horMACD.addComponent(getMove());
         horMACD.addComponent(getRSI());
+        if (!isProductionMode) {
+        horMACD.addComponent(getDbEngine());
+        }
         HorizontalLayout horStat = new HorizontalLayout();
         horStat.setHeight("20%");
         horStat.setWidth("90%");
@@ -275,6 +284,7 @@ public class MyVaadinUI extends UI
         horDb2.addComponent(getTableDays());
         horDb2.addComponent(getTableIntervalDays());
         horDb2.addComponent(getTopBottom());
+        horDb2.addComponent(getMACDDerivDays());
         HorizontalLayout horDb3 = new HorizontalLayout();
         horDb3.setHeight("20%");
         horDb3.setWidth("60%");
@@ -557,6 +567,30 @@ public class MyVaadinUI extends UI
         return tf;
     }
 
+   private TextField getMACDDerivDays() {
+       TextField tf = new TextField("MACD bonus days");
+       tf.setValue("" + controlService.conf.getMACDderivDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setMACDderivDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
     private TextField getTableIntervalDays() {
         TextField tf = new TextField("Table interval days");
         tf.setValue("" + controlService.conf.getTableIntervalDays());
@@ -798,6 +832,28 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
+    private CheckBox getMACDbonus() {
+        CheckBox cb = new CheckBox("Enable MACD bonus");
+        cb.setValue(controlService.conf.isMACDderivenabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setMACDderivenabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
     private CheckBox getRSI() {
         CheckBox cb = new CheckBox("Enable RSI");
         cb.setValue(controlService.conf.isRSIenabled());
@@ -864,7 +920,33 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
-    void addListText(VerticalLayout ts, ResultItemText str) {
+    private ListSelect getDbEngine() {
+    	ListSelect ls = new ListSelect("Select search engine");
+    	String[] engines = MyPropertyConfig.dbvalues;
+    	ls.addItems(engines);
+        ls.setNullSelectionAllowed(false);
+        // Show 5 items and a scrollbar if there are more                       
+        ls.setRows(5);
+        ls.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String                 
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value                              
+    		    ControlService maininst = new ControlService();
+    		    try {
+    			maininst.dbengine(value.equals(ConfigConstants.SPARK));
+    			Notification.show("Request sent");
+    		    } catch (Exception e) {
+    			log.error(Constants.EXCEPTION, e);
+    		    }
+    		}
+    	    });
+    	// Fire value changes immediately when the field loses focus
+    	ls.setImmediate(true);
+    	return ls;
+    }
+    
+   void addListText(VerticalLayout ts, ResultItemText str) {
             ts.addComponent(new Label(str.text));
      }
 

@@ -11,8 +11,10 @@ import roart.category.Category;
 import roart.category.CategoryIndex;
 import roart.category.CategoryPeriod;
 import roart.category.CategoryPrice;
+import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.config.MyPropertyConfig;
+import roart.db.DbDao;
 import roart.graphcategory.GraphCategory;
 import roart.graphcategory.GraphCategoryIndex;
 import roart.graphcategory.GraphCategoryPeriod;
@@ -549,5 +551,15 @@ public class ControlService {
         retList.add(table);
         return retList;
     }
-
+    public void config(MyConfig config) {    	
+    	configDb(config.useSpark);
+    }
+    
+    public void configDb(Boolean useSpark) {
+    	if (useSpark) {
+    		DbDao.instance("spark");
+    	} else {
+    		DbDao.instance("hibernate");
+    	}
+    }    
 }

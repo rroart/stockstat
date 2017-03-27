@@ -17,7 +17,7 @@ import roart.util.PeriodData;
 import roart.util.StockDao;
 import roart.util.TaUtil;
 
-public class IndicatorMACD extends Indicator {
+public class IndicatorMACDderiv extends Indicator {
 
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
@@ -26,7 +26,7 @@ public class IndicatorMACD extends Indicator {
     Map<String, List<Double>> listMap;
     Map<String, Double> resultMap;
 
-    public IndicatorMACD(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    public IndicatorMACDderiv(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
@@ -49,26 +49,19 @@ public class IndicatorMACD extends Indicator {
         String periodstr = key;
         PeriodData perioddata = periodDataMap.get(periodstr);
         for (String id : listMap.keySet()) {
-        	if (id.equals("EUCA000520")) {
-        	List<Double> list = listMap.get(id);
-            Pair<String, String> pair = new Pair<>(market, id);
-            Set<Pair<String, String>> ids = new HashSet<>();
-            ids.add(pair);
-            double momentum = tu.getMom(conf.getDays(), market, id, ids, marketdatamap, perioddata, periodstr);
-        	}
             List<Double> list = listMap.get(id);
             if (id.equals("EUCA000520")) {
             	log.info("india list " + list);
             }
-            double momentum = tu.getMom(list, conf.getDays());
-            resultMap.put(id, momentum);
+            double deriv = tu.getMomderiv(list, conf.getDays(), conf.getMACDderivDays());
+            resultMap.put(id, deriv);
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
 	}
 
     @Override
     public boolean isEnabled() {
-        return conf.isMACDenabled();
+        return conf.isMACDderivenabled();
     }
 
     @Override
