@@ -15,6 +15,12 @@ public class ResultItemTableRow {
     	cols.add(obj);
     }
     
+    public void addarr(Object[] objs) {
+    	for (Object obj : objs) {
+    		cols.add(obj);
+    	}
+    }
+    
     public Object get(int i) {
     	return cols.get(i);
     }

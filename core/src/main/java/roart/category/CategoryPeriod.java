@@ -39,7 +39,7 @@ public class CategoryPeriod extends Category {
         period = i;
         indicators.add(new IndicatorMove(conf, "Δ" + title, periodmap, period));
         indicators.add(new IndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, periodmap, title, i));
-        indicators.add(new IndicatorMACDderiv(conf, title + " md", marketdatamap, periodDataMap, periodmap, title, i));
+        //indicators.add(new IndicatorMACDderiv(conf, title + " md", marketdatamap, periodDataMap, periodmap, title, i));
         indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, i));
 
     }
@@ -51,7 +51,7 @@ public class CategoryPeriod extends Category {
                 r.add(title);
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        r.add(indicator.getResultItemTitle());
+                        r.addarr(indicator.getResultItemTitle());
                     }
                 }
             }
@@ -72,7 +72,7 @@ public class CategoryPeriod extends Category {
                     //System.out.print("2");
                     if (indicator.isEnabled()) {
                         //System.out.print("ri");
-                        r.add(indicator.getResultItem(stock));
+                        r.addarr(indicator.getResultItem(stock));
                     }
                     else { System.out.println("not"); }
                 }

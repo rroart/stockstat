@@ -56,7 +56,7 @@ public class CategoryIndex extends Category {
                 r.add(StockDao.getValue(stock, Constants.INDEXVALUECOLUMN));
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        r.add(indicator.getResultItem(stock));
+                        r.addarr(indicator.getResultItem(stock));
                     }
                 }
             }

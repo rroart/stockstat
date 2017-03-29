@@ -217,9 +217,10 @@ public class MyVaadinUI extends UI
         horMACD.setHeight("20%");
         horMACD.setWidth("90%");
         horMACD.addComponent(getMACD());
-        horMACD.addComponent(getMACDbonus());
+        horMACD.addComponent(getMACDdiff());
         horMACD.addComponent(getMove());
         horMACD.addComponent(getRSI());
+        horMACD.addComponent(getRSIdiff());
         if (!isProductionMode) {
         horMACD.addComponent(getDbEngine());
         }
@@ -284,7 +285,8 @@ public class MyVaadinUI extends UI
         horDb2.addComponent(getTableDays());
         horDb2.addComponent(getTableIntervalDays());
         horDb2.addComponent(getTopBottom());
-        horDb2.addComponent(getMACDDerivDays());
+        horDb2.addComponent(getMACDdiffDays());
+        horDb2.addComponent(getRSIdiffDays());
         HorizontalLayout horDb3 = new HorizontalLayout();
         horDb3.setHeight("20%");
         horDb3.setWidth("60%");
@@ -567,9 +569,9 @@ public class MyVaadinUI extends UI
         return tf;
     }
 
-   private TextField getMACDDerivDays() {
-       TextField tf = new TextField("MACD bonus days");
-       tf.setValue("" + controlService.conf.getMACDderivDays());
+   private TextField getMACDdiffDays() {
+       TextField tf = new TextField("MACD diff days");
+       tf.setValue("" + controlService.conf.getMACDdiffDays());
 
        // Handle changes in the value
        tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -578,7 +580,31 @@ public class MyVaadinUI extends UI
                String value = (String) event.getProperty().getValue();
                // Do something with the value
                try {
-                   controlService.conf.setMACDderivDays(new Integer(value));
+                   controlService.conf.setMACDdiffDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getRSIdiffDays() {
+       TextField tf = new TextField("RSI diff days");
+       tf.setValue("" + controlService.conf.getRSIdiffDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setRSIdiffDays(new Integer(value));
                    Notification.show("Request sent");
                    displayResults();
                } catch (Exception e) {
@@ -832,9 +858,9 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
-    private CheckBox getMACDbonus() {
-        CheckBox cb = new CheckBox("Enable MACD bonus");
-        cb.setValue(controlService.conf.isMACDderivenabled());
+    private CheckBox getMACDdiff() {
+        CheckBox cb = new CheckBox("Enable MACD diff");
+        cb.setValue(controlService.conf.isMACDdiffenabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -843,7 +869,29 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.conf.setMACDderivenabled(value);
+                    controlService.conf.setMACDdiffenabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getRSIdiff() {
+        CheckBox cb = new CheckBox("Enable RSI diff");
+        cb.setValue(controlService.conf.isRSIdiffenabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setRSIdiffenabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

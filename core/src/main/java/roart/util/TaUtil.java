@@ -316,16 +316,41 @@ public class TaUtil {
         return dataset;
     }
 
-	public double getRSI(List<Double> list, int days) {
+	public Double[] getRSI(List<Double> list, int days, boolean wantdiff, int diffdays) {
+    	int retsize = 1;
+		if (wantdiff) {
+    		retsize++;
+    	}
+		Double[] retValues = new Double[retsize];
 		double values[] = new double[days];
 	    int size = getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerRSI(values, size);
-        double rsi[] = (double[]) objs[0];
+        retValues[0] = getRSI(objs);
+        if (wantdiff) {
+        	retValues[1] = getRSIdiff(objs, diffdays);
+        }
+        return retValues;
+	}
+
+	private double getRSI(Object[] objs) {
+		double rsi[] = (double[]) objs[0];
         MInteger end = (MInteger) objs[2];
         if (end.value == 0) {
             return 0;
         }
         return rsi[end.value - 1];
+	}
+
+	private double getRSIdiff(Object[] objs, int diffdays) {
+		double rsi[] = (double[]) objs[0];
+        MInteger end = (MInteger) objs[2];
+        if (end.value == 0) {
+            return 0;
+        }
+        double diff = 0;
+        int min = Math.max(0, end.value - diffdays);
+        diff = rsi[end.value - 1] - rsi[min];
+        return diff/(diffdays - 1);
 	}
 
 	private int getArrayNonNullReverse(List<Double> list, double[] values) {
@@ -350,16 +375,21 @@ public class TaUtil {
 		return size;
 	}
 
-	public double getMomderiv(List<Double> list, int days, int derivdays) {
+	public double getMomderiv(List<Double> list, int days, int diffdays) {
 		double values[] = new double[days];
 	    int size = getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerMACD(values, size);
-        double hist[] = (double[]) objs[2];
+        return getMomDiff(objs, diffdays);
+	}
+
+	private double getMomDiff( Object[] objs, int diffdays) {
+		double hist[] = (double[]) objs[2];
         MInteger end = (MInteger) objs[4];
         if (end.value == 0) {
             return 0;
         }
-        double sum = 0;
+        double diff = 0;
+        /*
         for (int i = end.value - 1; i >= end.value - derivdays && i >= 1; i--) {
         	double deriv = hist[i] - hist[i - 1];
         	if (deriv < 0 && sum >= 0) {
@@ -370,14 +400,30 @@ public class TaUtil {
         	}
         	sum += deriv;
         }
-        return sum/(derivdays - 1);
+        */
+        int min = Math.max(0, end.value - diffdays);
+        diff = hist[end.value - 1] - hist[min];
+        return diff/(diffdays - 1);
 	}
 	
-	public double getMom(List<Double> list, int days) {
+	public Double[] getMomAndDiff(List<Double> list, int days, boolean wantdiff, int diffdays) {
+    	int retsize = 1;
+		if (wantdiff) {
+    		retsize++;
+    	}
+		Double[] retValues = new Double[retsize];
 		double values[] = new double[days];
 	    int size = getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerMACD(values, size);
-        double hist[] = (double[]) objs[2];
+        retValues[0] = getMom(objs);
+        if (wantdiff) {
+        	retValues[1] = getMomDiff(objs, diffdays);
+        }
+        return retValues;
+	}
+
+	private double getMom(Object[] objs) {
+		double hist[] = (double[]) objs[2];
         MInteger end = (MInteger) objs[4];
         if (end.value == 0) {
             return 0;

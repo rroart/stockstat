@@ -26,7 +26,7 @@ public class IndicatorRSI extends Indicator {
     Map<String, Integer>[] periodmap;
     String key;
     Map<String, List<Double>> listMap;
-    Map<String, Double> resultMap;
+    Map<String, Double[]> resultMap;
 
     public IndicatorRSI(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
@@ -59,7 +59,7 @@ public class IndicatorRSI extends Indicator {
             double rsi = tu.getRSI2(conf.getDays(), market, id, ids, marketdatamap, perioddata, periodstr);
             */
             List<Double> list = listMap.get(id);
-            double momentum = tu.getRSI(list, conf.getDays());
+            Double[] momentum = tu.getRSI(list, conf.getDays(), conf.isRSIdiffenabled(), conf.getRSIdiffDays());
             resultMap.put(id, momentum);
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
@@ -71,12 +71,12 @@ public class IndicatorRSI extends Indicator {
     }
 
     @Override
-    public Object getResultItem(StockItem stock) {
-        TaUtil tu = new TaUtil();
+    public Object[] getResultItem(StockItem stock) {
+    	TaUtil tu = new TaUtil();
         String market = conf.getMarket();
         String id = stock.getId();
-        Pair pair = new Pair(market, id);
-        Set ids = new HashSet();
+        Pair<String, String> pair = new Pair(market, id);
+        Set<Pair<String, String>> ids = new HashSet<>();
         ids.add(pair);
         String periodstr = key;
         PeriodData perioddata = periodDataMap.get(periodstr);
@@ -84,8 +84,22 @@ public class IndicatorRSI extends Indicator {
             System.out.println("key " + key + " : " + periodDataMap.keySet());
             log.info("key " + key + " : " + periodDataMap.keySet());
         }
-        double rsi = resultMap.get(id);
+        Double[] rsi = resultMap.get(id);
         return rsi;
+    }
+
+    @Override
+    public Object[] getResultItemTitle() {
+    	int size = 1;
+    	if (conf.isMACDdiffenabled()) {
+    		size++;
+    	}
+    	Object[] objs = new Object[size];
+    	objs[0] = title;
+    	if (conf.isMACDdiffenabled()) {
+    		objs[1] = Constants.DELTA + title;
+    	}
+        return objs;
     }
 
 }

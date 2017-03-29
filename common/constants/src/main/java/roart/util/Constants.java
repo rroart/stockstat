@@ -27,9 +27,11 @@ public static final String MYDATEFORMAT = "yyyy.MM.dd";
 
 public static final String IMG = "Img";
 
-public static int PRICECOLUMN = -1;
-public static int INDEXVALUECOLUMN = -2;
+public static final int PRICECOLUMN = -1;
+public static final int INDEXVALUECOLUMN = -2;
 
-public static String PRICE = "Price";
-public static String INDEX = "Index";
+public static final String PRICE = "Price";
+public static final String INDEX = "Index";
+
+public static final String DELTA = "Δ";
 }

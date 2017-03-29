@@ -53,7 +53,7 @@ public class IndicatorMACDderiv extends Indicator {
             if (id.equals("EUCA000520")) {
             	log.info("india list " + list);
             }
-            double deriv = tu.getMomderiv(list, conf.getDays(), conf.getMACDderivDays());
+            double deriv = tu.getMomderiv(list, conf.getDays(), conf.getMACDdiffDays());
             resultMap.put(id, deriv);
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
@@ -61,11 +61,11 @@ public class IndicatorMACDderiv extends Indicator {
 
     @Override
     public boolean isEnabled() {
-        return conf.isMACDderivenabled();
+        return conf.isMACDdiffenabled();
     }
 
     @Override
-    public Object getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockItem stock) {
         TaUtil tu = new TaUtil();
         String market = conf.getMarket();
         String id = stock.getId();
@@ -79,7 +79,8 @@ public class IndicatorMACDderiv extends Indicator {
             log.info("key " + key + " : " + periodDataMap.keySet());
         }
         double momentum = resultMap.get(id);
-        return momentum;
+        //return momentum;
+        return null;
     }
 }
 

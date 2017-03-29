@@ -22,11 +22,13 @@ public abstract class Indicator {
 
     abstract public boolean isEnabled();
 
-    public String getResultItemTitle() {
-        return title;
+    public Object[] getResultItemTitle() {
+    	Object[] titleArray = new Object[1];
+    	titleArray[0] = title;
+        return titleArray;
     }
 
-    abstract public Object getResultItem(StockItem stock);
+    abstract public Object[] getResultItem(StockItem stock);
 
 }
 

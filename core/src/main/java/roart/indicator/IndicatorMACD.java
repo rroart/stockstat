@@ -24,7 +24,8 @@ public class IndicatorMACD extends Indicator {
     Map<String, Integer>[] periodmap;
     String key;
     Map<String, List<Double>> listMap;
-    Map<String, Double> resultMap;
+    //Map<String, Double> resultMap;
+    Map<String, Double[]> resultMap;
 
     public IndicatorMACD(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
@@ -60,7 +61,8 @@ public class IndicatorMACD extends Indicator {
             if (id.equals("EUCA000520")) {
             	log.info("india list " + list);
             }
-            double momentum = tu.getMom(list, conf.getDays());
+            //double momentum = tu.getMom(list, conf.getDays());
+            Double[] momentum = tu.getMomAndDiff(list, conf.getDays(), conf.isMACDdiffenabled(), conf.getMACDdiffDays());
             resultMap.put(id, momentum);
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
@@ -72,12 +74,12 @@ public class IndicatorMACD extends Indicator {
     }
 
     @Override
-    public Object getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockItem stock) {
         TaUtil tu = new TaUtil();
         String market = conf.getMarket();
         String id = stock.getId();
-        Pair pair = new Pair(market, id);
-        Set ids = new HashSet();
+        Pair<String, String> pair = new Pair<>(market, id);
+        Set<Pair<String, String>> ids = new HashSet<>();
         ids.add(pair);
         String periodstr = key;
         PeriodData perioddata = periodDataMap.get(periodstr);
@@ -85,8 +87,24 @@ public class IndicatorMACD extends Indicator {
             System.out.println("key " + key + " : " + periodDataMap.keySet());
             log.info("key " + key + " : " + periodDataMap.keySet());
         }
-        double momentum = resultMap.get(id);
+        //double momentum = resultMap.get(id);
+        Double[] momentum = resultMap.get(id);
         return momentum;
     }
+    
+    @Override
+    public Object[] getResultItemTitle() {
+    	int size = 1;
+    	if (conf.isMACDdiffenabled()) {
+    		size++;
+    	}
+    	Object[] objs = new Object[size];
+    	objs[0] = title;
+    	if (conf.isMACDdiffenabled()) {
+    		objs[1] = Constants.DELTA + title;
+    	}
+        return objs;
+    }
+
 }
 

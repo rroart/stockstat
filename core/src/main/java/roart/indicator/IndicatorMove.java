@@ -26,13 +26,15 @@ public class IndicatorMove extends Indicator {
     }
 
     @Override
-    public Object getResultItem(StockItem stock) {
+    public Object[] getResultItem(StockItem stock) {
+    	Object[] retArray = new Object[1];
+    	retArray[0] = 0;
         try {
-            return periodmap[period].get(stock.getId());
+        	retArray[0] = periodmap[period].get(stock.getId());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        return 0;
+        return retArray;
     }
 
 }

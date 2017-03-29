@@ -47,13 +47,17 @@ public abstract class MyConfig {
 
 	private boolean macdEnabled = true;
 
-	private boolean macdDerivEnabled = true;
+	private boolean macdDiffEnabled = true;
 
 	private boolean moveEnabled = true;
 
 	private boolean rsiEnabled = true;
     
-	private int macdderivdays = 3;
+	private boolean rsiDiffEnabled = true;
+    
+	private int macddiffdays = 3;
+
+	private int rsidiffdays = 3;
 
     public abstract void config() throws Exception;
 
@@ -149,12 +153,20 @@ public abstract class MyConfig {
 	    return macdEnabled;
 	}
 
-	public void setMACDderivenabled(Boolean bool) {
-	    macdDerivEnabled = bool;
+	public void setMACDdiffenabled(Boolean bool) {
+	    macdDiffEnabled = bool;
 	}
 
-	public boolean isMACDderivenabled() {
-	    return macdDerivEnabled;
+	public boolean isRSIdiffenabled() {
+	    return rsiDiffEnabled;
+	}
+
+	public void setRSIdiffenabled(Boolean bool) {
+	    rsiDiffEnabled = bool;
+	}
+
+	public boolean isMACDdiffenabled() {
+	    return macdDiffEnabled;
 	}
 
 	public void setRSIenabled(Boolean bool) {
@@ -181,12 +193,20 @@ public abstract class MyConfig {
 	    return mygraphequalizeunify;
 	}
 
-	public int getMACDderivDays() {
-		return macdderivdays;
+	public int getMACDdiffDays() {
+		return macddiffdays;
 	}
     
-	public void setMACDderivDays(Integer integer) {
-		this.macdderivdays = integer;
+	public void setMACDdiffDays(Integer integer) {
+		this.macddiffdays = integer;
+	}
+    
+	public int getRSIdiffDays() {
+		return rsidiffdays;
+	}
+    
+	public void setRSIdiffDays(Integer integer) {
+		this.rsidiffdays = integer;
 	}
     
 }

@@ -2,6 +2,7 @@ package roart.servlet.listeners;
 
 import roart.config.MyConfig;
 import roart.config.MyPropertyConfig;
+import roart.service.ControlService;
 import roart.util.Constants;
 import roart.util.EurekaUtil;
 
@@ -19,7 +20,9 @@ public class StartupListener implements javax.servlet.ServletContextListener {
     	MyConfig conf = MyPropertyConfig.instance();
         try {
             conf.config();
-        } catch (Exception e) {
+            ControlService maininst = new ControlService();
+			maininst.dbengine(false);
+       } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
 

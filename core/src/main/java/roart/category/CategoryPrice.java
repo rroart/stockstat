@@ -36,7 +36,7 @@ public class CategoryPrice extends Category {
                 r.add(title);
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        r.add(indicator.getResultItemTitle());
+                        r.addarr(indicator.getResultItemTitle());
                     }
                 }
                 r.add("Currency");
@@ -53,7 +53,7 @@ public class CategoryPrice extends Category {
                 r.add(stock.getPrice());
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        r.add(indicator.getResultItem(stock));
+                        r.addarr(indicator.getResultItem(stock));
                     }
                 }
                 r.add(stock.getCurrency());
