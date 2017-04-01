@@ -53,7 +53,7 @@ public class IndicatorMACDderiv extends Indicator {
             if (id.equals("EUCA000520")) {
             	log.info("india list " + list);
             }
-            double deriv = tu.getMomderiv(list, conf.getDays(), conf.getMACDdiffDays());
+            double deriv = tu.getMomderiv(list, conf.getDays(), conf.getMACDHistogramDeltaDays());
             resultMap.put(id, deriv);
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
@@ -61,7 +61,7 @@ public class IndicatorMACDderiv extends Indicator {
 
     @Override
     public boolean isEnabled() {
-        return conf.isMACDdiffenabled();
+        return conf.isMACDHistogramDeltaEnabled();
     }
 
     @Override

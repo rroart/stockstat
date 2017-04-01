@@ -143,6 +143,12 @@ public class ControlService {
             Map<String, Integer>[] periodmap = periodmaps[0];
 
             List<StockItem> datedstocks = datedstocklists[0];
+            /*
+            Set<String> curIds = new HashSet<>();
+            for (StockItem stock : datedstocks) {
+            	curIds.add(stock.getId());
+            }
+            */
             List<StockItem> datedstocksoffset = datedstocklists[1];
             if (datedstocks == null) {
                 return null;

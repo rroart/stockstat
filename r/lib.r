@@ -325,15 +325,17 @@ mytopperiod2 <- function(dflist, period, max, days, wantrise=FALSE, wantmacd=FAL
                 rsi <- df$rsic[[i]]
             }
             macd <- NA
+            hist <- NA
             if (wantmacd) {
                 macd <- df$momc[[i]]
+                hist <- df$histc[[i]]
             }
             rise <- NA
             if (wantrise) {
                 rise <- df$risec[[i]]
             }
             
-            print(sprintf("%3d %-35s %12s %3.2f %3d %3.2f %3.2f %s", i, strtrim(df$name[[i]],33), as.POSIXct(df$date[[i]], origin="1970-01-01"), listperiod(df, period, i), rise, macd, rsi, df$id[[i]]))
+            print(sprintf("%3d %-35s %12s %3.2f %3d %3.2f %3.2f %3.2f %s", i, strtrim(df$name[[i]],33), as.POSIXct(df$date[[i]], origin="1970-01-01"), listperiod(df, period, i), rise, macd, hist, rsi, df$id[[i]]))
         }
                                         #        str(df$id[[1]])
     }
@@ -388,11 +390,11 @@ myperiodtextslist <- function(myperiodtexts, periodtexts) {
     return(retlist)
 }
 
-getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=VALUE, macddays=60) {
+getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=VALUE, macddays=180) {
     return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=TRUE))
 }
 
-gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=60, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
+gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
     periodtexts <- getperiodtexts(market)
     myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
     for (i in 1:length(myperiodtexts)) {
@@ -446,6 +448,7 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
             periodc <- getonedfperiod(df, period)
             if (wantmacd) {
                 momlist <- list()
+                histlist <- list()
                                         #            str("nrow")
                                         #            str(nrow(df))
                 for (i in 1:nrow(df)) {
@@ -464,18 +467,21 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
                     myc <- head(myc, n=(myclen-headskipmacd))
                     myc <- tail(myc, n=macddays)
                                         #str(myc)
-                    mom <- getmom(myc)
+                    momhist <- getmomhist(myc)
                                         #str(mom)
-                    momlist[i] <- mom
+                    momlist[i] <- momhist[1]
+                    histlist[i] <- momhist[2]
                 }
                 headskipmacd <- headskipmacd + tablemoveintervaldays
                 momc <- c(unlist(momlist))
+                histc <- c(unlist(histlist))
                 df <- cbind(df, momc)
+                df <- cbind(df, histc)
                 if (sort == MACD) {
                     if (reverse) {
-                        df <- df[order(df$momc),]
+                        df <- df[order(df$histc),]
                     } else {
-                        df <- df[order(-df$momc),]
+                        df <- df[order(-df$histc),]
                     }
                 }
             }
@@ -1209,13 +1215,17 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wa
     }
 }
 
-getmom <- function(myma) {
+getmomhist <- function(myma) {
     lses <- getmylses(myma)
     if (is.null(lses)) {
         return(0)
     }
-    ls <- lses[[3]]
-    return(ls[[length(ls)]])
+    retl <- list()
+    ls1 <- lses[[1]]
+    ls3 <- lses[[3]]
+    retl[1] <- ls1[[length(ls1)]]
+    retl[2] <- ls3[[length(ls3)]]
+    return(retl)
 }
 
 getmylses <- function(myma) {

@@ -49,6 +49,7 @@ public class IndicatorMACD extends Indicator {
         String market = conf.getMarket();
         String periodstr = key;
         PeriodData perioddata = periodDataMap.get(periodstr);
+        log.info("listmap " + listMap.size() + " " + listMap.keySet());
         for (String id : listMap.keySet()) {
         	if (id.equals("EUCA000520")) {
         	List<Double> list = listMap.get(id);
@@ -62,7 +63,7 @@ public class IndicatorMACD extends Indicator {
             	log.info("india list " + list);
             }
             //double momentum = tu.getMom(list, conf.getDays());
-            Double[] momentum = tu.getMomAndDiff(list, conf.getDays(), conf.isMACDdiffenabled(), conf.getMACDdiffDays());
+            Double[] momentum = tu.getMomAndDelta(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
             resultMap.put(id, momentum);
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
@@ -70,7 +71,7 @@ public class IndicatorMACD extends Indicator {
 
     @Override
     public boolean isEnabled() {
-        return conf.isMACDenabled();
+        return conf.isMACDEnabled();
     }
 
     @Override
@@ -95,13 +96,19 @@ public class IndicatorMACD extends Indicator {
     @Override
     public Object[] getResultItemTitle() {
     	int size = 1;
-    	if (conf.isMACDdiffenabled()) {
+    	if (conf.isMACDDeltaEnabled()) {
+    		size++;
+    	}
+    	if (conf.isMACDHistogramDeltaEnabled()) {
     		size++;
     	}
     	Object[] objs = new Object[size];
     	objs[0] = title;
-    	if (conf.isMACDdiffenabled()) {
+    	if (conf.isMACDDeltaEnabled()) {
     		objs[1] = Constants.DELTA + title;
+    	}
+    	if (conf.isMACDHistogramDeltaEnabled()) {
+    		objs[2] = Constants.DELTA + "hist " + title;
     	}
         return objs;
     }

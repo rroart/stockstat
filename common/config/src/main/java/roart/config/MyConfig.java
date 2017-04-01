@@ -47,17 +47,21 @@ public abstract class MyConfig {
 
 	private boolean macdEnabled = true;
 
-	private boolean macdDiffEnabled = true;
+	private boolean macdDeltaEnabled = true;
+
+	private boolean macdHistogramDeltaEnabled = true;
 
 	private boolean moveEnabled = true;
 
 	private boolean rsiEnabled = true;
     
-	private boolean rsiDiffEnabled = true;
+	private boolean rsiDeltaEnabled = true;
     
-	private int macddiffdays = 3;
+	private int macdDeltaDays = 3;
 
-	private int rsidiffdays = 3;
+	private int macdHistogramDeltaDays = 3;
+
+	private int rsiDeltaDays = 3;
 
     public abstract void config() throws Exception;
 
@@ -145,28 +149,36 @@ public abstract class MyConfig {
 	    return moveEnabled;
 	}
 
-	public void setMACDenabled(Boolean bool) {
+	public void setMACDEnabled(Boolean bool) {
 	    macdEnabled = bool;
 	}
 
-	public boolean isMACDenabled() {
+	public boolean isMACDEnabled() {
 	    return macdEnabled;
 	}
 
-	public void setMACDdiffenabled(Boolean bool) {
-	    macdDiffEnabled = bool;
+	public void setMACDDeltaEnabled(Boolean bool) {
+	    macdDeltaEnabled = bool;
 	}
 
-	public boolean isRSIdiffenabled() {
-	    return rsiDiffEnabled;
+	public void setMACDHistogramDeltaEnabled(Boolean bool) {
+	    macdHistogramDeltaEnabled = bool;
 	}
 
-	public void setRSIdiffenabled(Boolean bool) {
-	    rsiDiffEnabled = bool;
+	public boolean isRSIDeltaEnabled() {
+	    return rsiDeltaEnabled;
 	}
 
-	public boolean isMACDdiffenabled() {
-	    return macdDiffEnabled;
+	public void setRSIDeltaEnabled(Boolean bool) {
+	    rsiDeltaEnabled = bool;
+	}
+
+	public boolean isMACDDeltaEnabled() {
+	    return macdDeltaEnabled;
+	}
+
+	public boolean isMACDHistogramDeltaEnabled() {
+	    return macdHistogramDeltaEnabled;
 	}
 
 	public void setRSIenabled(Boolean bool) {
@@ -193,20 +205,28 @@ public abstract class MyConfig {
 	    return mygraphequalizeunify;
 	}
 
-	public int getMACDdiffDays() {
-		return macddiffdays;
+	public int getMACDDeltaDays() {
+		return macdDeltaDays;
 	}
     
-	public void setMACDdiffDays(Integer integer) {
-		this.macddiffdays = integer;
+	public void setMACDHistogramDeltaDays(Integer integer) {
+		this.macdHistogramDeltaDays = integer;
+	}
+    
+	public int getMACDHistogramDeltaDays() {
+		return macdHistogramDeltaDays;
+	}
+    
+	public void setMACDDeltaDays(Integer integer) {
+		this.macdDeltaDays = integer;
 	}
     
 	public int getRSIdiffDays() {
-		return rsidiffdays;
+		return rsiDeltaDays;
 	}
     
 	public void setRSIdiffDays(Integer integer) {
-		this.rsidiffdays = integer;
+		this.rsiDeltaDays = integer;
 	}
     
 }

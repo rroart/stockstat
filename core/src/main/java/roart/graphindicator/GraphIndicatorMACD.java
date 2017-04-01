@@ -35,7 +35,7 @@ public class GraphIndicatorMACD extends GraphIndicator {
 
     @Override
     public boolean isEnabled() {
-        return conf.isMACDenabled();
+        return conf.isMACDEnabled();
     }
 
     @Override

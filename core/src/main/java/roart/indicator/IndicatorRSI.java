@@ -59,7 +59,7 @@ public class IndicatorRSI extends Indicator {
             double rsi = tu.getRSI2(conf.getDays(), market, id, ids, marketdatamap, perioddata, periodstr);
             */
             List<Double> list = listMap.get(id);
-            Double[] momentum = tu.getRSI(list, conf.getDays(), conf.isRSIdiffenabled(), conf.getRSIdiffDays());
+            Double[] momentum = tu.getRSI(list, conf.getDays(), conf.isRSIDeltaEnabled(), conf.getRSIdiffDays());
             resultMap.put(id, momentum);
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
@@ -91,12 +91,12 @@ public class IndicatorRSI extends Indicator {
     @Override
     public Object[] getResultItemTitle() {
     	int size = 1;
-    	if (conf.isMACDdiffenabled()) {
+    	if (conf.isMACDHistogramDeltaEnabled()) {
     		size++;
     	}
     	Object[] objs = new Object[size];
     	objs[0] = title;
-    	if (conf.isMACDdiffenabled()) {
+    	if (conf.isMACDHistogramDeltaEnabled()) {
     		objs[1] = Constants.DELTA + title;
     	}
         return objs;

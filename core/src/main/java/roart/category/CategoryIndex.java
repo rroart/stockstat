@@ -40,7 +40,7 @@ public class CategoryIndex extends Category {
                 r.add(title);
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
-                        r.add(indicator.getResultItemTitle());
+                        r.addarr(indicator.getResultItemTitle());
                     }
                 }
             }

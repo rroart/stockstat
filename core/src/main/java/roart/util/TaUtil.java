@@ -1,6 +1,7 @@
 package roart.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -253,6 +254,26 @@ public class TaUtil {
         return objs;
     }
 
+	private Object[] getInnerEMA(double[] values, int size) {
+		Core core = new Core();
+        MInteger beg26 = new MInteger();
+        MInteger end26 = new MInteger();
+        MInteger beg12 = new MInteger();
+        MInteger end12 = new MInteger();
+        double ema26[] = new double[values.length];
+        double ema12[] = new double[values.length];
+        double hist[] = new double[values.length];
+        core.ema(0, size - 1, values, 26, beg26, end26, ema26);
+        core.ema(0, size - 1, values, 12, beg12, end12, ema12);
+        Object[] objs = new Object[5];
+        objs[0] = ema26;
+        objs[1] = ema12;
+        objs[2] = hist;
+        objs[3] = beg26;
+        objs[4] = end26;
+		return objs;
+	}
+
 	private Object[] getInnerMACD(double[] values, int size) {
 		Core core = new Core();
         MInteger beg = new MInteger();
@@ -267,6 +288,9 @@ public class TaUtil {
         objs[2] = hist;
         objs[3] = beg;
         objs[4] = end;
+        //System.out.println("outout1 " + Arrays.toString(macd));
+        //System.out.println("outout2 " + Arrays.toString(sig));
+        //System.out.println("outout3 " + Arrays.toString(hist));
 		return objs;
 	}
 
@@ -316,9 +340,9 @@ public class TaUtil {
         return dataset;
     }
 
-	public Double[] getRSI(List<Double> list, int days, boolean wantdiff, int diffdays) {
+	public Double[] getRSI(List<Double> list, int days, boolean wantdelta, int deltadays) {
     	int retsize = 1;
-		if (wantdiff) {
+		if (wantdelta) {
     		retsize++;
     	}
 		Double[] retValues = new Double[retsize];
@@ -326,8 +350,8 @@ public class TaUtil {
 	    int size = getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerRSI(values, size);
         retValues[0] = getRSI(objs);
-        if (wantdiff) {
-        	retValues[1] = getRSIdiff(objs, diffdays);
+        if (wantdelta) {
+        	retValues[1] = getRSIdelta(objs, deltadays);
         }
         return retValues;
 	}
@@ -341,16 +365,16 @@ public class TaUtil {
         return rsi[end.value - 1];
 	}
 
-	private double getRSIdiff(Object[] objs, int diffdays) {
+	private double getRSIdelta(Object[] objs, int deltadays) {
 		double rsi[] = (double[]) objs[0];
         MInteger end = (MInteger) objs[2];
         if (end.value == 0) {
             return 0;
         }
-        double diff = 0;
-        int min = Math.max(0, end.value - diffdays);
-        diff = rsi[end.value - 1] - rsi[min];
-        return diff/(diffdays - 1);
+        double delta = 0;
+        int min = Math.max(0, end.value - deltadays);
+        delta = rsi[end.value - 1] - rsi[min];
+        return delta/(deltadays - 1);
 	}
 
 	private int getArrayNonNullReverse(List<Double> list, double[] values) {
@@ -375,20 +399,20 @@ public class TaUtil {
 		return size;
 	}
 
-	public double getMomderiv(List<Double> list, int days, int diffdays) {
+	public double getMomderiv(List<Double> list, int days, int deltadays) {
 		double values[] = new double[days];
 	    int size = getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerMACD(values, size);
-        return getMomDiff(objs, diffdays);
+        return getHistogramDelta(objs, deltadays);
 	}
 
-	private double getMomDiff( Object[] objs, int diffdays) {
+	private double getHistogramDelta( Object[] objs, int deltadays) {
 		double hist[] = (double[]) objs[2];
         MInteger end = (MInteger) objs[4];
         if (end.value == 0) {
             return 0;
         }
-        double diff = 0;
+        double delta = 0;
         /*
         for (int i = end.value - 1; i >= end.value - derivdays && i >= 1; i--) {
         	double deriv = hist[i] - hist[i - 1];
@@ -401,14 +425,29 @@ public class TaUtil {
         	sum += deriv;
         }
         */
-        int min = Math.max(0, end.value - diffdays);
-        diff = hist[end.value - 1] - hist[min];
-        return diff/(diffdays - 1);
+        int min = Math.max(0, end.value - deltadays);
+        delta = hist[end.value - 1] - hist[min];
+        return delta/(deltadays - 1);
 	}
 	
-	public Double[] getMomAndDiff(List<Double> list, int days, boolean wantdiff, int diffdays) {
+	private double getMomentumDelta( Object[] objs, int deltadays) {
+		double macd[] = (double[]) objs[0];
+        MInteger end = (MInteger) objs[4];
+        if (end.value == 0) {
+            return 0;
+        }
+        double delta = 0;
+        int min = Math.max(0, end.value - deltadays);
+        delta = macd[end.value - 1] - macd[min];
+        return delta/(deltadays - 1);
+	}
+	
+	public Double[] getMomAndDelta(List<Double> list, int days, boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays) {
     	int retsize = 1;
-		if (wantdiff) {
+		if (wantmacddelta) {
+    		retsize++;
+    	}
+		if (wanthistdelta) {
     		retsize++;
     	}
 		Double[] retValues = new Double[retsize];
@@ -416,8 +455,11 @@ public class TaUtil {
 	    int size = getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerMACD(values, size);
         retValues[0] = getMom(objs);
-        if (wantdiff) {
-        	retValues[1] = getMomDiff(objs, diffdays);
+        if (wantmacddelta) {
+        	retValues[1] = getMomentumDelta(objs, macddeltadays);
+        }
+        if (wanthistdelta) {
+        	retValues[2] = getHistogramDelta(objs, histdeltadays);
         }
         return retValues;
 	}

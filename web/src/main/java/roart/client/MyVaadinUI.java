@@ -14,6 +14,7 @@ import roart.service.ControlService;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map;
@@ -166,7 +167,8 @@ public class MyVaadinUI extends UI
         guiSize.y = com.vaadin.server.Page.getCurrent().getBrowserWindowHeight();
         VerticalLayout searchTab;
         VerticalLayout controlPanelTab;
-
+        VerticalLayout configTab;
+        
         com.vaadin.server.Page.getCurrent().setTitle("Stock statistics by Roar Thronæs");
 
         layout.setMargin(true);
@@ -192,11 +194,15 @@ public class MyVaadinUI extends UI
         // This tab gets its caption from the component caption
         controlPanelTab = getControlPanelTab();
         getSession().setAttribute("controlpanel", controlPanelTab);
+        // This tab gets its caption from the component caption
+        configTab = getConfigTab();
+        getSession().setAttribute("config", configTab);
 
         tabsheet.addTab(searchTab);
         // This tab gets its caption from the component caption
         tabsheet.addTab(controlPanelTab);
         //tabsheet.addTab(statTab);
+        tabsheet.addTab(configTab);
 
         HorizontalLayout bottomLine = new HorizontalLayout();
         bottomLine.setHeight("10%");
@@ -217,13 +223,11 @@ public class MyVaadinUI extends UI
         horMACD.setHeight("20%");
         horMACD.setWidth("90%");
         horMACD.addComponent(getMACD());
-        horMACD.addComponent(getMACDdiff());
+        horMACD.addComponent(getMACDDelta());
+        horMACD.addComponent(getMACDHistogramDelta());
         horMACD.addComponent(getMove());
         horMACD.addComponent(getRSI());
-        horMACD.addComponent(getRSIdiff());
-        if (!isProductionMode) {
-        horMACD.addComponent(getDbEngine());
-        }
+        horMACD.addComponent(getRSIdelta());
         HorizontalLayout horStat = new HorizontalLayout();
         horStat.setHeight("20%");
         horStat.setWidth("90%");
@@ -256,6 +260,23 @@ public class MyVaadinUI extends UI
         return tab;
     }
 
+    private VerticalLayout getConfigTab() {
+    	boolean isProductionMode = VaadinService.getCurrent()
+    		    .getDeploymentConfiguration().isProductionMode();
+        String DELIMITER = " = ";
+        
+    VerticalLayout tab = new VerticalLayout();
+    tab.setCaption("Configuration");
+    HorizontalLayout hor = new HorizontalLayout();
+    hor.setHeight("20%");
+    hor.setWidth("90%");
+   if (!isProductionMode) {
+    hor.addComponent(getDbEngine());
+    }
+   tab.addComponent(hor);
+    return tab;
+    }
+    
     private VerticalLayout getSearchTab() {
         //displayResults(new ControlService());
         VerticalLayout tab = new VerticalLayout();
@@ -285,7 +306,8 @@ public class MyVaadinUI extends UI
         horDb2.addComponent(getTableDays());
         horDb2.addComponent(getTableIntervalDays());
         horDb2.addComponent(getTopBottom());
-        horDb2.addComponent(getMACDdiffDays());
+        horDb2.addComponent(getMACDDeltaDays());
+        horDb2.addComponent(getMACDHistogramDeltaDays());
         horDb2.addComponent(getRSIdiffDays());
         HorizontalLayout horDb3 = new HorizontalLayout();
         horDb3.setHeight("20%");
@@ -569,9 +591,9 @@ public class MyVaadinUI extends UI
         return tf;
     }
 
-   private TextField getMACDdiffDays() {
-       TextField tf = new TextField("MACD diff days");
-       tf.setValue("" + controlService.conf.getMACDdiffDays());
+   private TextField getMACDHistogramDeltaDays() {
+       TextField tf = new TextField("MACD histogram delta days");
+       tf.setValue("" + controlService.conf.getMACDHistogramDeltaDays());
 
        // Handle changes in the value
        tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -580,7 +602,31 @@ public class MyVaadinUI extends UI
                String value = (String) event.getProperty().getValue();
                // Do something with the value
                try {
-                   controlService.conf.setMACDdiffDays(new Integer(value));
+                   controlService.conf.setMACDHistogramDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getMACDDeltaDays() {
+       TextField tf = new TextField("MACD delta days");
+       tf.setValue("" + controlService.conf.getMACDDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setMACDDeltaDays(new Integer(value));
                    Notification.show("Request sent");
                    displayResults();
                } catch (Exception e) {
@@ -838,7 +884,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getMACD() {
         CheckBox cb = new CheckBox("Enable MACD");
-        cb.setValue(controlService.conf.isMACDenabled());
+        cb.setValue(controlService.conf.isMACDEnabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -847,7 +893,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.conf.setMACDenabled(value);
+                    controlService.conf.setMACDEnabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -858,9 +904,9 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
-    private CheckBox getMACDdiff() {
-        CheckBox cb = new CheckBox("Enable MACD diff");
-        cb.setValue(controlService.conf.isMACDdiffenabled());
+    private CheckBox getMACDDelta() {
+        CheckBox cb = new CheckBox("Enable MACD delta");
+        cb.setValue(controlService.conf.isMACDDeltaEnabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -869,7 +915,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.conf.setMACDdiffenabled(value);
+                    controlService.conf.setMACDDeltaEnabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -880,9 +926,9 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
-    private CheckBox getRSIdiff() {
-        CheckBox cb = new CheckBox("Enable RSI diff");
-        cb.setValue(controlService.conf.isRSIdiffenabled());
+    private CheckBox getMACDHistogramDelta() {
+        CheckBox cb = new CheckBox("Enable MACD histogram delta");
+        cb.setValue(controlService.conf.isMACDHistogramDeltaEnabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -891,7 +937,29 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.conf.setRSIdiffenabled(value);
+                    controlService.conf.setMACDHistogramDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getRSIdelta() {
+        CheckBox cb = new CheckBox("Enable RSI delta");
+        cb.setValue(controlService.conf.isRSIDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setRSIDeltaEnabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -1014,6 +1082,8 @@ public class MyVaadinUI extends UI
                 break;
             }
         }
+        try {
+        	log.info("arr " + 0 + " " + strarr.get(0).getarr().length + " " + Arrays.toString(strarr.get(0).getarr()));
         for (int i = 0; i < columns; i++) {
             Object object = null;
             for (int j = 1; j < strarr.size(); j++) {
@@ -1054,21 +1124,31 @@ public class MyVaadinUI extends UI
             }
             //table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
         }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);        	
+        }
+        log.info("strarr size " + strarr.size());
         for (int i = 1; i < strarr.size(); i++) {
+        	log.info("str arr " + i);
             ResultItemTableRow str = strarr.get(i);
             try {
                 if (strarr.get(0).get().get(0).equals(Constants.IMG)) {
                     String id = (String) str.get().get(0);
                     str.get().set(0, getImage(id));
-                    table.addItem(str.getarr(), i);                    
+                    //Object myid = table.addItem(str.getarr(), i); 
+                    //log.info("myid " + str.getarr().length + " " + myid);
                 }
-                table.addItem(str.getarr(), i);                    
+                Object myid = table.addItem(str.getarr(), i);
+                if (myid == null) {
+                	log.error("addItem failed for" + Arrays.toString(str.getarr()));
+                }
             } catch (Exception e) {
                 log.error("i " + i + " " + str.get().get(0));
                 log.error(Constants.EXCEPTION, e);
             }
         }
         //table.setPageLength(table.size());
+        log.info("tabledata " + table.getColumnHeaders().length + " " + table.size() + " " + Arrays.toString(table.getColumnHeaders()));
         ts.addComponent(table);
     }
 
