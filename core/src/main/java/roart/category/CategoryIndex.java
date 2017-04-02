@@ -7,6 +7,7 @@ import roart.config.MyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorRSI;
+import roart.indicator.IndicatorSTOCHRSI;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.util.Constants;
@@ -31,6 +32,7 @@ public class CategoryIndex extends Category {
         this.periodDataMap = periodDataMap;
         indicators.add(new IndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
         indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
+        indicators.add(new IndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
     }
 
     @Override

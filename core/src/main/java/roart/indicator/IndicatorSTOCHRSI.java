@@ -20,7 +20,9 @@ import roart.util.PeriodData;
 import roart.util.StockDao;
 import roart.util.TaUtil;
 
-public class IndicatorRSI extends Indicator {
+// TODO warning this looks weird, avoid for now?
+
+public class IndicatorSTOCHRSI extends Indicator {
 
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
@@ -29,16 +31,16 @@ public class IndicatorRSI extends Indicator {
     Map<String, List<Double>> listMap;
     Map<String, Double[]> resultMap;
 
-    public IndicatorRSI(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    public IndicatorSTOCHRSI(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         this.key = title;
-        calculateRSIs(conf, marketdatamap, periodDataMap, category);        
+        calculateSTOCHRSIs(conf, marketdatamap, periodDataMap, category);        
     }
 
-	private void calculateRSIs(MyConfig conf, Map<String, MarketData> marketdatamap,
+	private void calculateSTOCHRSIs(MyConfig conf, Map<String, MarketData> marketdatamap,
 			Map<String, PeriodData> periodDataMap, int category) throws Exception {
 		SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
@@ -60,9 +62,9 @@ public class IndicatorRSI extends Indicator {
             double rsi = tu.getRSI2(conf.getDays(), market, id, ids, marketdatamap, perioddata, periodstr);
             */
             List<Double> list = listMap.get(id);
-            Double[] rsi = tu.getRSI(list, conf.getDays(), conf.isRSIDeltaEnabled(), conf.getRSIDeltaDays());
+            Double[] rsi = tu.getSTOCHRSI(list, conf.getDays(), conf.isSTOCHRSIDeltaEnabled(), conf.getSTOCHRSIDeltaDays());
             resultMap.put(id, rsi);
-            if (id.equals("EUCA000520")) {
+            if (true || id.equals("EUCA000520")) {
                 //log.info("ind list + " + list);
                 //log.info("ind out " + Arrays.toString(rsi));
             }
@@ -72,7 +74,7 @@ public class IndicatorRSI extends Indicator {
 
     @Override
     public boolean isEnabled() {
-        return conf.isRSIEnabled();
+        return conf.isSTOCHRSIEnabled();
     }
 
     @Override
@@ -95,14 +97,16 @@ public class IndicatorRSI extends Indicator {
 
     @Override
     public Object[] getResultItemTitle() {
-    	int size = 1;
-    	if (conf.isRSIDeltaEnabled()) {
-    		size++;
+    	int size = 2;
+    	if (conf.isSTOCHRSIDeltaEnabled()) {
+    		size += 2;
     	}
     	Object[] objs = new Object[size];
     	objs[0] = title;
-    	if (conf.isRSIDeltaEnabled()) {
-    		objs[1] = Constants.DELTA + title;
+        objs[1] = title + "2";
+    	if (conf.isSTOCHRSIDeltaEnabled()) {
+    		objs[2] = Constants.DELTA + title;
+            objs[3] = Constants.DELTA + title + "2";
     	}
         return objs;
     }

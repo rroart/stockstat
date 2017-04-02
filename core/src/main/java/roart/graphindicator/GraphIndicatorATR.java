@@ -20,13 +20,13 @@ import roart.util.PeriodData;
 import roart.util.SvgUtil;
 import roart.util.TaUtil;
 
-public class GraphIndicatorRSI extends GraphIndicator {
+public class GraphIndicatorATR extends GraphIndicator {
 
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
     String key;
 
-    public GraphIndicatorRSI(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title) {
+    public GraphIndicatorATR(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title) {
         super(conf, string);
         this.marketdatamap = marketdatamap;
         this.periodDataMap = periodDataMap;
@@ -35,7 +35,7 @@ public class GraphIndicatorRSI extends GraphIndicator {
 
     @Override
     public boolean isEnabled() {
-        return conf.isRSIEnabled();
+        return conf.isATREnabled();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class GraphIndicatorRSI extends GraphIndicator {
             for (Pair id : ids) {
                 String market = (String) id.getFirst();
                 String stockid = (String) id.getSecond();
-                DefaultCategoryDataset dataset = tu.getRSIChart(days, market, stockid, ids, marketdatamap, perioddata, periodText);
+                DefaultCategoryDataset dataset = tu.getATRChart(days, market, stockid, ids, marketdatamap, perioddata, periodText);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Period " + periodText, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, 1);
                     OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+".svg", days, topbottom, conf.getTableDays(), 1, guiSize);

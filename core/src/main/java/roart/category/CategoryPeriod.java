@@ -13,6 +13,7 @@ import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorMACDderiv;
 import roart.indicator.IndicatorMove;
 import roart.indicator.IndicatorRSI;
+import roart.indicator.IndicatorSTOCHRSI;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 //import roart.model.Stock;
@@ -41,6 +42,7 @@ public class CategoryPeriod extends Category {
         indicators.add(new IndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, periodmap, title, i));
         //indicators.add(new IndicatorMACDderiv(conf, title + " md", marketdatamap, periodDataMap, periodmap, title, i));
         indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, i));
+        indicators.add(new IndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, periodmap, title, i));
 
     }
 
@@ -74,7 +76,6 @@ public class CategoryPeriod extends Category {
                         //System.out.print("ri");
                         r.addarr(indicator.getResultItem(stock));
                     }
-                    else { System.out.println("not"); }
                 }
             }
         } catch (Exception e) {

@@ -14,6 +14,7 @@ import roart.config.MyConfig;
 import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorMACD;
 import roart.graphindicator.GraphIndicatorRSI;
+import roart.graphindicator.GraphIndicatorSTOCHRSI;
 import roart.model.GUISize;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItem;
@@ -38,6 +39,7 @@ public class GraphCategoryIndex extends GraphCategory {
         this.periodDataMap = periodDataMap;
         indicators.add(new GraphIndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, title));
         indicators.add(new GraphIndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap,title));
+        indicators.add(new GraphIndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, title));
     }
 
     @Override

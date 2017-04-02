@@ -112,6 +112,9 @@ public class DbSpark {
 			retList.add(new StockItem(dbid, marketid, id, name, date, indexvalue, price, currency, period1, period2, period3, period4, period5, period6));			
 		}
 		log.info("time0 " + (System.currentTimeMillis() - time0));
+		{
+			Map<String, List<Double>> listMap;
+		}
 		return retList;
 	}
 

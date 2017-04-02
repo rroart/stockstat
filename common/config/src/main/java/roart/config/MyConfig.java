@@ -57,11 +57,36 @@ public abstract class MyConfig {
     
 	private boolean rsiDeltaEnabled = true;
     
+	// TODO warning this looks weird, avoid for now?
+	private boolean stochrsiEnabled = false;
+    
+	private boolean stochrsiDeltaEnabled = false;
+    
+	private boolean cciEnabled = true;
+    
+	private boolean cciDeltaEnabled = true;
+    
+	private boolean atrEnabled = true;
+    
+	private boolean atrDeltaEnabled = true;
+    
+	private boolean stochEnabled = true;
+    
+	private boolean stochDeltaEnabled = true;
+    
 	private int macdDeltaDays = 3;
 
 	private int macdHistogramDeltaDays = 3;
 
 	private int rsiDeltaDays = 3;
+
+	private int stochrsiDeltaDays = 3;
+
+	private int cciDeltaDays = 3;
+
+	private int atrDeltaDays = 3;
+
+	private int stochDeltaDays = 3;
 
     public abstract void config() throws Exception;
 
@@ -165,12 +190,44 @@ public abstract class MyConfig {
 	    macdHistogramDeltaEnabled = bool;
 	}
 
+	public boolean isCCIDeltaEnabled() {
+	    return cciDeltaEnabled;
+	}
+
+	public void setCCIDeltaEnabled(Boolean bool) {
+	    cciDeltaEnabled = bool;
+	}
+
+	public boolean isATRDeltaEnabled() {
+	    return atrDeltaEnabled;
+	}
+
+	public void setATRDeltaEnabled(Boolean bool) {
+	    atrDeltaEnabled = bool;
+	}
+
+	public boolean isSTOCHDeltaEnabled() {
+	    return stochDeltaEnabled;
+	}
+
+	public void setSTOCHDeltaEnabled(Boolean bool) {
+	    stochDeltaEnabled = bool;
+	}
+
 	public boolean isRSIDeltaEnabled() {
 	    return rsiDeltaEnabled;
 	}
 
 	public void setRSIDeltaEnabled(Boolean bool) {
 	    rsiDeltaEnabled = bool;
+	}
+
+	public boolean isSTOCHRSIDeltaEnabled() {
+	    return stochrsiDeltaEnabled;
+	}
+
+	public void setSTOCHRSIDeltaEnabled(Boolean bool) {
+	    stochrsiDeltaEnabled = bool;
 	}
 
 	public boolean isMACDDeltaEnabled() {
@@ -181,12 +238,44 @@ public abstract class MyConfig {
 	    return macdHistogramDeltaEnabled;
 	}
 
-	public void setRSIenabled(Boolean bool) {
+	public void setRSIEnabled(Boolean bool) {
 	    rsiEnabled = bool;
 	}
 
-	public boolean isRSIenabled() {
+	public boolean isRSIEnabled() {
 	    return rsiEnabled;
+	}
+
+	public void setSTOCHRSIEnabled(Boolean bool) {
+	    stochrsiEnabled = bool;
+	}
+
+	public boolean isSTOCHRSIEnabled() {
+	    return stochrsiEnabled;
+	}
+
+	public void setCCIEnabled(Boolean bool) {
+	    cciEnabled = bool;
+	}
+
+	public boolean isCCIEnabled() {
+	    return cciEnabled;
+	}
+
+	public void setATREnabled(Boolean bool) {
+	    atrEnabled = bool;
+	}
+
+	public boolean isATREnabled() {
+	    return atrEnabled;
+	}
+
+	public void setSTOCHEnabled(Boolean bool) {
+	    stochEnabled = bool;
+	}
+
+	public boolean isSTOCHEnabled() {		
+	    return stochEnabled;
 	}
 
 	public void setGraphEqualize(Boolean integer) {
@@ -221,12 +310,44 @@ public abstract class MyConfig {
 		this.macdDeltaDays = integer;
 	}
     
-	public int getRSIdiffDays() {
+	public int getRSIDeltaDays() {
 		return rsiDeltaDays;
 	}
     
-	public void setRSIdiffDays(Integer integer) {
+	public void setRSIDeltaDays(Integer integer) {
 		this.rsiDeltaDays = integer;
+	}
+    
+	public int getSTOCHRSIDeltaDays() {
+		return stochrsiDeltaDays;
+	}
+    
+	public void setSTOCHRSIDeltaDays(Integer integer) {
+		this.stochrsiDeltaDays = integer;
+	}
+    
+	public int getCCIDeltaDays() {
+		return cciDeltaDays;
+	}
+    
+	public void setCCIDeltaDays(Integer integer) {
+		this.cciDeltaDays = integer;
+	}
+    
+	public int getATRDeltaDays() {
+		return atrDeltaDays;
+	}
+    
+	public void setATRDeltaDays(Integer integer) {
+		this.atrDeltaDays = integer;
+	}
+    
+	public int getSTOCHDeltaDays() {
+		return stochDeltaDays;
+	}
+    
+	public void setSTOCHDeltaDays(Integer integer) {
+		this.stochDeltaDays = integer;
 	}
     
 }

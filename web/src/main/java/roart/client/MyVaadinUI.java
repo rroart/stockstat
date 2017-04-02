@@ -219,15 +219,32 @@ public class MyVaadinUI extends UI
     		    .getDeploymentConfiguration().isProductionMode();
         VerticalLayout tab = new VerticalLayout();
         tab.setCaption("Control Panel");
+        HorizontalLayout horMisc = new HorizontalLayout();
+        horMisc.setHeight("20%");
+        horMisc.setWidth("90%");
+        horMisc.addComponent(getMove());
         HorizontalLayout horMACD = new HorizontalLayout();
         horMACD.setHeight("20%");
         horMACD.setWidth("90%");
         horMACD.addComponent(getMACD());
         horMACD.addComponent(getMACDDelta());
         horMACD.addComponent(getMACDHistogramDelta());
-        horMACD.addComponent(getMove());
-        horMACD.addComponent(getRSI());
-        horMACD.addComponent(getRSIdelta());
+        HorizontalLayout horRSI = new HorizontalLayout();
+        horRSI.setHeight("20%");
+        horRSI.setWidth("90%");
+        horRSI.addComponent(getRSI());
+        horRSI.addComponent(getRSIDelta());
+        // not yet
+        /*
+        horMACD.addComponent(getCCI());
+        horMACD.addComponent(getCCIDelta());
+        horMACD.addComponent(getATR());
+        horMACD.addComponent(getATRDelta());
+        horMACD.addComponent(getSTOCH());
+        horMACD.addComponent(getSTOCHDelta());
+        */
+        horRSI.addComponent(getSTOCHRSI());
+        horRSI.addComponent(getSTOCHRSIDelta());
         HorizontalLayout horStat = new HorizontalLayout();
         horStat.setHeight("20%");
         horStat.setWidth("90%");
@@ -242,7 +259,9 @@ public class MyVaadinUI extends UI
 	tab.addComponent(getCleanupfs());
          */
 
+        tab.addComponent(horMisc);
         tab.addComponent(horMACD);
+        tab.addComponent(horRSI);
         tab.addComponent(horStat);
         tab.addComponent(horDb);
         /*
@@ -306,9 +325,23 @@ public class MyVaadinUI extends UI
         horDb2.addComponent(getTableDays());
         horDb2.addComponent(getTableIntervalDays());
         horDb2.addComponent(getTopBottom());
-        horDb2.addComponent(getMACDDeltaDays());
-        horDb2.addComponent(getMACDHistogramDeltaDays());
-        horDb2.addComponent(getRSIdiffDays());
+        HorizontalLayout horMACD = new HorizontalLayout();
+        horMACD.setHeight("20%");
+        horMACD.setWidth("90%");
+       
+        horMACD.addComponent(getMACDDeltaDays());
+        horMACD.addComponent(getMACDHistogramDeltaDays());
+        // not yet:
+        /*
+        horDb2.addComponent(getATRDeltaDays());
+        horDb2.addComponent(getCCIDeltaDays());
+        horDb2.addComponent(getSTOCHDeltaDays());
+        */
+        HorizontalLayout horRSI = new HorizontalLayout();
+        horRSI.setHeight("20%");
+        horRSI.setWidth("90%");
+        horRSI.addComponent(getRSIDeltaDays());
+        horRSI.addComponent(getSTOCHRSIDeltaDays());
         HorizontalLayout horDb3 = new HorizontalLayout();
         horDb3.setHeight("20%");
         horDb3.setWidth("60%");
@@ -341,6 +374,8 @@ public class MyVaadinUI extends UI
         tab.addComponent(horDb); 
         tab.addComponent(horDb2);
         tab.addComponent(horDb3);
+        tab.addComponent(horMACD);
+        tab.addComponent(horRSI);
         tab.addComponent(horManual);
         tab.addComponent(verManualList);
         tab.addComponent(horChooseGraph);
@@ -639,9 +674,9 @@ public class MyVaadinUI extends UI
        return tf;
    }
 
-   private TextField getRSIdiffDays() {
-       TextField tf = new TextField("RSI diff days");
-       tf.setValue("" + controlService.conf.getRSIdiffDays());
+   private TextField getRSIDeltaDays() {
+       TextField tf = new TextField("RSI delta days");
+       tf.setValue("" + controlService.conf.getRSIDeltaDays());
 
        // Handle changes in the value
        tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -650,7 +685,103 @@ public class MyVaadinUI extends UI
                String value = (String) event.getProperty().getValue();
                // Do something with the value
                try {
-                   controlService.conf.setRSIdiffDays(new Integer(value));
+                   controlService.conf.setRSIDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getSTOCHRSIDeltaDays() {
+       TextField tf = new TextField("STOCH RSI delta days");
+       tf.setValue("" + controlService.conf.getSTOCHRSIDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setSTOCHRSIDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getCCIDeltaDays() {
+       TextField tf = new TextField("CCI delta days");
+       tf.setValue("" + controlService.conf.getCCIDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setCCIDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getATRDeltaDays() {
+       TextField tf = new TextField("ATR delta days");
+       tf.setValue("" + controlService.conf.getATRDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setATRDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getSTOCHDeltaDays() {
+       TextField tf = new TextField("STOCH delta days");
+       tf.setValue("" + controlService.conf.getATRDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setSTOCHDeltaDays(new Integer(value));
                    Notification.show("Request sent");
                    displayResults();
                } catch (Exception e) {
@@ -948,7 +1079,7 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
-    private CheckBox getRSIdelta() {
+    private CheckBox getRSIDelta() {
         CheckBox cb = new CheckBox("Enable RSI delta");
         cb.setValue(controlService.conf.isRSIDeltaEnabled());
 
@@ -970,9 +1101,9 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
-    private CheckBox getRSI() {
-        CheckBox cb = new CheckBox("Enable RSI");
-        cb.setValue(controlService.conf.isRSIenabled());
+    private CheckBox getSTOCHRSIDelta() {
+        CheckBox cb = new CheckBox("Enable STOCH RSI delta (caution)");
+        cb.setValue(controlService.conf.isSTOCHRSIDeltaEnabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -981,7 +1112,183 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.conf.setRSIenabled(value);
+                    controlService.conf.setSTOCHRSIDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getCCIDelta() {
+        CheckBox cb = new CheckBox("Enable CCI delta");
+        cb.setValue(controlService.conf.isCCIDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setCCIDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getATRDelta() {
+        CheckBox cb = new CheckBox("Enable ATR delta");
+        cb.setValue(controlService.conf.isATRDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setATRDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getSTOCHDelta() {
+        CheckBox cb = new CheckBox("Enable STOCH delta");
+        cb.setValue(controlService.conf.isSTOCHDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setSTOCHDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getRSI() {
+        CheckBox cb = new CheckBox("Enable RSI");
+        cb.setValue(controlService.conf.isRSIEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setRSIEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getSTOCHRSI() {
+        CheckBox cb = new CheckBox("Enable STOCH RSI");
+        cb.setValue(controlService.conf.isSTOCHRSIEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setSTOCHRSIEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getCCI() {
+        CheckBox cb = new CheckBox("Enable CCI");
+        cb.setValue(controlService.conf.isCCIEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setCCIEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getATR() {
+        CheckBox cb = new CheckBox("Enable ATR");
+        cb.setValue(controlService.conf.isATREnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setATREnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getSTOCH() {
+        CheckBox cb = new CheckBox("Enable STOCH");
+        cb.setValue(controlService.conf.isSTOCHEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setSTOCHEnabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

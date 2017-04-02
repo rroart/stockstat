@@ -7,11 +7,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
+import org.apache.spark.scheduler.BeginEvent;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tictactec.ta.lib.Core;
+import com.tictactec.ta.lib.MAType;
 import com.tictactec.ta.lib.MInteger;
 
 import roart.model.StockItem;
@@ -20,6 +22,8 @@ public class TaUtil {
 
     private static Logger log = LoggerFactory.getLogger(TaUtil.class);
 
+    // TODO make OO version of this, when getting another stat lib
+    
     Object[] getRSI(int days, String market,
             String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
@@ -27,44 +31,118 @@ public class TaUtil {
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
         List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
-        int size = 0;
-        int count = days - 1;
-        int downcount = Math.min(days, datedstocklists.length);
-        for (int j = 0; j < datedstocklists.length && downcount > 0 ; j++) {
-            List<StockItem> list = datedstocklists[j];
-            if (list == null) {
-                log.info("listnull " + market + " " + " " + j);
-                continue;
-            }
-            if (periodInt == null) {
-                continue;
-            }
-            int period = periodInt;
-            grr:  for (int i = 0; i < list.size(); i++) {
-                StockItem stock = list.get(i);
-                Pair<String, String> pair = new Pair(market, stock.getId());
-                if (ids.contains(pair)) {
-                    try {
-                        Double value = StockDao.getValue(stock, period);
-                        if (value == null) {
-                            continue;
-                        }
-                        double val = value;
-                        values[count] = value;
-                        count--;
-                        downcount--;
-                        size++;
-                        break grr;
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION, e);
-                    }
-                }
-            }    
-        }
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, values);
+        //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
         Object[] objs = getInnerRSI(values, size);
         return objs;
 
     }
+
+    Object[] getSTOCHRSI(int days, String market,
+            String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+        Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        MarketData marketdata = marketdatamap.get(market);
+        Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
+        List<StockItem> datedstocklists[] = marketdata.datedstocklists;
+        double values[] = new double[days];
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, values);
+        //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
+        Object[] objs = getInnerSTOCHRSI(values, size);
+        return objs;
+
+    }
+
+    Object[] getCCI(int days, String market,
+            String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+        Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        MarketData marketdata = marketdatamap.get(market);
+        Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
+        List<StockItem> datedstocklists[] = marketdata.datedstocklists;
+        double low[] = new double[days];
+        double high[] = new double[days];
+        double close[] = new double[days];
+        // TODO make new getarr for low high
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, close);
+        //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
+        Object[] objs = getInnerCCI(low, high, close, size);
+        return objs;
+
+    }
+
+    Object[] getATR(int days, String market,
+            String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+        Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        MarketData marketdata = marketdatamap.get(market);
+        Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
+        List<StockItem> datedstocklists[] = marketdata.datedstocklists;
+        double low[] = new double[days];
+        double high[] = new double[days];
+        double close[] = new double[days];
+        // TODO make new getarr for low high
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, close);
+        //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
+        Object[] objs = getInnerATR(low, high, close, size);
+        return objs;
+
+    }
+
+    Object[] getSTOCH(int days, String market,
+            String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+        Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        MarketData marketdata = marketdatamap.get(market);
+        Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
+        List<StockItem> datedstocklists[] = marketdata.datedstocklists;
+        double low[] = new double[days];
+        double high[] = new double[days];
+        double close[] = new double[days];
+        // TODO make new getarr for low high
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, close);
+        //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
+        Object[] objs = getInnerSTOCH(low, high, close, size);
+        return objs;
+
+    }
+
+	private int getArr2(int days, String market, Set<Pair<String, String>> ids, Integer periodInt,
+			List<StockItem>[] datedstocklists, double[] values) {
+	    int size = 0;
+	    int count = days - 1;
+	    int downcount = Math.min(days, datedstocklists.length);
+	    for (int j = 0; j < datedstocklists.length && downcount > 0 ; j++) {
+	        //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
+	        List<StockItem> list = datedstocklists[j];
+	        if (list == null) {
+	            log.info("listnull " + market + " " + " " + j);
+	            continue;
+	        }
+	        if (periodInt == null) {
+	            //System.out.println("tata " + market + " " + periodstr);
+	            continue;
+	        }
+	        int period = periodInt;
+	        grr:  for (int i = 0; i < list.size(); i++) {
+	            StockItem stock = list.get(i);
+	            Pair<String, String> pair = new Pair(market, stock.getId());
+	            if (ids.contains(pair)) {
+	                try {
+	                    Double value = StockDao.getValue(stock, period);
+	                    if (value == null) {
+	                        continue;
+	                    }
+	                    double val = value;
+	                    values[count] = value;
+	                    count--;
+	                    downcount--;
+	                    size++;
+	                    break grr;
+	                } catch (Exception e) {
+	                    log.error(Constants.EXCEPTION, e);
+	                }
+	            }
+	        }    
+	    }
+	    return size;
+	}
 
     Object[] getRSI_orig(int days, String market, String id,
             Set<Pair> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
@@ -73,33 +151,7 @@ public class TaUtil {
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
         List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
-        int size = 0;
-        for (int j = days - 1; j >= 0; j--) {
-            List<StockItem> list = datedstocklists[j];
-            if (list == null) {
-                log.info("listnull " + market + " " + " " + j);
-                continue;
-            }
-            int period = periodInt;
-            for (int i = 0; i < list.size(); i++) {
-                StockItem stock = list.get(i);
-                Pair<String, String> pair = new Pair(market, stock.getId());
-                if (ids.contains(pair)) {
-                    try {
-                        Double value = StockDao.getPeriod(stock, period);
-                        if (value == null) {
-                            continue;
-                        }
-                        double val = value;
-                        values[size] = value;
-                        size++;
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION, e);
-
-                    }
-                }
-            }    
-        }
+        int size = getArrForOrig(days, market, ids, periodInt, datedstocklists, values);
         Object[] objs = getInnerRSI(values, size);
         return objs;
 
@@ -115,6 +167,69 @@ public class TaUtil {
         objs[0] = rsi;
         objs[1] = beg;
         objs[2] = end;
+        //log.info("rsi beg end " + beg.value + " " + end.value + Arrays.toString(rsi));
+		return objs;
+	}
+
+	private Object[] getInnerCCI(double[] low, double[] high, double[] close, int size) {
+		Core core = new Core();
+        MInteger beg = new MInteger();
+        MInteger end = new MInteger();
+        double rsi[] = new double[close.length];
+        core.cci (0, size - 1, low, high, close, 14, beg, end, rsi);
+        //core.cci .cci(0, size - 1, values, 14, beg, end, rsi);
+        Object[] objs = new Object[3];
+        objs[0] = rsi;
+        objs[1] = beg;
+        objs[2] = end;
+		return objs;
+	}
+
+	private Object[] getInnerATR(double[] low, double[] high, double[] close, int size) {
+		Core core = new Core();
+        MInteger beg = new MInteger();
+        MInteger end = new MInteger();
+        double rsi[] = new double[close.length];
+        core.atr(0, size - 1, low, high, close, 14, beg, end, rsi);
+        Object[] objs = new Object[3];
+        objs[0] = rsi;
+        objs[1] = beg;
+        objs[2] = end;
+		return objs;
+	}
+
+	private Object[] getInnerSTOCH(double[] low, double[] high, double[] close, int size) {
+		Core core = new Core();
+        MInteger beg = new MInteger();
+        MInteger end = new MInteger();
+        double rsi[] = new double[close.length];
+        double rsi2[] = new double[close.length];
+        //core.stoch .stoch(0, size - 1, close, 14, beg, end, rsi, rsi2);
+        Object[] objs = new Object[3];
+        objs[0] = rsi;
+        objs[1] = beg;
+        objs[2] = end;
+		return objs;
+	}
+
+	private Object[] getInnerSTOCHRSI(double[] values, int size) {
+		Core core = new Core();
+        MInteger beg = new MInteger();
+        MInteger end = new MInteger();
+        double rsi[] = new double[values.length];
+        double rsi2[] = new double[values.length];
+        MAType optInFastD;
+        optInFastD = MAType.Sma;
+        core.stochRsi(0, size - 1, values, 14, 5, 3, optInFastD, beg, end, rsi, rsi2);
+        Object[] objs = new Object[4];
+        objs[0] = rsi;
+        objs[1] = rsi2;
+        objs[2] = beg;
+        objs[3] = end;
+        //log.info("srs in" + Arrays.toString(values));
+        //log.info("srs beg end " + beg.value + " " + end.value);
+        //log.info("srs1 " + Arrays.toString(rsi));
+        //log.info("srs2 " + Arrays.toString(rsi2));
 		return objs;
 	}
 
@@ -132,7 +247,7 @@ public class TaUtil {
         if (end.value == 0) {
             return 0;
         }
-        log.info("end.value " + end.value + " " + rsi[end.value - 1]);
+        //log.info("end.value " + end.value + " " + rsi[end.value - 1] + Arrays.toString(rsi));
         return rsi[end.value - 1];
     }
 
@@ -161,6 +276,109 @@ public class TaUtil {
         return dataset;
     }
 
+    public DefaultCategoryDataset getSTOCHRSIChart(int days, String market, String id,
+            Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        Object objs[] = getSTOCHRSI(days, market, id, ids, marketdatamap, perioddata, periodstr);
+        double rsi[] = (double[]) objs[0];
+        double rsi2[] = (double[]) objs[1];
+        for (int i = 0; i < rsi.length; i ++) {
+            //log.info("grr3 " + i + " " + macd[i]);
+        }
+        MInteger beg = (MInteger) objs[2];
+        MInteger end = (MInteger) objs[3];
+        int size = beg.value + end.value;
+        size--;
+        for (int i = 0; i < beg.value; i++) {
+            dataset.addValue(0, "rsi" , new Integer(i - size));
+            dataset.addValue(0, "rsi2" , new Integer(i - size));
+        }
+        for (int i = 0; i < end.value; i++) {
+            dataset.addValue(rsi[i], "rsi" , new Integer(i + beg.value - size));
+            dataset.addValue(rsi2[i], "rsi2" , new Integer(i + beg.value - size));
+            if ("EUCA000699".equals(id)) {
+                log.info("hist i " + i + " " + rsi[i]);
+            }
+        }
+        return dataset;
+    }
+
+    public DefaultCategoryDataset getCCIChart(int days, String market, String id,
+            Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        Object objs[] = getCCI(days, market, id, ids, marketdatamap, perioddata, periodstr);
+        double cci[] = (double[]) objs[0];
+        for (int i = 0; i < cci.length; i ++) {
+            //log.info("grr3 " + i + " " + macd[i]);
+        }
+        MInteger beg = (MInteger) objs[1];
+        MInteger end = (MInteger) objs[2];
+        int size = beg.value + end.value;
+        size--;
+        for (int i = 0; i < beg.value; i++) {
+            dataset.addValue(0, "cci" , new Integer(i - size));
+        }
+        for (int i = 0; i < end.value; i++) {
+            dataset.addValue(cci[i], "cci" , new Integer(i + beg.value - size));
+            if ("EUCA000699".equals(id)) {
+                log.info("hist i " + i + " " + cci[i]);
+            }
+        }
+        return dataset;
+    }
+
+    public DefaultCategoryDataset getATRChart(int days, String market, String id,
+            Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        Object objs[] = getATR(days, market, id, ids, marketdatamap, perioddata, periodstr);
+        double atr[] = (double[]) objs[0];
+        for (int i = 0; i < atr.length; i ++) {
+            //log.info("grr3 " + i + " " + macd[i]);
+        }
+        MInteger beg = (MInteger) objs[1];
+        MInteger end = (MInteger) objs[2];
+        int size = beg.value + end.value;
+        size--;
+        for (int i = 0; i < beg.value; i++) {
+            dataset.addValue(0, "atr" , new Integer(i - size));
+        }
+        for (int i = 0; i < end.value; i++) {
+            dataset.addValue(atr[i], "atr" , new Integer(i + beg.value - size));
+            if ("EUCA000699".equals(id)) {
+                log.info("hist i " + i + " " + atr[i]);
+            }
+        }
+        return dataset;
+    }
+
+    public DefaultCategoryDataset getSTOCHChart(int days, String market, String id,
+            Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        Set<Pair<String, Integer>> pairs = perioddata.pairs;
+        Object objs[] = getSTOCH(days, market, id, ids, marketdatamap, perioddata, periodstr);
+        double stoch[] = (double[]) objs[0];
+        for (int i = 0; i < stoch.length; i ++) {
+            //log.info("grr3 " + i + " " + macd[i]);
+        }
+        MInteger beg = (MInteger) objs[1];
+        MInteger end = (MInteger) objs[2];
+        int size = beg.value + end.value;
+        size--;
+        for (int i = 0; i < beg.value; i++) {
+            dataset.addValue(0, "stoch" , new Integer(i - size));
+        }
+        for (int i = 0; i < end.value; i++) {
+            dataset.addValue(stoch[i], "stoch" , new Integer(i + beg.value - size));
+            if ("EUCA000699".equals(id)) {
+                log.info("hist i " + i + " " + stoch[i]);
+            }
+        }
+        return dataset;
+    }
+
     Object[] getMACD(int days, String market,
             String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
@@ -169,50 +387,50 @@ public class TaUtil {
         List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
         int size = getArr(days, market, id, ids, periodInt, datedstocklists, values);
-        log.info("india " + java.util.Arrays.toString(values));
+        //log.info("india " + java.util.Arrays.toString(values));
         Object[] objs = getInnerMACD(values, size);
         return objs;
     }
 
 	private int getArr(int days, String market, String id, Set<Pair<String, String>> ids, Integer periodInt,
 			List<StockItem>[] datedstocklists, double[] values) {
-		int size = 0;
-        int count = days - 1;
-        int downcount = Math.min(days, datedstocklists.length);
-        for (int j = 0; j < datedstocklists.length && downcount > 0 ; j++) {
-            //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
-            List<StockItem> list = datedstocklists[j];
-            if (list == null) {
-                log.info("listnull " + market + " " + " " + j);
-                continue;
-            }
-            if (periodInt == null) {
-                //System.out.println("tata " + market + " " + periodstr);
-                continue;
-            }
-            int period = periodInt;
-            grr:  for (int i = 0; i < list.size(); i++) {
-                StockItem stock = list.get(i);
-                Pair<String, String> pair = new Pair(market, stock.getId());
-                if (ids.contains(pair)) {
-                    try {
-                        Double value = StockDao.getValue(stock, period);
-                        if (value == null) {
-                            continue;
-                        }
-                        double val = value;
-                        values[count] = value;
-                        count--;
-                        downcount--;
-                        size++;
-                        break grr;
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION, e);
+	    int size = 0;
+	    int count = days - 1;
+	    int downcount = Math.min(days, datedstocklists.length);
+	    for (int j = 0; j < datedstocklists.length && downcount > 0 ; j++) {
+	        //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
+	        List<StockItem> list = datedstocklists[j];
+	        if (list == null) {
+	            log.info("listnull " + market + " " + " " + j);
+	            continue;
+	        }
+	        if (periodInt == null) {
+	            //System.out.println("tata " + market + " " + periodstr);
+	            continue;
+	        }
+	        int period = periodInt;
+	        grr:  for (int i = 0; i < list.size(); i++) {
+	            StockItem stock = list.get(i);
+	            Pair<String, String> pair = new Pair(market, stock.getId());
+	            if (ids.contains(pair)) {
+	                try {
+	                    Double value = StockDao.getValue(stock, period);
+	                    if (value == null) {
+	                        continue;
+	                    }
+	                    double val = value;
+	                    values[count] = value;
+	                    count--;
+	                    downcount--;
+	                    size++;
+	                    break grr;
+	                } catch (Exception e) {
+	                    log.error(Constants.EXCEPTION, e);
 
-                    }
-                }
-            }    
-        }
+	                }
+	            }
+	        }    
+	    }
 		return size;
 	}
 
@@ -223,7 +441,14 @@ public class TaUtil {
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
         List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
-        int size = 0;
+        int size = getArrForOrig(days, market, ids, periodInt, datedstocklists, values);
+        Object[] objs = getInnerMACD(values, size);
+        return objs;
+    }
+
+	private int getArrForOrig(int days, String market, Set<Pair> ids, Integer periodInt,
+			List<StockItem>[] datedstocklists, double[] values) {
+		int size = 0;
         for (int j = days - 1; j >= 0; j--) {
             List<StockItem> list = datedstocklists[j];
             if (list == null) {
@@ -250,9 +475,8 @@ public class TaUtil {
                 }
             }    
         }
-        Object[] objs = getInnerMACD(values, size);
-        return objs;
-    }
+		return size;
+	}
 
 	private Object[] getInnerEMA(double[] values, int size) {
 		Core core = new Core();
@@ -291,6 +515,7 @@ public class TaUtil {
         //System.out.println("outout1 " + Arrays.toString(macd));
         //System.out.println("outout2 " + Arrays.toString(sig));
         //System.out.println("outout3 " + Arrays.toString(hist));
+        //log.info("mac beg end " + beg.value + " " + end.value + Arrays.toString(macd));
 		return objs;
 	}
 
@@ -340,6 +565,72 @@ public class TaUtil {
         return dataset;
     }
 
+	public Double[] getCCI(List<Double> low, List<Double> high, List<Double> close, int days, boolean wantdelta, int deltadays) {
+    	int retsize = 1;
+		if (wantdelta) {
+    		retsize++;
+    	}
+		Double[] retValues = new Double[retsize];
+		double lowArr[] = new double[days];
+		double highArr[] = new double[days];
+		double closeArr[] = new double[days];
+	    int size = getArrayNonNullReverse(low, lowArr);
+	    getArrayNonNullReverse(high, highArr);
+	    getArrayNonNullReverse(close, closeArr);
+	    Object[] objs = getInnerCCI(lowArr, highArr, closeArr, size);
+	    // TODO works here too?
+	    retValues[0] = getRSI(objs);
+        if (wantdelta) {
+        	// TODO check works for this too?
+        	retValues[1] = getRSIdelta(objs, deltadays);
+        }
+        return retValues;
+	}
+
+    public Double[] getATR(List<Double> low, List<Double> high, List<Double> close, int days, boolean wantdelta, int deltadays) {
+        int retsize = 1;
+        if (wantdelta) {
+            retsize++;
+        }
+        Double[] retValues = new Double[retsize];
+        double lowArr[] = new double[days];
+        double highArr[] = new double[days];
+        double closeArr[] = new double[days];
+        int size = getArrayNonNullReverse(low, lowArr);
+        getArrayNonNullReverse(high, highArr);
+        getArrayNonNullReverse(close, closeArr);
+        Object[] objs = getInnerATR(lowArr, highArr, closeArr, size);
+        // TODO works here too?
+        retValues[0] = getRSI(objs);
+        if (wantdelta) {
+            // TODO check works for this too?
+            retValues[1] = getRSIdelta(objs, deltadays);
+        }
+        return retValues;
+    }
+
+    public Double[] getSTOCH(List<Double> low, List<Double> high, List<Double> close, int days, boolean wantdelta, int deltadays) {
+        int retsize = 1;
+        if (wantdelta) {
+            retsize++;
+        }
+        Double[] retValues = new Double[retsize];
+        double lowArr[] = new double[days];
+        double highArr[] = new double[days];
+        double closeArr[] = new double[days];
+        int size = getArrayNonNullReverse(low, lowArr);
+        getArrayNonNullReverse(high, highArr);
+        getArrayNonNullReverse(close, closeArr);
+        Object[] objs = getInnerSTOCH(lowArr, highArr, closeArr, size);
+        // TODO works here too?
+        retValues[0] = getRSI(objs);
+        if (wantdelta) {
+            // TODO check works for this too?
+            retValues[1] = getRSIdelta(objs, deltadays);
+        }
+        return retValues;
+    }
+
 	public Double[] getRSI(List<Double> list, int days, boolean wantdelta, int deltadays) {
     	int retsize = 1;
 		if (wantdelta) {
@@ -356,14 +647,54 @@ public class TaUtil {
         return retValues;
 	}
 
+	public Double[] getSTOCHRSI(List<Double> list, int days, boolean wantdelta, int deltadays) {
+    	int retsize = 2;
+		if (wantdelta) {
+    		retsize += 2;
+    	}
+		Double[] retValues = new Double[retsize];
+		double values[] = new double[days];
+	    int size = getArrayNonNullReverse(list, values);
+	    Object[] objs = getInnerSTOCHRSI(values, size);
+        retValues[0] = getArr(objs, 0, 3);
+        retValues[1] = getArr(objs, 1, 3);
+        if (wantdelta) {
+        	retValues[2] = getArrDelta(objs, 0, 3, deltadays);
+        	retValues[3] = getArrDelta(objs, 1, 3, deltadays);
+        }
+        return retValues;
+	}
+
 	private double getRSI(Object[] objs) {
 		double rsi[] = (double[]) objs[0];
+        MInteger beg = (MInteger) objs[1];
         MInteger end = (MInteger) objs[2];
         if (end.value == 0) {
             return 0;
         }
         return rsi[end.value - 1];
 	}
+
+    private double getArr(Object[] objs, int arrInd, int endInd) {
+        double arr[] = (double[]) objs[arrInd];
+        MInteger end = (MInteger) objs[endInd];
+        if (end.value == 0) {
+            return 0;
+        }
+        return arr[end.value - 1];
+    }
+
+    private double getArrDelta(Object[] objs, int arrInd, int endInd, int deltadays) {
+        double rsi[] = (double[]) objs[arrInd];
+        MInteger end = (MInteger) objs[endInd];
+        if (end.value == 0) {
+            return 0;
+        }
+        double delta = 0;
+        int min = Math.max(0, end.value - deltadays);
+        delta = rsi[end.value - 1] - rsi[min];
+        return delta/(deltadays - 1);
+    }
 
 	private double getRSIdelta(Object[] objs, int deltadays) {
 		double rsi[] = (double[]) objs[0];
