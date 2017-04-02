@@ -774,7 +774,7 @@ public class TaUtil {
 	}
 	
 	public Double[] getMomAndDelta(List<Double> list, int days, boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays) {
-    	int retsize = 1;
+    	int retsize = 2;
 		if (wantmacddelta) {
     		retsize++;
     	}
@@ -785,17 +785,28 @@ public class TaUtil {
 		double values[] = new double[days];
 	    int size = getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerMACD(values, size);
-        retValues[0] = getMom(objs);
-        if (wantmacddelta) {
-        	retValues[1] = getMomentumDelta(objs, macddeltadays);
-        }
+        int retindex = 0;
+        retValues[retindex++] = getHist(objs);
         if (wanthistdelta) {
-        	retValues[2] = getHistogramDelta(objs, histdeltadays);
+            retValues[retindex++] = getHistogramDelta(objs, histdeltadays);
+        }
+        retValues[retindex++] = getMom(objs);
+        if (wantmacddelta) {
+        	retValues[retindex++] = getMomentumDelta(objs, macddeltadays);
         }
         return retValues;
 	}
 
-	private double getMom(Object[] objs) {
+    private double getMom(Object[] objs) {
+        double macd[] = (double[]) objs[0];
+        MInteger end = (MInteger) objs[4];
+        if (end.value == 0) {
+            return 0;
+        }
+        return macd[end.value - 1];
+    }
+    
+	private double getHist(Object[] objs) {
 		double hist[] = (double[]) objs[2];
         MInteger end = (MInteger) objs[4];
         if (end.value == 0) {

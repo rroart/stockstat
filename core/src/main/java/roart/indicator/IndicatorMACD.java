@@ -95,7 +95,7 @@ public class IndicatorMACD extends Indicator {
     
     @Override
     public Object[] getResultItemTitle() {
-    	int size = 1;
+    	int size = 2;
     	if (conf.isMACDDeltaEnabled()) {
     		size++;
     	}
@@ -103,12 +103,14 @@ public class IndicatorMACD extends Indicator {
     		size++;
     	}
     	Object[] objs = new Object[size];
-    	objs[0] = title;
-    	if (conf.isMACDDeltaEnabled()) {
-    		objs[1] = Constants.DELTA + title;
-    	}
-    	if (conf.isMACDHistogramDeltaEnabled()) {
-    		objs[2] = Constants.DELTA + "hist " + title;
+    	int retindex = 0;
+    	objs[retindex++] = title + " " + "hist";
+        if (conf.isMACDHistogramDeltaEnabled()) {
+            objs[retindex++] = title + " " + Constants.DELTA + "hist";
+        }
+        objs[retindex++] = title + " " + "mom";
+        if (conf.isMACDDeltaEnabled()) {
+    		objs[retindex++] = title + " " + Constants.DELTA + "mom";
     	}
         return objs;
     }
