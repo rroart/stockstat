@@ -31,7 +31,7 @@
     <fileSet>
       <directory>${project.basedir}/../eureka/target</directory>
       <includes>
-	<include>stockstat*.war</include>
+	<include>stockstat*.jar</include>
       </includes>
       <outputDirectory>lib</outputDirectory>
     </fileSet>
