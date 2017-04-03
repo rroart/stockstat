@@ -52,9 +52,10 @@ public class GraphIndicatorCCI extends GraphIndicator {
                 DefaultCategoryDataset dataset = tu.getCCIChart(days, market, stockid, ids, marketdatamap, perioddata, periodText);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Period " + periodText, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, 1);
-                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+".svg", days, topbottom, conf.getTableDays(), 1, guiSize);
+                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+".svg", days, topbottom, conf.getTableDays(), 1, guiSize, Constants.INDICATORSIZE);
                     ResultItemBytes stream = new ResultItemBytes();
                     stream.bytes = ((ByteArrayOutputStream) r).toByteArray();
+                    stream.fullsize = false;
                     retlist.add(stream);
                 }
             }

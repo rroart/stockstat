@@ -59,16 +59,18 @@ public class GraphCategoryIndex extends GraphCategory {
                 DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.INDEXVALUECOLUMN, conf.isGraphEqualize(), dataseteq);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, Constants.INDEX, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
-                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize);
+                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize, Constants.FULLSIZE);
                     ResultItemBytes stream = new ResultItemBytes();
                     stream.bytes = ((ByteArrayOutputStream) r).toByteArray();
+                    stream.fullsize = true;
                     retlist.add(stream);
                 }
                 if (dataset != null && dataseteq != null) {
                     JFreeChart c = SvgUtil.getChart(dataseteq, Constants.INDEX, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, topbottom);
-                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize);
+                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new20"+ 1 +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize, Constants.FULLSIZE);
                     ResultItemBytes stream = new ResultItemBytes();
                     stream.bytes = ((ByteArrayOutputStream) r).toByteArray();
+                    stream.fullsize = true;
                     retlist.add(stream);
                 }
                 for (GraphIndicator indicator : indicators) {

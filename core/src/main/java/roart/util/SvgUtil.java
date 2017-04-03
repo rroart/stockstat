@@ -102,14 +102,16 @@ public class SvgUtil {
      * @param topbottom TODO
      * @param topbottom how many items
      * @param guiSize TODO
+     * @param size TODO
      * @return a stream resource for the image
      */
 
-    public static OutputStream chartToStream(JFreeChart chart, String name, int xsize2, int ysize2, int days, int topbottom, GUISize guiSize) {
+    public static OutputStream chartToStream(JFreeChart chart, String name, int xsize2, int ysize2, int days, int topbottom, GUISize guiSize, int size) {
         //StreamResource resource = null;
         try {
             int xsize = 0*200 + 1*100 + 300 + 10 * days;
             int ysize = 0*200 + 1*200 + 400 + 10 * topbottom;
+            //System.out.println("gui " + guiSize.x + " " + guiSize.y);
             //System.out.println("xys3 " + xsize + " " + ysize);
             if (xsize + 0*100 > guiSize.x) {
                 xsize = guiSize.x - 0*100 - 200;
@@ -120,6 +122,10 @@ public class SvgUtil {
             }
             */
             //System.out.println("xys4 " + xsize + " " + ysize);
+            // TODO gui size is wrong, temp fix
+            xsize = 1024;
+            ysize = 768;
+            ysize = size * ysize / 100;
             OutputStream out = SvgUtil.exportChartAsSVG(chart, new Rectangle(xsize, ysize), new File(name));
             return out;
         } catch (IOException e) {

@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,28 +31,11 @@ import java.io.InputStream;
 
 
 import java.io.OutputStream;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import javax.imageio.ImageIO;
 //import roart.beans.session.misc.Unit;
 import javax.servlet.annotation.WebServlet;
 
@@ -964,6 +948,25 @@ public class MyVaadinUI extends UI
             }
             */
             //System.out.println("xys2 " + xsize + " " + ysize);
+            /*
+            InputStream is = new ByteArrayInputStream(bytes);
+            try {
+                BufferedImage anImage = ImageIO.read(is);
+                if (anImage != null) {
+                xsize = anImage.getWidth();
+                ysize = anImage.getHeight();
+                }
+                System.out.println("sizeme " + xsize + " " + ysize);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            */
+            // TODO matching svgutil change
+            xsize = 1024;
+            ysize = 768;
+            if (!item.fullsize) {
+                ysize = 192;
+            }
             image.setHeight(ysize, Sizeable.Unit.PIXELS );
             image.setWidth(xsize, Sizeable.Unit.PIXELS );
             layout.addComponent(image);

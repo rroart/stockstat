@@ -54,9 +54,10 @@ public class GraphCategoryPeriodTopBottom extends GraphCategory {
                         stocklistPeriod, period);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Top period " + title, "Time " + date0 + " - " + date1, "Value", days, topbottom);
-                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new2"+ period +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize);
+                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new2"+ period +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize, Constants.FULLSIZE);
                     ResultItemBytes stream = new ResultItemBytes();
                     stream.bytes = ((ByteArrayOutputStream) r).toByteArray();
+                    stream.fullsize = true;
                     retlist.add(stream);
                 }
             }
@@ -65,9 +66,10 @@ public class GraphCategoryPeriodTopBottom extends GraphCategory {
                         stocklistPeriod, period);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Bottom period " + title, "Time " + date0 + " - " + date1, "Value", days, topbottom);
-                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new3"+ period +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize);
+                    OutputStream r = SvgUtil.chartToStream(c, "/tmp/new3"+ period +".svg", days, topbottom, conf.getTableDays(), conf.getTopBottom(), guiSize, Constants.FULLSIZE);
                     ResultItemBytes stream = new ResultItemBytes();
                     stream.bytes = ((ByteArrayOutputStream) r).toByteArray();
+                    stream.fullsize = true;
                     retlist.add(stream);
                 }
             }
