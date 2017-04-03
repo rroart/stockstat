@@ -31,7 +31,7 @@ public static final int PRICECOLUMN = -1;
 public static final int INDEXVALUECOLUMN = -2;
 
 public static final int FULLSIZE = 100;
-public static final int INDICATORSIZE = 25;
+public static final int INDICATORSIZE = 50;
 
 public static final String PRICE = "Price";
 public static final String INDEX = "Index";

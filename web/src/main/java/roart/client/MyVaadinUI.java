@@ -965,7 +965,7 @@ public class MyVaadinUI extends UI
             xsize = 1024;
             ysize = 768;
             if (!item.fullsize) {
-                ysize = 192;
+                ysize = 384;
             }
             image.setHeight(ysize, Sizeable.Unit.PIXELS );
             image.setWidth(xsize, Sizeable.Unit.PIXELS );
