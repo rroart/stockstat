@@ -390,11 +390,11 @@ myperiodtextslist <- function(myperiodtexts, periodtexts) {
     return(retlist)
 }
 
-getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=VALUE, macddays=180) {
+getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=VALUE, macddays=90) {
     return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=TRUE))
 }
 
-gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
+gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=90, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
     periodtexts <- getperiodtexts(market)
     myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
     for (i in 1:length(myperiodtexts)) {
@@ -1161,7 +1161,8 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wa
     displaychart(ls, mynames, 5, periodtext, newdate, olddate, days)
     if (wantmacd) {
         for (i in 1:length(ls)) {
-    myma <- c(unlist(ls[i]))
+            myma <- c(unlist(ls[i]))
+            cat(unlist(myma))
                                         #    myma <- fixna(myma)
                                         #    str(tail(myma, n=10L))
                                         #    cat("\nsize ", length(myma), "\n")
@@ -1176,8 +1177,15 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wa
 #    posneg <- getposneg(lses)
 #    ls1 <- lses[[1]]
 #    ls2 <- lses[[2]]
-#    cat("\ndays ", days2, " lastpos ", posneg[[1]], " lastneg ", posneg[[2]], " macd ", ls1[[days2]], " signal ", ls2[[days2]], "\n")
-    mynames2 <- list("macd", "signal", "diff")
+                                        #    cat("\ndays ", days2, " lastpos ", posneg[[1]], " lastneg ", posneg[[2]], " macd ", ls1[[days2]], " signal ", ls2[[days2]], "\n")
+            str("")
+            cat(unlist(lses[[1]])) 
+            str("")
+           cat(unlist(lses[[2]]))
+            str("")
+            cat(unlist(lses[[3]])) 
+            str("")
+           mynames2 <- list("macd", "signal", "diff")
     text <- paste(mynames[i], periodtext, sep=" ")
     displaychart(lses, mynames2, 3, text, newdate, olddate2, days2)
     }
@@ -1187,15 +1195,15 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wa
         rsis <- list()
         for (i in 1:length(ls)) {
             myma <- c(unlist(ls[i]))
-            str("ere")
-            str(myma)
+            #str("ere")
+            #str(myma)
                                         #    myma <- fixna(myma)
                                         #    str(tail(myma, n=10L))
                                         #    cat("\nsize ", length(myma), "\n")
                                         #                cat(myma)
             rsi <- getmyrsi(myma)
-            str(rsi)
-            cat(unlist(rsi))
+            #str(rsi)
+            #cat(unlist(rsi))
             rsis[i] <- rsi
 #    days2 <- length(ls[[1]])
 #    olddate2 <- daynames[days - days2]
