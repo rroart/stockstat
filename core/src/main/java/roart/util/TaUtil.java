@@ -387,7 +387,7 @@ public class TaUtil {
         List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
         int size = getArr(days, market, id, ids, periodInt, datedstocklists, values);
-        //log.info("india " + java.util.Arrays.toString(values));
+        log.info("before " + size + " " + java.util.Arrays.toString(values));
         Object[] objs = getInnerMACD(values, size);
         return objs;
     }
@@ -552,6 +552,11 @@ public class TaUtil {
         MInteger end = (MInteger) objs[4];
         int size = beg.value + end.value;
         size--;
+        //log.info("in " + );
+        log.info("beg end " + beg.value + " " + end.value);
+        log.info("macd " + Arrays.toString(macd));
+        log.info("sign " + Arrays.toString(sig));
+        log.info("hist " + Arrays.toString(hist));
         for (int i = 0; i < beg.value; i++) {
             dataset.addValue(0, "macd" , new Integer(i - size));
             dataset.addValue(0, "sig" , new Integer(i - size));
@@ -784,6 +789,7 @@ public class TaUtil {
 		Double[] retValues = new Double[retsize];
 		double values[] = new double[days];
 	    int size = getArrayNonNullReverse(list, values);
+	    log.info("before size " + size + Arrays.toString(values));
 	    Object[] objs = getInnerMACD(values, size);
         int retindex = 0;
         retValues[retindex++] = getHist(objs);

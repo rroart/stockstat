@@ -45,6 +45,7 @@ public class GraphIndicatorMACD extends GraphIndicator {
             int days = conf.getTableDays();
             int topbottom = conf.getTopBottom();
             System.out.println("check2 " + periodText + " " + periodDataMap.keySet());
+            log.info("check2 " + periodText + " " + periodDataMap.keySet());
             PeriodData perioddata = periodDataMap.get(periodText);
             TaUtil tu = new TaUtil();
             for (Pair id : ids) {
