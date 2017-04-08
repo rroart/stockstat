@@ -150,7 +150,12 @@ public class StockUtil {
         }
         int index = getStockDate(list, date);
         if (index >= 0) {
+            System.out.println("adate " + date);
+            if (date == null) {
+                log.error("Date is null");
+            }
             datedstocklists[0] = stockdatemap.get(date);
+            System.out.println("null test " + (datedstocklists[0] != null));
             for (int j = 1; j < count; j++) {
                 index = index - mytableintervaldays;
                 if (index >= 0) {
