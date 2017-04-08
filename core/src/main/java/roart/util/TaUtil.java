@@ -395,11 +395,15 @@ public class TaUtil {
 	private int getArr(int days, String market, String id, Set<Pair<String, String>> ids, Integer periodInt,
 			List<StockItem>[] datedstocklists, double[] values) {
 	    int size = 0;
-	    int count = days - 1;
+	    int count = 0;
 	    int downcount = Math.min(days, datedstocklists.length);
-	    for (int j = 0; j < datedstocklists.length && downcount > 0 ; j++) {
+	    System.out.println("downc " + downcount);
+	    for (int j = datedstocklists.length - 1; j >= 0 && downcount >= 0 ; j--) {
 	        //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
 	        List<StockItem> list = datedstocklists[j];
+	        if (j == 0) {
+	            System.out.println("j 0");
+	        }
 	        if (list == null) {
 	            log.info("listnull " + market + " " + " " + j);
 	            continue;
@@ -409,8 +413,10 @@ public class TaUtil {
 	            continue;
 	        }
 	        int period = periodInt;
+	       //System.out.println("");
 	        grr:  for (int i = 0; i < list.size(); i++) {
 	            StockItem stock = list.get(i);
+	            //System.out.print(" " + stock.getId());
 	            Pair<String, String> pair = new Pair(market, stock.getId());
 	            if (ids.contains(pair)) {
 	                try {
@@ -418,9 +424,12 @@ public class TaUtil {
 	                    if (value == null) {
 	                        continue;
 	                    }
+	                    if (j == 0) {
+	                        System.out.println("jj 0");
+	                    }
 	                    double val = value;
 	                    values[count] = value;
-	                    count--;
+	                    count++;
 	                    downcount--;
 	                    size++;
 	                    break grr;
@@ -431,6 +440,7 @@ public class TaUtil {
 	            }
 	        }    
 	    }
+	    System.out.println("thearr " + Arrays.toString(values));
 		return size;
 	}
 
@@ -713,7 +723,7 @@ public class TaUtil {
         return delta/(deltadays - 1);
 	}
 
-	private int getArrayNonNullReverse(List<Double> list, double[] values) {
+	private int getArrayNonNullReversenot(List<Double> list, double[] values) {
 		int count = values.length;
 		for (Double val : list) {
 			// TODO bounds check
@@ -723,6 +733,18 @@ public class TaUtil {
 	    }
 		return values.length - count;
 	}
+
+    private int getArrayNonNullReverse(List<Double> list, double[] values) {
+        int count = 0;
+        for (int i = list.size() - 1; i >= 0; i--) {
+            // TODO bounds check
+            Double val = list.get(i);
+            if (val != null && count < values.length) {
+                values[count++] = val;
+            }
+        }
+        return count;
+    }
 
 	private int getArrayNonNull(List<Double> list, double[] values) {
 		int size = 0;
