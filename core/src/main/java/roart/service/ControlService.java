@@ -143,6 +143,7 @@ public class ControlService {
             Map<String, Integer>[] periodmap = periodmaps[0];
 
             List<StockItem> datedstocks = datedstocklists[0];
+            System.out.println("dat sto siz " + datedstocks.size());
             /*
             Set<String> curIds = new HashSet<>();
             for (StockItem stock : datedstocks) {
@@ -347,6 +348,20 @@ public class ControlService {
             log.info("mydate " + conf.getdate());
            int days = conf.getTableDays();
             Set<String> markets = getMarkets(ids);
+            List<StockItem> stocks = null;
+            try {
+                stocks = StockItem.getAll(conf.getMarket());
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            if (stocks == null) {
+                return null;
+            }
+            log.info("stocks " + stocks.size());
+            Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+            if (conf.getdate() == null) {
+                getCurrentDate(conf, stockdatemap);
+            }
             Map<String, MarketData> marketdatamap = getMarketdatamap(days,
                     markets, conf);
             Map<String, PeriodData> periodDataMap = getPerioddatamap(markets,
