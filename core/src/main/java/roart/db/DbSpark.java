@@ -3,6 +3,7 @@ package roart.db;
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.config.MyPropertyConfig;
+import roart.indicator.Indicator;
 import roart.model.MetaItem;
 import roart.model.StockItem;
 import roart.util.Constants;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.io.StringReader;
 
 import org.apache.spark.SparkConf;
@@ -23,10 +25,17 @@ import org.apache.spark.SparkContext;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.RowFactory;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.sql.types.ArrayType;
+import org.apache.spark.sql.types.StringType;
+import org.apache.spark.sql.types.DoubleType;
 
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Multiset;
@@ -83,6 +92,7 @@ public class DbSpark {
 			// spark2: Dataset<Row> df = spark.read().jdbc("jdbc:postgresql://stockstat:password@localhost:5432/stockstat", "meta", null);
 			prop = new java.util.Properties();
 			prop.setProperty("driver", "org.postgresql.Driver");
+			System.out.println("spark conf fin");
 		} catch (Exception e) {
 			log.error(Constants.EXCEPTION, e);
 		}
@@ -113,6 +123,10 @@ public class DbSpark {
 		}
 		log.info("time0 " + (System.currentTimeMillis() - time0));
 		{
+		    allstocks.select("date").distinct().sort("date").show();
+		    allstocks.where(allstocks.col("marketid").equalTo("nordhist")).where(allstocks.col("id").equalTo("F00000M1AH")).show();
+		    //allstocks.or
+		    //spark.create
 			Map<String, List<Double>> listMap;
 		}
 		return retList;
@@ -135,6 +149,29 @@ public class DbSpark {
 		}
 		return null;
 	}
+
+    public static Map<String, Double[]> getMe(Map<String, List<Double>> listMap, Indicator ind) {
+        if (spark == null) {
+            return null;
+        }
+        System.out.println("running spark");
+        List<Row> rowList = new ArrayList<>();
+        for (String id : listMap.keySet()) {
+            List<Double> values = listMap.get(id);
+            Row row = RowFactory.create(id, values.toArray());
+            rowList.add(row);
+        }
+        StructType schema = DataTypes
+                .createStructType(new StructField[] {
+                        DataTypes.createStructField("id", DataTypes.StringType, false),
+                        DataTypes.createStructField("values", DataTypes.createArrayType(DataTypes.DoubleType), false)});
+        
+        Dataset<Row> df = spark.createDataFrame(rowList, schema);
+        df.show();
+        Map<String, Double[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Double[])ind.calculate(x.getAs("values"))));
+        System.out.println("m size " + m.size());
+        return m;
+    }
 
 }
 
