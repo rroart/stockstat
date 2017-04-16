@@ -8,7 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class MyConfig {
+public class MyConfig {
 
     protected static Logger log = LoggerFactory.getLogger(MyConfig.class);
     
@@ -88,7 +88,7 @@ public abstract class MyConfig {
 
 	private int stochDeltaDays = 3;
 
-    public abstract void config() throws Exception;
+    //public void config() throws Exception;
 
 	/**
 	 * Set current date
