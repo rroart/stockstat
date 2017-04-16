@@ -25,7 +25,8 @@ public class DbDao {
 		if (type == null) {
 			return;
 		}
-		if (access == null) {
+		// TODO temp fix
+		if (true || access == null) {
 			if (type.equals(ConfigConstants.SPARK)) {
 				access = new DbSparkAccess();
 				new DbSpark();
