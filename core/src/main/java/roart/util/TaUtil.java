@@ -398,7 +398,7 @@ public class TaUtil {
 	    int count = 0;
 	    int downcount = Math.min(days, datedstocklists.length);
 	    System.out.println("downc " + downcount);
-	    for (int j = datedstocklists.length - 1; j >= 0 && downcount >= 0 ; j--) {
+	    for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
 	        //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
 	        List<StockItem> list = datedstocklists[j];
 	        if (j == 0) {
@@ -435,7 +435,7 @@ public class TaUtil {
 	                    break grr;
 	                } catch (Exception e) {
 	                    log.error(Constants.EXCEPTION, e);
-
+System.out.println("grr " + count + " " + downcount + " " + size);
 	                }
 	            }
 	        }    
