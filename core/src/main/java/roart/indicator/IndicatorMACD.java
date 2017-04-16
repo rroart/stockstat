@@ -1,6 +1,8 @@
 package roart.indicator;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,12 +12,14 @@ import java.util.Set;
 import org.apache.commons.math3.util.Pair;
 
 import roart.config.MyConfig;
+import roart.db.DbSpark;
 import roart.model.StockItem;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
 import roart.util.StockDao;
 import roart.util.TaUtil;
+import scala.collection.mutable.WrappedArray;
 
 public class IndicatorMACD extends Indicator {
 
@@ -45,6 +49,12 @@ public class IndicatorMACD extends Indicator {
         log.info("time0 " + (System.currentTimeMillis() - time0));
         long time1 = System.currentTimeMillis();
         resultMap = new HashMap<>();
+        try{
+            Map resultMap2; 
+        resultMap2 = DbSpark.getMe(listMap, this);
+        } catch(Exception e) {
+            log.info("Exception", e);
+        }
         TaUtil tu = new TaUtil();
         String market = conf.getMarket();
         String periodstr = key;
@@ -68,6 +78,19 @@ public class IndicatorMACD extends Indicator {
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
 	}
+
+    @Override
+    public Object calculate(Object as) {
+        TaUtil tu = new TaUtil();
+        log.info("myclass " + as.getClass().getName());
+        WrappedArray wa = (WrappedArray) as;
+        Double[] arr2 = (Double[]) wa.array();
+        log.info("myclass " + arr2.getClass().getName());
+        //Double[] arr = (Double[]) as;
+        List<Double> list = Arrays.asList(arr2);
+        Double[] momentum = tu.getMomAndDelta(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
+        return momentum;
+    }
 
     @Override
     public boolean isEnabled() {
