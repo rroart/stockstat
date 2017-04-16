@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import roart.config.MyPropertyConfig;
 import roart.db.DbDao;
 import roart.service.ControlService;
 import roart.service.ServiceParam;
@@ -35,7 +36,7 @@ public class ServiceController {
 		return instance;
 	}
 	
-	@RequestMapping(value = "/" + EurekaConstants.CONFIG,
+	@RequestMapping(value = "/" + EurekaConstants.SETCONFIG,
 			method = RequestMethod.POST)
 	public ServiceResult configDb(@RequestBody ServiceParam param)
 			throws Exception {
@@ -48,6 +49,20 @@ public class ServiceController {
 		}
 		return result;
 	}
+
+    @RequestMapping(value = "/" + EurekaConstants.GETCONFIG,
+            method = RequestMethod.POST)
+    public ServiceResult getConfig(@RequestBody ServiceParam param)
+            throws Exception {
+        ServiceResult result = new ServiceResult();
+        try {
+            result.config = MyPropertyConfig.instance();
+        } catch (Exception e) {
+            log.error(roart.util.Constants.EXCEPTION, e);
+            result.error = e.getMessage();
+        }
+        return result;
+    }
 
 	@RequestMapping(value = "/" + EurekaConstants.GETMARKETS,
 			method = RequestMethod.POST)
@@ -141,6 +156,7 @@ public class ServiceController {
 	}
 
 	public static void main(String[] args) throws Exception {
+	    DbDao.instance("hibernate");
 		SpringApplication.run(ServiceController.class, args);
 	}
 

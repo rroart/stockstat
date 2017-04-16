@@ -3,7 +3,7 @@ package roart.service;
 import roart.model.GUISize;
 import roart.model.ResultItem;
 import roart.config.ConfigConstants;
-import roart.config.MyPropertyConfig;
+import roart.config.MyConfig;
 
 import java.util.List;
 import java.util.Set;
@@ -20,12 +20,19 @@ import org.slf4j.LoggerFactory;
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
-    public MyPropertyConfig conf;
+    public MyConfig conf;
     
     public ControlService() {
-    	conf = new MyPropertyConfig();
+    	conf = MyConfig.instance();
     }
   
+    public void getConfig() {
+        ServiceParam param = new ServiceParam();
+        param.config = conf;
+        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
+        conf = result.config;
+    }
+    
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
         param.config = conf;
@@ -120,10 +127,9 @@ public class ControlService {
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
-    	MyPropertyConfig property = (MyPropertyConfig) MyPropertyConfig.instance();
-    	property.configSpark(useSpark);
         ServiceParam param = new ServiceParam();
         param.config = conf;
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.CONFIG);
+        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.SETCONFIG);
+        getConfig();
     }
 }

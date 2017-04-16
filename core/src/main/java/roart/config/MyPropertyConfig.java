@@ -11,17 +11,15 @@ import roart.util.Constants;
 
 public class MyPropertyConfig extends MyConfig {
 
-     public static MyConfig instance() {
+     public static MyPropertyConfig instance() {
         if (instance == null) {
             instance = new MyPropertyConfig();
         }
-        return instance;
+        return (MyPropertyConfig) instance;
     }
     
     private static Configuration config = null;
     
-    public static String[] dbvalues = { ConfigConstants.HIBERNATE, ConfigConstants.SPARK };
-
     public MyPropertyConfig() {
         super();
 	try {

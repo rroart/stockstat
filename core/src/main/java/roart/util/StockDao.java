@@ -14,6 +14,15 @@ public class StockDao {
     	return stock.getPeriod(i);
     }
 
+    /**
+     * Get specific period or special type from StockItem
+     * 
+     * @param stock the desired StockItem
+     * @param i period/special
+     * @return the value
+     * @throws Exception
+     */
+    
     public static Double getValue(StockItem stock, int i) throws Exception {
         if (i >= 0) {
             return getPeriod(stock, i);
@@ -32,14 +41,37 @@ public class StockDao {
         throw new Exception("Out of range " + i);
     }
 
+     /**
+      * The id is mapped to a list, and the value is added to that list
+      * 
+      * @param aMap the map
+      * @param id Map id
+      * @param value value to map
+      */
+     
     private static void mapAdd(Map<String, List<Double>> aMap, String id, Double value) {
     	List<Double> aList = aMap.get(id);
     	if (aList == null) {
-    		aList = new ArrayList();
+    		aList = new ArrayList<>();
     		aMap.put(id, aList);
     	}
     	aList.add(value);
     }
+    
+    /**
+     * Make a map of all ids to a list of list of period values
+     * The list has the newest item first
+     * 
+     * @param conf unused
+     * @param market name
+     * @param date unused
+     * @param periodInt the period
+     * @param count unused
+     * @param mytableintervaldays unused
+     * @param marketdataMap
+     * @return the map
+     * @throws Exception
+     */
     
 	public static Map<String, List<Double>> getArr(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
 			Map<String, MarketData> marketdataMap) throws Exception {

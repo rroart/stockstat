@@ -30,5 +30,9 @@ public abstract class Indicator {
 
     abstract public Object[] getResultItem(StockItem stock);
 
+    public Object calculate(Object as) {
+        return null;
+    }
+
 }
 

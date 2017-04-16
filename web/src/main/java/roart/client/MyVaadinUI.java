@@ -1,7 +1,6 @@
 package roart.client;
 
 import roart.config.ConfigConstants;
-import roart.config.MyPropertyConfig;
 import roart.model.GUISize;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItemTable;
@@ -146,6 +145,7 @@ public class MyVaadinUI extends UI
     protected void init(VaadinRequest request) {
         
         controlService = new ControlService();
+        controlService.getConfig();
         final VerticalLayout layout = new VerticalLayout();
         guiSize.x = com.vaadin.server.Page.getCurrent().getBrowserWindowWidth();
         guiSize.y = com.vaadin.server.Page.getCurrent().getBrowserWindowHeight();
@@ -1348,7 +1348,7 @@ public class MyVaadinUI extends UI
 
     private ListSelect getDbEngine() {
     	ListSelect ls = new ListSelect("Select search engine");
-    	String[] engines = MyPropertyConfig.dbvalues;
+    	String[] engines = ConfigConstants.dbvalues;
     	ls.addItems(engines);
         ls.setNullSelectionAllowed(false);
         // Show 5 items and a scrollbar if there are more                       
@@ -1360,6 +1360,7 @@ public class MyVaadinUI extends UI
                 // Do something with the value                              
     		    ControlService maininst = new ControlService();
     		    try {
+    		        System.out.println("new val " + value);
     			maininst.dbengine(value.equals(ConfigConstants.SPARK));
     			Notification.show("Request sent");
     		    } catch (Exception e) {
