@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +22,7 @@ import roart.service.ServiceResult;
 import roart.util.EurekaConstants;
 
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.Bean;
 
 @RestController
 @SpringBootApplication
@@ -71,6 +75,7 @@ public class ServiceController {
 		ServiceResult result = new ServiceResult();
 		try {
 			result.markets = getInstance().getMarkets();
+			System.out.println("markets "+ result.markets.size());
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -78,7 +83,7 @@ public class ServiceController {
 		return result;
 	}
 
-	@RequestMapping(value = "/" + EurekaConstants.GETSTOCKS,
+    @RequestMapping(value = "/" + EurekaConstants.GETSTOCKS,
 			method = RequestMethod.POST)
 	public ServiceResult getStocks(@RequestBody ServiceParam param)
 			throws Exception {
@@ -159,5 +164,15 @@ public class ServiceController {
 	    DbDao.instance("hibernate");
 		SpringApplication.run(ServiceController.class, args);
 	}
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/" + EurekaConstants.GETMARKETS).allowedOrigins("http://localhost:19000");
+            }
+        };
+    }
 
 }
