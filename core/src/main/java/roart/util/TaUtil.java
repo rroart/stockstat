@@ -2,6 +2,7 @@ package roart.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -398,7 +399,9 @@ public class TaUtil {
 	    int count = 0;
 	    int downcount = Math.min(days, datedstocklists.length);
 	    System.out.println("downc " + downcount);
-	    for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
+	    List<Double> listd = new ArrayList<>();
+        for (int j = 0; j < datedstocklists.length  && downcount > 0 ; j++) {
+	    //for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
 	        //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
 	        List<StockItem> list = datedstocklists[j];
 	        if (j == 0) {
@@ -429,6 +432,7 @@ public class TaUtil {
 	                    }
 	                    double val = value;
 	                    values[count] = value;
+	                    listd.add(val);
 	                    count++;
 	                    downcount--;
 	                    size++;
@@ -440,6 +444,13 @@ System.out.println("grr " + count + " " + downcount + " " + size);
 	            }
 	        }    
 	    }
+        Collections.reverse(listd);
+        Object[] newarr = listd.toArray();
+        log.info("arrarr " + newarr + " " + values + " " + size + " " + newarr.length);
+        for (int i = 0; i < size; i ++) {
+            values[i] = (double) newarr[i];
+        }
+        //System.arraycopy(newarr, 0, values, 0, size);
 	    System.out.println("thearr " + Arrays.toString(values));
 		return size;
 	}
@@ -736,12 +747,19 @@ System.out.println("grr " + count + " " + downcount + " " + size);
 
     private int getArrayNonNullReverse(List<Double> list, double[] values) {
         int count = 0;
-        for (int i = list.size() - 1; i >= 0; i--) {
+        List<Double> newList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
             // TODO bounds check
             Double val = list.get(i);
             if (val != null && count < values.length) {
-                values[count++] = val;
+                newList.add(val);
+                count++;
+                //values[count++] = val;
             }
+        }
+        Collections.reverse(newList);
+        for (int i = 0; i < count; i++) {
+            values[i] = newList.get(i);
         }
         return count;
     }
@@ -810,6 +828,7 @@ System.out.println("grr " + count + " " + downcount + " " + size);
     	}
 		Double[] retValues = new Double[retsize];
 		double values[] = new double[days];
+		log.info("before before " + list.size() + " " + list);
 	    int size = getArrayNonNullReverse(list, values);
 	    log.info("before size " + size + Arrays.toString(values));
 	    Object[] objs = getInnerMACD(values, size);
