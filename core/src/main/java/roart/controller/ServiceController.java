@@ -175,4 +175,24 @@ public class ServiceController {
         };
     }
 
+    @Bean
+    public WebMvcConfigurer corsConfigurer2() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/" + EurekaConstants.GETCONFIG).allowedOrigins("http://localhost:19000");
+            }
+        };
+    }
+    @Bean
+    public WebMvcConfigurer corsConfigurer3() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/" + EurekaConstants.SETCONFIG).allowedOrigins("http://localhost:19000");
+            }
+        };
+    }
+
+
 }
