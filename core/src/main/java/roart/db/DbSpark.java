@@ -13,6 +13,7 @@ import scala.collection.JavaConversions;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -150,7 +151,7 @@ public class DbSpark {
 		return null;
 	}
 
-    public static Map<String, Double[]> getMe(Map<String, List<Double>> listMap, Indicator ind) {
+    public static Map<String, Double[]> doCalculations(Map<String, List<Double>> listMap, Indicator ind) {
         if (spark == null) {
             return null;
         }
@@ -167,9 +168,9 @@ public class DbSpark {
                         DataTypes.createStructField("values", DataTypes.createArrayType(DataTypes.DoubleType), false)});
         
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
-        df.show();
+        //df.show();
         Map<String, Double[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Double[])ind.calculate(x.getAs("values"))));
-        System.out.println("m size " + m.size());
+        //System.out.println("m size " + m.size());
         return m;
     }
 
