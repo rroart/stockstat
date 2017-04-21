@@ -326,16 +326,20 @@ mytopperiod2 <- function(dflist, period, max, days, wantrise=FALSE, wantmacd=FAL
             }
             macd <- NA
             hist <- NA
+            macdd <- NA
+            histd <- NA
             if (wantmacd) {
                 macd <- df$momc[[i]]
                 hist <- df$histc[[i]]
+                macdd <- df$momdc[[i]]
+                histd <- df$histdc[[i]]
             }
             rise <- NA
             if (wantrise) {
                 rise <- df$risec[[i]]
             }
             
-            print(sprintf("%3d %-35s %12s %3.2f %3d %3.2f %3.2f %3.2f %s", i, strtrim(df$name[[i]],33), as.POSIXct(df$date[[i]], origin="1970-01-01"), listperiod(df, period, i), rise, hist, macd, rsi, df$id[[i]]))
+            print(sprintf("%3d %-35s %12s % 6.2f %3d % 3.2f % 3.2f % 3.2f % 3.2f %3.2f %s", i, strtrim(df$name[[i]],33), as.POSIXct(df$date[[i]], origin="1970-01-01"), listperiod(df, period, i), rise, hist, histd, macd, macdd, rsi, df$id[[i]]))
         }
                                         #        str(df$id[[1]])
     }
@@ -390,11 +394,11 @@ myperiodtextslist <- function(myperiodtexts, periodtexts) {
     return(retlist)
 }
 
-getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=VALUE, macddays=180) {
-    return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=TRUE))
+getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=VALUE, macddays=180, deltadays=3) {
+    return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=TRUE, deltadays=deltadays))
 }
 
-gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
+gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, deltadays=3) {
     periodtexts <- getperiodtexts(market)
     myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
     for (i in 1:length(myperiodtexts)) {
@@ -449,6 +453,8 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
             if (wantmacd) {
                 momlist <- list()
                 histlist <- list()
+                momdlist <- list()
+                histdlist <- list()
                                         #            str("nrow")
                                         #            str(nrow(df))
                 for (i in 1:nrow(df)) {
@@ -467,16 +473,22 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
                     myc <- head(myc, n=(myclen-headskipmacd))
                     myc <- tail(myc, n=macddays)
                                         #str(myc)
-                    momhist <- getmomhist(myc)
+                    momhist <- getmomhist(myc, deltadays)
                                         #str(mom)
                     momlist[i] <- momhist[1]
                     histlist[i] <- momhist[2]
+                    momdlist[i] <- momhist[3]
+                    histdlist[i] <- momhist[4]
                 }
                 headskipmacd <- headskipmacd + tablemoveintervaldays
                 momc <- c(unlist(momlist))
                 histc <- c(unlist(histlist))
+                momdc <- c(unlist(momdlist))
+                histdc <- c(unlist(histdlist))
                 df <- cbind(df, momc)
                 df <- cbind(df, histc)
+                df <- cbind(df, momdc)
+                df <- cbind(df, histdc)
                 if (sort == MACD) {
                     if (reverse) {
                         df <- df[order(df$histc),]
@@ -1223,7 +1235,7 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wa
     }
 }
 
-getmomhist <- function(myma) {
+getmomhist <- function(myma, deltadays) {
     lses <- getmylses(myma)
     if (is.null(lses)) {
         return(0)
@@ -1233,6 +1245,13 @@ getmomhist <- function(myma) {
     ls3 <- lses[[3]]
     retl[1] <- ls1[[length(ls1)]]
     retl[2] <- ls3[[length(ls3)]]
+    last1 <- length(ls1)
+    last3 <- length(ls3)
+    delta <- deltadays - 1
+    prevs1 = last1 - delta
+    prevs3 = last3 - delta
+    retl[3] <- (ls1[[last1]] - ls1[[prevs1]])/delta
+    retl[4] <- (ls3[[last3]] - ls3[[prevs3]])/delta
     return(retl)
 }
 
