@@ -338,8 +338,9 @@ mytopperiod2 <- function(dflist, period, max, days, wantrise=FALSE, wantmacd=FAL
             if (wantrise) {
                 rise <- df$risec[[i]]
             }
-            
-            print(sprintf("%3d %-35s %12s % 6.2f %3d % 3.2f % 3.2f % 3.2f % 3.2f %3.2f %s", i, strtrim(df$name[[i]],33), as.POSIXct(df$date[[i]], origin="1970-01-01"), listperiod(df, period, i), rise, hist, histd, macd, macdd, rsi, df$id[[i]]))
+            name <- df$name[[i]]
+	    Encoding(name) <- "UTF-8"
+            print(sprintf("%3d %-35s %12s % 6.2f %3d % 3.2f % 3.2f % 3.2f % 3.2f %3.2f %s", i, strtrim(name,33), as.POSIXct(df$date[[i]], origin="1970-01-01"), listperiod(df, period, i), rise, hist, histd, macd, macdd, rsi, df$id[[i]]))
         }
                                         #        str(df$id[[1]])
     }
