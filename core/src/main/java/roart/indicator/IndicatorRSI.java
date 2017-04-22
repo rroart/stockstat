@@ -30,6 +30,7 @@ public class IndicatorRSI extends Indicator {
     String key;
     Map<String, List<Double>> listMap;
     Map<String, Double[]> resultMap;
+    Double[] emptyField;
 
     public IndicatorRSI(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
@@ -122,6 +123,13 @@ public class IndicatorRSI extends Indicator {
             log.info("key " + key + " : " + periodDataMap.keySet());
         }
         Double[] rsi = resultMap.get(id);
+        if (rsi == null) {
+            /*
+            Double[] i = resultMap.values().iterator().next();
+            int size = i.length;
+            rsi = new Double[size];*/
+            rsi = emptyField;
+        }
         return rsi;
     }
 
@@ -136,6 +144,7 @@ public class IndicatorRSI extends Indicator {
         if (conf.isRSIDeltaEnabled()) {
             objs[1] = Constants.DELTA + title;
         }
+        emptyField = new Double[size];
         return objs;
     }
 

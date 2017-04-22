@@ -30,7 +30,8 @@ public class IndicatorMACD extends Indicator {
     Map<String, List<Double>> listMap;
     //Map<String, Double> resultMap;
     Map<String, Double[]> resultMap;
-
+    Double[] emptyField;
+    
     public IndicatorMACD(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
@@ -124,6 +125,14 @@ public class IndicatorMACD extends Indicator {
         }
         //double momentum = resultMap.get(id);
         Double[] momentum = resultMap.get(id);
+        if (momentum == null) {
+            /*
+            Double[] i = resultMap.values().iterator().next();
+            int size = i.length;
+            momentum = new Double[size];
+            */
+            momentum = emptyField;
+        }
         return momentum;
     }
 
@@ -146,6 +155,7 @@ public class IndicatorMACD extends Indicator {
         if (conf.isMACDDeltaEnabled()) {
             objs[retindex++] = title + " " + Constants.DELTA + "mom";
         }
+        emptyField = new Double[size];
         return objs;
     }
 
