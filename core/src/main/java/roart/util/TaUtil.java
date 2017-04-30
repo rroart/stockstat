@@ -396,6 +396,7 @@ public class TaUtil {
 	private int getArr(int days, String market, String id, Set<Pair<String, String>> ids, Integer periodInt,
 			List<StockItem>[] datedstocklists, double[] values) {
 	    int size = 0;
+	    boolean display = false;
 	    int count = 0;
 	    int downcount = Math.min(days, datedstocklists.length);
 	    System.out.println("downc " + downcount);
@@ -425,6 +426,7 @@ public class TaUtil {
 	                try {
 	                    Double value = StockDao.getValue(stock, period);
 	                    if (value == null) {
+	                        display = true;
 	                        continue;
 	                    }
 	                    if (j == 0) {
@@ -452,6 +454,9 @@ System.out.println("grr " + count + " " + downcount + " " + size);
         }
         //System.arraycopy(newarr, 0, values, 0, size);
 	    System.out.println("thearr " + Arrays.toString(values));
+        if (display) {
+            //log.info("mydisplay " + list);
+        }
 		return size;
 	}
 
@@ -600,9 +605,9 @@ System.out.println("grr " + count + " " + downcount + " " + size);
 		double lowArr[] = new double[days];
 		double highArr[] = new double[days];
 		double closeArr[] = new double[days];
-	    int size = getArrayNonNullReverse(low, lowArr);
-	    getArrayNonNullReverse(high, highArr);
-	    getArrayNonNullReverse(close, closeArr);
+	    int size = ArraysUtil.getArrayNonNullReverse(low, lowArr);
+	    ArraysUtil.getArrayNonNullReverse(high, highArr);
+	    ArraysUtil.getArrayNonNullReverse(close, closeArr);
 	    Object[] objs = getInnerCCI(lowArr, highArr, closeArr, size);
 	    // TODO works here too?
 	    retValues[0] = getRSI(objs);
@@ -622,9 +627,9 @@ System.out.println("grr " + count + " " + downcount + " " + size);
         double lowArr[] = new double[days];
         double highArr[] = new double[days];
         double closeArr[] = new double[days];
-        int size = getArrayNonNullReverse(low, lowArr);
-        getArrayNonNullReverse(high, highArr);
-        getArrayNonNullReverse(close, closeArr);
+        int size = ArraysUtil.getArrayNonNullReverse(low, lowArr);
+        ArraysUtil.getArrayNonNullReverse(high, highArr);
+        ArraysUtil.getArrayNonNullReverse(close, closeArr);
         Object[] objs = getInnerATR(lowArr, highArr, closeArr, size);
         // TODO works here too?
         retValues[0] = getRSI(objs);
@@ -644,9 +649,9 @@ System.out.println("grr " + count + " " + downcount + " " + size);
         double lowArr[] = new double[days];
         double highArr[] = new double[days];
         double closeArr[] = new double[days];
-        int size = getArrayNonNullReverse(low, lowArr);
-        getArrayNonNullReverse(high, highArr);
-        getArrayNonNullReverse(close, closeArr);
+        int size = ArraysUtil.getArrayNonNullReverse(low, lowArr);
+        ArraysUtil.getArrayNonNullReverse(high, highArr);
+        ArraysUtil.getArrayNonNullReverse(close, closeArr);
         Object[] objs = getInnerSTOCH(lowArr, highArr, closeArr, size);
         // TODO works here too?
         retValues[0] = getRSI(objs);
@@ -664,7 +669,7 @@ System.out.println("grr " + count + " " + downcount + " " + size);
     	}
 		Double[] retValues = new Double[retsize];
 		double values[] = new double[days];
-	    int size = getArrayNonNullReverse(list, values);
+	    int size = ArraysUtil.getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerRSI(values, size);
         retValues[0] = getRSI(objs);
         if (wantdelta) {
@@ -680,7 +685,7 @@ System.out.println("grr " + count + " " + downcount + " " + size);
     	}
 		Double[] retValues = new Double[retsize];
 		double values[] = new double[days];
-	    int size = getArrayNonNullReverse(list, values);
+	    int size = ArraysUtil.getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerSTOCHRSI(values, size);
         retValues[0] = getArr(objs, 0, 3);
         retValues[1] = getArr(objs, 1, 3);
@@ -734,50 +739,9 @@ System.out.println("grr " + count + " " + downcount + " " + size);
         return delta/(deltadays - 1);
 	}
 
-	private int getArrayNonNullReversenot(List<Double> list, double[] values) {
-		int count = values.length;
-		for (Double val : list) {
-			// TODO bounds check
-	    	if (val != null && count > 0) {
-	    		values[--count] = val;
-	    	}
-	    }
-		return values.length - count;
-	}
-
-    private int getArrayNonNullReverse(List<Double> list, double[] values) {
-        int count = 0;
-        List<Double> newList = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            // TODO bounds check
-            Double val = list.get(i);
-            if (val != null && count < values.length) {
-                newList.add(val);
-                count++;
-                //values[count++] = val;
-            }
-        }
-        Collections.reverse(newList);
-        for (int i = 0; i < count; i++) {
-            values[i] = newList.get(i);
-        }
-        return count;
-    }
-
-	private int getArrayNonNull(List<Double> list, double[] values) {
-		int size = 0;
-		for (Double val : list) {
-			// TODO bounds check
-	    	if (val != null && size < values.length) {
-	    		values[size++] = val;
-	    	}
-	    }
-		return size;
-	}
-
 	public double getMomderiv(List<Double> list, int days, int deltadays) {
 		double values[] = new double[days];
-	    int size = getArrayNonNullReverse(list, values);
+	    int size = ArraysUtil.getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerMACD(values, size);
         return getHistogramDelta(objs, deltadays);
 	}
@@ -819,20 +783,24 @@ System.out.println("grr " + count + " " + downcount + " " + size);
 	}
 	
 	public Double[] getMomAndDelta(List<Double> list, int days, boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays) {
-    	int retsize = 2;
-		if (wantmacddelta) {
-    		retsize++;
-    	}
-		if (wanthistdelta) {
-    		retsize++;
-    	}
-		Double[] retValues = new Double[retsize];
-		double values[] = new double[days];
-		log.info("before before " + list.size() + " " + list);
-	    int size = getArrayNonNullReverse(list, values);
-	    log.info("before size " + size + Arrays.toString(values));
-	    Object[] objs = getInnerMACD(values, size);
+	    Object[] objs = getMomAndDeltaFull(list, days, wantmacddelta, macddeltadays, wanthistdelta, histdeltadays);
+        return getMomAndDelta(wantmacddelta, macddeltadays, wanthistdelta, histdeltadays, objs);
+	}
+
+    public Double[] getMomAndDelta(boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays,
+            Object[] objs) {
         int retindex = 0;
+        int retsize = 2;
+        if (wantmacddelta) {
+            retsize++;
+        }
+        if (wanthistdelta) {
+            retsize++;
+        }
+        if (true /*wantScore()*/) {
+            retsize += 2;
+        }
+        Double[] retValues = new Double[retsize];
         retValues[retindex++] = getHist(objs);
         if (wanthistdelta) {
             retValues[retindex++] = getHistogramDelta(objs, histdeltadays);
@@ -841,8 +809,18 @@ System.out.println("grr " + count + " " + downcount + " " + size);
         if (wantmacddelta) {
         	retValues[retindex++] = getMomentumDelta(objs, macddeltadays);
         }
+        log.info("fieldsize " + retsize);
         return retValues;
-	}
+    }
+
+    public Object[] getMomAndDeltaFull(List<Double> list, int days, boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays) {
+        double values[] = new double[days];
+        log.info("before before " + list.size() + " " + list);
+        int size = ArraysUtil.getArrayNonNullReverse(list, values);
+        log.info("before size " + size + Arrays.toString(values));
+        Object[] objs = getInnerMACD(values, size);
+        return objs;
+    }
 
     private double getMom(Object[] objs) {
         double macd[] = (double[]) objs[0];
