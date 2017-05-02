@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class ArraysUtil {
 
-    private static Logger log = LoggerFactory.getLogger(TaUtil.class);
+    private static Logger log = LoggerFactory.getLogger(ArraysUtil.class);
 
     private int searchBackwardNegative(double[] array, int i) {
         while (i >= 0 && array[i] >= 0) {
@@ -149,5 +149,75 @@ public class ArraysUtil {
     	return size;
     }
     
+    /**
+     * Get accepted ranges
+     * where the range end should be have least a number of elements after it
+     * and it is resized to be no more the a certain elements before
+     * 
+     * @param map of ranges
+     * @param before minimum and required number to have before the range end
+     * @param after required number for range end before the array end
+     * @param size of the array with the ranges
+     * @return resized accepted ranges
+     */
+    
+    public static Map<Integer, Integer> getAcceptedRanges(Map<Integer, Integer> map, int before, int after, int size) {
+        Map<Integer, Integer> retMap = new HashMap<>();
+        for (int start : map.keySet()) {
+            int end = map.get(start);
+            if (end - start + 1 >= before) {
+                // TODO check exact limit
+                start = end - before + 1;
+                // TODO check exact limit
+                if (end + after < size) {
+                    retMap.put(start, end);
+                }
+            }
+        }
+        return retMap;
+    }
+
+    /**
+     * Get fresh ranges, with end less than after
+     * 
+     * @param map of ranges
+     * @param before minimum and required number to have before the range end
+     * @param after required number for range end before the array end
+     * @param size of the array with the ranges
+     * @return resized fresh range
+     */
+    
+    public static Map<Integer, Integer> getFreshRanges(Map<Integer, Integer> map, int before, int after, int size) {
+        Map<Integer, Integer> retMap = new HashMap<>();
+        for (int start : map.keySet()) {
+            int end = map.get(start);
+            if (end - start + 1 >= before) {
+                // TODO check exact limit
+                start = end - before + 1;
+                // TODO check exact limit
+                if (end + after >= size) {
+                    retMap.put(start, end);
+                }
+            }
+        }
+        return retMap;
+    }
+
+    /**
+     * Get a sub part of Array
+     * 
+     * @param arr Array
+     * @param start start
+     * @param end end, inclusive
+     * @return sub part
+     */
+    
+    public static double[] getSub(double[] arr, int start, int end) {
+        double[] retArr = new double[end - start + 1];
+        for (int i = start; i <= end; i++) {
+            retArr[i - start] = arr[i];
+        }
+        return retArr;
+    }
 }
 

@@ -46,6 +46,7 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		try {
+            System.out.println("new market" + param.config.getMarket());
 			getInstance().config(param.config);
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
@@ -61,6 +62,7 @@ public class ServiceController {
         ServiceResult result = new ServiceResult();
         try {
             result.config = MyPropertyConfig.instance();
+            System.out.println("configs " + result.config);
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);
             result.error = e.getMessage();
@@ -161,7 +163,8 @@ public class ServiceController {
 	}
 
 	public static void main(String[] args) throws Exception {
-	    DbDao.instance("hibernate");
+	    //DbDao.instance("hibernate");
+        DbDao.instance("spark");
 		SpringApplication.run(ServiceController.class, args);
 	}
 

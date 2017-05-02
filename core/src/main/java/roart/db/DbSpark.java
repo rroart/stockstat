@@ -37,6 +37,16 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.types.ArrayType;
 import org.apache.spark.sql.types.StringType;
 import org.apache.spark.sql.types.DoubleType;
+import org.apache.spark.sql.types.Metadata;
+import org.apache.spark.ml.Model;
+import org.apache.spark.ml.PipelineModel;
+import org.apache.spark.ml.classification.LogisticRegression;
+import org.apache.spark.ml.classification.MultilayerPerceptronClassificationModel;
+import org.apache.spark.ml.classification.MultilayerPerceptronClassifier;
+import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator;
+import org.apache.spark.ml.linalg.DenseVector;
+import org.apache.spark.ml.linalg.VectorUDT;
+import org.apache.spark.ml.linalg.Vectors;
 
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Multiset;
@@ -51,7 +61,12 @@ public class DbSpark {
 	private static SparkSession spark;
 	private static Properties prop;
 
+    //private static Model model;
+	private static Map<String, Model> modelMap = new HashMap<>();
+    private static Map<String, Double> accuracyMap = new HashMap<>();
+    
 	public DbSpark() {
+	    
 		try {
 			String sparkmaster = "spark://127.0.0.1:7077";
 			//sparkmaster = MyPropertyConfig.instance().sparkMaster;
@@ -124,8 +139,8 @@ public class DbSpark {
 		}
 		log.info("time0 " + (System.currentTimeMillis() - time0));
 		{
-		    allstocks.select("date").distinct().sort("date").show();
-		    allstocks.where(allstocks.col("marketid").equalTo("nordhist")).where(allstocks.col("id").equalTo("F00000M1AH")).show();
+		    //allstocks.select("date").distinct().sort("date").show();
+		    //allstocks.where(allstocks.col("marketid").equalTo("nordhist")).where(allstocks.col("id").equalTo("F00000M1AH")).show();
 		    //allstocks.or
 		    //spark.create
 			Map<String, List<Double>> listMap;
@@ -135,7 +150,7 @@ public class DbSpark {
 
 	public static MetaItem getMarket(String market) {
 		Dataset<Row> allmetas = spark.read().jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "meta", prop);
-		allmetas.show();
+		//allmetas.show();
 		for (Row row : allmetas.collectAsList()) {
 			String marketid = row.getAs("marketid");
 			if (market.equals(marketid)) {
@@ -174,5 +189,185 @@ public class DbSpark {
         return m;
     }
 
+    public static Dataset<Row> createDFfromMap(Map<double[], Double> listMap) {
+        if (spark == null) {
+            return null;
+        }
+        List<Row> rowList = new ArrayList<>();
+        int i = 0;
+        for (double[] array : listMap.keySet()) {
+            //log.info("arrsize " + array.length);
+             Double label = listMap.get(array);
+             if (label == null) {
+                 log.error("no label");
+             }
+            Row row = RowFactory.create(label, Vectors.dense(array));
+            rowList.add(row);
+            //if (i++ > 1) break;
+        }
+        List<Row> data = rowList;
+        StructType schema = new StructType(new StructField[]{
+                new StructField("label", DataTypes.DoubleType, false, Metadata.empty()),
+                new StructField("features", new VectorUDT(), false, Metadata.empty())
+        });
+        Dataset<Row> dataFrame = spark.createDataFrame(data, schema);
+        return dataFrame;
+    }
+    
+    public static Dataset<Row> createDFfromMap2(Map<String, double[]> listMap) {
+        if (spark == null) {
+            return null;
+        }
+        List<Row> rowList = new ArrayList<>();
+        int i = 0;
+        for (String id : listMap.keySet()) {
+            //log.info("arrsize " + array.length);
+             double[] array = listMap.get(id);
+            Row row = RowFactory.create(id, Vectors.dense(array));
+            rowList.add(row);
+            //if (i++ > 1) break;
+        }
+        List<Row> data = rowList;
+        StructType schema = new StructType(new StructField[]{
+                new StructField("id", DataTypes.StringType, false, Metadata.empty()),
+                new StructField("features", new VectorUDT(), false, Metadata.empty())
+        });
+        Dataset<Row> dataFrame = spark.createDataFrame(data, schema);
+        return dataFrame;
+    }
+    
+    public static Dataset<Row> createDF(List<double[]> arrList) {
+        if (spark == null) {
+            return null;
+        }
+        List<Row> rowList = new ArrayList<>();
+        for (double[] array : arrList) {
+             //String label = listMap.get(array);
+            Row row = RowFactory.create(Vectors.dense(array));
+            rowList.add(row);
+        }
+        List<Row> data = rowList;
+        StructType schema = new StructType(new StructField[]{
+                //new StructField("label", DataTypes.DoubleType, false, Metadata.empty()),
+                new StructField("features", new VectorUDT(), false, Metadata.empty())
+        });
+        Dataset<Row> dataFrame = spark.createDataFrame(data, schema);
+        return dataFrame;
+    }
+    
+    public static Map<String, Double[]> classify(Map<String, double[]> map, String modelStr, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap) {
+        //List<double[]> arrList = new ArrayList<>();
+        //arrList.add(array);
+        Map<String, Double[]> retMap = new HashMap<>();
+        Dataset<Row> data = createDFfromMap2(map);
+        try {
+            /*
+            List<Row> jrdd = Arrays.asList(
+                    RowFactory.create(content));
+
+            String schemaString = "sentence";
+
+            // Generate the schema based on the string of schema
+            List<StructField> fields = new ArrayList<>();
+            for (String fieldName : schemaString.split(" ")) {
+                StructField field = DataTypes.createStructField(fieldName, DataTypes.StringType, true);
+                fields.add(field);
+            }
+            StructType schema = DataTypes.createStructType(fields);
+             */
+            //Dataset<Row> sentenceDF = spark.createDataFrame(jrdd, schema);
+            Model model = modelMap.get(modelStr+period+mapname);
+            if (model == null) {
+                return retMap;
+            }
+            Dataset<Row> resultDF = model.transform(data);
+
+            for (Row row : resultDF.collectAsList()) {
+                String id = row.getAs("id");
+                Double predict = row.getAs("prediction");
+                Double prob = null;
+                try {
+                    DenseVector probvector = row.getAs("probability");
+                    double[] probarray = probvector.values();
+                    prob = probarray[predict.intValue()];
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            //Map<Double, String> label = conf.labelsMap.get(language);
+            //String cat = label.get(predict);
+             //  log.info(" cat " + predict);
+            //MachineLearningClassifyResult result = new MachineLearningClassifyResult();
+            //result.result = cat;
+                Double[] retVal = new Double[2];
+                retVal[0] = predict;
+                retVal[1] = prob;
+                String label = shortMap.get(predict);
+                retMap.put(id, retVal);
+            }
+            log.info("classify done");
+            return retMap;
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return null;
+    }
+
+    private final static int CATS = 4;
+    
+    public static void learntest(Map<double[], Double> map, String modelStr, int size, String period, String mapname, int outcomes) {
+        try {
+            if (spark == null) {
+                return;
+            }
+            if (map.isEmpty()) {
+                return;
+            }
+        Dataset<Row> data = createDFfromMap(map);
+        Dataset<Row>[] splits = data.randomSplit(new double[]{0.6, 0.4}, 1234);
+        Dataset<Row> train = splits[0];
+        Dataset<Row> test = splits[1];
+        log.info("data size " + map.size());
+        Model model = null;
+        if ("LogisticRegression".equals(modelStr)) {
+            LogisticRegression reg = new LogisticRegression();
+            //reg.setLabelCol("label");
+            reg.setMaxIter(5);
+            reg.setRegParam(0.01);
+            model = reg.fit(train);
+        }
+        if ("MultilayerPerceptronClassifier".equals(modelStr)) {
+            //int[] layers = new int[]{size + 1, size + 1, size + 1, CATS + 1};
+            //int[] layers = new int[]{size, size + 2, size + 4, CATS + 1};
+            int[] layers = new int[]{size, outcomes + 1, outcomes + 1, outcomes + 1};
+            //int[] layers = new int[]{size, 15, 15, outcomes + 1};
+            //int[] layers = new int[]{size, size, size, outcomes + 1};
+             MultilayerPerceptronClassifier trainer = new MultilayerPerceptronClassifier()
+                    .setLayers(layers)
+                    .setBlockSize(128)
+                    .setSeed(1234L)
+                    .setMaxIter(100);
+            model = trainer.fit(train);
+        }
+        modelMap.put(modelStr+period+mapname, model);
+                    // compute accuracy on the test set                                         
+                    Dataset<Row> result = model.transform(test);
+                    //result.schema().toString();
+                    //result.show();
+                    Dataset<Row> predictionAndLabels = result.select("prediction", "label");
+                    //predictionAndLabels.show();
+                    MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
+                      .setMetricName("accuracy");
+                    double eval = evaluator.evaluate(predictionAndLabels);
+                    log.info("Test set accuracy for " + mapname + " " + modelStr + " " + period + " = " + eval);
+                    accuracyMap.put(modelStr+period+mapname, eval);
+
+       
+    } catch (Exception e) {
+        log.error("Exception", e);
+    }
+    }
+    public static double eval(String modelStr, String period, String mapname) {
+        return accuracyMap.get(modelStr+period+mapname);
+    }
 }
 

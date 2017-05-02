@@ -19,8 +19,18 @@ public class ArraysUtilTest {
         System.out.println("neg " + neg);
         assertEquals(pos.get(0), new Integer(7));
         assertEquals(pos.get(13), new Integer(16));
-        assertEquals(neg.get(8), new Integer(12));        
-    }
+        assertEquals(neg.get(8), new Integer(12));  
+        Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, 5, 5, array.length);
+        Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, 5, 5, array.length);
+        System.out.println("newpos " + newPos);
+        System.out.println("newneg " + newNeg);
+        assertEquals(newPos.size(), 1);
+        assertEquals(newPos.get(3), new Integer(7));
+        assert(newNeg.isEmpty());
+        Map<Integer, Integer> fresh = ArraysUtil.getFreshRanges(pos, 4, 5, array.length);
+        System.out.println("fresh " + fresh);
+        assertEquals(fresh.get(13), new Integer(16));
+   }
     
     @Test
     public void testGetArrayNonNullReverse() {

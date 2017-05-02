@@ -49,7 +49,7 @@ public class StockDao {
       * @param value value to map
       */
      
-    private static void mapAdd(Map<String, List<Double>> aMap, String id, Double value) {
+    public static void mapAdd(Map<String, List<Double>> aMap, String id, Double value) {
     	List<Double> aList = aMap.get(id);
     	if (aList == null) {
     		aList = new ArrayList<>();

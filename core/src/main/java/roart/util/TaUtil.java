@@ -453,7 +453,7 @@ System.out.println("grr " + count + " " + downcount + " " + size);
             values[i] = (double) newarr[i];
         }
         //System.arraycopy(newarr, 0, values, 0, size);
-	    System.out.println("thearr " + Arrays.toString(values));
+	    //System.out.println("thearr " + Arrays.toString(values));
         if (display) {
             //log.info("mydisplay " + list);
         }
@@ -798,7 +798,7 @@ System.out.println("grr " + count + " " + downcount + " " + size);
             retsize++;
         }
         if (true /*wantScore()*/) {
-            retsize += 2;
+            retsize += 5;
         }
         Double[] retValues = new Double[retsize];
         retValues[retindex++] = getHist(objs);

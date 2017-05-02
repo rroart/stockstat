@@ -124,6 +124,92 @@ public class Math3Util {
         } 
     }
 
+    public static void getStats2(ResultItemTable table, Date datedate, int count, Map<String, List<StockItem>> stockidmap, Map<String, List<StockItem>> stockdatemap) {
+        List<String> list = new ArrayList(stockdatemap.keySet());
+        Collections.sort(list);
+        String date = null;
+        if (datedate != null) {
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            date = dt.format(datedate);                
+        }
+        int index = list.size() - 1 - StockUtil.getStockDate(list, date);
+        System.out.println("index " + index);
+        Map<Integer, Map<String, List<StockItem>>> periodmap = new HashMap<>();
+        for (int i = 0; i < StockUtil.PERIODS; i++) {
+            Map<String, List<StockItem>> mapSample = new HashMap<>();
+            Map<String, List<StockItem>> mapSampleE = new HashMap<>();
+            for (String id : stockidmap.keySet()) {
+            List<StockItem> stocks = stockidmap.get(id);
+            stocks.sort(StockUtil.StockDateComparator);
+                List<StockItem> stockstrunc = listtrunc(stocks, count, i, index);
+                for (String idnot : stockidmap.keySet()) {
+                    if (idnot.equals(id)) {
+                        continue;
+                    }
+                    try {
+                    List<StockItem> stocksnot = stockidmap.get(idnot);
+                    stocksnot.sort(StockUtil.StockDateComparator);
+                    List<StockItem> stockstruncnot2 = listtrunc(stocksnot, stockstrunc, i);
+                    List<StockItem> stockstrunc3 = listtrunc(stockstrunc, stockstruncnot2, i);
+                    double[] sample1 = getSample(stockstrunc3, i, false);
+                    double[] sample2 = getSample(stockstruncnot2, i, false);
+                    double[] sample1e = getSample(stockstrunc3, i, true);
+                    double[] sample2e = getSample(stockstruncnot2, i, true);
+                    if (sample1.length < 2 || sample2.length < 2) {
+                        log.error("sample too small " + stocks.get(0).getName() + " " + stocksnot.get(0).getName() + " " + sample1.length + " " + sample2.length);
+                        continue;
+                    }
+                    if (sample1.length != sample2.length) {
+                        log.error("diff sample " + stockstruncnot2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + sample1.length + " " + sample2.length);
+                        continue;
+                    }
+                    TTest ttest = new TTest();
+                    double t1 = ttest.pairedT(sample1, sample2);
+                    double t2 = ttest.pairedTTest(sample1, sample2);
+                    boolean b = ttest.pairedTTest(sample1, sample2, 0.05);
+                    double t1e = ttest.pairedT(sample1e, sample2e);
+                    double t2e = ttest.pairedTTest(sample1e, sample2e);
+                    boolean be = ttest.pairedTTest(sample1e, sample2e, 0.05);
+                    SpearmansCorrelation sc = new SpearmansCorrelation();
+                    double sp = sc.correlation(sample1e, sample2e);
+                    KendallsCorrelation kc = new KendallsCorrelation();
+                    double ke = kc.correlation(sample1e, sample2e);
+                    PearsonsCorrelation pc = new PearsonsCorrelation();
+                    double pe = pc.correlation(sample1e, sample2e);
+                    if (false /*sample1.length < 10*/) {
+                        log.info("ttest " + stockstruncnot2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + t1 + " " + t2 + " " + sample1.length + " " + b + Arrays.toString(sample1) + " and "+ Arrays.toString(sample2) + " " + i + " " + stockstruncnot2.get(0).getDate() + " " + stockstrunc3.get(0).getDate() + stockstrunc3.get(stockstrunc3.size() - 1).getDate());
+                        log.info("ttest " + stockstruncnot2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + t1e + " " + t2e + " " + sample1.length + " " + be + Arrays.toString(sample1e) + " and "+ Arrays.toString(sample2e) + " " + i + " " + stockstruncnot2.get(0).getDate() + " " + stockstrunc3.get(0).getDate() + stockstrunc3.get(stockstrunc3.size() - 1).getDate());
+                        if (b != be) {
+                            log.info("ttestdiff " + stockstruncnot2.get(0).getName() + " " + stockstrunc3.get(0).getName() + " " + i); 
+                        }
+                    }
+                    ResultItemTableRow row = new ResultItemTableRow();
+                    row.add(stocks.get(0).getId() + "," + stocksnot.get(0).getId());
+                    row.add(stocks.get(0).getName());
+                    row.add(stocksnot.get(0).getName());
+                    //SimpleDateFormat dt = new SimpleDateFormat("yyyy.MM.dd");
+                    //r.add(dt.format(stock.getDate()));
+                    row.add(i + 1);
+                    row.add(sample1.length);
+                    row.add(t1);
+                    row.add(t2);
+                    row.add("" + b);
+                    row.add(t1e);
+                    row.add(t2e);
+                    row.add("" + be);
+                    row.add(sp);
+                    row.add(ke);
+                    row.add(pe);
+                   //r.add(stock.get());
+                    table.add(row);
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                    }
+                }
+            }
+        } 
+    }
+
     /**
      * Create sample out a truncated stock list
      * 
