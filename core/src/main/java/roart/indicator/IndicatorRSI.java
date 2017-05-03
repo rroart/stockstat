@@ -52,7 +52,7 @@ public class IndicatorRSI extends Indicator {
         resultMap = new HashMap();
         try {
             long time2 = System.currentTimeMillis();
-            Map<String, Double[]> m; 
+            Map<String, Object[]> m; 
             m = DbSpark.doCalculations(listMap, this);
             if (m != null) {
                 log.info("time2 " + (System.currentTimeMillis() - time2));
@@ -60,8 +60,8 @@ public class IndicatorRSI extends Indicator {
                     log.info("key " + key);
                     log.info("value " + Arrays.toString(m.get(key)));
                 }
-                resultMap = m;
-                if (true) return;
+                // objectmap resultMap = m;
+                //if (true) return;
             }
         } catch(Exception e) {
             log.info("Exception", e);

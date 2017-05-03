@@ -34,14 +34,43 @@ public class IndicatorMACD extends Indicator {
     Map<String, List<Double>> listMap;
     Map<String, Object[]> objectMap;
     //Map<String, Double> resultMap;
-    Map<String, Double[]> resultMap;
-    Double[] emptyField;
+    Map<String, Object[]> resultMap;
+    Map<String, Double[]> momMap;
+    Map<String, Double> buyMap;
+    Map<String, Double> sellMap;
+    Object[] emptyField;
 
+    private int fieldSize = 0;
+    
+    /**
+     *  days before positive/negative change
+     * @return
+     */
+    private int getDaysBeforeZero() {
+        return 25;
+    }
+    
+    /**
+     *  days after positive/negative change
+     * @return
+     */
+   private int getDaysAfterZero() {
+        return 10;
+    }
+    
     private boolean wantScore() {
         return true;
     }
 
     private boolean wantML() {
+        return true;
+    }
+    
+    private boolean wantMCP() {
+        return true;
+    }
+    
+    private boolean wantLR() {
         return true;
     }
     
@@ -83,6 +112,7 @@ public class IndicatorMACD extends Indicator {
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         this.key = title;
+        fieldSize = fieldSize();
         calculateMomentums(conf, marketdatamap, periodDataMap, category);        
     }
 
@@ -96,17 +126,18 @@ public class IndicatorMACD extends Indicator {
         log.info("time0 " + (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
         objectMap = new HashMap<>();
+        momMap = new HashMap<>();
+        buyMap = new HashMap<>();
+        sellMap = new HashMap<>();
         List<Double> macdList = new ArrayList<>();
         List<Double> histList = new ArrayList<>();
         List<Double> macdDList = new ArrayList<>();
         List<Double> histDList = new ArrayList<>();
-        // days after positive/negative change
-        int daysAfterZero = 10;
-        // days before positive/negative change
-        int daysBeforeZero = 25;
+        //int daysAfterZero = 10;
+        //int daysBeforeZero = 25;
         try {
             long time2 = System.currentTimeMillis();
-            Map<String, Double[]> m; 
+            Map<String, Object[]> m; 
             m = DbSpark.doCalculations(listMap, this);
             if (m != null) {
                 log.info("time2 " + (System.currentTimeMillis() - time2));
@@ -114,7 +145,7 @@ public class IndicatorMACD extends Indicator {
                     log.info("key " + key);
                     log.info("value " + Arrays.toString(m.get(key)));
                 }
-                resultMap = m;
+                objectMap = m;
                 //if (true) return;
             }
         } catch(Exception e) {
@@ -142,9 +173,10 @@ public class IndicatorMACD extends Indicator {
                 log.info("india list " + list);
             }
             //double momentum = tu.getMom(list, conf.getDays());
-            Object[] objs = tu.getMomAndDeltaFull(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
+            Object[] objs = tu.getMomAndDeltaFull(list, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
             objectMap.put(id, objs);
-            Double[] momentum = tu.getMomAndDelta(conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays(), objs);
+            Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs);
+            momMap.put(id, momentum);
             Map<String, List<Double>> retMap = new HashMap();
             //Object[] full = tu.getMomAndDeltaFull(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
             {
@@ -190,7 +222,6 @@ public class IndicatorMACD extends Indicator {
                     }
                 }
             }
-            resultMap.put(id, momentum);
             if (wantML()) {
                 Map<Double, String> labelMapShort = createLabelMapShort();
                 Map<Double, String> labelMap1 = createLabelMap1();
@@ -213,13 +244,14 @@ public class IndicatorMACD extends Indicator {
                 int trunclistsize = trunclist.size();
                 Map<Integer, Integer>[] map = ArraysUtil.searchForward(histarr);
                 Map<Integer, Integer> pos = map[0];
-                Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, daysBeforeZero, daysAfterZero, trunclistsize);
+                Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, getDaysBeforeZero(), getDaysAfterZero(), trunclistsize);
                 for (int start : newPos.keySet()) {
                     int end = newPos.get(start);
                     String label = null;
                     try {
-                        if (trunclist.get(end) < trunclist.get(end + daysAfterZero)) {
+                        if (trunclist.get(end) < trunclist.get(end + getDaysAfterZero())) {
                             label = "FalseNegative";
+                            log.info("FalseNegative: " + id);
                         } else {
                             label = "TrueNegative";
                         }
@@ -232,12 +264,13 @@ public class IndicatorMACD extends Indicator {
                     posMap.put(truncArray, label2);
                 }
                 Map<Integer, Integer> neg = map[1];
-                Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, daysBeforeZero, daysAfterZero, trunclistsize);
+                Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, getDaysBeforeZero(), getDaysAfterZero(), trunclistsize);
                 for (int start : newNeg.keySet()) {
                     int end = newNeg.get(start);
                     String label;
-                    if (trunclist.get(end) < trunclist.get(end + daysAfterZero)) {
+                    if (trunclist.get(end) < trunclist.get(end + getDaysAfterZero())) {
                         label = "FalsePositive";
+                        log.info("FalsePositive: " + id);
                     } else {
                         label = "TruePositive";
                     }
@@ -291,7 +324,7 @@ public class IndicatorMACD extends Indicator {
         Map<Double, String> labelMapShort = createLabelMapShort();
         for (String id : listMap.keySet()) {
             if (wantScore()) {
-                Double[] momentum = resultMap.get(id);
+                Double[] momentum = momMap.get(id);
                 int momentumSize = momentum.length;
                 double hist = momentum[0];
                 double histd = momentum[1];
@@ -305,7 +338,7 @@ public class IndicatorMACD extends Indicator {
                         recommend += weightBuyMacd()*(maxmacd - macd)/maxmacd;
                         recommend += weightBuyMacdDelta()*(maxdmacd - macdd)/maxdmacd;
                     }
-                    momentum[momidx] = recommend;
+                    buyMap.put(id, recommend);
                 }
                 momidx++;
                 if (hist < 0) {
@@ -315,20 +348,21 @@ public class IndicatorMACD extends Indicator {
                         recommend += weightSellMacd()*(minmacd - macd)/minmacd;
                         recommend += weightSellMacdDelta()*(mindmacd - macdd)/mindmacd;
                     }
-                    momentum[momidx] = recommend;
+                    sellMap.put(id, recommend);
+                    //momentum[momidx] = recommend;
                 }
                 momidx++;
             }
         }
         try {
             String model = "MultilayerPerceptronClassifier";
-            DbSpark.learntest(commonMap, model, daysBeforeZero, key, "common", 4);
-            DbSpark.learntest(posMap, model, daysBeforeZero, key, "pos", 4);
-            DbSpark.learntest(negMap, model, daysBeforeZero, key, "neg", 4);
+            DbSpark.learntest(commonMap, model, getDaysBeforeZero(), key, "common", 4);
+            DbSpark.learntest(posMap, model, getDaysBeforeZero(), key, "pos", 4);
+            DbSpark.learntest(negMap, model, getDaysBeforeZero(), key, "neg", 4);
             model = "LogisticRegression";
-            DbSpark.learntest(commonMap, model, daysBeforeZero, key, "common", 4);
-            DbSpark.learntest(posMap, model, daysBeforeZero, key, "pos", 4);
-            DbSpark.learntest(negMap, model, daysBeforeZero, key, "neg", 4);
+            DbSpark.learntest(commonMap, model, getDaysBeforeZero(), key, "common", 4);
+            DbSpark.learntest(posMap, model, getDaysBeforeZero(), key, "pos", 4);
+            DbSpark.learntest(negMap, model, getDaysBeforeZero(), key, "neg", 4);
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -347,9 +381,10 @@ public class IndicatorMACD extends Indicator {
             int trunclistsize = trunclist.size();
             Map<Integer, Integer>[] map = ArraysUtil.searchForward(histarr);
             Map<Integer, Integer> pos = map[0];
-            Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, daysBeforeZero, daysAfterZero, trunclistsize);
+            Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, getDaysBeforeZero(), getDaysAfterZero(), trunclistsize);
             Map<Integer, Integer> neg = map[1];
-            Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, daysBeforeZero, daysAfterZero, trunclistsize);
+            printSignChange(id, map, trunclistsize, getDaysAfterZero());
+            Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, getDaysBeforeZero(), getDaysAfterZero(), trunclistsize);
             if (!newNeg.isEmpty() && !newPos.isEmpty()) {
                 int start = 0;
                 int end = 0;
@@ -398,58 +433,79 @@ public class IndicatorMACD extends Indicator {
             */
         }
         String model = "MultilayerPerceptronClassifier";
-        Map<String, Double[]> map1 = DbSpark.classify(commonMap2, model, daysBeforeZero, key, "common", 4, labelMapShort);
-        Map<String, Double[]> map2 = DbSpark.classify(posMap2, model, daysBeforeZero, key, "pos", 4, labelMapShort);
-        Map<String, Double[]> map3 = DbSpark.classify(negMap2, model, daysBeforeZero, key, "neg", 4, labelMapShort);
+        Map<String, Double[]> map1 = DbSpark.classify(commonMap2, model, getDaysBeforeZero(), key, "common", 4, labelMapShort);
+        Map<String, Double[]> map2 = DbSpark.classify(posMap2, model, getDaysBeforeZero(), key, "pos", 4, labelMapShort);
+        Map<String, Double[]> map3 = DbSpark.classify(negMap2, model, getDaysBeforeZero(), key, "neg", 4, labelMapShort);
         model = "LogisticRegression";
-        Map<String, Double[]> map4 = DbSpark.classify(commonMap2, model, daysBeforeZero, key, "common", 4, labelMapShort);
-        Map<String, Double[]> map5 = DbSpark.classify(posMap2, model, daysBeforeZero, key, "pos", 4, labelMapShort);
-        Map<String, Double[]> map6 = DbSpark.classify(negMap2, model, daysBeforeZero, key, "neg", 4, labelMapShort);
+        Map<String, Double[]> map4 = DbSpark.classify(commonMap2, model, getDaysBeforeZero(), key, "common", 4, labelMapShort);
+        Map<String, Double[]> map5 = DbSpark.classify(posMap2, model, getDaysBeforeZero(), key, "pos", 4, labelMapShort);
+        Map<String, Double[]> map6 = DbSpark.classify(negMap2, model, getDaysBeforeZero(), key, "neg", 4, labelMapShort);
+        List<Map> maplist = new ArrayList<>();
         for (String id : listMap.keySet()) {
+            Double[] momentum = momMap.get(id);
+            Object[] objs = objectMap.get(id);
+            Object[] fields = new Object[fieldSize];
+            momMap.put(id, momentum);
+            resultMap.put(id, fields);
+            int retindex = tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
+
+            Double buy = buyMap.get(id);
+            fields[retindex++] = buy;
+            Double sell = sellMap.get(id);
+            fields[retindex++] = sell;
             if (wantScore()) {
-                Double[] momentum = resultMap.get(id);
-                int momidx = 6;
-                 Double[] add;
-                Double[] txt1 = null;
-                add = map3.get(id);
-                if (add != null && txt1 == null) {
-                    txt1 = add;
-                }
-                add = map2.get(id);
-                if (add != null && txt1 == null) {
-                    txt1 = add;
-                }
-                add = map1.get(id);
-                if (add != null && txt1 == null) {
-                    txt1 = add;
-                }
-                if (txt1 != null) {
-                momentum[momidx] = txt1[0];
-                }
-                momidx++;
-                Double[] txt2 = null;
-                add = map6.get(id);
-                if (add != null && txt2 == null) {
-                    txt2 = add;
-                }
-                add = map5.get(id);
-                if (add != null && txt2 == null) {
-                    txt2 = add;
-                }
-                add = map4.get(id);
-                if (add != null && txt2 == null) {
-                    txt2 = add;
-                }
-                if (txt2 != null) {
-                momentum[momidx++] = txt2[0];
-                momentum[momidx++] = txt2[1];
-                }
+                //int momidx = 6;
+                Double[] type;
+                type = map1.get(id);
+                fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
+                printout(type, id);
+                type = map2.get(id);
+                fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
+                printout(type, id);
+                type = map3.get(id);
+                fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
+                printout(type, id);
+               type = map4.get(id);
+                fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
+                printout(type, id);
+               type = map5.get(id);
+                fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
+                printout(type, id);
+               type = map6.get(id);
+                fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
+                printout(type, id);
+                fields[retindex++] = type != null ? labelMapShort.get(type[1]) : null;
             }
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
         
     }
 
+    private void printSignChange(String id, Map<Integer, Integer>[] map, int trunclistsize, int i) {
+        Map<Integer, Integer> pos = map[0];
+        if (!pos.isEmpty()) {
+       int posmaxind = Collections.max(pos.keySet());
+        int posmax = pos.get(posmaxind);
+        if (posmax + i >= trunclistsize) {
+            System.out.println("Sign changed to negative for id " + id + " " + title + " since " + (trunclistsize - posmax));
+        }
+    }
+        Map<Integer, Integer> neg = map[1];
+        if (!neg.isEmpty()) {
+        int negmaxind = Collections.max(neg.keySet());
+        int negmax = neg.get(negmaxind);
+        if (negmax + i >= trunclistsize) {
+            System.out.println("Sign changed to positive for id " + id + " " + title + "since " + (trunclistsize - negmax));
+        }
+        }
+    }
+
+    private void printout(Double[] type, String id) {
+        if (type != null) {
+        System.out.println("Type " + type + " id " + id);
+        }
+    }
+    
     private Map<String, Double> createLabelMap2() {
         Map<String, Double> labelMap2 = new HashMap<>();
         labelMap2.put("TruePositive", 1.0);
@@ -486,8 +542,9 @@ public class IndicatorMACD extends Indicator {
         //log.info("myclass " + arr2.getClass().getName());
         //Double[] arr = (Double[]) as;
         List<Double> list = Arrays.asList(arr2);
-        Double[] momentum = tu.getMomAndDelta(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
-        return momentum;
+        //Double[] momentum = tu.getMomAndDelta(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
+        Object[] objs = tu.getMomAndDeltaFull(list, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
+        return objs;
     }
 
     @Override
@@ -510,32 +567,22 @@ public class IndicatorMACD extends Indicator {
             log.info("key " + key + " : " + periodDataMap.keySet());
         }
         //double momentum = resultMap.get(id);
-        Double[] momentum = resultMap.get(id);
-        if (momentum == null) {
+        Object[] result = resultMap.get(id);
+        if (result == null) {
             /*
             Double[] i = resultMap.values().iterator().next();
             int size = i.length;
             momentum = new Double[size];
              */
-            momentum = emptyField;
+            result = emptyField;
         }
-        return momentum;
+        return result;
     }
 
     @Override
     public Object[] getResultItemTitle() {
-        int size = 2;
-        if (conf.isMACDDeltaEnabled()) {
-            size++;
-        }
-        if (conf.isMACDHistogramDeltaEnabled()) {
-            size++;
-        }
-        if (wantScore()) {
-            size += 5;
-        }
-        Object[] objs = new Object[size];
-        int retindex = 0;
+        Object[] objs = new Object[fieldSize];
+         int retindex = 0;
         objs[retindex++] = title + " " + "hist";
         if (conf.isMACDHistogramDeltaEnabled()) {
             objs[retindex++] = title + " " + Constants.DELTA + "hist";
@@ -547,18 +594,55 @@ public class IndicatorMACD extends Indicator {
         if (wantScore()) {
             objs[retindex++] = title + " " + "buy";
             objs[retindex++] = title + " " + "sell";
+        }
+        if (wantMCP()) {
             String mpc = "";
+            String val = "";
             //String mpc = "" + DbSpark.eval("MultilayerPerceptronClassifier", title, "common");
-            objs[retindex++] = title + " " + "MPC"+mpc;
+            val = "" + DbSpark.eval("MultilayerPerceptronClassifier", title, "common");
+            objs[retindex++] = title + " " + "MPCcom"+val;
+            val = "" + DbSpark.eval("MultilayerPerceptronClassifier", title, "neg");
+           objs[retindex++] = title + " " + "MPCpos"+val;
+           val = "" + DbSpark.eval("MultilayerPerceptronClassifier", title, "neg");
+            objs[retindex++] = title + " " + "MPCneg"+val;
+        }
+        if (wantLR()) {
+            String val = "";
             //String lr = "" + DbSpark.eval("LogisticRegression ", title, "common");
             String lr = "";
-            objs[retindex++] = title + " " + "LR"+lr;
+            val = "" + DbSpark.eval("LogisticRegression", title, "common");
+            objs[retindex++] = title + " " + "LRcom"+val;
+            val = "" + DbSpark.eval("LogisticRegression", title, "pos");
+            objs[retindex++] = title + " " + "LRpos"+val;
+            val = "" + DbSpark.eval("LogisticRegression", title, "neg");
+           objs[retindex++] = title + " " + "LRneg"+val;
             objs[retindex++] = title + " " + "LR prob";
         }
-        emptyField = new Double[size];
-        log.info("fieldsizet " + size);
+        //emptyField = new Double[size];
+        log.info("fieldsizet " + retindex);
         return objs;
     }
 
+    private int fieldSize() {
+        int size = 2;
+        if (conf.isMACDDeltaEnabled()) {
+            size++;
+        }
+        if (conf.isMACDHistogramDeltaEnabled()) {
+            size++;
+        }
+        if (wantScore()) {
+            size += 2;
+        }
+        if (wantMCP()) {
+            size += 3;
+        }
+        if (wantLR()) {
+            size += 4;
+        }
+        emptyField = new Object[size];
+        log.info("fieldsizet " + size);
+        return size;
+    }
 }
 

@@ -782,38 +782,35 @@ System.out.println("grr " + count + " " + downcount + " " + size);
         return delta/(deltadays - 1);
 	}
 	
-	public Double[] getMomAndDelta(List<Double> list, int days, boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays) {
-	    Object[] objs = getMomAndDeltaFull(list, days, wantmacddelta, macddeltadays, wanthistdelta, histdeltadays);
-        return getMomAndDelta(wantmacddelta, macddeltadays, wanthistdelta, histdeltadays, objs);
+	public int getMomAndDelta(List<Double> list, int days, boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays, Object[] retValues) {
+	    Object[] objs = getMomAndDeltaFull(list, days, macddeltadays, histdeltadays);
+        return getMomAndDelta(wantmacddelta, wanthistdelta, (Double[]) objs, retValues);
 	}
 
-    public Double[] getMomAndDelta(boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays,
-            Object[] objs) {
+    public Double[] getMomAndDelta(int macddeltadays, int histdeltadays, Object[] objs) {
         int retindex = 0;
-        int retsize = 2;
-        if (wantmacddelta) {
-            retsize++;
-        }
-        if (wanthistdelta) {
-            retsize++;
-        }
-        if (true /*wantScore()*/) {
-            retsize += 5;
-        }
-        Double[] retValues = new Double[retsize];
+        Double[] retValues = new Double[4];
         retValues[retindex++] = getHist(objs);
-        if (wanthistdelta) {
-            retValues[retindex++] = getHistogramDelta(objs, histdeltadays);
-        }
+        retValues[retindex++] = getHistogramDelta(objs, histdeltadays);
         retValues[retindex++] = getMom(objs);
-        if (wantmacddelta) {
-        	retValues[retindex++] = getMomentumDelta(objs, macddeltadays);
-        }
-        log.info("fieldsize " + retsize);
+        retValues[retindex++] = getMomentumDelta(objs, macddeltadays);
         return retValues;
     }
 
-    public Object[] getMomAndDeltaFull(List<Double> list, int days, boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays) {
+    public int getMomAndDelta(boolean wantmacddelta, boolean wanthistdelta, Double[] objs, Object[] retValues) {
+        int retindex = 0;
+        retValues[retindex++] = objs[0];
+        if (wanthistdelta) {
+            retValues[retindex++] = objs[1];
+        }
+        retValues[retindex++] = objs[2];
+        if (wantmacddelta) {
+            retValues[retindex++] = objs[3];
+        }
+        return retindex;
+    }
+
+    public Object[] getMomAndDeltaFull(List<Double> list, int days, int macddeltadays, int histdeltadays) {
         double values[] = new double[days];
         log.info("before before " + list.size() + " " + list);
         int size = ArraysUtil.getArrayNonNullReverse(list, values);

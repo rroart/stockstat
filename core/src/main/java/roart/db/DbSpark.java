@@ -166,7 +166,7 @@ public class DbSpark {
 		return null;
 	}
 
-    public static Map<String, Double[]> doCalculations(Map<String, List<Double>> listMap, Indicator ind) {
+    public static Map<String, Object[]> doCalculations(Map<String, List<Double>> listMap, Indicator ind) {
         if (spark == null) {
             return null;
         }
@@ -184,7 +184,7 @@ public class DbSpark {
         
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Double[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Double[])ind.calculate(x.getAs("values"))));
+        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate(x.getAs("values"))));
         //System.out.println("m size " + m.size());
         return m;
     }
@@ -366,7 +366,8 @@ public class DbSpark {
         log.error("Exception", e);
     }
     }
-    public static double eval(String modelStr, String period, String mapname) {
+    public static Double eval(String modelStr, String period, String mapname) {
+        System.out.println("str vs " + modelStr+period+mapname + " :" + accuracyMap.keySet());
         return accuracyMap.get(modelStr+period+mapname);
     }
 }
