@@ -389,7 +389,7 @@ public class IndicatorMACD extends Indicator {
                         type = negIdTypeLRHistMap.get(id);
                         fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
                         printout(type, id, labelMapShort);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[1]) : null;
+                        fields[retindex++] = type != null ? type[1] : null;
                     }  
                 }
                 if (wantMLMacd()) {
@@ -414,7 +414,7 @@ public class IndicatorMACD extends Indicator {
                         type = negIdTypeLRMacdMap.get(id);
                         fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
                         printout(type, id, labelMapShort);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[1]) : null;
+                        fields[retindex++] = type != null ? type[1] : null;
                     }  
                 }
             }
