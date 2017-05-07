@@ -138,10 +138,10 @@ public class StockUtil {
     public static List<StockItem>[] getDatedstocklists(Map<String, List<StockItem>> stockdatemap, Date datedate, int count, int mytableintervaldays) {
         List<StockItem>[] datedstocklists = new ArrayList[count];
         for (int i = 0; i < count; i ++) {
-            datedstocklists[i] = new ArrayList();          
+            datedstocklists[i] = new ArrayList<>();          
         }
 
-        List<String> list = new ArrayList(stockdatemap.keySet());
+        List<String> list = new ArrayList<>(stockdatemap.keySet());
         Collections.sort(list);
         String date = null;
         if (datedate != null) {

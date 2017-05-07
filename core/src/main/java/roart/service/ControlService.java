@@ -58,6 +58,20 @@ import org.slf4j.LoggerFactory;
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
+    // TODO temp hack
+    private static Map<String, String> idNameMap;
+    
+    public static String getName(String id) {
+        if (idNameMap == null) {
+            return id;
+        }
+        String name = idNameMap.get(id);
+        if (name == null) {
+            name = id;
+        }
+        return name;
+    }
+    
     public List<String> getMarkets() {
     	try {
 			return StockItem.getMarkets();
@@ -123,10 +137,12 @@ public class ControlService {
             Map<String, PeriodData> periodDataMap = getPerioddatamap(markets,
                     marketdatamap);
 
+            idNameMap = new HashMap<>();
             // sort based on date
             for (String key : stockidmap.keySet()) {
                 List<StockItem> stocklist = stockidmap.get(key);
                 stocklist.sort(StockUtil.StockDateComparator);
+                idNameMap.put(key, stocklist.get(0).getName());
             }
 
             // the main list, based on freshest or specific date.
@@ -404,7 +420,7 @@ public class ControlService {
             String[] periodText = marketdatamap.get(market).periodtext;
             for (int i = 0; i < StockUtil.PERIODS; i++) {
                 String text = periodText[i];
-                System.out.println("text " + market + " " + i + " " + text);
+                //System.out.println("text " + market + " " + i + " " + text);
                 Pair<String, Integer> pair = new Pair(market, i);
                 addPairToPeriodDataMap(periodDataMap, text, pair);
              }
@@ -417,7 +433,7 @@ public class ControlService {
                 addPairToPeriodDataMap(periodDataMap, Constants.INDEX, pair);                
             }
         }
-        System.out.println("per " + periodDataMap.keySet());
+        //System.out.println("per " + periodDataMap.keySet());
         return periodDataMap;
     }
 
@@ -479,8 +495,7 @@ public class ControlService {
              * Make stock lists based on the intervals
              */
             
-            // TODO check out the 15 days
-            List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), days + 15, conf.getTableIntervalDays());
+            List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), days, conf.getTableIntervalDays());
             marketdata.datedstocklists = datedstocklists;
             
             //Object[] arr = new Object[1];

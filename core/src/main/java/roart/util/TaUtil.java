@@ -399,14 +399,14 @@ public class TaUtil {
 	    boolean display = false;
 	    int count = 0;
 	    int downcount = Math.min(days, datedstocklists.length);
-	    System.out.println("downc " + downcount);
+	    //System.out.println("downc " + downcount);
 	    List<Double> listd = new ArrayList<>();
         for (int j = 0; j < datedstocklists.length  && downcount > 0 ; j++) {
 	    //for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
 	        //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
 	        List<StockItem> list = datedstocklists[j];
 	        if (j == 0) {
-	            System.out.println("j 0");
+	            //System.out.println("j 0");
 	        }
 	        if (list == null) {
 	            log.info("listnull " + market + " " + " " + j);
@@ -430,7 +430,7 @@ public class TaUtil {
 	                        continue;
 	                    }
 	                    if (j == 0) {
-	                        System.out.println("jj 0");
+	                        //System.out.println("jj 0");
 	                    }
 	                    double val = value;
 	                    values[count] = value;
@@ -441,7 +441,7 @@ public class TaUtil {
 	                    break grr;
 	                } catch (Exception e) {
 	                    log.error(Constants.EXCEPTION, e);
-System.out.println("grr " + count + " " + downcount + " " + size);
+//System.out.println("grr " + count + " " + downcount + " " + size);
 	                }
 	            }
 	        }    
@@ -566,7 +566,7 @@ System.out.println("grr " + count + " " + downcount + " " + size);
             String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
-        System.out.println("parsize " + pairs.size());
+        //System.out.println("parsize " + pairs.size());
         Object objs[] = getMACD(days, market, id, ids, marketdatamap, perioddata, periodstr);
         double macd[] = (double[]) objs[0];
         double sig[] = (double[]) objs[1];
@@ -746,11 +746,11 @@ System.out.println("grr " + count + " " + downcount + " " + size);
         return getHistogramDelta(objs, deltadays);
 	}
 
-	private double getHistogramDelta( Object[] objs, int deltadays) {
+	private Double getHistogramDelta( Object[] objs, int deltadays) {
 		double hist[] = (double[]) objs[2];
         MInteger end = (MInteger) objs[4];
         if (end.value == 0) {
-            return 0;
+            return null;
         }
         double delta = 0;
         /*
@@ -770,23 +770,24 @@ System.out.println("grr " + count + " " + downcount + " " + size);
         return delta/(deltadays - 1);
 	}
 	
-	private double getMomentumDelta( Object[] objs, int deltadays) {
+	private Double getMomentumDelta( Object[] objs, int deltadays) {
 		double macd[] = (double[]) objs[0];
         MInteger end = (MInteger) objs[4];
         if (end.value == 0) {
-            return 0;
+            return null;
         }
         double delta = 0;
         int min = Math.max(0, end.value - deltadays);
         delta = macd[end.value - 1] - macd[min];
         return delta/(deltadays - 1);
 	}
-	
+	/*
 	public int getMomAndDelta(List<Double> list, int days, boolean wantmacddelta, int macddeltadays, boolean wanthistdelta, int histdeltadays, Object[] retValues) {
 	    Object[] objs = getMomAndDeltaFull(list, days, macddeltadays, histdeltadays);
         return getMomAndDelta(wantmacddelta, wanthistdelta, (Double[]) objs, retValues);
 	}
-
+*/
+	
     public Double[] getMomAndDelta(int macddeltadays, int histdeltadays, Object[] objs) {
         int retindex = 0;
         Double[] retValues = new Double[4];
@@ -810,29 +811,32 @@ System.out.println("grr " + count + " " + downcount + " " + size);
         return retindex;
     }
 
-    public Object[] getMomAndDeltaFull(List<Double> list, int days, int macddeltadays, int histdeltadays) {
-        double values[] = new double[days];
-        log.info("before before " + list.size() + " " + list);
-        int size = ArraysUtil.getArrayNonNullReverse(list, values);
-        log.info("before size " + size + Arrays.toString(values));
-        Object[] objs = getInnerMACD(values, size);
+    public Object[] getMomAndDeltaFull(Double[] list, int days, int macddeltadays, int histdeltadays) {
+        double values[] = new double[list.length];
+        log.info("before before " + list.length + " " + Arrays.toString(list));
+        //int size = ArraysUtil.getArrayNonNullReverse(list, values);
+        //log.info("before size " + size + Arrays.toString(values));
+        for (int i = 0; i < list.length; i++) {
+            values[i] = list[i];
+        }
+        Object[] objs = getInnerMACD(values, values.length);
         return objs;
     }
 
-    private double getMom(Object[] objs) {
+    private Double getMom(Object[] objs) {
         double macd[] = (double[]) objs[0];
         MInteger end = (MInteger) objs[4];
         if (end.value == 0) {
-            return 0;
+            return null;
         }
         return macd[end.value - 1];
     }
     
-	private double getHist(Object[] objs) {
+	private Double getHist(Object[] objs) {
 		double hist[] = (double[]) objs[2];
         MInteger end = (MInteger) objs[4];
         if (end.value == 0) {
-            return 0;
+            return null;
         }
         return hist[end.value - 1];
 	}

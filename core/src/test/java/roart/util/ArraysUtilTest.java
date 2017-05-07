@@ -1,6 +1,7 @@
 package roart.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ public class ArraysUtilTest {
     
     @Test
     public void testSearchForward() throws Exception {
-        Map<Integer, Integer>[] map = ArraysUtil.searchForward(array);
+        Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, 0);
         Map<Integer, Integer> pos = map[0];
         Map<Integer, Integer> neg = map[1];
         System.out.println("pos " + pos);
@@ -42,5 +43,31 @@ public class ArraysUtilTest {
         int num = ArraysUtil.getArrayNonNullReverse(list, values);
         assertEquals(num, 2);
         assertEquals(values[0], 1, 0.1);
+    }  
+    
+    @Test
+    public void testGetArrayNonNullReverse2() {
+        Double[] list = new Double[]{2.0, null, 1.0};
+        double[] values = new double[list.length];
+        int num = ArraysUtil.getArrayNonNullReverse(list, values);
+        assertEquals(num, 2);
+        assertEquals(values[0], 1, 0.1);
+    }  
+    
+    @Test
+    public void testGetArrayNonNullReverse3() {
+        Double[] list = new Double[]{2.0, null, 1.0};
+        Double[] values = ArraysUtil.getArrayNonNullReverse(list);
+        assertEquals(values.length, 2);
+        assertEquals(values[0], 1, 0.1);
+    }  
+    
+    @Test
+    public void testGetSub() {
+        Double[] list = new Double[]{1.0, 2.0, 3.0, 4.0, 5.0};
+        Double[] values = ArraysUtil.getSubExclusive(list, 1, 3);
+        System.out.println("Arr " + Arrays.asList(values));
+        assertEquals(values.length, 2);
+        assertEquals(values[0], 2, 0.1);
     }  
 }

@@ -49,7 +49,7 @@ public class GraphCategoryPeriod extends GraphCategory {
     public void addResult(List<ResultItem> retlist, Set<Pair<String, String>> ids, GUISize guiSize) {
         try {
             String periodText = title;
-            System.out.println("check3 " + periodText + " " + periodDataMap.keySet());
+            //System.out.println("check3 " + periodText + " " + periodDataMap.keySet());
             log.info("check3 " + periodText + " " + periodDataMap.keySet());
             int days = conf.getTableDays();
             int topbottom = conf.getTopBottom();

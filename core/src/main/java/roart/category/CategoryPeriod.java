@@ -39,7 +39,7 @@ public class CategoryPeriod extends Category {
         this.periodmap = periodmap;
         period = i;
         indicators.add(new IndicatorMove(conf, "Δ" + title, periodmap, period));
-        indicators.add(new IndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, periodmap, title, i));
+        indicators.add(new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, i));
         //indicators.add(new IndicatorMACDderiv(conf, title + " md", marketdatamap, periodDataMap, periodmap, title, i));
         indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, i));
         indicators.add(new IndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, periodmap, title, i));

@@ -58,6 +58,27 @@ public class StockDao {
     	aList.add(value);
     }
     
+    public static void mapAdd(Map<String, Double[]> aMap, String id, int index, Double value, int length) {
+        Double[] array = aMap.get(id);
+        if (array == null) {
+            array = new Double[length];
+            aMap.put(id, array);
+        }
+        array[index] = value;
+    }
+    
+    /*
+    public static void mapAdd(Map<String, Double[]> aMap, String id, Double value) {
+        List<Double> aList = aMap.get(id);
+        if (aList == null) {
+            aList = new ArrayList<>();
+            aList.set
+            aMap.put(id, aList);
+        }
+        aList.add(value);
+    }
+    */
+    
     /**
      * Make a map of all ids to a list of list of period values
      * The list has the newest item first
@@ -73,10 +94,32 @@ public class StockDao {
      * @throws Exception
      */
     
-	public static Map<String, List<Double>> getArr(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static Map<String, List<Double>> getArr(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+            Map<String, MarketData> marketdataMap) throws Exception {
+        Map<String, List<Double>> retMap = new HashMap<>();
+        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        //System.out.println("datstolen " + datedstocklists.length);
+        int index = 0;
+        if (index >= 0) {
+            for (int i = index; i < datedstocklists.length; i++) {
+                List<StockItem> stocklist = datedstocklists[i];
+                for (StockItem stock : stocklist) {
+                    String stockid = stock.getId();
+                    Double value = StockDao.getValue(stock, periodInt);
+                    if (value != null) {
+                        mapAdd(retMap, stockid, value);
+                    }
+                }
+            }
+        }
+        return retMap;
+    }
+
+    public static Map<String, Double[]> getArrSparse(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
 			Map<String, MarketData> marketdataMap) throws Exception {
-		Map<String, List<Double>> retMap = new HashMap();
+		Map<String, Double[]> retMap = new HashMap<>();
 		List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        //System.out.println("datstolen " + datedstocklists.length);
 		int index = 0;
         if (index >= 0) {
         	for (int i = index; i < datedstocklists.length; i++) {
@@ -84,9 +127,7 @@ public class StockDao {
         		for (StockItem stock : stocklist) {
         			String stockid = stock.getId();
         			Double value = StockDao.getValue(stock, periodInt);
-        			if (value != null) {
-        				mapAdd(retMap, stockid, value);
-        			}
+        			mapAdd(retMap, stockid, i, value, datedstocklists.length);
         		}
         	}
         }

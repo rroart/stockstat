@@ -5,3 +5,7 @@ spark dataframe for java
 distrib
 Pred algo test many and verif 
 stat/indic calc support for spark
+macd todo
+don't calculate indicators for outdated
+fixed left
+eureka notify

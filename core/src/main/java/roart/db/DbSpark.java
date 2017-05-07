@@ -4,8 +4,10 @@ import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.config.MyPropertyConfig;
 import roart.indicator.Indicator;
+import roart.indicator.IndicatorMACD;
 import roart.model.MetaItem;
 import roart.model.StockItem;
+import roart.util.ArraysUtil;
 import roart.util.Constants;
 import scala.Tuple2;
 import scala.collection.JavaConversions;
@@ -170,7 +172,8 @@ public class DbSpark {
         if (spark == null) {
             return null;
         }
-        System.out.println("running spark");
+        long time0 = System.currentTimeMillis();
+       //System.out.println("running spark");
         List<Row> rowList = new ArrayList<>();
         for (String id : listMap.keySet()) {
             List<Double> values = listMap.get(id);
@@ -186,7 +189,33 @@ public class DbSpark {
         //df.show();
         Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate(x.getAs("values"))));
         //System.out.println("m size " + m.size());
+        log.info("time calc " + (System.currentTimeMillis() - time0));
         return m;
+    }
+
+    public static Map<String, Object[]> doCalculationsArr(Map<String, Double[]> listMap, Indicator ind) {
+        if (spark == null) {
+            return null;
+        }
+        long time0 = System.currentTimeMillis();
+        System.out.println("running spark");
+        List<Row> rowList = new ArrayList<>();
+        for (String id : listMap.keySet()) {
+            Double[] values = listMap.get(id);
+            Row row = RowFactory.create(id, ArraysUtil.getArrayNonNullReverse(values));
+            rowList.add(row);
+        }
+        StructType schema = DataTypes
+                .createStructType(new StructField[] {
+                        DataTypes.createStructField("id", DataTypes.StringType, false),
+                        DataTypes.createStructField("values", DataTypes.createArrayType(DataTypes.DoubleType), false)});
+        
+        Dataset<Row> df = spark.createDataFrame(rowList, schema);
+        //df.show();
+        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate(x.getAs("values"))));
+        //System.out.println("m size " + m.size());
+        log.info("time calc " + (System.currentTimeMillis() - time0));
+       return m;
     }
 
     public static Dataset<Row> createDFfromMap(Map<double[], Double> listMap) {
@@ -255,7 +284,8 @@ public class DbSpark {
         return dataFrame;
     }
     
-    public static Map<String, Double[]> classify(Map<String, double[]> map, String modelStr, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap) {
+    public static Map<String, Double[]> classify(Map<String, double[]> map, int modelInt, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap) {
+        long time0 = System.currentTimeMillis();
         //List<double[]> arrList = new ArrayList<>();
         //arrList.add(array);
         Map<String, Double[]> retMap = new HashMap<>();
@@ -276,7 +306,7 @@ public class DbSpark {
             StructType schema = DataTypes.createStructType(fields);
              */
             //Dataset<Row> sentenceDF = spark.createDataFrame(jrdd, schema);
-            Model model = modelMap.get(modelStr+period+mapname);
+            Model model = modelMap.get(modelInt+period+mapname);
             if (model == null) {
                 return retMap;
             }
@@ -286,12 +316,14 @@ public class DbSpark {
                 String id = row.getAs("id");
                 Double predict = row.getAs("prediction");
                 Double prob = null;
+                if (IndicatorMACD.LOGISTICREGRESSION == modelInt) {
                 try {
                     DenseVector probvector = row.getAs("probability");
                     double[] probarray = probvector.values();
                     prob = probarray[predict.intValue()];
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
+                }
                 }
             //Map<Double, String> label = conf.labelsMap.get(language);
             //String cat = label.get(predict);
@@ -308,34 +340,40 @@ public class DbSpark {
             return retMap;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
+        } finally {
+            log.info("time classify model " + modelInt + " " + period + " " + map.size() + " " + (System.currentTimeMillis() - time0));            
         }
         return null;
     }
 
     private final static int CATS = 4;
     
-    public static void learntest(Map<double[], Double> map, String modelStr, int size, String period, String mapname, int outcomes) {
-        try {
-            if (spark == null) {
+    public static void learntest(Map<double[], Double> map, int modelInt, int size, String period, String mapname, int outcomes) {
+        long time0 = System.currentTimeMillis();
+           if (spark == null) {
                 return;
             }
             if (map.isEmpty()) {
                 return;
             }
-        Dataset<Row> data = createDFfromMap(map);
+            Map<Double, Long> counts =
+                    map.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));       
+           log.info("learning distribution " + counts);
+            try {
+             Dataset<Row> data = createDFfromMap(map);
         Dataset<Row>[] splits = data.randomSplit(new double[]{0.6, 0.4}, 1234);
         Dataset<Row> train = splits[0];
         Dataset<Row> test = splits[1];
         log.info("data size " + map.size());
         Model model = null;
-        if ("LogisticRegression".equals(modelStr)) {
+        if (IndicatorMACD.LOGISTICREGRESSION == modelInt) {
             LogisticRegression reg = new LogisticRegression();
             //reg.setLabelCol("label");
             reg.setMaxIter(5);
             reg.setRegParam(0.01);
             model = reg.fit(train);
         }
-        if ("MultilayerPerceptronClassifier".equals(modelStr)) {
+        if (IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER == modelInt) {
             //int[] layers = new int[]{size + 1, size + 1, size + 1, CATS + 1};
             //int[] layers = new int[]{size, size + 2, size + 4, CATS + 1};
             int[] layers = new int[]{size, outcomes + 1, outcomes + 1, outcomes + 1};
@@ -348,7 +386,7 @@ public class DbSpark {
                     .setMaxIter(100);
             model = trainer.fit(train);
         }
-        modelMap.put(modelStr+period+mapname, model);
+        modelMap.put(modelInt+period+mapname, model);
                     // compute accuracy on the test set                                         
                     Dataset<Row> result = model.transform(test);
                     //result.schema().toString();
@@ -358,17 +396,20 @@ public class DbSpark {
                     MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
                       .setMetricName("accuracy");
                     double eval = evaluator.evaluate(predictionAndLabels);
-                    log.info("Test set accuracy for " + mapname + " " + modelStr + " " + period + " = " + eval);
-                    accuracyMap.put(modelStr+period+mapname, eval);
+                    log.info("Test set accuracy for " + mapname + " " + modelInt + " " + period + " = " + eval);
+                    accuracyMap.put(modelInt+period+mapname, eval);
 
        
     } catch (Exception e) {
         log.error("Exception", e);
+    } finally {
+        log.info("time learn test model " + modelInt + " " + period + " " + map.size() + " " + (System.currentTimeMillis() - time0));
     }
     }
-    public static Double eval(String modelStr, String period, String mapname) {
-        System.out.println("str vs " + modelStr+period+mapname + " :" + accuracyMap.keySet());
-        return accuracyMap.get(modelStr+period+mapname);
+    
+    public static Double eval(int modelInt, String period, String mapname) {
+        //System.out.println("str vs " + modelStr+period+mapname + " :" + accuracyMap.keySet());
+        return accuracyMap.get(modelInt+period+mapname);
     }
 }
 

@@ -1,6 +1,7 @@
 package roart.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,13 @@ public class ArraysUtil {
         return i;
     }
 
+    private static int searchForwardNegative(double[] array, int i, int length) {
+        while (i < length && array[i] >= 0) {
+            i++;
+        }
+        return i;
+    }
+
     private int searchBackwardPositive(double[] array, int i) {
         while (i >= 0 && array[i] < 0) {
             i--;
@@ -41,7 +49,14 @@ public class ArraysUtil {
         return i;
     }
 
-    /**
+    private static int searchForwardPositive(double[] array, int i, int length) {
+        while (i < length && array[i] < 0)  {
+            i++;
+        }
+        return i;
+    }
+
+   /**
      * This will search an array, and return the gruoupings of positive and negative numbers
      * This returns an array of two maps, the first is for positive, the second for negative ranges.
      * The key is low value, while the value is the high value.
@@ -50,24 +65,28 @@ public class ArraysUtil {
      * @return a resulting array
      */
     
-    public static Map<Integer, Integer>[] searchForward(double[] array) {
+    public static Map<Integer, Integer>[] searchForward(double[] array, int maxlen) {
+        int length = array.length;
+        if (maxlen > 0) {
+            length = maxlen;
+        }
         Map<Integer, Integer>[] retmap = new HashMap[2];
         retmap[0] = new HashMap<>();
         retmap[1] = new HashMap<>();
         double prevval = array[0];
         int prev = 0;
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < length; i++) {
             if (prevval >= 0) {
-                i = searchForwardNegative(array, i);
+                i = searchForwardNegative(array, i, length);
                 retmap[0].put(prev, i - 1);
-                if (i < array.length) {
+                if (i < length) {
                     prevval = array[i];
                 }
                 prev = i;
            } else {
-                i = searchForwardPositive(array, i);                       
+                i = searchForwardPositive(array, i, length);                       
                 retmap[1].put(prev, i - 1);
-                if (i < array.length) {
+                if (i < length) {
                     prevval = array[i];
                 }
                 prev = i;
@@ -138,7 +157,44 @@ public class ArraysUtil {
         return count;
     }
 
-    private static int getArrayNonNull(List<Double> list, double[] values) {
+    static int getArrayNonNullReverse(Double[] list, double[] values) {
+        int count = 0;
+        boolean display = false;
+        List<Double> newList = new ArrayList<>();
+        for (int i = 0; i < list.length; i++) {
+            // TODO bounds check
+            Double val = list[i];
+            if (val != null && count < values.length) {
+                newList.add(val);
+                count++;
+                //values[count++] = val;
+            } 
+            if (val == null) {
+                display = true;
+            }
+        }
+        Collections.reverse(newList);
+        for (int i = 0; i < count; i++) {
+            values[i] = newList.get(i);
+        }
+        if (display) {
+            log.info("mydisplay " + list);
+        }
+        return count;
+    }
+
+    public static Double[] getArrayNonNullReverse(Double[] array) {
+        ArrayList<Double> list = new ArrayList<>(Arrays.asList(array));
+        list.removeAll(Collections.singleton(null)); 
+        if (list.size() != array.length) {
+            //System.out.println("shrink from " + array.length + " to " + list.size());
+        }
+        Collections.reverse(list);
+        Double[] newArray = new Double[list.size()];
+        return list.toArray(newArray);
+    }
+
+   private static int getArrayNonNull(List<Double> list, double[] values) {
     	int size = 0;
     	for (Double val : list) {
     		// TODO bounds check
@@ -218,6 +274,34 @@ public class ArraysUtil {
             retArr[i - start] = arr[i];
         }
         return retArr;
+    }
+    /**
+     * Get a sub part of Array
+     * 
+     * @param arr Array
+     * @param start start
+     * @param end end, inclusive
+     * @return sub part
+     */
+    
+    public static Double[] getSubInclusive(Double[] arr, int start, int end) {        
+        Double[] retArr = new Double[end - start + 1];
+        for (int i = start; i <= end; i++) {
+            retArr[i - start] = arr[i];
+        }
+        return retArr;
+    }
+    /**
+     * Get a sub part of Array
+     * 
+     * @param arr Array
+     * @param start start
+     * @param end end, exclusive
+     * @return sub part
+     */
+    
+    public static Double[] getSubExclusive(Double[] arr, int start, int end) {
+        return getSubInclusive(arr, start, end - 1);
     }
 }
 

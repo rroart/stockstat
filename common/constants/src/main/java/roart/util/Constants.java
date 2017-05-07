@@ -37,4 +37,6 @@ public static final String PRICE = "Price";
 public static final String INDEX = "Index";
 
 public static final String DELTA = "Δ";
+
+public static final String WEBBR = "<br/>"; 
 }
