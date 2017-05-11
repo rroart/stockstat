@@ -80,35 +80,35 @@ public class IndicatorMACD extends Indicator {
     }
 
     private int weightBuyHist() {
-        return 25;
+        return 40;
     }
 
     private int weightBuyHistDelta() {
-        return 25;
+        return 20;
     }
 
     private int weightBuyMacd() {
-        return 0;
+        return 20;
     }
 
     private int weightBuyMacdDelta() {
-        return 25;
+        return 20;
     }
 
     private int weightSellHist() {
-        return 25;
+        return 40;
     }
 
     private int weightSellHistDelta() {
-        return 25;
+        return 20;
     }
 
     private int weightSellMacd() {
-        return 0;
+        return 20;
     }
 
     private int weightSellMacdDelta() {
-        return 25;
+        return 20;
     }
 
     private boolean wantMLHist() {
