@@ -557,6 +557,32 @@ devoffs <- function() {
     }
 }
 
+getvalues <- function(market, id, mydate, days, myperiodtexts) {
+    tablemoveintervaldays <- 1
+    periodtexts <- getperiodtexts(market)
+    myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
+    for (i in 1:length(myperiodtexts)) {
+        periodtext <- myperiodtexts[i]
+        period <- match(periodtext, periodtexts)
+                                        #    cat("perind ", period)
+        stocks <- getstockmarket(allstocks, market)
+        listdate <- split(stocks, stocks$date)
+        listid <- split(stocks, stocks$id)
+        datedstocklists <- getdatedstocklists(listdate, mydate, days, tablemoveintervaldays)
+        stocklistperiod <- getlistsorted(datedstocklists, listid, listdate, days, tablemoveintervaldays, reverse=FALSE)
+        dflist <- list()
+        for (j in 1:days) {
+            df <- stocklistperiod[period, j][[1]]
+            df <- df[which(df$id == id),]
+            if (nrow(df) == 1) {
+                name <- df$name[[1]]
+                list11 <- df
+                print(sprintf("%3d %-35s %12s % 6.2f %s", i, strtrim(name,33), as.POSIXct(df$date[[i]], origin="1970-01-01"), listperiod(df, period, i), df$id[[i]]))
+            }
+        }
+    }
+}
+    
 getbottomgraph2 <- function(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) {
     periodtexts <- getperiodtexts(market)
     myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
