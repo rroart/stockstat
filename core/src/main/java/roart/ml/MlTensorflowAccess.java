@@ -176,51 +176,42 @@ public class MlTensorflowAccess extends MlAccess {
 
     @Override
     public int addTitles(Object[] objs, int retindex, String title, String key) {
-        if (IndicatorMACD.wantMCP() && IndicatorMACD.wantMLHist()) {
+        List<Integer> models = getModels();
+        for (Integer model : models) {
+            String modStr = null;
+            if (model.intValue() == 1) {
+                modStr="DNN";
+            } else {
+                modStr="L";
+            }
+            if (IndicatorMACD.wantMLMacd()) {
+            }
+
+        if (IndicatorMACD.wantMLHist()) {
             String mpc = "";
             String val = "";
+            String extraStr = "";
             //String mpc = "" + DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, title, "common");
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER, key, "common"));
-            objs[retindex++] = title + Constants.WEBBR + "DNNcomH "+val;
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER, key, "neg"));
-            objs[retindex++] = title + Constants.WEBBR + "DNNposH "+val;
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER, key, "neg"));
-            objs[retindex++] = title + Constants.WEBBR + "DNNnegH "+val;
+            val = "" + IndicatorMACD.roundme(eval(model, key, "common" + extraStr));
+            objs[retindex++] = title + Constants.WEBBR + modStr + "com" + extraStr + " "+val;
+            val = "" + IndicatorMACD.roundme(eval(model, key, "neg" + extraStr));
+            objs[retindex++] = title + Constants.WEBBR + modStr + "pos" + extraStr + " "+val;
+            val = "" + IndicatorMACD.roundme(eval(model, key, "neg" + extraStr));
+            objs[retindex++] = title + Constants.WEBBR + modStr + "neg" + extraStr + " "+val;
         }
-        if (IndicatorMACD.wantLR() && IndicatorMACD.wantMLHist()) {
+        if (IndicatorMACD.wantMLMacd()) {
+            String extraStr = "M";
             String val = "";
             //String lr = "" + DbSpark.eval("LogisticRegression ", title, "common");
             String lr = "";
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.LOGISTICREGRESSION, key, "common"));
-            objs[retindex++] = title + Constants.WEBBR + "LcomH "+val;
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.LOGISTICREGRESSION, key, "pos"));
-            objs[retindex++] = title + Constants.WEBBR + "LposH "+val;
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.LOGISTICREGRESSION, key, "neg"));
-            objs[retindex++] = title + Constants.WEBBR + "LnegH "+val;
-            //objs[retindex++] = title + Constants.WEBBR + "LR prob H";
-        }
-        if (IndicatorMACD.wantMCP() && IndicatorMACD.wantMLMacd()) {
-            String mpc = "";
-            String val = "";
-            //String mpc = "" + DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, title, "common");
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER, key, "commonM"));
-            objs[retindex++] = title + Constants.WEBBR + "DNNcomM "+val;
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER, key, "negM"));
-            objs[retindex++] = title + Constants.WEBBR + "DNNposM "+val;
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER, key, "negM"));
-            objs[retindex++] = title + Constants.WEBBR + "DNNnegM "+val;
-        }
-        if (IndicatorMACD.wantLR() && IndicatorMACD.wantMLMacd()) {
-            String val = "";
-            //String lr = "" + DbSpark.eval("LogisticRegression ", title, "common");
-            String lr = "";
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.LOGISTICREGRESSION, key, "commonM"));
-            objs[retindex++] = title + Constants.WEBBR + "LcomM "+val;
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.LOGISTICREGRESSION, key, "posM"));
-            objs[retindex++] = title + Constants.WEBBR + "LposM "+val;
-            val = "" + IndicatorMACD.roundme(eval(IndicatorMACD.LOGISTICREGRESSION, key, "negM"));
-            objs[retindex++] = title + Constants.WEBBR + "LnegM "+val;
+            val = "" + IndicatorMACD.roundme(eval(model, key, "common" + extraStr));
+            objs[retindex++] = title + Constants.WEBBR + modStr + "com" + extraStr + " "+val;
+            val = "" + IndicatorMACD.roundme(eval(model, key, "pos" + extraStr));
+            objs[retindex++] = title + Constants.WEBBR + modStr + "pos" + extraStr + " "+val;
+            val = "" + IndicatorMACD.roundme(eval(model, key, "neg" + extraStr));
+            objs[retindex++] = title + Constants.WEBBR + modStr + "neg" + extraStr + " "+val;
             //objs[retindex++] = title + Constants.WEBBR + "LR prob M ";
+        }
         }
         return retindex;
     }
