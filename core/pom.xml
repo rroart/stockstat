@@ -233,6 +233,11 @@
     <artifactId>mockito-all</artifactId>
     <version>1.10.19</version>
 </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-eureka</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
     </dependencies>
   <properties>
     <jetty.version>9.3.14.v20161028</jetty.version>

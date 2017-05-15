@@ -15,8 +15,10 @@ import org.apache.commons.math3.util.Pair;
 
 import com.tictactec.ta.lib.MInteger;
 
+import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.db.DbSpark;
+import roart.ml.MlDao;
 import roart.model.StockItem;
 import roart.service.ControlService;
 import roart.util.ArraysUtil;
@@ -63,61 +65,79 @@ public class IndicatorMACD extends Indicator {
         return 10;
     }
 
-    private boolean wantScore() {
+    public static  boolean wantScore() {
         return true;
     }
 
-    private boolean wantML() {
+    public static  boolean wantML() {
         return true;
     }
 
-    private boolean wantMCP() {
+    public static  boolean wantMLSpark() {
+        return false;
+    }
+
+    public static  boolean wantMLTensorflow() {
         return true;
     }
 
-    private boolean wantLR() {
+    public static  boolean wantMCP() {
         return true;
     }
 
-    private int weightBuyHist() {
+    public static  boolean wantLR() {
+        return true;
+    }
+
+    public static  boolean wantDNN() {
+        return true;
+    }
+
+    public static  boolean wantL() {
+        return true;
+    }
+
+    public static  int weightBuyHist() {
         return 40;
     }
 
-    private int weightBuyHistDelta() {
+    public static  int weightBuyHistDelta() {
         return 20;
     }
 
-    private int weightBuyMacd() {
+    public static  int weightBuyMacd() {
         return 20;
     }
 
-    private int weightBuyMacdDelta() {
+    public static  int weightBuyMacdDelta() {
         return 20;
     }
 
-    private int weightSellHist() {
+    public static  int weightSellHist() {
         return 40;
     }
 
-    private int weightSellHistDelta() {
+    public static  int weightSellHistDelta() {
         return 20;
     }
 
-    private int weightSellMacd() {
+    public static  int weightSellMacd() {
         return 20;
     }
 
-    private int weightSellMacdDelta() {
+    public static  int weightSellMacdDelta() {
         return 20;
     }
 
-    private boolean wantMLHist() {
+    public static  boolean wantMLHist() {
         return true;
     }
 
-    private boolean wantMLMacd() {
+    public static  boolean wantMLMacd() {
         return true;
     }
+
+    List<MlDao> mldaos = new ArrayList<>();
 
     public IndicatorMACD(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
@@ -125,6 +145,14 @@ public class IndicatorMACD extends Indicator {
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         this.key = title;
+        if (wantML()) {
+            if (wantMLSpark()) {
+                mldaos.add(new MlDao("spark"));
+            }
+            if (wantMLTensorflow()) {
+                mldaos.add(new MlDao("tensorflow"));
+            }
+        }
         fieldSize = fieldSize();
         calculateMomentums(conf, marketdatamap, periodDataMap, category);        
     }
@@ -242,6 +270,13 @@ public class IndicatorMACD extends Indicator {
             log.info("histlist " + histList);
             getBuySellRecommendations(macdList, histList, macdDList, histDList);
         }
+        Map<Integer, Map<String, Double[]>> commonIdTypeModelHistMap = new HashMap<>(); 
+        Map<Integer, Map<String, Double[]>> posIdTypeModelHistMap = new HashMap<>(); 
+        Map<Integer, Map<String, Double[]>> negIdTypeModelHistMap = new HashMap<>(); 
+        Map<Integer, Map<String, Double[]>> commonIdTypeModelMacdMap = new HashMap<>(); 
+        Map<Integer, Map<String, Double[]>> posIdTypeModelMacdMap = new HashMap<>(); 
+        Map<Integer, Map<String, Double[]>> negIdTypeModelMacdMap = new HashMap<>(); 
+        /*
         Map<String, Double[]> commonIdTypeMCPHistMap = null; 
         Map<String, Double[]> posIdTypeMCPHistMap = null; 
         Map<String, Double[]> negIdTypeMCPHistMap = null; 
@@ -254,36 +289,21 @@ public class IndicatorMACD extends Indicator {
         Map<String, Double[]> commonIdTypeLRMacdMap = null; 
         Map<String, Double[]> posIdTypeLRMacdMap = null; 
         Map<String, Double[]> negIdTypeLRMacdMap = null; 
+        */
         if (wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();
             try {
-                // TODO make OO of this
-                if (wantMLHist()) {
-                    if (wantMCP()) {
-                        int model = MULTILAYERPERCEPTRONCLASSIFIER;
-                        DbSpark.learntest(commonHistTypeMap, model, getDaysBeforeZero(), key, "common", 4);
-                        DbSpark.learntest(posHistTypeMap, model, getDaysBeforeZero(), key, "pos", 4);
-                        DbSpark.learntest(negHistTypeMap, model, getDaysBeforeZero(), key, "neg", 4);
-                    }
-                    if (wantLR()) {
-                        int model = LOGISTICREGRESSION;
-                        DbSpark.learntest(commonHistTypeMap, model, getDaysBeforeZero(), key, "common", 4);
-                        DbSpark.learntest(posHistTypeMap, model, getDaysBeforeZero(), key, "pos", 4);
-                        DbSpark.learntest(negHistTypeMap, model, getDaysBeforeZero(), key, "neg", 4);
-                    }
+                for (MlDao mldao : mldaos) {
+                    int model = 0;
+                    if (wantMLHist()) {
+                    mldao.learntest(commonHistTypeMap, model, getDaysBeforeZero(), key, "common", 4);
+                    mldao.learntest(posHistTypeMap, model, getDaysBeforeZero(), key, "pos", 4);
+                    mldao.learntest(negHistTypeMap, model, getDaysBeforeZero(), key, "neg", 4);
                 }
                 if (wantMLMacd()) {
-                    if (wantMCP()) {
-                        int model = MULTILAYERPERCEPTRONCLASSIFIER;
-                        DbSpark.learntest(commonMacdTypeMap, model, getDaysBeforeZero(), key, "commonM", 4);
-                        DbSpark.learntest(posMacdTypeMap, model, getDaysBeforeZero(), key, "posM", 4);
-                        DbSpark.learntest(negMacdTypeMap, model, getDaysBeforeZero(), key, "negM", 4);
-                    }
-                    if (wantLR()) {
-                        int model = LOGISTICREGRESSION;
-                        DbSpark.learntest(commonMacdTypeMap, model, getDaysBeforeZero(), key, "commonM", 4);
-                        DbSpark.learntest(posMacdTypeMap, model, getDaysBeforeZero(), key, "posM", 4);
-                        DbSpark.learntest(negMacdTypeMap, model, getDaysBeforeZero(), key, "negM", 4);
+                        mldao.learntest(commonMacdTypeMap, model, getDaysBeforeZero(), key, "commonM", 4);
+                        mldao.learntest(posMacdTypeMap, model, getDaysBeforeZero(), key, "posM", 4);
+                        mldao.learntest(negMacdTypeMap, model, getDaysBeforeZero(), key, "negM", 4);
                     }
                 }
             } catch (Exception e) {
@@ -317,33 +337,17 @@ public class IndicatorMACD extends Indicator {
                     getMlMappings("Macd", labelMapShort, commonIdMacdMap, posIdMacdMap, negIdMacdMap, id, macdarr, endOfArray, trunclist);
                 }
             }
-            // TODO make OO...
+            for (MlDao mldao : mldaos) {
+                int model = 0;
             if (wantMLHist()) {
-                if (wantMCP()) {
-                    int model = MULTILAYERPERCEPTRONCLASSIFIER;
-                    commonIdTypeMCPHistMap = DbSpark.classify(commonIdHistMap, model, getDaysBeforeZero(), key, "common", 4, labelMapShort);
-                    posIdTypeMCPHistMap = DbSpark.classify(posIdHistMap, model, getDaysBeforeZero(), key, "pos", 4, labelMapShort);
-                    negIdTypeMCPHistMap = DbSpark.classify(negIdHistMap, model, getDaysBeforeZero(), key, "neg", 4, labelMapShort);
-                }
-                if (wantLR()) {
-                    int model = LOGISTICREGRESSION;
-                    commomIdTypeLRHistMap = DbSpark.classify(commonIdHistMap, model, getDaysBeforeZero(), key, "common", 4, labelMapShort);
-                    posIdTypeLRHistMap = DbSpark.classify(posIdHistMap, model, getDaysBeforeZero(), key, "pos", 4, labelMapShort);
-                    negIdTypeLRHistMap = DbSpark.classify(negIdHistMap, model, getDaysBeforeZero(), key, "neg", 4, labelMapShort);
-                }
+                    commonIdTypeModelHistMap = mldao.classify(commonIdHistMap, model, getDaysBeforeZero(), key, "common", 4, labelMapShort);
+                    posIdTypeModelHistMap = mldao.classify(posIdHistMap, model, getDaysBeforeZero(), key, "pos", 4, labelMapShort);
+                    negIdTypeModelHistMap = mldao.classify(negIdHistMap, model, getDaysBeforeZero(), key, "neg", 4, labelMapShort);
             }
             if (wantMLMacd()) {
-                if (wantMCP()) {
-                    int model = MULTILAYERPERCEPTRONCLASSIFIER;
-                    commonIdTypeMCPMacdMap = DbSpark.classify(commonIdMacdMap, model, getDaysBeforeZero(), key, "commonM", 4, labelMapShort);
-                    posIdTypeMCPMacdMap = DbSpark.classify(posIdMacdMap, model, getDaysBeforeZero(), key, "posM", 4, labelMapShort);
-                    negIdTypeMCPMacdMap = DbSpark.classify(negIdMacdMap, model, getDaysBeforeZero(), key, "negM", 4, labelMapShort);
-                }
-                if (wantLR()) {
-                    int model = LOGISTICREGRESSION;
-                    commonIdTypeLRMacdMap = DbSpark.classify(commonIdMacdMap, model, getDaysBeforeZero(), key, "commonM", 4, labelMapShort);
-                    posIdTypeLRMacdMap = DbSpark.classify(posIdMacdMap, model, getDaysBeforeZero(), key, "posM", 4, labelMapShort);
-                    negIdTypeLRMacdMap = DbSpark.classify(negIdMacdMap, model, getDaysBeforeZero(), key, "negM", 4, labelMapShort);
+                    commonIdTypeModelMacdMap = mldao.classify(commonIdMacdMap, model, getDaysBeforeZero(), key, "commonM", 4, labelMapShort);
+                    posIdTypeModelMacdMap = mldao.classify(posIdMacdMap, model, getDaysBeforeZero(), key, "posM", 4, labelMapShort);
+                    negIdTypeModelMacdMap = mldao.classify(negIdMacdMap, model, getDaysBeforeZero(), key, "negM", 4, labelMapShort);
                 }
             }
         }
@@ -367,55 +371,16 @@ public class IndicatorMACD extends Indicator {
                 Map<Double, String> labelMapShort = createLabelMapShort();
                 //int momidx = 6;
                 Double[] type;
-                if (wantMLHist()) {
-                    if (wantMCP()) {
-                        type = commonIdTypeMCPHistMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        type = posIdTypeMCPHistMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        type = negIdTypeMCPHistMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
+                for (MlDao mldao : mldaos) {
+                    for (MlDao dao : mldaos) {
+                        retindex = dao.addResults(fields, retindex, id,
+                        commonIdTypeModelHistMap,
+                        posIdTypeModelHistMap,
+                        negIdTypeModelHistMap,
+                        commonIdTypeModelMacdMap,
+                        posIdTypeModelMacdMap,
+                        negIdTypeModelMacdMap);
                     }
-                    if (wantLR()) {
-                        type = commomIdTypeLRHistMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        type = posIdTypeLRHistMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        type = negIdTypeLRHistMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        fields[retindex++] = type != null ? type[1] : null;
-                    }  
-                }
-                if (wantMLMacd()) {
-                    if (wantMCP()) {
-                        type = commonIdTypeMCPMacdMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        type = posIdTypeMCPMacdMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        type = negIdTypeMCPMacdMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                    }
-                    if (wantLR()) {
-                        type = commonIdTypeLRMacdMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        type = posIdTypeLRMacdMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        type = negIdTypeLRMacdMap.get(id);
-                        fields[retindex++] = type != null ? labelMapShort.get(type[0]) : null;
-                        printout(type, id, labelMapShort);
-                        fields[retindex++] = type != null ? type[1] : null;
-                    }  
                 }
             }
         }
@@ -718,7 +683,7 @@ public class IndicatorMACD extends Indicator {
         }
     }
 
-    private void printout(Double[] type, String id, Map<Double, String> labelMapShort) {
+    public static void printout(Double[] type, String id, Map<Double, String> labelMapShort) {
         if (type != null) {
             //System.out.println("Type " + labelMapShort.get(type[0]) + " id " + id);
         }
@@ -742,7 +707,7 @@ public class IndicatorMACD extends Indicator {
         return labelMap1;
     }
 
-    private Map<Double, String> createLabelMapShort() {
+    public static Map<Double, String> createLabelMapShort() {
         Map<Double, String> labelMap1 = new HashMap<>();
         labelMap1.put(1.0, "TP");
         labelMap1.put(2.0, "FP");
@@ -814,58 +779,15 @@ public class IndicatorMACD extends Indicator {
             objs[retindex++] = title + Constants.WEBBR + "sell";
         }
         // TODO make OO of this
-        if (wantMCP() && wantMLHist()) {
-            String mpc = "";
-            String val = "";
-            //String mpc = "" + DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, title, "common");
-            val = "" + roundme(DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, key, "common"));
-            objs[retindex++] = title + Constants.WEBBR + "MPCcomH "+val;
-            val = "" + roundme(DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, key, "neg"));
-            objs[retindex++] = title + Constants.WEBBR + "MPCposH "+val;
-            val = "" + roundme(DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, key, "neg"));
-            objs[retindex++] = title + Constants.WEBBR + "MPCnegH "+val;
-        }
-        if (wantLR() && wantMLHist()) {
-            String val = "";
-            //String lr = "" + DbSpark.eval("LogisticRegression ", title, "common");
-            String lr = "";
-            val = "" + roundme(DbSpark.eval(LOGISTICREGRESSION, key, "common"));
-            objs[retindex++] = title + Constants.WEBBR + "LRcomH "+val;
-            val = "" + roundme(DbSpark.eval(LOGISTICREGRESSION, key, "pos"));
-            objs[retindex++] = title + Constants.WEBBR + "LRposH "+val;
-            val = "" + roundme(DbSpark.eval(LOGISTICREGRESSION, key, "neg"));
-            objs[retindex++] = title + Constants.WEBBR + "LRnegH "+val;
-            objs[retindex++] = title + Constants.WEBBR + "LR prob H";
-        }
-        if (wantMCP() && wantMLMacd()) {
-            String mpc = "";
-            String val = "";
-            //String mpc = "" + DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, title, "common");
-            val = "" + roundme(DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, key, "commonM"));
-            objs[retindex++] = title + Constants.WEBBR + "MPCcomM "+val;
-            val = "" + roundme(DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, key, "negM"));
-            objs[retindex++] = title + Constants.WEBBR + "MPCposM "+val;
-            val = "" + roundme(DbSpark.eval(MULTILAYERPERCEPTRONCLASSIFIER, key, "negM"));
-            objs[retindex++] = title + Constants.WEBBR + "MPCnegM "+val;
-        }
-        if (wantLR() && wantMLMacd()) {
-            String val = "";
-            //String lr = "" + DbSpark.eval("LogisticRegression ", title, "common");
-            String lr = "";
-            val = "" + roundme(DbSpark.eval(LOGISTICREGRESSION, key, "commonM"));
-            objs[retindex++] = title + Constants.WEBBR + "LRcomM "+val;
-            val = "" + roundme(DbSpark.eval(LOGISTICREGRESSION, key, "posM"));
-            objs[retindex++] = title + Constants.WEBBR + "LRposM "+val;
-            val = "" + roundme(DbSpark.eval(LOGISTICREGRESSION, key, "negM"));
-            objs[retindex++] = title + Constants.WEBBR + "LRnegM "+val;
-            objs[retindex++] = title + Constants.WEBBR + "LR prob M ";
+        for (MlDao dao : mldaos) {
+            retindex = dao.addTitles(objs, retindex, title, key);
         }
         //emptyField = new Double[size];
         log.info("fieldsizet " + retindex);
         return objs;
     }
 
-    private String roundme(Double eval) {
+    public static String roundme(Double eval) {
         if (eval == null) {
             return null;
         }
@@ -884,21 +806,8 @@ public class IndicatorMACD extends Indicator {
         if (wantScore()) {
             size += 2;
         }
-        if (wantMLHist()) {
-            if (wantMCP()) {
-                size += 3;
-            }
-            if (wantLR()) {
-                size += 4;
-            }
-        }
-        if (wantMLMacd()) {
-            if (wantMCP()) {
-                size += 3;
-            }
-            if (wantLR()) {
-                size += 4;
-            }
+        for (MlDao dao : mldaos) {
+            size += dao.getSizes();
         }
         emptyField = new Object[size];
         log.info("fieldsizet " + size);
