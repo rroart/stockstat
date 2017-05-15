@@ -150,7 +150,7 @@ class HttpService:
 
         print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
         global dicteval
-        dicteval[str(myobj.modelInt) + myobj.period + myobj.mapname] = int(accuracy_score)
+        dicteval[str(myobj.modelInt) + myobj.period + myobj.mapname] = float(accuracy_score)
         print("seteval" + str(myobj.modelInt) + myobj.period + myobj.mapname)
         
         dt = datetime.now()
