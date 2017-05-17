@@ -13,6 +13,8 @@ public abstract class MLAccess {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    protected List<MLModel> models;
+    
     public abstract void learntest(Indicator indicator, Map<double[], Double> map, MLModel model, int size, String period, String mapname, int outcomes);
 
     public abstract Double eval(int modelInt, String period, String mapname);

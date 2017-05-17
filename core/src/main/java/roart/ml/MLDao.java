@@ -77,7 +77,7 @@ public class MLDao {
     //public int addTitles(Object[] objs, int retindex, String title, String key, String subType, List<Integer> typeList, Map<Integer, String> mapTypes, MLDao dao) {
     public int addTitles(Object[] objs, int retindex, Indicator indicator, String title, String key, String subType) {
         for (MLModel model : getModels()) {
-            retindex += model.addTitles(objs, retindex, indicator, title, key, subType, null, null, this);
+            retindex = model.addTitles(objs, retindex, indicator, title, key, subType, null, null, this);
         }
         return retindex;
     }
@@ -88,7 +88,7 @@ public class MLDao {
 
     public int addResults(Object[] objs, int retindex, String id, MLModel model, Indicator indicator, Map<String, Map<String, Double[]>> mapResult, Map<Double, String> labelMapShort) {
         //for (MLModel model : getModels()) {
-            retindex += model.addResults(objs, retindex, id, model, indicator, mapResult, labelMapShort);
+            retindex = model.addResults(objs, retindex, id, model, indicator, mapResult, labelMapShort);
         //}
             return retindex;
     }

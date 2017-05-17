@@ -146,6 +146,7 @@ public class IndicatorMACD extends Indicator {
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         this.key = title;
+        makeWantedSubTypes();
         makeMapTypes();
         if (wantML()) {
             if (wantMLSpark()) {
@@ -227,17 +228,20 @@ public class IndicatorMACD extends Indicator {
     private String NEGTYPESTR = "neg";
     private String POSTYPESTR = "pos";
     
-    private List<MacdSubType> wantedSubTypes() {
-        List<MacdSubType> retList = new ArrayList<>();
-        if (wantMLHist()) {
-            retList.add(new MacdSubTypeHist());
-        }
-        if (wantMLMacd()) {
-            retList.add(new MacdSubTypeMacd());
-        }
-        return retList;
-    }
+    private List<MacdSubType> wantedSubTypes = new ArrayList<>();
     
+   private List<MacdSubType> wantedSubTypes() {
+          return wantedSubTypes;
+    }
+  
+   private void makeWantedSubTypes() {
+       if (wantMLHist()) {
+           wantedSubTypes.add(new MacdSubTypeHist());
+       }
+       if (wantMLMacd()) {
+           wantedSubTypes.add(new MacdSubTypeMacd());
+       }
+   }
     // TODO make an oo version of this
     private void calculateMomentums(MyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category) throws Exception {
@@ -482,7 +486,7 @@ public class IndicatorMACD extends Indicator {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
                             Map<String, double[]> map = mapIdMap.get(mapName);
-                            Map<String, Double[]> classifyResult = mldao.classify(this, map, null, getDaysBeforeZero(), key, mapName, 4, labelMapShort);
+                            Map<String, Double[]> classifyResult = mldao.classify(this, map, model, getDaysBeforeZero(), key, mapName, 4, labelMapShort);
                             mapResult2.put(mapType, classifyResult);
                         }
                         mapResult1.put(model, mapResult2);
@@ -514,15 +518,17 @@ public class IndicatorMACD extends Indicator {
                 List<MacdSubType> subTypes2 = wantedSubTypes();
                 for (MacdSubType subType : subTypes2) {
                     Map<MLModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
+                    System.out.println("mapget " + subType + " " + mapResult.keySet());
                     for (MLDao mldao : mldaos) {
                         for (MLModel model : mldao.getModels()) {
                             Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
-                            for (int mapTypeInt : getMapTypeList()) {
-                                String mapType = mapTypes.get(mapTypeInt);
-                                Map<String, Double[]> mapResult3 = mapResult2.get(mapType);
-                                String mapName = subType.getType() + mapType;
+                            //for (int mapTypeInt : getMapTypeList()) {
+                                //String mapType = mapTypes.get(mapTypeInt);
+                                //Map<String, Double[]> mapResult3 = mapResult2.get(mapType);
+                                //String mapName = subType.getType() + mapType;
+                                System.out.println("fields " + fields.length + " " + retindex);
                                 retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
-                            }
+                            //}
                         }   
                     }
                 }
@@ -999,7 +1005,7 @@ public class IndicatorMACD extends Indicator {
                 for (int mapTypeInt : getMapTypeList()) {
                     String mapType = mapTypes.get(mapTypeInt);
                     String mapName = subType.getType() + mapType;
-                    retindex += mldao.addTitles(objs, retindex, this, title, key, subType.getName());
+                    retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getName());
                 }
             }
         }

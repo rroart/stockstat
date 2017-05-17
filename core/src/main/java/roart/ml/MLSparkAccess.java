@@ -20,6 +20,20 @@ public class MLSparkAccess extends MLAccess {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
+	public MLSparkAccess() {
+        findModels();	    
+	}
+    private void findModels() {
+        models = new ArrayList<>();
+        if (IndicatorMACD.wantDNN()) {
+            MLModel model = new MLSparkMCPModel();
+            models.add(model);
+        }
+        if (IndicatorMACD.wantL()) {
+            MLModel model = new MLSparkLRModel();
+            models.add(model);
+        }
+    }
     @Override
     public void learntest(Indicator indicator, Map<double[], Double> map, MLModel model, int size, String period,
             String mapname, int outcomes) {
@@ -47,15 +61,6 @@ public class MLSparkAccess extends MLAccess {
 
     @Override
     public List<MLModel> getModels() {
-        List<MLModel> models = new ArrayList<>();
-        if (IndicatorMACD.wantDNN()) {
-            MLModel model = new MLSparkMCPModel();
-            models.add(model);
-        }
-        if (IndicatorMACD.wantL()) {
-            MLModel model = new MLSparkLRModel();
-            models.add(model);
-        }
         return models;
     }
 

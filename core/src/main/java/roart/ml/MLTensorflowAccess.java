@@ -22,6 +22,22 @@ public class MLTensorflowAccess extends MLAccess {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
+	public MLTensorflowAccess() {
+	    findModels();
+	}
+	
+	private void findModels() {
+        models = new ArrayList<>();
+        if (IndicatorMACD.wantDNN()) {
+            MLModel model = new MLTensorflowDNNModel();
+            models.add(model);
+        }
+        if (IndicatorMACD.wantL()) {
+            MLModel model = new MLTensorflowLModel();
+            models.add(model);
+        }	    
+	}
+	
     @Override
     public void learntest(Indicator indicator, Map<double[], Double> map, MLModel model, int size, String period, String mapname,
             int outcomes) {
@@ -33,15 +49,6 @@ public class MLTensorflowAccess extends MLAccess {
 
     @Override
     public List<MLModel> getModels() {
-        List<MLModel> models = new ArrayList<>();
-        if (IndicatorMACD.wantDNN()) {
-            MLModel model = new MLTensorflowDNNModel();
-            models.add(model);
-        }
-        if (IndicatorMACD.wantL()) {
-            MLModel model = new MLTensorflowLModel();
-            models.add(model);
-        }
         return models;
     }
 
