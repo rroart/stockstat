@@ -23,7 +23,7 @@ public abstract class MLModel {
             String val = "";
             //String lr = "" + DbSpark.eval("LogisticRegression ", title, "common");
             String lr = "";
-            val = "" + roundme(dao.eval(getId(), key, mapType));
+            val = "" + roundme(dao.eval(getId(), key, subType + mapType));
             objs[retindex++] = title + Constants.WEBBR +  subType + getName() + mapType +val;
         }
         return retindex;

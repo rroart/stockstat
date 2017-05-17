@@ -98,6 +98,7 @@ public class MLTensorflowAccess extends MLAccess {
         param.period = period;
         param.mapname = mapname;
         param.outcomes = outcomes;
+        log.info("evalin " + param.modelInt + period + mapname);
         LearnTest test = EurekaUtil.sendMe(LearnTest.class, param, "http://localhost:8000/learntest");
         System.out.println("test " + test.outcomes);
     }
@@ -108,6 +109,7 @@ public class MLTensorflowAccess extends MLAccess {
         param.modelInt = modelInt;
         param.period = period;
         param.mapname = mapname;
+        log.info("evalout " + modelInt + period + mapname);
         LearnTest test = EurekaUtil.sendMe(LearnTest.class, param, "http://localhost:8000/eval");
         return test.prob;
     }

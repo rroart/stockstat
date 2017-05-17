@@ -1002,11 +1002,11 @@ public class IndicatorMACD extends Indicator {
         List<MacdSubType> subTypes = wantedSubTypes();
         for (MacdSubType subType : subTypes) {
             for (MLDao mldao : mldaos) {
-                for (int mapTypeInt : getMapTypeList()) {
-                    String mapType = mapTypes.get(mapTypeInt);
-                    String mapName = subType.getType() + mapType;
-                    retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getName());
-                }
+                //for (int mapTypeInt : getMapTypeList()) {
+                    //String mapType = mapTypes.get(mapTypeInt);
+                    //String mapName = subType.getType() + mapType;
+                    retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
+                //}
             }
         }
         //emptyField = new Double[size];
