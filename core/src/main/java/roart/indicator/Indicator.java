@@ -1,5 +1,8 @@
 package roart.indicator;
 
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +34,14 @@ public abstract class Indicator {
     abstract public Object[] getResultItem(StockItem stock);
 
     public Object calculate(Object as) {
+        return null;
+    }
+
+    public List<Integer> getTypeList() {
+        return null;
+    }
+
+    public Map<Integer, String> getMapTypes() {
         return null;
     }
 
