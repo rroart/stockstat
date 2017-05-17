@@ -393,11 +393,10 @@ public class IndicatorMACD extends Indicator {
             try {
                 List<MacdSubType> subTypes = wantedSubTypes();
                 for (MacdSubType subType : subTypes) {
-
                     for (MLDao mldao : mldaos) {
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
-                            String mapName = subType + mapType;
+                            String mapName = subType.getType() + mapType;
                             System.out.println("mapget " + mapName);
                            Map<double[], Double> map = mapMap.get(mapName);
                             mldao.learntest(this, map, null, getDaysBeforeZero(), key, mapName, 4);  
@@ -481,7 +480,7 @@ public class IndicatorMACD extends Indicator {
                     for (MLModel model : mldao.getModels()) {
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
-                            String mapName = subType + mapType;
+                            String mapName = subType.getType() + mapType;
                             Map<String, double[]> map = mapIdMap.get(mapName);
                             Map<String, Double[]> classifyResult = mldao.classify(this, map, null, getDaysBeforeZero(), key, mapName, 4, labelMapShort);
                             mapResult2.put(mapType, classifyResult);
@@ -521,7 +520,7 @@ public class IndicatorMACD extends Indicator {
                             for (int mapTypeInt : getMapTypeList()) {
                                 String mapType = mapTypes.get(mapTypeInt);
                                 Map<String, Double[]> mapResult3 = mapResult2.get(mapType);
-                                String mapName = subType + mapType;
+                                String mapName = subType.getType() + mapType;
                                 retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
                             }
                         }   
@@ -999,7 +998,7 @@ public class IndicatorMACD extends Indicator {
             for (MLDao mldao : mldaos) {
                 for (int mapTypeInt : getMapTypeList()) {
                     String mapType = mapTypes.get(mapTypeInt);
-                    String mapName = subType + mapType;
+                    String mapName = subType.getType() + mapType;
                     retindex += mldao.addTitles(objs, retindex, this, title, key, subType.getName());
                 }
             }
