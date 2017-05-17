@@ -45,7 +45,7 @@ public class MLSparkLRModel  extends MLSparkModel {
             String mapType = mapTypes.get(mapTypeInt);
             Map<String, Double[]> resultMap1 = mapResult.get(mapType);
             Double[] type = resultMap1.get(id);
-            fields[retindex++] = type != null ? labelMapShort.get(type[1]) : null;
+            fields[retindex++] = type != null ? type[1] : null;
         }
                 
                 return retindex;
