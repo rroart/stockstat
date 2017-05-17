@@ -9,9 +9,9 @@ import roart.indicator.IndicatorMACD;
 import roart.util.Constants;
 
 public abstract class MLModel {
-    public int id;
+    public abstract int getId();
     
-    public String name;
+    public abstract String getName();
     
     //public abstract int addTitles(Object[] objs, int retindex, String title, String key, String subType, List<Integer> typeList, Map<Integer, String> mapTypes, MLDao dao);
     //@Override
@@ -23,8 +23,8 @@ public abstract class MLModel {
             String val = "";
             //String lr = "" + DbSpark.eval("LogisticRegression ", title, "common");
             String lr = "";
-            val = "" + roundme(dao.eval(id, key, mapType));
-            objs[retindex++] = title + Constants.WEBBR +  subType + name + mapType +val;
+            val = "" + roundme(dao.eval(getId(), key, mapType));
+            objs[retindex++] = title + Constants.WEBBR +  subType + getName() + mapType +val;
         }
         return retindex;
     }

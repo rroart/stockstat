@@ -7,6 +7,12 @@ import roart.indicator.IndicatorMACD;
 import roart.util.Constants;
 
 public class MLTensorflowLModel  extends MLTensorflowModel {
-    public int id = 2;
-    public String name = "L";
+    @Override
+    public int getId() {
+        return 2;
+    }
+    @Override
+    public String getName() {
+        return "L";
+    }
 }

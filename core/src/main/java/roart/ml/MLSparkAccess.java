@@ -25,7 +25,7 @@ public class MLSparkAccess extends MLAccess {
             String mapname, int outcomes) {
         //List<MLModel> models = model.getModels();
         //for (MLModel modelInt : models) {
-       DbSpark.learntest(map, model.id, size, period, mapname, outcomes);       
+       DbSpark.learntest(map, model.getId(), size, period, mapname, outcomes);       
     //}
     }
 
@@ -40,7 +40,7 @@ public class MLSparkAccess extends MLAccess {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         //List<MLModel> models = getModels();
         //for (MLModel modelInt : models) {
-         return DbSpark.classify(map, new Integer(model.id), size, period, mapname, outcomes, shortMap);
+         return DbSpark.classify(map, new Integer(model.getId()), size, period, mapname, outcomes, shortMap);
         //}
         //return retMap;
     }

@@ -86,7 +86,7 @@ public class MLTensorflowAccess extends MLAccess {
         param.array = objobj;
         param.cat = cat;
         param.listlist = listlist;
-        param.modelInt = model.id;
+        param.modelInt = model.getId();
         param.size = size;
         param.period = period;
         param.mapname = mapname;
@@ -139,7 +139,7 @@ public class MLTensorflowAccess extends MLAccess {
             retList.add(key);
         }
         param.array = objobj;
-        param.modelInt = model.id;
+        param.modelInt = model.getId();
         param.size = size;
         param.period = period;
         param.mapname = mapname;

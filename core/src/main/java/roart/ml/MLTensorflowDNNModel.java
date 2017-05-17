@@ -1,6 +1,12 @@
 package roart.ml;
 
 public class MLTensorflowDNNModel  extends MLTensorflowModel {
-    public int id = 1;
-    public String name = "DNN";
+    @Override
+   public int getId() {
+        return 1;
+    }
+    @Override
+   public String getName() {
+        return "DNN";
+    }
 }

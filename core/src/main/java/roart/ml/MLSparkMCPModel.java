@@ -1,7 +1,13 @@
 package roart.ml;
 
 public  class MLSparkMCPModel  extends MLSparkModel {
-    public int id = 1;
-    public String name = "MCP";
+    @Override
+    public int getId() {
+        return 1;
+    }
+    @Override
+    public String getName() {
+        return "MCP";
+    }
 
 }

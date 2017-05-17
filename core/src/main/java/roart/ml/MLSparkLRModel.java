@@ -8,8 +8,14 @@ import roart.indicator.IndicatorMACD;
 import roart.util.Constants;
 
 public class MLSparkLRModel  extends MLSparkModel {
-    public int id = 2;
-    public String name = "LR";
+    @Override
+    public int getId() {
+        return 2;
+    }
+    @Override
+    public String getName() {
+        return "LR";
+    }
 
     @Override
     public int addTitles(Object[] objs, int retindex, Indicator indicator, String title, String key, String subType, List<Integer> typeList0, Map<Integer, String> mapTypes0, MLDao dao) {
@@ -23,7 +29,7 @@ public class MLSparkLRModel  extends MLSparkModel {
             //String lr = "" + DbSpark.eval("LogisticRegression ", title, "common");
             String lr = "";
             //val = "" + roundme(dao.eval(id, key, mapType));
-            objs[retindex++] = title + Constants.WEBBR +  subType + name + mapType + " prob ";
+            objs[retindex++] = title + Constants.WEBBR +  subType + getName() + mapType + " prob ";
         }
         return retindex;
     }

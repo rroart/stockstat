@@ -160,22 +160,39 @@ public class IndicatorMACD extends Indicator {
     }
 
     private abstract class MacdSubType {
-        private String type;
-        private String name;
-        private int arrIdx;
+        public abstract  String getType();
+        public abstract  String getName();
+        public abstract  int getArrIdx();
     }
     
     private class MacdSubTypeHist extends MacdSubType {
-        private String type = "H";
-        private String name = "Hist";
-       private int arrIdx = 2;
+        @Override
+        public String getType() {
+            return "H";
+        }
+        @Override
+        public String getName() {
+            return "Hist";
+        }
+        @Override
+       public int getArrIdx() {
+            return 2;
+        }
     }
     
     private class MacdSubTypeMacd extends MacdSubType {
-        private String type = "M";
-        private String name = "Macd";
-        private int arrIdx = 0;
-        
+        @Override
+        public String getType() {
+            return "M";
+        }
+        @Override
+        public String getName() {
+            return "Macd";
+        }
+        @Override
+       public int getArrIdx() {
+            return 0;
+        }
     }
 
     @Override
@@ -319,10 +336,10 @@ public class IndicatorMACD extends Indicator {
                     if (endOfArray.value > 0) {
                         List<MacdSubType> subTypes = wantedSubTypes();
                         for (MacdSubType subType : subTypes) {
-                            double[] aMacdArray = (double[]) objs[subType.arrIdx];
+                            double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
                             Map<Integer, Integer>[] map = ArraysUtil.searchForward(aMacdArray, endOfArray.value);
-                            getPosNegMap(mapMap, subType.type, CMNTYPESTR, POSTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[0], labelFN, labelTN);
-                            getPosNegMap(mapMap, subType.type, CMNTYPESTR, NEGTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[1], labelTP, labelFP);
+                            getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, POSTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[0], labelFN, labelTN);
+                            getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, NEGTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[1], labelTP, labelFP);
                        }
                         /*
                         if (wantMLHist()) {
@@ -381,7 +398,8 @@ public class IndicatorMACD extends Indicator {
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType + mapType;
-                            Map<double[], Double> map = mapMap.get(mapName);
+                            System.out.println("mapget " + mapName);
+                           Map<double[], Double> map = mapMap.get(mapName);
                             mldao.learntest(this, map, null, getDaysBeforeZero(), key, mapName, 4);  
                         }
                     }
@@ -429,8 +447,8 @@ public class IndicatorMACD extends Indicator {
                 }
                 List<MacdSubType> subTypes = wantedSubTypes();
                 for (MacdSubType subType : subTypes) {
-                    double[] aMacdArray = (double[]) objs[subType.arrIdx];
-                    getMlMappings(subType.name, subType.type, labelMapShort, mapIdMap, id, aMacdArray, endOfArray, trunclist);
+                    double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
+                    getMlMappings(subType.getName(), subType.getType(), labelMapShort, mapIdMap, id, aMacdArray, endOfArray, trunclist);
                 }
                 /*
                 if (wantMLMacd()) {
@@ -762,6 +780,7 @@ public class IndicatorMACD extends Indicator {
         Map<K, V> map = mapMap.get(key);
         if (map == null) {
             map = new HashMap<>();
+            System.out.println("mapput " + key);
             mapMap.put(key, map);
         }
         return map;
@@ -981,7 +1000,7 @@ public class IndicatorMACD extends Indicator {
                 for (int mapTypeInt : getMapTypeList()) {
                     String mapType = mapTypes.get(mapTypeInt);
                     String mapName = subType + mapType;
-                    retindex += mldao.addTitles(objs, retindex, this, title, key, subType.name);
+                    retindex += mldao.addTitles(objs, retindex, this, title, key, subType.getName());
                 }
             }
         }
