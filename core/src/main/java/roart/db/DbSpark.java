@@ -193,7 +193,7 @@ public class DbSpark {
         return m;
     }
 
-    public static Map<String, Object[]> doCalculationsArr(Map<String, Double[]> listMap, Indicator ind) {
+    public static Map<String, Object[]> doCalculationsArr(Map<String, Double[]> listMap, String key, Indicator ind) {
         if (spark == null) {
             return null;
         }
@@ -202,7 +202,12 @@ public class DbSpark {
         List<Row> rowList = new ArrayList<>();
         for (String id : listMap.keySet()) {
             Double[] values = listMap.get(id);
-            Row row = RowFactory.create(id, ArraysUtil.getArrayNonNullReverse(values));
+            values = ArraysUtil.getArrayNonNullReverse(values);
+            // TODO !!!
+            if (IndicatorMACD.wantPercentizedPriceIndex()) {
+           values = IndicatorMACD.getPercentizedPriceIndex(values, key);
+            }
+            Row row = RowFactory.create(id, values);
             rowList.add(row);
         }
         StructType schema = DataTypes

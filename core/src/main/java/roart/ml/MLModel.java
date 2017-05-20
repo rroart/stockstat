@@ -58,4 +58,6 @@ public abstract class MLModel {
         return typeList.size();
     }
 
+    public abstract String getEngineName();
+
 }

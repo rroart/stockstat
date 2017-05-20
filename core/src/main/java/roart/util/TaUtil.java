@@ -504,6 +504,12 @@ public class TaUtil {
 		return size;
 	}
 
+	public static final int IDXMACD = 0;
+	public static final int IDXSIGN = 1;
+	public static final int IDXHIST = 2;
+	public static final int IDXBEG = 3;
+	public static final int IDXEND = 4;
+	
 	private Object[] getInnerEMA(double[] values, int size) {
 		Core core = new Core();
         MInteger beg26 = new MInteger();
@@ -548,9 +554,9 @@ public class TaUtil {
     public double getMom(int days, String market,
             String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Object objs[] = getMACD(days, market, id, ids, marketdatamap, perioddata, periodstr);
-        double hist[] = (double[]) objs[2];
-        MInteger beg = (MInteger) objs[3];
-        MInteger end = (MInteger) objs[4];
+        double hist[] = (double[]) objs[IDXHIST];
+        MInteger beg = (MInteger) objs[IDXBEG];
+        MInteger end = (MInteger) objs[IDXEND];
         try {
             //log.info("hist " + id + " " + hist.length + " " + hist[0] + " " + hist[end.value -1 ] + " " + end.value + " " + hist[beg.value - 1] + " " + hist[hist.length -1]);
         } catch (Exception e) {

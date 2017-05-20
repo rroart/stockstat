@@ -96,6 +96,33 @@ public class ControlService {
         }
     }
 
+    ResultItemTable mlTimesTable = new ResultItemTable();
+    ResultItemTable eventTable = new ResultItemTable();
+    
+    Map<Integer, ResultItemTable> otherTableMap = new HashMap<>();
+    
+    public static final int EVENT = 0;
+    public static final int MLTIMES = 1;
+    
+    public static int otherTableNames[] = { EVENT, MLTIMES }; 
+    
+    public void createOtherTables() {
+        ResultItemTableRow headrow = new ResultItemTableRow();
+        headrow.add("Period");
+        headrow.add("Engine");
+        headrow.add("Model name");
+        headrow.add("Millis");
+        mlTimesTable.add(headrow);
+        headrow = new ResultItemTableRow();
+        headrow.add("Period");
+        headrow.add("Event");
+        headrow.add("Name");
+        headrow.add("Id");
+        eventTable.add(headrow);
+        otherTableMap.put(EVENT, eventTable);
+        otherTableMap.put(MLTIMES, mlTimesTable);
+    }
+    
     /**
      * Create result lists
      * 
@@ -104,6 +131,7 @@ public class ControlService {
 
     public List<ResultItem> getContent(MyConfig conf) {
         log.info("mydate " + conf.getdate());
+        createOtherTables();
         List<StockItem> stocks = null;
         try {
             stocks = StockItem.getAll(conf.getMarket());
@@ -120,6 +148,9 @@ public class ControlService {
         Integer days = conf.getDays();
 
         ResultItemTable table = new ResultItemTable();
+        List<ResultItemTable> otherTables = new ArrayList<>();
+        otherTables.add(mlTimesTable);
+        otherTables.add(eventTable);
         
         try {
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
@@ -216,11 +247,25 @@ public class ControlService {
 
             }
             log.info("retlist2 " +table.size());
-                    } catch (Exception e) {
+            for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
+                Map<Integer, List<ResultItemTableRow>> tableMap = categories[i].otherTables();
+                for (Integer key : tableMap.keySet()) {
+                    List<ResultItemTableRow> resultItems = tableMap.get(key);
+                    ResultItemTable otherTable = otherTableMap.get(key);
+                    for (ResultItemTableRow row : resultItems) {
+                    otherTable.add(row);
+                    }
+                }
+                   //System.out.print("first " + ri.get().size());
+            }
+        } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         List<ResultItem> retlist = new ArrayList<ResultItem>();
         retlist.add(table);
+        for (ResultItemTable list : otherTables) {
+            retlist.add(list);
+        }
         return retlist;
     }
 

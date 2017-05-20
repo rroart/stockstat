@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.config.MyConfig;
+import roart.model.ResultItemTable;
+import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 
 public abstract class Indicator {
@@ -42,6 +44,10 @@ public abstract class Indicator {
     }
 
     public Map<Integer, String> getMapTypes() {
+        return null;
+    }
+
+    public Map<Integer, List<ResultItemTableRow>> otherTables() {
         return null;
     }
 

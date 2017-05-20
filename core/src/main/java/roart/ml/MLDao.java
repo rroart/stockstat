@@ -10,6 +10,7 @@ import java.util.HashSet;
 
 import roart.config.ConfigConstants;
 import roart.indicator.Indicator;
+import roart.indicator.IndicatorMACD;
 import roart.model.StockItem;
 
 import org.slf4j.Logger;
@@ -42,11 +43,13 @@ public class MLDao {
         }
     }
 
-    public void learntest(Indicator indicator, Map<double[], Double> map, MLModel modeln, int size, String period, String mapname, int outcomes) {
+    public void learntest(Indicator indicator, Map<double[], Double> map, MLModel modeln, int size, String period, String mapname, int outcomes, Map<MLModel, Long> mapTime) {
         for (MLModel model : getModels()) {
             long time1 = System.currentTimeMillis();
             access.learntest(indicator, map, model, size, period, mapname, outcomes);
-            log.info("time " + model + " " + period + " " + mapname + " " + (System.currentTimeMillis() - time1));
+            long time = (System.currentTimeMillis() - time1);
+            log.info("time " + model + " " + period + " " + mapname + " " + time);
+            IndicatorMACD.mapAdder(mapTime, model, time);
         }
     }
 
@@ -54,12 +57,14 @@ public class MLDao {
         return access.eval(modelInt, period, mapname);
     }
 
-    public Map<String, Double[]> classify(Indicator indicator, Map<String, double[]> map, MLModel model, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap) {
+    public Map<String, Double[]> classify(Indicator indicator, Map<String, double[]> map, MLModel model, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap, Map<MLModel, Long> mapTime) {
         //Map<MLModel, Map<String, Double[]>> result = new HashMap<>();
         //for (MLModel model : getModels()) {
             long time1 = System.currentTimeMillis();
             Map<String, Double[]> resultAccess = access.classify(indicator, map, model, size, period, mapname, outcomes, shortMap);
-            log.info("time " + model + " " + period + " " + mapname + " " + (System.currentTimeMillis() - time1));
+            long time = (System.currentTimeMillis() - time1);
+            log.info("time " + model + " " + period + " " + mapname + " " + time);
+            IndicatorMACD.mapAdder(mapTime, model, time);
             //result.put(model, resultAccess);
         //}
         return resultAccess;
