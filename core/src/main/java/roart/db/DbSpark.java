@@ -11,6 +11,7 @@ import roart.util.ArraysUtil;
 import roart.util.Constants;
 import scala.Tuple2;
 import scala.collection.JavaConversions;
+import scala.collection.mutable.WrappedArray;
 
 import java.util.Map;
 import java.util.Properties;
@@ -39,7 +40,6 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.types.ArrayType;
 import org.apache.spark.sql.types.StringType;
 import org.apache.spark.sql.types.DoubleType;
-import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.ml.Model;
 import org.apache.spark.ml.PipelineModel;
 import org.apache.spark.ml.classification.LogisticRegression;
@@ -47,8 +47,6 @@ import org.apache.spark.ml.classification.MultilayerPerceptronClassificationMode
 import org.apache.spark.ml.classification.MultilayerPerceptronClassifier;
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator;
 import org.apache.spark.ml.linalg.DenseVector;
-import org.apache.spark.ml.linalg.VectorUDT;
-import org.apache.spark.ml.linalg.Vectors;
 
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Multiset;
@@ -64,9 +62,6 @@ public class DbSpark {
 	private static Properties prop;
 
     //private static Model model;
-	private static Map<String, Model> modelMap = new HashMap<>();
-    private static Map<String, Double> accuracyMap = new HashMap<>();
-    
 	public DbSpark() {
 	    
 		try {
@@ -193,7 +188,7 @@ public class DbSpark {
         return m;
     }
 
-    public static Map<String, Object[]> doCalculationsArr(Map<String, Double[]> listMap, String key, Indicator ind) {
+    public static Map<String, Object[]> doCalculationsArr(Map<String, Double[]> listMap, String key, Indicator ind,  boolean wantPercentizedPriceIndex) {
         if (spark == null) {
             return null;
         }
@@ -204,7 +199,7 @@ public class DbSpark {
             Double[] values = listMap.get(id);
             values = ArraysUtil.getArrayNonNullReverse(values);
             // TODO !!!
-            if (IndicatorMACD.wantPercentizedPriceIndex()) {
+            if (wantPercentizedPriceIndex) {
            values = ArraysUtil.getPercentizedPriceIndex(values, key);
             }
             Row row = RowFactory.create(id, values);
@@ -217,204 +212,14 @@ public class DbSpark {
         
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate(x.getAs("values"))));
+        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[])((WrappedArray)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
-       return m;
-    }
-
-    public static Dataset<Row> createDFfromMap(Map<double[], Double> listMap) {
-        if (spark == null) {
-            return null;
-        }
-        List<Row> rowList = new ArrayList<>();
-        int i = 0;
-        for (double[] array : listMap.keySet()) {
-            //log.info("arrsize " + array.length);
-             Double label = listMap.get(array);
-             if (label == null) {
-                 log.error("no label");
-             }
-            Row row = RowFactory.create(label, Vectors.dense(array));
-            rowList.add(row);
-            //if (i++ > 1) break;
-        }
-        List<Row> data = rowList;
-        StructType schema = new StructType(new StructField[]{
-                new StructField("label", DataTypes.DoubleType, false, Metadata.empty()),
-                new StructField("features", new VectorUDT(), false, Metadata.empty())
-        });
-        Dataset<Row> dataFrame = spark.createDataFrame(data, schema);
-        return dataFrame;
+       return objMap;
     }
     
-    public static Dataset<Row> createDFfromMap2(Map<String, double[]> listMap) {
-        if (spark == null) {
-            return null;
-        }
-        List<Row> rowList = new ArrayList<>();
-        int i = 0;
-        for (String id : listMap.keySet()) {
-            //log.info("arrsize " + array.length);
-             double[] array = listMap.get(id);
-            Row row = RowFactory.create(id, Vectors.dense(array));
-            rowList.add(row);
-            //if (i++ > 1) break;
-        }
-        List<Row> data = rowList;
-        StructType schema = new StructType(new StructField[]{
-                new StructField("id", DataTypes.StringType, false, Metadata.empty()),
-                new StructField("features", new VectorUDT(), false, Metadata.empty())
-        });
-        Dataset<Row> dataFrame = spark.createDataFrame(data, schema);
-        return dataFrame;
-    }
-    
-    public static Dataset<Row> createDF(List<double[]> arrList) {
-        if (spark == null) {
-            return null;
-        }
-        List<Row> rowList = new ArrayList<>();
-        for (double[] array : arrList) {
-             //String label = listMap.get(array);
-            Row row = RowFactory.create(Vectors.dense(array));
-            rowList.add(row);
-        }
-        List<Row> data = rowList;
-        StructType schema = new StructType(new StructField[]{
-                //new StructField("label", DataTypes.DoubleType, false, Metadata.empty()),
-                new StructField("features", new VectorUDT(), false, Metadata.empty())
-        });
-        Dataset<Row> dataFrame = spark.createDataFrame(data, schema);
-        return dataFrame;
-    }
-    
-    public static Map<String, Double[]> classify(Map<String, double[]> map, int modelInt, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap) {
-        long time0 = System.currentTimeMillis();
-        //List<double[]> arrList = new ArrayList<>();
-        //arrList.add(array);
-        Map<String, Double[]> retMap = new HashMap<>();
-        Dataset<Row> data = createDFfromMap2(map);
-        try {
-            /*
-            List<Row> jrdd = Arrays.asList(
-                    RowFactory.create(content));
-
-            String schemaString = "sentence";
-
-            // Generate the schema based on the string of schema
-            List<StructField> fields = new ArrayList<>();
-            for (String fieldName : schemaString.split(" ")) {
-                StructField field = DataTypes.createStructField(fieldName, DataTypes.StringType, true);
-                fields.add(field);
-            }
-            StructType schema = DataTypes.createStructType(fields);
-             */
-            //Dataset<Row> sentenceDF = spark.createDataFrame(jrdd, schema);
-            Model model = modelMap.get(modelInt+period+mapname);
-            if (model == null) {
-                return retMap;
-            }
-            Dataset<Row> resultDF = model.transform(data);
-
-            for (Row row : resultDF.collectAsList()) {
-                String id = row.getAs("id");
-                Double predict = row.getAs("prediction");
-                Double prob = null;
-                if (IndicatorMACD.LOGISTICREGRESSION == modelInt) {
-                try {
-                    DenseVector probvector = row.getAs("probability");
-                    double[] probarray = probvector.values();
-                    prob = probarray[predict.intValue()];
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
-                }
-            //Map<Double, String> label = conf.labelsMap.get(language);
-            //String cat = label.get(predict);
-             //  log.info(" cat " + predict);
-            //MachineLearningClassifyResult result = new MachineLearningClassifyResult();
-            //result.result = cat;
-                Double[] retVal = new Double[2];
-                retVal[0] = predict;
-                retVal[1] = prob;
-                String label = shortMap.get(predict);
-                retMap.put(id, retVal);
-            }
-            log.info("classify done");
-            return retMap;
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        } finally {
-            log.info("time classify model " + modelInt + " " + period + " " + map.size() + " " + (System.currentTimeMillis() - time0));            
-        }
-        return null;
-    }
-
-    private final static int CATS = 4;
-    
-    public static void learntest(Map<double[], Double> map, int modelInt, int size, String period, String mapname, int outcomes) {
-        long time0 = System.currentTimeMillis();
-           if (spark == null) {
-                return;
-            }
-            if (map.isEmpty()) {
-                return;
-            }
-            Map<Double, Long> counts =
-                    map.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));       
-           log.info("learning distribution " + counts);
-            try {
-             Dataset<Row> data = createDFfromMap(map);
-        Dataset<Row>[] splits = data.randomSplit(new double[]{0.6, 0.4}, 1234);
-        Dataset<Row> train = splits[0];
-        Dataset<Row> test = splits[1];
-        log.info("data size " + map.size());
-        Model model = null;
-        if (IndicatorMACD.LOGISTICREGRESSION == modelInt) {
-            LogisticRegression reg = new LogisticRegression();
-            //reg.setLabelCol("label");
-            reg.setMaxIter(5);
-            reg.setRegParam(0.01);
-            model = reg.fit(train);
-        }
-        if (IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER == modelInt) {
-            //int[] layers = new int[]{size + 1, size + 1, size + 1, CATS + 1};
-            //int[] layers = new int[]{size, size + 2, size + 4, CATS + 1};
-            int[] layers = new int[]{size, outcomes + 1, outcomes + 1, outcomes + 1};
-            //int[] layers = new int[]{size, 15, 15, outcomes + 1};
-            //int[] layers = new int[]{size, size, size, outcomes + 1};
-             MultilayerPerceptronClassifier trainer = new MultilayerPerceptronClassifier()
-                    .setLayers(layers)
-                    .setBlockSize(128)
-                    .setSeed(1234L)
-                    .setMaxIter(100);
-            model = trainer.fit(train);
-        }
-        modelMap.put(modelInt+period+mapname, model);
-                    // compute accuracy on the test set                                         
-                    Dataset<Row> result = model.transform(test);
-                    //result.schema().toString();
-                    //result.show();
-                    Dataset<Row> predictionAndLabels = result.select("prediction", "label");
-                    //predictionAndLabels.show();
-                    MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
-                      .setMetricName("accuracy");
-                    double eval = evaluator.evaluate(predictionAndLabels);
-                    log.info("Test set accuracy for " + mapname + " " + modelInt + " " + period + " = " + eval);
-                    accuracyMap.put(modelInt+period+mapname, eval);
-
-       
-    } catch (Exception e) {
-        log.error("Exception", e);
-    } finally {
-        log.info("time learn test model " + modelInt + " " + period + " " + map.size() + " " + (System.currentTimeMillis() - time0));
-    }
-    }
-    
-    public static Double eval(int modelInt, String period, String mapname) {
-        //System.out.println("str vs " + modelStr+period+mapname + " :" + accuracyMap.keySet());
-        return accuracyMap.get(modelInt+period+mapname);
+    public static SparkSession getSparkSession() {
+        return spark;
     }
 }
 

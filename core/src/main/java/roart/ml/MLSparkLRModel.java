@@ -3,6 +3,11 @@ package roart.ml;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.spark.ml.Model;
+import org.apache.spark.ml.classification.LogisticRegression;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.util.Constants;
@@ -55,4 +60,16 @@ public class MLSparkLRModel  extends MLSparkModel {
     public int getSizes(Indicator indicator) { 
         return 2 * super.getSizes(indicator);
     }
+    
+    @Override
+    public Model getModel(Dataset<Row> train, int size, int outcomes) {
+        LogisticRegression reg = new LogisticRegression();
+        //reg.setLabelCol("label");
+        reg.setMaxIter(5);
+        reg.setRegParam(0.01);
+        Model model = reg.fit(train);
+        return model;
+    }
+
 }
+

@@ -1,12 +1,19 @@
 package roart.db;
 
+import roart.config.MyConfig;
+import roart.indicator.Indicator;
 import roart.model.Meta;
 import roart.model.MetaItem;
 import roart.model.Stock;
 import roart.model.StockItem;
+import roart.util.ArraysUtil;
+import roart.util.TaUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +40,23 @@ public class DbHibernate {
     public static MetaItem getMarket(String market) throws Exception {
 		Meta meta = Meta.getById(market);
 		return new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6());
+    }
+
+    public static Map<String, Object[]> doCalculationsArr(MyConfig conf, Map<String, Double[]> listMap, String key, Indicator indicator, boolean wantPercentizedPriceIndex) {
+        Map<String, Object[]> objectMap = new HashMap<>();
+        for (String id : listMap.keySet()) {
+            Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+            if (wantPercentizedPriceIndex) {
+                list = ArraysUtil.getPercentizedPriceIndex(list, key);
+            }
+            log.info("beg end " + id + " "+ key);
+            //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
+            log.info("list " + list.length + " " + Arrays.asList(list));
+            //double momentum = tu.getMom(list, conf.getDays());
+            Object[] objs = (Object[]) indicator.calculate(list);
+            objectMap.put(id, objs);
+        }
+        return objectMap;
     }
 }
 

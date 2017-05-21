@@ -52,6 +52,7 @@ public class IndicatorRSI extends Indicator {
         resultMap = new HashMap();
         try {
             long time2 = System.currentTimeMillis();
+            /*
             Map<String, Object[]> m; 
             m = DbSpark.doCalculations(listMap, this);
             if (m != null) {
@@ -63,6 +64,7 @@ public class IndicatorRSI extends Indicator {
                 // objectmap resultMap = m;
                 //if (true) return;
             }
+            */
         } catch(Exception e) {
             log.info("Exception", e);
         }
@@ -96,14 +98,9 @@ public class IndicatorRSI extends Indicator {
     }
 
     @Override
-    public Object calculate(Object as) {
+    public Object calculate(Double[] array) {
+        List<Double> list = Arrays.asList(array);
         TaUtil tu = new TaUtil();
-        //log.info("myclass " + as.getClass().getName());
-        WrappedArray wa = (WrappedArray) as;
-        Double[] arr2 = (Double[]) wa.array();
-        //log.info("myclass " + arr2.getClass().getName());
-        //Double[] arr = (Double[]) as;
-        List<Double> list = Arrays.asList(arr2);
         Double[] rsi = tu.getRSI(list, conf.getDays(), conf.isRSIDeltaEnabled(), conf.getRSIDeltaDays());
         return rsi;
     }

@@ -35,7 +35,7 @@ public abstract class Indicator {
 
     abstract public Object[] getResultItem(StockItem stock);
 
-    public Object calculate(Object as) {
+    public Object calculate(Double[] array) {
         return null;
     }
 

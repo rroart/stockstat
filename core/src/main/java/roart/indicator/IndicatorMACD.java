@@ -18,6 +18,8 @@ import com.tictactec.ta.lib.MInteger;
 
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
+import roart.db.DbAccess;
+import roart.db.DbDao;
 import roart.db.DbSpark;
 import roart.ml.MLDao;
 import roart.ml.MLModel;
@@ -95,7 +97,7 @@ public class IndicatorMACD extends Indicator {
     }
 
     public static  boolean wantMLSpark() {
-        return false;
+        return true/*false*/;
     }
 
     public static  boolean wantMLTensorflow() {
@@ -163,7 +165,7 @@ public class IndicatorMACD extends Indicator {
     }
     
     public static boolean wantPercentizedPriceIndex() {
-        return true;
+        return false/*true*/;
     }
     
     public static boolean wantOtherStats() {
@@ -286,6 +288,7 @@ public class IndicatorMACD extends Indicator {
     // TODO make an oo version of this
     private void calculateMomentums(MyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category) throws Exception {
+        DbAccess dbDao = DbDao.instance();
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
@@ -307,26 +310,9 @@ public class IndicatorMACD extends Indicator {
         List<Double> histList = new ArrayList<>();
         List<Double> macdDList = new ArrayList<>();
         List<Double> histDList = new ArrayList<>();
-        //int daysAfterZero = 10;
-        //int daysBeforeZero = 25;
-        Map<String, Object[]> testobjmap = null;
-        try {
-            long time2 = System.currentTimeMillis();
-            Map<String, Object[]> m; 
-            m = DbSpark.doCalculationsArr(listMap, key, this);
-            if (m != null) {
-                log.info("time2 " + (System.currentTimeMillis() - time2));
-                for (String key : m.keySet()) {
-                    log.info("key " + key);
-                    log.info("value " + Arrays.toString(m.get(key)));
-                }
-                //objectMap = m;
-                testobjmap = m;
-                //if (true) return;
-            }
-        } catch(Exception e) {
-            log.info("Exception", e);
-        }
+        long time2 = System.currentTimeMillis();
+        objectMap = dbDao.doCalculationsArr(conf, listMap, key, this, wantPercentizedPriceIndex());
+        log.info("time2 " + (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
         TaUtil tu = new TaUtil();
         String market = conf.getMarket();
@@ -335,18 +321,8 @@ public class IndicatorMACD extends Indicator {
         log.info("listmap " + listMap.size() + " " + listMap.keySet());
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<String, Map<double[], Double>> mapMap = new HashMap<>();
-        /*
-        Map<double[], Double> commonHistTypeMap = new HashMap<>();
-        Map<double[], Double> posHistTypeMap = new HashMap<>();
-        Map<double[], Double> negHistTypeMap = new HashMap<>();
-        Map<double[], Double> commonMacdTypeMap = new HashMap<>();
-        Map<double[], Double> posMacdTypeMap = new HashMap<>();
-        Map<double[], Double> negMacdTypeMap = new HashMap<>();
-        */
-        nonSparkMACDCalculations(conf, marketdatamap, tu, market, periodstr, perioddata);
         for (String id : listMap.keySet()) {
             Object[] objs = objectMap.get(id);
-            Object[] testobjs = testobjmap.get(id);
             Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs);
             momMap.put(id, momentum);
             Map<String, List<Double>> retMap = new HashMap<>();
@@ -356,7 +332,6 @@ public class IndicatorMACD extends Indicator {
                 double[] hist = (double[]) objs[TaUtil.IDXHIST];
                 log.info("outout1 " + Arrays.toString(macd));
                 log.info("outout3 " + Arrays.toString(hist));
-                log.info("testoutout3 " + Arrays.toString((double[]) testobjs[2]));
             }
             MInteger begOfArray = (MInteger) objs[TaUtil.IDXBEG];
             MInteger endOfArray = (MInteger) objs[TaUtil.IDXEND];
@@ -392,20 +367,6 @@ public class IndicatorMACD extends Indicator {
                             getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, POSTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[0], labelFN, labelTN);
                             getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, NEGTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[1], labelTP, labelFP);
                        }
-                        /*
-                        if (wantMLHist()) {
-                            double[] histarr = (double[]) objs[2];
-                             Map<Integer, Integer>[] map = ArraysUtil.searchForward(histarr, endOfArray.value);
-                            getPosNegMap(commonHistTypeMap, posHistTypeMap, id, trunclist, labelMap2, histarr, trunclist.length, map[0], labelFN, labelTN);
-                            getPosNegMap(commonHistTypeMap, negHistTypeMap, id, trunclist, labelMap2, histarr, trunclist.length, map[1], labelTP, labelFP);
-                        }
-                        if (wantMLMacd()) {
-                            double[] macdarr = (double[]) objs[0];
-                            Map<Integer, Integer>[] map = ArraysUtil.searchForward(macdarr, endOfArray.value);
-                            getPosNegMap(commonMacdTypeMap, posMacdTypeMap, id, trunclist, labelMap2, macdarr, trunclist.length, map[0], labelFN, labelTN);
-                            getPosNegMap(commonMacdTypeMap, negMacdTypeMap, id, trunclist, labelMap2, macdarr, trunclist.length, map[1], labelTP, labelFP);
-                        }
-                        */
                     }
                 }
             }
@@ -415,28 +376,6 @@ public class IndicatorMACD extends Indicator {
             log.info("histlist " + histList);
             getBuySellRecommendations(macdList, histList, macdDList, histDList);
         }
-        /*
-        Map<Integer, Map<String, Double[]>> commonIdTypeModelHistMap = new HashMap<>(); 
-        Map<Integer, Map<String, Double[]>> posIdTypeModelHistMap = new HashMap<>(); 
-        Map<Integer, Map<String, Double[]>> negIdTypeModelHistMap = new HashMap<>(); 
-        Map<Integer, Map<String, Double[]>> commonIdTypeModelMacdMap = new HashMap<>(); 
-        Map<Integer, Map<String, Double[]>> posIdTypeModelMacdMap = new HashMap<>(); 
-        Map<Integer, Map<String, Double[]>> negIdTypeModelMacdMap = new HashMap<>(); 
-       */
-        /*
-        Map<String, Double[]> commonIdTypeMCPHistMap = null; 
-        Map<String, Double[]> posIdTypeMCPHistMap = null; 
-        Map<String, Double[]> negIdTypeMCPHistMap = null; 
-        Map<String, Double[]> commomIdTypeLRHistMap = null; 
-        Map<String, Double[]> posIdTypeLRHistMap = null; 
-        Map<String, Double[]> negIdTypeLRHistMap = null; 
-        Map<String, Double[]> commonIdTypeMCPMacdMap = null; 
-        Map<String, Double[]> posIdTypeMCPMacdMap = null; 
-        Map<String, Double[]> negIdTypeMCPMacdMap = null; 
-        Map<String, Double[]> commonIdTypeLRMacdMap = null; 
-        Map<String, Double[]> posIdTypeLRMacdMap = null; 
-        Map<String, Double[]> negIdTypeLRMacdMap = null; 
-        */
         // map from h/m to model to posnegcom map<model, results>
         Map<MacdSubType, Map<MLModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
         if (wantML()) {
@@ -448,38 +387,17 @@ public class IndicatorMACD extends Indicator {
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
-                            System.out.println("mapget " + mapName);
-                           Map<double[], Double> map = mapMap.get(mapName);
+                            //System.out.println("mapget " + mapName);
+                            Map<double[], Double> map = mapMap.get(mapName);
                             mldao.learntest(this, map, null, getDaysBeforeZero(), key, mapName, 4, mapTime);  
                         }
                     }
                 }
-                    /*
-                    if (wantMLHist()) {
-                    mldao.learntest(commonHistTypeMap, model, getDaysBeforeZero(), key, "common", 4);
-                    mldao.learntest(posHistTypeMap, model, getDaysBeforeZero(), key, "pos", 4);
-                    mldao.learntest(negHistTypeMap, model, getDaysBeforeZero(), key, "neg", 4);
-                }
-                if (wantMLMacd()) {
-                        mldao.learntest(commonMacdTypeMap, model, getDaysBeforeZero(), key, "commonM", 4);
-                        mldao.learntest(posMacdTypeMap, model, getDaysBeforeZero(), key, "posM", 4);
-                        mldao.learntest(negMacdTypeMap, model, getDaysBeforeZero(), key, "negM", 4);
-                    }
-                }
-                     */
-                } catch (Exception e) {
-                    log.error("Exception", e);
-                }
+            } catch (Exception e) {
+                log.error("Exception", e);
+            }
             // calculate sections and do ML
-            /*
-            Map<String, double[]> commonIdHistMap = new HashMap<>();
-            Map<String, double[]> posIdHistMap = new HashMap<>();
-            Map<String, double[]> negIdHistMap = new HashMap<>();
-            Map<String, double[]> commonIdMacdMap = new HashMap<>();
-            Map<String, double[]> posIdMacdMap = new HashMap<>();
-            Map<String, double[]> negIdMacdMap = new HashMap<>();
-            */
-        // a map from h/m + com/neg/sub to map<id, values>
+            // a map from h/m + com/neg/sub to map<id, values>
             Map<String, Map<String, double[]>> mapIdMap= new HashMap<>();
             for (String id : listMap.keySet()) {
                 Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
@@ -566,7 +484,7 @@ public class IndicatorMACD extends Indicator {
                 List<MacdSubType> subTypes2 = wantedSubTypes();
                 for (MacdSubType subType : subTypes2) {
                     Map<MLModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
-                    System.out.println("mapget " + subType + " " + mapResult.keySet());
+                    //System.out.println("mapget " + subType + " " + mapResult.keySet());
                     for (MLDao mldao : mldaos) {
                         for (MLModel model : mldao.getModels()) {
                             Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
@@ -574,7 +492,7 @@ public class IndicatorMACD extends Indicator {
                                 //String mapType = mapTypes.get(mapTypeInt);
                                 //Map<String, Double[]> mapResult3 = mapResult2.get(mapType);
                                 //String mapName = subType.getType() + mapType;
-                                System.out.println("fields " + fields.length + " " + retindex);
+                                //System.out.println("fields " + fields.length + " " + retindex);
                                 retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
                             //}
                         }   
@@ -731,32 +649,6 @@ public class IndicatorMACD extends Indicator {
         }
     }
 
-    private void nonSparkMACDCalculations(MyConfig conf, Map<String, MarketData> marketdatamap, TaUtil tu,
-            String market, String periodstr, PeriodData perioddata) {
-        for (String id : listMap.keySet()) {
-            if (id.equals("EUCA000520")) {
-                Double[] list = listMap.get(id);
-                Pair<String, String> pair = new Pair<>(market, id);
-                Set<Pair<String, String>> ids = new HashSet<>();
-                ids.add(pair);
-                double momentum = tu.getMom(conf.getDays(), market, id, ids, marketdatamap, perioddata, periodstr);
-            }
-            Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-        if (wantPercentizedPriceIndex()) {
-            list = ArraysUtil.getPercentizedPriceIndex(list, key);
-        }
-            log.info("beg end " + id + " "+ key);
-            //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
-            log.info("list " + list.length + " " + Arrays.asList(list));
-            if (id.equals("EUCA000520")) {
-                log.info("india list " + list);
-            }
-            //double momentum = tu.getMom(list, conf.getDays());
-            Object[] objs = tu.getMomAndDeltaFull(list, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
-            objectMap.put(id, objs);
-        }
-    }
-
     private void getPosMap(Map<double[], Double> commonMap, Map<double[], Double> posMap, String id,
             Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer>[] map) {
@@ -868,7 +760,7 @@ public class IndicatorMACD extends Indicator {
         Map<K, V> map = mapMap.get(key);
         if (map == null) {
             map = new HashMap<>();
-            System.out.println("mapput " + key);
+            //System.out.println("mapput " + key);
             mapMap.put(key, map);
         }
         return map;
@@ -1038,16 +930,9 @@ public class IndicatorMACD extends Indicator {
     }
 
     @Override
-    public Object calculate(Object as) {
+    public Object calculate(Double[] array) {
         TaUtil tu = new TaUtil();
-        //log.info("myclass " + as.getClass().getName());
-        WrappedArray wa = (WrappedArray) as;
-        Double[] arr2 = (Double[]) wa.array();
-        //log.info("myclass " + arr2.getClass().getName());
-        //Double[] arr = (Double[]) as;
-        //List<Double> list = Arrays.asList(arr2);
-        //Double[] momentum = tu.getMomAndDelta(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
-        Object[] objs = tu.getMomAndDeltaFull(arr2, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
+        Object[] objs = tu.getMomAndDeltaFull(array, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
         return objs;
     }
 
@@ -1067,7 +952,7 @@ public class IndicatorMACD extends Indicator {
         String periodstr = key;
         PeriodData perioddata = periodDataMap.get(periodstr);
         if (perioddata == null) {
-            System.out.println("key " + key + " : " + periodDataMap.keySet());
+            //System.out.println("key " + key + " : " + periodDataMap.keySet());
             log.info("key " + key + " : " + periodDataMap.keySet());
         }
         //double momentum = resultMap.get(id);
@@ -1136,5 +1021,6 @@ public class IndicatorMACD extends Indicator {
         log.info("fieldsizet " + size);
         return size;
     }
+    
 }
 

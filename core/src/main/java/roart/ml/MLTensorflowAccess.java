@@ -91,6 +91,7 @@ public class MLTensorflowAccess extends MLAccess {
         }
         LearnTest param = new LearnTest();
         param.array = objobj;
+        //System.out.println("cats " + cat.length + " " + Arrays.asList(cat));
         param.cat = cat;
         param.listlist = listlist;
         param.modelInt = model.getId();
@@ -100,7 +101,7 @@ public class MLTensorflowAccess extends MLAccess {
         param.outcomes = outcomes;
         log.info("evalin " + param.modelInt + period + mapname);
         LearnTest test = EurekaUtil.sendMe(LearnTest.class, param, "http://localhost:8000/learntest");
-        System.out.println("test " + test.outcomes);
+        //System.out.println("test " + test.outcomes);
     }
 
     @Override
@@ -163,7 +164,7 @@ public class MLTensorflowAccess extends MLAccess {
             Double acat = new Double((Integer) cat[j]);
             retMap.put(retList.get(j), new Double[]{acat});
         }
-        //System.out.println("acat " + retMap);
+        //System.out.println("acat " + retMap.size());
         return retMap;
     }
 

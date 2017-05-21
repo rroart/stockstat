@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.HashSet;
 
 import roart.config.ConfigConstants;
+import roart.config.MyConfig;
+import roart.indicator.Indicator;
 import roart.model.StockItem;
 
 import org.slf4j.Logger;
@@ -47,5 +49,12 @@ public class DbDao {
 		}
 		return access.getAll(type);
 	}
+
+    public Map<String, Object[]> doCalculationsArr(MyConfig conf, Map<String, Double[]> listMap, String key, Indicator indicator, boolean wantPercentizedPriceIndex) {
+        if (access == null) {
+            return null;
+        }
+        return access.doCalculationsArr(conf, listMap, key, indicator, wantPercentizedPriceIndex);
+    }
 
 }
