@@ -70,4 +70,19 @@ public class ArraysUtilTest {
         assertEquals(values.length, 2);
         assertEquals(values[0], 2, 0.1);
     }  
+    
+    @Test
+    public void getPercentizedPriceIndex() {
+        Double[] nullist = new Double[]{null, null, null, null};
+        ArraysUtil.getPercentizedPriceIndex(null, null);
+        ArraysUtil.getPercentizedPriceIndex(null, "Price");
+        ArraysUtil.getPercentizedPriceIndex(nullist, "Price");
+        Double[] list = new Double[]{null, 200.0, 50.0, 125.0};
+        ArraysUtil.getPercentizedPriceIndex(list, null);
+        ArraysUtil.getPercentizedPriceIndex(list, "");
+        assertEquals(list[1], 200.0, 0.1);
+        ArraysUtil.getPercentizedPriceIndex(list, "Price");
+        assertEquals(list[2], 25.0, 0.1);
+      
+    }
 }

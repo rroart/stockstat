@@ -112,6 +112,36 @@ public class ArraysUtil {
         return retmap;
     }
 
+    /**
+     * Pick the first non-null element in the array, and find the
+     * increases/decreases since that. ( * 100 / first)
+     * @param list
+     * @param key whether price/index, if not, then skip
+     * @return new array
+     */
+    
+    public static Double[] getPercentizedPriceIndex(Double[] list, String key) {
+        if (list == null) {
+            return list;
+        }
+        if (("Index").equals(key) || ("Price").equals(key)) {
+            int i = 0;
+            double first = 0;
+            for (i = 0; i < list.length; i ++) {
+                if (list[i] != null) {
+                    first = list[i];
+                    break;
+                }
+            }
+            for (; i < list.length; i ++) {
+                if (list[i] != null) {
+                    list[i] *= 100 / first;
+                }
+            }
+        }
+        return list;
+    }
+
     private static int getArrayNonNullReversenot(List<Double> list, double[] values) {
     	int count = values.length;
     	for (Double val : list) {

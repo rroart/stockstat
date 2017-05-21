@@ -363,7 +363,7 @@ public class IndicatorMACD extends Indicator {
 
             Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
             if (wantPercentizedPriceIndex()) {
-            list = getPercentizedPriceIndex(list, key);
+            list = ArraysUtil.getPercentizedPriceIndex(list, key);
             }
             log.info("beg end " + id + " "+ begOfArray.value + " " + endOfArray.value);
             //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
@@ -483,7 +483,7 @@ public class IndicatorMACD extends Indicator {
             Map<String, Map<String, double[]>> mapIdMap= new HashMap<>();
             for (String id : listMap.keySet()) {
                 Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-                list = getPercentizedPriceIndex(list, key);
+                list = ArraysUtil.getPercentizedPriceIndex(list, key);
                 Object[] objs = objectMap.get(id);
                 double[] macdarr = (double[]) objs[0];
                 double[] histarr = (double[]) objs[2];
@@ -743,7 +743,7 @@ public class IndicatorMACD extends Indicator {
             }
             Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
         if (wantPercentizedPriceIndex()) {
-            list = getPercentizedPriceIndex(list, key);
+            list = ArraysUtil.getPercentizedPriceIndex(list, key);
         }
             log.info("beg end " + id + " "+ key);
             //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
@@ -755,29 +755,6 @@ public class IndicatorMACD extends Indicator {
             Object[] objs = tu.getMomAndDeltaFull(list, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
             objectMap.put(id, objs);
         }
-    }
-
-    public static Double[] getPercentizedPriceIndex(Double[] list, String key) {
-        //if (wantNormalizedPriceIndex()) {
-            // TODO fix
-            if (key.equals("Index") || key.equals("Price")) {
-                int i = 0;
-                double first = 0;
-                for (i = 0; i < list.length; i ++) {
-                    if (list[i] != null) {
-                        first = list[i];
-                        break;
-                    }
-                }
-                for (; i < list.length; i ++) {
-                    if (list[i] != null) {
-                        list[i] *= 100 / first;
-                    }
-                }
-            }
-        //}
-            
-           return list;
     }
 
     private void getPosMap(Map<double[], Double> commonMap, Map<double[], Double> posMap, String id,
