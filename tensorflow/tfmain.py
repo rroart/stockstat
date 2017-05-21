@@ -85,11 +85,15 @@ class HttpService:
         print(cat)
         (lenrow, lencol) = array.shape
         half = round(lenrow / 2)
-        df = pd.DataFrame(array)
         train = array[:half, :]
         test = array[half:, :]
         traincat = cat[:half]
         testcat = cat[half:]
+        if len(cat) == 1:
+            train = array
+            test = array
+            traincat = cat
+            testcat = cat
         feature_columns = [tf.contrib.layers.real_valued_column("", dimension=25)]
         global count
         count = count + 1                                                

@@ -132,7 +132,7 @@ public class MLSparkAccess extends MLAccess {
                 String label = shortMap.get(predict);
                 retMap.put(id, retVal);
             }
-            System.out.println("classed " + retMap.values());
+            //System.out.println("classed " + retMap.values());
             log.info("classify done");
             return retMap;
         } catch (Exception e) {
@@ -159,7 +159,11 @@ public class MLSparkAccess extends MLAccess {
         Dataset<Row>[] splits = data.randomSplit(new double[]{0.6, 0.4}, 1234);
         Dataset<Row> train = splits[0];
         Dataset<Row> test = splits[1];
-        log.info("data size " + map.size());
+        log.info("data size " + map.size() + " " + train.count());
+        if (train.count() == 0) {
+            train = data;
+            test = data;
+        }
         MLSparkModel sparkModel = (MLSparkModel) mlmodel;
         Model model = sparkModel.getModel(train, size, outcomes);
         
