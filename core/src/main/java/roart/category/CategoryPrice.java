@@ -5,6 +5,9 @@ import java.util.Map;
 
 import roart.config.MyConfig;
 import roart.indicator.Indicator;
+import roart.indicator.IndicatorMACD;
+import roart.indicator.IndicatorRSI;
+import roart.indicator.IndicatorSTOCHRSI;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.util.Constants;
@@ -22,11 +25,14 @@ public class CategoryPrice extends Category {
     public CategoryPrice(MyConfig conf, String string, List<StockItem> stocks,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
-            Map<String, Integer>[] periodmap) {
+            Map<String, Integer>[] periodmap) throws Exception {
         super(conf, string, stocks);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
+        indicators.add(new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
+        indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
+        indicators.add(new IndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
     }
 
     @Override
