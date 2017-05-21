@@ -96,8 +96,8 @@ public class ControlService {
         }
     }
 
-    ResultItemTable mlTimesTable = new ResultItemTable();
-    ResultItemTable eventTable = new ResultItemTable();
+    ResultItemTable mlTimesTable = null;
+    ResultItemTable eventTable = null;
     
     Map<Integer, ResultItemTable> otherTableMap = new HashMap<>();
     
@@ -107,6 +107,8 @@ public class ControlService {
     public static int otherTableNames[] = { EVENT, MLTIMES }; 
     
     public void createOtherTables() {
+        mlTimesTable = new ResultItemTable();
+        eventTable = new ResultItemTable();
         ResultItemTableRow headrow = new ResultItemTableRow();
         headrow.add("Period");
         headrow.add("Engine");
