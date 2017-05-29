@@ -399,7 +399,7 @@ getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbotto
     return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=TRUE, deltadays=deltadays))
 }
 
-gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, deltadays=3) {
+gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, deltadays=3, percentize=TRUE) {
     periodtexts <- getperiodtexts(market)
     myperiodtexts <- myperiodtextslist(myperiodtexts, periodtexts)
     for (i in 1:length(myperiodtexts)) {

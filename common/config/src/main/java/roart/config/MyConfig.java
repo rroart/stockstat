@@ -21,14 +21,19 @@ public class MyConfig {
     public MyConfig() {
     }
     
-    public boolean useSpark = false;
+    public ConfigTreeMap configTreeMap;
     
-    public String sparkMaster = null;
+    public Map<String, Object> configValueMap;
+    
+    //public boolean useSpark = false;
+    
+    //public String sparkMaster = null;
 
 	private Date mydate = null;
 
 	private String mymarket = "0";
 
+	/*
 	private Integer mydays = 180;
 
 	private Integer mytopbottom = 10;
@@ -87,7 +92,7 @@ public class MyConfig {
 	private int atrDeltaDays = 3;
 
 	private int stochDeltaDays = 3;
-
+*/
     //public void config() throws Exception;
 
 	/**
@@ -117,237 +122,358 @@ public class MyConfig {
 	public String getMarket() {
 	    return mymarket;
 	}
-
+/*
 	public void setDays(Integer integer) {
 	    mydays = integer;
 	}
-
+*/
 	public int getDays() {
-	    return mydays;
+	    return (Integer) configValueMap.get(ConfigConstants.MISCMYDAYS);
 	}
-
+/*
 	public void setTopBottom(Integer integer) {
 	    mytopbottom = integer;
 	}
-
+*/
 	public int getTopBottom() {
-	    return mytopbottom;
+	    return (Integer) configValueMap.get(ConfigConstants.MISCMYTOPBOTTOM);
 	}
-
+/*
 	public void setTableDays(Integer integer) {
 	    mytabledays = integer;
 	}
-
+*/
 	public int getTableDays() {
-	    return mytabledays;
+	    return (Integer) configValueMap.get(ConfigConstants.MISCMYTBLEDAYS);
 	}
-
+/*
 	public void setTableIntervalDays(Integer integer) {
 	    mytableintervaldays = integer;
 	}
-
+*/
 	public int getTableIntervalDays() {
-	    return mytableintervaldays;
+	    return (Integer) configValueMap.get(ConfigConstants.MISCMYTABLEINTERVALDAYS);
 	}
-
+/*
 	public void setTableMoveIntervalDays(Integer integer) {
 	    mytablemoveintervaldays = integer;
 	}
-
+*/
 	public int getTableMoveIntervalDays() {
-	    return mytablemoveintervaldays;
+	    return (Integer) configValueMap.get(ConfigConstants.MISCMYTABLEMOVEINTERVALDAYS);
 	}
-
+/*
 	public void setEqualize(Boolean integer) {
 	    myequalize = integer;
 	}
-
+*/
 	public boolean isEqualize() {
-	    return myequalize;
+	    return (Boolean) configValueMap.get(ConfigConstants.MISCMYEQUALIZE);
 	}
-
+/*
 	public void setMoveEnabled(Boolean bool) {
 	    moveEnabled = bool;
 	}
-
+*/
 	public boolean isMoveEnabled() {
-	    return moveEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMOVE);
 	}
-
+/*
 	public void setMACDEnabled(Boolean bool) {
 	    macdEnabled = bool;
 	}
-
+*/
 	public boolean isMACDEnabled() {
-	    return macdEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACD);
 	}
-
+/*
 	public void setMACDDeltaEnabled(Boolean bool) {
 	    macdDeltaEnabled = bool;
 	}
-
+*/
+	/*
 	public void setMACDHistogramDeltaEnabled(Boolean bool) {
 	    macdHistogramDeltaEnabled = bool;
 	}
-
+*/
 	public boolean isCCIDeltaEnabled() {
-	    return cciDeltaEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSCCIDELTA);
 	}
-
+/*
 	public void setCCIDeltaEnabled(Boolean bool) {
 	    cciDeltaEnabled = bool;
 	}
-
+*/
 	public boolean isATRDeltaEnabled() {
-	    return atrDeltaEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSATRDELTA);
 	}
-
+/*
 	public void setATRDeltaEnabled(Boolean bool) {
 	    atrDeltaEnabled = bool;
 	}
-
+*/
 	public boolean isSTOCHDeltaEnabled() {
-	    return stochDeltaEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCHSTOCHDELTA);
 	}
-
+/*
 	public void setSTOCHDeltaEnabled(Boolean bool) {
 	    stochDeltaEnabled = bool;
 	}
-
+*/
 	public boolean isRSIDeltaEnabled() {
-	    return rsiDeltaEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSRSIDELTA);
 	}
-
+/*
 	public void setRSIDeltaEnabled(Boolean bool) {
 	    rsiDeltaEnabled = bool;
 	}
-
+*/
 	public boolean isSTOCHRSIDeltaEnabled() {
-	    return stochrsiDeltaEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCHRSI);
 	}
-
+/*
 	public void setSTOCHRSIDeltaEnabled(Boolean bool) {
 	    stochrsiDeltaEnabled = bool;
 	}
-
+*/
 	public boolean isMACDDeltaEnabled() {
-	    return macdDeltaEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDMACDMOMENTUMDELTA);
 	}
 
 	public boolean isMACDHistogramDeltaEnabled() {
-	    return macdHistogramDeltaEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA);
 	}
-
+/*
 	public void setRSIEnabled(Boolean bool) {
 	    rsiEnabled = bool;
 	}
-
+*/
 	public boolean isRSIEnabled() {
-	    return rsiEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSRSI);
 	}
-
+/*
 	public void setSTOCHRSIEnabled(Boolean bool) {
 	    stochrsiEnabled = bool;
 	}
-
+*/
 	public boolean isSTOCHRSIEnabled() {
-	    return stochrsiEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCHRSI);
 	}
-
+/*
 	public void setCCIEnabled(Boolean bool) {
 	    cciEnabled = bool;
 	}
-
+*/
 	public boolean isCCIEnabled() {
-	    return cciEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSCCI);
 	}
-
+/*
 	public void setATREnabled(Boolean bool) {
 	    atrEnabled = bool;
 	}
-
+*/
 	public boolean isATREnabled() {
-	    return atrEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSATR);
 	}
-
+/*
 	public void setSTOCHEnabled(Boolean bool) {
 	    stochEnabled = bool;
 	}
-
+*/
 	public boolean isSTOCHEnabled() {		
-	    return stochEnabled;
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCH);
 	}
-
+/*
 	public void setGraphEqualize(Boolean integer) {
 	    mygraphequalize = integer;
 	}
-
+*/
 	public boolean isGraphEqualize() {
-	    return mygraphequalize;
+	    return (Boolean) configValueMap.get(ConfigConstants.MISCMYGRAPHEQUALIZE);
 	}
-
+/*
 	public void setGraphEqUnify(Boolean integer) {
 	    mygraphequalizeunify = integer;
 	}
-
+*/
 	public boolean isGraphEqUnify() {
-	    return mygraphequalizeunify;
+	    return (Boolean) configValueMap.get(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY);
 	}
 
 	public int getMACDDeltaDays() {
-		return macdDeltaDays;
+		return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDACDMOMENTUMDELTADAYS);
 	}
-    
+    /*
 	public void setMACDHistogramDeltaDays(Integer integer) {
 		this.macdHistogramDeltaDays = integer;
 	}
-    
+    */
 	public int getMACDHistogramDeltaDays() {
-		return macdHistogramDeltaDays;
+		return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDMACHHISTOGRAMDELTADAYS);
 	}
-    
+    /*
 	public void setMACDDeltaDays(Integer integer) {
 		this.macdDeltaDays = integer;
 	}
-    
+    */
 	public int getRSIDeltaDays() {
-		return rsiDeltaDays;
+		return (Integer) configValueMap.get(ConfigConstants.INDICATORSRSIDELTADAYS);
 	}
-    
+    /*
 	public void setRSIDeltaDays(Integer integer) {
 		this.rsiDeltaDays = integer;
 	}
-    
+    */
 	public int getSTOCHRSIDeltaDays() {
-		return stochrsiDeltaDays;
+		return (Integer) configValueMap.get(ConfigConstants.INDICATORSSTOCHRSIDELTADAYS);
 	}
-    
+    /*
 	public void setSTOCHRSIDeltaDays(Integer integer) {
 		this.stochrsiDeltaDays = integer;
 	}
-    
+    */
 	public int getCCIDeltaDays() {
-		return cciDeltaDays;
+		return (Integer) configValueMap.get(ConfigConstants.INDICATORSCCIDELTADAYS);
 	}
-    
+    /*
 	public void setCCIDeltaDays(Integer integer) {
 		this.cciDeltaDays = integer;
 	}
-    
+    */
 	public int getATRDeltaDays() {
-		return atrDeltaDays;
+		return (Integer) configValueMap.get(ConfigConstants.INDICATORSATRDELTADAYS);
 	}
-    
+  /*  
 	public void setATRDeltaDays(Integer integer) {
 		this.atrDeltaDays = integer;
 	}
-    
+    */
 	public int getSTOCHDeltaDays() {
-		return stochDeltaDays;
+		return (Integer) configValueMap.get(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS);
 	}
-    
+    /*
 	public void setSTOCHDeltaDays(Integer integer) {
 		this.stochDeltaDays = integer;
 	}
+*/
+    /**
+     *  days before positive/negative change
+     * @return
+     */
+    public int getDaysBeforeZero() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
+    }
+
+    /**
+     *  days after positive/negative change
+     * @return
+     */
+    public int getDaysAfterZero() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
+    }
+
+    public  boolean wantScore() {
+        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTS);
+    }
+
+    public  boolean wantML() {
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNING);
+    }
+
+    public  boolean wantMLSpark() {
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKML);
+    }
+
+    public  boolean wantMLTensorflow() {
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOW);
+    }
+
+    public  boolean wantMCP() {
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKMLMCP);
+    }
+
+    public  boolean wantLR() {
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKMLLR);
+    }
+
+    public  boolean wantDNN() {
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
+    }
+
+    public  boolean wantL() {
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOWL);
+    }
+
+    public  int weightBuyHist() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAM);
+    }
+
+    public  int weightBuyHistDelta() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAMDELTA);
+    }
+
+    public  int weightBuyMacd() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUM);
+    }
+
+    public  int weightBuyMacdDelta() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUGMOMENTUMDELTA);
+    }
+
+    public  int weightSellHist() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAM);
+    }
+
+    public  int weightSellHistDelta() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAMDELTA);
+    }
+
+    public  int weightSellMacd() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUM);
+    }
+
+    public  int weightSellMacdDelta() {
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUMDELTA);
+    }
+
+    public  boolean wantMLHist() {
+        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML);
+    }
+
+    public  boolean wantMLMacd() {
+        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDMACHINELEARNINGMOMENTUMML);
+    }
+
+    public boolean wantMLTimes() {
+        return (Boolean) configValueMap.get(ConfigConstants.MISCMLSTATS);
+    }
+
+    public boolean wantPercentizedPriceIndex() {
+        return (Boolean) configValueMap.get(ConfigConstants.MISCPERCENTIZEPRICEINDEX);
+    }
+
+    public boolean wantOtherStats() {
+        return (Boolean) configValueMap.get(ConfigConstants.MISCOTHERSTATS);
+        
+    }
     
+    public String getDbSparkMaster() {
+        return (String) configValueMap.get(ConfigConstants.DATABASESPARKSPARKMASTER);
+    }
+    
+    public String getMLSparkMaster() {
+        return (String) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER);
+    }
+    
+    public boolean wantDbSpark() {
+        System.out.println("sp " + (Boolean) configValueMap.get(ConfigConstants.DATABASESPARK));
+        return (Boolean) configValueMap.get(ConfigConstants.DATABASESPARK);
+    }
+        
+    
+    public boolean wantDbHibernate() {
+        System.out.println("hb " + (Boolean) configValueMap.get(ConfigConstants.DATABASEHIBERNATE));
+        return (Boolean) configValueMap.get(ConfigConstants.DATABASEHIBERNATE);
+    }
+
 }

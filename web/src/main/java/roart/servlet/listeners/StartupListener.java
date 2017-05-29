@@ -18,7 +18,7 @@ public class StartupListener implements javax.servlet.ServletContextListener {
     	EurekaUtil.initEurekaClient();
         try {
             ControlService maininst = new ControlService();
-			maininst.dbengine(false);
+			//maininst.dbengine(false);
        } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

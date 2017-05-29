@@ -15,6 +15,8 @@ public class DbSparkAccess extends DbAccess {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
+	private static DbAccess instance;
+	
 	@Override
 	public List<StockItem> getAll(String market) throws Exception {
 		return DbSpark.getAll(market);
@@ -29,6 +31,14 @@ public class DbSparkAccess extends DbAccess {
     public Map<String, Object[]> doCalculationsArr(MyConfig conf, Map<String, Double[]> listMap, String key,
             Indicator indicator, boolean wantPercentizedPriceIndex) {
         return DbSpark.doCalculationsArr(listMap, key, indicator, wantPercentizedPriceIndex);
+    }
+
+    public static DbAccess instance(MyConfig conf) {
+        if (instance == null) {
+            instance = new DbHibernateAccess();
+            new DbSpark(conf);
+        }
+        return instance;
     }
 
 }

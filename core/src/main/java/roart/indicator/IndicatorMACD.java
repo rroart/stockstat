@@ -72,106 +72,6 @@ public class IndicatorMACD extends Indicator {
         return retMap;
     }
 
-    /**
-     *  days before positive/negative change
-     * @return
-     */
-    private int getDaysBeforeZero() {
-        return 25;
-    }
-
-    /**
-     *  days after positive/negative change
-     * @return
-     */
-    private int getDaysAfterZero() {
-        return 10;
-    }
-
-    public static  boolean wantScore() {
-        return true;
-    }
-
-    public static  boolean wantML() {
-        return true;
-    }
-
-    public static  boolean wantMLSpark() {
-        return true/*false*/;
-    }
-
-    public static  boolean wantMLTensorflow() {
-        return true;
-    }
-
-    public static  boolean wantMCP() {
-        return true;
-    }
-
-    public static  boolean wantLR() {
-        return true;
-    }
-
-    public static  boolean wantDNN() {
-        return true;
-    }
-
-    public static  boolean wantL() {
-        return true;
-    }
-
-    public static  int weightBuyHist() {
-        return 40;
-    }
-
-    public static  int weightBuyHistDelta() {
-        return 20;
-    }
-
-    public static  int weightBuyMacd() {
-        return 20;
-    }
-
-    public static  int weightBuyMacdDelta() {
-        return 20;
-    }
-
-    public static  int weightSellHist() {
-        return 40;
-    }
-
-    public static  int weightSellHistDelta() {
-        return 20;
-    }
-
-    public static  int weightSellMacd() {
-        return 20;
-    }
-
-    public static  int weightSellMacdDelta() {
-        return 20;
-    }
-
-    public static  boolean wantMLHist() {
-        return true;
-    }
-
-    public static  boolean wantMLMacd() {
-        return true;
-    }
-
-    public static boolean wantMLTimes() {
-        return true;
-    }
-    
-    public static boolean wantPercentizedPriceIndex() {
-        return false/*true*/;
-    }
-    
-    public static boolean wantOtherStats() {
-        return true;
-        
-    }
     List<MLDao> mldaos = new ArrayList<>();
 
     public IndicatorMACD(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
@@ -182,22 +82,22 @@ public class IndicatorMACD extends Indicator {
         this.key = title;
         makeWantedSubTypes();
         makeMapTypes();
-        if (wantML()) {
-            if (wantMLSpark()) {
-                mldaos.add(new MLDao("spark"));
+        if (conf.wantML()) {
+            if (conf.wantMLSpark()) {
+                mldaos.add(new MLDao("spark", conf));
             }
-            if (wantMLTensorflow()) {
-                mldaos.add(new MLDao("tensorflow"));
+            if (conf.wantMLTensorflow()) {
+                mldaos.add(new MLDao("tensorflow", conf));
             }
         }
         fieldSize = fieldSize();
-        if (wantMLTimes()) {
+        if (conf.wantMLTimes()) {
             mlTimesTableRows = new ArrayList<>();
             Object[] objs = new Object[fieldSize];
             int retindex = 0;
             objs[retindex++] = "";
         }
-        if (wantOtherStats()) {
+        if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
         calculateMomentums(conf, marketdatamap, periodDataMap, category);        
@@ -278,26 +178,27 @@ public class IndicatorMACD extends Indicator {
     }
   
    private void makeWantedSubTypes() {
-       if (wantMLHist()) {
+       if (conf.wantMLHist()) {
            wantedSubTypes.add(new MacdSubTypeHist());
        }
-       if (wantMLMacd()) {
+       if (conf.wantMLMacd()) {
            wantedSubTypes.add(new MacdSubTypeMacd());
        }
    }
     // TODO make an oo version of this
     private void calculateMomentums(MyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category) throws Exception {
-        DbAccess dbDao = DbDao.instance();
+        DbAccess dbDao = DbDao.instance(conf);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap);
-        if (wantPercentizedPriceIndex()) {
+        if (conf.wantPercentizedPriceIndex()) {
             
         }
         if (!anythingHere(listMap)) {
+            System.out.println("empty"+key);
             return;
         }
         log.info("time0 " + (System.currentTimeMillis() - time0));
@@ -311,7 +212,8 @@ public class IndicatorMACD extends Indicator {
         List<Double> macdDList = new ArrayList<>();
         List<Double> histDList = new ArrayList<>();
         long time2 = System.currentTimeMillis();
-        objectMap = dbDao.doCalculationsArr(conf, listMap, key, this, wantPercentizedPriceIndex());
+        objectMap = dbDao.doCalculationsArr(conf, listMap, key, this, conf.wantPercentizedPriceIndex());
+        //System.out.println("imap " + objectMap.size());
         log.info("time2 " + (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
         TaUtil tu = new TaUtil();
@@ -321,6 +223,7 @@ public class IndicatorMACD extends Indicator {
         log.info("listmap " + listMap.size() + " " + listMap.keySet());
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<String, Map<double[], Double>> mapMap = new HashMap<>();
+       // System.out.println("allids " + listMap.size());
         for (String id : listMap.keySet()) {
             Object[] objs = objectMap.get(id);
             Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs);
@@ -337,7 +240,8 @@ public class IndicatorMACD extends Indicator {
             MInteger endOfArray = (MInteger) objs[TaUtil.IDXEND];
 
             Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            if (wantPercentizedPriceIndex()) {
+            log.info("listsize"+ list.length);
+            if (conf.wantPercentizedPriceIndex()) {
             list = ArraysUtil.getPercentizedPriceIndex(list, key);
             }
             log.info("beg end " + id + " "+ begOfArray.value + " " + endOfArray.value);
@@ -345,10 +249,10 @@ public class IndicatorMACD extends Indicator {
             log.info("list " + list.length + " " + Arrays.asList(list));
             Double[] trunclist = ArraysUtil.getSubExclusive(list, begOfArray.value, begOfArray.value + endOfArray.value);
             log.info("trunclist" + list.length + " " + Arrays.asList(trunclist));
-            if (wantScore()) {
+            if (conf.wantScore()) {
                 addToLists(marketdatamap, category, macdList, histList, macdDList, histDList, market, momentum, retMap);
             }
-            if (wantML()) {
+            if (conf.wantML()) {
                 if (momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
                     Map<String, Double> labelMap2 = createLabelMap2();
                     //List<Double> list = listMap.get(id);
@@ -363,6 +267,7 @@ public class IndicatorMACD extends Indicator {
                         List<MacdSubType> subTypes = wantedSubTypes();
                         for (MacdSubType subType : subTypes) {
                             double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
+                            //System.out.println("arrlen " + aMacdArray.length);
                             Map<Integer, Integer>[] map = ArraysUtil.searchForward(aMacdArray, endOfArray.value);
                             getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, POSTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[0], labelFN, labelTN);
                             getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, NEGTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[1], labelTP, labelFP);
@@ -372,13 +277,13 @@ public class IndicatorMACD extends Indicator {
             }
         }
 
-        if (wantScore()) {
+        if (conf.wantScore()) {
             log.info("histlist " + histList);
             getBuySellRecommendations(macdList, histList, macdDList, histDList);
         }
         // map from h/m to model to posnegcom map<model, results>
         Map<MacdSubType, Map<MLModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
-        if (wantML()) {
+        if (conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();
             try {
                 List<MacdSubType> subTypes = wantedSubTypes();
@@ -387,9 +292,9 @@ public class IndicatorMACD extends Indicator {
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
-                            //System.out.println("mapget " + mapName);
+                            //System.out.println("mapget " + mapName + " " + mapMap.keySet());
                             Map<double[], Double> map = mapMap.get(mapName);
-                            mldao.learntest(this, map, null, getDaysBeforeZero(), key, mapName, 4, mapTime);  
+                            mldao.learntest(this, map, null, conf.getDaysBeforeZero(), key, mapName, 4, mapTime);  
                         }
                     }
                 }
@@ -452,7 +357,7 @@ public class IndicatorMACD extends Indicator {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
                             Map<String, double[]> map = mapIdMap.get(mapName);
-                            Map<String, Double[]> classifyResult = mldao.classify(this, map, model, getDaysBeforeZero(), key, mapName, 4, labelMapShort, mapTime);
+                            Map<String, Double[]> classifyResult = mldao.classify(this, map, model, conf.getDaysBeforeZero(), key, mapName, 4, labelMapShort, mapTime);
                             mapResult2.put(mapType, classifyResult);
                         }
                         mapResult1.put(model, mapResult2);
@@ -470,14 +375,14 @@ public class IndicatorMACD extends Indicator {
             resultMap.put(id, fields);
             int retindex = tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
 
-            if (wantScore()) {
+            if (conf.wantScore()) {
                 Double buy = buyMap.get(id);
                 fields[retindex++] = buy;
                 Double sell = sellMap.get(id);
                 fields[retindex++] = sell;
             }
             // TODO make OO of this
-            if (wantML()) {
+            if (conf.wantML()) {
                 Map<Double, String> labelMapShort2 = createLabelMapShort();
                 //int momidx = 6;
                 Double[] type;
@@ -502,7 +407,7 @@ public class IndicatorMACD extends Indicator {
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
         // and others done with println
-        if (wantOtherStats()) {
+        if (conf.wantOtherStats()) {
             Map<Double, String> labelMapShort = createLabelMapShort();            
             List<MacdSubType> subTypes = wantedSubTypes();
             for (MacdSubType subType : subTypes) {
@@ -522,7 +427,7 @@ public class IndicatorMACD extends Indicator {
                 }
             }
         }
-        if (wantMLTimes()) {
+        if (conf.wantMLTimes()) {
             //Map<MLModel, Long> mapTime = new HashMap<>();
             for (MLModel model : mapTime.keySet()) {
                 ResultItemTableRow row = new ResultItemTableRow();
@@ -541,11 +446,11 @@ public class IndicatorMACD extends Indicator {
             Double[] valueList) {
         Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, endOfArray.value);
         Map<Integer, Integer> pos = map[0];
-        Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, getDaysBeforeZero(), getDaysAfterZero(), valueList.length);
+        Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), valueList.length);
         Map<Integer, Integer> neg = map[1];
-        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, getDaysBeforeZero(), getDaysAfterZero(), valueList.length);
+        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), valueList.length);
         //System.out.println("negpos " + newNeg.size() + " " + newPos.size());
-        printSignChange(name, id, newPos, newNeg, endOfArray.value, getDaysAfterZero(), labelMapShort);
+        printSignChange(name, id, newPos, newNeg, endOfArray.value, conf.getDaysAfterZero(), labelMapShort);
         if (!newNeg.isEmpty() || !newPos.isEmpty()) {
             int start = 0;
             int end = 0;
@@ -576,11 +481,11 @@ public class IndicatorMACD extends Indicator {
         Map<String, double[]> negMap = mapGetter(mapIdMap, subType + NEGTYPESTR);
         Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, endOfArray.value);
         Map<Integer, Integer> pos = map[0];
-        Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, getDaysBeforeZero(), getDaysAfterZero(), valueList.length);
+        Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), valueList.length);
         Map<Integer, Integer> neg = map[1];
-        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, getDaysBeforeZero(), getDaysAfterZero(), valueList.length);
+        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), valueList.length);
         //System.out.println("negpos " + newNeg.size() + " " + newPos.size());
-        printSignChange(name, id, newPos, newNeg, endOfArray.value, getDaysAfterZero(), labelMapShort);
+        printSignChange(name, id, newPos, newNeg, endOfArray.value, conf.getDaysAfterZero(), labelMapShort);
         if (!newNeg.isEmpty() || !newPos.isEmpty()) {
             int start = 0;
             int end = 0;
@@ -657,12 +562,12 @@ public class IndicatorMACD extends Indicator {
         if (list.length == 0) {
             //System.out.println("h " + Arrays.asList( histarr));
         }
-        Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, getDaysBeforeZero(), getDaysAfterZero(), listsize);
+        Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), listsize);
         for (int start : newPos.keySet()) {
             int end = newPos.get(start);
             String label = null;
             try {
-                if (list[end] < list[end + getDaysAfterZero()]) {
+                if (list[end] < list[end + conf.getDaysAfterZero()]) {
                     label = labelFN;
                     log.info(labelFN + ": " + id + " " + ControlService.getName(id) + " at " + end);
                     printme(label, end, list, array);
@@ -690,11 +595,11 @@ public class IndicatorMACD extends Indicator {
             Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer>[] map) {
         Map<Integer, Integer> neg = map[1];
-        Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, getDaysBeforeZero(), getDaysAfterZero(), listsize);
+        Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), listsize);
         for (int start : newNeg.keySet()) {
             int end = newNeg.get(start);
             String label;
-            if (list[end] < list[end + getDaysAfterZero()]) {
+            if (list[end] < list[end + conf.getDaysAfterZero()]) {
                 label = labelTP;
                 log.info("TruePositive" + ": " + id + " " + ControlService.getName(id) + " at " + end);
                 printme(label, end, list, array);
@@ -713,11 +618,11 @@ public class IndicatorMACD extends Indicator {
     private void getPosNegMap(Map<double[], Double> commonMap, Map<double[], Double> posnegMap, String id,
             Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer> posneg, String label, String labelopposite) {
-        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, getDaysBeforeZero(), getDaysAfterZero(), listsize);
+        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), listsize);
         for (int start : newPosNeg.keySet()) {
             int end = newPosNeg.get(start);
             String textlabel;
-            if (list[end] < list[end + getDaysAfterZero()]) {
+            if (list[end] < list[end + conf.getDaysAfterZero()]) {
                 textlabel = label;
             } else {
                 textlabel = labelopposite;
@@ -734,11 +639,12 @@ public class IndicatorMACD extends Indicator {
     private void getPosNegMap(Map<String, Map<double[], Double>> mapMap, String subType, String commonType, String posnegType , String id,
             Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer> posneg, String label, String labelopposite) {
-        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, getDaysBeforeZero(), getDaysAfterZero(), listsize);
+        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), listsize);
+    //System.out.println("pnmap " + newPosNeg.keySet());
         for (int start : newPosNeg.keySet()) {
             int end = newPosNeg.get(start);
             String textlabel;
-            if (list[end] < list[end + getDaysAfterZero()]) {
+            if (list[end] < list[end + conf.getDaysAfterZero()]) {
                 textlabel = label;
             } else {
                 textlabel = labelopposite;
@@ -778,7 +684,7 @@ public class IndicatorMACD extends Indicator {
     private void printme(String label, int end, Double[] values, double[] array) {
         String me1 = "";
         String me2 = "";
-        for (int i = end - 3; i <= end + getDaysAfterZero(); i++) {
+        for (int i = end - 3; i <= end + conf.getDaysAfterZero(); i++) {
             me1 = me1 + values[i] + " ";
             me2 = me2 + array[i] + " ";
         }
@@ -835,28 +741,28 @@ public class IndicatorMACD extends Indicator {
             double macd = momentum[2];
             double macdd = momentum[3];
             if (hist >= 0) {
-                double recommend = weightBuyHist()*(maxhist - hist)/maxhist;
+                double recommend = conf.weightBuyHist()*(maxhist - hist)/maxhist;
                 if (histd >= 0) {
-                    recommend += weightBuyHistDelta()*(histd)/maxdhist;
+                    recommend += conf.weightBuyHistDelta()*(histd)/maxdhist;
                 }
                 if (macd >= 0) {
-                    recommend += weightBuyMacd()*(macd)/maxmacd;
+                    recommend += conf.weightBuyMacd()*(macd)/maxmacd;
                 }
                 if (macdd >= 0) {
-                    recommend += weightBuyMacdDelta()*(macdd)/maxdmacd;
+                    recommend += conf.weightBuyMacdDelta()*(macdd)/maxdmacd;
                 }
                 buyMap.put(id, recommend);
             }
             if (hist < 0) {
-                double recommend = weightSellHist()*(minhist - hist)/minhist;
+                double recommend = conf.weightSellHist()*(minhist - hist)/minhist;
                 if (histd < 0) {
-                    recommend += weightSellHistDelta()*(histd)/mindhist;
+                    recommend += conf.weightSellHistDelta()*(histd)/mindhist;
                 }
                 if (macd < 0) {
-                    recommend += weightSellMacd()*(macd)/minmacd;
+                    recommend += conf.weightSellMacd()*(macd)/minmacd;
                 }
                 if (macdd < 0) {
-                    recommend += weightSellMacdDelta()*(macdd)/mindmacd;
+                    recommend += conf.weightSellMacdDelta()*(macdd)/mindmacd;
                 }
                 sellMap.put(id, recommend);
             }
@@ -980,7 +886,7 @@ public class IndicatorMACD extends Indicator {
         if (conf.isMACDDeltaEnabled()) {
             objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
         }
-        if (wantScore()) {
+        if (conf.wantScore()) {
             objs[retindex++] = title + Constants.WEBBR + "buy";
             objs[retindex++] = title + Constants.WEBBR + "sell";
         }
@@ -1008,7 +914,7 @@ public class IndicatorMACD extends Indicator {
         if (conf.isMACDHistogramDeltaEnabled()) {
             size++;
         }
-        if (wantScore()) {
+        if (conf.wantScore()) {
             size += 2;
         }
         List<MacdSubType> subTypes = wantedSubTypes();

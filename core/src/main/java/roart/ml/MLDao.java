@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.HashSet;
 
 import roart.config.ConfigConstants;
+import roart.config.MyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.model.StockItem;
@@ -21,11 +22,11 @@ public class MLDao {
 
     private MLAccess access = null;
 
-    public MLDao(String instance) {
-        instance(instance);
+    public MLDao(String instance, MyConfig conf) {
+        instance(instance, conf);
     }
 
-    private void instance(String type) {
+    private void instance(String type, MyConfig conf) {
         System.out.println("instance " + type);
         log.info("instance " + type);
         if (type == null) {
@@ -34,11 +35,11 @@ public class MLDao {
         // TODO temp fix
         if (true || access == null) {
             if (type.equals(ConfigConstants.SPARK)) {
-                access = new MLSparkAccess();
+                access = new MLSparkAccess(conf);
                 //new MlSpark();
             }
             if (type.equals(ConfigConstants.TENSORFLOW)) {
-                access = new MLTensorflowAccess();
+                access = new MLTensorflowAccess(conf);
             }
         }
     }

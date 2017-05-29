@@ -21,7 +21,7 @@ public class DbDao {
 
 	private static DbAccess access = null;
 
-	public static void instance(String type) {
+	public static void instance(String type, MyConfig conf) {
 		System.out.println("instance " + type);
 		log.info("instance " + type);
 		if (type == null) {
@@ -31,7 +31,7 @@ public class DbDao {
 		if (true || access == null) {
 			if (type.equals(ConfigConstants.SPARK)) {
 				access = new DbSparkAccess();
-				new DbSpark();
+				new DbSpark(conf);
 			}
 			if (type.equals(ConfigConstants.HIBERNATE)) {
 				access = new DbHibernateAccess();
@@ -39,8 +39,15 @@ public class DbDao {
 		}
 	}
 
-	public static DbAccess instance() {
-		return access;
+	public static DbAccess instance(MyConfig conf) {
+	    if (conf.wantDbSpark()) {
+	        return DbSparkAccess.instance(conf);
+	    }
+        if (conf.wantDbHibernate()) {
+            return DbHibernateAccess.instance();
+        }
+        System.out.println("ret null");
+		return null;
 	}
 
 	public static List<StockItem> getAll(String type, String language) throws Exception {

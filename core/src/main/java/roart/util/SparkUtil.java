@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.spark.SparkConf;
 import org.apache.spark.ml.linalg.VectorUDT;
 import org.apache.spark.ml.linalg.Vectors;
 import org.apache.spark.sql.Dataset;
@@ -23,6 +24,46 @@ public class SparkUtil {
 
     private static Logger log = LoggerFactory.getLogger(SparkUtil.class);
     
+    public static SparkSession createSparkSession(String sparkmaster, String appName) {
+        SparkConf sparkconf = new SparkConf();
+        String master = sparkmaster;
+        sparkconf.setMaster(master);
+        sparkconf.setAppName("stockstat");
+        // it does not work well with default snappy
+        sparkconf.set("spark.io.compression.codec", "lzf");
+        sparkconf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        sparkconf.set("spark.driver.extraClassPath", "/home/roart/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar" );
+        sparkconf.set("spark.executor.extraClassPath", "/home/roart/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar" );
+        //sparkconf.set("spark.kryo.registrator", "org.apache.mahout.sparkbindings.io.MahoutKryoRegistrator");
+        String userDir = System.getProperty("user.dir");
+        log.info("user.dir " + userDir);
+        String[] jars = {
+                "file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/mahout-spark_2.10-0.12.0.jar",
+                "file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/mahout-hdfs-0.12.0.jar",
+                "file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/mahout-math-0.12.0.jar",
+                "file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/guava-16.0.1.jar",
+                "file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/fastutil-7.0.11.jar",
+                "file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/mahout-math-scala_2.10-0.12.0.jar",
+                "file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT.jar"
+        };
+        // first try without sparkconf.setJars(jars);
+
+        SparkSession spark = SparkSession
+                .builder()
+                .master(sparkmaster)
+                .appName(appName)
+                .config(sparkconf)
+                .getOrCreate();
+
+        return spark;
+        //JavaSparkContext jsc = new JavaSparkContext(sparkconf);
+        //SQLContext sqlContext = new SQLContext(jsc);
+        //Dataset<Row> df = sqlContext.sql("select * from meta");
+        // spark2:            SparkSession spark = SparkSession.builder().master("local[*]").appName("Stockstat Spark").getOrCreate();
+
+        // spark2: Dataset<Row> df = spark.read().jdbc("jdbc:postgresql://stockstat:password@localhost:5432/stockstat", "meta", null);
+    }
+
     public static Dataset<Row> createDFfromMap(SparkSession spark, Map<double[], Double> listMap) {
         if (spark == null) {
             return null;

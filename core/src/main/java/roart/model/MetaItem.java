@@ -1,5 +1,6 @@
 package roart.model;
 
+import roart.config.MyConfig;
 import roart.db.DbDao;
 
 public class MetaItem {
@@ -17,8 +18,9 @@ public class MetaItem {
 		this.period[5] = period6;
 	}
 
-	public static MetaItem getById(String market) throws Exception {
-		return DbDao.instance().getMarket(market);
+	public static MetaItem getById(String market, MyConfig conf) throws Exception {
+	    System.out.println("mymarket " + market);
+	    return DbDao.instance(conf).getMarket(market);
 	}
 	public String getperiod(int i) {
 		return period[i];

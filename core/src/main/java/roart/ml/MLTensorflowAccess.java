@@ -9,6 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.config.MyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.model.LearnTest;
@@ -22,17 +23,20 @@ public class MLTensorflowAccess extends MLAccess {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	public MLTensorflowAccess() {
+    private MyConfig conf;
+    
+	public MLTensorflowAccess(MyConfig conf) {
+        this.conf = conf;
 	    findModels();
 	}
 	
 	private void findModels() {
         models = new ArrayList<>();
-        if (IndicatorMACD.wantDNN()) {
+        if (conf.wantDNN()) {
             MLModel model = new MLTensorflowDNNModel();
             models.add(model);
         }
-        if (IndicatorMACD.wantL()) {
+        if (conf.wantL()) {
             MLModel model = new MLTensorflowLModel();
             models.add(model);
         }	    

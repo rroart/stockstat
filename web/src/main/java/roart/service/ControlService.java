@@ -3,6 +3,7 @@ package roart.service;
 import roart.model.GUISize;
 import roart.model.ResultItem;
 import roart.config.ConfigConstants;
+import roart.config.ConfigTreeMap;
 import roart.config.MyConfig;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class ControlService {
     
     public ControlService() {
     	conf = MyConfig.instance();
+    	//getConfig();
     }
   
     public void getConfig() {
@@ -31,8 +33,35 @@ public class ControlService {
         param.config = conf;
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
         conf = result.config;
+        ConfigConstants.makeTypeMap();
+        ConfigConstants.makeTextMap();
+        Map<String, Object> map = conf.configValueMap;
+        for (String key : map.keySet()) {
+            Object value = map.get(key);
+            //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
+            System.out.println("k " + key + " " + value);
+            if (value != null) {
+                System.out.println("cls " + value.getClass().getName());
+            }
+        }
+        ConfigTreeMap map2 = conf.configTreeMap;
+        print(map2, 0);
+       
     }
     
+    private void print(ConfigTreeMap map2, int indent) {
+        String space = "      ";
+        System.out.print(space.substring(0, indent));
+        System.out.println("map2 " + map2.name + " " + map2.enabled);
+        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        for (String key : map3.keySet()) {
+        print(map3.get(key), indent + 1);
+            //Object value = map.get(key);
+            //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
+        }
+       
+    }
+
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
         param.config = conf;

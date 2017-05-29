@@ -17,6 +17,7 @@ import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.config.MyConfig;
 import roart.db.DbSpark;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
@@ -32,20 +33,27 @@ public class MLSparkAccess extends MLAccess {
 
 	protected SparkSession spark;
 	
+	private MyConfig conf;
+	
     private Map<String, Model> modelMap = new HashMap<>();
     private Map<String, Double> accuracyMap = new HashMap<>();
     
-	public MLSparkAccess() {
+	public MLSparkAccess(MyConfig conf) {
+        this.conf = conf;
         findModels();	
-        spark = DbSpark.getSparkSession();
+        String sparkmaster = conf.getMLSparkMaster();
+        //sparkmaster = MyPropertyConfig.instance().sparkMaster;
+        spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat ML");
 	}
+
+
     private void findModels() {
         models = new ArrayList<>();
-        if (IndicatorMACD.wantDNN()) {
+        if (conf.wantDNN()) {
             MLModel model = new MLSparkMCPModel();
             models.add(model);
         }
-        if (IndicatorMACD.wantL()) {
+        if (conf.wantL()) {
             MLModel model = new MLSparkLRModel();
             models.add(model);
         }

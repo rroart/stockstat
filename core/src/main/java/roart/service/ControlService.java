@@ -81,10 +81,10 @@ public class ControlService {
     	return null;
     }
     
-    public Map<String, String> getStocks(String market) {
+    public Map<String, String> getStocks(String market, MyConfig conf) {
         try {
         	Map<String, String> stockMap = new HashMap();
-        	List<StockItem> stocks = StockItem.getAll(market);
+        	List<StockItem> stocks = StockItem.getAll(market, conf);
         	stocks.remove(null);
         	for (StockItem stock : stocks) {
         		stockMap.put(stock.getId(), stock.getName());
@@ -133,10 +133,11 @@ public class ControlService {
 
     public List<ResultItem> getContent(MyConfig conf) {
         log.info("mydate " + conf.getdate());
+        log.info("mydate " + conf.getDays());
         createOtherTables();
         List<StockItem> stocks = null;
         try {
-            stocks = StockItem.getAll(conf.getMarket());
+            stocks = StockItem.getAll(conf.getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -144,7 +145,7 @@ public class ControlService {
             return null;
         }
         log.info("stocks " + stocks.size());
-        String[] periodText = getPeriodText(conf.getMarket());
+        String[] periodText = getPeriodText(conf.getMarket(), conf);
         Set<String> markets = new HashSet();
         markets.add(conf.getMarket());
         Integer days = conf.getDays();
@@ -320,11 +321,11 @@ public class ControlService {
      * @param market
      */
     
-    private String[] getPeriodText(String market) {
+    private String[] getPeriodText(String market, MyConfig conf) {
         String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6" };
         MetaItem meta = null;
         try {
-            meta = MetaItem.getById(market);
+            meta = MetaItem.getById(market, conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -353,9 +354,9 @@ public class ControlService {
         List<ResultItem> retlist = new ArrayList<>();
         try {
             log.info("mydate " + conf.getdate());
-            List<StockItem> stocks = StockItem.getAll(conf.getMarket());
+            List<StockItem> stocks = StockItem.getAll(conf.getMarket(), conf);
             log.info("stocks " + stocks.size());
-            String[] periodText = getPeriodText(conf.getMarket());
+            String[] periodText = getPeriodText(conf.getMarket(), conf);
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
             if (conf.getdate() == null) {
@@ -413,7 +414,7 @@ public class ControlService {
             Set<String> markets = getMarkets(ids);
             List<StockItem> stocks = null;
             try {
-                stocks = StockItem.getAll(conf.getMarket());
+                stocks = StockItem.getAll(conf.getMarket(), conf);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -527,11 +528,11 @@ public class ControlService {
         Map<String, MarketData> marketdatamap = new HashMap();
         for (String market : markets) {
             log.info("prestocks");
-            List<StockItem> stocks = StockItem.getAll(market);
+            List<StockItem> stocks = StockItem.getAll(market, conf);
             log.info("stocks " + stocks.size());
             MarketData marketdata = new MarketData();
             marketdata.stocks = stocks;
-            String[] periodText = getPeriodText(market);
+            String[] periodText = getPeriodText(market, conf);
             marketdata.periodtext = periodText;
             //Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
@@ -599,7 +600,7 @@ public class ControlService {
         row.add("Pearson (e)");
         table.add(row);
         try {
-            List<StockItem> stocks = StockItem.getAll(conf.getMarket());
+            List<StockItem> stocks = StockItem.getAll(conf.getMarket(), conf);
             log.info("stocks " + stocks.size());
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
@@ -634,6 +635,7 @@ public class ControlService {
         retList.add(table);
         return retList;
     }
+    /*
     public void config(MyConfig config) {    	
     	configDb(config.useSpark);
     }
@@ -644,5 +646,6 @@ public class ControlService {
     	} else {
     		DbDao.instance("hibernate");
     	}
-    }    
+    } 
+    */   
 }

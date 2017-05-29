@@ -204,10 +204,15 @@
     <version>0.4.0</version>
   </dependency>
   <dependency>
-    <groupId>commons-configuration</groupId>
-    <artifactId>commons-configuration</artifactId>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-configuration2</artifactId>
     <version>${commons.version}</version>
   </dependency>
+<dependency>
+    <groupId>commons-beanutils</groupId>
+    <artifactId>commons-beanutils</artifactId>
+    <version>1.9.3</version>
+</dependency>
   <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.11</artifactId>
@@ -279,7 +284,7 @@
     <servlet.version>3.1.0</servlet.version>
     <guava.version>16.0.1</guava.version>
     <xmlapis.version>1.4.01</xmlapis.version>
-    <commons.version>1.10</commons.version>
+    <commons.version>2.1.1</commons.version>
     <spark.version>2.1.0</spark.version>
   </properties>
 	<repositories>

@@ -1,6 +1,7 @@
 package roart.client;
 
 import roart.config.ConfigConstants;
+import roart.config.ConfigTreeMap;
 import roart.model.GUISize;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItemTable;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.awt.Rectangle;
@@ -206,6 +208,7 @@ public class MyVaadinUI extends UI
         HorizontalLayout horMisc = new HorizontalLayout();
         horMisc.setHeight("20%");
         horMisc.setWidth("90%");
+        /*
         horMisc.addComponent(getMove());
         HorizontalLayout horMACD = new HorizontalLayout();
         horMACD.setHeight("20%");
@@ -218,6 +221,7 @@ public class MyVaadinUI extends UI
         horRSI.setWidth("90%");
         horRSI.addComponent(getRSI());
         horRSI.addComponent(getRSIDelta());
+        */
         // not yet
         /*
         horMACD.addComponent(getCCI());
@@ -226,12 +230,26 @@ public class MyVaadinUI extends UI
         horMACD.addComponent(getATRDelta());
         horMACD.addComponent(getSTOCH());
         horMACD.addComponent(getSTOCHDelta());
-        */
         horRSI.addComponent(getSTOCHRSI());
         horRSI.addComponent(getSTOCHRSIDelta());
+        */
         HorizontalLayout horStat = new HorizontalLayout();
         horStat.setHeight("20%");
         horStat.setWidth("90%");
+        horStat.addComponent(new Label("b1"));
+        VerticalLayout v1 = new VerticalLayout();
+        horStat.addComponent(v1);
+        
+        v1.addComponent(new Label("b2"));
+        HorizontalLayout h1 = new HorizontalLayout();
+        v1.addComponent(h1);
+        
+        h1.addComponent(new Label("b3"));
+        VerticalLayout v2 = new VerticalLayout();
+        h1.addComponent(v2);
+        
+        v2.addComponent(new Label("b4"));
+        
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
         horDb.setHeight("20%");
@@ -242,12 +260,17 @@ public class MyVaadinUI extends UI
 	tab.addComponent(getCleanup2());
 	tab.addComponent(getCleanupfs());
          */
+        HorizontalLayout horTree = new HorizontalLayout();
+        ConfigTreeMap map2 = controlService.conf.configTreeMap;
+        componentMap = new HashMap<>();
+        print(map2, horTree);
 
         tab.addComponent(horMisc);
-        tab.addComponent(horMACD);
-        tab.addComponent(horRSI);
+        //tab.addComponent(horMACD);
+        //tab.addComponent(horRSI);
         tab.addComponent(horStat);
         tab.addComponent(horDb);
+        tab.addComponent(horTree);
         /*
 	HorizontalLayout bla2 = new HorizontalLayout();
 	tab.addComponent(bla2);
@@ -262,6 +285,68 @@ public class MyVaadinUI extends UI
          */
         return tab;
     }
+    
+    Map<String, Component> componentMap ;
+    private void print(ConfigTreeMap map2, HorizontalLayout tab) {
+        Map<String, Object> map = controlService.conf.configValueMap;
+        String name = map2.name;
+        System.out.println("name " + name);
+        Object object = map.get(name);
+        Component o = null;
+        String text = ConfigConstants.text.get(name);
+        if (object == null) {
+            //System.out.println("null for " + name);
+            String labelname = name;
+            int last = name.lastIndexOf(".");
+            if (last >=0) {
+                labelname = name.substring(last + 1);
+            }
+            o = new Label(labelname + "    ");
+            tab.addComponent(o);
+            componentMap.put(name, o);
+        } else {
+            switch (object.getClass().getName()) {
+            case "java.lang.String":
+                o = getStringField(text, name);
+                break;
+            case "java.lang.Integer":
+                o = getIntegerField(text, name);
+                break;
+            case "java.lang.Boolean":
+                o = getCheckbox(text, name);
+                break;
+            default:
+                System.out.println("unknown " + object.getClass().getName());
+                log.info("unknown " + object.getClass().getName());
+
+            }
+            tab.addComponent(o);
+            componentMap.put(name, o);
+        }
+        //System.out.print(space.substring(0, indent));
+        //System.out.println("map2 " + map2.name + " " + map2.enabled);
+        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        if (!map3.keySet().isEmpty()) {
+            VerticalLayout h = new VerticalLayout();
+            tab.addComponent(h);
+            h.addComponent(new Label(">"));
+            HorizontalLayout n1 = new HorizontalLayout();
+            h.addComponent(n1);
+            
+            n1.addComponent(new Label(">"));
+            VerticalLayout h1 = new VerticalLayout();
+            n1.addComponent(h1);
+            
+            for (String key : map3.keySet()) {
+                System.out.println("key " + key);
+                HorizontalLayout n = new HorizontalLayout();
+                h1.addComponent(n);
+                print(map3.get(key), n);
+                //Object value = map.get(key);
+                //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
+            }
+        }
+    }
 
     private VerticalLayout getConfigTab() {
     	boolean isProductionMode = VaadinService.getCurrent()
@@ -273,9 +358,11 @@ public class MyVaadinUI extends UI
     HorizontalLayout hor = new HorizontalLayout();
     hor.setHeight("20%");
     hor.setWidth("90%");
+    /*
    if (!isProductionMode) {
     hor.addComponent(getDbEngine());
     }
+    */
    tab.addComponent(hor);
     return tab;
     }
@@ -305,6 +392,7 @@ public class MyVaadinUI extends UI
         horDb2.setHeight("20%");
         horDb2.setWidth("60%");
         //horDb.addComponent(getDbItem());
+        /*
         horDb2.addComponent(getDays());
         horDb2.addComponent(getTableDays());
         horDb2.addComponent(getTableIntervalDays());
@@ -315,12 +403,14 @@ public class MyVaadinUI extends UI
        
         horMACD.addComponent(getMACDDeltaDays());
         horMACD.addComponent(getMACDHistogramDeltaDays());
+        */
         // not yet:
         /*
         horDb2.addComponent(getATRDeltaDays());
         horDb2.addComponent(getCCIDeltaDays());
         horDb2.addComponent(getSTOCHDeltaDays());
         */
+        /*
         HorizontalLayout horRSI = new HorizontalLayout();
         horRSI.setHeight("20%");
         horRSI.setWidth("90%");
@@ -330,6 +420,7 @@ public class MyVaadinUI extends UI
         horDb3.setHeight("20%");
         horDb3.setWidth("60%");
         horDb3.addComponent(getTableMoveIntervalDays());
+        */
         /*
         horDb3.addComponent(getTodayZero());
         */
@@ -349,17 +440,17 @@ public class MyVaadinUI extends UI
         horChooseGraph.setHeight("20%");
         horChooseGraph.setWidth("60%");
         //horDb.addComponent(getDbItem());
-        horChooseGraph.addComponent(getEqualizeGraph());
-        horChooseGraph.addComponent(getEqualizeUnify());
+        //horChooseGraph.addComponent(getEqualizeGraph());
+        //horChooseGraph.addComponent(getEqualizeUnify());
        horChooseGraph.addComponent(getChooseGraph(verManualList));
 
         //tab.addComponent(horNewInd);
         tab.addComponent(horStat);
         tab.addComponent(horDb); 
         tab.addComponent(horDb2);
-        tab.addComponent(horDb3);
-        tab.addComponent(horMACD);
-        tab.addComponent(horRSI);
+        //tab.addComponent(horDb3);
+        //tab.addComponent(horMACD);
+        //tab.addComponent(horRSI);
         tab.addComponent(horManual);
         tab.addComponent(verManualList);
         tab.addComponent(horChooseGraph);
@@ -585,7 +676,7 @@ public class MyVaadinUI extends UI
         ls.setImmediate(true);
         return ls;
     }
-
+/*
    private TextField getDays() {
         TextField tf = new TextField("Single interval days");
         tf.setValue("" + controlService.conf.getDays());
@@ -874,7 +965,7 @@ public class MyVaadinUI extends UI
         tf.setImmediate(true);
         return tf;
     }
-
+*/
     private void displayResults() {
         List<ResultItem> list = controlService.getContent();
         log.info("listsize " + list.size());
@@ -971,7 +1062,7 @@ public class MyVaadinUI extends UI
             image.setWidth(xsize, Sizeable.Unit.PIXELS );
             layout.addComponent(image);
     }
-
+/*
     private CheckBox getEqualize() {
         CheckBox cb = new CheckBox("Equalize sample sets");
         cb.setValue(controlService.conf.isEqualize());
@@ -993,7 +1084,79 @@ public class MyVaadinUI extends UI
         cb.setImmediate(true);
         return cb;
     }
+*/
+    private CheckBox getCheckbox(String text, String configKey) {
+        CheckBox cb = new CheckBox(text);
+        Boolean origValue = (Boolean) controlService.conf.configValueMap.get(configKey);
+        cb.setValue(origValue);
 
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.configValueMap.put(configKey, value );
+                    // TODO handle hiding
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private TextField getStringField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        String origValue = (String) controlService.conf.configValueMap.get(configKey);
+
+        tf.setValue(origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.configValueMap.put(configKey, value );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        tf.setImmediate(true);
+        return tf;
+    }
+
+    private TextField getIntegerField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        Integer origValue = (Integer) controlService.conf.configValueMap.get(configKey);
+
+        tf.setValue("" + origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.configValueMap.put(configKey, new Integer(value) );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        tf.setImmediate(true);
+        return tf;
+    }
+/*
     private CheckBox getMove() {
         CheckBox cb = new CheckBox("Enable chart move");
         cb.setValue(controlService.conf.isMoveEnabled());
@@ -1358,10 +1521,9 @@ public class MyVaadinUI extends UI
                 // Assuming that the value type is a String                 
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value                              
-    		    ControlService maininst = new ControlService();
     		    try {
     		        System.out.println("new val " + value);
-    			maininst.dbengine(value.equals(ConfigConstants.SPARK));
+    			controlService.dbengine(value.equals(ConfigConstants.SPARK));
     			Notification.show("Request sent");
     		    } catch (Exception e) {
     			log.error(Constants.EXCEPTION, e);
@@ -1372,7 +1534,7 @@ public class MyVaadinUI extends UI
     	ls.setImmediate(true);
     	return ls;
     }
-    
+  */  
    void addListText(VerticalLayout ts, ResultItemText str) {
             ts.addComponent(new Label(str.text));
      }

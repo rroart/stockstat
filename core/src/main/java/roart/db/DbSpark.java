@@ -9,6 +9,7 @@ import roart.model.MetaItem;
 import roart.model.StockItem;
 import roart.util.ArraysUtil;
 import roart.util.Constants;
+import roart.util.SparkUtil;
 import scala.Tuple2;
 import scala.collection.JavaConversions;
 import scala.collection.mutable.WrappedArray;
@@ -62,47 +63,12 @@ public class DbSpark {
 	private static Properties prop;
 
     //private static Model model;
-	public DbSpark() {
+	public DbSpark(MyConfig conf) {
 	    
 		try {
-			String sparkmaster = "spark://127.0.0.1:7077";
+			String sparkmaster = conf.getDbSparkMaster();
 			//sparkmaster = MyPropertyConfig.instance().sparkMaster;
-			SparkConf sparkconf = new SparkConf();
-			String master = sparkmaster;
-			sparkconf.setMaster(master);
-			sparkconf.setAppName("stockstat");
-			// it does not work well with default snappy
-			sparkconf.set("spark.io.compression.codec", "lzf");
-			sparkconf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-			sparkconf.set("spark.driver.extraClassPath", "/home/roart/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar" );
-			sparkconf.set("spark.executor.extraClassPath", "/home/roart/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar" );
-			//sparkconf.set("spark.kryo.registrator", "org.apache.mahout.sparkbindings.io.MahoutKryoRegistrator");
-			String userDir = System.getProperty("user.dir");
-			log.info("user.dir " + userDir);
-			String[] jars = {
-					"file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/mahout-spark_2.10-0.12.0.jar",
-					"file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/mahout-hdfs-0.12.0.jar",
-					"file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/mahout-math-0.12.0.jar",
-					"file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/guava-16.0.1.jar",
-					"file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/fastutil-7.0.11.jar",
-					"file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT/WEB-INF/lib/mahout-math-scala_2.10-0.12.0.jar",
-					"file:" + userDir + "/target/stockstat-web-0.4-SNAPSHOT.jar"
-			};
-			// first try without sparkconf.setJars(jars);
-
-			spark = SparkSession
-					.builder()
-					.master(sparkmaster)
-					.appName("Aether")
-					.config(sparkconf)
-					.getOrCreate();
-
-			//JavaSparkContext jsc = new JavaSparkContext(sparkconf);
-			//SQLContext sqlContext = new SQLContext(jsc);
-			//Dataset<Row> df = sqlContext.sql("select * from meta");
-			// spark2:            SparkSession spark = SparkSession.builder().master("local[*]").appName("Stockstat Spark").getOrCreate();
-
-			// spark2: Dataset<Row> df = spark.read().jdbc("jdbc:postgresql://stockstat:password@localhost:5432/stockstat", "meta", null);
+			spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat DB");
 			prop = new java.util.Properties();
 			prop.setProperty("driver", "org.postgresql.Driver");
 			System.out.println("spark conf fin");
@@ -218,7 +184,7 @@ public class DbSpark {
        return objMap;
     }
     
-    public static SparkSession getSparkSession() {
+    private static SparkSession getSparkSession() {
         return spark;
     }
 }

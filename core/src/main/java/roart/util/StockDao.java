@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jfree.util.Log;
+
 import roart.model.StockItem;
 import roart.config.MyConfig;
 
@@ -119,18 +121,27 @@ public class StockDao {
 			Map<String, MarketData> marketdataMap) throws Exception {
 		Map<String, Double[]> retMap = new HashMap<>();
 		List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
-        //System.out.println("datstolen " + datedstocklists.length);
+        System.out.println("datstolen " + datedstocklists.length);
 		int index = 0;
+		int nonn = 0;
+		int nu = 0;
         if (index >= 0) {
         	for (int i = index; i < datedstocklists.length; i++) {
         		List<StockItem> stocklist = datedstocklists[i];
+        		//System.out.println("datstolen2 " + stocklist.size());
         		for (StockItem stock : stocklist) {
         			String stockid = stock.getId();
         			Double value = StockDao.getValue(stock, periodInt);
+        			if (value == null) {
+        			    nu++;
+        			} else {
+        			    nonn++;
+        			}
         			mapAdd(retMap, stockid, i, value, datedstocklists.length);
         		}
         	}
         }
+        System.out.println("nullnul" + nonn + " " + nu);
 		return retMap;
 	}
 }
