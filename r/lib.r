@@ -395,8 +395,8 @@ myperiodtextslist <- function(myperiodtexts, periodtexts) {
     return(retlist)
 }
 
-getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=VALUE, macddays=180, deltadays=3) {
-    return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=TRUE, deltadays=deltadays))
+getbottomgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, sort=VALUE, macddays=180, deltadays=3, percentize=TRUE) {
+    return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=TRUE, deltadays=deltadays, percentize=percentize))
 }
 
 gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=FALSE, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE, deltadays=3, percentize=TRUE) {
@@ -474,6 +474,20 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
                     myc <- head(myc, n=(myclen-headskipmacd))
                     myc <- tail(myc, n=macddays)
                                         #str(myc)
+            if (percentize) {
+                #str("period")
+                if (periodtext == "Price" || periodtext == "Index") {
+                #str(head(df[,"price"],1))
+                #maxprice = max(df[,"price"])
+                    
+                    first = myc[1]
+                    myc <- myc * (100 / first)
+                #maxprice = max(df[,"price"])
+                #maxindex = max(df[,"indexvalue"])
+                #df$price <- df$price
+                                        #df$index <- df$index
+                }
+            }
                     momhist <- getmomhist(myc, deltadays)
                                         #str(mom)
                     momlist[i] <- momhist[1]
