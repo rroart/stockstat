@@ -21,8 +21,8 @@ import roart.config.MyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;
 import roart.db.DbSpark;
-import roart.ml.MLDao;
-import roart.ml.MLModel;
+import roart.ml.MLClassifyDao;
+import roart.ml.MLClassifyModel;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
@@ -42,6 +42,7 @@ public class IndicatorMACD extends Indicator {
     Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[]> listMap;
+    // TODO save and return this map
     Map<String, Object[]> objectMap;
     //Map<String, Double> resultMap;
     Map<String, Object[]> resultMap;
@@ -49,7 +50,7 @@ public class IndicatorMACD extends Indicator {
     Map<String, Double> buyMap;
     Map<String, Double> sellMap;
     Object[] emptyField;
-    Map<MLModel, Long> mapTime = new HashMap<>();
+    Map<MLClassifyModel, Long> mapTime = new HashMap<>();
     
     List<ResultItemTableRow> mlTimesTableRows = null;
     List<ResultItemTableRow> eventTableRows = null;
@@ -72,7 +73,7 @@ public class IndicatorMACD extends Indicator {
         return retMap;
     }
 
-    List<MLDao> mldaos = new ArrayList<>();
+    List<MLClassifyDao> mldaos = new ArrayList<>();
 
     public IndicatorMACD(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
@@ -84,10 +85,10 @@ public class IndicatorMACD extends Indicator {
         makeMapTypes();
         if (conf.wantML()) {
             if (conf.wantMLSpark()) {
-                mldaos.add(new MLDao("spark", conf));
+                mldaos.add(new MLClassifyDao("spark", conf));
             }
             if (conf.wantMLTensorflow()) {
-                mldaos.add(new MLDao("tensorflow", conf));
+                mldaos.add(new MLClassifyDao("tensorflow", conf));
             }
         }
         fieldSize = fieldSize();
@@ -272,6 +273,8 @@ public class IndicatorMACD extends Indicator {
                             getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, POSTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[0], labelFN, labelTN);
                             getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, NEGTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[1], labelTP, labelFP);
                        }
+                    } else {
+                        //log.error("error " + subType.getType());
                     }
                 }
             }
@@ -282,19 +285,24 @@ public class IndicatorMACD extends Indicator {
             getBuySellRecommendations(macdList, histList, macdDList, histDList);
         }
         // map from h/m to model to posnegcom map<model, results>
-        Map<MacdSubType, Map<MLModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
+        Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
+        log.info("Period " + title + " " + mapMap.keySet());
         if (conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();
             try {
                 List<MacdSubType> subTypes = wantedSubTypes();
                 for (MacdSubType subType : subTypes) {
-                    for (MLDao mldao : mldaos) {
+                    for (MLClassifyDao mldao : mldaos) {
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
                             //System.out.println("mapget " + mapName + " " + mapMap.keySet());
                             Map<double[], Double> map = mapMap.get(mapName);
-                            mldao.learntest(this, map, null, conf.getDaysBeforeZero(), key, mapName, 4, mapTime);  
+                            if (map == null) {
+                                log.error("map null " + mapName);
+                                continue;
+                            }
+                            mldao.learntest(this, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime);  
                         }
                     }
                 }
@@ -348,16 +356,27 @@ public class IndicatorMACD extends Indicator {
             // map from h/m + posnegcom to map<model, results>
             List<MacdSubType> subTypes = wantedSubTypes();
             for (MacdSubType subType : subTypes) {
-                Map<MLModel, Map<String, Map<String, Double[]>>> mapResult1 = new HashMap<>();
-                for (MLDao mldao : mldaos) {
+                Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = new HashMap<>();
+                for (MLClassifyDao mldao : mldaos) {
                     // map from posnegcom to map<id, result>
                     Map<String, Map<String, Double[]>> mapResult2 = new HashMap<>();
-                    for (MLModel model : mldao.getModels()) {
+                    for (MLClassifyModel model : mldao.getModels()) {
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
                             Map<String, double[]> map = mapIdMap.get(mapName);
-                            Map<String, Double[]> classifyResult = mldao.classify(this, map, model, conf.getDaysBeforeZero(), key, mapName, 4, labelMapShort, mapTime);
+                            log.info("map name " + mapName);
+                            if (mapMap.get(mapName) == null) {
+                                log.error("map null and continue? " + mapName);
+                                continue;
+                            }
+                            if (map == null) {
+                                log.error("map null " + mapName);
+                                continue;
+                            } else {
+                                log.info("keyset " + map.keySet());
+                            }
+                            Map<String, Double[]> classifyResult = mldao.classify(this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, labelMapShort, mapTime);
                             mapResult2.put(mapType, classifyResult);
                         }
                         mapResult1.put(model, mapResult2);
@@ -388,10 +407,10 @@ public class IndicatorMACD extends Indicator {
                 Double[] type;
                 List<MacdSubType> subTypes2 = wantedSubTypes();
                 for (MacdSubType subType : subTypes2) {
-                    Map<MLModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
+                    Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
                     //System.out.println("mapget " + subType + " " + mapResult.keySet());
-                    for (MLDao mldao : mldaos) {
-                        for (MLModel model : mldao.getModels()) {
+                    for (MLClassifyDao mldao : mldaos) {
+                        for (MLClassifyModel model : mldao.getModels()) {
                             Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
                             //for (int mapTypeInt : getMapTypeList()) {
                                 //String mapType = mapTypes.get(mapTypeInt);
@@ -418,6 +437,10 @@ public class IndicatorMACD extends Indicator {
                     String name = mapTypes.get(type);
                     String mapName = subType.getType() + name;
                     Map<double[], Double> myMap = mapMap.get(mapName);
+                    if (myMap == null) {
+                        log.error("map null " + mapName);
+                        continue;
+                    }
                     Map<Double, Long> countMap = myMap.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
                     String counts = "";
                     for (Double label : countMap.keySet()) {
@@ -429,7 +452,7 @@ public class IndicatorMACD extends Indicator {
         }
         if (conf.wantMLTimes()) {
             //Map<MLModel, Long> mapTime = new HashMap<>();
-            for (MLModel model : mapTime.keySet()) {
+            for (MLClassifyModel model : mapTime.keySet()) {
                 ResultItemTableRow row = new ResultItemTableRow();
                 row.add(key);
                 row.add(model.getEngineName());
@@ -446,11 +469,11 @@ public class IndicatorMACD extends Indicator {
             Double[] valueList) {
         Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, endOfArray.value);
         Map<Integer, Integer> pos = map[0];
-        Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), valueList.length);
+        Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), valueList.length);
         Map<Integer, Integer> neg = map[1];
-        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), valueList.length);
+        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), valueList.length);
         //System.out.println("negpos " + newNeg.size() + " " + newPos.size());
-        printSignChange(name, id, newPos, newNeg, endOfArray.value, conf.getDaysAfterZero(), labelMapShort);
+        printSignChange(name, id, newPos, newNeg, endOfArray.value, conf.getMACDDaysAfterZero(), labelMapShort);
         if (!newNeg.isEmpty() || !newPos.isEmpty()) {
             int start = 0;
             int end = 0;
@@ -481,11 +504,11 @@ public class IndicatorMACD extends Indicator {
         Map<String, double[]> negMap = mapGetter(mapIdMap, subType + NEGTYPESTR);
         Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, endOfArray.value);
         Map<Integer, Integer> pos = map[0];
-        Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), valueList.length);
+        Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), valueList.length);
         Map<Integer, Integer> neg = map[1];
-        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), valueList.length);
+        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), valueList.length);
         //System.out.println("negpos " + newNeg.size() + " " + newPos.size());
-        printSignChange(name, id, newPos, newNeg, endOfArray.value, conf.getDaysAfterZero(), labelMapShort);
+        printSignChange(name, id, newPos, newNeg, endOfArray.value, conf.getMACDDaysAfterZero(), labelMapShort);
         if (!newNeg.isEmpty() || !newPos.isEmpty()) {
             int start = 0;
             int end = 0;
@@ -562,12 +585,12 @@ public class IndicatorMACD extends Indicator {
         if (list.length == 0) {
             //System.out.println("h " + Arrays.asList( histarr));
         }
-        Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), listsize);
+        Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
         for (int start : newPos.keySet()) {
             int end = newPos.get(start);
             String label = null;
             try {
-                if (list[end] < list[end + conf.getDaysAfterZero()]) {
+                if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
                     label = labelFN;
                     log.info(labelFN + ": " + id + " " + ControlService.getName(id) + " at " + end);
                     printme(label, end, list, array);
@@ -595,11 +618,11 @@ public class IndicatorMACD extends Indicator {
             Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer>[] map) {
         Map<Integer, Integer> neg = map[1];
-        Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), listsize);
+        Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
         for (int start : newNeg.keySet()) {
             int end = newNeg.get(start);
             String label;
-            if (list[end] < list[end + conf.getDaysAfterZero()]) {
+            if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
                 label = labelTP;
                 log.info("TruePositive" + ": " + id + " " + ControlService.getName(id) + " at " + end);
                 printme(label, end, list, array);
@@ -618,11 +641,11 @@ public class IndicatorMACD extends Indicator {
     private void getPosNegMap(Map<double[], Double> commonMap, Map<double[], Double> posnegMap, String id,
             Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer> posneg, String label, String labelopposite) {
-        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), listsize);
+        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
         for (int start : newPosNeg.keySet()) {
             int end = newPosNeg.get(start);
             String textlabel;
-            if (list[end] < list[end + conf.getDaysAfterZero()]) {
+            if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
                 textlabel = label;
             } else {
                 textlabel = labelopposite;
@@ -639,12 +662,12 @@ public class IndicatorMACD extends Indicator {
     private void getPosNegMap(Map<String, Map<double[], Double>> mapMap, String subType, String commonType, String posnegType , String id,
             Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer> posneg, String label, String labelopposite) {
-        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getDaysBeforeZero(), conf.getDaysAfterZero(), listsize);
+        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
     //System.out.println("pnmap " + newPosNeg.keySet());
         for (int start : newPosNeg.keySet()) {
             int end = newPosNeg.get(start);
             String textlabel;
-            if (list[end] < list[end + conf.getDaysAfterZero()]) {
+            if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
                 textlabel = label;
             } else {
                 textlabel = labelopposite;
@@ -672,7 +695,7 @@ public class IndicatorMACD extends Indicator {
         return map;
     }
 
-    public static void mapAdder(Map<MLModel, Long> map, MLModel key, Long add) {
+    public static void mapAdder(Map<MLClassifyModel, Long> map, MLClassifyModel key, Long add) {
         Long val = map.get(key);
         if (val == null) {
             val = new Long(0);
@@ -684,7 +707,7 @@ public class IndicatorMACD extends Indicator {
     private void printme(String label, int end, Double[] values, double[] array) {
         String me1 = "";
         String me2 = "";
-        for (int i = end - 3; i <= end + conf.getDaysAfterZero(); i++) {
+        for (int i = end - 3; i <= end + conf.getMACDDaysAfterZero(); i++) {
             me1 = me1 + values[i] + " ";
             me2 = me2 + array[i] + " ";
         }
@@ -893,7 +916,7 @@ public class IndicatorMACD extends Indicator {
         // TODO make OO of this
         List<MacdSubType> subTypes = wantedSubTypes();
         for (MacdSubType subType : subTypes) {
-            for (MLDao mldao : mldaos) {
+            for (MLClassifyDao mldao : mldaos) {
                 //for (int mapTypeInt : getMapTypeList()) {
                     //String mapType = mapTypes.get(mapTypeInt);
                     //String mapName = subType.getType() + mapType;
@@ -919,7 +942,7 @@ public class IndicatorMACD extends Indicator {
         }
         List<MacdSubType> subTypes = wantedSubTypes();
         for (MacdSubType subType : subTypes) {
-            for (MLDao mldao : mldaos) {
+            for (MLClassifyDao mldao : mldaos) {
                 size += mldao.getSizes(this);
             }
         }

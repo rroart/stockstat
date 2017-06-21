@@ -647,5 +647,90 @@ public class ControlService {
     		DbDao.instance("hibernate");
     	}
     } 
-    */   
+    */
+
+    public List<ResultItem> getTestRecommender(MyConfig conf) {
+        conf.disableML();
+        log.info("mydate " + conf.getdate());
+        log.info("mydate " + conf.getDays());
+        createOtherTables();
+        List<StockItem> stocks = null;
+        try {
+            stocks = StockItem.getAll(conf.getMarket(), conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        if (stocks == null) {
+            return null;
+        }
+        log.info("stocks " + stocks.size());
+        String[] periodText = getPeriodText(conf.getMarket(), conf);
+        Set<String> markets = new HashSet();
+        markets.add(conf.getMarket());
+        Integer days = conf.getDays();
+
+        ResultItemTable table = new ResultItemTable();
+        List<ResultItemTable> otherTables = new ArrayList<>();
+        otherTables.add(mlTimesTable);
+        otherTables.add(eventTable);
+        
+        try {
+            Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
+            Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+            if (conf.getdate() == null) {
+                getCurrentDate(conf, stockdatemap);
+            }
+
+            Map<String, MarketData> marketdatamap = null;
+            try {
+                marketdatamap = getMarketdatamap(days, markets, conf);
+            } catch(Exception e) {
+                log.error(Constants.EXCEPTION, e);            
+            }
+            Map<String, PeriodData> periodDataMap = getPerioddatamap(markets,
+                    marketdatamap);
+
+            idNameMap = new HashMap<>();
+            // sort based on date
+            for (String key : stockidmap.keySet()) {
+                List<StockItem> stocklist = stockidmap.get(key);
+                stocklist.sort(StockUtil.StockDateComparator);
+                idNameMap.put(key, stocklist.get(0).getName());
+            }
+
+            // the main list, based on freshest or specific date.
+
+            /*
+             * For all days with intervals
+             * Make stock lists based on the intervals
+             */
+
+            List<StockItem> datedstocklists[] = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), 2, conf.getTableMoveIntervalDays());
+
+            List<StockItem>[][] stocklistPeriod = StockUtil.getListSorted(datedstocklists, 2);
+            //Map<String, Integer>[][] periodmaps = StockUtil.getListMove(datedstocklists, 2, stocklistPeriod);
+            //Map<String, Integer>[] periodmap = periodmaps[0];
+
+            List<StockItem> datedstocks = datedstocklists[0];
+            System.out.println("dat sto siz " + datedstocks.size());
+            /*
+            Set<String> curIds = new HashSet<>();
+            for (StockItem stock : datedstocks) {
+                curIds.add(stock.getId());
+            }
+            */
+            List<StockItem> datedstocksoffset = datedstocklists[1];
+            if (datedstocks == null) {
+                return null;
+            }
+
+            Category[] categories = getCategories(conf, stocks,
+                    periodText, marketdatamap, periodDataMap, periodmap);
+            
+        } catch (Exception e) {
+            log.error("E ", e);
+        }
+        // TODO Auto-generated method stub
+        return null;
+    }   
 }

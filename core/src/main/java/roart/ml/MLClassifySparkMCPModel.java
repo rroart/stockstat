@@ -5,7 +5,7 @@ import org.apache.spark.ml.classification.MultilayerPerceptronClassifier;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
-public  class MLSparkMCPModel  extends MLSparkModel {
+public  class MLClassifySparkMCPModel  extends MLClassifySparkModel {
     @Override
     public int getId() {
         return 1;

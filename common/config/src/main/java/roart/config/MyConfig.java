@@ -175,8 +175,14 @@ public class MyConfig {
 	    moveEnabled = bool;
 	}
 */
+	
+	public boolean wantIndicators() {
+        return (Boolean) configValueMap.get(ConfigConstants.INDICATORS);	    
+	}
+	
 	public boolean isMoveEnabled() {
-	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMOVE);
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMOVE)
+	            && wantIndicators();
 	}
 /*
 	public void setMACDEnabled(Boolean bool) {
@@ -184,7 +190,8 @@ public class MyConfig {
 	}
 */
 	public boolean isMACDEnabled() {
-	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACD);
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACD)
+        && wantIndicators();
 	}
 /*
 	public void setMACDDeltaEnabled(Boolean bool) {
@@ -249,7 +256,8 @@ public class MyConfig {
 	}
 */
 	public boolean isRSIEnabled() {
-	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSRSI);
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSRSI)
+        && wantIndicators();
 	}
 /*
 	public void setSTOCHRSIEnabled(Boolean bool) {
@@ -257,7 +265,8 @@ public class MyConfig {
 	}
 */
 	public boolean isSTOCHRSIEnabled() {
-	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCHRSI);
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCHRSI)
+                && wantIndicators();
 	}
 /*
 	public void setCCIEnabled(Boolean bool) {
@@ -265,7 +274,8 @@ public class MyConfig {
 	}
 */
 	public boolean isCCIEnabled() {
-	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSCCI);
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSCCI)
+                && wantIndicators();
 	}
 /*
 	public void setATREnabled(Boolean bool) {
@@ -273,7 +283,8 @@ public class MyConfig {
 	}
 */
 	public boolean isATREnabled() {
-	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSATR);
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSATR)
+                && wantIndicators();
 	}
 /*
 	public void setSTOCHEnabled(Boolean bool) {
@@ -281,7 +292,8 @@ public class MyConfig {
 	}
 */
 	public boolean isSTOCHEnabled() {		
-	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCH);
+	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCH)
+                && wantIndicators();
 	}
 /*
 	public void setGraphEqualize(Boolean integer) {
@@ -360,7 +372,7 @@ public class MyConfig {
      *  days before positive/negative change
      * @return
      */
-    public int getDaysBeforeZero() {
+    public int getMACDDaysBeforeZero() {
         return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
     }
 
@@ -368,7 +380,7 @@ public class MyConfig {
      *  days after positive/negative change
      * @return
      */
-    public int getDaysAfterZero() {
+    public int getMACDDaysAfterZero() {
         return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
     }
 
@@ -376,32 +388,42 @@ public class MyConfig {
         return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTS);
     }
 
+    public void disableML() {
+        configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+    }
+    
     public  boolean wantML() {
         return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNING);
     }
 
     public  boolean wantMLSpark() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKML);
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKML)
+        && wantML();
     }
 
     public  boolean wantMLTensorflow() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOW);
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOW)
+        && wantML();
     }
 
     public  boolean wantMCP() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKMLMCP);
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKMLMCP)
+                && wantMLSpark();
     }
 
     public  boolean wantLR() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKMLLR);
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKMLLR)
+        && wantMLSpark();
     }
 
     public  boolean wantDNN() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN)
+        && wantMLTensorflow();
     }
 
     public  boolean wantL() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOWL);
+        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOWL)
+        && wantMLTensorflow();
     }
 
     public  int weightBuyHist() {
@@ -475,5 +497,42 @@ public class MyConfig {
         System.out.println("hb " + (Boolean) configValueMap.get(ConfigConstants.DATABASEHIBERNATE));
         return (Boolean) configValueMap.get(ConfigConstants.DATABASEHIBERNATE);
     }
+    
+    public boolean wantPredictors() {
+        return (Boolean) configValueMap.get(ConfigConstants.PREDICTORS); 
+    }
+    
+    public boolean wantPredictorLSTM() {
+        return (Boolean) configValueMap.get(ConfigConstants.PREDICTORSLSTM) 
+                && wantPredictors() 
+                && wantMLTensorflow();
+    }
+    
+    public Integer getPredictorLSTMHorizon() {
+        return (Integer) configValueMap.get(ConfigConstants.PREDICTORSLSTMHORIZON);
+    }
 
+    public Integer getPredictorLSTMEpochs() {
+        return (Integer) configValueMap.get(ConfigConstants.PREDICTORSLSTMEPOCHS);
+    }
+
+    public Integer getPredictorLSTMWindowsize() {
+        return (Integer) configValueMap.get(ConfigConstants.PREDICTORSLSTMWINDOWSIZE);
+    }
+
+    public Integer getTestRecommendIntervalTimes() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDINTERVALTIMES);
+    }
+
+    public Integer getTestRecommendIterations() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDITERATIONS);
+    }
+
+    public String getTestRecommendPeriod() {
+        return (String) configValueMap.get(ConfigConstants.TESTRECOMMENDPERIOD);
+    }
+
+    public Integer getTestRecommendIntervalDays() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDINTERVALDAYS);
+    }
 }

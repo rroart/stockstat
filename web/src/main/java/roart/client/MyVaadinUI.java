@@ -140,12 +140,12 @@ public class MyVaadinUI extends UI
     public Label statLabel = null;
 
     public static GUISize guiSize = new GUISize();
-    
+
     ControlService controlService = null;
-    
+
     @Override
     protected void init(VaadinRequest request) {
-        
+
         controlService = new ControlService();
         controlService.getConfig();
         final VerticalLayout layout = new VerticalLayout();
@@ -154,7 +154,7 @@ public class MyVaadinUI extends UI
         VerticalLayout searchTab;
         VerticalLayout controlPanelTab;
         VerticalLayout configTab;
-        
+
         com.vaadin.server.Page.getCurrent().setTitle("Stock statistics by Roar Thronæs");
 
         layout.setMargin(true);
@@ -201,8 +201,8 @@ public class MyVaadinUI extends UI
     }
 
     private VerticalLayout getControlPanelTab() {
-    	boolean isProductionMode = VaadinService.getCurrent()
-    		    .getDeploymentConfiguration().isProductionMode();
+        boolean isProductionMode = VaadinService.getCurrent()
+                .getDeploymentConfiguration().isProductionMode();
         VerticalLayout tab = new VerticalLayout();
         tab.setCaption("Control Panel");
         HorizontalLayout horMisc = new HorizontalLayout();
@@ -221,7 +221,7 @@ public class MyVaadinUI extends UI
         horRSI.setWidth("90%");
         horRSI.addComponent(getRSI());
         horRSI.addComponent(getRSIDelta());
-        */
+         */
         // not yet
         /*
         horMACD.addComponent(getCCI());
@@ -232,24 +232,24 @@ public class MyVaadinUI extends UI
         horMACD.addComponent(getSTOCHDelta());
         horRSI.addComponent(getSTOCHRSI());
         horRSI.addComponent(getSTOCHRSIDelta());
-        */
+         */
         HorizontalLayout horStat = new HorizontalLayout();
         horStat.setHeight("20%");
         horStat.setWidth("90%");
         horStat.addComponent(new Label("b1"));
         VerticalLayout v1 = new VerticalLayout();
         horStat.addComponent(v1);
-        
+
         v1.addComponent(new Label("b2"));
         HorizontalLayout h1 = new HorizontalLayout();
         v1.addComponent(h1);
-        
+
         h1.addComponent(new Label("b3"));
         VerticalLayout v2 = new VerticalLayout();
         h1.addComponent(v2);
-        
+
         v2.addComponent(new Label("b4"));
-        
+
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
         horDb.setHeight("20%");
@@ -285,7 +285,7 @@ public class MyVaadinUI extends UI
          */
         return tab;
     }
-    
+
     Map<String, Component> componentMap ;
     private void print(ConfigTreeMap map2, HorizontalLayout tab) {
         Map<String, Object> map = controlService.conf.configValueMap;
@@ -332,11 +332,11 @@ public class MyVaadinUI extends UI
             h.addComponent(new Label(">"));
             HorizontalLayout n1 = new HorizontalLayout();
             h.addComponent(n1);
-            
+
             n1.addComponent(new Label(">"));
             VerticalLayout h1 = new VerticalLayout();
             n1.addComponent(h1);
-            
+
             for (String key : map3.keySet()) {
                 System.out.println("key " + key);
                 HorizontalLayout n = new HorizontalLayout();
@@ -349,24 +349,24 @@ public class MyVaadinUI extends UI
     }
 
     private VerticalLayout getConfigTab() {
-    	boolean isProductionMode = VaadinService.getCurrent()
-    		    .getDeploymentConfiguration().isProductionMode();
+        boolean isProductionMode = VaadinService.getCurrent()
+                .getDeploymentConfiguration().isProductionMode();
         String DELIMITER = " = ";
-        
-    VerticalLayout tab = new VerticalLayout();
-    tab.setCaption("Configuration");
-    HorizontalLayout hor = new HorizontalLayout();
-    hor.setHeight("20%");
-    hor.setWidth("90%");
-    /*
+
+        VerticalLayout tab = new VerticalLayout();
+        tab.setCaption("Configuration");
+        HorizontalLayout hor = new HorizontalLayout();
+        hor.setHeight("20%");
+        hor.setWidth("90%");
+        /*
    if (!isProductionMode) {
     hor.addComponent(getDbEngine());
     }
-    */
-   tab.addComponent(hor);
-    return tab;
+         */
+        tab.addComponent(hor);
+        return tab;
     }
-    
+
     private VerticalLayout getSearchTab() {
         //displayResults(new ControlService());
         VerticalLayout tab = new VerticalLayout();
@@ -381,7 +381,7 @@ public class MyVaadinUI extends UI
         horStat.addComponent(getResetDate());
         horStat.addComponent(getReload());
         horStat.addComponent(getStat());
-       //horStat.addComponent(getOverlapping());
+        //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
         horDb.setHeight("20%");
         horDb.setWidth("60%");
@@ -400,16 +400,16 @@ public class MyVaadinUI extends UI
         HorizontalLayout horMACD = new HorizontalLayout();
         horMACD.setHeight("20%");
         horMACD.setWidth("90%");
-       
+
         horMACD.addComponent(getMACDDeltaDays());
         horMACD.addComponent(getMACDHistogramDeltaDays());
-        */
+         */
         // not yet:
         /*
         horDb2.addComponent(getATRDeltaDays());
         horDb2.addComponent(getCCIDeltaDays());
         horDb2.addComponent(getSTOCHDeltaDays());
-        */
+         */
         /*
         HorizontalLayout horRSI = new HorizontalLayout();
         horRSI.setHeight("20%");
@@ -420,16 +420,21 @@ public class MyVaadinUI extends UI
         horDb3.setHeight("20%");
         horDb3.setWidth("60%");
         horDb3.addComponent(getTableMoveIntervalDays());
-        */
+         */
         /*
         horDb3.addComponent(getTodayZero());
-        */
+         */
         //horDb3.addComponent(getEqualize());
 
         VerticalLayout verManualList = new VerticalLayout();
         verManualList.setHeight("20%");
         verManualList.setWidth("60%");
-        
+
+        HorizontalLayout horTester = new HorizontalLayout();
+        horTester.setHeight("20%");
+        horTester.setWidth("60%");
+        horTester.addComponent(getTestRecommender());
+
         HorizontalLayout horManual = new HorizontalLayout();
         horManual.setHeight("20%");
         horManual.setWidth("60%");
@@ -442,7 +447,7 @@ public class MyVaadinUI extends UI
         //horDb.addComponent(getDbItem());
         //horChooseGraph.addComponent(getEqualizeGraph());
         //horChooseGraph.addComponent(getEqualizeUnify());
-       horChooseGraph.addComponent(getChooseGraph(verManualList));
+        horChooseGraph.addComponent(getChooseGraph(verManualList));
 
         //tab.addComponent(horNewInd);
         tab.addComponent(horStat);
@@ -454,6 +459,7 @@ public class MyVaadinUI extends UI
         tab.addComponent(horManual);
         tab.addComponent(verManualList);
         tab.addComponent(horChooseGraph);
+        tab.addComponent(horTester);
         return tab;
     }
 
@@ -500,6 +506,27 @@ public class MyVaadinUI extends UI
                 try {
                     controlService.conf.setdate(null);
                     Notification.show("Request sent");
+                    //displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getTestRecommender() {
+        Button button = new Button("Test recommender");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {                    
+                    Notification.show("Request sent");
+
+                    List<ResultItem> list = controlService.getTestRecommender();
+                    log.info("listsize " + list.size());
+                    VerticalLayout layout = new VerticalLayout();
+                    layout.setCaption("Results");
+                    displayResultListsTab(layout, list); 
                     //displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
@@ -578,13 +605,13 @@ public class MyVaadinUI extends UI
     }
 
     Set<Pair<String, String>> chosen = new HashSet<>();
-    
+
     private Button getChooseGraph(VerticalLayout ver) {
         Button button = new Button("Choose graph");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {
-                    
+
                     Notification.show("Request sent");
                     displayResultsGraph(chosen);
                     chosen.clear();
@@ -655,7 +682,7 @@ public class MyVaadinUI extends UI
                 try {
                     String id = null;
                     for (String stockid : stockMap.keySet()) {
-                    	String stockname = stockMap.get(stockid);
+                        String stockname = stockMap.get(stockid);
                         if (value.equals(stockname)) {
                             id = stockid;
                             break;
@@ -676,7 +703,7 @@ public class MyVaadinUI extends UI
         ls.setImmediate(true);
         return ls;
     }
-/*
+    /*
    private TextField getDays() {
         TextField tf = new TextField("Single interval days");
         tf.setValue("" + controlService.conf.getDays());
@@ -965,7 +992,7 @@ public class MyVaadinUI extends UI
         tf.setImmediate(true);
         return tf;
     }
-*/
+     */
     private void displayResults() {
         List<ResultItem> list = controlService.getContent();
         log.info("listsize " + list.size());
@@ -977,7 +1004,7 @@ public class MyVaadinUI extends UI
         tabsheet.addComponent(layout);
         tabsheet.getTab(layout).setClosable(true);
         Notification.show("New result available");
-     }
+    }
 
 
     private void displayResultsStat() {
@@ -988,7 +1015,7 @@ public class MyVaadinUI extends UI
         tabsheet.addComponent(layout);
         tabsheet.getTab(layout).setClosable(true);
         Notification.show("New result available");
-   }
+    }
 
     private void displayResultsGraph(Set<Pair<String, String>> ids) {
         VerticalLayout layout = new VerticalLayout();
@@ -1001,11 +1028,11 @@ public class MyVaadinUI extends UI
         tabsheet.getTab(layout).setClosable(true);
         Notification.show("New result available");       
     }
-    
+
     private StreamResource getStreamResource(byte[] bytes) {
         //System.out.println("bytes " + bytes.length + " "+ new String(bytes));
         //System.out.println("size " + (300 + 10 * xsize) + " " + (400 + 10 * ysize));
-       StreamResource resource = new StreamResource(new StreamSource() {
+        StreamResource resource = new StreamResource(new StreamSource() {
             @Override
             public InputStream getStream() {
                 try {
@@ -1016,30 +1043,30 @@ public class MyVaadinUI extends UI
                 }
             }
         }, "/tmp/svg3.svg");
-       return resource;
+        return resource;
     }
 
     protected void addListStream(Layout layout, ResultItemBytes item) {
-    	byte[] bytes = item.bytes;
-            //SvgUtil. bla3(layout, resource);
-            //SvgUtil. bla5(layout, resource);
-            //if (true) continue;
-        	StreamResource resource = getStreamResource(bytes);
-            Image image = new Image ("Image", resource);
-            //Embedded image = new Embedded("1", img);
-            int xsize = 100 + 300 + 10 * controlService.conf.getTableDays();
-            int ysize = 200 + 400 + 10 * controlService.conf.getTopBottom();
-            //System.out.println("xys1 " + xsize + " " + ysize);
-            if (xsize + 100 > guiSize.x) {
-                xsize = guiSize.x - 100;
-            }
-            /*
+        byte[] bytes = item.bytes;
+        //SvgUtil. bla3(layout, resource);
+        //SvgUtil. bla5(layout, resource);
+        //if (true) continue;
+        StreamResource resource = getStreamResource(bytes);
+        Image image = new Image ("Image", resource);
+        //Embedded image = new Embedded("1", img);
+        int xsize = 100 + 300 + 10 * controlService.conf.getTableDays();
+        int ysize = 200 + 400 + 10 * controlService.conf.getTopBottom();
+        //System.out.println("xys1 " + xsize + " " + ysize);
+        if (xsize + 100 > guiSize.x) {
+            xsize = guiSize.x - 100;
+        }
+        /*
             if (ysize + 200 > y) {
                 ysize = y - 200;
             }
-            */
-            //System.out.println("xys2 " + xsize + " " + ysize);
-            /*
+         */
+        //System.out.println("xys2 " + xsize + " " + ysize);
+        /*
             InputStream is = new ByteArrayInputStream(bytes);
             try {
                 BufferedImage anImage = ImageIO.read(is);
@@ -1051,18 +1078,18 @@ public class MyVaadinUI extends UI
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            */
-            // TODO matching svgutil change
-            xsize = 1024;
-            ysize = 768;
-            if (!item.fullsize) {
-                ysize = 384;
-            }
-            image.setHeight(ysize, Sizeable.Unit.PIXELS );
-            image.setWidth(xsize, Sizeable.Unit.PIXELS );
-            layout.addComponent(image);
+         */
+        // TODO matching svgutil change
+        xsize = 1024;
+        ysize = 768;
+        if (!item.fullsize) {
+            ysize = 384;
+        }
+        image.setHeight(ysize, Sizeable.Unit.PIXELS );
+        image.setWidth(xsize, Sizeable.Unit.PIXELS );
+        layout.addComponent(image);
     }
-/*
+    /*
     private CheckBox getEqualize() {
         CheckBox cb = new CheckBox("Equalize sample sets");
         cb.setValue(controlService.conf.isEqualize());
@@ -1084,7 +1111,7 @@ public class MyVaadinUI extends UI
         cb.setImmediate(true);
         return cb;
     }
-*/
+     */
     private CheckBox getCheckbox(String text, String configKey) {
         CheckBox cb = new CheckBox(text);
         Boolean origValue = (Boolean) controlService.conf.configValueMap.get(configKey);
@@ -1156,7 +1183,7 @@ public class MyVaadinUI extends UI
         tf.setImmediate(true);
         return tf;
     }
-/*
+    /*
     private CheckBox getMove() {
         CheckBox cb = new CheckBox("Enable chart move");
         cb.setValue(controlService.conf.isMoveEnabled());
@@ -1534,10 +1561,10 @@ public class MyVaadinUI extends UI
     	ls.setImmediate(true);
     	return ls;
     }
-  */  
-   void addListText(VerticalLayout ts, ResultItemText str) {
-            ts.addComponent(new Label(str.text));
-     }
+     */  
+    void addListText(VerticalLayout ts, ResultItemText str) {
+        ts.addComponent(new Label(str.text));
+    }
 
     void addListTable(VerticalLayout ts, ResultItemTable strarr) {
         if (strarr.size() <= 1) {
@@ -1556,53 +1583,53 @@ public class MyVaadinUI extends UI
             }
         }
         try {
-        	log.info("arr " + 0 + " " + strarr.get(0).getarr().length + " " + Arrays.toString(strarr.get(0).getarr()));
-        for (int i = 0; i < columns; i++) {
-            Object object = null;
-            for (int j = 1; j < strarr.size(); j++) {
-                object = strarr.get(j).get().get(i);
-                if (object != null) {
+            log.info("arr " + 0 + " " + strarr.get(0).getarr().length + " " + Arrays.toString(strarr.get(0).getarr()));
+            for (int i = 0; i < columns; i++) {
+                Object object = null;
+                for (int j = 1; j < strarr.size(); j++) {
+                    object = strarr.get(j).get().get(i);
+                    if (object != null) {
+                        break;
+                    }
+                }
+                //Object object = strarr.get(1).get().get(i);
+                if (object == null) {
+                    table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+                    continue;
+                }
+                switch (object.getClass().getName()) {
+                case "java.lang.String":
+                    if (i == 0 && strarr.get(0).get().get(0).equals(Constants.IMG)) {
+                        table.addContainerProperty(strarr.get(0).get().get(i), Button.class, null);
+                    } else {
+                        table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+                    }
+                    break;
+                case "java.lang.Integer":
+                    table.addContainerProperty(strarr.get(0).get().get(i), Integer.class, null);
+                    break;
+                case "java.lang.Double":
+                    table.addContainerProperty(strarr.get(0).get().get(i), Double.class, null);
+                    break;
+                case "java.util.Date":
+                    table.addContainerProperty(strarr.get(0).get().get(i), Date.class, null);
+                    break;
+                case "java.sql.Timestamp":
+                    table.addContainerProperty(strarr.get(0).get().get(i), Timestamp.class, null);
+                    break;
+                default:
+                    log.error("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
+                    System.out.println("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
                     break;
                 }
+                //table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
             }
-            //Object object = strarr.get(1).get().get(i);
-            if (object == null) {
-                table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
-                continue;
-            }
-            switch (object.getClass().getName()) {
-            case "java.lang.String":
-                if (i == 0 && strarr.get(0).get().get(0).equals(Constants.IMG)) {
-                    table.addContainerProperty(strarr.get(0).get().get(i), Button.class, null);
-                } else {
-                    table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
-                }
-                break;
-            case "java.lang.Integer":
-                table.addContainerProperty(strarr.get(0).get().get(i), Integer.class, null);
-                break;
-            case "java.lang.Double":
-                table.addContainerProperty(strarr.get(0).get().get(i), Double.class, null);
-                break;
-            case "java.util.Date":
-                table.addContainerProperty(strarr.get(0).get().get(i), Date.class, null);
-                break;
-            case "java.sql.Timestamp":
-                table.addContainerProperty(strarr.get(0).get().get(i), Timestamp.class, null);
-                break;
-            default:
-                log.error("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
-                System.out.println("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
-                break;
-            }
-            //table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
-        }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);        	
         }
         log.info("strarr size " + strarr.size());
         for (int i = 1; i < strarr.size(); i++) {
-        	log.info("str arr " + i);
+            log.info("str arr " + i);
             ResultItemTableRow str = strarr.get(i);
             try {
                 if (strarr.get(0).get().get(0).equals(Constants.IMG)) {
@@ -1613,7 +1640,7 @@ public class MyVaadinUI extends UI
                 }
                 Object myid = table.addItem(str.getarr(), i);
                 if (myid == null) {
-                	log.error("addItem failed for" + Arrays.toString(str.getarr()));
+                    log.error("addItem failed for" + Arrays.toString(str.getarr()));
                 }
             } catch (Exception e) {
                 log.error("i " + i + " " + str.get().get(0));
@@ -1700,8 +1727,8 @@ public class MyVaadinUI extends UI
         //table.setPageLength(table.size());
         ts.addComponent(table);
     }
-*/
-    
+     */
+
     private Button getImage(final String id) {
         Button button = new Button("Img");
         button.setHtmlContentAllowed(true);
@@ -1748,23 +1775,23 @@ public class MyVaadinUI extends UI
         final String table = (new ResultItemTable()).getClass().getName();
         final String text = (new ResultItemText()).getClass().getName();
         final String stream = (new ResultItemBytes()).getClass().getName();
-        
+
         VerticalLayout result = getResultTemplate();
         if (lists != null) {
             for (ResultItem item : lists) {
-            	if (table.equals(item.getClass().getName())) {
-            		addListTable(result, (ResultItemTable) item);
-            	}
-            	if (text.equals(item.getClass().getName())) {
-            		addListText(result, (ResultItemText) item);
-            	}
-            	if (stream.equals(item.getClass().getName())) {
-            		addListStream(result, (ResultItemBytes) item);
-            	}
+                if (table.equals(item.getClass().getName())) {
+                    addListTable(result, (ResultItemTable) item);
+                }
+                if (text.equals(item.getClass().getName())) {
+                    addListText(result, (ResultItemText) item);
+                }
+                if (stream.equals(item.getClass().getName())) {
+                    addListStream(result, (ResultItemBytes) item);
+                }
             }
-       }
+        }
         tab.addComponent(result);
-   }
+    }
 
     public void notify(String text) {
         Notification.show(text);

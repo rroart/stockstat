@@ -14,6 +14,7 @@ import roart.model.ResultItem;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.predictor.Predictor;
 
 public abstract class Category {
 
@@ -23,6 +24,7 @@ public abstract class Category {
     protected MyConfig conf;
     protected List<StockItem> stocks;
     protected List<Indicator> indicators = new ArrayList();
+    protected List<Predictor> predictors = new ArrayList();
 
     public Category(MyConfig conf, String periodText, List<StockItem> stocks) {
         this.conf = conf;

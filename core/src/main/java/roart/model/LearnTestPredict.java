@@ -2,8 +2,10 @@ package roart.model;
 
 import java.util.List;
 
-public class LearnTest {
-    public Object[][] array;
+public class LearnTestPredict {
+    public List<Double[]> slides;
+    //public List<Double> next;
+    public Object[] array;
     public Object[] cat;
     public List<List<Object>> listlist;
     public int modelInt;
@@ -12,4 +14,9 @@ public class LearnTest {
     public String mapname;
     public int outcomes;
     public Double prob;
+    public int horizon;
+    public int epochs;
+    public int windowsize;
+    public Double[] predicted;
+    public Double accuracy;
 }

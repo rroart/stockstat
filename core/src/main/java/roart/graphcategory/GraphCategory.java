@@ -12,6 +12,7 @@ import roart.config.MyConfig;
 import roart.graphindicator.GraphIndicator;
 import roart.model.GUISize;
 import roart.model.ResultItem;
+import roart.predictor.Predictor;
 import roart.service.ControlService;
 
 public abstract class GraphCategory {
@@ -21,6 +22,7 @@ public abstract class GraphCategory {
     protected String title;
     protected MyConfig conf;
     protected List<GraphIndicator> indicators = new ArrayList();
+    protected List<Predictor> predictors = new ArrayList();
 
     public GraphCategory(MyConfig conf, String periodText) {
         this.conf = conf;

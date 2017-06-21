@@ -9,3 +9,7 @@ macd todo
 don't calculate indicators for outdated
 fixed left
 eureka notify
+indicator/predictor save created/generated data
+test buy recommend w/o ml, iteratively (plus gen alg)
+macd ml w/ gen alg?
+drop classifier eval and use when model learntest

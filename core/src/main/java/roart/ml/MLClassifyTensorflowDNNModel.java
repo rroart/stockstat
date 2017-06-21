@@ -1,6 +1,6 @@
 package roart.ml;
 
-public class MLTensorflowDNNModel  extends MLTensorflowModel {
+public class MLClassifyTensorflowDNNModel  extends MLClassifyTensorflowModel {
     @Override
    public int getId() {
         return 1;

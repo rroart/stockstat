@@ -10,6 +10,8 @@ import roart.indicator.IndicatorRSI;
 import roart.indicator.IndicatorSTOCHRSI;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.predictor.Predictor;
+import roart.predictor.PredictorLSTM;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
@@ -33,6 +35,7 @@ public class CategoryIndex extends Category {
         indicators.add(new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
         indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
         indicators.add(new IndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
+        predictors.add(new PredictorLSTM(conf, title + "LSTM", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
     }
 
     @Override
@@ -43,6 +46,11 @@ public class CategoryIndex extends Category {
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItemTitle());
+                    }
+                }
+                for (Predictor predictor : predictors) {
+                    if (predictor.isEnabled()) {
+                        r.addarr(predictor.getResultItemTitle());
                     }
                 }
             }
@@ -59,6 +67,11 @@ public class CategoryIndex extends Category {
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItem(stock));
+                    }
+                }
+                for (Predictor predictor : predictors) {
+                    if (predictor.isEnabled()) {
+                        r.addarr(predictor.getResultItem(stock));
                     }
                 }
             }

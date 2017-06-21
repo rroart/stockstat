@@ -21,13 +21,15 @@ import roart.config.MyConfig;
 import roart.db.DbSpark;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
-import roart.ml.MLModel;
-import roart.ml.MLSparkLRModel;
-import roart.ml.MLSparkMCPModel;
+import roart.ml.MLClassifyModel;
+import roart.ml.MLClassifySparkLRModel;
+import roart.ml.MLClassifySparkMCPModel;
+import roart.model.LearnTestPredict;
+import roart.predictor.Predictor;
 import roart.util.Constants;
 import roart.util.SparkUtil;
 
-public class MLSparkAccess extends MLAccess {
+public class MLPredictSparkAccess extends MLPredictAccess {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -38,7 +40,7 @@ public class MLSparkAccess extends MLAccess {
     private Map<String, Model> modelMap = new HashMap<>();
     private Map<String, Double> accuracyMap = new HashMap<>();
     
-	public MLSparkAccess(MyConfig conf) {
+	public MLPredictSparkAccess(MyConfig conf) {
         this.conf = conf;
         findModels();	
         String sparkmaster = conf.getMLSparkMaster();
@@ -50,20 +52,20 @@ public class MLSparkAccess extends MLAccess {
     private void findModels() {
         models = new ArrayList<>();
         if (conf.wantDNN()) {
-            MLModel model = new MLSparkMCPModel();
-            models.add(model);
+            //MLModel2 model = null; //new MLSparkMCPModel();
+            //models.add(model);
         }
         if (conf.wantL()) {
-            MLModel model = new MLSparkLRModel();
-            models.add(model);
+            //MLModel2 model = null; //new MLSparkLRModel();
+            //models.add(model);
         }
     }
     @Override
-    public void learntest(Indicator indicator, Map<double[], Double> map, MLModel model, int size, String period,
-            String mapname, int outcomes) {
+    public LearnTestPredict learntestpredict(Predictor predictor, Double[] array, List<Double> next, Map<double[], Double> map, MLPredictModel model, int size, String period,
+            String mapname, int outcomes, int windowsize, int horizon, int epochs) {
         //List<MLModel> models = model.getModels();
         //for (MLModel modelInt : models) {
-       learntestInner(map, model, size, period, mapname, outcomes);       
+       return learntestInner(array, map, model, size, period, mapname, outcomes, horizon);       
     //}
     }
 
@@ -73,7 +75,7 @@ public class MLSparkAccess extends MLAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Indicator indicator, Map<String, double[]> map, MLModel model, int size,
+    public Map<String, Double[]> predict(Predictor indicator, Map<String, double[]> map, MLPredictModel model, int size,
             String period, String mapname, int outcomes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         //List<MLModel> models = getModels();
@@ -84,7 +86,7 @@ public class MLSparkAccess extends MLAccess {
     }
 
     @Override
-    public List<MLModel> getModels() {
+    public List<MLPredictModel> getModels() {
         return models;
     }
     
@@ -151,13 +153,13 @@ public class MLSparkAccess extends MLAccess {
         return null;
     }
 
-    public void learntestInner(Map<double[], Double> map, MLModel mlmodel, int size, String period, String mapname, int outcomes) {
+    public LearnTestPredict learntestInner(Double[] array, Map<double[], Double> map, MLPredictModel mlmodel, int size, String period, String mapname, int outcomes, int horizon) {
         long time0 = System.currentTimeMillis();
            if (spark == null) {
-                return;
+                return null;
             }
             if (map.isEmpty()) {
-                return;
+                return null;
             }
             Map<Double, Long> counts =
                     map.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));       
@@ -172,7 +174,7 @@ public class MLSparkAccess extends MLAccess {
             train = data;
             test = data;
         }
-        MLSparkModel sparkModel = (MLSparkModel) mlmodel;
+        MLPredictSparkModel sparkModel = (MLPredictSparkModel) mlmodel;
         Model model = sparkModel.getModel(train, size, outcomes);
         
         modelMap.put(mlmodel.getId()+period+mapname, model);
@@ -194,6 +196,7 @@ public class MLSparkAccess extends MLAccess {
     } finally {
         log.info("time learn test model " + mlmodel.getName() + " " + period + " " + map.size() + " " + (System.currentTimeMillis() - time0));
     }
+            return null;
     }
     
     public Double evalInner(int modelInt, String period, String mapname) {

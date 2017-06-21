@@ -17,6 +17,7 @@
     <fileSet>
       <directory>${project.basedir}/../web/target</directory>
       <includes>
+	<!--include>stockstat*.jar</include-->
 	<include>stockstat*.war</include>
       </includes>
       <outputDirectory>lib</outputDirectory>

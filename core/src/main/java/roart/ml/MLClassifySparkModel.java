@@ -19,9 +19,9 @@ import roart.indicator.IndicatorMACD;
 import roart.util.Constants;
 import roart.util.SparkUtil;
 
-public abstract class MLSparkModel extends MLModel {
+public abstract class MLClassifySparkModel extends MLClassifyModel {
 
-    private static Logger log = LoggerFactory.getLogger(MLSparkModel.class);
+    private static Logger log = LoggerFactory.getLogger(MLClassifySparkModel.class);
     
     public String getEngineName() {
         return "Spark ML";

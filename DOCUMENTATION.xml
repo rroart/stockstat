@@ -83,7 +83,8 @@ Need to provide postgres with a database stockstat, and username/password stocks
     Sample files are not yet available.
   </para>
   <para>
-    Configure with stockstat.prop:
+    Configure with stockstat.xml:
+    See sample file stockstat.xml, it contains the complete configuration structure.
   </para>
   <sect1>
     <title>
@@ -96,8 +97,8 @@ Need to provide postgres with a database stockstat, and username/password stocks
       <para>
 	Not yet in active use
 	<programlisting>
-	  spark=true
-	  sparkmaster=...
+	  database.spark[@enable]=true
+	  database.spark.sparkmaster=...
 	</programlisting>
     </para>
 </sect2>

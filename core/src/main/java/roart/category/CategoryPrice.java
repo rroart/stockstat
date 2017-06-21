@@ -10,6 +10,8 @@ import roart.indicator.IndicatorRSI;
 import roart.indicator.IndicatorSTOCHRSI;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.predictor.Predictor;
+import roart.predictor.PredictorLSTM;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
@@ -33,6 +35,7 @@ public class CategoryPrice extends Category {
         indicators.add(new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
         indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
         indicators.add(new IndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
+        predictors.add(new PredictorLSTM(conf, title + "LSTM", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
     }
 
     @Override
@@ -40,12 +43,17 @@ public class CategoryPrice extends Category {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
                 r.add(title);
+                r.add("Currency");
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItemTitle());
                     }
                 }
-                r.add("Currency");
+                for (Predictor predictor : predictors) {
+                    if (predictor.isEnabled()) {
+                        r.addarr(predictor.getResultItemTitle());
+                    }
+                }
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -57,13 +65,18 @@ public class CategoryPrice extends Category {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
                 r.add(stock.getPrice());
+                r.add(stock.getCurrency());
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItem(stock));
                     }
                 }
-                r.add(stock.getCurrency());
-            }
+                for (Predictor predictor : predictors) {
+                    if (predictor.isEnabled()) {
+                        r.addarr(predictor.getResultItem(stock));
+                    }
+                }
+           }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

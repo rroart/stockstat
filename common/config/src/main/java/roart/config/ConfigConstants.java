@@ -59,6 +59,11 @@ public class ConfigConstants {
     public static final String INDICATORSSTOCH = "indicators.stoch[@enable]";
     public static final String INDICATORSSTOCHSTOCHDELTA ="indicators.stoch.stochdelta[@enable]";
     public static final String INDICATORSSTOCHSTOCHDELTADAYS = "indicators.stoch.stochdeltadays";
+    public static final String PREDICTORS = "predictors[@enable]";
+    public static final String PREDICTORSLSTM = "predictors.lstm[@enable]";
+    public static final String PREDICTORSLSTMWINDOWSIZE = "predictors.lstm.windowsize";
+    public static final String PREDICTORSLSTMHORIZON = "predictors.lstm.horizon";
+    public static final String PREDICTORSLSTMEPOCHS = "predictors.lstm.epochs";
     public static final String MISC = "misc";
     public static final String MISCPERCENTIZEPRICEINDEX = "misc.percentizepriceindex[@enable]";
     public static final String MISCMLSTATS = "misc.mlstats[@enable]";
@@ -71,7 +76,10 @@ public class ConfigConstants {
     public static final String MISCMYEQUALIZE = "misc.myequalize[@enable]";
     public static final String MISCMYGRAPHEQUALIZE = "misc.mygraphequalize[@enable]";
     public static final String MISCMYGRAPHEQUALIZEUNIFY = "misc.mygraphequalizeunify[@enable]";
-
+    public static final String TESTRECOMMENDINTERVALDAYS = "test.recommend.intervaldays";
+    public static final String TESTRECOMMENDINTERVALTIMES = "test.recommend.intervaltimes";
+    public static final String TESTRECOMMENDITERATIONS = "test.recommend.iterations";
+    public static final String TESTRECOMMENDPERIOD = "test.recommend.period";
     public static Map<String, Class> map = new HashMap();
     
     public static void makeTypeMap() {
@@ -126,6 +134,11 @@ public class ConfigConstants {
         map.put(ConfigConstants.INDICATORSSTOCH, Boolean.class);
         map.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA , Boolean.class);
         map.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, Integer.class);
+        map.put(ConfigConstants.PREDICTORS, Boolean.class);
+        map.put(ConfigConstants.PREDICTORSLSTM, Boolean.class);
+        map.put(ConfigConstants.PREDICTORSLSTMEPOCHS, Integer.class);
+        map.put(ConfigConstants.PREDICTORSLSTMHORIZON, Integer.class);
+        map.put(ConfigConstants.PREDICTORSLSTMWINDOWSIZE, Integer.class);
         map.put(ConfigConstants.MISC, Boolean.class);
         map.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, Boolean.class);
         map.put(ConfigConstants.MISCMLSTATS, Boolean.class);
@@ -138,7 +151,10 @@ public class ConfigConstants {
         map.put(ConfigConstants.MISCMYEQUALIZE, Boolean.class);
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZE, Boolean.class);
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, Boolean.class);
-       
+        map.put(ConfigConstants.TESTRECOMMENDINTERVALDAYS, Integer.class);
+        map.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, Integer.class);
+        map.put(ConfigConstants.TESTRECOMMENDITERATIONS, Integer.class);
+        map.put(ConfigConstants.TESTRECOMMENDPERIOD, String.class);
     }
 
     public static Map<String, String> text = new HashMap();
@@ -195,6 +211,11 @@ public class ConfigConstants {
         text.put(ConfigConstants.INDICATORSSTOCH, "Enable indicator STOCH");
         text.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA , "Enable indicator STOCH delta");
         text.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, "STOCH delta days");
+        text.put(ConfigConstants.PREDICTORS, "Enable predictors");
+        text.put(ConfigConstants.PREDICTORSLSTM, "Enable LSTM predictor");
+        text.put(ConfigConstants.PREDICTORSLSTMEPOCHS, "LSTM epochs");
+        text.put(ConfigConstants.PREDICTORSLSTMHORIZON, "LSTM horizon");
+        text.put(ConfigConstants.PREDICTORSLSTMWINDOWSIZE, "LSTM windowsize");
         text.put(ConfigConstants.MISC, "Misc");
         text.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, "Enable turning price/index into percent based on first date");
         text.put(ConfigConstants.MISCMLSTATS, "Enable ML stats for time usage");
@@ -207,6 +228,10 @@ public class ConfigConstants {
         text.put(ConfigConstants.MISCMYEQUALIZE, "Enable equalizing");
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZE, "Enable graph equalizing");
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, "Enable unified graph equalizing");
+        text.put(ConfigConstants.TESTRECOMMENDINTERVALDAYS, "Test recommender interval days");
+        text.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, "Test recommender interval times");
+        text.put(ConfigConstants.TESTRECOMMENDITERATIONS, "Test recommender iterations");
+        text.put(ConfigConstants.TESTRECOMMENDPERIOD, "Test recommender period");
        
     }
 

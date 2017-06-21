@@ -38,6 +38,7 @@ public class GraphCategoryPrice extends GraphCategory {
         indicators.add(new GraphIndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, title));
         indicators.add(new GraphIndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, title));
         indicators.add(new GraphIndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, title));
+        //predictors.add();
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.Map;
 import roart.indicator.IndicatorMACD;
 import roart.util.Constants;
 
-public class MLTensorflowLModel  extends MLTensorflowModel {
+public class MLClassifyTensorflowLModel  extends MLClassifyTensorflowModel {
     @Override
     public int getId() {
         return 2;

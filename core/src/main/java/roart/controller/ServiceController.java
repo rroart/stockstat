@@ -162,6 +162,20 @@ public class ServiceController {
 		return result;
 	}
 
+    @RequestMapping(value = "/" + EurekaConstants.GETTESTRECOMMENDER,
+            method = RequestMethod.POST)
+    public ServiceResult getTestRecommender(@RequestBody ServiceParam param)
+            throws Exception {
+        ServiceResult result = new ServiceResult();
+        try {
+            result.list = getInstance().getTestRecommender(param.config);
+        } catch (Exception e) {
+            log.error(roart.util.Constants.EXCEPTION, e);
+            result.error = e.getMessage();
+        }
+        return result;
+    }
+
 	public static void main(String[] args) throws Exception {
 	    //DbDao.instance("hibernate");
         //DbDao.instance("spark");

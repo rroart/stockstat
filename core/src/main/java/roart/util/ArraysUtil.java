@@ -214,6 +214,9 @@ public class ArraysUtil {
     }
 
     public static Double[] getArrayNonNullReverse(Double[] array) {
+        if (array == null) {
+            return array;
+        }
         ArrayList<Double> list = new ArrayList<>(Arrays.asList(array));
         list.removeAll(Collections.singleton(null)); 
         if (list.size() != array.length) {
@@ -332,6 +335,34 @@ public class ArraysUtil {
     
     public static Double[] getSubExclusive(Double[] arr, int start, int end) {
         return getSubInclusive(arr, start, end - 1);
+    }
+    
+    public static List<Double[]> splitEpocsWindowsize(Double[] arr, int minepocs, int windowsize) {
+        log.info("mysplits " + arr.length + " " + minepocs + " " + windowsize);
+        if (arr.length < (windowsize + minepocs)) {
+            return null;
+        }
+        List<Double[]> retlist = new ArrayList<>();
+        int windowslide = windowsize;
+        int epocs = arr.length / windowsize;
+        windowsize++;
+        if (epocs < minepocs) {
+            epocs = minepocs;
+            windowslide = arr.length / (epocs + 1);
+            windowslide--;
+        }
+        System.out.println("ws"+windowslide);
+        int startidx = 0;
+        for (int i = 0; i < epocs; i++) {
+            Double[] smallarr = new Double[windowsize];
+            for (int j = 0; j < smallarr.length; j++) {
+                smallarr[j] = arr[startidx + j];
+            }
+            retlist.add(smallarr);
+            startidx += windowslide;
+            System.out.println("wn"+startidx+ " " +i);
+        }
+        return retlist;
     }
 }
 

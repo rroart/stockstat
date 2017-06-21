@@ -85,4 +85,28 @@ public class ArraysUtilTest {
         assertEquals(list[2], 25.0, 0.1);
       
     }
+    
+    @Test
+    public void splitEpocsWindowsize() {
+        Double[] list = {2.0, 3.0, 4.0, 5.0, 6.0, 7.0 , 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0,15.0};
+        List<Double[]> list2 = ArraysUtil.splitEpocsWindowsize(list, 3, 4);
+        for (Double[] arr : list2) {
+            System.out.println(Arrays.asList(arr));
+        }
+        System.out.println("more");
+        list2 = ArraysUtil.splitEpocsWindowsize(list, 5, 5);
+        for (Double[] arr : list2) {
+            System.out.println(Arrays.asList(arr));
+        }
+        System.out.println("more3");
+        list2 = ArraysUtil.splitEpocsWindowsize(list, 2, 3);
+        for (Double[] arr : list2) {
+            System.out.println(Arrays.asList(arr));
+        }
+        System.out.println("more4");
+        list = new Double[145];
+        list2 = ArraysUtil.splitEpocsWindowsize(list, 20, 10);
+        list = new Double[46];
+        list2 = ArraysUtil.splitEpocsWindowsize(list, 20, 10);
+    }
 }
