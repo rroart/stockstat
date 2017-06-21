@@ -474,20 +474,12 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
                     myc <- head(myc, n=(myclen-headskipmacd))
                     myc <- tail(myc, n=macddays)
                                         #str(myc)
-            if (percentize) {
-                #str("period")
-                if (periodtext == "Price" || periodtext == "Index") {
-                #str(head(df[,"price"],1))
-                #maxprice = max(df[,"price"])
-                    
-                    first = myc[1]
-                    myc <- myc * (100 / first)
-                #maxprice = max(df[,"price"])
-                #maxindex = max(df[,"indexvalue"])
-                #df$price <- df$price
-                                        #df$index <- df$index
-                }
-            }
+                    if (percentize) {
+                        if (periodtext == "Price" || periodtext == "Index") {
+                            first = myc[1]
+                            myc <- myc * (100 / first)
+                        }
+                    }
                     momhist <- getmomhist(myc, deltadays)
                                         #str(mom)
                     momlist[i] <- momhist[1]
