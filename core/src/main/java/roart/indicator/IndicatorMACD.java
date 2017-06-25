@@ -26,6 +26,7 @@ import roart.ml.MLClassifyModel;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.recommender.MACDRecommend;
 import roart.service.ControlService;
 import roart.util.ArraysUtil;
 import roart.util.Constants;
@@ -43,6 +44,7 @@ public class IndicatorMACD extends Indicator {
     String key;
     Map<String, Double[]> listMap;
     // TODO save and return this map
+    // TODO need getters for this and not? buy/sell
     Map<String, Object[]> objectMap;
     //Map<String, Double> resultMap;
     Map<String, Object[]> resultMap;
@@ -54,6 +56,14 @@ public class IndicatorMACD extends Indicator {
     
     List<ResultItemTableRow> mlTimesTableRows = null;
     List<ResultItemTableRow> eventTableRows = null;
+    
+    public Map<String, Object[]> getObjectMap() {
+        return objectMap;
+    }
+    
+    public Map<String, Double[]> getListMap() {
+        return listMap;
+    }
     
     private int fieldSize = 0;
 
@@ -208,10 +218,16 @@ public class IndicatorMACD extends Indicator {
         momMap = new HashMap<>();
         buyMap = new HashMap<>();
         sellMap = new HashMap<>();
+        List<Double> macdLists[] = new ArrayList[4];
+        for (int i = 0; i < 4; i ++) {
+            macdLists[i] = new ArrayList<>();
+        }
+        /*
         List<Double> macdList = new ArrayList<>();
         List<Double> histList = new ArrayList<>();
         List<Double> macdDList = new ArrayList<>();
         List<Double> histDList = new ArrayList<>();
+        */
         long time2 = System.currentTimeMillis();
         objectMap = dbDao.doCalculationsArr(conf, listMap, key, this, conf.wantPercentizedPriceIndex());
         //System.out.println("imap " + objectMap.size());
@@ -228,7 +244,12 @@ public class IndicatorMACD extends Indicator {
         for (String id : listMap.keySet()) {
             Object[] objs = objectMap.get(id);
             Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs);
-            momMap.put(id, momentum);
+            if (momentum != null) {
+                momMap.put(id, momentum);
+                // TODO and continue?
+            } else {
+                System.out.println("no macd for id" + id);
+            }
             Map<String, List<Double>> retMap = new HashMap<>();
             //Object[] full = tu.getMomAndDeltaFull(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
             {
@@ -250,11 +271,11 @@ public class IndicatorMACD extends Indicator {
             log.info("list " + list.length + " " + Arrays.asList(list));
             Double[] trunclist = ArraysUtil.getSubExclusive(list, begOfArray.value, begOfArray.value + endOfArray.value);
             log.info("trunclist" + list.length + " " + Arrays.asList(trunclist));
-            if (conf.wantScore()) {
-                addToLists(marketdatamap, category, macdList, histList, macdDList, histDList, market, momentum, retMap);
+            if (conf.wantScore() && momentum != null) {
+                MACDRecommend.addToLists(marketdatamap, category, macdLists /*macdList, histList, macdDList, histDList*/, market, momentum);
             }
             if (conf.wantML()) {
-                if (momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
+                if (momentum != null && momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
                     Map<String, Double> labelMap2 = createLabelMap2();
                     //List<Double> list = listMap.get(id);
                     //Double[] momentum = resultMap.get(id);
@@ -281,8 +302,10 @@ public class IndicatorMACD extends Indicator {
         }
 
         if (conf.wantScore()) {
-            log.info("histlist " + histList);
-            getBuySellRecommendations(macdList, histList, macdDList, histDList);
+            //log.info("histlist " + histList);
+            List<String> buyList = new MACDRecommend().getBuyList();
+            List<String> sellList = new MACDRecommend().getSellList();
+            MACDRecommend.getBuySellRecommendations(buyMap, sellMap, conf, macdLists, listMap, momMap, buyList, sellList /*macdList, histList, macdDList, histDList*/);
         }
         // map from h/m to model to posnegcom map<model, results>
         Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
@@ -392,6 +415,9 @@ public class IndicatorMACD extends Indicator {
             Object[] fields = new Object[fieldSize];
             momMap.put(id, momentum);
             resultMap.put(id, fields);
+            if (momentum == null) {
+                System.out.println("zero mom for id " + id);
+            }
             int retindex = tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
 
             if (conf.wantScore()) {
@@ -426,7 +452,7 @@ public class IndicatorMACD extends Indicator {
         }
         log.info("time1 " + (System.currentTimeMillis() - time1));
         // and others done with println
-        if (conf.wantOtherStats()) {
+        if (conf.wantOtherStats() && conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();            
             List<MacdSubType> subTypes = wantedSubTypes();
             for (MacdSubType subType : subTypes) {
@@ -540,41 +566,6 @@ public class IndicatorMACD extends Indicator {
             }
         }
         return false;
-    }
-
-    private void addToLists(Map<String, MarketData> marketdatamap, int category, List<Double> macdList,
-            List<Double> histList, List<Double> macdDList, List<Double> histDList, String market, Double[] momentum,
-            Map<String, List<Double>> retMap) throws Exception {
-        {
-
-            if (momentum[0] != null) {
-                histList.add(momentum[0]);
-            }
-            if (momentum[1] != null) {
-                histDList.add(momentum[1]);
-            }
-            if (momentum[2] != null) {
-                macdList.add(momentum[2]);
-            }
-            if (momentum[3] != null) {
-                macdDList.add(momentum[3]);
-            }
-            //System.out.println("outout2 " + Arrays.toString(sig));
-            List<StockItem> datedstocklists[] = marketdatamap.get(market).datedstocklists;
-            int index = 0;
-            if (false && index >= 0) {
-                for (int i = index; i < datedstocklists.length; i++) {
-                    List<StockItem> stocklist = datedstocklists[i];
-                    for (StockItem stock : stocklist) {
-                        String stockid = stock.getId();
-                        Double value = StockDao.getValue(stock, category);
-                        if (value != null) {
-                            StockDao.mapAdd(retMap, stockid, value);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private void getPosMap(Map<double[], Double> commonMap, Map<double[], Double> posMap, String id,
@@ -713,83 +704,6 @@ public class IndicatorMACD extends Indicator {
         }
         log.info("me1 " + me1);
         log.info("me2 " + me2);
-    }
-
-    private void getBuySellRecommendations(List<Double> macdList, List<Double> histList, List<Double> macdDList,
-            List<Double> histDList) {
-        Double maxhist = 0.0;
-        Double maxdhist = 0.0;
-        Double maxmacd = 0.0;
-        Double maxdmacd = 0.0;
-        Double minhist = 0.0;
-        Double mindhist = 0.0;
-        Double minmacd = 0.0;
-        Double mindmacd = 0.0;
-        log.info("listsize" + histList.size());
-        log.info("listsize" + histDList.size());
-        log.info("listsize" + macdList.size());
-        log.info("listsize" + macdDList.size());
-        if (!histList.isEmpty()) {
-            maxhist = Collections.max(histList);
-        }
-        if (!histDList.isEmpty()) {
-            maxdhist = Collections.max(histDList);
-        }
-        if (!macdList.isEmpty()) {
-            maxmacd = Collections.max(macdList);
-        }
-        if (!macdDList.isEmpty()) {
-            maxdmacd = Collections.max(macdDList);
-        }
-        if (!histList.isEmpty()) {
-            minhist = Collections.min(histList);
-        }
-        if (!histDList.isEmpty()) {
-            mindhist = Collections.min(histDList);
-        }
-        if (!macdList.isEmpty()) {
-            minmacd = Collections.min(macdList);
-        }
-        if (!macdDList.isEmpty()) {
-            mindmacd = Collections.min(macdDList);
-        }
-        // find recommendations
-        for (String id : listMap.keySet()) {
-            Double[] momentum = momMap.get(id);
-            if (momentum[0] == null || momentum[1] == null || momentum[2] == null || momentum[3] == null) {
-                continue;
-            }
-            double hist = momentum[0];
-            double histd = momentum[1];
-            double macd = momentum[2];
-            double macdd = momentum[3];
-            if (hist >= 0) {
-                double recommend = conf.weightBuyHist()*(maxhist - hist)/maxhist;
-                if (histd >= 0) {
-                    recommend += conf.weightBuyHistDelta()*(histd)/maxdhist;
-                }
-                if (macd >= 0) {
-                    recommend += conf.weightBuyMacd()*(macd)/maxmacd;
-                }
-                if (macdd >= 0) {
-                    recommend += conf.weightBuyMacdDelta()*(macdd)/maxdmacd;
-                }
-                buyMap.put(id, recommend);
-            }
-            if (hist < 0) {
-                double recommend = conf.weightSellHist()*(minhist - hist)/minhist;
-                if (histd < 0) {
-                    recommend += conf.weightSellHistDelta()*(histd)/mindhist;
-                }
-                if (macd < 0) {
-                    recommend += conf.weightSellMacd()*(macd)/minmacd;
-                }
-                if (macdd < 0) {
-                    recommend += conf.weightSellMacdDelta()*(macdd)/mindmacd;
-                }
-                sellMap.put(id, recommend);
-            }
-        }
     }
 
     public void addEventRow(String text, String name, String id) {

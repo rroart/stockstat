@@ -542,8 +542,8 @@ public class TaUtil {
         objs[0] = macd;
         objs[1] = sig;
         objs[2] = hist;
-        objs[3] = beg;
-        objs[4] = end;
+        objs[IDXBEG] = beg;
+        objs[IDXEND] = end;
         //System.out.println("outout1 " + Arrays.toString(macd));
         //System.out.println("outout2 " + Arrays.toString(sig));
         //System.out.println("outout3 " + Arrays.toString(hist));
@@ -580,8 +580,8 @@ public class TaUtil {
         for (int i = 0; i < macd.length; i ++) {
             //log.info("grr3 " + i + " " + macd[i]);
         }
-        MInteger beg = (MInteger) objs[3];
-        MInteger end = (MInteger) objs[4];
+        MInteger beg = (MInteger) objs[IDXBEG];
+        MInteger end = (MInteger) objs[IDXEND];
         int size = beg.value + end.value;
         size--;
         //log.info("in " + );
@@ -749,42 +749,30 @@ public class TaUtil {
 		double values[] = new double[days];
 	    int size = ArraysUtil.getArrayNonNullReverse(list, values);
 	    Object[] objs = getInnerMACD(values, size);
-        return getHistogramDelta(objs, deltadays);
+        return getHistogramDelta(objs, deltadays, 0);
 	}
 
-	private Double getHistogramDelta( Object[] objs, int deltadays) {
-		double hist[] = (double[]) objs[2];
-        MInteger end = (MInteger) objs[4];
+	private Double getHistogramDelta( Object[] objs, int deltadays, int offset) {
+		double hist[] = (double[]) objs[IDXHIST];
+        MInteger end = (MInteger) objs[IDXEND];
         if (end.value == 0) {
             return null;
         }
         double delta = 0;
-        /*
-        for (int i = end.value - 1; i >= end.value - derivdays && i >= 1; i--) {
-        	double deriv = hist[i] - hist[i - 1];
-        	if (deriv < 0 && sum >= 0) {
-        		return 0;
-        	}
-        	if (deriv >= 0 && sum < 0) {
-        		return 0;
-        	}
-        	sum += deriv;
-        }
-        */
-        int min = Math.max(0, end.value - deltadays);
-        delta = hist[end.value - 1] - hist[min];
+        int min = Math.max(0, end.value - offset - deltadays);
+        delta = hist[end.value - offset - 1] - hist[min];
         return delta/(deltadays - 1);
 	}
 	
-	private Double getMomentumDelta( Object[] objs, int deltadays) {
-		double macd[] = (double[]) objs[0];
-        MInteger end = (MInteger) objs[4];
+	private Double getMomentumDelta( Object[] objs, int deltadays, int offset ) {
+		double macd[] = (double[]) objs[IDXMACD];
+        MInteger end = (MInteger) objs[IDXEND];
         if (end.value == 0) {
             return null;
         }
         double delta = 0;
-        int min = Math.max(0, end.value - deltadays);
-        delta = macd[end.value - 1] - macd[min];
+        int min = Math.max(0, end.value - offset - deltadays);
+        delta = macd[end.value - offset - 1] - macd[min];
         return delta/(deltadays - 1);
 	}
 	/*
@@ -794,17 +782,41 @@ public class TaUtil {
 	}
 */
 	
-    public Double[] getMomAndDelta(int macddeltadays, int histdeltadays, Object[] objs) {
+    public Double[] getMomAndDelta(int macddeltadays, int histdeltadays, Object[] objs, int offset) {
+        double any[] = (double[]) objs[0];
+        double any1[] = (double[]) objs[1];
+        double any2[] = (double[]) objs[2];
+        MInteger end = (MInteger) objs[IDXEND];
+       if (end.value < offset + Math.max(macddeltadays, histdeltadays)) {
+            //System.out.println("too short" + end.value + " " + macddeltadays + " " + histdeltadays);
+            return null;
+        }
         int retindex = 0;
         Double[] retValues = new Double[4];
-        retValues[retindex++] = getHist(objs);
-        retValues[retindex++] = getHistogramDelta(objs, histdeltadays);
-        retValues[retindex++] = getMom(objs);
-        retValues[retindex++] = getMomentumDelta(objs, macddeltadays);
+        //MInteger begin = (MInteger) objs[IDXBEG];
+        // System.out.println("long enough " + offset + " " + begin.value + " " + end.value + " " + any.length + " " + any1.length + " " + any2.length + " " + macddeltadays + " " + histdeltadays);
+        retValues[retindex++] = getHist(objs, offset);
+        retValues[retindex++] = getHistogramDelta(objs, histdeltadays, offset);
+        retValues[retindex++] = getMom(objs, offset);
+        retValues[retindex++] = getMomentumDelta(objs, macddeltadays, offset);
         return retValues;
     }
 
+    public Double[] getMomAndDelta(int macddeltadays, int histdeltadays, Object[] objs) {
+        return getMomAndDelta(macddeltadays, histdeltadays, objs, 0);
+    }
+
     public int getMomAndDelta(boolean wantmacddelta, boolean wanthistdelta, Double[] objs, Object[] retValues) {
+        if (objs == null) {
+            int retindex = 2;
+            if (wanthistdelta) {
+                retindex++;
+            }
+            if (wantmacddelta) {
+                retindex++;
+            }
+            return retindex;
+        }
         int retindex = 0;
         retValues[retindex++] = objs[0];
         if (wanthistdelta) {
@@ -829,21 +841,21 @@ public class TaUtil {
         return objs;
     }
 
-    private Double getMom(Object[] objs) {
-        double macd[] = (double[]) objs[0];
-        MInteger end = (MInteger) objs[4];
+    private Double getMom(Object[] objs, int offset) {
+        double macd[] = (double[]) objs[IDXMACD];
+        MInteger end = (MInteger) objs[IDXEND];
         if (end.value == 0) {
             return null;
         }
-        return macd[end.value - 1];
+        return macd[end.value - offset - 1];
     }
     
-	private Double getHist(Object[] objs) {
-		double hist[] = (double[]) objs[2];
-        MInteger end = (MInteger) objs[4];
+	private Double getHist(Object[] objs, int offset) {
+		double hist[] = (double[]) objs[IDXHIST];
+        MInteger end = (MInteger) objs[IDXEND];
         if (end.value == 0) {
             return null;
         }
-        return hist[end.value - 1];
+        return hist[end.value - offset - 1];
 	}
 }

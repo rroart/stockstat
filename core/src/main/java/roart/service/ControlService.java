@@ -6,7 +6,8 @@ import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.ResultItem;
 import roart.model.StockItem;
-
+import roart.mutation.Mutate;
+import roart.recommender.MACDRecommend;
 import roart.category.Category;
 import roart.category.CategoryIndex;
 import roart.category.CategoryPeriod;
@@ -20,6 +21,8 @@ import roart.graphcategory.GraphCategoryIndex;
 import roart.graphcategory.GraphCategoryPeriod;
 import roart.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.graphcategory.GraphCategoryPrice;
+import roart.indicator.Indicator;
+import roart.indicator.IndicatorMACD;
 
 import javax.servlet.http.*;
 
@@ -282,6 +285,16 @@ public class ControlService {
 		conf.setdate(dt.parse(date));
 		log.info("mydate2 " + conf.getdate());
 	}
+
+    private Category[] getCategoriesSmall(MyConfig conf, List<StockItem> stocks,
+            String[] periodText,
+            Map<String, MarketData> marketdatamap,
+            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) throws Exception {
+        Category[] categories = new Category[1];
+        //categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap);
+        categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap);
+        return categories;
+    }
 
     private Category[] getCategories(MyConfig conf, List<StockItem> stocks,
             String[] periodText,
@@ -669,7 +682,6 @@ public class ControlService {
         markets.add(conf.getMarket());
         Integer days = conf.getDays();
 
-        ResultItemTable table = new ResultItemTable();
         List<ResultItemTable> otherTables = new ArrayList<>();
         otherTables.add(mlTimesTable);
         otherTables.add(eventTable);
@@ -718,19 +730,135 @@ public class ControlService {
             for (StockItem stock : datedstocks) {
                 curIds.add(stock.getId());
             }
-            */
+             */
             List<StockItem> datedstocksoffset = datedstocklists[1];
             if (datedstocks == null) {
                 return null;
             }
 
-            Category[] categories = getCategories(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, periodmap);
-            
+            //Category[] categories = getCategoriesSmall(conf, stocks,
+            //       periodText, marketdatamap, periodDataMap, null);
+            String title = null;
+            Map<String, Integer>[] periodmap = null;
+            // no...get this from the category
+            IndicatorMACD indicator = new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN);
+
+            Map<String, Object[]> objectMap = indicator.getObjectMap();
+            Map<String, Double[]> listMap = indicator.getListMap();
+            // TODO clone config
+            MyConfig bestBuyConfig = new MyConfig();
+            MyConfig bestSellConfig = new MyConfig();
+            MyConfig testBuyConfig = new MyConfig();
+            MyConfig testSellConfig = new MyConfig();
+            bestBuyConfig.configValueMap = new HashMap<>(conf.configValueMap);
+            bestSellConfig.configValueMap = new HashMap<>(conf.configValueMap);
+            testBuyConfig.configValueMap = new HashMap<>(conf.configValueMap);
+            testSellConfig.configValueMap = new HashMap<>(conf.configValueMap);
+
+            bestBuyConfig.disableML();
+            bestSellConfig.disableML();
+            testBuyConfig.disableML();
+            testSellConfig.disableML();
+
+            MACDRecommend recommend = new MACDRecommend();
+            List<String> buyList = recommend.getBuyList();
+            List<String> sellList = recommend.getSellList();
+            int category = 0;
+            String market = null; //"tradcomm";
+            //List<Double> macdLists[] = new ArrayList[4];
+            TaUtil tu = new TaUtil();
+
+            //int macdlen = ((double[])(objectMap.values().iterator().next())[0]).length;
+            //int listlen = (listMap.values()).iterator().next().length;
+            int macdlen = conf.getTableDays();
+            int listlen = conf.getTableDays();
+            System.out.println("macdlen"+macdlen + " " + listlen);
+
+            double bestRecommendQualBuy = -1000;
+            double bestRecommendQualSell = -1000;
+
+            for (int i = 0; i < conf.getTestRecommendIterations(); i++) {
+                System.out.println("i " + i);
+                List<Double> macdLists[] = new ArrayList[4];
+                for (int tmpj = 0; tmpj < 4; tmpj ++) {
+                    macdLists[tmpj] = new ArrayList<>();
+                }
+                double testRecommendQualBuy = 0;
+                double testRecommendQualSell = 0;
+                for (int j = conf.getTestRecommendIntervalDays(); j < macdlen; j += conf.getTestRecommendIntervalDays()) {
+                    int newlistidx = listlen - 1 - j + conf.getTestRecommendIntervalDays();
+                    int curlistidx = listlen - 1 - j;
+                    int newmacdidx = macdlen - 1 - j + conf.getTestRecommendIntervalDays();
+                    int curmacdidx = macdlen - 1 - j;
+                    Map<String, Double[]> momMap = new HashMap<>();
+                    //System.out.println("j"+j);
+                    for (String id : listMap.keySet()) {
+                        Object[] objs = objectMap.get(id);
+                        Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs, j);
+                        if (momentum != null) {
+                            momMap.put(id, momentum);
+                            MACDRecommend.addToLists(marketdatamap, category, macdLists /*macdList, histList, macdDList, histDList*/, market, momentum);
+                        } else {
+                            //System.out.println("No macd for id" + id);
+                        }
+
+
+                    }
+                    Map<String, Double> buyMap = new HashMap<>();
+                    Map<String, Double> sellMap = new HashMap<>();
+                    MACDRecommend.getBuySellRecommendations(buyMap, null, testBuyConfig, macdLists, listMap, momMap, buyList, sellList /*macdList, histList, macdDList, histDList*/);
+                    MACDRecommend.getBuySellRecommendations(null, sellMap, testSellConfig, macdLists, listMap, momMap, buyList, sellList /*macdList, histList, macdDList, histDList*/);
+                    testRecommendQualBuy += MACDRecommend.getQuality(true, buyMap, listMap, curlistidx, newlistidx);
+                    testRecommendQualSell += MACDRecommend.getQuality(false, sellMap, listMap, curlistidx, newlistidx);
+                }
+                System.out.println("test " + testRecommendQualBuy + " " + bestRecommendQualBuy + " " + testRecommendQualSell + " " + bestRecommendQualSell);
+                if (testRecommendQualBuy > bestRecommendQualBuy) {
+                    bestRecommendQualBuy = testRecommendQualBuy;
+                    bestBuyConfig.configValueMap = new HashMap<>(testBuyConfig.configValueMap);
+                } else {
+                    testBuyConfig.configValueMap = new HashMap<>(bestBuyConfig.configValueMap);                    
+                }
+                if (testRecommendQualSell > bestRecommendQualSell) {
+                    bestRecommendQualSell = testRecommendQualSell;
+                    bestSellConfig.configValueMap = new HashMap<>(testSellConfig.configValueMap);
+                } else {
+                    testSellConfig.configValueMap = new HashMap<>(bestSellConfig.configValueMap);                    
+                }
+                Mutate.mutate(testBuyConfig.configValueMap, buyList);
+                Mutate.mutate(testSellConfig.configValueMap, sellList);
+            }
+            ResultItemTable table = new ResultItemTable();
+            ResultItemTableRow headrow = new ResultItemTableRow();
+            headrow.add("Config");
+            headrow.add("Old value");
+            headrow.add("New value");
+            table.add(headrow);
+            for (String id : buyList) {
+                System.out.println("r1");
+                ResultItemTableRow row = new ResultItemTableRow();
+                row.add(id);
+                row.add(conf.configValueMap.get(id));
+                row.add(bestBuyConfig.configValueMap.get(id));
+                table.add(row);
+            }
+            for (String id : sellList) {
+                System.out.println("r2");
+                ResultItemTableRow row = new ResultItemTableRow();
+                row.add(id);
+                row.add(conf.configValueMap.get(id));
+                row.add(bestSellConfig.configValueMap.get(id));
+                table.add(row);
+            }
+            List<ResultItem> retlist = new ArrayList<>();
+            retlist.add(table);
+            for (ResultItemTable list : otherTables) {
+                //retlist.add(list);
+            }
+            System.out.println("retlist ");
+            return retlist;
         } catch (Exception e) {
             log.error("E ", e);
+            return null;
         }
-        // TODO Auto-generated method stub
-        return null;
     }   
 }

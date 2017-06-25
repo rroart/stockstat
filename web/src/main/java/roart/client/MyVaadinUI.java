@@ -379,7 +379,7 @@ public class MyVaadinUI extends UI
         horStat.setWidth("90%");
         horStat.addComponent(getDate());
         horStat.addComponent(getResetDate());
-        horStat.addComponent(getReload());
+        horStat.addComponent(getMarket());
         horStat.addComponent(getStat());
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
@@ -488,7 +488,7 @@ public class MyVaadinUI extends UI
                 try {
                     controlService.conf.setdate(date);
                     Notification.show("Request sent");
-                    displayResults();
+                    //displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -527,6 +527,9 @@ public class MyVaadinUI extends UI
                     VerticalLayout layout = new VerticalLayout();
                     layout.setCaption("Results");
                     displayResultListsTab(layout, list); 
+                    tabsheet.addComponent(layout);
+                    tabsheet.getTab(layout).setClosable(true);
+                    Notification.show("New result available");
                     //displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
@@ -536,8 +539,8 @@ public class MyVaadinUI extends UI
         return button;
     }
 
-    private Button getReload() {
-        Button button = new Button("Reload");
+    private Button getMarket() {
+        Button button = new Button("Get market data");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {
@@ -593,7 +596,7 @@ public class MyVaadinUI extends UI
                 try {
                     controlService.conf.setMarket(value);
                     Notification.show("Request sent");
-                    displayResults();
+                    //displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
