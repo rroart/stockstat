@@ -44,14 +44,14 @@ public class CategoryPrice extends Category {
             if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
                 r.add(title);
                 r.add("Currency");
-                for (Indicator indicator : indicators) {
-                    if (indicator.isEnabled()) {
-                        r.addarr(indicator.getResultItemTitle());
-                    }
-                }
                 for (Predictor predictor : predictors) {
                     if (predictor.isEnabled()) {
                         r.addarr(predictor.getResultItemTitle());
+                    }
+                }
+                for (Indicator indicator : indicators) {
+                    if (indicator.isEnabled()) {
+                        r.addarr(indicator.getResultItemTitle());
                     }
                 }
             }
@@ -66,14 +66,14 @@ public class CategoryPrice extends Category {
             if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
                 r.add(stock.getPrice());
                 r.add(stock.getCurrency());
-                for (Indicator indicator : indicators) {
-                    if (indicator.isEnabled()) {
-                        r.addarr(indicator.getResultItem(stock));
-                    }
-                }
                 for (Predictor predictor : predictors) {
                     if (predictor.isEnabled()) {
                         r.addarr(predictor.getResultItem(stock));
+                    }
+                }
+                for (Indicator indicator : indicators) {
+                    if (indicator.isEnabled()) {
+                        r.addarr(indicator.getResultItem(stock));
                     }
                 }
            }
