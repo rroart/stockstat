@@ -43,24 +43,14 @@ public class PredictorLSTM extends Predictor {
     Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[]> listMap;
-    //Map<String, Object[]> objectMap;
-    //Map<String, Double> resultMap;
     Map<String, Object[]> resultMap;
-    /*
-    Map<String, Double[]> momMap;
-    Map<String, Double> buyMap;
-    Map<String, Double> sellMap;
-    */
     Object[] emptyField;
     Map<MLPredictModel, Long> mapTime = new HashMap<>();
-    
+
     List<ResultItemTableRow> mlTimesTableRows = null;
     List<ResultItemTableRow> eventTableRows = null;
-    
-    private int fieldSize = 0;
 
-    public static final int MULTILAYERPERCEPTRONCLASSIFIER = 1;
-    public static final int LOGISTICREGRESSION = 2;
+    private int fieldSize = 0;
 
     @Override
     public Map<Integer, List<ResultItemTableRow>> otherTables() {
@@ -80,8 +70,8 @@ public class PredictorLSTM extends Predictor {
     public PredictorLSTM(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
         if (!isEnabled()) {
-         return;
-    }
+            return;
+        }
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
@@ -106,14 +96,14 @@ public class PredictorLSTM extends Predictor {
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
-        calculateMomentums(conf, marketdatamap, periodDataMap, category);        
+        calculate(conf, marketdatamap, periodDataMap, category);        
     }
 
     private abstract class PredSubType {
         public abstract  String getType();
         public abstract  String getName();
     }
-    
+
     private class PredSubTypeFull extends PredSubType {
         @Override
         public String getType() {
@@ -124,7 +114,7 @@ public class PredictorLSTM extends Predictor {
             return "Full";
         }
     }
-    
+
     private class PredSubTypeSingle extends PredSubType {
         @Override
         public String getType() {
@@ -140,53 +130,35 @@ public class PredictorLSTM extends Predictor {
     public Map<Integer, String> getMapTypes() {
         return mapTypes;
     }
-    
+
     private List<Integer> getMapTypeList() {
         List<Integer> retList = new ArrayList<>();
         retList.add(0);
         return retList;
     }
-     
-     @Override
+
+    @Override
     public List<Integer> getTypeList() {
         return getMapTypeList();
     }
-    
-     private Map<Integer, String> mapTypes = new HashMap<>();
-    
-   private void makeMapTypes() {
+
+    private Map<Integer, String> mapTypes = new HashMap<>();
+
+    private void makeMapTypes() {
         mapTypes.put(0, "me");
     }
-   /*
-   private int CMNTYPE = 0;
-    private int NEGTYPE = 1;
-    private int POSTYPE = 2;
-    private String CMNTYPESTR = "cmn";
-    private String NEGTYPESTR = "neg";
-    private String POSTYPESTR = "pos";
-    */
-    
+
     private List<PredSubType> wantedSubTypes = new ArrayList<>();
-    
-   private List<PredSubType> wantedSubTypes() {
-          return wantedSubTypes;
+
+    private List<PredSubType> wantedSubTypes() {
+        return wantedSubTypes;
     }
-  
-   private void makeWantedSubTypes() {
-       /*
-       if (conf.wantMLHist()) {
-           wantedSubTypes.add(new PredSubTypeFull());
-       }
-       */
-       /*
-       if (conf.wantMLMacd()) {
-           wantedSubTypes.add(new PredSubTypeSingle());
-       }
-       */
-       wantedSubTypes.add(new PredSubTypeSingle());
-   }
+
+    private void makeWantedSubTypes() {
+        wantedSubTypes.add(new PredSubTypeSingle());
+    }
     // TODO make an oo version of this
-    private void calculateMomentums(MyConfig conf, Map<String, MarketData> marketdatamap,
+    private void calculate(MyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category) throws Exception {
         DbAccess dbDao = DbDao.instance(conf);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
@@ -195,7 +167,7 @@ public class PredictorLSTM extends Predictor {
         // note that there are nulls in the lists with sparse
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap);
         if (conf.wantPercentizedPriceIndex()) {
-            
+
         }
         if (!anythingHere(listMap)) {
             System.out.println("empty"+key);
@@ -203,12 +175,7 @@ public class PredictorLSTM extends Predictor {
         }
         log.info("time0 " + (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
-        /*
-        objectMap = new HashMap<>();
-        momMap = new HashMap<>();
-        buyMap = new HashMap<>();
-        sellMap = new HashMap<>();
-        */
+
         long time2 = System.currentTimeMillis();
         //objectMap = dbDao.doCalculationsArr(conf, listMap, key, null /*this*/, conf.wantPercentizedPriceIndex());
         //System.out.println("imap " + objectMap.size());
@@ -221,7 +188,7 @@ public class PredictorLSTM extends Predictor {
         log.info("listmap " + listMap.size() + " " + listMap.keySet());
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<String, Map<double[], Double>> mapMap = new HashMap<>();
-       // System.out.println("allids " + listMap.size());
+        // System.out.println("allids " + listMap.size());
         //Map<String, List<Double[]>> splits = new HashMap<>();
         for (String id : listMap.keySet()) {
             //Object[] objs = objectMap.get(id);
@@ -234,29 +201,11 @@ public class PredictorLSTM extends Predictor {
             log.info("listsize"+ list.length);
             // TODO do not need?
             if (conf.wantPercentizedPriceIndex()) {
-            list = ArraysUtil.getPercentizedPriceIndex(list, key);
+                list = ArraysUtil.getPercentizedPriceIndex(list, key);
             }
             //log.info("beg end " + id + " "+ begOfArray.value + " " + endOfArray.value);
             //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
             log.info("list " + list.length + " " + Arrays.asList(list));
-            list = list;
-            int windowsize = 10;
-            int epocs = 20;
-            if (conf.wantML()) {
-                //List<Double> list = listMap.get(id);
-                /*
-                List<Double[]> splitArray = ArraysUtil.splitEpocsWindowsize(list, epocs, windowsize);
-                if (splitArray != null) {
-                for (int i = 0; i < splitArray.size(); i ++) {
-                    Double[] j = splitArray.get(i);
-                    j = ArraysUtil.getPercentizedPriceIndex(j, "Price");
-                    splitArray.set(0, j);
-                }
-                splits.put(id, splitArray);
-                }
-                */
-                
-            }
         }
         // map from h/m to model to posnegcom map<model, results>
         //Map<PredSubType, Map<MLModel2, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
@@ -307,31 +256,31 @@ public class PredictorLSTM extends Predictor {
         }
         List<Map> maplist = new ArrayList<>();
         log.info("here00");
-       for (String id : listMap.keySet()) {
+        for (String id : listMap.keySet()) {
             Object[] fields = new Object[1];
             resultMap.put(id, fields);
             int retindex = 0;
             log.info("here0");
             if (conf.wantML()) {
                 log.info("here1");
-               //int momidx = 6;
+                //int momidx = 6;
                 Double[] type;
                 List<PredSubType> subTypes2 = wantedSubTypes();
                 for (PredSubType subType : subTypes2) {
                     //Map<MLModel2, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
                     log.info("here11");
-                   //System.out.println("mapget " + subType + " " + mapResult.keySet());
+                    //System.out.println("mapget " + subType + " " + mapResult.keySet());
                     for (MLPredictDao mldao : mldaos) {
                         log.info("here111");
                         for (MLPredictModel model : mldao.getModels()) {
                             log.info("here1111");
-                           //Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
+                            //Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
                             //for (int mapTypeInt : getMapTypeList()) {
-                                //String mapType = mapTypes.get(mapTypeInt);
-                                //Map<String, Double[]> mapResult3 = mapResult2.get(mapType);
-                                //String mapName = subType.getType() + mapType;
-                                //System.out.println("fields " + fields.length + " " + retindex);
-                                retindex = mldao.addResults(fields, retindex, id, model, this, mapResult, null);
+                            //String mapType = mapTypes.get(mapTypeInt);
+                            //Map<String, Double[]> mapResult3 = mapResult2.get(mapType);
+                            //String mapName = subType.getType() + mapType;
+                            //System.out.println("fields " + fields.length + " " + retindex);
+                            retindex = mldao.addResults(fields, retindex, id, model, this, mapResult, null);
                             //}
                         }   
                     }
@@ -367,170 +316,6 @@ public class PredictorLSTM extends Predictor {
         return false;
     }
 
-    private void addToLists(Map<String, MarketData> marketdatamap, int category, List<Double> macdList,
-            List<Double> histList, List<Double> macdDList, List<Double> histDList, String market, Double[] momentum,
-            Map<String, List<Double>> retMap) throws Exception {
-        {
-
-            if (momentum[0] != null) {
-                histList.add(momentum[0]);
-            }
-            if (momentum[1] != null) {
-                histDList.add(momentum[1]);
-            }
-            if (momentum[2] != null) {
-                macdList.add(momentum[2]);
-            }
-            if (momentum[3] != null) {
-                macdDList.add(momentum[3]);
-            }
-            //System.out.println("outout2 " + Arrays.toString(sig));
-            List<StockItem> datedstocklists[] = marketdatamap.get(market).datedstocklists;
-            int index = 0;
-            if (false && index >= 0) {
-                for (int i = index; i < datedstocklists.length; i++) {
-                    List<StockItem> stocklist = datedstocklists[i];
-                    for (StockItem stock : stocklist) {
-                        String stockid = stock.getId();
-                        Double value = StockDao.getValue(stock, category);
-                        if (value != null) {
-                            StockDao.mapAdd(retMap, stockid, value);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void getPosMap(Map<double[], Double> commonMap, Map<double[], Double> posMap, String id,
-            Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
-            Map<Integer, Integer>[] map) {
-        Map<Integer, Integer> pos = map[0];
-        //System.out.println("Checking " + key + " " + id + " " + listsize + " " + histarr.length);
-        if (list.length == 0) {
-            //System.out.println("h " + Arrays.asList( histarr));
-        }
-        Map<Integer, Integer> newPos = ArraysUtil.getAcceptedRanges(pos, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
-        for (int start : newPos.keySet()) {
-            int end = newPos.get(start);
-            String label = null;
-            try {
-                if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
-                    label = labelFN;
-                    log.info(labelFN + ": " + id + " " + ControlService.getName(id) + " at " + end);
-                    printme(label, end, list, array);
-                } else {
-                    label = labelTN;
-                    log.info(labelTN + ": " + id + " " + ControlService.getName(id) + " at " + end);
-                    printme(label, end, list, array);
-                }
-            } catch (Exception e) {
-                log.error("myexcept " + pos + " : " + newPos + " " + start + " " + end + " " + list.length + " " + array.length, e);
-            }
-            double[] truncArray = ArraysUtil.getSub(array, start, end);
-            Double label2 = labelMap2.get(label);
-            commonMap.put(truncArray, label2);
-            posMap.put(truncArray, label2);
-        }
-    }
-
-    static String labelTP = "TruePositive";
-    static String labelFP = "FalsePositive";
-    static String labelTN = "TrueNegative";
-    static String labelFN = "FalseNegative";
-
-    private void getNegMap(Map<double[], Double> commonMap, Map<double[], Double> negMap, String id,
-            Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
-            Map<Integer, Integer>[] map) {
-        Map<Integer, Integer> neg = map[1];
-        Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
-        for (int start : newNeg.keySet()) {
-            int end = newNeg.get(start);
-            String label;
-            if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
-                label = labelTP;
-                log.info("TruePositive" + ": " + id + " " + ControlService.getName(id) + " at " + end);
-                printme(label, end, list, array);
-            } else {
-                label = labelFP;
-                log.info(labelFP + ": " + id + " " + ControlService.getName(id) + " at " + end);
-                printme(label, end, list, array);
-            }
-            double[] truncArray = ArraysUtil.getSub(array, start, end);
-            Double label2 = labelMap2.get(label);
-            commonMap.put(truncArray, label2);
-            negMap.put(truncArray, label2);
-        }
-    }
-
-    private void getPosNegMap(Map<double[], Double> commonMap, Map<double[], Double> posnegMap, String id,
-            Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
-            Map<Integer, Integer> posneg, String label, String labelopposite) {
-        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
-        for (int start : newPosNeg.keySet()) {
-            int end = newPosNeg.get(start);
-            String textlabel;
-            if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
-                textlabel = label;
-            } else {
-                textlabel = labelopposite;
-            }
-            log.info(textlabel + ": " + id + " " + ControlService.getName(id) + " at " + end);
-            printme(textlabel, end, list, array);
-            double[] truncArray = ArraysUtil.getSub(array, start, end);
-            Double doublelabel = labelMap2.get(textlabel);
-            commonMap.put(truncArray, doublelabel);
-            posnegMap.put(truncArray, doublelabel);
-        }
-    }
-
-    private void getPosNegMap(Map<String, Map<double[], Double>> mapMap, String subType, String commonType, String posnegType , String id,
-            Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
-            Map<Integer, Integer> posneg, String label, String labelopposite) {
-        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
-    //System.out.println("pnmap " + newPosNeg.keySet());
-        for (int start : newPosNeg.keySet()) {
-            int end = newPosNeg.get(start);
-            String textlabel;
-            if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
-                textlabel = label;
-            } else {
-                textlabel = labelopposite;
-            }
-            log.info(textlabel + ": " + id + " " + ControlService.getName(id) + " at " + end);
-            printme(textlabel, end, list, array);
-            double[] truncArray = ArraysUtil.getSub(array, start, end);
-            Double doublelabel = labelMap2.get(textlabel);
-            String commonMapName = subType + commonType;
-            String posnegMapName = subType + posnegType;
-            Map<double[], Double> commonMap = mapGetter(mapMap, commonMapName);
-            Map<double[], Double> posnegMap = mapGetter(mapMap, posnegMapName);
-            commonMap.put(truncArray, doublelabel);
-            posnegMap.put(truncArray, doublelabel);
-        }
-    }
-
-    private <K, V> Map<K, V> mapGetter(Map<String, Map<K, V>> mapMap, String key) {
-        Map<K, V> map = mapMap.get(key);
-        if (map == null) {
-            map = new HashMap<>();
-            //System.out.println("mapput " + key);
-            mapMap.put(key, map);
-        }
-        return map;
-    }
-
-    private void printme(String label, int end, Double[] values, double[] array) {
-        String me1 = "";
-        String me2 = "";
-        for (int i = end - 3; i <= end + conf.getMACDDaysAfterZero(); i++) {
-            me1 = me1 + values[i] + " ";
-            me2 = me2 + array[i] + " ";
-        }
-        log.info("me1 " + me1);
-        log.info("me2 " + me2);
-    }
-
     public void addEventRow(String text, String name, String id) {
         ResultItemTableRow event = new ResultItemTableRow();
         event.add(key);
@@ -539,7 +324,7 @@ public class PredictorLSTM extends Predictor {
         event.add(id);
         eventTableRows.add(event);
     }
-    
+
     public static void printout(Double[] type, String id, Map<Double, String> labelMapShort) {
         if (type != null) {
             //System.out.println("Type " + labelMapShort.get(type[0]) + " id " + id);
@@ -591,9 +376,9 @@ public class PredictorLSTM extends Predictor {
         for (PredSubType subType : subTypes) {
             for (MLPredictDao mldao : mldaos) {
                 //for (int mapTypeInt : getMapTypeList()) {
-                    //String mapType = mapTypes.get(mapTypeInt);
-                    //String mapName = subType.getType() + mapType;
-                    retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
+                //String mapType = mapTypes.get(mapTypeInt);
+                //String mapName = subType.getType() + mapType;
+                retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
                 //}
             }
         }
@@ -615,7 +400,7 @@ public class PredictorLSTM extends Predictor {
         log.info("fieldsizet " + size);
         return size;
     }
-    
+
     public static void mapAdder(Map<MLPredictModel, Long> map, MLPredictModel key, Long add) {
         Long val = map.get(key);
         if (val == null) {

@@ -57,6 +57,13 @@ public class IndicatorMACD extends Indicator {
     List<ResultItemTableRow> mlTimesTableRows = null;
     List<ResultItemTableRow> eventTableRows = null;
     
+    @Override
+    public Map<String, Object> getResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("MACD", resultMap);
+        return map;
+    }
+    
     public Map<String, Object[]> getObjectMap() {
         return objectMap;
     }
@@ -222,12 +229,6 @@ public class IndicatorMACD extends Indicator {
         for (int i = 0; i < 4; i ++) {
             macdLists[i] = new ArrayList<>();
         }
-        /*
-        List<Double> macdList = new ArrayList<>();
-        List<Double> histList = new ArrayList<>();
-        List<Double> macdDList = new ArrayList<>();
-        List<Double> histDList = new ArrayList<>();
-        */
         long time2 = System.currentTimeMillis();
         objectMap = dbDao.doCalculationsArr(conf, listMap, key, this, conf.wantPercentizedPriceIndex());
         //System.out.println("imap " + objectMap.size());
@@ -355,27 +356,8 @@ public class IndicatorMACD extends Indicator {
                     double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
                     getMlMappings(subType.getName(), subType.getType(), labelMapShort, mapIdMap, id, aMacdArray, endOfArray, trunclist);
                 }
-                /*
-                if (wantMLMacd()) {
-                    getMlMappings("Macd", labelMapShort, commonIdMacdMap, posIdMacdMap, negIdMacdMap, id, aMacdArray, endOfArray, trunclist);
-                }
-                 */
             }
-         /*
-            for (MLDao mldao : mldaos) {
-                int model = 0;
-            if (wantMLHist()) {
-                    commonIdTypeModelHistMap = mldao.classify(commonIdHistMap, model, getDaysBeforeZero(), key, "common", 4, labelMapShort);
-                    posIdTypeModelHistMap = mldao.classify(posIdHistMap, model, getDaysBeforeZero(), key, "pos", 4, labelMapShort);
-                    negIdTypeModelHistMap = mldao.classify(negIdHistMap, model, getDaysBeforeZero(), key, "neg", 4, labelMapShort);
-            }
-            if (wantMLMacd()) {
-                    commonIdTypeModelMacdMap = mldao.classify(commonIdMacdMap, model, getDaysBeforeZero(), key, "commonM", 4, labelMapShort);
-                    posIdTypeModelMacdMap = mldao.classify(posIdMacdMap, model, getDaysBeforeZero(), key, "posM", 4, labelMapShort);
-                    negIdTypeModelMacdMap = mldao.classify(negIdMacdMap, model, getDaysBeforeZero(), key, "negM", 4, labelMapShort);
-                }
-            }
-            */
+
             // map from h/m + posnegcom to map<model, results>
             List<MacdSubType> subTypes = wantedSubTypes();
             for (MacdSubType subType : subTypes) {
