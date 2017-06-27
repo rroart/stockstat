@@ -1,4 +1,4 @@
-package roart.predictor;
+package roart.aggregate;
 
 import java.util.List;
 import java.util.Map;
@@ -7,19 +7,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.config.MyConfig;
-import roart.model.ResultItemTable;
+import roart.indicator.Indicator;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 
-public abstract class Predictor {
+public abstract class Aggregator {
 
-    protected static Logger log = LoggerFactory.getLogger(Predictor.class);
+    protected static Logger log = LoggerFactory.getLogger(Indicator.class);
 
     protected String title;
     protected MyConfig conf;
     protected int category;
     
-    public Predictor(MyConfig conf, String string, int category) {
+    public Aggregator(MyConfig conf, String string, int category) {
         this.title = string;
         this.conf = conf;
         this.category = category;
@@ -28,8 +28,8 @@ public abstract class Predictor {
     abstract public boolean isEnabled();
 
     public Object[] getResultItemTitle() {
-    	Object[] titleArray = new Object[1];
-    	titleArray[0] = title;
+        Object[] titleArray = new Object[1];
+        titleArray[0] = "Agg"+title;
         return titleArray;
     }
 
@@ -51,9 +51,9 @@ public abstract class Predictor {
         return null;
     }
 
-    public Map<String, Object> getResultMap() {
-        return null;
-    }
+    public abstract void addResultItem(ResultItemTableRow row, StockItem stock);
 
+    public abstract void addResultItemTitle(ResultItemTableRow headrow); 
+
+    //public abstract void addResultItemTitle(ResultItemTableRow headrow);
 }
-

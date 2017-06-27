@@ -8,6 +8,8 @@ import roart.model.ResultItem;
 import roart.model.StockItem;
 import roart.mutation.Mutate;
 import roart.recommender.MACDRecommend;
+import roart.aggregate.Aggregator;
+import roart.aggregate.AggregatorRecommenderMacdRsi;
 import roart.category.Category;
 import roart.category.CategoryIndex;
 import roart.category.CategoryPeriod;
@@ -211,6 +213,9 @@ public class ControlService {
             Category[] categories = getCategories(conf, stocks,
                     periodText, marketdatamap, periodDataMap, periodmap);
             
+            Aggregator[] aggregates = getAggregates(conf, stocks,
+                    periodText, marketdatamap, periodDataMap, periodmap, categories);
+            
             ResultItemTableRow headrow = new ResultItemTableRow();
             //ri.add("Id");
             headrow.add(Constants.IMG);
@@ -219,6 +224,10 @@ public class ControlService {
             try {
                 for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
                     categories[i].addResultItemTitle(headrow);
+                    //System.out.print("first " + ri.get().size());
+                }
+                for (int i = 0; i < aggregates.length; i++) {
+                    aggregates[i].addResultItemTitle(headrow);
                     //System.out.print("first " + ri.get().size());
                 }
             } catch (Exception e) {
@@ -243,6 +252,10 @@ public class ControlService {
                 try {
                     for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
                         categories[i].addResultItem(row, stock);
+                        //System.out.print("others " + r.get().size());
+                    }
+                    for (int i = 0; i < aggregates.length; i++) {
+                        aggregates[i].addResultItem(row, stock);
                         //System.out.print("others " + r.get().size());
                     }
                 } catch (Exception e) {
@@ -294,6 +307,15 @@ public class ControlService {
         //categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap);
         categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap);
         return categories;
+    }
+
+    private Aggregator[] getAggregates(MyConfig conf, List<StockItem> stocks,
+            String[] periodText,
+            Map<String, MarketData> marketdatamap,
+            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories) throws Exception {
+        Aggregator[] aggregates = new Aggregator[1];
+        aggregates[0] = new AggregatorRecommenderMacdRsi(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap, categories);
+        return aggregates;
     }
 
     private Category[] getCategories(MyConfig conf, List<StockItem> stocks,
@@ -785,10 +807,10 @@ public class ControlService {
                 }
                 double testRecommendQualBuy = 0;
                 double testRecommendQualSell = 0;
-                for (int j = conf.getTestRecommendIntervalDays(); j < macdlen; j += conf.getTestRecommendIntervalDays()) {
-                    int newlistidx = listlen - 1 - j + conf.getTestRecommendIntervalDays();
+                for (int j = conf.getTestRecommendFutureDays(); j < macdlen; j += conf.getTestRecommendIntervalDays()) {
+                    int newlistidx = listlen - 1 - j + conf.getTestRecommendFutureDays();
                     int curlistidx = listlen - 1 - j;
-                    int newmacdidx = macdlen - 1 - j + conf.getTestRecommendIntervalDays();
+                    int newmacdidx = macdlen - 1 - j + conf.getTestRecommendFutureDays();
                     int curmacdidx = macdlen - 1 - j;
                     Map<String, Double[]> momMap = new HashMap<>();
                     //System.out.println("j"+j);
@@ -855,6 +877,13 @@ public class ControlService {
                 //retlist.add(list);
             }
             System.out.println("retlist ");
+            // TODO have a boolean here
+            for (String id : buyList) {
+                conf.configValueMap.put(id, bestBuyConfig.configValueMap.get(id));
+            }
+            for (String id : sellList) {
+                conf.configValueMap.put(id, bestSellConfig.configValueMap.get(id));
+            }
             return retlist;
         } catch (Exception e) {
             log.error("E ", e);

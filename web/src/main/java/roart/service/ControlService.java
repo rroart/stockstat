@@ -162,10 +162,13 @@ public class ControlService {
         getConfig();
     }
 
-    public List<ResultItem> getTestRecommender() {
+    public List<ResultItem> getTestRecommender(boolean doSet) {
         ServiceParam param = new ServiceParam();
         param.config = conf;
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETTESTRECOMMENDER);
+        if (doSet) {
+            conf = result.config;
+        }
         return result.list;
     }
 }

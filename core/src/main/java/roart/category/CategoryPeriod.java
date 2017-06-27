@@ -38,10 +38,10 @@ public class CategoryPeriod extends Category {
         super(conf, periodText, stocks);
         this.periodmap = periodmap;
         period = i;
-        indicators.add(new IndicatorMove(conf, "Δ" + title, periodmap, period));
-        indicators.add(new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, i));
-        indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, i));
-        indicators.add(new IndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, periodmap, title, i));
+        indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), periodmap, period));
+        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), i));
+        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), i));
+        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), i));
 
     }
 
@@ -49,7 +49,7 @@ public class CategoryPeriod extends Category {
     public void addResultItemTitle(ResultItemTableRow r) {
         try {
             if (StockUtil.hasStockPeriod(stocks, period)) {
-                r.add(title);
+                r.add(getTitle());
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItemTitle());

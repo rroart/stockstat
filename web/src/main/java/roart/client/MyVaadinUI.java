@@ -433,7 +433,8 @@ public class MyVaadinUI extends UI
         HorizontalLayout horTester = new HorizontalLayout();
         horTester.setHeight("20%");
         horTester.setWidth("60%");
-        horTester.addComponent(getTestRecommender());
+        horTester.addComponent(getTestRecommender(false));
+        horTester.addComponent(getTestRecommender(true));
 
         HorizontalLayout horManual = new HorizontalLayout();
         horManual.setHeight("20%");
@@ -515,14 +516,18 @@ public class MyVaadinUI extends UI
         return button;
     }
 
-    private Button getTestRecommender() {
-        Button button = new Button("Test recommender");
+    private Button getTestRecommender(boolean doSet) {
+        String set = "";
+        if (doSet) {
+            set = "and set";
+        }
+        Button button = new Button("Test recommender" + set);
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {                    
                     Notification.show("Request sent");
 
-                    List<ResultItem> list = controlService.getTestRecommender();
+                    List<ResultItem> list = controlService.getTestRecommender(doSet);
                     log.info("listsize " + list.size());
                     VerticalLayout layout = new VerticalLayout();
                     layout.setCaption("Results");

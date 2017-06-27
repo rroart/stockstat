@@ -60,7 +60,7 @@ public class IndicatorMACD extends Indicator {
     @Override
     public Map<String, Object> getResultMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("MACD", resultMap);
+        map.put("MACD", momMap);
         return map;
     }
     

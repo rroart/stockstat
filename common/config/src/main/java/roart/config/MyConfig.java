@@ -520,6 +520,7 @@ public class MyConfig {
         return (Integer) configValueMap.get(ConfigConstants.PREDICTORSLSTMWINDOWSIZE);
     }
 
+    @Deprecated
     public Integer getTestRecommendIntervalTimes() {
         return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDINTERVALTIMES);
     }
@@ -532,7 +533,30 @@ public class MyConfig {
         return (String) configValueMap.get(ConfigConstants.TESTRECOMMENDPERIOD);
     }
 
+    public Integer getTestRecommendFutureDays() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDFUTUREDAYS);
+    }
+
     public Integer getTestRecommendIntervalDays() {
         return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDINTERVALDAYS);
     }
+    
+    public Integer getTestRecommendGenerations() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDGENERATIONS);
+    }
+    
+    public Integer getTestRecommendChildren() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDCHILDREN);
+    }
+    
+    public boolean wantAggregators() {
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORS); 
+    }
+    
+    public boolean wantMACDRSIRecommender() {
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDER) 
+                && wantAggregators();
+    }
+    
+
 }

@@ -32,17 +32,17 @@ public class CategoryIndex extends Category {
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
-        indicators.add(new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
-        indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
-        indicators.add(new IndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
-        predictors.add(new PredictorLSTM(conf, title + "LSTM", marketdatamap, periodDataMap, periodmap, title, Constants.INDEXVALUECOLUMN));
+        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN));
+        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN));
+        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN));
+        predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN));
     }
 
     @Override
     public void addResultItemTitle(ResultItemTableRow r) {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUECOLUMN)) {
-                r.add(title);
+                r.add(getTitle());
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItemTitle());

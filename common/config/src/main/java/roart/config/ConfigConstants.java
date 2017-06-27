@@ -76,11 +76,29 @@ public class ConfigConstants {
     public static final String MISCMYEQUALIZE = "misc.myequalize[@enable]";
     public static final String MISCMYGRAPHEQUALIZE = "misc.mygraphequalize[@enable]";
     public static final String MISCMYGRAPHEQUALIZEUNIFY = "misc.mygraphequalizeunify[@enable]";
+    public static final String TESTRECOMMENDFUTUREDAYS = "test.recommend.futuredays";
     public static final String TESTRECOMMENDINTERVALDAYS = "test.recommend.intervaldays";
+    @Deprecated
     public static final String TESTRECOMMENDINTERVALTIMES = "test.recommend.intervaltimes";
     public static final String TESTRECOMMENDITERATIONS = "test.recommend.iterations";
     public static final String TESTRECOMMENDPERIOD = "test.recommend.period";
-    public static Map<String, Class> map = new HashMap();
+    public static final String TESTRECOMMENDGENERATIONS = "test.recommend.generations";
+    public static final String TESTRECOMMENDCHILDREN = "test.recommend.children";
+    public static final String AGGREGATORS = "aggregators[@enable]";
+    public static final String AGGREGATORSMACDRSIRECOMMENDER = "aggregators.macdrsirecommender[@enable]";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAM = "aggregators.macdrsirecommender.weightbuyhistogram";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTA = "aggregators.macdrsirecommender.weightbuyhistogramdelta";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUM = "aggregators.macdrsirecommender.weightbuymomemtum";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTA = "aggregators.macdrsirecommender.weightbuymomemtumdelta";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMRSI = "aggregators.macdrsirecommender.weightbuyrsi";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTA = "aggregators.macdrsirecommender.weightbuyrsidelta";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAM = "aggregators.macdrsirecommender.weightsellhistogram";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTA = "aggregators.macdrsirecommender.weightsellhistogramdelta";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUM = "aggregators.macdrsirecommender.weightsellmomemtum";
+    public static final String AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTA = "aggregators.macdrsirecommender.weightsellmomemtumdelta";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMRSI = "aggregators.macdrsirecommender.weightsellrsi";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTA = "aggregators.macdrsirecommender.weightsellrsidelta";
+   public static Map<String, Class> map = new HashMap();
     
     public static void makeTypeMap() {
         if (!map.isEmpty()) {
@@ -151,10 +169,120 @@ public class ConfigConstants {
         map.put(ConfigConstants.MISCMYEQUALIZE, Boolean.class);
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZE, Boolean.class);
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, Boolean.class);
+        map.put(ConfigConstants.TESTRECOMMENDFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.TESTRECOMMENDINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, Integer.class);
         map.put(ConfigConstants.TESTRECOMMENDITERATIONS, Integer.class);
         map.put(ConfigConstants.TESTRECOMMENDPERIOD, String.class);
+        map.put(ConfigConstants.TESTRECOMMENDGENERATIONS, Integer.class);
+        map.put(ConfigConstants.TESTRECOMMENDCHILDREN, Integer.class);
+        map.put(ConfigConstants.AGGREGATORS, Boolean.class);
+       map.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDER, Boolean.class);
+       map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAM , Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTA , Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUM , Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTA , Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMRSI, Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTA , Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAM , Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTA, Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUM , Integer.class);
+        map.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTA, Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMRSI, Integer.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTA, Integer.class);
+    }
+
+    public static Map<String, Object> deflt = new HashMap();
+    public static void makeDefaultMap() {
+        if (!deflt.isEmpty()) {
+            return;
+        }
+        deflt.put(ConfigConstants.DATABASESPARK, Boolean.TRUE);
+        deflt.put(ConfigConstants.DATABASESPARKSPARKMASTER, "spark://127.0.0.1:7077");
+        deflt.put(ConfigConstants.DATABASEHIBERNATE, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER, "spark://127.0.0.1:7077");
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORS, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSMOVE, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSMACDMACHHISTOGRAMDELTADAYS, 3);
+        
+        deflt.put(ConfigConstants. INDICATORSMACDMACDMOMENTUMDELTA, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSMACDACDMOMENTUMDELTADAYS, 3);
+        deflt.put(ConfigConstants. INDICATORSMACDRECOMMENDWEIGHTS, Boolean.TRUE);
+        deflt.put(ConfigConstants. INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAM, 40);
+        deflt.put(ConfigConstants. INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAMDELTA, 20);
+        deflt.put(ConfigConstants. INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUM, 20);
+        deflt.put(ConfigConstants. INDICATORSMACDRECOMMENDWEIGHTSBUGMOMENTUMDELTA, 20);
+        deflt.put(ConfigConstants. INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAM, 40);
+        deflt.put(ConfigConstants. INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAMDELTA, 20);
+        deflt.put(ConfigConstants. INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUM, 20);
+        deflt.put(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUMDELTA, 20);
+        deflt.put(ConfigConstants.INDICATORSMACDMACHINELEARNING, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGMOMENTUMML, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML, Boolean.TRUE);
+        deflt.put(ConfigConstants. INDICATORSMACDDAYSBEFOREZERO , 25);
+        deflt.put(ConfigConstants. INDICATORSMACDDAYSAFTERZERO, 10);
+        deflt.put(ConfigConstants. INDICATORSRSI, Boolean.TRUE);
+        deflt.put(ConfigConstants. INDICATORSRSIDELTA, Boolean.TRUE);
+        deflt.put(ConfigConstants. INDICATORSRSIDELTADAYS, 3);
+        deflt.put(ConfigConstants. INDICATORSSTOCHRSI, Boolean.TRUE);
+        deflt.put(ConfigConstants. INDICATORSSTOCHRSIDELTA, Boolean.TRUE);
+        deflt.put(ConfigConstants. INDICATORSSTOCHRSIDELTADAYS, 3);
+        deflt.put(ConfigConstants. INDICATORSCCI, Boolean.TRUE);
+        deflt.put(ConfigConstants. INDICATORSCCIDELTA , Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSCCIDELTADAYS, 3);
+        deflt.put(ConfigConstants.INDICATORSATR , Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSATRDELTA, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSATRDELTADAYS, 3);
+        deflt.put(ConfigConstants.INDICATORSSTOCH, Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA , Boolean.TRUE);
+        deflt.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, 3);
+        deflt.put(ConfigConstants.PREDICTORS, Boolean.TRUE);
+        deflt.put(ConfigConstants.PREDICTORSLSTM, Boolean.TRUE);
+        deflt.put(ConfigConstants.PREDICTORSLSTMEPOCHS, 5);
+        deflt.put(ConfigConstants.PREDICTORSLSTMHORIZON, 5);
+        deflt.put(ConfigConstants.PREDICTORSLSTMWINDOWSIZE, 3);
+        deflt.put(ConfigConstants.MISC, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCMLSTATS, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCOTHERSTATS, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCMYDAYS, Integer.class);
+        deflt.put(ConfigConstants.MISCMYTOPBOTTOM, 10);
+        deflt.put(ConfigConstants.MISCMYTBLEDAYS, 180);
+        deflt.put(ConfigConstants.MISCMYTABLEMOVEINTERVALDAYS, 5);
+        deflt.put(ConfigConstants.MISCMYTABLEINTERVALDAYS, 1);
+        deflt.put(ConfigConstants.MISCMYEQUALIZE, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCMYGRAPHEQUALIZE, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, Boolean.TRUE);
+        deflt.put(ConfigConstants.TESTRECOMMENDFUTUREDAYS, 10);
+        deflt.put(ConfigConstants.TESTRECOMMENDINTERVALDAYS, 5);
+        deflt.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, 10);
+        deflt.put(ConfigConstants.TESTRECOMMENDITERATIONS, 100);
+        deflt.put(ConfigConstants.TESTRECOMMENDPERIOD, "Price");
+        deflt.put(ConfigConstants.TESTRECOMMENDGENERATIONS, 2);
+        deflt.put(ConfigConstants.TESTRECOMMENDCHILDREN, 4);
+        deflt.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);
+       deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDER, Boolean.TRUE);
+       deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAM , 40);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTA , 20);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUM , 20);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTA , 20);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMRSI, 20);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTA , 20);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAM , 40);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTA, 20);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUM , 20);
+        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTA, 20);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMRSI, 20);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTA, 20);
     }
 
     public static Map<String, String> text = new HashMap();
@@ -228,10 +356,27 @@ public class ConfigConstants {
         text.put(ConfigConstants.MISCMYEQUALIZE, "Enable equalizing");
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZE, "Enable graph equalizing");
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, "Enable unified graph equalizing");
+        text.put(ConfigConstants.TESTRECOMMENDFUTUREDAYS, "Test recommender future days");
         text.put(ConfigConstants.TESTRECOMMENDINTERVALDAYS, "Test recommender interval days");
-        text.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, "Test recommender interval times");
+        text.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, "Deprecated Test recommender interval times");
         text.put(ConfigConstants.TESTRECOMMENDITERATIONS, "Test recommender iterations");
         text.put(ConfigConstants.TESTRECOMMENDPERIOD, "Test recommender period");
+        text.put(ConfigConstants.TESTRECOMMENDGENERATIONS, "Test recommender generations");
+        text.put(ConfigConstants.TESTRECOMMENDCHILDREN, "Test recommender children");
+        text.put(ConfigConstants.AGGREGATORS, "Enable aggregators");
+       text.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDER, "Enable aggregated MACD RSI recommender");
+       text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAM , "Buy weight histogram");
+       text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTA , "Buy weight histogram delta");
+       text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUM , "Buy weight momentum");
+       text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTA ,"Buy weight momentum delta");
+       text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMRSI, "Buy weight RSI");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTA , "Buy weight RSI delta");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAM ,"Sell weight histogram");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTA, "Sell weight histogram delta");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUM ,"Sell weight momentum");
+		text.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTA,"Sell weight momentum delta");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMRSI, "Sell weight RSI");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTA, "Sell weight RSI delta");
        
     }
 

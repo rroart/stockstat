@@ -20,7 +20,7 @@ public abstract class Category {
 
     protected static Logger log = LoggerFactory.getLogger(Category.class);
 
-    protected String title;
+    private String title;
     protected MyConfig conf;
     protected List<StockItem> stocks;
     protected List<Indicator> indicators = new ArrayList();
@@ -28,7 +28,7 @@ public abstract class Category {
 
     public Category(MyConfig conf, String periodText, List<StockItem> stocks) {
         this.conf = conf;
-        title = periodText;
+        setTitle(periodText);
         this.stocks = stocks;
     }
 
@@ -57,6 +57,35 @@ public abstract class Category {
             }
         }
         return allTablesMap;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Map<String, Object> getResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        for (Predictor predictor : predictors) {
+            if (predictor.isEnabled()) {
+                Map<String, Object> tmpMap = predictor.getResultMap();
+                if (tmpMap != null) {
+                    map.putAll(tmpMap);
+                }
+            }
+        }
+        for (Indicator indicator : indicators) {
+            if (indicator.isEnabled()) {
+                Map<String, Object> tmpMap = indicator.getResultMap();
+                if (tmpMap != null) {
+                    map.putAll(tmpMap);
+                }
+           }
+        }
+        return map;
     }
 }
 

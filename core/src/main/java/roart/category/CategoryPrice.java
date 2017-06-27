@@ -32,17 +32,17 @@ public class CategoryPrice extends Category {
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
-        indicators.add(new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
-        indicators.add(new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
-        indicators.add(new IndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
-        predictors.add(new PredictorLSTM(conf, title + "LSTM", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
+        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN));
+        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN));
+        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN));
+        predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN));
     }
 
     @Override
     public void addResultItemTitle(ResultItemTableRow r) {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
-                r.add(title);
+                r.add(getTitle());
                 r.add("Currency");
                 for (Predictor predictor : predictors) {
                     if (predictor.isEnabled()) {

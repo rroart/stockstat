@@ -51,5 +51,9 @@ public abstract class Indicator {
         return null;
     }
 
+    public Map<String, Object> getResultMap() {
+         return null;
+    }
+
 }
 
