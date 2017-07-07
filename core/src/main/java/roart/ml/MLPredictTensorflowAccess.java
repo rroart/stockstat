@@ -9,7 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.LearnTestPredict;
 import roart.predictor.Predictor;
 import roart.ml.MLClassifyModel;
@@ -22,9 +22,9 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private MyConfig conf;
+    private MyMyConfig conf;
     
-	public MLPredictTensorflowAccess(MyConfig conf) {
+	public MLPredictTensorflowAccess(MyMyConfig conf) {
         this.conf = conf;
 	    findModels();
 	}

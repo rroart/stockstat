@@ -6,7 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
@@ -16,10 +16,10 @@ public abstract class Predictor {
     protected static Logger log = LoggerFactory.getLogger(Predictor.class);
 
     protected String title;
-    protected MyConfig conf;
+    protected MyMyConfig conf;
     protected int category;
     
-    public Predictor(MyConfig conf, String string, int category) {
+    public Predictor(MyMyConfig conf, String string, int category) {
         this.title = string;
         this.conf = conf;
         this.category = category;

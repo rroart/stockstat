@@ -9,7 +9,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyConfig;
+import roart.aggregate.Aggregator;
+import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.model.LearnTestClassify;
@@ -23,9 +24,9 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private MyConfig conf;
+    private MyMyConfig conf;
     
-	public MLClassifyTensorflowAccess(MyConfig conf) {
+	public MLClassifyTensorflowAccess(MyMyConfig conf) {
         this.conf = conf;
 	    findModels();
 	}
@@ -43,7 +44,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 	}
 	
     @Override
-    public void learntest(Indicator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
+    public void learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
             int outcomes) {
         //List<MLModel> models = getModels();
         //for (MLModel modelInt : models) {
@@ -59,7 +60,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     /*
     private Map<Integer, String> getModelsMap() {
         Map<Integer, String> models = new HashMap<>();
-        if (IndicatorMACD.wantDNN()) {
+        if (AggregatorMACD.wantDNN()) {
             int model = IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER;
             models.put(model, "DNN");
         }
@@ -120,7 +121,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Indicator indicator, Map<String, double[]> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, Map<String, double[]> map, MLClassifyModel model, int size,
             String period, String mapname, int outcomes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         //List<Integer> models = getModels();

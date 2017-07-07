@@ -3,7 +3,7 @@ package roart.category;
 import java.util.List;
 import java.util.Map;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorRSI;
@@ -24,7 +24,7 @@ public class CategoryIndex extends Category {
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
 
-    public CategoryIndex(MyConfig conf, String string, List<StockItem> stocks,
+    public CategoryIndex(MyMyConfig conf, String string, List<StockItem> stocks,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
             Map<String, Integer>[] periodmap) throws Exception {

@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.StockItem;
 import roart.util.Constants;
 import roart.util.MarketData;
@@ -26,7 +26,7 @@ public class IndicatorMACDderiv extends Indicator {
     Map<String, List<Double>> listMap;
     Map<String, Double> resultMap;
 
-    public IndicatorMACDderiv(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    public IndicatorMACDderiv(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
@@ -35,7 +35,7 @@ public class IndicatorMACDderiv extends Indicator {
         calculateMomentums(conf, marketdatamap, periodDataMap, category);        
     }
 
-	private void calculateMomentums(MyConfig conf, Map<String, MarketData> marketdatamap,
+	private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
 			Map<String, PeriodData> periodDataMap, int category) throws Exception {
 		SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());

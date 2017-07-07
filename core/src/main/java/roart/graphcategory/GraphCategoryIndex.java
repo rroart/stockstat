@@ -10,7 +10,7 @@ import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorMACD;
 import roart.graphindicator.GraphIndicatorRSI;
@@ -31,7 +31,7 @@ public class GraphCategoryIndex extends GraphCategory {
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
 
-    public GraphCategoryIndex(MyConfig conf, String string,
+    public GraphCategoryIndex(MyMyConfig conf, String string,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap) {
         super(conf, string);

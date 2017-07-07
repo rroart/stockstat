@@ -53,6 +53,12 @@ public class MyPropertyConfig extends MyConfig {
             Document doc = configxml.getDocument();
             configTreeMap = new ConfigTreeMap();
             configValueMap = new HashMap<String, Object>();
+            ConfigConstants.makeDefaultMap();
+            ConfigConstants.makeTextMap();
+            ConfigConstants.makeTypeMap();
+            deflt = ConfigConstants.deflt;
+            type = ConfigConstants.map;
+            text = ConfigConstants.text;
             handleDoc(doc.getDocumentElement(), configTreeMap, "");
             print(configTreeMap, 0);
             System.out.println("root " + root);

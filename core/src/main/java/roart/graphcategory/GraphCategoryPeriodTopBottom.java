@@ -10,7 +10,7 @@ import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.GUISize;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItem;
@@ -25,7 +25,7 @@ public class GraphCategoryPeriodTopBottom extends GraphCategory {
 
     private int period;
 
-    public GraphCategoryPeriodTopBottom(MyConfig conf, int i,
+    public GraphCategoryPeriodTopBottom(MyMyConfig conf, int i,
             String periodText, List<StockItem>[][] stocklistPeriod) {
         super(conf, periodText);
         period = i;

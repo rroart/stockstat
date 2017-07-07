@@ -1,35 +1,46 @@
 package roart.recommender;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import roart.calculate.CalcMACDNode;
+import roart.calculate.CalcNode;
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.model.StockItem;
 import roart.util.MarketData;
 import roart.util.StockDao;
 
-public class MACDRecommend extends BuySellRecommend {
+public class MACDRSIRecommend extends BuySellRecommend {
     
     // TODO add deltadays?
     
     public  List<String> getBuyList() {
         List<String> buyList = new ArrayList<>();
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAM);
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAMDELTA);
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUM);
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUGMOMENTUMDELTA);
+        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMNODE);
+        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTANODE);
+        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMNODE);
+        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTANODE);
+        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSINODE);
+        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTANODE);
         return buyList;
     }
 
     public  List<String> getSellList() {
         List<String> sellList = new ArrayList<>();
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAM);
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAMDELTA);
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUM);
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUMDELTA);
+        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMNODE);
+        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTANODE);
+        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMNODE);
+        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTANODE);
+        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSINODE);
+        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTANODE);
         return sellList;
     }
 
@@ -42,26 +53,12 @@ public class MACDRecommend extends BuySellRecommend {
                     macdList.add(momentum[i]);
                 }
             }
-            /*
-            if (momentum[0] != null) {
-                histList.add(momentum[0]);
-            }
-            if (momentum[1] != null) {
-                histDList.add(momentum[1]);
-            }
-            if (momentum[2] != null) {
-                macdList.add(momentum[2]);
-            }
-            if (momentum[3] != null) {
-                macdDList.add(momentum[3]);
-            }
-            */
-            //System.out.println("outout2 " + Arrays.toString(sig));
         }
     }
 
-    public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[] /*,List<Double> macdList, List<Double> histList, List<Double> macdDList,
-            List<Double> histDList*/, Map<String, Double[]> listMap, Map<String, Double[]> momMap, List<String> buyList, List<String> sellList) {
+    @Override
+    public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[],
+            Map<String, Double[]> listMap, Map<String, Double[]> momMap, List<String> buyList, List<String> sellList) throws JsonParseException, JsonMappingException, IOException {
         int len = macdLists.length;
         Double macdMax[] = new Double[len];
         Double macdMin[] = new Double[len];
@@ -76,6 +73,24 @@ public class MACDRecommend extends BuySellRecommend {
             }
         }
         // find recommendations
+        ObjectMapper mapper = new ObjectMapper();
+        double recommend = 0;
+        int ii = 0;
+        for (String key : buyList) {
+            String jsonValue = (String) conf.configValueMap.get(key);
+            CalcNode anode = mapper.readValue(jsonValue, CalcNode.class);
+            CalcNode node = CalcNodeFactory.get(anode.className, jsonValue);
+            int value = 0;
+            double minmax = 0;
+            if (buyMap != null) {
+                minmax = macdMax[ii];
+            } else {
+                minmax = macdMin[ii];
+            }
+            recommend += node.calc(value, minmax);
+            ii++;
+        }
+        
         for (String id : listMap.keySet()) {
             Double[] momentum = momMap.get(id);
             if (momentum == null || momentum[0] == null || momentum[1] == null || momentum[2] == null || momentum[3] == null) {
@@ -83,14 +98,14 @@ public class MACDRecommend extends BuySellRecommend {
             }
             // this is the histogram 0
             if (momentum[0] >= 0 && buyMap != null) {
-                double recommend = ((Integer) conf.configValueMap.get(buyList.get(0)))*(macdMax[0] - momentum[0])/macdMax[0];
+                recommend = ((Integer) conf.configValueMap.get(buyList.get(0)))*(macdMax[0] - momentum[0])/macdMax[0];
                 for (int i = 1; i < len; i ++) {
                     recommend += ((Integer) conf.configValueMap.get(buyList.get(i)))*(momentum[i])/macdMax[i];
                 }
                 buyMap.put(id, recommend);
             }
             if (momentum[0] < 0 && sellMap != null) {
-                double recommend = ((Integer) conf.configValueMap.get(sellList.get(0)))*(macdMin[0] - momentum[0])/macdMin[0];
+                recommend = ((Integer) conf.configValueMap.get(sellList.get(0)))*(macdMin[0] - momentum[0])/macdMin[0];
                 for (int i = 1; i < len; i ++) {
                     recommend += ((Integer) conf.configValueMap.get(sellList.get(i)))*(momentum[i])/macdMin[i];
                 }
@@ -166,6 +181,14 @@ public class MACDRecommend extends BuySellRecommend {
         return score;
     }
 
+    private static class CalcNodeFactory {
+        public static CalcNode get(String name, String jsonValue) throws JsonParseException, JsonMappingException, IOException {
+            ObjectMapper mapper = new ObjectMapper();
+            CalcNode anode = (CalcNode) mapper.readValue(jsonValue, CalcMACDNode.class);
+            return anode;
+        }
+    }
+
     @Override
     public void mutate(Map<String, Object> configValueMap, List<String> keys) {
         // TODO Auto-generated method stub
@@ -177,6 +200,4 @@ public class MACDRecommend extends BuySellRecommend {
         // TODO Auto-generated method stub
         
     }
-
-
 }

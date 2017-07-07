@@ -1,6 +1,5 @@
 package roart.client;
 
-import roart.config.ConfigConstants;
 import roart.config.ConfigTreeMap;
 import roart.model.GUISize;
 import roart.model.ResultItemBytes;
@@ -293,7 +292,7 @@ public class MyVaadinUI extends UI
         System.out.println("name " + name);
         Object object = map.get(name);
         Component o = null;
-        String text = ConfigConstants.text.get(name);
+        String text = controlService.conf.text.get(name);
         if (object == null) {
             //System.out.println("null for " + name);
             String labelname = name;
@@ -1062,8 +1061,8 @@ public class MyVaadinUI extends UI
         StreamResource resource = getStreamResource(bytes);
         Image image = new Image ("Image", resource);
         //Embedded image = new Embedded("1", img);
-        int xsize = 100 + 300 + 10 * controlService.conf.getTableDays();
-        int ysize = 200 + 400 + 10 * controlService.conf.getTopBottom();
+        int xsize = 100 + 300 + 10 * 120 /*controlService.conf.getTableDays()*/;
+        int ysize = 200 + 400 + 10 * 10 /*controlService.conf.getTopBottom()*/;
         //System.out.println("xys1 " + xsize + " " + ysize);
         if (xsize + 100 > guiSize.x) {
             xsize = guiSize.x - 100;

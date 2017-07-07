@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.StockItem;
 //import roart.model.Stock;
 import roart.service.ControlService;
@@ -29,7 +29,7 @@ public class IndicatorSTOCH extends Indicator {
     Map<String, Double[]> resultMap;
 
     // TODO extend to three cats
-    public IndicatorSTOCH(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    public IndicatorSTOCH(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
@@ -38,7 +38,7 @@ public class IndicatorSTOCH extends Indicator {
         calculateSTOCHs(conf, marketdatamap, periodDataMap, category);        
     }
 
-	private void calculateSTOCHs(MyConfig conf, Map<String, MarketData> marketdatamap,
+	private void calculateSTOCHs(MyMyConfig conf, Map<String, MarketData> marketdatamap,
 			Map<String, PeriodData> periodDataMap, int category) throws Exception {
 		SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());

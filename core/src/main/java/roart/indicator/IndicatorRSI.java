@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.db.DbSpark;
 import roart.model.StockItem;
 //import roart.model.Stock;
@@ -32,7 +32,7 @@ public class IndicatorRSI extends Indicator {
     Map<String, Double[]> resultMap;
     Double[] emptyField;
 
-    public IndicatorRSI(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    public IndicatorRSI(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
@@ -41,8 +41,15 @@ public class IndicatorRSI extends Indicator {
         calculateRSIs(conf, marketdatamap, periodDataMap, category);        
     }
 
+    @Override
+    public Map<String, Object> getResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("RSI", resultMap);
+        return map;
+    }
+    
     // TODO make an oo version of this
-    private void calculateRSIs(MyConfig conf, Map<String, MarketData> marketdatamap,
+    private void calculateRSIs(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category) throws Exception {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());

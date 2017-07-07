@@ -6,7 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
@@ -16,10 +16,10 @@ public abstract class Aggregator {
     protected static Logger log = LoggerFactory.getLogger(Indicator.class);
 
     protected String title;
-    protected MyConfig conf;
+    protected MyMyConfig conf;
     protected int category;
     
-    public Aggregator(MyConfig conf, String string, int category) {
+    public Aggregator(MyMyConfig conf, String string, int category) {
         this.title = string;
         this.conf = conf;
         this.category = category;
@@ -53,7 +53,12 @@ public abstract class Aggregator {
 
     public abstract void addResultItem(ResultItemTableRow row, StockItem stock);
 
-    public abstract void addResultItemTitle(ResultItemTableRow headrow); 
+    public abstract void addResultItemTitle(ResultItemTableRow headrow);
+
+    public Map<String, Object> getResultMap() {
+        // TODO Auto-generated method stub
+        return null;
+    } 
 
     //public abstract void addResultItemTitle(ResultItemTableRow headrow);
 }

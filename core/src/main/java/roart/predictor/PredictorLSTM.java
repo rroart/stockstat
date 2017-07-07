@@ -17,7 +17,7 @@ import org.apache.commons.math3.util.Pair;
 import com.tictactec.ta.lib.MInteger;
 
 import roart.config.ConfigConstants;
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;
 import roart.db.DbSpark;
@@ -67,7 +67,7 @@ public class PredictorLSTM extends Predictor {
 
     List<MLPredictDao> mldaos = new ArrayList<>();
 
-    public PredictorLSTM(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    public PredictorLSTM(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
         if (!isEnabled()) {
             return;
@@ -158,7 +158,7 @@ public class PredictorLSTM extends Predictor {
         wantedSubTypes.add(new PredSubTypeSingle());
     }
     // TODO make an oo version of this
-    private void calculate(MyConfig conf, Map<String, MarketData> marketdatamap,
+    private void calculate(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category) throws Exception {
         DbAccess dbDao = DbDao.instance(conf);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);

@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorMACDderiv;
@@ -32,7 +32,7 @@ public class CategoryPeriod extends Category {
 
     private int period;
 
-    public CategoryPeriod(MyConfig conf, int i, String periodText, List<StockItem> stocks,             Map<String, MarketData> marketdatamap,
+    public CategoryPeriod(MyMyConfig conf, int i, String periodText, List<StockItem> stocks,             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
             Map<String, Integer>[] periodmap) throws Exception {
         super(conf, periodText, stocks);

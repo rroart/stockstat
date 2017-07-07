@@ -2,7 +2,7 @@ package roart.indicator;
 
 import java.util.Map;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.StockItem;
 //import roart.model.Stock;
 import roart.service.ControlService;
@@ -14,7 +14,7 @@ public class IndicatorMove extends Indicator {
     // TODO fix category/period
     int period;
 
-    public IndicatorMove(MyConfig conf, String string, Map<String, Integer>[] periodmap, int period) {
+    public IndicatorMove(MyMyConfig conf, String string, Map<String, Integer>[] periodmap, int period) {
         super(conf, string, period);
         this.periodmap = periodmap;
         this.period = period;

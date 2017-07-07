@@ -17,7 +17,7 @@ import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.db.DbSpark;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
@@ -35,12 +35,12 @@ public class MLPredictSparkAccess extends MLPredictAccess {
 
 	protected SparkSession spark;
 	
-	private MyConfig conf;
+	private MyMyConfig conf;
 	
     private Map<String, Model> modelMap = new HashMap<>();
     private Map<String, Double> accuracyMap = new HashMap<>();
     
-	public MLPredictSparkAccess(MyConfig conf) {
+	public MLPredictSparkAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();	
         String sparkmaster = conf.getMLSparkMaster();

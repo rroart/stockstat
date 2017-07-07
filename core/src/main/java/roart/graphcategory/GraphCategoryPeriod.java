@@ -11,7 +11,7 @@ import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorMACD;
 import roart.graphindicator.GraphIndicatorRSI;
@@ -32,7 +32,7 @@ public class GraphCategoryPeriod extends GraphCategory {
 
     //private int period;
 
-    public GraphCategoryPeriod(MyConfig conf, int i, String periodText, 
+    public GraphCategoryPeriod(MyMyConfig conf, int i, String periodText, 
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap) {
         super(conf, periodText);

@@ -17,7 +17,8 @@ import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyConfig;
+import roart.aggregate.Aggregator;
+import roart.config.MyMyConfig;
 import roart.db.DbSpark;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
@@ -33,12 +34,12 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
 	protected SparkSession spark;
 	
-	private MyConfig conf;
+	private MyMyConfig conf;
 	
     private Map<String, Model> modelMap = new HashMap<>();
     private Map<String, Double> accuracyMap = new HashMap<>();
     
-	public MLClassifySparkAccess(MyConfig conf) {
+	public MLClassifySparkAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();	
         String sparkmaster = conf.getMLSparkMaster();
@@ -59,7 +60,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         }
     }
     @Override
-    public void learntest(Indicator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period,
+    public void learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period,
             String mapname, int outcomes) {
         //List<MLModel> models = model.getModels();
         //for (MLModel modelInt : models) {
@@ -73,7 +74,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Indicator indicator, Map<String, double[]> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, Map<String, double[]> map, MLClassifyModel model, int size,
             String period, String mapname, int outcomes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         //List<MLModel> models = getModels();

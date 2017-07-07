@@ -12,10 +12,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.config.MyPropertyConfig;
 import roart.db.DbDao;
+import roart.model.GUISize;
+import roart.model.ResultItem;
 import roart.service.ControlService;
 import roart.service.ServiceParam;
 import roart.service.ServiceResult;
@@ -91,7 +96,7 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		try {
-			result.stocks = getInstance().getStocks(param.market, param.config);
+			result.stocks = getInstance().getStocks(param.market,  new MyMyConfig(param.config));
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -105,7 +110,7 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		try {
-			result.list = getInstance().getContent(param.config);
+			result.list = getInstance().getContent( new MyMyConfig(param.config));
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -119,7 +124,7 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		try {
-			result.list = getInstance().getContentStat(param.config);
+			result.list = getInstance().getContentStat( new MyMyConfig(param.config));
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -133,7 +138,7 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		try {
-			result.list = getInstance().getContentGraph(param.config, param.guiSize);
+			result.list = getInstance().getContentGraph( new MyMyConfig(param.config), param.guiSize);
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -154,7 +159,7 @@ public class ServiceController {
 				Pair<String, String> pair = new Pair(idsplit[0], idsplit[1]);
 				ids.add(pair);
 			}
-			result.list = getInstance().getContentGraph(param.config, ids, param.guiSize);
+			result.list = getInstance().getContentGraph( new MyMyConfig(param.config), ids, param.guiSize);
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -168,7 +173,7 @@ public class ServiceController {
             throws Exception {
         ServiceResult result = new ServiceResult();
         try {
-            result.list = getInstance().getTestRecommender(param.config);
+            result.list = getInstance().getTestRecommender( new MyMyConfig(param.config));
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);
             result.error = e.getMessage();
@@ -211,5 +216,4 @@ public class ServiceController {
         };
     }
 
-
-}
+ }

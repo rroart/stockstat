@@ -574,9 +574,9 @@ public class TaUtil {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         //System.out.println("parsize " + pairs.size());
         Object objs[] = getMACD(days, market, id, ids, marketdatamap, perioddata, periodstr);
-        double macd[] = (double[]) objs[0];
-        double sig[] = (double[]) objs[1];
-        double hist[] = (double[]) objs[2];
+        double macd[] = (double[]) objs[IDXMACD];
+        double sig[] = (double[]) objs[IDXSIGN];
+        double hist[] = (double[]) objs[IDXHIST];
         for (int i = 0; i < macd.length; i ++) {
             //log.info("grr3 " + i + " " + macd[i]);
         }

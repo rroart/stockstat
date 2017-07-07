@@ -8,7 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.model.ResultItem;
 import roart.model.ResultItemTable;
@@ -21,12 +21,12 @@ public abstract class Category {
     protected static Logger log = LoggerFactory.getLogger(Category.class);
 
     private String title;
-    protected MyConfig conf;
+    protected MyMyConfig conf;
     protected List<StockItem> stocks;
     protected List<Indicator> indicators = new ArrayList();
     protected List<Predictor> predictors = new ArrayList();
 
-    public Category(MyConfig conf, String periodText, List<StockItem> stocks) {
+    public Category(MyMyConfig conf, String periodText, List<StockItem> stocks) {
         this.conf = conf;
         setTitle(periodText);
         this.stocks = stocks;

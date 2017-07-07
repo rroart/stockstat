@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.HashSet;
 
+import roart.aggregate.Aggregator;
+import roart.aggregate.MLMACD;
 import roart.config.ConfigConstants;
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.model.StockItem;
@@ -22,11 +24,11 @@ public class MLClassifyDao {
 
     private MLClassifyAccess access = null;
 
-    public MLClassifyDao(String instance, MyConfig conf) {
+    public MLClassifyDao(String instance, MyMyConfig conf) {
         instance(instance, conf);
     }
 
-    private void instance(String type, MyConfig conf) {
+    private void instance(String type, MyMyConfig conf) {
         System.out.println("instance " + type);
         log.info("instance " + type);
         if (type == null) {
@@ -44,13 +46,13 @@ public class MLClassifyDao {
         }
     }
 
-    public void learntest(Indicator indicator, Map<double[], Double> map, MLClassifyModel modeln, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
+    public void learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel modeln, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
         for (MLClassifyModel model : getModels()) {
             long time1 = System.currentTimeMillis();
             access.learntest(indicator, map, model, size, period, mapname, outcomes);
             long time = (System.currentTimeMillis() - time1);
             log.info("time " + model + " " + period + " " + mapname + " " + time);
-            IndicatorMACD.mapAdder(mapTime, model, time);
+            MLMACD.mapAdder(mapTime, model, time);
         }
     }
 
@@ -58,20 +60,20 @@ public class MLClassifyDao {
         return access.eval(modelInt, period, mapname);
     }
 
-    public Map<String, Double[]> classify(Indicator indicator, Map<String, double[]> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap, Map<MLClassifyModel, Long> mapTime) {
+    public Map<String, Double[]> classify(Aggregator indicator, Map<String, double[]> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap, Map<MLClassifyModel, Long> mapTime) {
         //Map<MLModel, Map<String, Double[]>> result = new HashMap<>();
         //for (MLModel model : getModels()) {
             long time1 = System.currentTimeMillis();
             Map<String, Double[]> resultAccess = access.classify(indicator, map, model, size, period, mapname, outcomes, shortMap);
             long time = (System.currentTimeMillis() - time1);
             log.info("time " + model + " " + period + " " + mapname + " " + time);
-            IndicatorMACD.mapAdder(mapTime, model, time);
+            MLMACD.mapAdder(mapTime, model, time);
             //result.put(model, resultAccess);
         //}
         return resultAccess;
     }
 
-    public int getSizes(Indicator indicator) {
+    public int getSizes(Aggregator indicator) {
         int size = 0;
 
         for (MLClassifyModel model : getModels()) {
@@ -81,7 +83,7 @@ public class MLClassifyDao {
     }
 
     //public int addTitles(Object[] objs, int retindex, String title, String key, String subType, List<Integer> typeList, Map<Integer, String> mapTypes, MLDao dao) {
-    public int addTitles(Object[] objs, int retindex, Indicator indicator, String title, String key, String subType) {
+    public int addTitles(Object[] objs, int retindex, Aggregator indicator, String title, String key, String subType) {
         for (MLClassifyModel model : getModels()) {
             retindex = model.addTitles(objs, retindex, indicator, title, key, subType, null, null, this);
         }
@@ -92,7 +94,7 @@ public class MLClassifyDao {
         return access.getModels();
     }
 
-    public int addResults(Object[] objs, int retindex, String id, MLClassifyModel model, Indicator indicator, Map<String, Map<String, Double[]>> mapResult, Map<Double, String> labelMapShort) {
+    public int addResults(Object[] objs, int retindex, String id, MLClassifyModel model, Aggregator indicator, Map<String, Map<String, Double[]>> mapResult, Map<Double, String> labelMapShort) {
         //for (MLModel model : getModels()) {
             retindex = model.addResults(objs, retindex, id, model, indicator, mapResult, labelMapShort);
         //}

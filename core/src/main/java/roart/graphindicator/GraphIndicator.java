@@ -7,7 +7,7 @@ import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.GUISize;
 import roart.model.ResultItem;
 
@@ -16,9 +16,9 @@ public abstract class GraphIndicator {
     protected static Logger log = LoggerFactory.getLogger(GraphIndicator.class);
 
     protected String title;
-    protected MyConfig conf;
+    protected MyMyConfig conf;
 
-    public GraphIndicator(MyConfig conf, String string) {
+    public GraphIndicator(MyMyConfig conf, String string) {
         this.title = string;
         this.conf = conf;
     }

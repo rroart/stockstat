@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.category.Category;
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.util.MarketData;
@@ -13,8 +13,10 @@ import roart.util.PeriodData;
 public class AggregatorRecommenderMacdRsi extends Aggregator {
 
     Map<String, Object[]> macdMap;
+    Map<String, Double[]> listMap;
+    Map<String, Object[]> objectMap;
     
-    public AggregatorRecommenderMacdRsi(MyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
+    public AggregatorRecommenderMacdRsi(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories) {
         super(conf, index, 0);
        String wanted = "Price";
@@ -26,6 +28,8 @@ public class AggregatorRecommenderMacdRsi extends Aggregator {
             }
         }
         Object macd = cat.getResultMap().get("MACD");
+        Object list = cat.getResultMap().get("LIST");
+        Object object = cat.getResultMap().get("OBJECT");
         Object rsi = cat.getResultMap().get("RSI");
         macdMap = (Map<String, Object[]>) macd;
         Map<String, Object[]> rsiMap = (Map<String, Object[]>) rsi;

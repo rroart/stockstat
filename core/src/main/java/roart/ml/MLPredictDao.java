@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.HashSet;
 
 import roart.config.ConfigConstants;
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.LearnTestPredict;
 import roart.predictor.Predictor;
 import roart.predictor.PredictorLSTM;
@@ -22,11 +22,11 @@ public class MLPredictDao {
 
     private MLPredictAccess access = null;
 
-    public MLPredictDao(String instance, MyConfig conf) {
+    public MLPredictDao(String instance, MyMyConfig conf) {
         instance(instance, conf);
     }
 
-    private void instance(String type, MyConfig conf) {
+    private void instance(String type, MyMyConfig conf) {
         System.out.println("instance " + type);
         log.info("instance " + type);
         if (type == null) {

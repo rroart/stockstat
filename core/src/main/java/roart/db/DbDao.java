@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.HashSet;
 
 import roart.config.ConfigConstants;
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.model.StockItem;
 
@@ -21,7 +21,7 @@ public class DbDao {
 
 	private static DbAccess access = null;
 
-	public static void instance(String type, MyConfig conf) {
+	public static void instance(String type, MyMyConfig conf) {
 		System.out.println("instance " + type);
 		log.info("instance " + type);
 		if (type == null) {
@@ -39,7 +39,7 @@ public class DbDao {
 		}
 	}
 
-	public static DbAccess instance(MyConfig conf) {
+	public static DbAccess instance(MyMyConfig conf) {
 	    if (conf.wantDbSpark()) {
 	        return DbSparkAccess.instance(conf);
 	    }
@@ -57,7 +57,7 @@ public class DbDao {
 		return access.getAll(type);
 	}
 
-    public Map<String, Object[]> doCalculationsArr(MyConfig conf, Map<String, Double[]> listMap, String key, Indicator indicator, boolean wantPercentizedPriceIndex) {
+    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, Double[]> listMap, String key, Indicator indicator, boolean wantPercentizedPriceIndex) {
         if (access == null) {
             return null;
         }

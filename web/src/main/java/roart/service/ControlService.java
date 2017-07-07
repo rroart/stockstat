@@ -2,7 +2,6 @@ package roart.service;
 
 import roart.model.GUISize;
 import roart.model.ResultItem;
-import roart.config.ConfigConstants;
 import roart.config.ConfigTreeMap;
 import roart.config.MyConfig;
 
@@ -33,8 +32,6 @@ public class ControlService {
         param.config = conf;
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
         conf = result.config;
-        ConfigConstants.makeTypeMap();
-        ConfigConstants.makeTextMap();
         Map<String, Object> map = conf.configValueMap;
         for (String key : map.keySet()) {
             Object value = map.get(key);

@@ -2,6 +2,7 @@ package roart.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import roart.calculate.CalcMACDNode;
 
 public class ConfigConstants {
     public static final String PROPFILE = "stockstat.prop";
@@ -50,6 +51,11 @@ public class ConfigConstants {
     public static final String  INDICATORSSTOCHRSI = "indicators.stochrsi[@enable]";
     public static final String  INDICATORSSTOCHRSIDELTA = "indicators.stochrsi.stochrsidelta[@enable]";
     public static final String  INDICATORSSTOCHRSIDELTADAYS = "indicators.stochrsi.stochrsideltadays";
+    public static final String  INDICATORSRSIRECOMMENDWEIGHTS = "indicators.rsi.recommend[@enable]";
+    public static final String  INDICATORSRSIRECOMMENDWEIGHTSBUY = "indicators.rsi.recommend.weightbuy";
+    public static final String  INDICATORSRSIRECOMMENDWEIGHTSBUYDELTA = "indicators.rsi.recommend.weightbuydelta";
+    public static final String  INDICATORSRSIRECOMMENDWEIGHTSSELL = "indicators.rsi.recommend.weightsell";
+    public static final String  INDICATORSRSIRECOMMENDWEIGHTSSELLDELTA = "indicators.rsi.recommend.weightselldelta";
     public static final String  INDICATORSCCI = "indicators.cci[@enable]";
     public static final String  INDICATORSCCIDELTA ="indicators.cci.ccidelta[@enable]";
     public static final String INDICATORSCCIDELTADAYS = "indicators.cci.ccideltadays";
@@ -84,6 +90,10 @@ public class ConfigConstants {
     public static final String TESTRECOMMENDPERIOD = "test.recommend.period";
     public static final String TESTRECOMMENDGENERATIONS = "test.recommend.generations";
     public static final String TESTRECOMMENDCHILDREN = "test.recommend.children";
+    public static final String TESTRECOMMENDSELECT = "test.recommend.select";
+    public static final String TESTRECOMMENDELITE= "test.recommend.elite";
+    public static final String TESTRECOMMENDMUTATE = "test.recommend.mutate";
+    public static final String TESTRECOMMENDCROSSOVER = "test.recommend.crossover";
     public static final String AGGREGATORS = "aggregators[@enable]";
     public static final String AGGREGATORSMACDRSIRECOMMENDER = "aggregators.macdrsirecommender[@enable]";
     public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAM = "aggregators.macdrsirecommender.weightbuyhistogram";
@@ -96,8 +106,20 @@ public class ConfigConstants {
     public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTA = "aggregators.macdrsirecommender.weightsellhistogramdelta";
     public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUM = "aggregators.macdrsirecommender.weightsellmomemtum";
     public static final String AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTA = "aggregators.macdrsirecommender.weightsellmomemtumdelta";
-    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMRSI = "aggregators.macdrsirecommender.weightsellrsi";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSI = "aggregators.macdrsirecommender.weightsellrsi";
     public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTA = "aggregators.macdrsirecommender.weightsellrsidelta";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMNODE = "aggregators.macdrsirecommender.weightbuyhistogramnode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTANODE = "aggregators.macdrsirecommender.weightbuyhistogramdeltanode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMNODE = "aggregators.macdrsirecommender.weightbuymomemtumnode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTANODE = "aggregators.macdrsirecommender.weightbuymomemtumdeltanode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSINODE = "aggregators.macdrsirecommender.weightbuyrsinode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTANODE = "aggregators.macdrsirecommender.weightbuyrsideltanode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMNODE = "aggregators.macdrsirecommender.weightsellhistogramnode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTANODE = "aggregators.macdrsirecommender.weightsellhistogramdeltanode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMNODE = "aggregators.macdrsirecommender.weightsellmomemtumnode";
+    public static final String AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTANODE = "aggregators.macdrsirecommender.weightsellmomemtumdeltanode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSINODE = "aggregators.macdrsirecommender.weightsellrsinode";
+    public static final String  AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTANODE = "aggregators.macdrsirecommender.weightsellrsideltanode";
    public static Map<String, Class> map = new HashMap();
     
     public static void makeTypeMap() {
@@ -140,6 +162,11 @@ public class ConfigConstants {
         map.put(ConfigConstants. INDICATORSRSI, Boolean.class);
         map.put(ConfigConstants. INDICATORSRSIDELTA, Boolean.class);
         map.put(ConfigConstants. INDICATORSRSIDELTADAYS, Integer.class);
+        map.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTS, Boolean.class);
+        map.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSBUY, Integer.class);
+        map.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSBUYDELTA, Integer.class);
+        map.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSSELL, Integer.class);
+        map.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSSELLDELTA, Integer.class);
         map.put(ConfigConstants. INDICATORSSTOCHRSI, Boolean.class);
         map.put(ConfigConstants. INDICATORSSTOCHRSIDELTA, Boolean.class);
         map.put(ConfigConstants. INDICATORSSTOCHRSIDELTADAYS, Integer.class);
@@ -176,6 +203,10 @@ public class ConfigConstants {
         map.put(ConfigConstants.TESTRECOMMENDPERIOD, String.class);
         map.put(ConfigConstants.TESTRECOMMENDGENERATIONS, Integer.class);
         map.put(ConfigConstants.TESTRECOMMENDCHILDREN, Integer.class);
+        map.put(ConfigConstants.TESTRECOMMENDCROSSOVER, Integer.class);
+        map.put(ConfigConstants.TESTRECOMMENDELITE, Integer.class);
+        map.put(ConfigConstants.TESTRECOMMENDMUTATE, Integer.class);
+        map.put(ConfigConstants.TESTRECOMMENDSELECT, Integer.class);
         map.put(ConfigConstants.AGGREGATORS, Boolean.class);
        map.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDER, Boolean.class);
        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAM , Integer.class);
@@ -188,8 +219,20 @@ public class ConfigConstants {
         map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTA, Integer.class);
         map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUM , Integer.class);
         map.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTA, Integer.class);
-        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMRSI, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSI, Integer.class);
         map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTA, Integer.class);
+       map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMNODE , String.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTANODE , String.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMNODE , String.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTANODE , String.class);
+        map.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSINODE, String.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTANODE , String.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMNODE , String.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTANODE , String.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMNODE , String.class);
+        map.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTANODE, String.class);
+        map.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSINODE, String.class);
+        map.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTANODE, String.class);
     }
 
     public static Map<String, Object> deflt = new HashMap();
@@ -233,6 +276,11 @@ public class ConfigConstants {
         deflt.put(ConfigConstants. INDICATORSRSI, Boolean.TRUE);
         deflt.put(ConfigConstants. INDICATORSRSIDELTA, Boolean.TRUE);
         deflt.put(ConfigConstants. INDICATORSRSIDELTADAYS, 3);
+        deflt.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTS, Boolean.TRUE);
+        deflt.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSBUY, 50);
+        deflt.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSBUYDELTA, 50);
+        deflt.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSSELL, 50);
+        deflt.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSSELLDELTA, 50);
         deflt.put(ConfigConstants. INDICATORSSTOCHRSI, Boolean.TRUE);
         deflt.put(ConfigConstants. INDICATORSSTOCHRSIDELTA, Boolean.TRUE);
         deflt.put(ConfigConstants. INDICATORSSTOCHRSIDELTADAYS, 3);
@@ -269,6 +317,10 @@ public class ConfigConstants {
         deflt.put(ConfigConstants.TESTRECOMMENDPERIOD, "Price");
         deflt.put(ConfigConstants.TESTRECOMMENDGENERATIONS, 2);
         deflt.put(ConfigConstants.TESTRECOMMENDCHILDREN, 4);
+        deflt.put(ConfigConstants.TESTRECOMMENDELITE, 1);
+        deflt.put(ConfigConstants.TESTRECOMMENDMUTATE, 1);
+        deflt.put(ConfigConstants.TESTRECOMMENDCROSSOVER, 1);
+        deflt.put(ConfigConstants.TESTRECOMMENDSELECT, 16);
         deflt.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);
        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDER, Boolean.TRUE);
        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAM , 40);
@@ -281,8 +333,20 @@ public class ConfigConstants {
         deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTA, 20);
         deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUM , 20);
         deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTA, 20);
-        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMRSI, 20);
+        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSI, 20);
         deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTA, 20);
+       deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMNODE , "");
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTANODE , "");
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMNODE , "");
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTANODE , "");
+        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSINODE, "");
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTANODE , "");
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMNODE , "");
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTANODE, "");
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMNODE , "");
+        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTANODE, "");
+        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSINODE, "");
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTANODE, "");
     }
 
     public static Map<String, String> text = new HashMap();
@@ -327,7 +391,12 @@ public class ConfigConstants {
         text.put(ConfigConstants. INDICATORSRSI, "Enable indicator RSI");
         text.put(ConfigConstants. INDICATORSRSIDELTA, "Enable indicator RSI delta");
         text.put(ConfigConstants. INDICATORSRSIDELTADAYS, "RSI delta days");
-        text.put(ConfigConstants. INDICATORSSTOCHRSI, "Enable indicator STOCH RSI");
+        text.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTS, "Enable buy/sell indicator RSI");
+        text.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSBUY, "RSI buy weight");
+        text.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSBUYDELTA, "RSI delta buy weight");
+        text.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSSELL, "RSI sell weight");
+        text.put(ConfigConstants. INDICATORSRSIRECOMMENDWEIGHTSSELLDELTA, "RSI delta sell weight");
+       text.put(ConfigConstants. INDICATORSSTOCHRSI, "Enable indicator STOCH RSI");
         text.put(ConfigConstants. INDICATORSSTOCHRSIDELTA, "Enable indicator STOCH RSI delta");
         text.put(ConfigConstants. INDICATORSSTOCHRSIDELTADAYS, "STOCH RSI delta days");
         text.put(ConfigConstants. INDICATORSCCI, "Enable indicator CCI");
@@ -363,6 +432,10 @@ public class ConfigConstants {
         text.put(ConfigConstants.TESTRECOMMENDPERIOD, "Test recommender period");
         text.put(ConfigConstants.TESTRECOMMENDGENERATIONS, "Test recommender generations");
         text.put(ConfigConstants.TESTRECOMMENDCHILDREN, "Test recommender children");
+        text.put(ConfigConstants.TESTRECOMMENDCROSSOVER, "Test recommender crossover");
+        text.put(ConfigConstants.TESTRECOMMENDELITE, "Test recommender elite");
+        text.put(ConfigConstants.TESTRECOMMENDSELECT, "Test recommender select");
+        text.put(ConfigConstants.TESTRECOMMENDMUTATE, "Test recommender mutate");
         text.put(ConfigConstants.AGGREGATORS, "Enable aggregators");
        text.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDER, "Enable aggregated MACD RSI recommender");
        text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAM , "Buy weight histogram");
@@ -375,8 +448,20 @@ public class ConfigConstants {
 		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTA, "Sell weight histogram delta");
 		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUM ,"Sell weight momentum");
 		text.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTA,"Sell weight momentum delta");
-		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMRSI, "Sell weight RSI");
+		text.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSI, "Sell weight RSI");
 		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTA, "Sell weight RSI delta");
+       text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMNODE , "Buy weight histogram node");
+       text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTANODE , "Buy weight histogram delta node");
+       text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMNODE , "Buy weight momentum node");
+       text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTANODE ,"Buy weight momentum delta node");
+       text.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSINODE, "Buy weight RSI node");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTANODE , "Buy weight RSI delta node");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMNODE ,"Sell weight histogram node");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTANODE, "Sell weight histogram delta node");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMNODE ,"Sell weight momentum node");
+		text.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTANODE,"Sell weight momentum delta node");
+		text.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSINODE, "Sell weight RSI node");
+		text.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTANODE, "Sell weight RSI delta node");
        
     }
 

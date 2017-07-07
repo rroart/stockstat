@@ -1,7 +1,7 @@
 package roart.db;
 
 import roart.config.ConfigConstants;
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.config.MyPropertyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
@@ -63,7 +63,7 @@ public class DbSpark {
 	private static Properties prop;
 
     //private static Model model;
-	public DbSpark(MyConfig conf) {
+	public DbSpark(MyMyConfig conf) {
 	    
 		try {
 			String sparkmaster = conf.getDbSparkMaster();

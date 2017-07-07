@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.StockItem;
 //import roart.model.Stock;
 import roart.service.ControlService;
@@ -31,7 +31,7 @@ public class IndicatorSTOCHRSI extends Indicator {
     Map<String, List<Double>> listMap;
     Map<String, Double[]> resultMap;
 
-    public IndicatorSTOCHRSI(MyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    public IndicatorSTOCHRSI(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
@@ -40,7 +40,7 @@ public class IndicatorSTOCHRSI extends Indicator {
         calculateSTOCHRSIs(conf, marketdatamap, periodDataMap, category);        
     }
 
-	private void calculateSTOCHRSIs(MyConfig conf, Map<String, MarketData> marketdatamap,
+	private void calculateSTOCHRSIs(MyMyConfig conf, Map<String, MarketData> marketdatamap,
 			Map<String, PeriodData> periodDataMap, int category) throws Exception {
 		SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());

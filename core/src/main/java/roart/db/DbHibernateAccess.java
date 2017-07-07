@@ -6,7 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.model.MetaItem;
 import roart.model.StockItem;
@@ -28,7 +28,7 @@ public class DbHibernateAccess extends DbAccess {
 	}
 
     @Override
-    public Map<String, Object[]> doCalculationsArr(MyConfig conf, Map<String, Double[]> listMap, String key,
+    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, Double[]> listMap, String key,
             Indicator indicator, boolean wantPercentizedPriceIndex) {
         return DbHibernate.doCalculationsArr(conf, listMap, key, indicator, wantPercentizedPriceIndex);
     }

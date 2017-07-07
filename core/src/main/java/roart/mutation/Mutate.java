@@ -30,6 +30,12 @@ public class Mutate {
         keyCopies.remove(key0);
         int key1 = random.nextInt(len - 1);
         String str1 = keyCopies.get(key1);
+        if (((Integer) configValueMap.get(str0)).intValue() >= 99) {
+            return;
+        }
+        if (((Integer) configValueMap.get(str1)).intValue() <= 1) {
+            return;
+        }
         configValueMap.put(str0, ((Integer) configValueMap.get(str0)) + 1);
         configValueMap.put(str1, ((Integer) configValueMap.get(str1)) - 1);
     }
