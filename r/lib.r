@@ -1074,13 +1074,13 @@ getdatedstocklists <- function(listdate, mydate, days, tableintervaldays) {
 }
 
 getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wantmacd=FALSE, wantrsi=FALSE) {
-    normalize <- 0
+    scalebeginning100 <- 0
     if (length(ids) > 1) {
         if (periodtext == "price") {
-            normalize <- 1
+            scalebeginning100 <- 1
         }
         if (periodtext == "index") {
-            normalize <- 1
+            scalebeginning100 <- 1
         }
     }
     
@@ -1176,7 +1176,7 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wa
                         c <- c + 1
                         bigretl <- getelem3(id, days, datedstocklists, period, topbottom)
                         l <- unlist(bigretl[[1]])
-                        if (normalize == 1) {
+                        if (scalebeginning100 == 1) {
                             str("minmax")
                             str(l)
                             mymin <- abs(min(l))
@@ -1295,8 +1295,8 @@ getmylses <- function(myma) {
     if (length(myma) < 40) {
         return(NULL)
     }
-    normalize <- 0
-    if (normalize == 0) {
+    scalebeginning100 <- 0
+    if (scalebeginning100 == 0) {
                                         #        this does not matter?
                                         #        myma <- fixpercent(myma)
     }
@@ -1338,8 +1338,8 @@ getmyrsi <- function(myma) {
     if (length(myma) < 40) {
         return(NULL)
     }
-    normalize <- 0
-    if (normalize == 0) {
+    scalebeginning100 <- 0
+    if (scalebeginning100 == 0) {
                                         #        this does not matter?
                                         #        myma <- fixpercent(myma)
     }
