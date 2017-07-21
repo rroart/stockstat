@@ -33,7 +33,7 @@ public class OneFour extends Common {
         //List<Double> macdLists[] = new ArrayList[4];
         TaUtil tu = new TaUtil();
 
-        Object[] retObj = ControlService.getDayMomMap(conf, marketdatamap, objectMap, listMap, category, market, tu);
+        Object[] retObj = ControlService.getDayMomMap(conf, objectMap, listMap, tu);
         Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
         Map<Integer, List<Double>[]> dayMacdListsMap = (Map<Integer, List<Double>[]>) retObj[1];
 

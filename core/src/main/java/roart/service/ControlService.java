@@ -7,6 +7,7 @@ import roart.model.ResultItemTableRow;
 import roart.model.ResultItem;
 import roart.model.StockItem;
 import roart.mutation.Mutate;
+import roart.recommender.MACDRSIRecommend;
 import roart.recommender.MACDRecommend;
 import roart.aggregate.Aggregator;
 import roart.aggregate.AggregatorRecommenderMacdRsi;
@@ -768,7 +769,7 @@ public class ControlService {
 
             //Category[] categories = getCategoriesSmall(conf, stocks,
             //       periodText, marketdatamap, periodDataMap, null);
-            String title = null;
+            String title = "Price";
             Map<String, Integer>[] periodmap = null;
             // no...get this from the category
             IndicatorMACD indicator = new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN);
@@ -781,7 +782,7 @@ public class ControlService {
             List<Populus> populationBuy = new ArrayList<>();
             List<Populus> populationSell = new ArrayList<>();
             
-            MACDRecommend recommend = new MACDRecommend();
+            MACDRSIRecommend recommend = new MACDRSIRecommend();
             
             List<String> buyList = recommend.getBuyList();
             List<String> sellList = recommend.getSellList();
@@ -790,7 +791,7 @@ public class ControlService {
             //List<Double> macdLists[] = new ArrayList[4];
             TaUtil tu = new TaUtil();
 
-            Object[] retObj = getDayMomMap(conf, marketdatamap, objectMap, listMap, category, market, tu);
+            Object[] retObj = getDayMomMap(conf, objectMap, listMap, tu);
             Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
             Map<Integer, List<Double>[]> dayMacdListsMap = (Map<Integer, List<Double>[]>) retObj[1];
 
@@ -914,8 +915,22 @@ public class ControlService {
         }
     }
 
-    public static Object[] getDayMomMap(MyMyConfig conf, Map<String, MarketData> marketdatamap, Map<String, Object[]> objectMap,
-            Map<String, Double[]> listMap, int category, String market, TaUtil tu) throws Exception {
+    /**
+     * 
+     * Get an array with two arrays
+     * First a map from day to related macd map from id to values
+     * Second a map from day to all macd values
+     * 
+     * @param conf Main config, not evolution
+     * @param objectMap map from stock id to macd map
+     * @param listMap map from stock id to values
+     * @param tu
+     * @return
+     * @throws Exception
+     */
+    
+    public static Object[] getDayMomMap(MyMyConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
+            TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayMomMap = new HashMap<>();
         Map<Integer, List<Double>[]> dayMacdsMap = new HashMap<>();
@@ -930,7 +945,7 @@ public class ControlService {
                 Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs, j);
                 if (momentum != null) {
                     momMap.put(id, momentum);
-                    MACDRecommend.addToLists(marketdatamap, category, macdLists /*macdList, histList, macdDList, histDList*/, market, momentum);
+                    MACDRecommend.addToLists(macdLists, momentum);
                 } else {
                     //System.out.println("No macd for id" + id);
                 }
@@ -944,16 +959,18 @@ public class ControlService {
     }
 
     // TODO remember normalize
-    public static void getRandom(Map<String, Object> map, List<String> keys) {
+    @Deprecated
+    public static void getRandomNot(Map<String, Object> map, List<String> keys) {
         Random rand = new Random();
         for (String key : keys) {
             int tmpNum = rand.nextInt(100);
             map.put(key, tmpNum);
         }
-        normalize(map, keys);        
+        normalizeNot(map, keys);        
     }
 
-   public static void normalize(Map<String, Object> map, List<String> keys) {
+    @Deprecated
+    public static void normalizeNot(Map<String, Object> map, List<String> keys) {
         int total = 0;
         for (String key : keys) {
             int tmpNum = (int) map.get(key);
@@ -972,9 +989,10 @@ public  static MyMyConfig getNewWithValueCopy(MyMyConfig conf) {
         return newConf;
     }
     
-    public static MyMyConfig getNewWithValueCopyAndRandom(MyMyConfig conf, List<String> keys) {
+@Deprecated
+    public static MyMyConfig getNewWithValueCopyAndRandomNot(MyMyConfig conf, List<String> keys) {
         MyMyConfig newConf = getNewWithValueCopy(conf);
-        getRandom(newConf.configValueMap, keys);
+        getRandomNot(newConf.configValueMap, keys);
         return newConf;
     }
     

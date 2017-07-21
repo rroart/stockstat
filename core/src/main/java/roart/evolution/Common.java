@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.Random;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.config.MyMyConfig;
 import roart.recommender.BuySellRecommend;
@@ -17,10 +19,17 @@ public abstract class Common {
 
     public abstract List<Populus> doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMap, BuySellRecommend recommender) throws Exception;
 	
-    protected void printmap(Map<String, Object> map, List<String> keys) {
+    protected void printmap(Map<String, Object> map, List<String> keys) throws JsonProcessingException {
         for (String key : keys) {
-            int tmpNum = (int) map.get(key);
-            System.out.print(" " + tmpNum);
+            Object obj = map.get(key);
+            if (obj.getClass().getName().contains("Integer")) {
+                int tmpNum = (int) map.get(key);
+                System.out.print(" " + tmpNum);
+            } else {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonInString = mapper.writeValueAsString(obj);
+                System.out.println(jsonInString);
+            }
         }
         System.out.println("");
     }   

@@ -1,9 +1,13 @@
 package roart.recommender;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
@@ -113,6 +117,19 @@ public class RSIRecommend extends BuySellRecommend{
 
     @Override
     public void getRandom(Map<String, Object> configValueMap, List<String> keys) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void transform(MyConfig newConf, List<String> keys)
+            throws JsonParseException, JsonMappingException, IOException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void normalize(Map<String, Object> configValueMap, List<String> keys) {
         // TODO Auto-generated method stub
         
     }

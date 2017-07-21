@@ -20,6 +20,7 @@ public class Mutate {
         map.put(str1, map.get(str1) - 1);
     }
     
+    @Deprecated
     public static void mutate(Map<String, Object> configValueMap, List<String> keys) {
         List<String> keyCopies = new ArrayList<>(keys);
         Random random = new Random();

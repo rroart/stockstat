@@ -1,14 +1,17 @@
 package roart.recommender;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.model.StockItem;
-import roart.util.MarketData;
 import roart.util.StockDao;
 
 public class MACDRecommend extends BuySellRecommend {
@@ -33,8 +36,7 @@ public class MACDRecommend extends BuySellRecommend {
         return sellList;
     }
 
-    public static void addToLists(Map<String, MarketData> marketdatamap, int category, List<Double> macdLists[] /*List<Double> macdList,
-            List<Double> histList, List<Double> macdDList, List<Double> histDList*/, String market, Double[] momentum) throws Exception {
+    public static void addToLists(List<Double> macdLists[], Double[] momentum) throws Exception {
         {
             for (int i = 0; i < macdLists.length; i ++) {
                 List<Double> macdList = macdLists[i];
@@ -42,21 +44,6 @@ public class MACDRecommend extends BuySellRecommend {
                     macdList.add(momentum[i]);
                 }
             }
-            /*
-            if (momentum[0] != null) {
-                histList.add(momentum[0]);
-            }
-            if (momentum[1] != null) {
-                histDList.add(momentum[1]);
-            }
-            if (momentum[2] != null) {
-                macdList.add(momentum[2]);
-            }
-            if (momentum[3] != null) {
-                macdDList.add(momentum[3]);
-            }
-            */
-            //System.out.println("outout2 " + Arrays.toString(sig));
         }
     }
 
@@ -174,6 +161,19 @@ public class MACDRecommend extends BuySellRecommend {
 
     @Override
     public void getRandom(Map<String, Object> configValueMap, List<String> keys) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void transform(MyConfig newConf, List<String> keys)
+            throws JsonParseException, JsonMappingException, IOException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void normalize(Map<String, Object> configValueMap, List<String> keys) {
         // TODO Auto-generated method stub
         
     }

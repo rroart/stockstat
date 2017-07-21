@@ -27,16 +27,18 @@ public class Populus  implements Comparable<Populus>{
     }
     public Populus getNewWithValueCopyFactory(MyMyConfig conf, List<String> keys, boolean doScore, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
         MyMyConfig newConf = ControlService.getNewWithValueCopy(conf);
+        recommend.transform(newConf, keys);
         double score = 0.0;
         if (doScore) {
-            score = scoring.getScores(doBuy, conf, keys);
+            score = scoring.getScores(doBuy, newConf, keys);
         }
         return new Populus(newConf, score, scoring, recommend);
     }
     
     public Populus getNewWithValueCopyAndRandomFactory(MyMyConfig conf, List<String> keys, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
         MyMyConfig newConf = ControlService.getNewWithValueCopy(conf);
-        ControlService.getRandom(newConf.configValueMap, keys);
+        recommend.transform(newConf, keys);
+        //ControlService.getRandom(newConf.configValueMap, keys);
         recommend.getRandom(newConf.configValueMap, keys);
         double score = scoring.getScores(doBuy, newConf, keys);
         return new Populus(newConf, score, scoring, recommend);
@@ -55,7 +57,7 @@ public class Populus  implements Comparable<Populus>{
             configValueMap.put(key, value);
         }
         MyMyConfig config = new MyMyConfig(conf);
-        ControlService.normalize(configValueMap, keys);
+        recommend.normalize(configValueMap, keys);
         config.configValueMap = configValueMap;
         double score = 0.0;
         if (doScore) {
@@ -72,7 +74,8 @@ public class Populus  implements Comparable<Populus>{
     
     public void mutate(List<String> keys, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
         recommend.mutate(conf.configValueMap, keys);
-                 Mutate.mutate(conf.configValueMap, keys);
+                 //Mutate.mutate(conf.configValueMap, keys);
+        recommend.normalize(conf.configValueMap, keys);
             score = scoring.getScores(doBuy, conf, keys);
     }
     public void recalculateScore(List<String> keys, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {

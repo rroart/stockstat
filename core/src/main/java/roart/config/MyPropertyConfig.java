@@ -104,7 +104,7 @@ public class MyPropertyConfig extends MyConfig {
             System.out.println("keys " + ConfigConstants.map.keySet());
             while(iter.hasNext()) {
                 String s = iter.next();
-                System.out.println("s " + s + " " + configxml.getString(s) + " " + configxml.getProperty(s));
+                //System.out.println("s " + s + " " + configxml.getString(s) + " " + configxml.getProperty(s));
                 Object o = null;
                 String text = s;
                 Class myclass = ConfigConstants.map.get(text);
