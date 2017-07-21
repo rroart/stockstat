@@ -408,7 +408,8 @@ public class MyMyConfig extends MyPropertyConfig {
     }
 
     public boolean wantMLTimes() {
-        return (Boolean) configValueMap.get(ConfigConstants.MISCMLSTATS);
+        return (Boolean) configValueMap.get(ConfigConstants.MISCMLSTATS)
+        && wantML();
     }
 
     public boolean wantPercentizedPriceIndex() {
