@@ -335,20 +335,22 @@ public class ConfigConstants {
         deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTA, 20);
         deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSI, 20);
         deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTA, 20);
-       deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMNODE , "");
-        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTANODE , "");
-        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMNODE , "");
-        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTANODE , "");
-        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSINODE, "");
-        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTANODE , "");
-        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMNODE , "");
-        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTANODE, "");
-        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMNODE , "");
-        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTANODE, "");
-        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSINODE, "");
-        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTANODE, "");
+       deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMNODE , json);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTANODE , json);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMNODE , json);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTANODE , json);
+        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSINODE, json);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTANODE , json);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMNODE , json);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTANODE, json);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMNODE , json);
+        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTANODE, json);
+        deflt.put(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSINODE, json);
+        deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTANODE, json);
     }
 
+    private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":null,\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"doBuy\":false}";
+    
     public static Map<String, String> text = new HashMap();
     
     public static void makeTextMap() {
