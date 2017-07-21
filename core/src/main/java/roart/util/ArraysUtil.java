@@ -142,6 +142,21 @@ public class ArraysUtil {
         return list;
     }
 
+    public static boolean verifyPercentized(Double[] list, String key) {
+        if (("Index").equals(key) || ("Price").equals(key)) {
+            if (list != null) {
+                if (list[0] == 100.0) {
+                    return true;
+                } else {
+                    System.out.println("Not rescaled");
+                    log.error("Not rescaled");
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
     private static int getArrayNonNullReversenot(List<Double> list, double[] values) {
     	int count = values.length;
     	for (Double val : list) {
