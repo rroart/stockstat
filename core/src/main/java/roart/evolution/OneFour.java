@@ -19,7 +19,7 @@ import roart.util.TaUtil;
 public class OneFour extends Common {
 
     @Override
-    public List<Populus> doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMap, BuySellRecommend recommend) throws Exception {
+    public List<Populus> doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap, Map<String, Object[]> objectRSIMap, BuySellRecommend recommend) throws Exception {
         //MACDRecommend recommend = new MACDRecommend();
         int selectionSize = conf.getTestRecommendSelect();
         int four = 4;
@@ -33,13 +33,13 @@ public class OneFour extends Common {
         //List<Double> macdLists[] = new ArrayList[4];
         TaUtil tu = new TaUtil();
 
-        Object[] retObj = ControlService.getDayMomMap(conf, objectMap, listMap, tu);
-        Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
-        Map<Integer, List<Double>[]> dayMacdListsMap = (Map<Integer, List<Double>[]>) retObj[1];
+        Object[] retMacdObj = ControlService.getDayMomMap(conf, objectMACDMap, listMap, tu);
+        Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retMacdObj[0];
+        Map<Integer, List<Double>[]> dayMacdListsMap = (Map<Integer, List<Double>[]>) retMacdObj[1];
 
         // TODO clone config
 
-        FitnessBuySellMACD scoring = new FitnessBuySellMACD(conf, dayMomMap, dayMacdListsMap, listMap, recommend);
+        FitnessBuySellMACD scoring = new FitnessBuySellMACD(conf, dayMomMap, dayMacdListsMap, null, null, listMap, recommend);
         
         Populus buyParent = getBest(conf, four, five, buyList, populationBuy, scoring, true, recommend);
         Populus sellParent = getBest(conf, four, five, sellList, populationSell, scoring, false, recommend);

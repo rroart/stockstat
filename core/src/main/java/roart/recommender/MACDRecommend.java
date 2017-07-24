@@ -47,8 +47,9 @@ public class MACDRecommend extends BuySellRecommend {
         }
     }
 
-    public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[] /*,List<Double> macdList, List<Double> histList, List<Double> macdDList,
-            List<Double> histDList*/, Map<String, Double[]> listMap, Map<String, Double[]> momMap, List<String> buyList, List<String> sellList) {
+    @Override
+    public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[],
+            Map<String, Double[]> listMap, Map<String, Double[]> momMap, Map<String, Double[]> rsiMap, List<String> buyList, List<String> sellList) {
         int len = macdLists.length;
         Double macdMax[] = new Double[len];
         Double macdMin[] = new Double[len];
@@ -166,7 +167,7 @@ public class MACDRecommend extends BuySellRecommend {
     }
 
     @Override
-    public void transform(MyConfig newConf, List<String> keys)
+    public void transformToNode(MyConfig newConf, List<String> keys)
             throws JsonParseException, JsonMappingException, IOException {
         // TODO Auto-generated method stub
         
@@ -174,6 +175,13 @@ public class MACDRecommend extends BuySellRecommend {
 
     @Override
     public void normalize(Map<String, Object> configValueMap, List<String> keys) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void transformFromNode(MyConfig conf, List<String> keys)
+            throws JsonParseException, JsonMappingException, IOException {
         // TODO Auto-generated method stub
         
     }

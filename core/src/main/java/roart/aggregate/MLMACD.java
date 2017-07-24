@@ -145,7 +145,7 @@ public class MLMACD extends Aggregator {
         }
         @Override
        public int getArrIdx() {
-            return TaUtil.IDXHIST;
+            return TaUtil.MACDIDXHIST;
         }
     }
     
@@ -160,7 +160,7 @@ public class MLMACD extends Aggregator {
         }
         @Override
        public int getArrIdx() {
-            return TaUtil.IDXMACD;
+            return TaUtil.MACDIDXMACD;
         }
     }
 
@@ -268,8 +268,8 @@ public class MLMACD extends Aggregator {
             }
             Map<String, List<Double>> retMap = new HashMap<>();
             //Object[] full = tu.getMomAndDeltaFull(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
-            MInteger begOfArray = (MInteger) objs[TaUtil.IDXBEG];
-            MInteger endOfArray = (MInteger) objs[TaUtil.IDXEND];
+            MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
+            MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
 
             Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
             log.info("listsize"+ list.length);
@@ -342,8 +342,8 @@ public class MLMACD extends Aggregator {
                 Object[] objs = objectMap.get(id);
                 double[] macdarr = (double[]) objs[0];
                 double[] histarr = (double[]) objs[2];
-                MInteger begOfArray = (MInteger) objs[TaUtil.IDXBEG];
-                MInteger endOfArray = (MInteger) objs[TaUtil.IDXEND];
+                MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
+                MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
                 //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
                 Double[] trunclist = ArraysUtil.getSubExclusive(list, begOfArray.value, begOfArray.value + endOfArray.value);
                 //System.out.println("trunc " + list.length + " " + trunclist.length);

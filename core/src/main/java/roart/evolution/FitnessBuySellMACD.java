@@ -16,17 +16,21 @@ public class FitnessBuySellMACD {
     MyMyConfig conf;
     Map<Integer, Map<String, Double[]>> dayMomMap;
     Map<Integer, List<Double>[]> dayMacdListsMap;
+    Map<Integer, Map<String, Double[]>> dayRsiMap;
+    Map<Integer, List<Double>[]> dayRsiListsMap;
     int macdlen;
     int listlen;
     Map<String, Double[]> listMap;
     BuySellRecommend recommend;
     
-    public FitnessBuySellMACD(MyMyConfig conf, Map<Integer, Map<String, Double[]>>dayMomMap, Map<Integer, List<Double>[]> dayMacdListsMap, Map<String, Double[]> listMap, BuySellRecommend recommend) {
+    public FitnessBuySellMACD(MyMyConfig conf, Map<Integer, Map<String, Double[]>>dayMomMap, Map<Integer, List<Double>[]> dayMacdListsMap, Map<Integer, Map<String, Double[]>> dayRsiMap, Map<Integer, List<Double>[]> dayRsiListsMap, Map<String, Double[]> listMap, BuySellRecommend recommend) {
         this.conf = conf;
         this.macdlen = conf.getTableDays();
         this.listlen = conf.getTableDays();
         this.dayMacdListsMap = dayMacdListsMap;
         this.dayMomMap = dayMomMap;
+        this.dayRsiListsMap = dayRsiListsMap;
+        this.dayRsiMap = dayRsiMap;
         this.listMap = listMap;
         this.recommend = recommend;
     }
@@ -38,12 +42,13 @@ public class FitnessBuySellMACD {
             //int newmacdidx = macdlen - 1 - j + conf.getTestRecommendFutureDays();
             //int curmacdidx = macdlen - 1 - j;
             Map<String, Double[]> momMap = dayMomMap.get(j);
+            Map<String, Double[]> rsiMap = dayRsiMap.get(j);
             //System.out.println("j"+j);
             Map<String, Double> buysellMap = new HashMap<>();
             if (buy) {
-            recommend.getBuySellRecommendations(buysellMap, null, testBuySellConfig, macdLists, listMap, momMap, buySellList, null);
+            recommend.getBuySellRecommendations(buysellMap, null, testBuySellConfig, macdLists, listMap, momMap, rsiMap, buySellList, null);
             } else {
-            recommend.getBuySellRecommendations(null, buysellMap, testBuySellConfig, macdLists, listMap, momMap, null, buySellList);
+            recommend.getBuySellRecommendations(null, buysellMap, testBuySellConfig, macdLists, listMap, momMap, rsiMap, null, buySellList);
             }
             int newlistidx = listlen - 1 - j + conf.getTestRecommendFutureDays();
             int curlistidx = listlen - 1 - j;

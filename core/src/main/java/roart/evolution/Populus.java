@@ -27,7 +27,7 @@ public class Populus  implements Comparable<Populus>{
     }
     public Populus getNewWithValueCopyFactory(MyMyConfig conf, List<String> keys, boolean doScore, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
         MyMyConfig newConf = ControlService.getNewWithValueCopy(conf);
-        recommend.transform(newConf, keys);
+        recommend.transformToNode(newConf, keys);
         double score = 0.0;
         if (doScore) {
             score = scoring.getScores(doBuy, newConf, keys);
@@ -37,7 +37,7 @@ public class Populus  implements Comparable<Populus>{
     
     public Populus getNewWithValueCopyAndRandomFactory(MyMyConfig conf, List<String> keys, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
         MyMyConfig newConf = ControlService.getNewWithValueCopy(conf);
-        recommend.transform(newConf, keys);
+        recommend.transformToNode(newConf, keys);
         //ControlService.getRandom(newConf.configValueMap, keys);
         recommend.getRandom(newConf.configValueMap, keys);
         double score = scoring.getScores(doBuy, newConf, keys);

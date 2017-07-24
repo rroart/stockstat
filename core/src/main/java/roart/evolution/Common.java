@@ -17,7 +17,7 @@ import roart.util.MarketData;
 
 public abstract class Common {
 
-    public abstract List<Populus> doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMap, BuySellRecommend recommender) throws Exception;
+    public abstract List<Populus> doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap,Map<String, Object[]> objectRSIMap, BuySellRecommend recommender) throws Exception;
 	
     protected void printmap(Map<String, Object> map, List<String> keys) throws JsonProcessingException {
         for (String key : keys) {

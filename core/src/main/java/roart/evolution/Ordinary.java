@@ -19,7 +19,7 @@ import roart.util.TaUtil;
 public class Ordinary extends Common {
 
     @Override
-    public List<Populus> doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMap, BuySellRecommend recommend) throws Exception {
+    public List<Populus> doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap, Map<String, Object[]> objectRSIMap, BuySellRecommend recommend) throws Exception {
         //MACDRecommend recommend = new MACDRecommend();
         int selectionSize = conf.getTestRecommendSelect();
         int four = 4;
@@ -33,19 +33,24 @@ public class Ordinary extends Common {
         //List<Double> macdLists[] = new ArrayList[4];
         TaUtil tu = new TaUtil();
 
-        Object[] retObj = ControlService.getDayMomMap(conf, objectMap, listMap, tu);
-        Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
-        Map<Integer, List<Double>[]> dayMacdListsMap = (Map<Integer, List<Double>[]>) retObj[1];
+        Object[] retMacdObj = ControlService.getDayMomMap(conf, objectMACDMap, listMap, tu);
+        Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retMacdObj[0];
+        Map<Integer, List<Double>[]> dayMacdListsMap = (Map<Integer, List<Double>[]>) retMacdObj[1];
+        Object[] retRsiObj = ControlService.getDayRsiMap(conf, objectRSIMap, listMap, tu);
+        Map<Integer, Map<String, Double[]>> dayRsiMap = (Map<Integer, Map<String, Double[]>>) retMacdObj[0];
+        Map<Integer, List<Double>[]> dayRsiListsMap = (Map<Integer, List<Double>[]>) retMacdObj[1];
 
         // TODO clone config
 
-        FitnessBuySellMACD scoring = new FitnessBuySellMACD(conf, dayMomMap, dayMacdListsMap, listMap, recommend);
+        FitnessBuySellMACD scoring = new FitnessBuySellMACD(conf, dayMomMap, dayMacdListsMap, dayRsiMap, dayRsiListsMap, listMap, recommend);
         
         Populus buyParent = getBest(conf, selectionSize, buyList, populationBuy, scoring, true, recommend);
         Populus sellParent = getBest(conf, selectionSize, sellList, populationSell, scoring, false, recommend);
         //Populi sellParent = populationSell.get(0);
         //System.out.println("bP" + buyParent.conf.configValueMap);
         //System.out.println("sP" + sellParent.conf.configValueMap);
+        recommend.transformFromNode(buyParent.conf, buyList);
+        recommend.transformFromNode(sellParent.conf, sellList);
         List<Populus> retList = new ArrayList<>();
         retList.add(buyParent);
         retList.add(sellParent);
@@ -70,10 +75,10 @@ public class Ordinary extends Common {
         for (int i = 0; i < conf.getTestRecommendGenerations(); i++){
             population = population.subList(0, Math.min(population.size(), conf.getTestRecommendSelect()));
            
-            List<Populus> children = crossover(conf.getTestRecommendChildren(), population, keyList, conf, scoring, false, true, recommend);
+            List<Populus> children = crossover(conf.getTestRecommendChildren(), population, keyList, conf, scoring, false, doBuy, recommend);
             
-            mutateList(population, conf.getTestRecommendElite(), population.size(), conf.getTestRecommendMutate(), false, keyList, true);
-            mutateList(children, 0, population.size(), conf.getTestRecommendMutate(), true, keyList, false);
+            mutateList(population, conf.getTestRecommendElite(), population.size(), conf.getTestRecommendMutate(), false, keyList, doBuy);
+            mutateList(children, 0, population.size(), conf.getTestRecommendMutate(), true, keyList, doBuy);
             
             population.addAll(children);
 

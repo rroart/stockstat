@@ -155,13 +155,13 @@ public class IndicatorMACD extends Indicator {
             Map<String, List<Double>> retMap = new HashMap<>();
             //Object[] full = tu.getMomAndDeltaFull(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
             {
-                double[] macd = (double[]) objs[TaUtil.IDXMACD];
-                double[] hist = (double[]) objs[TaUtil.IDXHIST];
+                double[] macd = (double[]) objs[TaUtil.MACDIDXMACD];
+                double[] hist = (double[]) objs[TaUtil.MACDIDXHIST];
                 log.info("outout1 " + Arrays.toString(macd));
                 log.info("outout3 " + Arrays.toString(hist));
             }
-            MInteger begOfArray = (MInteger) objs[TaUtil.IDXBEG];
-            MInteger endOfArray = (MInteger) objs[TaUtil.IDXEND];
+            MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
+            MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
 
             Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
             log.info("listsize"+ list.length);

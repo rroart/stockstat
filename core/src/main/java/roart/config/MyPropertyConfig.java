@@ -60,9 +60,9 @@ public class MyPropertyConfig extends MyConfig {
             type = ConfigConstants.map;
             text = ConfigConstants.text;
             handleDoc(doc.getDocumentElement(), configTreeMap, "");
-            print(configTreeMap, 0);
-            System.out.println("root " + root);
-            System.out.println("maps "+ configTreeMap);
+            //print(configTreeMap, 0);
+            //System.out.println("root " + root);
+            //System.out.println("maps "+ configTreeMap);
             //makeTypeMap();
             //configxml.load(ConfigConstants.CONFIGFILE);
             //configxml.initFileLocator(new FileLocator(new FileLocatorBuilder()));
@@ -95,13 +95,13 @@ public class MyPropertyConfig extends MyConfig {
                     System.out.println("s2 " + s);
                 }
             }
-            System.out.println("root " + configxml.getList("config"));
-            System.out.println("root " + configxml.getList("/config"));
-            System.out.println("root " + configxml.getList("/misc"));
-            System.out.println("root " + configxml.getList("misc"));
+            //System.out.println("root " + configxml.getList("config"));
+            //System.out.println("root " + configxml.getList("/config"));
+            //System.out.println("root " + configxml.getList("/misc"));
+            //System.out.println("root " + configxml.getList("misc"));
             ConfigConstants.makeTypeMap();
             Iterator<String> iter = configxml.getKeys();
-            System.out.println("keys " + ConfigConstants.map.keySet());
+            //System.out.println("keys " + ConfigConstants.map.keySet());
             while(iter.hasNext()) {
                 String s = iter.next();
                 //System.out.println("s " + s + " " + configxml.getString(s) + " " + configxml.getProperty(s));
@@ -164,7 +164,7 @@ public class MyPropertyConfig extends MyConfig {
         }
         configMap.name = baseString + "." + name;
         configMap.name = configMap.name.replaceFirst(".config.", "");
-        System.out.println("name " + configMap.name);
+        //System.out.println("name " + configMap.name);
         if (leafNode) {
             //enabled = null;
         }

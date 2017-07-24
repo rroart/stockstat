@@ -48,8 +48,8 @@ public class RSIRecommend extends BuySellRecommend{
     }
 
     @Override
-    public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> rsiLists[], 
-            Map<String, Double[]> listMap, Map<String, Double[]> rsiMap, List<String> buyList, List<String> sellList) {
+    public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> rsiLists[],
+            Map<String, Double[]> listMap, Map<String, Double[]> momMap, Map<String, Double[]> rsiMap, List<String> buyList, List<String> sellList) {
         int len = rsiLists.length;
         Double macdMax[] = new Double[len];
         Double macdMin[] = new Double[len];
@@ -122,7 +122,7 @@ public class RSIRecommend extends BuySellRecommend{
     }
 
     @Override
-    public void transform(MyConfig newConf, List<String> keys)
+    public void transformToNode(MyConfig newConf, List<String> keys)
             throws JsonParseException, JsonMappingException, IOException {
         // TODO Auto-generated method stub
         
@@ -130,6 +130,13 @@ public class RSIRecommend extends BuySellRecommend{
 
     @Override
     public void normalize(Map<String, Object> configValueMap, List<String> keys) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void transformFromNode(MyConfig conf, List<String> keys)
+            throws JsonParseException, JsonMappingException, IOException {
         // TODO Auto-generated method stub
         
     }

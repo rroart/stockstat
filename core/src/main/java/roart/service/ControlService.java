@@ -31,6 +31,7 @@ import roart.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.graphcategory.GraphCategoryPrice;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
+import roart.indicator.IndicatorRSI;
 
 import javax.servlet.http.*;
 
@@ -772,10 +773,16 @@ public class ControlService {
             String title = "Price";
             Map<String, Integer>[] periodmap = null;
             // no...get this from the category
-            IndicatorMACD indicator = new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN);
+            IndicatorMACD indicatorMACD = new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN);
+            IndicatorRSI indicatorRSI = new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN);
 
-            Map<String, Object[]> objectMap = indicator.getObjectMap();
-            Map<String, Double[]> listMap = indicator.getListMap();
+            Map<String, Object> macdResultMap = indicatorMACD.getResultMap();
+            Map<String, Object> rsiResultMap = indicatorRSI.getResultMap();
+            
+            Map<String, Object[]> objectMACDMap = (Map<String, Object[]>) macdResultMap.get("OBJECT");
+            Map<String, Double[]> listMACDMap = (Map<String, Double[]>) macdResultMap.get("LIST");
+            Map<String, Object[]> objectRSIMap = (Map<String, Object[]>) rsiResultMap.get("OBJECT");
+            Map<String, Double[]> listRSIMap = (Map<String, Double[]>) rsiResultMap.get("LIST");
 
             int selectionSize = conf.getTestRecommendSelect();
 
@@ -791,10 +798,12 @@ public class ControlService {
             //List<Double> macdLists[] = new ArrayList[4];
             TaUtil tu = new TaUtil();
 
-            Object[] retObj = getDayMomMap(conf, objectMap, listMap, tu);
-            Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
-            Map<Integer, List<Double>[]> dayMacdListsMap = (Map<Integer, List<Double>[]>) retObj[1];
-
+            /*
+            Object[] retMACDObj = getDayMomMap(conf, objectMACDMap, listMACDMap, tu);
+            Object[] retRSIObj = getDayRsiMap(conf, objectRSIMap, listRSIMap, tu);
+            Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retMACDObj[0];
+            Map<Integer, List<Double>[]> dayMacdListsMap = (Map<Integer, List<Double>[]>) retMACDObj[1];
+*/
             // TODO clone config
             //MyMyConfig bestBuyConfig = new MyMyConfig();
             //MyMyConfig bestSellConfig = new MyMyConfig();
@@ -804,7 +813,7 @@ public class ControlService {
             
             Ordinary o = new Ordinary();
             
-            List<Populus> retList = o.doit(conf, marketdatamap, listMap, objectMap, recommend);
+            List<Populus> retList = o.doit(conf, marketdatamap, listMACDMap, objectMACDMap, objectRSIMap, recommend);
             /*
             double buy = getScores(true, conf, listMap, bestBuyConfig, buyList, macdlen, listlen, dayMomMap, dayMacdListsMap);
             double sell = getScores(false, conf, listMap, bestSellConfig, sellList, macdlen, listlen, dayMomMap, dayMacdListsMap);
@@ -884,6 +893,8 @@ public class ControlService {
                 ResultItemTableRow row = new ResultItemTableRow();
                 row.add(id);
                 row.add(conf.configValueMap.get(id));
+                System.out.println(retList.get(0).conf.configValueMap.get(id));
+                System.out.println(retList.get(0).conf.configValueMap.get(id).getClass().getName());
                 row.add(retList.get(0).conf.configValueMap.get(id));
                 table.add(row);
             }
@@ -955,6 +966,35 @@ public class ControlService {
         }
         retobj[0] = dayMomMap;
         retobj[1] = dayMacdsMap;
+        return retobj;
+    }
+
+    public static Object[] getDayRsiMap(MyMyConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
+            TaUtil tu) throws Exception {
+        Object[] retobj = new Object[2];
+        Map<Integer, Map<String, Double[]>> dayRsiMap = new HashMap<>();
+        Map<Integer, List<Double>[]> dayRsisMap = new HashMap<>();
+        for (int j = conf.getTestRecommendFutureDays(); j < conf.getTableDays(); j += conf.getTestRecommendIntervalDays()) {
+            List<Double> rsiLists[] = new ArrayList[2];
+            for (int tmpj = 0; tmpj < 2; tmpj ++) {
+                rsiLists[tmpj] = new ArrayList<>();
+            }
+            Map<String, Double[]> rsiMap = new HashMap<>();
+            for (String id : listMap.keySet()) {
+                Object[] objs = objectMap.get(id);
+                Double[] rsi = tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, j);
+                if (rsi != null) {
+                    rsiMap.put(id, rsi);
+                    MACDRecommend.addToLists(rsiLists, rsi);
+                } else {
+                    //System.out.println("No macd for id" + id);
+                }
+            }
+            dayRsiMap.put(j, rsiMap);
+            dayRsisMap.put(j, rsiLists);
+        }
+        retobj[0] = dayRsiMap;
+        retobj[1] = dayRsisMap;
         return retobj;
     }
 

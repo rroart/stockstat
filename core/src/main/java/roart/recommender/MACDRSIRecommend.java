@@ -59,7 +59,7 @@ public class MACDRSIRecommend extends BuySellRecommend {
 
     @Override
     public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[],
-            Map<String, Double[]> listMap, Map<String, Double[]> momMap, List<String> buyList, List<String> sellList) throws JsonParseException, JsonMappingException, IOException {
+            Map<String, Double[]> listMap, Map<String, Double[]> momMap, Map<String, Double[]> rsiMap, List<String> buyList, List<String> sellList) throws JsonParseException, JsonMappingException, IOException {
         int len = macdLists.length;
         Double macdMax[] = new Double[len];
         Double macdMin[] = new Double[len];
@@ -86,18 +86,26 @@ public class MACDRSIRecommend extends BuySellRecommend {
         }
         for (String key : keys) {
             // TODO temp fix
+            CalcMACDNode node = (CalcMACDNode) conf.configValueMap.get(key);
+            node.setDoBuy(doBuy);
             if (ii > 3) {
                 break;
             }
-            CalcMACDNode node = (CalcMACDNode) conf.configValueMap.get(key);
-            node.setDoBuy(doBuy);
-
             int value = 0;
             double minmax = 0;
             if (buyMap != null) {
-                minmax = macdMax[ii];
-            } else {
-                minmax = macdMin[ii];
+                if (ii < 4) {
+                    minmax = macdMax[ii];
+                } else {
+                    //minmax = rsiMax[ii - 4];
+               
+                }
+           } else {
+                if (ii < 4) {
+                    minmax = macdMin[ii];
+                } else {
+                    //minmax = rsiMin[ii - 4];
+                }
             }
             recommend += node.calc(value, minmax);
             ii++;
@@ -201,18 +209,29 @@ public class MACDRSIRecommend extends BuySellRecommend {
             }
 
     @Override
-    public void transform(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
+    public void transformToNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
         // TODO implement default somewhere else
         ObjectMapper mapper = new ObjectMapper();
         for (String key : keys) {
             String jsonValue = (String) conf.configValueMap.get(key);
-        if (jsonValue == null || jsonValue.isEmpty()) {
-            jsonValue = (String) conf.deflt.get(key);
-            //System.out.println(conf.deflt);
+            if (jsonValue == null || jsonValue.isEmpty()) {
+                jsonValue = (String) conf.deflt.get(key);
+                //System.out.println(conf.deflt);
+            }
+            CalcNode anode = mapper.readValue(jsonValue, CalcNode.class);
+            CalcNode node = CalcNodeFactory.get(anode.className, jsonValue);
+            conf.configValueMap.put(key, node);
         }
-        CalcNode anode = mapper.readValue(jsonValue, CalcNode.class);
-        CalcNode node = CalcNodeFactory.get(anode.className, jsonValue);
-        conf.configValueMap.put(key, node);
+    }
+
+    @Override
+    public void transformFromNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
+        // TODO implement default somewhere else
+        ObjectMapper mapper = new ObjectMapper();
+        for (String key : keys) {
+            CalcNode node = (CalcNode) conf.configValueMap.get(key);
+            String string = mapper.writeValueAsString(node);
+            conf.configValueMap.put(key, string);
         }
     }
 
