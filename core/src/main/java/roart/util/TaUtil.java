@@ -39,6 +39,16 @@ public class TaUtil {
 
     }
 
+    public Object[] getRsiAndDeltaFull(Double[] list, int days, int rsideltadays) {
+	double values[] = new double[list.length];
+	for (int i = 0; i < list.length; i++) {
+            values[i] = list[i];
+        }
+        Object[] objs = getInnerRSI(values, values.length);
+        return objs;
+
+    }
+
     Object[] getSTOCHRSI(int days, String market,
             String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
@@ -504,13 +514,17 @@ public class TaUtil {
 		return size;
 	}
 
-	public static final int IDXMACD = 0;
-	public static final int IDXSIGN = 1;
-	public static final int IDXHIST = 2;
-	public static final int IDXBEG = 3;
-	public static final int IDXEND = 4;
+	public static final int MACDIDXMACD = 0;
+	public static final int MACDIDXSIGN = 1;
+	public static final int MACDIDXHIST = 2;
+	public static final int MACDIDXBEG = 3;
+	public static final int MACDIDXEND = 4;
 	
-	private Object[] getInnerEMA(double[] values, int size) {
+    public static final int RSIIDXRSI = 0;
+    public static final int RSIIDXBEG = 1;
+    public static final int RSIIDXEND = 2;
+
+    private Object[] getInnerEMA(double[] values, int size) {
 		Core core = new Core();
         MInteger beg26 = new MInteger();
         MInteger end26 = new MInteger();
@@ -542,8 +556,8 @@ public class TaUtil {
         objs[0] = macd;
         objs[1] = sig;
         objs[2] = hist;
-        objs[IDXBEG] = beg;
-        objs[IDXEND] = end;
+        objs[MACDIDXBEG] = beg;
+        objs[MACDIDXEND] = end;
         //System.out.println("outout1 " + Arrays.toString(macd));
         //System.out.println("outout2 " + Arrays.toString(sig));
         //System.out.println("outout3 " + Arrays.toString(hist));
@@ -554,9 +568,9 @@ public class TaUtil {
     public double getMom(int days, String market,
             String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Object objs[] = getMACD(days, market, id, ids, marketdatamap, perioddata, periodstr);
-        double hist[] = (double[]) objs[IDXHIST];
-        MInteger beg = (MInteger) objs[IDXBEG];
-        MInteger end = (MInteger) objs[IDXEND];
+        double hist[] = (double[]) objs[MACDIDXHIST];
+        MInteger beg = (MInteger) objs[MACDIDXBEG];
+        MInteger end = (MInteger) objs[MACDIDXEND];
         try {
             //log.info("hist " + id + " " + hist.length + " " + hist[0] + " " + hist[end.value -1 ] + " " + end.value + " " + hist[beg.value - 1] + " " + hist[hist.length -1]);
         } catch (Exception e) {
@@ -574,14 +588,14 @@ public class TaUtil {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         //System.out.println("parsize " + pairs.size());
         Object objs[] = getMACD(days, market, id, ids, marketdatamap, perioddata, periodstr);
-        double macd[] = (double[]) objs[IDXMACD];
-        double sig[] = (double[]) objs[IDXSIGN];
-        double hist[] = (double[]) objs[IDXHIST];
+        double macd[] = (double[]) objs[MACDIDXMACD];
+        double sig[] = (double[]) objs[MACDIDXSIGN];
+        double hist[] = (double[]) objs[MACDIDXHIST];
         for (int i = 0; i < macd.length; i ++) {
             //log.info("grr3 " + i + " " + macd[i]);
         }
-        MInteger beg = (MInteger) objs[IDXBEG];
-        MInteger end = (MInteger) objs[IDXEND];
+        MInteger beg = (MInteger) objs[MACDIDXBEG];
+        MInteger end = (MInteger) objs[MACDIDXEND];
         int size = beg.value + end.value;
         size--;
         //log.info("in " + );
@@ -616,10 +630,10 @@ public class TaUtil {
 	    ArraysUtil.getArrayNonNullReverse(close, closeArr);
 	    Object[] objs = getInnerCCI(lowArr, highArr, closeArr, size);
 	    // TODO works here too?
-	    retValues[0] = getRSI(objs);
+	    //retValues[0] = getCCI(objs);
         if (wantdelta) {
         	// TODO check works for this too?
-        	retValues[1] = getRSIdelta(objs, deltadays);
+        	//retValues[1] = getCCIdelta(objs, deltadays);
         }
         return retValues;
 	}
@@ -638,10 +652,10 @@ public class TaUtil {
         ArraysUtil.getArrayNonNullReverse(close, closeArr);
         Object[] objs = getInnerATR(lowArr, highArr, closeArr, size);
         // TODO works here too?
-        retValues[0] = getRSI(objs);
+        //retValues[0] = getATR(objs);
         if (wantdelta) {
             // TODO check works for this too?
-            retValues[1] = getRSIdelta(objs, deltadays);
+            //retValues[1] = getATRdelta(objs, deltadays);
         }
         return retValues;
     }
@@ -660,10 +674,10 @@ public class TaUtil {
         ArraysUtil.getArrayNonNullReverse(close, closeArr);
         Object[] objs = getInnerSTOCH(lowArr, highArr, closeArr, size);
         // TODO works here too?
-        retValues[0] = getRSI(objs);
+        //retValues[0] = getSTOCH(objs);
         if (wantdelta) {
             // TODO check works for this too?
-            retValues[1] = getRSIdelta(objs, deltadays);
+            //retValues[1] = getSTOCHdelta(objs, deltadays);
         }
         return retValues;
     }
@@ -753,8 +767,8 @@ public class TaUtil {
 	}
 
 	private Double getHistogramDelta( Object[] objs, int deltadays, int offset) {
-		double hist[] = (double[]) objs[IDXHIST];
-        MInteger end = (MInteger) objs[IDXEND];
+		double hist[] = (double[]) objs[MACDIDXHIST];
+        MInteger end = (MInteger) objs[MACDIDXEND];
         if (end.value == 0) {
             return null;
         }
@@ -764,9 +778,21 @@ public class TaUtil {
         return delta/(deltadays - 1);
 	}
 	
+    private Double getRsiDelta( Object[] objs, int deltadays, int offset) {
+        double rsi[] = (double[]) objs[RSIIDXRSI];
+        MInteger end = (MInteger) objs[RSIIDXEND];
+        if (end.value == 0) {
+            return null;
+        }
+        double delta = 0;
+        int min = Math.max(0, end.value - offset - deltadays);
+        delta = rsi[end.value - offset - 1] - rsi[min];
+        return delta/(deltadays - 1);
+    }
+    
 	private Double getMomentumDelta( Object[] objs, int deltadays, int offset ) {
-		double macd[] = (double[]) objs[IDXMACD];
-        MInteger end = (MInteger) objs[IDXEND];
+		double macd[] = (double[]) objs[MACDIDXMACD];
+        MInteger end = (MInteger) objs[MACDIDXEND];
         if (end.value == 0) {
             return null;
         }
@@ -786,7 +812,7 @@ public class TaUtil {
         double any[] = (double[]) objs[0];
         double any1[] = (double[]) objs[1];
         double any2[] = (double[]) objs[2];
-        MInteger end = (MInteger) objs[IDXEND];
+        MInteger end = (MInteger) objs[MACDIDXEND];
        if (end.value < offset + Math.max(macddeltadays, histdeltadays)) {
             //System.out.println("too short" + end.value + " " + macddeltadays + " " + histdeltadays);
             return null;
@@ -800,6 +826,25 @@ public class TaUtil {
         retValues[retindex++] = getMom(objs, offset);
         retValues[retindex++] = getMomentumDelta(objs, macddeltadays, offset);
         return retValues;
+    }
+
+    public Double[] getRsiAndDelta(int rsideltadays, Object[] objs, int offset) {
+        MInteger end = (MInteger) objs[RSIIDXEND];
+       if (end.value < offset + Math.max(rsideltadays, rsideltadays)) {
+            //System.out.println("too short" + end.value + " " + macddeltadays + " " + histdeltadays);
+            return null;
+        }
+        int retindex = 0;
+        Double[] retValues = new Double[2];
+        //MInteger begin = (MInteger) objs[IDXBEG];
+        // System.out.println("long enough " + offset + " " + begin.value + " " + end.value + " " + any.length + " " + any1.length + " " + any2.length + " " + macddeltadays + " " + histdeltadays);
+        retValues[retindex++] = getRsi(objs, offset);
+        retValues[retindex++] = getRsiDelta(objs, rsideltadays, offset);
+        return retValues;
+    }
+
+    public Double[] getRsiAndDelta(int rsideltadays, Object[] objs) {
+        return getRsiAndDelta(rsideltadays, objs, 0);
     }
 
     public Double[] getMomAndDelta(int macddeltadays, int histdeltadays, Object[] objs) {
@@ -829,6 +874,22 @@ public class TaUtil {
         return retindex;
     }
 
+    public int getRSIAndDelta(boolean wantrsidelta, Double[] objs, Object[] retValues) {
+        if (objs == null) {
+            int retindex = 1;
+            if (wantrsidelta) {
+                retindex++;
+            }
+            return retindex;
+        }
+        int retindex = 0;
+        retValues[retindex++] = objs[0];
+        if (wantrsidelta) {
+            retValues[retindex++] = objs[1];
+        }
+        return retindex;
+    }
+
     public Object[] getMomAndDeltaFull(Double[] list, int days, int macddeltadays, int histdeltadays) {
         double values[] = new double[list.length];
         log.info("before before " + list.length + " " + Arrays.toString(list));
@@ -842,8 +903,8 @@ public class TaUtil {
     }
 
     private Double getMom(Object[] objs, int offset) {
-        double macd[] = (double[]) objs[IDXMACD];
-        MInteger end = (MInteger) objs[IDXEND];
+        double macd[] = (double[]) objs[MACDIDXMACD];
+        MInteger end = (MInteger) objs[MACDIDXEND];
         if (end.value == 0) {
             return null;
         }
@@ -851,11 +912,20 @@ public class TaUtil {
     }
     
 	private Double getHist(Object[] objs, int offset) {
-		double hist[] = (double[]) objs[IDXHIST];
-        MInteger end = (MInteger) objs[IDXEND];
+		double hist[] = (double[]) objs[MACDIDXHIST];
+        MInteger end = (MInteger) objs[MACDIDXEND];
         if (end.value == 0) {
             return null;
         }
         return hist[end.value - offset - 1];
 	}
+
+    private Double getRsi(Object[] objs, int offset) {
+        double rsi[] = (double[]) objs[RSIIDXRSI];
+        MInteger end = (MInteger) objs[RSIIDXEND];
+        if (end.value == 0) {
+            return null;
+        }
+        return rsi[end.value - offset - 1];
+    }
 }
