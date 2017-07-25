@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import roart.config.MyMyConfig;
 import roart.evaluation.Evaluation;
 import roart.mutation.Mutate;
-import roart.service.ControlService;
 
 public class Individual  implements Comparable<Individual>{
     public MyMyConfig conf;
@@ -24,7 +23,7 @@ public class Individual  implements Comparable<Individual>{
         this.evaluation = evaluation;
     }
     public Individual getNewWithValueCopyFactory(MyMyConfig conf, List<String> keys, boolean doScore) throws JsonParseException, JsonMappingException, IOException {
-        MyMyConfig newConf = ControlService.getNewWithValueCopy(conf);
+        MyMyConfig newConf = Individual.getNewWithValueCopy(conf);
         evaluation.transformToNode(newConf, keys);
         double fitness = 0.0;
         if (doScore) {
@@ -34,7 +33,7 @@ public class Individual  implements Comparable<Individual>{
     }
     
     public Individual getNewWithValueCopyAndRandomFactory(MyMyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
-        MyMyConfig newConf = ControlService.getNewWithValueCopy(conf);
+        MyMyConfig newConf = Individual.getNewWithValueCopy(conf);
         evaluation.transformToNode(newConf, keys);
         //ControlService.getRandom(newConf.configValueMap, keys);
         evaluation.getRandom(newConf.configValueMap, keys);
@@ -88,6 +87,12 @@ public class Individual  implements Comparable<Individual>{
     
     public double getFitness() {
         return fitness;
+    }
+    public  static MyMyConfig getNewWithValueCopy(MyMyConfig conf) {
+        MyMyConfig newConf = new MyMyConfig(conf);
+        Map<String, Object> configValueMap = new HashMap<>(conf.configValueMap);
+        newConf.configValueMap = configValueMap;
+        return newConf;
     }
 }
 

@@ -17,7 +17,7 @@ import roart.util.MarketData;
 
 public abstract class EvolutionAlgorithm {
 
-    public abstract Individual doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap,Map<String, Object[]> objectRSIMap, Evaluation recommender) throws Exception;
+    public abstract Individual getFittest(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap,Map<String, Object[]> objectRSIMap, Evaluation recommender) throws Exception;
 	
     protected void printmap(Map<String, Object> map, List<String> keys) throws JsonProcessingException {
         for (String key : keys) {

@@ -19,7 +19,7 @@ import roart.util.TaUtil;
 public class OrdinaryEvolution extends EvolutionAlgorithm {
 
     @Override
-    public Individual doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap, Map<String, Object[]> objectRSIMap, Evaluation evaluation) throws Exception {
+    public Individual getFittest(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap, Map<String, Object[]> objectRSIMap, Evaluation evaluation) throws Exception {
         //MACDRecommend recommend = new MACDRecommend();
         int selectionSize = conf.getTestRecommendSelect();
         List<String> keys = evaluation.getKeys();

@@ -12,14 +12,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import roart.config.MyMyConfig;
 import roart.evaluation.Evaluation;
 import roart.evaluation.MACDRecommend;
-import roart.service.ControlService;
+import roart.indicator.IndicatorUtils;
 import roart.util.MarketData;
 import roart.util.TaUtil;
 
 public class OneFourEvolution extends EvolutionAlgorithm {
 
     @Override
-    public Individual doit(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap, Map<String, Object[]> objectRSIMap, Evaluation recommend) throws Exception {
+    public Individual getFittest(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap, Map<String, Object[]> objectRSIMap, Evaluation recommend) throws Exception {
         //MACDRecommend recommend = new MACDRecommend();
         int selectionSize = conf.getTestRecommendSelect();
         int four = 4;
@@ -32,7 +32,7 @@ public class OneFourEvolution extends EvolutionAlgorithm {
         //List<Double> macdLists[] = new ArrayList[4];
         TaUtil tu = new TaUtil();
 
-        Object[] retMacdObj = ControlService.getDayMomMap(conf, objectMACDMap, listMap, tu);
+        Object[] retMacdObj = IndicatorUtils.getDayMomMap(conf, objectMACDMap, listMap, tu);
         Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retMacdObj[0];
         List<Double>[] dayMacdListsMap = (List<Double>[]) retMacdObj[1];
 
