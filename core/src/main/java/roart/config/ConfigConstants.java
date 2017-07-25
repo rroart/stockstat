@@ -349,7 +349,7 @@ public class ConfigConstants {
         deflt.put(ConfigConstants. AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTANODE, json);
     }
 
-    private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":null,\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"doBuy\":false}";
+    private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":null,\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"useMax\":false}";
     
     public static Map<String, String> text = new HashMap();
     

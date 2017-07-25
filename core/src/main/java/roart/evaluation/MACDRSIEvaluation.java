@@ -1,8 +1,9 @@
-package roart.recommender;
+package roart.evaluation;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,14 +16,28 @@ import roart.calculate.CalcNode;
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.config.MyMyConfig;
+import roart.evolution.FitnessBuySellMACD;
 import roart.model.StockItem;
 import roart.util.MarketData;
 import roart.util.StockDao;
 
-public class MACDRSIRecommend extends BuySellRecommend {
+public class MACDRSIEvaluation extends Evaluation {
     
     // TODO add deltadays?
     
+    public MyMyConfig conf;
+    public Object[] retObj;
+    public boolean useMax;
+    //public FitnessBuySellMACD scoring;
+    
+    public MACDRSIEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b) {
+        this.conf = conf;
+        this.keys = keys;
+        this.retObj = retObj;
+        this.useMax = b;
+        //scoring = new FitnessBuySellMACD(conf, dayMomMap, dayMacdListsMap, dayRsiMap, dayRsiListsMap, listMap, recommend);
+    }
+
     public  List<String> getBuyList() {
         List<String> buyList = new ArrayList<>();
         buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMNODE);
@@ -58,99 +73,28 @@ public class MACDRSIRecommend extends BuySellRecommend {
     }
 
     @Override
-    public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[],
-            Map<String, Double[]> listMap, Map<String, Double[]> momMap, Map<String, Double[]> rsiMap, List<String> buyList, List<String> sellList) throws JsonParseException, JsonMappingException, IOException {
-        int len = macdLists.length;
-        Double macdMax[] = new Double[len];
-        Double macdMin[] = new Double[len];
-        for (int i = 0; i < len; i ++) {
-            List<Double> macdList = macdLists[i];
-            if (!macdList.isEmpty()) {
-                //System.out.println("macdlist " + i + " " + macdList);
-                macdMax[i] = Collections.max(macdList);
-                macdMin[i] = Collections.min(macdList);
-            } else {
-                macdMax[i] = 0.0;
-                macdMin[i] = 0.0;
-            }
-        }
+    public double getEvaluations(MyMyConfig conf, int j) throws JsonParseException, JsonMappingException, IOException {
+        Map<Integer, Map<String, Double[]>> dayMomRsiMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
+        //List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
+        Map<String, Double[]> momRsiMap = dayMomRsiMap.get(j);
         // find recommendations
         double recommend = 0;
         //transform(conf, buyList);
-        int ii = 0;
-        boolean doBuy = true;
-        List<String> keys = buyList;
-        if (keys == null) {
-            keys = sellList;
-            doBuy = false;
-        }
-        for (String key : keys) {
-            // TODO temp fix
-            CalcMACDNode node = (CalcMACDNode) conf.configValueMap.get(key);
-            node.setDoBuy(doBuy);
-            if (ii > 3) {
-                break;
+        for (Double[] momrsi : momRsiMap.values()) {
+
+            for (int i = 0; i < keys.size(); i++) {
+                String key = keys.get(i);
+                // TODO temp fix
+                CalcMACDNode node = (CalcMACDNode) conf.configValueMap.get(key);
+                //node.setDoBuy(useMax);
+                double value = momrsi[i];
+                recommend += node.calc(value, 0);
             }
-            int value = 0;
-            double minmax = 0;
-            if (buyMap != null) {
-                if (ii < 4) {
-                    minmax = macdMax[ii];
-                } else {
-                    //minmax = rsiMax[ii - 4];
-               
-                }
-           } else {
-                if (ii < 4) {
-                    minmax = macdMin[ii];
-                } else {
-                    //minmax = rsiMin[ii - 4];
-                }
-            }
-            recommend += node.calc(value, minmax);
-            ii++;
         }
+        return recommend;
     }
-    
-    public static void getBuySellRecommendations2(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[] /*,List<Double> macdList, List<Double> histList, List<Double> macdDList,
-            List<Double> histDList*/, Map<String, Double[]> listMap, Map<String, Double[]> momMap, List<String> buyList, List<String> sellList) {
-        int len = macdLists.length;
-        Double macdMax[] = new Double[len];
-        Double macdMin[] = new Double[len];
-        for (int i = 0; i < len; i ++) {
-            List<Double> macdList = macdLists[i];
-            if (!macdList.isEmpty()) {
-                macdMax[i] = Collections.max(macdList);
-                macdMin[i] = Collections.min(macdList);
-            } else {
-                macdMax[i] = 0.0;
-                macdMin[i] = 0.0;
-            }
-        }
-        // find recommendations
-        for (String id : listMap.keySet()) {
-            Double[] momentum = momMap.get(id);
-            if (momentum == null || momentum[0] == null || momentum[1] == null || momentum[2] == null || momentum[3] == null) {
-                continue;
-            }
-            // this is the histogram 0
-            if (momentum[0] >= 0 && buyMap != null) {
-                double recommend = ((Integer) conf.configValueMap.get(buyList.get(0)))*(macdMax[0] - momentum[0])/macdMax[0];
-                for (int i = 1; i < len; i ++) {
-                    recommend += ((Integer) conf.configValueMap.get(buyList.get(i)))*(momentum[i])/macdMax[i];
-                }
-                buyMap.put(id, recommend);
-            }
-            if (momentum[0] < 0 && sellMap != null) {
-                double recommend = ((Integer) conf.configValueMap.get(sellList.get(0)))*(macdMin[0] - momentum[0])/macdMin[0];
-                for (int i = 1; i < len; i ++) {
-                    recommend += ((Integer) conf.configValueMap.get(sellList.get(i)))*(momentum[i])/macdMin[i];
-                }
-                sellMap.put(id, recommend);
-            }
-        }
-    }
-    
+
+    /*
     public static double getQuality(boolean buy, Map<String, Double> buySellMap, Map<String, Double[]> listMap, int curlistidx,
             int newlistidx) {
         double score = 0;
@@ -178,15 +122,24 @@ public class MACDRSIRecommend extends BuySellRecommend {
         //System.out.println("score"+score);
         return score;
     }
-
+*/
+    
     private static class CalcNodeFactory {
-        public static CalcNode get(String name, String jsonValue) throws JsonParseException, JsonMappingException, IOException {
+        public static CalcNode get(String name, String jsonValue, List<Double>[] macdrsiMinMax, int index, boolean useMax) throws JsonParseException, JsonMappingException, IOException {
             // TODO check class name
+            CalcMACDNode anode;
             if (jsonValue == null) {
-                return new CalcMACDNode();
+                anode = new CalcMACDNode();
+            } else {
+                ObjectMapper mapper = new ObjectMapper();
+                anode = (CalcMACDNode) mapper.readValue(jsonValue, CalcMACDNode.class);
             }
-            ObjectMapper mapper = new ObjectMapper();
-            CalcNode anode = (CalcNode) mapper.readValue(jsonValue, CalcMACDNode.class);
+            List<Double> minmax = macdrsiMinMax[index];
+            double minMutateThresholdRange =  minmax.get(0);
+            double maxMutateThresholdRange = minmax.get(1);
+            anode.setMinMutateThresholdRange(minMutateThresholdRange);
+            anode.setMaxMutateThresholdRange(maxMutateThresholdRange);
+            anode.setUseMax(useMax);
             return anode;
         }
     }
@@ -201,25 +154,30 @@ public class MACDRSIRecommend extends BuySellRecommend {
 
     @Override
     public void getRandom(Map<String, Object> configValueMap, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
-        for (String key : keys) {
-            CalcNode node = CalcNodeFactory.get(null, null);
+        List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
+        for (int i = 0; i < keys.size(); i++) {
+            String key = keys.get(i);
+            CalcNode node = CalcNodeFactory.get(null, null, macdrsiMinMax, i, useMax);
             node.randomize();
             configValueMap.put(key, node);
         }
-            }
+        normalize(configValueMap, keys);
+    }
 
     @Override
     public void transformToNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
         // TODO implement default somewhere else
+        List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
         ObjectMapper mapper = new ObjectMapper();
-        for (String key : keys) {
+        for (int i = 0; i < keys.size(); i++) {
+            String key = keys.get(i);
             String jsonValue = (String) conf.configValueMap.get(key);
             if (jsonValue == null || jsonValue.isEmpty()) {
                 jsonValue = (String) conf.deflt.get(key);
                 //System.out.println(conf.deflt);
             }
             CalcNode anode = mapper.readValue(jsonValue, CalcNode.class);
-            CalcNode node = CalcNodeFactory.get(anode.className, jsonValue);
+            CalcNode node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);
             conf.configValueMap.put(key, node);
         }
     }
@@ -250,4 +208,26 @@ public class MACDRSIRecommend extends BuySellRecommend {
         }
         
     }
+
+    @Override
+    public double getFitness(MyMyConfig testBuySellConfig, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
+        int macdlen = conf.getTableDays();
+        int listlen = conf.getTableDays();
+
+        double testRecommendQualBuySell = 0;
+        for (int j = conf.getTestRecommendFutureDays(); j < macdlen; j += conf.getTestRecommendIntervalDays()) {
+            //List<Double> macdLists[] = macdMinMax.get(j);
+            //int newmacdidx = macdlen - 1 - j + conf.getTestRecommendFutureDays();
+            //int curmacdidx = macdlen - 1 - j;
+            Map<Integer, Map<String, Double[]>> dayMomRsiMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
+            Map<String, Double[]> momrsiMap = dayMomRsiMap.get(j);
+           //System.out.println("j"+j);
+            testRecommendQualBuySell += getEvaluations(testBuySellConfig, j);
+            int newlistidx = listlen - 1 - j + conf.getTestRecommendFutureDays();
+            int curlistidx = listlen - 1 - j;
+            //testRecommendQualBuySell += MACDRecommend.getQuality(buy, buysellMap, listMap, curlistidx, newlistidx);
+        }
+        return testRecommendQualBuySell;
+    }
+
 }

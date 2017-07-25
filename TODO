@@ -13,3 +13,4 @@ indicator/predictor save created/generated data
 test buy recommend w/o ml, iteratively (plus gen alg)
 macd ml w/ gen alg?
 drop classifier eval and use when model learntest
+reconstruct full time base on 1y etc

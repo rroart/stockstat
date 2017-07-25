@@ -7,8 +7,6 @@ import roart.model.ResultItemTableRow;
 import roart.model.ResultItem;
 import roart.model.StockItem;
 import roart.mutation.Mutate;
-import roart.recommender.MACDRSIRecommend;
-import roart.recommender.MACDRecommend;
 import roart.aggregate.Aggregator;
 import roart.aggregate.AggregatorRecommenderMacdRsi;
 import roart.aggregate.MLMACD;
@@ -21,9 +19,11 @@ import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.config.MyPropertyConfig;
 import roart.db.DbDao;
+import roart.evaluation.MACDRSIEvaluation;
+import roart.evaluation.MACDRecommend;
 import roart.evolution.FitnessBuySellMACD;
-import roart.evolution.Ordinary;
-import roart.evolution.Populus;
+import roart.evolution.OrdinaryEvolution;
+import roart.evolution.Individual;
 import roart.graphcategory.GraphCategory;
 import roart.graphcategory.GraphCategoryIndex;
 import roart.graphcategory.GraphCategoryPeriod;
@@ -62,6 +62,7 @@ import roart.util.Math3Util;
 import roart.util.MetaDao;
 import roart.util.PeriodData;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -786,17 +787,21 @@ public class ControlService {
 
             int selectionSize = conf.getTestRecommendSelect();
 
-            List<Populus> populationBuy = new ArrayList<>();
-            List<Populus> populationSell = new ArrayList<>();
+            List<Individual> populationBuy = new ArrayList<>();
+            List<Individual> populationSell = new ArrayList<>();
             
-            MACDRSIRecommend recommend = new MACDRSIRecommend();
+            TaUtil tu = new TaUtil();
+            Object[] retObj = getDayMomRsiMap(conf, objectMACDMap, listMACDMap, objectRSIMap, listRSIMap, tu);
+            MACDRSIEvaluation recommend = new MACDRSIEvaluation(null, null, null, false);
             
             List<String> buyList = recommend.getBuyList();
             List<String> sellList = recommend.getSellList();
+            MACDRSIEvaluation recommendBuy = new MACDRSIEvaluation(conf, buyList, retObj, true);
+            MACDRSIEvaluation recommendSell = new MACDRSIEvaluation(conf, sellList, retObj, false);
+            
             int category = 0;
             String market = null; //"tradcomm";
             //List<Double> macdLists[] = new ArrayList[4];
-            TaUtil tu = new TaUtil();
 
             /*
             Object[] retMACDObj = getDayMomMap(conf, objectMACDMap, listMACDMap, tu);
@@ -811,9 +816,10 @@ public class ControlService {
             int macdlen = conf.getTableDays();
             int listlen = conf.getTableDays();
             
-            Ordinary o = new Ordinary();
+            OrdinaryEvolution o = new OrdinaryEvolution();
             
-            List<Populus> retList = o.doit(conf, marketdatamap, listMACDMap, objectMACDMap, objectRSIMap, recommend);
+            Individual retListBuy = o.doit(conf, marketdatamap, listMACDMap, objectMACDMap, objectRSIMap, recommendBuy);
+            Individual retListSell = o.doit(conf, marketdatamap, listMACDMap, objectMACDMap, objectRSIMap, recommendSell);
             /*
             double buy = getScores(true, conf, listMap, bestBuyConfig, buyList, macdlen, listlen, dayMomMap, dayMacdListsMap);
             double sell = getScores(false, conf, listMap, bestSellConfig, sellList, macdlen, listlen, dayMomMap, dayMacdListsMap);
@@ -893,9 +899,9 @@ public class ControlService {
                 ResultItemTableRow row = new ResultItemTableRow();
                 row.add(id);
                 row.add(conf.configValueMap.get(id));
-                System.out.println(retList.get(0).conf.configValueMap.get(id));
-                System.out.println(retList.get(0).conf.configValueMap.get(id).getClass().getName());
-                row.add(retList.get(0).conf.configValueMap.get(id));
+                System.out.println(retListBuy.conf.configValueMap.get(id));
+                System.out.println(retListBuy.conf.configValueMap.get(id).getClass().getName());
+                row.add(retListBuy.conf.configValueMap.get(id));
                 table.add(row);
             }
             for (String id : sellList) {
@@ -903,7 +909,7 @@ public class ControlService {
                 ResultItemTableRow row = new ResultItemTableRow();
                 row.add(id);
                 row.add(conf.configValueMap.get(id));
-                row.add(retList.get(1).conf.configValueMap.get(id));
+                row.add(retListSell.conf.configValueMap.get(id));
                 table.add(row);
             }
             List<ResultItem> retlist = new ArrayList<>();
@@ -914,10 +920,10 @@ public class ControlService {
             System.out.println("retlist ");
             // TODO have a boolean here
             for (String id : buyList) {
-                conf.configValueMap.put(id, retList.get(0).conf.configValueMap.get(id));
+                conf.configValueMap.put(id, retListBuy.conf.configValueMap.get(id));
             }
             for (String id : sellList) {
-                conf.configValueMap.put(id, retList.get(1).conf.configValueMap.get(id));
+                conf.configValueMap.put(id, retListSell.conf.configValueMap.get(id));
             }
             return retlist;
         } catch (Exception e) {
@@ -945,11 +951,13 @@ public class ControlService {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayMomMap = new HashMap<>();
         Map<Integer, List<Double>[]> dayMacdsMap = new HashMap<>();
+        List<Double> macdLists[] = new ArrayList[4];
+        List<Double> macdMinMax[] = new ArrayList[4];
+        for (int tmpj = 0; tmpj < 4; tmpj ++) {
+            macdLists[tmpj] = new ArrayList<>();
+            macdMinMax[tmpj] = new ArrayList<>();
+         }
         for (int j = conf.getTestRecommendFutureDays(); j < conf.getTableDays(); j += conf.getTestRecommendIntervalDays()) {
-            List<Double> macdLists[] = new ArrayList[4];
-            for (int tmpj = 0; tmpj < 4; tmpj ++) {
-                macdLists[tmpj] = new ArrayList<>();
-            }
             Map<String, Double[]> momMap = new HashMap<>();
             for (String id : listMap.keySet()) {
                 Object[] objs = objectMap.get(id);
@@ -964,8 +972,12 @@ public class ControlService {
             dayMomMap.put(j, momMap);
             dayMacdsMap.put(j, macdLists);
         }
+        macdMinMax[0].add(Collections.min(macdLists[0]));
+        macdMinMax[0].add(Collections.max(macdLists[0]));
+        macdMinMax[1].add(Collections.min(macdLists[1]));
+        macdMinMax[1].add(Collections.max(macdLists[1]));
         retobj[0] = dayMomMap;
-        retobj[1] = dayMacdsMap;
+        retobj[1] = macdMinMax;
         return retobj;
     }
 
@@ -973,12 +985,13 @@ public class ControlService {
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayRsiMap = new HashMap<>();
-        Map<Integer, List<Double>[]> dayRsisMap = new HashMap<>();
+        List<Double> rsiLists[] = new ArrayList[2];
+        List<Double> rsiMinMax[] = new ArrayList[2];
+        for (int tmpj = 0; tmpj < 2; tmpj ++) {
+            rsiLists[tmpj] = new ArrayList<>();
+            rsiMinMax[tmpj] = new ArrayList<>();
+        }
         for (int j = conf.getTestRecommendFutureDays(); j < conf.getTableDays(); j += conf.getTestRecommendIntervalDays()) {
-            List<Double> rsiLists[] = new ArrayList[2];
-            for (int tmpj = 0; tmpj < 2; tmpj ++) {
-                rsiLists[tmpj] = new ArrayList<>();
-            }
             Map<String, Double[]> rsiMap = new HashMap<>();
             for (String id : listMap.keySet()) {
                 Object[] objs = objectMap.get(id);
@@ -991,10 +1004,49 @@ public class ControlService {
                 }
             }
             dayRsiMap.put(j, rsiMap);
-            dayRsisMap.put(j, rsiLists);
         }
+        rsiMinMax[0].add(Collections.min(rsiLists[0]));
+        rsiMinMax[0].add(Collections.max(rsiLists[0]));
+        rsiMinMax[1].add(Collections.min(rsiLists[1]));
+        rsiMinMax[1].add(Collections.max(rsiLists[1]));
         retobj[0] = dayRsiMap;
-        retobj[1] = dayRsisMap;
+        retobj[1] = rsiMinMax;
+        return retobj;
+    }
+
+    public static Object[] getDayMomRsiMap(MyMyConfig conf, Map<String, Object[]> objectMacdMap, Map<String, Double[]> listMacdMap, Map<String, Object[]> objectRsiMap, Map<String, Double[]> listRsiMap, 
+            TaUtil tu) throws Exception {
+        Object[] retobj = new Object[2];
+        Map<Integer, Map<String, Double[]>> dayMomRsiMap = new HashMap<>();
+        List<Double> macdrsiLists[] = new ArrayList[6];
+        List<Double> macdrsiMinMax[] = new ArrayList[6];
+        for (int tmpj = 0; tmpj < 4 + 2; tmpj ++) {
+            macdrsiLists[tmpj] = new ArrayList<>();
+            macdrsiMinMax[tmpj] = new ArrayList<>();
+         }
+        for (int j = conf.getTestRecommendFutureDays(); j < conf.getTableDays(); j += conf.getTestRecommendIntervalDays()) {
+            Map<String, Double[]> momrsiMap = new HashMap<>();
+            for (String id : listMacdMap.keySet()) {
+                Object[] objsMacd = objectMacdMap.get(id);
+                Object[] objsRSI = objectRsiMap.get(id);
+                Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objsMacd, j);
+                Double[] rsi = tu.getRsiAndDelta(conf.getRSIDeltaDays(), objsRSI, j);
+                if (momentum != null) {
+		    Double[] momrsi = ArrayUtils.addAll(momentum, rsi);
+                    momrsiMap.put(id, momrsi);
+                    MACDRecommend.addToLists(macdrsiLists, momrsi);
+                } else {
+                    //System.out.println("No macd for id" + id);
+                }
+            }
+            dayMomRsiMap.put(j, momrsiMap);
+        }
+	for (int i = 0; i < 4 + 2; i++) {
+        macdrsiMinMax[i].add(Collections.min(macdrsiLists[i]));
+        macdrsiMinMax[i].add(Collections.max(macdrsiLists[i]));
+	}
+        retobj[0] = dayMomRsiMap;
+        retobj[1] = macdrsiMinMax;
         return retobj;
     }
 

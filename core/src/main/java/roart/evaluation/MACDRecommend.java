@@ -1,4 +1,4 @@
-package roart.recommender;
+package roart.evaluation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,10 +11,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.StockItem;
 import roart.util.StockDao;
 
-public class MACDRecommend extends BuySellRecommend {
+public class MACDRecommend extends Evaluation {
     
     // TODO add deltadays?
     
@@ -47,7 +48,7 @@ public class MACDRecommend extends BuySellRecommend {
         }
     }
 
-    @Override
+    //@Override
     public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[],
             Map<String, Double[]> listMap, Map<String, Double[]> momMap, Map<String, Double[]> rsiMap, List<String> buyList, List<String> sellList) {
         int len = macdLists.length;
@@ -184,6 +185,20 @@ public class MACDRecommend extends BuySellRecommend {
             throws JsonParseException, JsonMappingException, IOException {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public double getEvaluations(MyMyConfig conf, int j)
+            throws JsonParseException, JsonMappingException, IOException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public double getFitness(MyMyConfig testBuySellConfig, List<String> buySellList)
+            throws JsonParseException, JsonMappingException, IOException {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 

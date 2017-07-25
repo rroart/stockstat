@@ -1,4 +1,4 @@
-package roart.recommender;
+package roart.evaluation;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,14 +10,21 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import roart.config.MyConfig;
 import roart.config.MyMyConfig;
 
-public abstract class BuySellRecommend {
-    public  abstract List<String> getBuyList();
-    public abstract List<String> getSellList();
-        public abstract void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[] , Map<String, Double[]> listMap, Map<String, Double[]> momMap, Map<String, Double[]> rsiMap, List<String> buyList, List<String> sellList) throws JsonParseException, JsonMappingException, IOException;
+public abstract class Evaluation {
+    public List<String> keys;
+    public List<String> getKeys() {
+        return keys;
+    }
+    
+    //public  abstract List<String> getBuyList();
+    //public abstract List<String> getSellList();
+        public abstract double getEvaluations(MyMyConfig conf, int j) throws JsonParseException, JsonMappingException, IOException;
         public abstract void mutate(Map<String, Object> configValueMap, List<String> keys);
         public abstract void getRandom(Map<String, Object> configValueMap, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
         public abstract void transformToNode(MyConfig newConf, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
         public abstract void normalize(Map<String, Object> configValueMap, List<String> keys);
         public abstract void transformFromNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
 
+        public abstract double getFitness(MyMyConfig testConfig, List<String> keys)
+                throws JsonParseException, JsonMappingException, IOException;
 }

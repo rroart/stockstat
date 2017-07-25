@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class CalcMACDNode extends CalcNode {
 
-double minMutateThresholdRange = -5;
-double maxMutateThresholdRange = 5;
+double minMutateThresholdRange;
+double maxMutateThresholdRange;
 
 double threshold;
 boolean useminmaxthreshold;
@@ -19,7 +19,7 @@ boolean changeSignWhole;
 
 // not mutatable
 
-boolean doBuy;
+boolean useMax;
 
 //boolean threshMaxValue; //?
 //boolean norm;
@@ -88,16 +88,20 @@ public void setChangeSignWhole(boolean changeSignWhole) {
     this.changeSignWhole = changeSignWhole;
 }
 
-public boolean isDoBuy() {
-    return doBuy;
+public boolean isUseMax() {
+    return useMax;
 }
 
-public void setDoBuy(boolean doBuy) {
-    this.doBuy = doBuy;
+public void setUseMax(boolean doBuy) {
+    this.useMax = doBuy;
 }
 
 @Override
-public double calc(double val, double minmaxthreshold) {
+public double calc(double val, double minmaxthreshold2) {
+    double minmaxthreshold = maxMutateThresholdRange;
+    if (!useMax) {
+        minmaxthreshold = minMutateThresholdRange;
+    }
     double mythreshold = threshold;
     if (useminmaxthreshold) {
         mythreshold = minmaxthreshold;
@@ -124,7 +128,7 @@ public void randomize() {
 }
 
 private void getThreshold(Random rand) {
-    if (doBuy) {
+    if (useMax) {
     threshold = rand.nextDouble() * maxMutateThresholdRange;
     } else {
         threshold = rand.nextDouble() * minMutateThresholdRange;       

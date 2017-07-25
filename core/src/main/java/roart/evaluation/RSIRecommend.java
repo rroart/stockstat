@@ -1,4 +1,4 @@
-package roart.recommender;
+package roart.evaluation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,9 +11,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.util.MarketData;
 
-public class RSIRecommend extends BuySellRecommend{
+public class RSIRecommend extends Evaluation{
     
     // TODO add deltadays?
     
@@ -47,7 +48,6 @@ public class RSIRecommend extends BuySellRecommend{
         }
     }
 
-    @Override
     public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> rsiLists[],
             Map<String, Double[]> listMap, Map<String, Double[]> momMap, Map<String, Double[]> rsiMap, List<String> buyList, List<String> sellList) {
         int len = rsiLists.length;
@@ -139,6 +139,20 @@ public class RSIRecommend extends BuySellRecommend{
             throws JsonParseException, JsonMappingException, IOException {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public double getEvaluations(MyMyConfig conf, int j)
+            throws JsonParseException, JsonMappingException, IOException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public double getFitness(MyMyConfig testBuySellConfig, List<String> buySellList)
+            throws JsonParseException, JsonMappingException, IOException {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 
