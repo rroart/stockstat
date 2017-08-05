@@ -15,36 +15,39 @@ import roart.config.MyMyConfig;
 import roart.model.StockItem;
 import roart.util.StockDao;
 
-public abstract class MACDRecommend extends RecommendMACD {
+public class MACDRecommendSimple extends RecommendMACD {
     
     // TODO add deltadays?
     
-    public MACDRecommend(MyMyConfig conf) {
+    public MACDRecommendSimple(MyMyConfig conf) {
         super(conf);
     }
 
+    @Override
     public  List<String> getBuyList() {
         List<String> buyList = new ArrayList<>();
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAM);
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAMDELTA);
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUM);
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUMDELTA);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDWEIGHTSBUYHISTOGRAM);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDWEIGHTSBUYHISTOGRAMDELTA);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDWEIGHTSBUYMOMENTUM);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDWEIGHTSBUYMOMENTUMDELTA);
         return buyList;
     }
 
+    @Override
     public  List<String> getSellList() {
         List<String> sellList = new ArrayList<>();
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAM);
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAMDELTA);
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUM);
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUMDELTA);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDWEIGHTSSELLHISTOGRAM);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDWEIGHTSSELLHISTOGRAMDELTA);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDWEIGHTSSELLMOMENTUM);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDWEIGHTSSELLMOMENTUMDELTA);
         return sellList;
     }
 
     @Override
     public boolean isEnabled() {
-        return conf.wantRecommenderMACD();
+        return conf.wantRecommenderSimpleMACD();
     }
+
     /*
     //@Override
     public void getBuySellRecommendations(Map<String, Double> buyMap, Map<String, Double> sellMap, MyConfig conf, List<Double> macdLists[],
@@ -153,5 +156,10 @@ public abstract class MACDRecommend extends RecommendMACD {
         return score;
     }
 */
+
+    @Override
+    public String complexity() {
+        return RecommendConstants.SIMPLE;
+    }
 
 }

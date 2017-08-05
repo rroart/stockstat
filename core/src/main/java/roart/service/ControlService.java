@@ -8,10 +8,12 @@ import roart.model.ResultItem;
 import roart.model.StockItem;
 import roart.mutation.Mutate;
 import roart.aggregate.Aggregator;
-import roart.aggregate.AggregatorRecommenderMacdRsi;
+import roart.aggregate.AggregatorRecommenderIndicator;
+import roart.aggregate.DataReader;
 import roart.aggregate.MLMACD;
 import roart.aggregate.RecommenderRSI;
 import roart.category.Category;
+import roart.category.CategoryConstants;
 import roart.category.CategoryIndex;
 import roart.category.CategoryPeriod;
 import roart.category.CategoryPrice;
@@ -19,7 +21,8 @@ import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.config.MyPropertyConfig;
 import roart.db.DbDao;
-import roart.evaluation.MACDRSIEvaluation;
+import roart.evaluation.IndicatorEvaluation;
+import roart.evaluation.Recommend;
 import roart.evolution.FitnessBuySellMACD;
 import roart.evolution.OrdinaryEvolution;
 import roart.evolution.Individual;
@@ -217,6 +220,9 @@ public class ControlService {
                 return null;
             }
 
+            DataReader[] datareaders = getDataReaders(conf, stocks,
+                    periodText, marketdatamap, periodDataMap, periodmap);
+            
             Category[] categories = getCategories(conf, stocks,
                     periodText, marketdatamap, periodDataMap, periodmap);
             
@@ -321,10 +327,23 @@ public class ControlService {
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories) throws Exception {
         Aggregator[] aggregates = new Aggregator[3];
-        aggregates[0] = new AggregatorRecommenderMacdRsi(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
+        aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
         aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
-        aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, "Price", 0, categories);
+        aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories);
         return aggregates;
+    }
+
+    private DataReader[] getDataReaders(MyMyConfig conf, List<StockItem> stocks,
+            String[] periodText,
+            Map<String, MarketData> marketdatamap,
+            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) throws Exception {
+        DataReader[] categories = new DataReader[StockUtil.PERIODS + 2];
+        categories[0] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.INDEXVALUECOLUMN);
+        categories[1] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.PRICECOLUMN);
+        for (int i = 0; i < StockUtil.PERIODS; i++) {
+            categories[i + 2] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, i);
+        }
+        return categories;
     }
 
     private Category[] getCategories(MyMyConfig conf, List<StockItem> stocks,
@@ -717,6 +736,13 @@ public class ControlService {
         otherTables.add(mlTimesTable);
         otherTables.add(eventTable);
         
+        ResultItemTable table = new ResultItemTable();
+        ResultItemTableRow headrow = new ResultItemTableRow();
+        headrow.add("Config");
+        headrow.add("Old value");
+        headrow.add("New value");
+        table.add(headrow);
+
         try {
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
@@ -769,146 +795,71 @@ public class ControlService {
 
             //Category[] categories = getCategoriesSmall(conf, stocks,
             //       periodText, marketdatamap, periodDataMap, null);
-            String title = "Price";
-            Map<String, Integer>[] periodmap = null;
+
+            int cat = Constants.PRICECOLUMN;
+            
+            DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, null, cat);
+            
             // no...get this from the category
-            IndicatorMACD indicatorMACD = new IndicatorMACD(conf, title + " MACD", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN);
-            IndicatorRSI indicatorRSI = new IndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN);
+            // TODO make oo of this
+            // TODO optimize with constructors, no need for duplicate
+            // map from type (complex/simple) to recommender and keysets
+            Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
+            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
+            Map<String, Indicator> indicatorMap = new HashMap<>();
+            int category = Constants.PRICECOLUMN;
+            for (String type : usedRecommenders.keySet()) {
+                List<Recommend> list = usedRecommenders.get(type);
+                for (Recommend recommend : list) {
+                    String indicator = recommend.indicator();
+                    indicatorMap.put(indicator, recommend.getIndicator(marketdatamap, category));
+                }
+            }
 
-            Map<String, Object> macdResultMap = indicatorMACD.getResultMap();
-            Map<String, Object> rsiResultMap = indicatorRSI.getResultMap();
-            
-            Map<String, Object[]> objectMACDMap = (Map<String, Object[]>) macdResultMap.get("OBJECT");
-            Map<String, Double[]> listMACDMap = (Map<String, Double[]>) macdResultMap.get("LIST");
-            Map<String, Object[]> objectRSIMap = (Map<String, Object[]>) rsiResultMap.get("OBJECT");
-            Map<String, Double[]> listRSIMap = (Map<String, Double[]>) rsiResultMap.get("LIST");
-
-            int selectionSize = conf.getTestRecommendSelect();
-
-            List<Individual> populationBuy = new ArrayList<>();
-            List<Individual> populationSell = new ArrayList<>();
-            
             TaUtil tu = new TaUtil();
-            Object[] retObj = IndicatorUtils.getDayMomRsiMap(conf, objectMACDMap, listMACDMap, objectRSIMap, listRSIMap, tu);
-            MACDRSIEvaluation recommend = new MACDRSIEvaluation(null, null, null, false);
-            
-            List<String> buyList = recommend.getBuyList();
-            List<String> sellList = recommend.getSellList();
-            MACDRSIEvaluation recommendBuy = new MACDRSIEvaluation(conf, buyList, retObj, true);
-            MACDRSIEvaluation recommendSell = new MACDRSIEvaluation(conf, sellList, retObj, false);
-            
-            int category = 0;
-            String market = null; //"tradcomm";
-            //List<Double> macdLists[] = new ArrayList[4];
-
-            /*
-            Object[] retMACDObj = getDayMomMap(conf, objectMACDMap, listMACDMap, tu);
-            Object[] retRSIObj = getDayRsiMap(conf, objectRSIMap, listRSIMap, tu);
-            Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retMACDObj[0];
-            Map<Integer, List<Double>[]> dayMacdListsMap = (Map<Integer, List<Double>[]>) retMACDObj[1];
-*/
-            // TODO clone config
-            //MyMyConfig bestBuyConfig = new MyMyConfig();
-            //MyMyConfig bestSellConfig = new MyMyConfig();
-            
-            int macdlen = conf.getTableDays();
-            int listlen = conf.getTableDays();
-            
-            OrdinaryEvolution evolution = new OrdinaryEvolution();
-            
-            Individual buy = evolution.getFittest(conf, marketdatamap, listMACDMap, objectMACDMap, objectRSIMap, recommendBuy);
-            Individual sell = evolution.getFittest(conf, marketdatamap, listMACDMap, objectMACDMap, objectRSIMap, recommendSell);
-            /*
-            double buy = getScores(true, conf, listMap, bestBuyConfig, buyList, macdlen, listlen, dayMomMap, dayMacdListsMap);
-            double sell = getScores(false, conf, listMap, bestSellConfig, sellList, macdlen, listlen, dayMomMap, dayMacdListsMap);
-                populationBuy.add(new Populi(bestBuyConfig, buy));
-            populationSell.add(new Populi(bestSellConfig, sell));
-            for (int i = 1; i < 2 * selectionSize; i ++) {
-                Map<String, Object> buyValueMap = new HashMap<>(bestBuyConfig.configValueMap);
-                Map<String, Object> sellValueMap = new HashMap<>(bestSellConfig.configValueMap);
-
-                getRandom(buyValueMap, recommend.getBuyList());
-                getRandom(sellValueMap, recommend.getBuyList());
-                MyMyConfig testBuyConfig = new MyMyConfig();
-                MyMyConfig testSellConfig = new MyMyConfig();
-                testBuyConfig.configValueMap = buyValueMap;
-                testSellConfig.configValueMap = sellValueMap;
-                buy = getScores(true, conf, listMap, bestBuyConfig, buyList, macdlen, listlen, dayMomMap, dayMacdListsMap);
-                sell = getScores(false, conf, listMap, bestSellConfig, sellList, macdlen, listlen, dayMomMap, dayMacdListsMap);
-                populationBuy.add(new Populi(testBuyConfig, buy));
-                 populationSell.add(new Populi(testSellConfig, sell));
-                 List<Populi> crossoverBuy = crossover(conf.getTestRecommendChildren(), populationBuy, recommend.getBuyList());
-                 List<Populi> crossoverSell = crossover(conf.getTestRecommendChildren(), populationSell, recommend.getSellList());
-                 mutate(crossoverBuy, recommend.getBuyList());
-                 mutate(crossoverSell, recommend.getSellList());
-            }
-            
-            
-            MyMyConfig testBuyConfig = new MyMyConfig();
-            MyMyConfig testSellConfig = new MyMyConfig();
-            bestBuyConfig.configValueMap = new HashMap<>(conf.configValueMap);
-            bestSellConfig.configValueMap = new HashMap<>(conf.configValueMap);
-            testBuyConfig.configValueMap = new HashMap<>(conf.configValueMap);
-            testSellConfig.configValueMap = new HashMap<>(conf.configValueMap);
-
-            bestBuyConfig.disableML();
-            bestSellConfig.disableML();
-            testBuyConfig.disableML();
-            testSellConfig.disableML();
-
-            //int macdlen = ((double[])(objectMap.values().iterator().next())[0]).length;
-            //int listlen = (listMap.values()).iterator().next().length;
-            System.out.println("macdlen"+macdlen + " " + listlen);
-
-            double bestRecommendQualBuy = -1000;
-            double bestRecommendQualSell = -1000;
-            for (int i = 0; i < conf.getTestRecommendIterations(); i++) {
-                System.out.println("i " + i);
-                double buy = getScores(true, conf, listMap, testBuyConfig, testSellConfig, buyList, sellList, macdlen, listlen, dayMomMap,
-                        dayMacdListsMap);
-                //buysell
-                //double l
-                //System.out.println(buysell);
-                System.out.println("test " + testRecommendQualBuy + " " + bestRecommendQualBuy + " " + testRecommendQualSell + " " + bestRecommendQualSell);
-                if (testRecommendQualBuy > bestRecommendQualBuy) {
-                    bestRecommendQualBuy = testRecommendQualBuy;
-                    bestBuyConfig.configValueMap = new HashMap<>(testBuyConfig.configValueMap);
-                } else {
-                    testBuyConfig.configValueMap = new HashMap<>(bestBuyConfig.configValueMap);                    
+            for (String recommender : usedRecommenders.keySet()) {
+            //for (String indicator : indicatorMap.keySet()) {
+                List<Indicator> indicators = Recommend.getIndicators(recommender, usedRecommenders, indicatorMap);
+                List<String>[] recommendList = recommendKeyMap.get(recommender);
+                //indicators.add(indicatorMap.get(recommender));
+                Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators);
+                //IndicatorEvaluation recommend = new IndicatorEvaluation(null, null, null, false);
+                
+                List<String> buyList = recommendList[0];
+                List<String> sellList = recommendList[1];
+                IndicatorEvaluation recommendBuy = new IndicatorEvaluation(conf, buyList, retObj, true);
+                IndicatorEvaluation recommendSell = new IndicatorEvaluation(conf, sellList, retObj, false);
+                
+                OrdinaryEvolution evolution = new OrdinaryEvolution();
+                
+                Individual buy = evolution.getFittest(conf, recommendBuy);
+                Individual sell = evolution.getFittest(conf, recommendSell);
+     
+                for (String id : buyList) {
+                    System.out.println("r1");
+                    ResultItemTableRow row = new ResultItemTableRow();
+                    row.add(id);
+                    row.add(conf.configValueMap.get(id));
+                    System.out.println(buy.conf.configValueMap.get(id));
+                    System.out.println(buy.conf.configValueMap.get(id).getClass().getName());
+                    row.add(buy.conf.configValueMap.get(id));
+                    table.add(row);
                 }
-                if (testRecommendQualSell > bestRecommendQualSell) {
-                    bestRecommendQualSell = testRecommendQualSell;
-                    bestSellConfig.configValueMap = new HashMap<>(testSellConfig.configValueMap);
-                } else {
-                    testSellConfig.configValueMap = new HashMap<>(bestSellConfig.configValueMap);                    
+                for (String id : sellList) {
+                    System.out.println("r2");
+                    ResultItemTableRow row = new ResultItemTableRow();
+                    row.add(id);
+                    row.add(conf.configValueMap.get(id));
+                    row.add(sell.conf.configValueMap.get(id));
+                    table.add(row);
                 }
-                Mutate.mutate(testBuyConfig.configValueMap, buyList);
-                Mutate.mutate(testSellConfig.configValueMap, sellList);
-            }
-            */
-            ResultItemTable table = new ResultItemTable();
-            ResultItemTableRow headrow = new ResultItemTableRow();
-            headrow.add("Config");
-            headrow.add("Old value");
-            headrow.add("New value");
-            table.add(headrow);
-            for (String id : buyList) {
-                System.out.println("r1");
-                ResultItemTableRow row = new ResultItemTableRow();
-                row.add(id);
-                row.add(conf.configValueMap.get(id));
-                System.out.println(buy.conf.configValueMap.get(id));
-                System.out.println(buy.conf.configValueMap.get(id).getClass().getName());
-                row.add(buy.conf.configValueMap.get(id));
-                table.add(row);
-            }
-            for (String id : sellList) {
-                System.out.println("r2");
-                ResultItemTableRow row = new ResultItemTableRow();
-                row.add(id);
-                row.add(conf.configValueMap.get(id));
-                row.add(sell.conf.configValueMap.get(id));
-                table.add(row);
+                // TODO have a boolean here
+                for (String id : buyList) {
+                    conf.configValueMap.put(id, buy.conf.configValueMap.get(id));
+                }
+                for (String id : sellList) {
+                    conf.configValueMap.put(id, sell.conf.configValueMap.get(id));
+                }
             }
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
@@ -916,13 +867,6 @@ public class ControlService {
                 //retlist.add(list);
             }
             System.out.println("retlist ");
-            // TODO have a boolean here
-            for (String id : buyList) {
-                conf.configValueMap.put(id, buy.conf.configValueMap.get(id));
-            }
-            for (String id : sellList) {
-                conf.configValueMap.put(id, sell.conf.configValueMap.get(id));
-            }
             return retlist;
         } catch (Exception e) {
             log.error("E ", e);

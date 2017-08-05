@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import roart.category.Category;
+import roart.category.CategoryConstants;
 import roart.config.MyConfig;
 import roart.config.MyMyConfig;
 import roart.evaluation.RSIRecommend;
+import roart.indicator.IndicatorUtils;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.util.Constants;
@@ -29,7 +31,7 @@ public class RecommenderRSI extends Aggregator {
          SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap);
-     String wanted = "Price";
+     String wanted = CategoryConstants.PRICE;
         Category cat = null;
         for (Category category : categories) {
             if (category.getTitle().equals(wanted)) {
@@ -43,14 +45,14 @@ public class RecommenderRSI extends Aggregator {
         }
        Object rsi = cat.getResultMap().get("RSI");
         rsiMap = (Map<String, Object[]>) rsi;
-        List<String> buyList = new RSIRecommend().getBuyList();
-        List<String> sellList = new RSIRecommend().getSellList();
+        List<String> buyList = null;///new RSIRecommend().getBuyList();
+        List<String> sellList = null;//new RSIRecommend().getSellList();
         for (String id : listMap.keySet()) {
        // TODO not yet RSIRecommend.getBuySellRecommendations(buyMap, sellMap, conf, rsiLists, listMap, rsiMap, buyList, sellList);
         if (conf.wantRSIScore() && rsi != null) {
             String market = "tradcomm";
             Double[] rsiA = (Double[]) rsiMap.get(id);
-            RSIRecommend.addToLists(marketdatamap, category, rsiLists, market, rsiA);
+            IndicatorUtils.addToLists(marketdatamap, category, rsiLists, market, rsiA);
         }
         }
     }

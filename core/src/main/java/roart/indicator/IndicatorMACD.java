@@ -16,6 +16,7 @@ import org.apache.commons.math3.util.Pair;
 
 import com.tictactec.ta.lib.MInteger;
 
+import roart.pipeline.PipelineConstants;
 import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
@@ -60,9 +61,18 @@ public class IndicatorMACD extends Indicator {
     @Override
     public Map<String, Object> getResultMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("MACD", momMap);
-        map.put("OBJECT", objectMap);
-        map.put("LIST", listMap);
+        map.put(PipelineConstants.INDICATORMACDRESULT, momMap);
+        map.put(PipelineConstants.INDICATORMACDOBJECT, objectMap);
+        map.put(PipelineConstants.INDICATORMACDLIST, listMap);
+        return map;
+    }
+    
+    @Override
+    public Map<String, Object> getLocalResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.RESULT, momMap);
+        map.put(PipelineConstants.OBJECT, objectMap);
+        map.put(PipelineConstants.LIST, listMap);
         return map;
     }
     
@@ -138,7 +148,7 @@ public class IndicatorMACD extends Indicator {
         TaUtil tu = new TaUtil();
         String market = conf.getMarket();
         String periodstr = key;
-        PeriodData perioddata = periodDataMap.get(periodstr);
+        //PeriodData perioddata = periodDataMap.get(periodstr);
         log.info("listmap " + listMap.size() + " " + listMap.keySet());
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<String, Map<double[], Double>> mapMap = new HashMap<>();
@@ -270,5 +280,17 @@ public class IndicatorMACD extends Indicator {
         return size;
     }
     
+    @Override
+    public Object[] getDayResult(Object[] objs, int offset) {
+        TaUtil tu = new TaUtil();
+        return tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs, offset);
+
+    }
+    
+    // TODO call tautil
+    @Override
+    public int getResultSize() {
+        return 4;        
+    }
 }
 

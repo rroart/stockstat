@@ -13,11 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.config.MyMyConfig;
 import roart.evaluation.Evaluation;
-import roart.util.MarketData;
 
 public abstract class EvolutionAlgorithm {
 
-    public abstract Individual getFittest(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap,Map<String, Object[]> objectRSIMap, Evaluation recommender) throws Exception;
+    public abstract Individual getFittest(MyMyConfig conf,Evaluation recommender) throws Exception;
 	
     protected void printmap(Map<String, Object> map, List<String> keys) throws JsonProcessingException {
         for (String key : keys) {
@@ -73,4 +72,9 @@ public abstract class EvolutionAlgorithm {
         return children;
     }
 
+    protected List<Individual> created(Integer evolutionGenerationCreate, MyMyConfig conf, Evaluation evaluation, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
+        Population population = new Population(evolutionGenerationCreate, conf, evaluation, keys);
+        return population.getIndividuals();
+    }
+    
 }

@@ -23,9 +23,10 @@ public abstract class Category {
     private String title;
     protected MyMyConfig conf;
     protected List<StockItem> stocks;
-    protected List<Indicator> indicators = new ArrayList();
-    protected List<Predictor> predictors = new ArrayList();
-
+    protected List<Indicator> indicators = new ArrayList<>();
+    protected List<Predictor> predictors = new ArrayList<>();
+    private Map<String, Indicator> indicatorMap = new HashMap<>();
+    
     public Category(MyMyConfig conf, String periodText, List<StockItem> stocks) {
         this.conf = conf;
         setTitle(periodText);
@@ -86,6 +87,16 @@ public abstract class Category {
            }
         }
         return map;
+    }
+    
+    protected void createIndicatorMap(String periodText) {
+        for (Indicator indicator : indicators) {
+            indicatorMap.put(periodText, indicator);
+        }
+    }
+    
+    public Map<String, Indicator> getIndicatorMap() {
+        return indicatorMap;
     }
 }
 

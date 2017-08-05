@@ -10,6 +10,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.category.CategoryConstants;
+
 public class ArraysUtil {
 
     private static Logger log = LoggerFactory.getLogger(ArraysUtil.class);
@@ -124,7 +126,7 @@ public class ArraysUtil {
         if (list == null) {
             return list;
         }
-        if (("Index").equals(key) || ("Price").equals(key)) {
+        if ((CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key)) {
             int i = 0;
             double first = 0;
             for (i = 0; i < list.length; i ++) {
@@ -143,7 +145,7 @@ public class ArraysUtil {
     }
 
     public static boolean verifyPercentized(Double[] list, String key) {
-        if (("Index").equals(key) || ("Price").equals(key)) {
+        if ((CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key)) {
             if (list != null) {
                 if (list[0] == 100.0) {
                     return true;

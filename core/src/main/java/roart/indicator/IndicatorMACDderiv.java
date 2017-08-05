@@ -17,6 +17,7 @@ import roart.util.PeriodData;
 import roart.util.StockDao;
 import roart.util.TaUtil;
 
+@Deprecated
 public class IndicatorMACDderiv extends Indicator {
 
     Map<String, MarketData> marketdatamap;

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import roart.calculate.CalcDoubleNode;
 import roart.calculate.CalcMACDNode;
 import roart.calculate.CalcNode;
 import roart.config.ConfigConstants;
@@ -21,42 +22,28 @@ import roart.model.StockItem;
 import roart.util.MarketData;
 import roart.util.StockDao;
 
-public class MACDRSIEvaluation extends Evaluation {
+public class IndicatorEvaluation extends Evaluation {
     
     // TODO add deltadays?
     
     public MyMyConfig conf;
     public Object[] retObj;
     public boolean useMax;
-    //public FitnessBuySellMACD scoring;
     
-    public MACDRSIEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b) {
+    public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b) {
         this.conf = conf;
         this.keys = keys;
         this.retObj = retObj;
         this.useMax = b;
-        //scoring = new FitnessBuySellMACD(conf, dayMomMap, dayMacdListsMap, dayRsiMap, dayRsiListsMap, listMap, recommend);
     }
 
     public  List<String> getBuyList() {
         List<String> buyList = new ArrayList<>();
-        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMNODE);
-        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYHISTOGRAMDELTANODE);
-        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMNODE);
-        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYMOMENTUMDELTANODE);
-        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSINODE);
-        buyList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSBUYRSIDELTANODE);
         return buyList;
     }
 
     public  List<String> getSellList() {
         List<String> sellList = new ArrayList<>();
-        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMNODE);
-        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLHISTOGRAMDELTANODE);
-        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMNODE);
-        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLMOMENTUMDELTANODE);
-        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSINODE);
-        sellList.add(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDWEIGHTSSELLRSIDELTANODE);
         return sellList;
     }
 
@@ -74,21 +61,33 @@ public class MACDRSIEvaluation extends Evaluation {
 
     @Override
     public double getEvaluations(MyMyConfig conf, int j) throws JsonParseException, JsonMappingException, IOException {
-        Map<Integer, Map<String, Double[]>> dayMomRsiMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
+        int listlen = conf.getTableDays();
+        List<Map<String, Double[]>> listList = (List<Map<String, Double[]>>) retObj[2];
+        Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
         //List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
-        Map<String, Double[]> momRsiMap = dayMomRsiMap.get(j);
+        Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
         // find recommendations
         double recommend = 0;
         //transform(conf, buyList);
-        for (Double[] momrsi : momRsiMap.values()) {
-
+        if (indicatorMap == null) {
+            return 0;
+        }
+        for (String id : indicatorMap.keySet()) {
+            int newlistidx = listlen - 1 - j + conf.getTestIndicatorRecommenderComplexFutureDays();
+            int curlistidx = listlen - 1 - j;
+            Double[] list = listList.get(0).get(id);
+            if (list[newlistidx] == null || list[curlistidx] == null) {
+                continue;
+            }
+            double change = list[newlistidx]/list[curlistidx];
+            Double[] momrsi = indicatorMap.get(id);
             for (int i = 0; i < keys.size(); i++) {
                 String key = keys.get(i);
                 // TODO temp fix
-                CalcMACDNode node = (CalcMACDNode) conf.configValueMap.get(key);
+                CalcNode node = (CalcNode) conf.configValueMap.get(key);
                 //node.setDoBuy(useMax);
                 double value = momrsi[i];
-                recommend += node.calc(value, 0);
+                recommend += node.calc(value, 0) * change;
             }
         }
         return recommend;
@@ -128,6 +127,10 @@ public class MACDRSIEvaluation extends Evaluation {
         public static CalcNode get(String name, String jsonValue, List<Double>[] macdrsiMinMax, int index, boolean useMax) throws JsonParseException, JsonMappingException, IOException {
             // TODO check class name
             CalcMACDNode anode;
+            if (name != null && name.equals("Double")) {
+                CalcDoubleNode aanode = new CalcDoubleNode();
+                return aanode;
+            }
             if (jsonValue == null) {
                 anode = new CalcMACDNode();
             } else {
@@ -157,7 +160,11 @@ public class MACDRSIEvaluation extends Evaluation {
         List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
-            CalcNode node = CalcNodeFactory.get(null, null, macdrsiMinMax, i, useMax);
+            String name = null;
+            if (key.contains("simple")) {
+                name = "Double";
+            }
+            CalcNode node = CalcNodeFactory.get(name, null, macdrsiMinMax, i, useMax);
             node.randomize();
             configValueMap.put(key, node);
         }
@@ -171,6 +178,12 @@ public class MACDRSIEvaluation extends Evaluation {
         ObjectMapper mapper = new ObjectMapper();
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
+            Object value = conf.configValueMap.get(key);
+            if (value instanceof Integer) {
+                CalcNode anode = new CalcDoubleNode();
+                conf.configValueMap.put(key, anode);
+                return;
+            }
             String jsonValue = (String) conf.configValueMap.get(key);
             if (jsonValue == null || jsonValue.isEmpty()) {
                 jsonValue = (String) conf.deflt.get(key);
@@ -188,8 +201,13 @@ public class MACDRSIEvaluation extends Evaluation {
         ObjectMapper mapper = new ObjectMapper();
         for (String key : keys) {
             CalcNode node = (CalcNode) conf.configValueMap.get(key);
-            String string = mapper.writeValueAsString(node);
-            conf.configValueMap.put(key, string);
+            if (node instanceof CalcMACDNode) {
+                String string = mapper.writeValueAsString(node);
+                conf.configValueMap.put(key, string);
+            } else {
+                CalcDoubleNode anode = (CalcDoubleNode) node;
+                conf.configValueMap.put(key, anode.getWeight());
+            }
         }
     }
 
@@ -197,14 +215,29 @@ public class MACDRSIEvaluation extends Evaluation {
     public void normalize(Map<String, Object> map, List<String> keys) {
         int total = 0;
         for (String key : keys) {
-            CalcMACDNode node = (CalcMACDNode) map.get(key);
-            int tmpNum = node.getWeight();
+            CalcNode anode = (CalcNode) map.get(key);
+            int tmpNum = 0;
+            if (anode instanceof CalcMACDNode) {
+                CalcMACDNode node = (CalcMACDNode) anode;
+                tmpNum = node.getWeight();
+            } else {
+                CalcDoubleNode node = (CalcDoubleNode) anode;
+                tmpNum = node.getWeight();               
+            }
             total += tmpNum;
         }
         for (String key : keys) {
-            CalcMACDNode node = (CalcMACDNode) map.get(key);
-            int tmpNum = node.getWeight();
-            node.setWeight(tmpNum * 100 / total);
+            CalcNode anode = (CalcNode) map.get(key);
+            int tmpNum = 0;
+            if (anode instanceof CalcMACDNode) {
+                CalcMACDNode node = (CalcMACDNode) anode;
+                tmpNum = node.getWeight();
+                node.setWeight(tmpNum * 100 / total);
+            } else {
+                CalcDoubleNode node = (CalcDoubleNode) anode;
+                tmpNum = node.getWeight();               
+                node.setWeight(tmpNum * 100 / total);
+            }
         }
         
     }
@@ -215,7 +248,7 @@ public class MACDRSIEvaluation extends Evaluation {
         int listlen = conf.getTableDays();
 
         double testRecommendQualBuySell = 0;
-        for (int j = conf.getTestRecommendFutureDays(); j < macdlen; j += conf.getTestRecommendIntervalDays()) {
+        for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < macdlen; j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             //List<Double> macdLists[] = macdMinMax.get(j);
             //int newmacdidx = macdlen - 1 - j + conf.getTestRecommendFutureDays();
             //int curmacdidx = macdlen - 1 - j;
@@ -223,7 +256,7 @@ public class MACDRSIEvaluation extends Evaluation {
             Map<String, Double[]> momrsiMap = dayMomRsiMap.get(j);
            //System.out.println("j"+j);
             testRecommendQualBuySell += getEvaluations(testBuySellConfig, j);
-            int newlistidx = listlen - 1 - j + conf.getTestRecommendFutureDays();
+            int newlistidx = listlen - 1 - j + conf.getTestIndicatorRecommenderComplexFutureDays();
             int curlistidx = listlen - 1 - j;
             //testRecommendQualBuySell += MACDRecommend.getQuality(buy, buysellMap, listMap, curlistidx, newlistidx);
         }

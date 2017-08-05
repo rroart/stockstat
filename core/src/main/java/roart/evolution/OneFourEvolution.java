@@ -13,15 +13,14 @@ import roart.config.MyMyConfig;
 import roart.evaluation.Evaluation;
 import roart.evaluation.MACDRecommend;
 import roart.indicator.IndicatorUtils;
-import roart.util.MarketData;
 import roart.util.TaUtil;
 
 public class OneFourEvolution extends EvolutionAlgorithm {
 
     @Override
-    public Individual getFittest(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap, Map<String, Object[]> objectRSIMap, Evaluation recommend) throws Exception {
+    public Individual getFittest(MyMyConfig conf,Evaluation recommend) throws Exception {
         //MACDRecommend recommend = new MACDRecommend();
-        int selectionSize = conf.getTestRecommendSelect();
+        int selectionSize = conf.getEvolutionSelect();
         int four = 4;
         int five = 5;
         List<String> buyList = recommend.getKeys();
@@ -30,11 +29,6 @@ public class OneFourEvolution extends EvolutionAlgorithm {
         int category = 0;
         String market = null; //"tradcomm";
         //List<Double> macdLists[] = new ArrayList[4];
-        TaUtil tu = new TaUtil();
-
-        Object[] retMacdObj = IndicatorUtils.getDayMomMap(conf, objectMACDMap, listMap, tu);
-        Map<Integer, Map<String, Double[]>> dayMomMap = (Map<Integer, Map<String, Double[]>>) retMacdObj[0];
-        List<Double>[] dayMacdListsMap = (List<Double>[]) retMacdObj[1];
 
         // TODO clone config
 
@@ -62,7 +56,7 @@ public class OneFourEvolution extends EvolutionAlgorithm {
         printmap(population.get(0).conf.configValueMap, keyList);
         printmap(population.get(population.size() - 1).conf.configValueMap, keyList);
 
-        for (int i = 0; i < conf.getTestRecommendGenerations(); i++){
+        for (int i = 0; i < conf.getEvolutionGenerations(); i++){
             Individual parent = population.get(0);
              population = new ArrayList<>();
             population.add(parent);
@@ -70,7 +64,7 @@ public class OneFourEvolution extends EvolutionAlgorithm {
                 Individual pop = new Individual(conf, i, recommend).getNewWithValueCopyFactory(parent.conf, keyList, false);
                 pop.mutate(keyList);
                 population.add(pop);
-                if ( i == conf.getTestRecommendGenerations() - 1) {
+                if ( i == conf.getEvolutionGenerations() - 1) {
                     printmap(pop.conf.configValueMap, keyList);
 
                 }

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -13,15 +12,14 @@ import roart.config.MyMyConfig;
 import roart.evaluation.Evaluation;
 import roart.evaluation.MACDRecommend;
 import roart.service.ControlService;
-import roart.util.MarketData;
 import roart.util.TaUtil;
 
 public class OrdinaryEvolution extends EvolutionAlgorithm {
 
     @Override
-    public Individual getFittest(MyMyConfig conf,Map<String, MarketData> marketdatamap,Map<String, Double[]> listMap,Map<String, Object[]> objectMACDMap, Map<String, Object[]> objectRSIMap, Evaluation evaluation) throws Exception {
+    public Individual getFittest(MyMyConfig conf,Evaluation evaluation) throws Exception {
         //MACDRecommend recommend = new MACDRecommend();
-        int selectionSize = conf.getTestRecommendSelect();
+        int selectionSize = conf.getEvolutionSelect();
         List<String> keys = evaluation.getKeys();
         Population population = new Population(selectionSize, conf, evaluation, keys);
         int category = 0;
@@ -66,16 +64,19 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         printmap(population.getFittest().conf.configValueMap, keyList);
         printmap(population.getIndividuals().get(population.size() - 1).conf.configValueMap, keyList);
         
-        for (int i = 0; i < conf.getTestRecommendGenerations(); i++){
-            population.truncate(Math.min(population.size(), conf.getTestRecommendSelect()));
+        for (int i = 0; i < conf.getEvolutionGenerations(); i++){
+            population.truncate(Math.min(population.size(), conf.getEvolutionSelect()));
            
-            List<Individual> children = crossover(conf.getTestRecommendChildren(), population.getIndividuals(), keyList, conf, false, useMax, evaluation);
+            List<Individual> children = crossover(conf.getEvolutionCrossover(), population.getIndividuals(), keyList, conf, false, useMax, evaluation);
             
-            mutateList(population.getIndividuals(), conf.getTestRecommendElite(), population.size(), conf.getTestRecommendMutate(), false, keyList, useMax);
-            mutateList(children, 0, population.size(), conf.getTestRecommendMutate(), true, keyList, useMax);
+            mutateList(population.getIndividuals(), conf.getEvolutionElite(), population.size(), conf.getEvolutionMutate(), false, keyList, useMax);
+            mutateList(children, 0, population.size(), conf.getEvolutionMutate(), true, keyList, useMax);
             
             population.getIndividuals().addAll(children);
 
+            List<Individual> created = created(conf.getEvolutionGenerationCreate(), conf, evaluation, keyList);
+            population.getIndividuals().addAll(created);
+            
              //Collections.sort(population);
             // System.out.println("pMid " + population);
            
@@ -86,5 +87,5 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         Individual parent = population.getFittest();
         return parent;
     }
-    
+
  }

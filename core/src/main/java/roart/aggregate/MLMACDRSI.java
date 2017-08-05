@@ -24,6 +24,8 @@ import roart.db.DbAccess;
 import roart.db.DbDao;
 import roart.db.DbSpark;
 import roart.evaluation.MACDRecommend;
+import roart.indicator.Indicator;
+import roart.indicator.IndicatorUtils;
 import roart.ml.MLClassifyDao;
 import roart.ml.MLClassifyModel;
 import roart.model.ResultItemTable;
@@ -39,7 +41,7 @@ import roart.util.StockDao;
 import roart.util.TaUtil;
 import scala.collection.mutable.WrappedArray;
 
-public class MLMACD extends Aggregator {
+public class MLMACDRSI extends Aggregator {
 /*
     public MLMACD(MyMyConfig conf, String string, int category) {
         super(conf, string, category);
@@ -100,15 +102,13 @@ public class MLMACD extends Aggregator {
 
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
-    public MLMACD(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, MarketData> marketdatamap, 
-            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories) throws Exception {
+    public MLMACDRSI(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, MarketData> marketdatamap, 
+            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories, Indicator[] indicators) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         this.key = title;
-        makeWantedSubTypes();
-        makeMapTypes();
         if (conf.wantML()) {
             if (conf.wantMLSpark()) {
                 mldaos.add(new MLClassifyDao("spark", conf));
@@ -136,67 +136,17 @@ public class MLMACD extends Aggregator {
         public abstract  int getArrIdx();
     }
     
-    private class MacdSubTypeHist extends MacdSubType {
-        @Override
-        public String getType() {
-            return "H";
-        }
-        @Override
-        public String getName() {
-            return "Hist";
-        }
-        @Override
-       public int getArrIdx() {
-            return TaUtil.MACDIDXHIST;
-        }
-    }
-    
-    private class MacdSubTypeMacd extends MacdSubType {
-        @Override
-        public String getType() {
-            return "M";
-        }
-        @Override
-        public String getName() {
-            return "Macd";
-        }
-        @Override
-       public int getArrIdx() {
-            return TaUtil.MACDIDXMACD;
-        }
-    }
-
     @Override
     public Map<Integer, String> getMapTypes() {
         return mapTypes;
     }
     
-    private List<Integer> getMapTypeList() {
-        List<Integer> retList = new ArrayList<>();
-        retList.add(CMNTYPE);
-        retList.add(POSTYPE);
-        retList.add(NEGTYPE);
-        return retList;
-    }
-    
     @Override
     public List<Integer> getTypeList() {
-        return getMapTypeList();
+        return null;
     }
     
     private Map<Integer, String> mapTypes = new HashMap<>();
-    
-   private void makeMapTypes() {
-        mapTypes.put(CMNTYPE, CMNTYPESTR);
-        mapTypes.put(POSTYPE, POSTYPESTR);
-        mapTypes.put(NEGTYPE, NEGTYPESTR);
-    }
-    private int CMNTYPE = 0;
-    private int NEGTYPE = 1;
-    private int POSTYPE = 2;
-    private String CMNTYPESTR = "cmn";
-    private String NEGTYPESTR = "neg";
-    private String POSTYPESTR = "pos";
     
     private List<MacdSubType> wantedSubTypes = new ArrayList<>();
     
@@ -204,14 +154,6 @@ public class MLMACD extends Aggregator {
           return wantedSubTypes;
     }
   
-   private void makeWantedSubTypes() {
-       if (conf.wantMLHist()) {
-           wantedSubTypes.add(new MacdSubTypeHist());
-       }
-       if (conf.wantMLMacd()) {
-           wantedSubTypes.add(new MacdSubTypeMacd());
-       }
-   }
     // TODO make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category2, Category[] categories) throws Exception {
@@ -222,16 +164,23 @@ public class MLMACD extends Aggregator {
                 break;
             }
         }
-        Object macd = cat.getResultMap().get(PipelineConstants.INDICATORMACDRESULT);
-        Object list0 = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
-        Object object = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
+        //Object macd = cat.getResultMap().get(PipelineConstants.INDICATORMACDRESULT);
+        Map<String, Double[]> listMACDMap = (Map<String, Double[]>) cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
+        Map<String, Object[]> objectMACDMap = (Map<String, Object[]>) cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
+        //Object rsi = cat.getResultMap().get(PipelineConstants.INDICATORRSIRESULT);
+        Map<String, Double[]> listRSIMap = (Map<String, Double[]>) cat.getResultMap().get(PipelineConstants.INDICATORRSILIST);
+        Map<String, Object[]> objectRSIMap = (Map<String, Object[]>) cat.getResultMap().get(PipelineConstants.INDICATORRSIOBJECT);
+        TaUtil tu = new TaUtil();
+        Object[] retObj = IndicatorUtils.getDayMomRsiMap(conf, objectMACDMap, listMACDMap, objectRSIMap, listRSIMap, tu);
+
+        Map<Integer, Map<String, Double[]>> dayMomRsiMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
         
         DbAccess dbDao = DbDao.instance(conf);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        this.listMap = (Map<String, Double[]>) list0;
+        this.listMap = (Map<String, Double[]>) listMACDMap;
         if (conf.wantPercentizedPriceIndex()) {
             
         }
@@ -250,11 +199,11 @@ public class MLMACD extends Aggregator {
             macdLists[i] = new ArrayList<>();
         }
         long time2 = System.currentTimeMillis();
-        objectMap = (Map<String, Object[]>) object;
+        objectMap = (Map<String, Object[]>) objectMACDMap;
         //System.out.println("imap " + objectMap.size());
         log.info("time2 " + (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
-        TaUtil tu = new TaUtil();
+
         String market = conf.getMarket();
         String periodstr = key;
         PeriodData perioddata = periodDataMap.get(periodstr);
@@ -294,6 +243,7 @@ public class MLMACD extends Aggregator {
                     //for (int i = trunclist.size(); i >=0 ; i --) {
                     //for (String id : listMap.keySet()) {
                     //int trunclistsize = trunclist.length;
+                    /*
                     if (endOfArray.value > 0) {
                         List<MacdSubType> subTypes = wantedSubTypes();
                         for (MacdSubType subType : subTypes) {
@@ -306,6 +256,7 @@ public class MLMACD extends Aggregator {
                     } else {
                         //log.error("error " + subType.getType());
                     }
+                    */
                 }
             }
         }
@@ -317,11 +268,9 @@ public class MLMACD extends Aggregator {
             Map<Double, String> labelMapShort = createLabelMapShort();
             try {
                 List<MacdSubType> subTypes = wantedSubTypes();
-                for (MacdSubType subType : subTypes) {
                     for (MLClassifyDao mldao : mldaos) {
-                        for (int mapTypeInt : getMapTypeList()) {
-                            String mapType = mapTypes.get(mapTypeInt);
-                            String mapName = subType.getType() + mapType;
+                            String mapType = mapTypes.get(null);
+                            String mapName = mapType;
                             //System.out.println("mapget " + mapName + " " + mapMap.keySet());
                             Map<double[], Double> map = mapMap.get(mapName);
                             if (map == null) {
@@ -329,8 +278,6 @@ public class MLMACD extends Aggregator {
                                 continue;
                             }
                             mldao.learntest(this, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime);  
-                        }
-                    }
                 }
             } catch (Exception e) {
                 log.error("Exception", e);
@@ -356,7 +303,7 @@ public class MLMACD extends Aggregator {
                 List<MacdSubType> subTypes = wantedSubTypes();
                 for (MacdSubType subType : subTypes) {
                     double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
-                    getMlMappings(subType.getName(), subType.getType(), labelMapShort, mapIdMap, id, aMacdArray, endOfArray, trunclist);
+                    //getMlMappings(subType.getName(), subType.getType(), labelMapShort, mapIdMap, id, aMacdArray, endOfArray, trunclist);
                 }
             }
 
@@ -368,8 +315,8 @@ public class MLMACD extends Aggregator {
                     // map from posnegcom to map<id, result>
                     Map<String, Map<String, Double[]>> mapResult2 = new HashMap<>();
                     for (MLClassifyModel model : mldao.getModels()) {
-                        for (int mapTypeInt : getMapTypeList()) {
-                            String mapType = mapTypes.get(mapTypeInt);
+                        for (;;) {
+                            String mapType = mapTypes.get(null);
                             String mapName = subType.getType() + mapType;
                             Map<String, double[]> map = mapIdMap.get(mapName);
                             log.info("map name " + mapName);
@@ -386,7 +333,7 @@ public class MLMACD extends Aggregator {
                             Map<String, Double[]> classifyResult = mldao.classify(this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, labelMapShort, mapTime);
                             mapResult2.put(mapType, classifyResult);
                         }
-                        mapResult1.put(model, mapResult2);
+                        //mapResult1.put(model, mapResult2);
                     }
                 }
                 mapResult.put(subType, mapResult1);
@@ -435,10 +382,11 @@ public class MLMACD extends Aggregator {
             List<MacdSubType> subTypes = wantedSubTypes();
             for (MacdSubType subType : subTypes) {
                 List<Integer> list = new ArrayList<>();
-                list.add(POSTYPE);
-                list.add(NEGTYPE);
+                //list.add(POSTYPE);
+                //list.add(NEGTYPE);
                 for (Integer type : list) {
-                    String name = mapTypes.get(type);
+                    /*
+                    String name = mapTypes.get(null);
                     String mapName = subType.getType() + name;
                     Map<double[], Double> myMap = mapMap.get(mapName);
                     if (myMap == null) {
@@ -451,6 +399,7 @@ public class MLMACD extends Aggregator {
                         counts += labelMapShort.get(label) + " : " + countMap.get(label) + " ";
                     }
                     addEventRow(counts, subType.getName(), "");
+*/                
                 }
             }
         }
@@ -499,7 +448,7 @@ public class MLMACD extends Aggregator {
             }
         }
     }
-
+/*
     private void getMlMappings(String name, String subType, Map<Double, String> labelMapShort, Map<String, Map<String, double[]>> mapIdMap,
             String id, double[] array, MInteger endOfArray,
             Double[] valueList) {
@@ -534,7 +483,7 @@ public class MLMACD extends Aggregator {
             }
         }
     }
-
+*/
     private boolean anythingHere(Map<String, Double[]> listMap2) {
         for (Double[] array : listMap2.values()) {
             for (int i = 0; i < array.length; i++) {

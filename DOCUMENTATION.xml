@@ -209,7 +209,100 @@ Table days (R days): how many days to use for the graph or statistics
       </programlisting>
     </para>
   </sect1>
-</chapter>  
+</chapter>
+<chapter id="recommend">
+  <title>
+    Recommendation
+  </title>
+  <para>
+    It is difficult to find the right formula for recommendations.
+    For this, an evolutionary algorithm is used.
+    <table>
+      <title>
+	Evolution settings
+      </title>
+            <tgroup cols="2">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	      evolution.generations
+	    </entry>
+	    <entry>
+	      How many generation (iterations) we will have.
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.select
+	    </entry>
+	    <entry>
+	      The size of the population after each selection
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.elite
+	    </entry>
+	    <entry>
+	      The number of best fitted that will not mutate
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.crossover
+	    </entry>
+	    <entry>
+	      The number of crossover to make a new individual
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.mutate
+	    </entry>
+	    <entry>
+	      The number to mutate
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.generationcreate
+	    </entry>
+	    <entry>
+	      The number to create per generation
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+  </para>
+</chapter>
 <chapter id="R">
   <title>
     R

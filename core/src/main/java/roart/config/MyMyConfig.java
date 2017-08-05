@@ -360,7 +360,7 @@ public class MyMyConfig extends MyPropertyConfig {
     }
 
     public  int weightBuyMacdDelta() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUGMOMENTUMDELTA);
+        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUMDELTA);
     }
 
     public  int weightSellHist() {
@@ -381,6 +381,10 @@ public class MyMyConfig extends MyPropertyConfig {
 
     public  boolean wantRecommenderRSI() {
         return (Boolean) configValueMap.get(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTS);
+    }
+
+    public  boolean wantRecommenderMACD() {
+        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTS);
     }
 
     public  int buyWeightRSI() {
@@ -466,44 +470,54 @@ public class MyMyConfig extends MyPropertyConfig {
         return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDINTERVALTIMES);
     }
 
-    public Integer getTestRecommendIterations() {
+    @Deprecated
+   public Integer getTestRecommendIterations() {
         return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDITERATIONS);
     }
 
+    @Deprecated
     public String getTestRecommendPeriod() {
         return (String) configValueMap.get(ConfigConstants.TESTRECOMMENDPERIOD);
     }
 
-    public Integer getTestRecommendFutureDays() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDFUTUREDAYS);
+    public Integer getTestIndicatorRecommenderComplexFutureDays() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTINDICATORRECOMMENDERCOMPLEXFUTUREDAYS);
     }
 
-    public Integer getTestRecommendIntervalDays() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDINTERVALDAYS);
+    public Integer getTestIndicatorRecommenderComplexIntervalDays() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTINDICATORRECOMMENDERCOMPLEXINTERVALDAYS);
     }
 
-    public Integer getTestRecommendGenerations() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDGENERATIONS);
+    public Integer getTestIndicatorRecommenderSimpleFutureDays() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTINDICATORRECOMMENDERSIMPLEFUTUREDAYS);
     }
 
-    public Integer getTestRecommendChildren() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDCHILDREN);
+    public Integer getTestIndicatorRecommenderSimpleIntervalDays() {
+        return (Integer) configValueMap.get(ConfigConstants.TESTINDICATORRECOMMENDERSIMPLEINTERVALDAYS);
     }
 
-    public Integer getTestRecommendMutate() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDMUTATE);
+    public Integer getEvolutionGenerations() {
+        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONGENERATIONS);
     }
 
-    public Integer getTestRecommendSelect() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDSELECT);
+    public Integer getEvolutionCrossover() {
+        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONCROSSOVER);
     }
 
-    public Integer getTestRecommendCrossover() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDCROSSOVER);
+    public Integer getEvolutionGenerationCreate() {
+        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONGENERATIONCREATE);
     }
 
-    public Integer getTestRecommendElite() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDELITE);
+    public Integer getEvolutionMutate() {
+        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONMUTATE);
+    }
+
+    public Integer getEvolutionSelect() {
+        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONSELECT);
+    }
+
+    public Integer getEvolutionElite() {
+        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONELITE);
     }
 
     public boolean wantAggregators() {
@@ -511,7 +525,42 @@ public class MyMyConfig extends MyPropertyConfig {
     }
 
     public boolean wantMACDRSIRecommender() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSMACDRSIRECOMMENDER) 
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER) 
+                && wantAggregators();
+    }
+
+    public boolean wantRecommenderSimpleMACD() {
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACD) 
+                && wantIndicatorRecommenderSimple();
+    }
+
+    public boolean wantRecommenderComplexMACD() {
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD) 
+                && wantIndicatorRecommenderComplex();
+    }
+
+    public boolean wantRecommenderSimpleRSI() {
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSI) 
+                && wantIndicatorRecommenderSimple();
+    }
+
+    public boolean wantRecommenderComplexRSI() {
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI) 
+                && wantIndicatorRecommenderComplex();
+    }
+
+    public boolean wantIndicatorRecommenderSimple() {
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLE) 
+                && wantIndicatorRecommender();
+    }
+
+    public boolean wantIndicatorRecommenderComplex() {
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX) 
+                && wantIndicatorRecommender();
+    }
+
+   public boolean wantIndicatorRecommender() {
+        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER) 
                 && wantAggregators();
     }
 

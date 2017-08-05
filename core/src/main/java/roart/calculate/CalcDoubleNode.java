@@ -1,25 +1,47 @@
 package roart.calculate;
 
+import java.util.Random;
+
 public class CalcDoubleNode extends CalcNode {
 
-    private double value;
-    
+    private int weight;
+
     @Override
     public double calc(double value, double minmax) {
-        // TODO Auto-generated method stub
-        return 0;
+        return weight;
     }
 
     @Override
     public void randomize() {
-        // TODO Auto-generated method stub
-        
+        Random rand = new Random();
+        getWeight(rand);
+    }
+
+    private void getWeight(Random rand) {
+        weight = 1 + rand.nextInt(100);
     }
 
     @Override
     public void mutate() {
-        // TODO Auto-generated method stub
-        
+        Random rand = new Random();
+        int task = rand.nextInt(1);
+        switch (task) {
+        case 0:
+            getWeight(rand);
+            break;
+        default:
+            System.out.println("Too many");
+            break;
+        }
+
+    }
+    
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
 }

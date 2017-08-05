@@ -3,13 +3,16 @@ package roart.indicator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import roart.pipeline.PipelineConstants;
 import roart.config.MyMyConfig;
-import roart.evaluation.MACDRecommend;
+import roart.util.MarketData;
 import roart.util.TaUtil;
 
 public class IndicatorUtils {
@@ -27,7 +30,7 @@ public class IndicatorUtils {
      * @return
      * @throws Exception
      */
-    
+
     public static Object[] getDayMomMap(MyMyConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
@@ -38,15 +41,15 @@ public class IndicatorUtils {
         for (int tmpj = 0; tmpj < 4; tmpj ++) {
             macdLists[tmpj] = new ArrayList<>();
             macdMinMax[tmpj] = new ArrayList<>();
-         }
-        for (int j = conf.getTestRecommendFutureDays(); j < conf.getTableDays(); j += conf.getTestRecommendIntervalDays()) {
+        }
+        for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < conf.getTableDays(); j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             Map<String, Double[]> momMap = new HashMap<>();
             for (String id : listMap.keySet()) {
                 Object[] objs = objectMap.get(id);
                 Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs, j);
                 if (momentum != null) {
                     momMap.put(id, momentum);
-                    MACDRecommend.addToLists(macdLists, momentum);
+                    IndicatorUtils.addToLists(macdLists, momentum);
                 } else {
                     //System.out.println("No macd for id" + id);
                 }
@@ -73,14 +76,14 @@ public class IndicatorUtils {
             rsiLists[tmpj] = new ArrayList<>();
             rsiMinMax[tmpj] = new ArrayList<>();
         }
-        for (int j = conf.getTestRecommendFutureDays(); j < conf.getTableDays(); j += conf.getTestRecommendIntervalDays()) {
+        for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < conf.getTableDays(); j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             Map<String, Double[]> rsiMap = new HashMap<>();
             for (String id : listMap.keySet()) {
                 Object[] objs = objectMap.get(id);
                 Double[] rsi = tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, j);
                 if (rsi != null) {
                     rsiMap.put(id, rsi);
-                    MACDRecommend.addToLists(rsiLists, rsi);
+                    IndicatorUtils.addToLists(rsiLists, rsi);
                 } else {
                     //System.out.println("No macd for id" + id);
                 }
@@ -105,8 +108,8 @@ public class IndicatorUtils {
         for (int tmpj = 0; tmpj < 4 + 2; tmpj ++) {
             macdrsiLists[tmpj] = new ArrayList<>();
             macdrsiMinMax[tmpj] = new ArrayList<>();
-         }
-        for (int j = conf.getTestRecommendFutureDays(); j < conf.getTableDays(); j += conf.getTestRecommendIntervalDays()) {
+        }
+        for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < conf.getTableDays(); j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             Map<String, Double[]> momrsiMap = new HashMap<>();
             for (String id : listMacdMap.keySet()) {
                 Object[] objsMacd = objectMacdMap.get(id);
@@ -114,21 +117,101 @@ public class IndicatorUtils {
                 Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objsMacd, j);
                 Double[] rsi = tu.getRsiAndDelta(conf.getRSIDeltaDays(), objsRSI, j);
                 if (momentum != null) {
-    	    Double[] momrsi = ArrayUtils.addAll(momentum, rsi);
+                    Double[] momrsi = ArrayUtils.addAll(momentum, rsi);
                     momrsiMap.put(id, momrsi);
-                    MACDRecommend.addToLists(macdrsiLists, momrsi);
+                    IndicatorUtils.addToLists(macdrsiLists, momrsi);
                 } else {
                     //System.out.println("No macd for id" + id);
                 }
             }
             dayMomRsiMap.put(j, momrsiMap);
         }
-    for (int i = 0; i < 4 + 2; i++) {
-        macdrsiMinMax[i].add(Collections.min(macdrsiLists[i]));
-        macdrsiMinMax[i].add(Collections.max(macdrsiLists[i]));
-    }
+        for (int i = 0; i < 4 + 2; i++) {
+            macdrsiMinMax[i].add(Collections.min(macdrsiLists[i]));
+            macdrsiMinMax[i].add(Collections.max(macdrsiLists[i]));
+        }
         retobj[0] = dayMomRsiMap;
         retobj[1] = macdrsiMinMax;
         return retobj;
     }
+
+    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators) throws Exception {
+        List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
+        List<Map<String, Double[]>> listList = new ArrayList<>();
+        int arraySize = 0;
+        for (Indicator indicator : indicators) {
+            Map<String, Object> resultMap = indicator.getLocalResultMap();
+            objectMapsList.add((Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT));
+            listList.add((Map<String, Double[]>) resultMap.get(PipelineConstants.LIST));
+            arraySize += indicator.getResultSize();
+            System.out.println("sizes " + listList.get(listList.size() - 1).size());
+        }
+        Object[] retobj = new Object[3];
+        Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
+        List<Double> indicatorLists[] = new ArrayList[arraySize];
+        List<Double> indicatorMinMax[] = new ArrayList[arraySize];
+        for (int tmpj = 0; tmpj < arraySize; tmpj ++) {
+            indicatorLists[tmpj] = new ArrayList<>();
+            indicatorMinMax[tmpj] = new ArrayList<>();
+        }
+        // TODO copy the retain from aggregator?
+        Set<String> ids = new HashSet<>();
+        ids.addAll(listList.get(0).keySet());
+
+        // TODO change
+        for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < conf.getTableDays(); j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
+            Map<String, Double[]> indicatorMap = new HashMap<>();
+            for (String id : listList.get(0).keySet()) {
+                Double[] result = new Double[0];
+                int idx = 0;
+                for (Map<String, Object[]> objectMap : objectMapsList) {
+                    Indicator ind = indicators.get(idx++);
+                    Object[] objsIndicator = objectMap.get(id);
+                    Object[] arr = ind.getDayResult(objsIndicator, j);
+                    if (arr != null && arr.length > 0) {
+                        result = (Double[]) ArrayUtils.addAll(result, arr);
+                    } else {
+                        System.out.println("No obj for id" + id);
+                    }
+                }
+                if (result.length == arraySize) {
+                    indicatorMap.put(id, result);
+                    IndicatorUtils.addToLists(indicatorLists, result);
+               } else {
+                    System.out.println("discarding " + id);
+                    continue;
+                }
+                dayIndicatorMap.put(j, indicatorMap);
+            }
+        }
+        for (int i = 0; i < arraySize; i++) {
+            indicatorMinMax[i].add(Collections.min(indicatorLists[i]));
+            indicatorMinMax[i].add(Collections.max(indicatorLists[i]));
+        }
+        retobj[0] = dayIndicatorMap;
+        retobj[1] = indicatorMinMax;
+        retobj[2] = listList;
+        return retobj;
+    }
+
+    public static void addToLists(List<Double> macdLists[], Double[] momentum) throws Exception {
+        for (int i = 0; i < macdLists.length; i ++) {
+            List<Double> macdList = macdLists[i];
+            if (momentum[i] != null) {
+                macdList.add(momentum[i]);
+            }
+        }
+    }
+
+    public static void addToLists(Map<String, MarketData> marketdatamap, int category, List<Double> macdLists[], String market, Double[] momentum) throws Exception {
+        {
+            for (int i = 0; i < macdLists.length; i ++) {
+                List<Double> macdList = macdLists[i];
+                if (momentum[i] != null) {
+                    macdList.add(momentum[i]);
+                }
+            }
+        }
+    }
+
 }

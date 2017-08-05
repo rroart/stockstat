@@ -55,7 +55,7 @@ public class Population {
     }
     
     public void truncate(int min) {
-        population = population.subList(0, Math.min(population.size(), conf.getTestRecommendSelect()));
+        population = population.subList(0, Math.min(population.size(), conf.getEvolutionSelect()));
     }
 
 }

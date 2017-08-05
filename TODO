@@ -13,4 +13,10 @@ indicator/predictor save created/generated data
 test buy recommend w/o ml, iteratively (plus gen alg)
 macd ml w/ gen alg?
 drop classifier eval and use when model learntest
-reconstruct full time base on 1y etc
+reconstruct full time base on 1y etc. cy merge
+combine many indicators menu mlmacdrs
+tensorflow config to xml file
+neunet av macdrsi kombo
+swarm algo
+prolog fuzzy
+add one random in each generation

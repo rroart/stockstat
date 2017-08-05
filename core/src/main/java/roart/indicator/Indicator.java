@@ -55,5 +55,16 @@ public abstract class Indicator {
          return null;
     }
 
+    public Object[] getDayResult(Object[] objs, int offset) {
+        return null;
+    }
+
+    public Map<String, Object> getLocalResultMap() {
+        return null;
+    }
+
+    public int getResultSize() {
+        return 0;
+    }
 }
 

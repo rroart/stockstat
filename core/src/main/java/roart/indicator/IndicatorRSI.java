@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 
+import roart.pipeline.PipelineConstants;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;
@@ -47,9 +48,18 @@ public class IndicatorRSI extends Indicator {
     @Override
     public Map<String, Object> getResultMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("RSI", rsiMap);
-        map.put("LIST", listMap);
-        map.put("OBJECT", objectMap);
+        map.put(PipelineConstants.INDICATORRSIRESULT, rsiMap);
+        map.put(PipelineConstants.INDICATORRSILIST, listMap);
+        map.put(PipelineConstants.INDICATORRSIOBJECT, objectMap);
+        return map;
+    }
+    
+    @Override
+    public Map<String, Object> getLocalResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.RESULT, rsiMap);
+        map.put(PipelineConstants.OBJECT, objectMap);
+        map.put(PipelineConstants.LIST, listMap);
         return map;
     }
     
@@ -86,7 +96,7 @@ public class IndicatorRSI extends Indicator {
         objectMap = dbDao.doCalculationsArr(conf, listMap, key, this, conf.wantPercentizedPriceIndex());
         String market = conf.getMarket();
         String periodstr = key;
-        PeriodData perioddata = periodDataMap.get(periodstr);
+        //PeriodData perioddata = periodDataMap.get(periodstr);
         for (String id : listMap.keySet()) {
             /*
         	List<Double> list = listMap.get(id);
@@ -168,5 +178,17 @@ public class IndicatorRSI extends Indicator {
         return objs;
     }
 
+    @Override
+    public Object[] getDayResult(Object[] objs, int offset) {
+        TaUtil tu = new TaUtil();
+        return tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, offset);
+    }
+    
+    
+    // TODO call tautil
+    @Override
+    public int getResultSize() {
+        return 2;        
+    }
 }
 
