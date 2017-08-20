@@ -125,6 +125,9 @@ public class ArraysUtilTest {
         System.out.println("n4");
         ArraysUtil.fixMapHoles(array4, null, 2);
         System.out.println("nr4 " + Arrays.asList(array4));
+        Double[] array5 = { 1.0, 2.0, 3.0, null, null, null, 4.0, 5.0, null, null, 10.0, 11.0 };
+        ArraysUtil.fixMapHoles(array5, null, 5);
+        System.out.println(Arrays.asList(array5));
     }
     
     @Test

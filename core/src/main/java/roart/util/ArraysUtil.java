@@ -445,7 +445,7 @@ public class ArraysUtil {
                 if (i < 0 || j < 0) {
                     //System.out.println(Arrays.asList(dstArray));
                 }
-                if (i < 0) {
+                if (false && i < 0) {
                     for (int k = 0; k < length; k++) {
                         dstArray[k] = null;
                     }                   

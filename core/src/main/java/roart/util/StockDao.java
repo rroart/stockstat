@@ -216,9 +216,16 @@ public class StockDao {
     
     public static Map<String, Double[]> getReverseArrSparseFillHoles(MyConfig conf, Map<String, Double[]> listMap) {
         Map<String, Double[]> retMap = /*getReverse*/(listMap);
+        //System.out.println("carn " + Arrays.asList(listMap.get("F00000NMNP")));
         for (String id : listMap.keySet()) {
+            /*
+            if (id.equals("F00000NMNP")) {
+                int j = 1;
+            }
+            */
             retMap.put(id, ArraysUtil.fixMapHoles(listMap.get(id), null, maxHoleNumber()));
-        }       
+        }      
+        //System.out.println("carn " + Arrays.asList(retMap.get("F00000NMNP")));
         return retMap;
     }
 }
