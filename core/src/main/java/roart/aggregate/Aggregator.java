@@ -35,7 +35,7 @@ public abstract class Aggregator {
 
     abstract public Object[] getResultItem(StockItem stock);
 
-    public Object calculate(Double[] array) {
+    public Object calculate(double[] array) {
         return null;
     }
 

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.config.MyMyConfig;
 import roart.config.MyPropertyConfig;
@@ -52,6 +53,8 @@ public class ServiceController {
 		ServiceResult result = new ServiceResult();
 		try {
             System.out.println("new market" + param.config.getMarket());
+            System.out.println("new market" + param.config);
+            System.out.println("new some " + param.config.configValueMap.get(ConfigConstants.DATABASESPARKSPARKMASTER));
 			//getInstance().config(param.config);
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);

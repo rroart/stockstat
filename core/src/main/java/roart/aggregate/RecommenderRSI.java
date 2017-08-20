@@ -13,6 +13,8 @@ import roart.evaluation.RSIRecommend;
 import roart.indicator.IndicatorUtils;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.pipeline.PipelineConstants;
+import roart.util.ArraysUtil;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
@@ -24,13 +26,15 @@ public class RecommenderRSI extends Aggregator {
     Map<String, Double> buyMap;
     Map<String, Double> sellMap;
     Map<String, Double[]> listMap;
-    
+    Map<String, double[]> truncListMap;
+   
     public RecommenderRSI(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories) throws Exception {
         super(conf, index, 0);
          SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
-        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap);
+        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        this.truncListMap = ArraysUtil.getTruncList(this.listMap);
      String wanted = CategoryConstants.PRICE;
         Category cat = null;
         for (Category category : categories) {
@@ -43,7 +47,7 @@ public class RecommenderRSI extends Aggregator {
         for (int i = 0; i < 2; i ++) {
             rsiLists[i] = new ArrayList<>();
         }
-       Object rsi = cat.getResultMap().get("RSI");
+       Object rsi = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
         rsiMap = (Map<String, Object[]>) rsi;
         List<String> buyList = null;///new RSIRecommend().getBuyList();
         List<String> sellList = null;//new RSIRecommend().getSellList();
@@ -52,7 +56,9 @@ public class RecommenderRSI extends Aggregator {
         if (conf.wantRSIScore() && rsi != null) {
             String market = "tradcomm";
             Double[] rsiA = (Double[]) rsiMap.get(id);
+            if (rsiA != null) {
             IndicatorUtils.addToLists(marketdatamap, category, rsiLists, market, rsiA);
+            }
         }
         }
     }

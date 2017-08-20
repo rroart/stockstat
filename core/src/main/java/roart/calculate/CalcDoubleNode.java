@@ -8,7 +8,7 @@ public class CalcDoubleNode extends CalcNode {
 
     @Override
     public double calc(double value, double minmax) {
-        return weight;
+        return weight * value / 100;
     }
 
     @Override

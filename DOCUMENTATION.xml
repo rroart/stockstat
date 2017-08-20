@@ -221,9 +221,10 @@ Table days (R days): how many days to use for the graph or statistics
       <title>
 	Evolution settings
       </title>
-            <tgroup cols="2">
+            <tgroup cols="3">
         <colspec colnum="1" colname="col1" colwidth="1*"/>
         <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
         <thead>
           <row>
             <entry>   
@@ -296,6 +297,123 @@ Table days (R days): how many days to use for the graph or statistics
 	      The number to create per generation
 	    </entry>
 	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+  </para>
+</chapter>
+<chapter id="mlmacd">
+  <title>
+    ML MACD
+  </title>
+  <para>
+    <programlisting>
+      daysbeforezero
+      daysafterzero
+    </programlisting>
+    This will check the MACD histogram curve for being all positive or
+    negative the number daysbeforezero.
+    Regarding of whether the value/index has increased/decreased the
+    number daysafterzero, we label it as true/false negative/positive.
+    Based on this, we try to label fresh MACD turns that has not net passed
+    the daysafterzero time.
+  </para>
+</chapter>
+<chapter id="aggregateml">
+  <title>
+    Aggregated ML
+  </title>
+  <para>
+    For learning which MACD, RSI indicators make it above or belov a up/down
+    threshold a certain number of days in the future.
+    <table>
+      <title>
+	ML settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	      aggregators.indicator
+	    </entry>
+	    <entry>
+	      Enabling
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.macd
+	    </entry>
+	    <entry>
+	      Enabling
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.rsi
+	    </entry>
+	    <entry>
+	      Enabling
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.futuredays
+	    </entry>
+	    <entry>
+	      The number of days back from current
+	    </entry>
+	    <entry>
+	      10
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.intervaldays
+	    </entry>
+	    <entry>
+	      The number of days back from current interval
+	    </entry>
+	    <entry>
+	      1
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.threshold
+	    </entry>
+	    <entry>
+	      The up/down percentage threshold
+	    </entry>
+	    <entry>
+	      0
 	    </entry>
 	  </row>
 	</tbody>

@@ -161,5 +161,14 @@ public class MACDRecommendComplex extends RecommendMACD {
     public String complexity() {
         return RecommendConstants.COMPLEX;
     }
-
+    
+    @Override
+    public int getFutureDays() {
+        return conf.getTestIndicatorRecommenderComplexFutureDays();
+    }
+    
+    @Override
+    public int getIntervalDays() {
+        return conf.getTestIndicatorRecommenderComplexIntervalDays();
+    }
 }

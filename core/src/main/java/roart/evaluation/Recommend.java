@@ -5,21 +5,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import roart.aggregate.AggregatorIndicator;
 import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.util.MarketData;
 import roart.util.PeriodData;
 
-public abstract class Recommend {
-    MyMyConfig conf;
+public abstract class Recommend extends AggregatorIndicator {
     public Recommend(MyMyConfig conf) {
-        this.conf = conf;
+        super(conf);
     }
     public abstract List<String> getBuyList();
     public abstract List<String> getSellList();
-    public abstract boolean isEnabled();
     public abstract String complexity();
-    public abstract String indicator();
     
     public static Map<String, List<Recommend>> getUsedRecommenders(MyMyConfig conf) {
         List<Recommend> all = new ArrayList<>();
@@ -41,8 +39,6 @@ public abstract class Recommend {
         return result;
     }
     
-    public abstract Indicator getIndicator(Map<String, MarketData> marketdatamap, int category) throws Exception;
-
     public static Map<String, List<String>[]> getRecommenderKeyMap(Map<String, List<Recommend>> usedRecommenders) {
         Map<String, List<String>[]> result = new HashMap<>();
         for (String complexity : usedRecommenders.keySet()) {
@@ -69,8 +65,13 @@ public abstract class Recommend {
         for (Recommend recommend : recommenders) {
             String name = recommend.indicator();
             Indicator indicator = indicatorMap.get(name);
-            result.add(indicator);
+            if (indicator != null) {
+                result.add(indicator);
+            }
         }
         return result;
     }
+    
+    public abstract int getFutureDays();
+    public abstract int getIntervalDays();
 }

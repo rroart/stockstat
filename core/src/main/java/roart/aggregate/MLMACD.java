@@ -22,8 +22,6 @@ import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;
-import roart.db.DbSpark;
-import roart.evaluation.MACDRecommend;
 import roart.ml.MLClassifyDao;
 import roart.ml.MLClassifyModel;
 import roart.model.ResultItemTable;
@@ -273,7 +271,8 @@ public class MLMACD extends Aggregator {
             MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
             MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
 
-            Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+           //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+            Double[] list = listMap.get(id);
             log.info("listsize"+ list.length);
             if (conf.wantPercentizedPriceIndex()) {
             list = ArraysUtil.getPercentizedPriceIndex(list, key);
@@ -339,7 +338,8 @@ public class MLMACD extends Aggregator {
             // a map from h/m + com/neg/sub to map<id, values>
             Map<String, Map<String, double[]>> mapIdMap= new HashMap<>();
             for (String id : listMap.keySet()) {
-                Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+                //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+                Double[] list = listMap.get(id);
                 list = ArraysUtil.getPercentizedPriceIndex(list, key);
                 Object[] objs = objectMap.get(id);
                 double[] macdarr = (double[]) objs[0];
@@ -402,7 +402,7 @@ public class MLMACD extends Aggregator {
             if (momentum == null) {
                 System.out.println("zero mom for id " + id);
             }
-            int retindex = tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
+            int retindex = 0; //tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
 
             // TODO make OO of this
             if (conf.wantML()) {
@@ -422,6 +422,7 @@ public class MLMACD extends Aggregator {
                                 //String mapName = subType.getType() + mapType;
                                 //System.out.println("fields " + fields.length + " " + retindex);
                                 retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
+                                System.out.println("sizej "+retindex);
                             //}
                         }   
                     }
@@ -751,7 +752,7 @@ public class MLMACD extends Aggregator {
     }
 
     @Override
-    public Object calculate(Double[] array) {
+    public Object calculate(double[] array) {
         TaUtil tu = new TaUtil();
         Object[] objs = tu.getMomAndDeltaFull(array, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
         return objs;
@@ -809,6 +810,7 @@ public class MLMACD extends Aggregator {
                     //String mapType = mapTypes.get(mapTypeInt);
                     //String mapName = subType.getType() + mapType;
                     retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
+                    System.out.println("sizei "+retindex);
                 //}
             }
         }
@@ -823,6 +825,7 @@ public class MLMACD extends Aggregator {
         for (MacdSubType subType : subTypes) {
             for (MLClassifyDao mldao : mldaos) {
                 size += mldao.getSizes(this);
+                System.out.println("size0 "+size);
             }
         }
         emptyField = new Object[size];

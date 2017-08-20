@@ -564,4 +564,30 @@ public class MyMyConfig extends MyPropertyConfig {
                 && wantAggregators();
     }
 
+   public boolean wantAggregatorsIndicatorML() {
+       return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOR);
+   }
+   
+   public boolean wantAggregatorsIndicatorMACD() {
+       return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORMACD)
+               && wantAggregatorsIndicatorML();
+   }
+   
+   public boolean wantAggregatorsIndicatorRSI() {
+       return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRSI)
+               && wantAggregatorsIndicatorML();
+   }
+   
+   public int getAggregatorsIndicatorFuturedays() {
+       return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
+   }
+   
+   public int getAggregatorsIndicatorIntervaldays() {
+       return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
+   }
+   
+   public double getAggregatorsIndicatorThreshold() {
+       return (Double) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
+   }
+   
 }

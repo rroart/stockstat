@@ -12,16 +12,20 @@ import roart.util.MarketData;
 
 public abstract class RecommendMACD extends Recommend {
 
-    public static Indicator indicator;
-    
     public RecommendMACD(MyMyConfig conf) {
         super(conf);
     }
 
     @Override
-    public Indicator getIndicator(Map<String, MarketData> marketdatamap, int category) throws Exception {
-        if (indicator == null) {
-            indicator = new IndicatorMACD(conf, null, marketdatamap, null, null, null, category);
+    public Indicator getIndicator(Map<String, MarketData> marketdatamap, int category, Map<String, Indicator> newIndicatorMap, Map<String, Indicator> usedIndicatorMap) throws Exception {
+        if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
+            return usedIndicatorMap.get(indicator());
+        }
+
+        Indicator indicator = new IndicatorMACD(conf, null, marketdatamap, null, null, null, category);
+        
+        if (newIndicatorMap != null) {
+            newIndicatorMap.put(indicator(), indicator);
         }
         return indicator;
     }

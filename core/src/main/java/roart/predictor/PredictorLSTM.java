@@ -43,6 +43,7 @@ public class PredictorLSTM extends Predictor {
     Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[]> listMap;
+    Map<String, double[]> truncListMap;
     Map<String, Object[]> resultMap;
     Object[] emptyField;
     Map<MLPredictModel, Long> mapTime = new HashMap<>();
@@ -165,7 +166,8 @@ public class PredictorLSTM extends Predictor {
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap);
+        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        this.truncListMap = ArraysUtil.getTruncList(this.listMap);
         if (conf.wantPercentizedPriceIndex()) {
 
         }
@@ -197,7 +199,8 @@ public class PredictorLSTM extends Predictor {
             Map<String, List<Double>> retMap = new HashMap<>();
             //Object[] full = tu.getMomAndDeltaFull(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
 
-            Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+            //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+            Double[] list = listMap.get(id);
             log.info("listsize"+ list.length);
             // TODO do not need?
             if (conf.wantPercentizedPriceIndex()) {
@@ -224,7 +227,7 @@ public class PredictorLSTM extends Predictor {
                             int epochs = conf.getPredictorLSTMEpochs();
                             Double[] list = listMap.get(id);
                             // TODO check reverse. move up before if?
-                            list = ArraysUtil.getArrayNonNullReverse(list);
+                            //list = ArraysUtil.getArrayNonNullReverse(list);
                             log.info("bla " + list.length + " " + windowsize);
                             if (list != null && list.length > 2 * windowsize ) {
                                 Map map = null;

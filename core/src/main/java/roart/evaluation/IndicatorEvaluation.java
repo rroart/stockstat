@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.calculate.CalcDoubleNode;
-import roart.calculate.CalcMACDNode;
+import roart.calculate.CalcComplexNode;
 import roart.calculate.CalcNode;
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
@@ -79,7 +79,7 @@ public class IndicatorEvaluation extends Evaluation {
             if (list[newlistidx] == null || list[curlistidx] == null) {
                 continue;
             }
-            double change = list[newlistidx]/list[curlistidx];
+            double change = (list[newlistidx]/list[curlistidx] - 1) * 100;
             Double[] momrsi = indicatorMap.get(id);
             for (int i = 0; i < keys.size(); i++) {
                 String key = keys.get(i);
@@ -126,16 +126,16 @@ public class IndicatorEvaluation extends Evaluation {
     private static class CalcNodeFactory {
         public static CalcNode get(String name, String jsonValue, List<Double>[] macdrsiMinMax, int index, boolean useMax) throws JsonParseException, JsonMappingException, IOException {
             // TODO check class name
-            CalcMACDNode anode;
+            CalcComplexNode anode;
             if (name != null && name.equals("Double")) {
                 CalcDoubleNode aanode = new CalcDoubleNode();
                 return aanode;
             }
             if (jsonValue == null) {
-                anode = new CalcMACDNode();
+                anode = new CalcComplexNode();
             } else {
                 ObjectMapper mapper = new ObjectMapper();
-                anode = (CalcMACDNode) mapper.readValue(jsonValue, CalcMACDNode.class);
+                anode = (CalcComplexNode) mapper.readValue(jsonValue, CalcComplexNode.class);
             }
             List<Double> minmax = macdrsiMinMax[index];
             double minMutateThresholdRange =  minmax.get(0);
@@ -201,7 +201,7 @@ public class IndicatorEvaluation extends Evaluation {
         ObjectMapper mapper = new ObjectMapper();
         for (String key : keys) {
             CalcNode node = (CalcNode) conf.configValueMap.get(key);
-            if (node instanceof CalcMACDNode) {
+            if (node instanceof CalcComplexNode) {
                 String string = mapper.writeValueAsString(node);
                 conf.configValueMap.put(key, string);
             } else {
@@ -217,8 +217,8 @@ public class IndicatorEvaluation extends Evaluation {
         for (String key : keys) {
             CalcNode anode = (CalcNode) map.get(key);
             int tmpNum = 0;
-            if (anode instanceof CalcMACDNode) {
-                CalcMACDNode node = (CalcMACDNode) anode;
+            if (anode instanceof CalcComplexNode) {
+                CalcComplexNode node = (CalcComplexNode) anode;
                 tmpNum = node.getWeight();
             } else {
                 CalcDoubleNode node = (CalcDoubleNode) anode;
@@ -229,8 +229,8 @@ public class IndicatorEvaluation extends Evaluation {
         for (String key : keys) {
             CalcNode anode = (CalcNode) map.get(key);
             int tmpNum = 0;
-            if (anode instanceof CalcMACDNode) {
-                CalcMACDNode node = (CalcMACDNode) anode;
+            if (anode instanceof CalcComplexNode) {
+                CalcComplexNode node = (CalcComplexNode) anode;
                 tmpNum = node.getWeight();
                 node.setWeight(tmpNum * 100 / total);
             } else {
@@ -252,8 +252,8 @@ public class IndicatorEvaluation extends Evaluation {
             //List<Double> macdLists[] = macdMinMax.get(j);
             //int newmacdidx = macdlen - 1 - j + conf.getTestRecommendFutureDays();
             //int curmacdidx = macdlen - 1 - j;
-            Map<Integer, Map<String, Double[]>> dayMomRsiMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
-            Map<String, Double[]> momrsiMap = dayMomRsiMap.get(j);
+            Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
+            Map<String, Double[]> momrsiMap = dayIndicatorMap.get(j);
            //System.out.println("j"+j);
             testRecommendQualBuySell += getEvaluations(testBuySellConfig, j);
             int newlistidx = listlen - 1 - j + conf.getTestIndicatorRecommenderComplexFutureDays();

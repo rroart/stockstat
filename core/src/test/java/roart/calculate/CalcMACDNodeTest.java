@@ -17,7 +17,7 @@ public class CalcMACDNodeTest {
 
     @Test
     public void aTest() throws JsonProcessingException {
-        CalcMACDNode i = new CalcMACDNode();
+        CalcComplexNode i = new CalcComplexNode();
         i.randomize();
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writeValueAsString(i));

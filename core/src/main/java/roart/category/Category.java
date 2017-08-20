@@ -89,9 +89,32 @@ public abstract class Category {
         return map;
     }
     
+    public Map<String, Map<String, Object>> getIndicatorLocalResultMap() {
+        Map<String, Map<String, Object>> map = new HashMap<>();
+        /*
+        for (Predictor predictor : predictors) {
+            if (predictor.isEnabled()) {
+                Map<String, Object> tmpMap = predictor.getResultMap();
+                if (tmpMap != null) {
+                    map.putAll(tmpMap);
+                }
+            }
+        }
+        */
+        for (Indicator indicator : indicators) {
+            if (indicator.isEnabled()) {
+                Map<String, Object> tmpMap = indicator.getLocalResultMap();
+                if (tmpMap != null) {
+                    map.put(indicator.indicatorName(), tmpMap);
+                }
+           }
+        }
+        return map;
+    }
+    
     protected void createIndicatorMap(String periodText) {
         for (Indicator indicator : indicators) {
-            indicatorMap.put(periodText, indicator);
+            indicatorMap.put(indicator.indicatorName(), indicator);
         }
     }
     

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         include = JsonTypeInfo.As.PROPERTY,  
         property = "_class")  
     @JsonSubTypes({  
-        @Type(value = CalcMACDNode.class, name = "roart.calculate.CalcMACDNode"),  
+        @Type(value = CalcComplexNode.class, name = "roart.calculate.CalcMACDNode"),  
         @Type(value = CalcDoubleNode.class, name = "roart.calculate.CalcDoubleNode") })  
 public abstract class CalcNode {
 

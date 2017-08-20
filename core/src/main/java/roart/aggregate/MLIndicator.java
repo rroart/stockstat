@@ -1,5 +1,6 @@
 package roart.aggregate;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,18 +13,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.tictactec.ta.lib.MInteger;
 
+import roart.calculate.CalcNode;
 import roart.category.Category;
 import roart.category.CategoryConstants;
 import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;
-import roart.db.DbSpark;
-import roart.evaluation.MACDRecommend;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorUtils;
 import roart.ml.MLClassifyDao;
@@ -41,7 +44,7 @@ import roart.util.StockDao;
 import roart.util.TaUtil;
 import scala.collection.mutable.WrappedArray;
 
-public class MLMACDRSI extends Aggregator {
+public class MLIndicator extends Aggregator {
 /*
     public MLMACD(MyMyConfig conf, String string, int category) {
         super(conf, string, category);
@@ -58,9 +61,11 @@ public class MLMACDRSI extends Aggregator {
     Map<String, Object[]> objectMap;
     //Map<String, Double> resultMap;
     Map<String, Object[]> resultMap;
+    /*
     Map<String, Double[]> momMap;
     Map<String, Double> buyMap;
     Map<String, Double> sellMap;
+    */
     Object[] emptyField;
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
     
@@ -102,8 +107,8 @@ public class MLMACDRSI extends Aggregator {
 
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
-    public MLMACDRSI(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, MarketData> marketdatamap, 
-            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories, Indicator[] indicators) throws Exception {
+    public MLIndicator(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, MarketData> marketdatamap, 
+            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories/*, Indicator[] indicators*/) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
@@ -143,7 +148,9 @@ public class MLMACDRSI extends Aggregator {
     
     @Override
     public List<Integer> getTypeList() {
-        return null;
+        List<Integer> retList = new ArrayList<>();
+        retList.add(0);
+        return retList;
     }
     
     private Map<Integer, String> mapTypes = new HashMap<>();
@@ -154,33 +161,91 @@ public class MLMACDRSI extends Aggregator {
           return wantedSubTypes;
     }
   
+   public Map<double[], Double> getEvaluations(MyMyConfig conf, int j, Object retObj[]) throws JsonParseException, JsonMappingException, IOException {
+       int listlen = conf.getTableDays();
+       List<Map<String, Double[]>> listList = (List<Map<String, Double[]>>) retObj[2];
+       Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
+       //List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
+       Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
+       // find recommendations
+       double recommend = 0;
+       //transform(conf, buyList);
+       if (indicatorMap == null) {
+           return new HashMap<>();
+       }
+       Map<double[], Double> retMap = new HashMap<>();
+       for (String id : indicatorMap.keySet()) {
+           int newlistidx = listlen - 1 - j + conf.getAggregatorsIndicatorFuturedays();
+           int curlistidx = listlen - 1 - j;
+           Double[] list = listList.get(0).get(id);
+           if (list[newlistidx] == null || list[curlistidx] == null) {
+               continue;
+           }
+           double change = list[newlistidx]/list[curlistidx] - 1;
+           double[] merged = ArraysUtil.convert(indicatorMap.get(id));
+           
+           // cat 1.0 is for >= threshold, 2.0 is for belov
+           Double cat = 2.0;
+           if (change > conf.getAggregatorsIndicatorThreshold()) {
+               cat = 1.0;
+           }
+           retMap.put(merged, cat);
+           /*
+           for (int i = 0; i < keys.size(); i++) {
+               String key = keys.get(i);
+               // TODO temp fix
+               CalcNode node = (CalcNode) conf.configValueMap.get(key);
+               //node.setDoBuy(useMax);
+               double value = momrsi[i];
+               recommend += node.calc(value, 0) * change;
+           }
+           */
+       }
+       return retMap;
+   }
+
     // TODO make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category2, Category[] categories) throws Exception {
         Category cat = null;
         for (Category category : categories) {
+            // TODO fix
             if (category.getTitle().equals(CategoryConstants.PRICE)) {
                 cat = category;
                 break;
             }
         }
-        //Object macd = cat.getResultMap().get(PipelineConstants.INDICATORMACDRESULT);
-        Map<String, Double[]> listMACDMap = (Map<String, Double[]>) cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
-        Map<String, Object[]> objectMACDMap = (Map<String, Object[]>) cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
-        //Object rsi = cat.getResultMap().get(PipelineConstants.INDICATORRSIRESULT);
-        Map<String, Double[]> listRSIMap = (Map<String, Double[]>) cat.getResultMap().get(PipelineConstants.INDICATORRSILIST);
-        Map<String, Object[]> objectRSIMap = (Map<String, Object[]>) cat.getResultMap().get(PipelineConstants.INDICATORRSIOBJECT);
-        TaUtil tu = new TaUtil();
-        Object[] retObj = IndicatorUtils.getDayMomRsiMap(conf, objectMACDMap, listMACDMap, objectRSIMap, listRSIMap, tu);
+        Map<String, Indicator> newIndicatorMap = new HashMap<>();
+        Map<String, Indicator> usedIndicatorMap = cat.getIndicatorMap();
 
-        Map<Integer, Map<String, Double[]>> dayMomRsiMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
-        
+        Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
+        Set<String> ids = new HashSet<>();
+        Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
+        Map<String, Double[]> list0 = (Map<String, Double[]>) localResultMap.get(localResultMap.keySet().iterator().next()).get(PipelineConstants.LIST);
+        ids.addAll(list0.keySet());
+        //AggregatorMLIndicator.getI
+        TaUtil tu = new TaUtil();
+        Map<String, Indicator> indicatorMap = new HashMap<>();
+       for (String type : usedIndicators.keySet()) {
+            List<AggregatorMLIndicator> list = usedIndicators.get(type);
+            for (AggregatorMLIndicator ind : list) {
+                String indicator = ind.indicator();
+                if (indicator != null) {
+                indicatorMap.put(indicator, ind.getIndicator(marketdatamap, category, newIndicatorMap, usedIndicatorMap));
+                }
+                // TODO fix
+                Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
+                ids.retainAll(aResult.keySet());
+            }
+        }
+       List<Indicator> indicators = new ArrayList<>(indicatorMap.values());
+
         DbAccess dbDao = DbDao.instance(conf);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        this.listMap = (Map<String, Double[]>) listMACDMap;
+        this.listMap = (Map<String, Double[]>) list0;
         if (conf.wantPercentizedPriceIndex()) {
             
         }
@@ -191,122 +256,112 @@ public class MLMACDRSI extends Aggregator {
         log.info("time0 " + (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
         objectMap = new HashMap<>();
+        /*
         momMap = new HashMap<>();
         buyMap = new HashMap<>();
         sellMap = new HashMap<>();
+        */
+        /*
         List<Double> macdLists[] = new ArrayList[4];
         for (int i = 0; i < 4; i ++) {
             macdLists[i] = new ArrayList<>();
         }
+        */
         long time2 = System.currentTimeMillis();
-        objectMap = (Map<String, Object[]>) objectMACDMap;
         //System.out.println("imap " + objectMap.size());
         log.info("time2 " + (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
 
-        String market = conf.getMarket();
-        String periodstr = key;
-        PeriodData perioddata = periodDataMap.get(periodstr);
-        log.info("listmap " + listMap.size() + " " + listMap.keySet());
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<String, Map<double[], Double>> mapMap = new HashMap<>();
        // System.out.println("allids " + listMap.size());
-        for (String id : listMap.keySet()) {
-            Object[] objs = objectMap.get(id);
-            Double[] momentum = momMap.get(id);
-            if (momentum == null) {
-                System.out.println("no macd for id" + id);
-            }
-            Map<String, List<Double>> retMap = new HashMap<>();
-            //Object[] full = tu.getMomAndDeltaFull(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
-            MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
-            MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
 
-            Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            log.info("listsize"+ list.length);
-            if (conf.wantPercentizedPriceIndex()) {
-            list = ArraysUtil.getPercentizedPriceIndex(list, key);
-            }
-            log.info("beg end " + id + " "+ begOfArray.value + " " + endOfArray.value);
-            //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
-            log.info("list " + list.length + " " + Arrays.asList(list));
-            Double[] trunclist = ArraysUtil.getSubExclusive(list, begOfArray.value, begOfArray.value + endOfArray.value);
-            log.info("trunclist" + list.length + " " + Arrays.asList(trunclist));
-            if (conf.wantML()) {
-                if (momentum != null && momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
-                    Map<String, Double> labelMap2 = createLabelMap2();
-                    //List<Double> list = listMap.get(id);
-                    //Double[] momentum = resultMap.get(id);
-                    // double hist = momentum[0];
-                    // TODO also macd
-                    //double macd = momentum[2];
-                    //for (int i = trunclist.size(); i >=0 ; i --) {
-                    //for (String id : listMap.keySet()) {
-                    //int trunclistsize = trunclist.length;
-                    /*
-                    if (endOfArray.value > 0) {
-                        List<MacdSubType> subTypes = wantedSubTypes();
-                        for (MacdSubType subType : subTypes) {
-                            double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
-                            //System.out.println("arrlen " + aMacdArray.length);
-                            Map<Integer, Integer>[] map = ArraysUtil.searchForward(aMacdArray, endOfArray.value);
-                            getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, POSTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[0], labelFN, labelTN);
-                            getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, NEGTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[1], labelTP, labelFP);
-                       }
-                    } else {
-                        //log.error("error " + subType.getType());
-                    }
-                    */
-                }
+        //Map<String, Double[]> list0 = (Map<String, Double[]>) cat.getResultMap().get("LIST");
+
+        //Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
+        //Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
+        //Map<String, Indicator> indicatorMap = new HashMap<>();
+        int category = Constants.PRICECOLUMN;
+        //Set<String> ids = new HashSet<>();
+        ids.addAll(list0.keySet());
+        List<String> keys = new ArrayList<>();
+        /*
+        for (String type : usedRecommenders.keySet()) {
+            List<Recommend> list = usedRecommenders.get(type);
+            for (Recommend recommend : list) {
+                String indicator = recommend.indicator();
+                // TODO fix
+                Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
+                //Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getResultMap().get(indicator);
+                ids.retainAll(aResult.keySet());
             }
         }
+        */
+        Map<String, Object[]> result = new HashMap<>();
+        for (String id : ids) {
+            Object[] arrayResult = new Object[0];
+            for (Indicator indicator : indicators) {
+                String indicatorName = indicator.indicatorName();
+                    // TODO fix
+                    Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicatorName).get(PipelineConstants.LIST);
+                   //Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getResultMap().get(indicator);
+                    arrayResult = (Object[]) ArrayUtils.addAll(arrayResult, aResult.get(id));
+            }
+            result.put(id, arrayResult);
+        }
 
+        int macdlen = conf.getTableDays();
+        int listlen = conf.getTableDays();
+        double testRecommendQualBuySell = 0;
+        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), conf.getTableDays(), conf.getAggregatorsIndicatorIntervaldays());
+        Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj2[0];
+        Map<double[], Double> mergedCatMap = new HashMap<>();
+        for (int j = conf.getAggregatorsIndicatorFuturedays(); j < macdlen; j += conf.getAggregatorsIndicatorIntervaldays()) {
+            //List<Double> macdLists[] = macdMinMax.get(j);
+            //int newmacdidx = macdlen - 1 - j + conf.getTestRecommendFutureDays();
+            //int curmacdidx = macdlen - 1 - j;
+            Map<String, Double[]> momrsiMap = dayIndicatorMap.get(j);
+           //System.out.println("j"+j);
+            Map<double[], Double> retMap = getEvaluations(conf, j, retObj2);
+            mergedCatMap.putAll(retMap);
+            int newlistidx = listlen - 1 - j + conf.getAggregatorsIndicatorFuturedays();
+            int curlistidx = listlen - 1 - j;
+            //testRecommendQualBuySell += MACDRecommend.getQuality(buy, buysellMap, listMap, curlistidx, newlistidx);
+        }
+   
+        
         // map from h/m to model to posnegcom map<model, results>
         Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
         log.info("Period " + title + " " + mapMap.keySet());
         if (conf.wantML()) {
+            int arrayLength = mergedCatMap.keySet().iterator().next().length;
+            for(double[] array : mergedCatMap.keySet()) {
+                if (array.length != arrayLength) {
+                    System.out.println("diff length " + arrayLength + " " + array.length);
+                }
+            }
             Map<Double, String> labelMapShort = createLabelMapShort();
             try {
-                List<MacdSubType> subTypes = wantedSubTypes();
+                //List<MacdSubType> subTypes = wantedSubTypes();
                     for (MLClassifyDao mldao : mldaos) {
-                            String mapType = mapTypes.get(null);
-                            String mapName = mapType;
+                            //String mapType = mapTypes.get(null);
+                            //String mapName = mapType;
                             //System.out.println("mapget " + mapName + " " + mapMap.keySet());
-                            Map<double[], Double> map = mapMap.get(mapName);
-                            if (map == null) {
-                                log.error("map null " + mapName);
-                                continue;
-                            }
-                            mldao.learntest(this, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime);  
+                            Map<double[], Double> map = mergedCatMap;
+                            System.out.println(map.values());
+                            mldao.learntest(this, map, null, arrayLength, key, "mapName", 2, mapTime);  
                 }
             } catch (Exception e) {
                 log.error("Exception", e);
             }
             // calculate sections and do ML
             // a map from h/m + com/neg/sub to map<id, values>
-            Map<String, Map<String, double[]>> mapIdMap= new HashMap<>();
-            for (String id : listMap.keySet()) {
-                Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-                list = ArraysUtil.getPercentizedPriceIndex(list, key);
-                Object[] objs = objectMap.get(id);
-                double[] macdarr = (double[]) objs[0];
-                double[] histarr = (double[]) objs[2];
-                MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
-                MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
-                //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
-                Double[] trunclist = ArraysUtil.getSubExclusive(list, begOfArray.value, begOfArray.value + endOfArray.value);
-                //System.out.println("trunc " + list.length + " " + trunclist.length);
-                int trunclistsize = trunclist.length; //endOfArray.value;
-                if (endOfArray.value == 0) {
-                    continue;
-                }
-                List<MacdSubType> subTypes = wantedSubTypes();
-                for (MacdSubType subType : subTypes) {
-                    double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
-                    //getMlMappings(subType.getName(), subType.getType(), labelMapShort, mapIdMap, id, aMacdArray, endOfArray, trunclist);
-                }
+            System.out.println(dayIndicatorMap.keySet());
+            Map<String, Double[]> indicatorMap2 = dayIndicatorMap.get(conf.getAggregatorsIndicatorFuturedays());
+            Map<String, double[]> indicatorMap3 = new HashMap<>();
+            for (String id : indicatorMap2.keySet()) {
+                indicatorMap3.put(id, ArraysUtil.convert(indicatorMap2.get(id)));
             }
-
             // map from h/m + posnegcom to map<model, results>
             List<MacdSubType> subTypes = wantedSubTypes();
             for (MacdSubType subType : subTypes) {
@@ -315,25 +370,17 @@ public class MLMACDRSI extends Aggregator {
                     // map from posnegcom to map<id, result>
                     Map<String, Map<String, Double[]>> mapResult2 = new HashMap<>();
                     for (MLClassifyModel model : mldao.getModels()) {
-                        for (;;) {
-                            String mapType = mapTypes.get(null);
-                            String mapName = subType.getType() + mapType;
-                            Map<String, double[]> map = mapIdMap.get(mapName);
-                            log.info("map name " + mapName);
-                            if (mapMap.get(mapName) == null) {
-                                log.error("map null and continue? " + mapName);
-                                continue;
-                            }
+                        Map<String, double[]> map = indicatorMap3;
+                            //log.info("map name " + mapName);
                             if (map == null) {
-                                log.error("map null " + mapName);
+                                log.error("map null ");
                                 continue;
                             } else {
                                 log.info("keyset " + map.keySet());
                             }
-                            Map<String, Double[]> classifyResult = mldao.classify(this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, labelMapShort, mapTime);
-                            mapResult2.put(mapType, classifyResult);
-                        }
-                        //mapResult1.put(model, mapResult2);
+                            Map<String, Double[]> classifyResult = mldao.classify(this, map, model, arrayLength, key, null, 2, labelMapShort, mapTime);
+                            //mapResult2.put(mapType, classifyResult);
+                         //mapResult1.put(model, mapResult2);
                     }
                 }
                 mapResult.put(subType, mapResult1);
@@ -341,16 +388,18 @@ public class MLMACDRSI extends Aggregator {
         }
         List<Map> maplist = new ArrayList<>();
         for (String id : listMap.keySet()) {
-            Double[] momentum = momMap.get(id);
+            //Double[] momentum = momMap.get(id);
             Object[] objs = objectMap.get(id);
             Object[] fields = new Object[fieldSize];
-            momMap.put(id, momentum);
+            //momMap.put(id, momentum);
             resultMap.put(id, fields);
+            /*
             if (momentum == null) {
                 System.out.println("zero mom for id " + id);
             }
-            int retindex = tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
-
+            */
+            int retindex = 0 ; //tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
+            
             // TODO make OO of this
             if (conf.wantML()) {
                 Map<Double, String> labelMapShort2 = createLabelMapShort();
@@ -672,35 +721,15 @@ public class MLMACDRSI extends Aggregator {
         }
     }
 
-    private Map<String, Double> createLabelMap2() {
-        Map<String, Double> labelMap2 = new HashMap<>();
-        labelMap2.put(labelTP, 1.0);
-        labelMap2.put(labelFP, 2.0);
-        labelMap2.put(labelTN, 3.0);
-        labelMap2.put(labelFN, 4.0);
-        return labelMap2;
-    }
-
-    private Map<Double, String> createLabelMap1() {
-        Map<Double, String> labelMap1 = new HashMap<>();
-        labelMap1.put(1.0, labelTP);
-        labelMap1.put(2.0, labelFP);
-        labelMap1.put(3.0, labelTN);
-        labelMap1.put(4.0, labelFN);
-        return labelMap1;
-    }
-
     public static Map<Double, String> createLabelMapShort() {
         Map<Double, String> labelMap1 = new HashMap<>();
-        labelMap1.put(1.0, "TP");
-        labelMap1.put(2.0, "FP");
-        labelMap1.put(3.0, "TN");
-        labelMap1.put(4.0, "FN");
+        labelMap1.put(1.0, "Inc");
+        labelMap1.put(2.0, "Dec");
         return labelMap1;
     }
 
     @Override
-    public Object calculate(Double[] array) {
+    public Object calculate(double[] array) {
         TaUtil tu = new TaUtil();
         Object[] objs = tu.getMomAndDeltaFull(array, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
         return objs;
@@ -769,11 +798,11 @@ public class MLMACDRSI extends Aggregator {
     private int fieldSize() {
         int size = 0;
         List<MacdSubType> subTypes = wantedSubTypes();
-        for (MacdSubType subType : subTypes) {
+        //for (MacdSubType subType : subTypes) {
             for (MLClassifyDao mldao : mldaos) {
                 size += mldao.getSizes(this);
             }
-        }
+        //}
         emptyField = new Object[size];
         log.info("fieldsizet " + size);
         return size;

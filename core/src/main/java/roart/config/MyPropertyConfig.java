@@ -121,6 +121,9 @@ public class MyPropertyConfig extends MyConfig {
                 case "java.lang.Integer":
                     o = configxml.getInt(s);
                     break;
+                case "java.lang.Double":
+                    o = configxml.getDouble(s);
+                    break;
                 case "java.lang.Boolean":
                     o = configxml.getBoolean(s);
                     break;

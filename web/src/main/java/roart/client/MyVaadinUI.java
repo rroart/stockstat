@@ -308,6 +308,9 @@ public class MyVaadinUI extends UI
             case "java.lang.String":
                 o = getStringField(text, name);
                 break;
+            case "java.lang.Double":
+                o = getDoubleField(text, name);
+                break;
             case "java.lang.Integer":
                 o = getIntegerField(text, name);
                 break;
@@ -1181,6 +1184,29 @@ public class MyVaadinUI extends UI
                 // Do something with the value
                 try {
                     controlService.conf.configValueMap.put(configKey, new Integer(value) );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        tf.setImmediate(true);
+        return tf;
+    }
+    private TextField getDoubleField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        Double origValue = (Double) controlService.conf.configValueMap.get(configKey);
+
+        tf.setValue("" + origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.configValueMap.put(configKey, new Double(value) );
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

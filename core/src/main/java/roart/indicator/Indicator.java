@@ -35,11 +35,11 @@ public abstract class Indicator {
 
     abstract public Object[] getResultItem(StockItem stock);
 
-    public Object calculate(Double[] array) {
+    public Object calculate(double[] array) {
         return null;
     }
 
-    public List<Integer> getTypeList() {
+   public List<Integer> getTypeList() {
         return null;
     }
 
@@ -65,6 +65,14 @@ public abstract class Indicator {
 
     public int getResultSize() {
         return 0;
+    }
+
+    public String indicatorName() {
+        return null;
+    }
+
+    public int getCategory() {
+        return category;
     }
 }
 

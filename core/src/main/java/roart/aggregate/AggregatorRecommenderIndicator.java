@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import roart.calculate.CalcMACDNode;
+import roart.calculate.CalcComplexNode;
 import roart.calculate.CalcNode;
 import roart.category.Category;
 import roart.category.CategoryConstants;
@@ -20,6 +20,7 @@ import roart.indicator.Indicator;
 import roart.indicator.IndicatorUtils;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.pipeline.PipelineConstants;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
@@ -27,14 +28,15 @@ import roart.util.TaUtil;
 
 public class AggregatorRecommenderIndicator extends Aggregator {
 
-    Map<String, Object[]> macdMap;
+    //Map<String, Object[]> macdMap;
     Map<String, Double[]> listMap;
     Map<String, Object[]> objectMap;
-    Map<String, Double[]> resMap;
+    Map<String, Double[]> resultMap;
     
     public AggregatorRecommenderIndicator(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories) throws Exception {
         super(conf, index, 0);
+        // TODO fix
        String wanted = CategoryConstants.PRICE;
         Category cat = null;
         for (Category category : categories) {
@@ -43,13 +45,11 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                 break;
             }
         }
-        Object macd = cat.getResultMap().get("MACD");
-        Map<String, Double[]> list0 = (Map<String, Double[]>) cat.getResultMap().get("LIST");
-        Object object = cat.getResultMap().get("OBJECT");
-        Object rsi = cat.getResultMap().get("RSI");
-        macdMap = (Map<String, Object[]>) macd;
-        Map<String, Object[]> rsiMap = (Map<String, Object[]>) rsi;
-
+        
+        Map<String, Indicator> usedIndicatorMap = cat.getIndicatorMap();
+        Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
+        Map<String, Double[]> list0 = (Map<String, Double[]>) localResultMap.get(localResultMap.keySet().iterator().next()).get(PipelineConstants.LIST);
+ 
         Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
         Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
         Map<String, Indicator> indicatorMap = new HashMap<>();
@@ -57,23 +57,32 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         Set<String> ids = new HashSet<>();
         ids.addAll(list0.keySet());
         List<String> keys = new ArrayList<>();
+        Map<String, Indicator> newIndicatorMap = new HashMap<>();
+
         for (String type : usedRecommenders.keySet()) {
             List<Recommend> list = usedRecommenders.get(type);
             for (Recommend recommend : list) {
                 String indicator = recommend.indicator();
-                Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getResultMap().get(indicator);
+                if (indicator != null) {
+                    Indicator newIndicator = recommend.getIndicator(marketdatamap, category, newIndicatorMap, usedIndicatorMap);
+                    if (newIndicator != null) {
+                        indicatorMap.put(indicator, newIndicator);
+                    }
+                }
+                // TODO fix
+                Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
                 ids.retainAll(aResult.keySet());
             }
         }
-        Map<String, Object[]> result = new HashMap<>();
+        Map<String, Double[]> result = new HashMap<>();
         for (String id : ids) {
-            Object[] arrayResult = new Object[0];
+            Double[] arrayResult = new Double[0];
             for (String type : usedRecommenders.keySet()) {
                 List<Recommend> list = usedRecommenders.get(type);
                 for (Recommend recommend : list) {
                     String indicator = recommend.indicator();
-                    Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getResultMap().get(indicator);
-                    arrayResult = (Object[]) ArrayUtils.addAll(arrayResult, aResult.get(id));
+                    Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
+                    arrayResult = (Double[]) ArrayUtils.addAll(arrayResult, aResult.get(id));
                 }
             }
             result.put(id, arrayResult);
@@ -83,17 +92,21 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         //for (String type : indicatorMap.keySet()) {
             List<Indicator> indicators = Recommend.getIndicators(recommender, usedRecommenders, indicatorMap);
             //indicators.add(indicatorMap.get(type));
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators);
+            // We just want the config, any in the list will do
+            Recommend recommend = usedRecommenders.get(recommender).get(0);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays());
             Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
             //Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
             // find recommendations
             int macdlen = conf.getTableDays();
             int listlen = conf.getTableDays();
-            double recommend = 0;
+            double recommendValue = 0;
             //transform(conf, buyList);
-            Map<String, Double[]> resultMap = new HashMap<>();
+            resultMap = new HashMap<>();
             for (String id : ids) {
                 Double[] aResult = new Double[2]; 
+                System.out.println(result.get(id)[0]);
+                System.out.println(result.get(id).getClass().getName());
                 Double[] mergedResult = (Double[]) result.get(id);
                 for (int i = 0; i < keys.size(); i++) {
                     String key = keys.get(i);
@@ -101,9 +114,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     CalcNode node = (CalcNode) conf.configValueMap.get(key);
                     //node.setDoBuy(useMax);
                     double value = mergedResult[i];
-                    recommend += node.calc(value, 0);
+                    recommendValue += node.calc(value, 0);
                 }
-                aResult[0] = recommend;
+                aResult[0] = recommendValue;
                 resultMap.put(id, aResult);
             }
         }
@@ -116,7 +129,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
 
     @Override
     public Object[] getResultItem(StockItem stock) {
-        return macdMap.get(stock.getId());
+        return resultMap.get(stock.getId());
     }
 
     @Override
@@ -126,7 +139,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
 
     @Override
     public void addResultItem(ResultItemTableRow row, StockItem stock) {
-        Object[] obj = macdMap.get(stock.getId());
+        Object[] obj = resultMap.get(stock.getId());
         Object val = null;
         if (obj != null) {
             val = obj[0];

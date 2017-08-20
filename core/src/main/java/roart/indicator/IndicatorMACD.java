@@ -44,9 +44,11 @@ public class IndicatorMACD extends Indicator {
     Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[]> listMap;
+    Map<String, double[]> truncListMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
     Map<String, Object[]> objectMap;
+    Map<String, Object[]> objectFixedMap;
     //Map<String, Double> resultMap;
     Map<String, Object[]> resultMap;
     Map<String, Double[]> momMap;
@@ -57,6 +59,11 @@ public class IndicatorMACD extends Indicator {
     
     List<ResultItemTableRow> mlTimesTableRows = null;
     List<ResultItemTableRow> eventTableRows = null;
+    
+    @Override
+    public String indicatorName() {
+        return PipelineConstants.INDICATORMACD;
+    }
     
     @Override
     public Map<String, Object> getResultMap() {
@@ -72,7 +79,9 @@ public class IndicatorMACD extends Indicator {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.RESULT, momMap);
         map.put(PipelineConstants.OBJECT, objectMap);
+        map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
         map.put(PipelineConstants.LIST, listMap);
+        map.put(PipelineConstants.TRUNCLIST, truncListMap);
         return map;
     }
     
@@ -122,7 +131,9 @@ public class IndicatorMACD extends Indicator {
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap);
+        boolean currentYear = "cy".equals(key);
+        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+        this.truncListMap = ArraysUtil.getTruncList(this.listMap);
         if (conf.wantPercentizedPriceIndex()) {
             
         }
@@ -141,7 +152,8 @@ public class IndicatorMACD extends Indicator {
             macdLists[i] = new ArrayList<>();
         }
         long time2 = System.currentTimeMillis();
-        objectMap = dbDao.doCalculationsArr(conf, listMap, key, this, conf.wantPercentizedPriceIndex());
+        objectMap = dbDao.doCalculationsArr(conf, truncListMap, key, this, conf.wantPercentizedPriceIndex());
+        //objectFixedMap = ArraysUtil.makeFixedMap(objectMap, conf.getDays());
         //System.out.println("imap " + objectMap.size());
         log.info("time2 " + (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
@@ -153,8 +165,14 @@ public class IndicatorMACD extends Indicator {
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<String, Map<double[], Double>> mapMap = new HashMap<>();
        // System.out.println("allids " + listMap.size());
+        boolean done = false;
         for (String id : listMap.keySet()) {
             Object[] objs = objectMap.get(id);
+            //Object[] objs2 = objectFixedMap.get(id);
+            if (!done) {
+                //System.out.println("s " + objs.length + " " + objs2.length);
+                done = true;
+            }
             Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs);
             if (momentum != null) {
                 momMap.put(id, momentum);
@@ -173,7 +191,8 @@ public class IndicatorMACD extends Indicator {
             MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
             MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
 
-            Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+            //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
+            Double[] list = listMap.get(id);
             log.info("listsize"+ list.length);
             if (conf.wantPercentizedPriceIndex()) {
             list = ArraysUtil.getPercentizedPriceIndex(list, key);
@@ -213,7 +232,7 @@ public class IndicatorMACD extends Indicator {
     }
 
     @Override
-    public Object calculate(Double[] array) {
+    public Object calculate(double[] array) {
         TaUtil tu = new TaUtil();
         Object[] objs = tu.getMomAndDeltaFull(array, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
         return objs;

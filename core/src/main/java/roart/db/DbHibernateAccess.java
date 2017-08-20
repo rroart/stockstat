@@ -28,9 +28,9 @@ public class DbHibernateAccess extends DbAccess {
 	}
 
     @Override
-    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, Double[]> listMap, String key,
+    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[]> listMap, String key,
             Indicator indicator, boolean wantPercentizedPriceIndex) {
-        return DbHibernate.doCalculationsArr(conf, listMap, key, indicator, wantPercentizedPriceIndex);
+        return DbHibernate.doCalculationsArrNonNull(conf, listMap, key, indicator, wantPercentizedPriceIndex);
     }
 
     public static DbAccess instance() {

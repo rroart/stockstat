@@ -31,6 +31,7 @@ public class IndicatorUtils {
      * @throws Exception
      */
 
+    @Deprecated
     public static Object[] getDayMomMap(MyMyConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
@@ -66,6 +67,7 @@ public class IndicatorUtils {
         return retobj;
     }
 
+    @Deprecated
     public static Object[] getDayRsiMap(MyMyConfig conf, Map<String, Object[]> objectMap, Map<String, Double[]> listMap,
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
@@ -135,7 +137,7 @@ public class IndicatorUtils {
         return retobj;
     }
 
-    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators) throws Exception {
+    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators, int futureDays, int tableDays, int intervalDays) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[]>> listList = new ArrayList<>();
         int arraySize = 0;
@@ -159,7 +161,7 @@ public class IndicatorUtils {
         ids.addAll(listList.get(0).keySet());
 
         // TODO change
-        for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < conf.getTableDays(); j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
+        for (int j = futureDays; j < tableDays; j += intervalDays) {
             Map<String, Double[]> indicatorMap = new HashMap<>();
             for (String id : listList.get(0).keySet()) {
                 Double[] result = new Double[0];

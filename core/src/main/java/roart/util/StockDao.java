@@ -1,10 +1,12 @@
 package roart.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.jfree.util.Log;
 
 import roart.model.StockItem;
@@ -118,15 +120,17 @@ public class StockDao {
     }
 
     public static Map<String, Double[]> getArrSparse(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
-			Map<String, MarketData> marketdataMap) throws Exception {
+			Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
 		Map<String, Double[]> retMap = new HashMap<>();
 		List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         System.out.println("datstolen " + datedstocklists.length);
 		int index = 0;
 		int nonn = 0;
 		int nu = 0;
+        if (!currentyear) {
         if (index >= 0) {
-        	for (int i = index; i < datedstocklists.length; i++) {
+            for (int i = datedstocklists.length - 1; i >= 0; i--) {
+        	//for (int i = index; i < datedstocklists.length; i++) {
         		List<StockItem> stocklist = datedstocklists[i];
         		//System.out.println("datstolen2 " + stocklist.size());
         		for (StockItem stock : stocklist) {
@@ -141,7 +145,80 @@ public class StockDao {
         		}
         	}
         }
+        } else {
+            List<List<StockItem>> yearList = new ArrayList<>();
+            System.out.println("date" + datedstocklists[datedstocklists.length -1].get(0).getDate());
+            System.out.println("date" + datedstocklists[0].get(0).getDate());
+            Map<String, Double> basenumberMap = new HashMap<>();
+            Map<String, Double> lastnumberMap = new HashMap<>();
+            Map<String, Integer> yearMap = new HashMap<>();
+            for (int i = datedstocklists.length - 1; i >= 0; i--) {
+                List<StockItem> stocklist = datedstocklists[i];
+                //System.out.println("datstolen2 " + stocklist.size());
+                for (StockItem stock : stocklist) {
+                    String stockid = stock.getId();
+                    int curYear = stock.getDate().getYear();
+                    Integer thisYear = yearMap.get(stockid);
+                    if (thisYear == null) {
+                        thisYear = curYear;
+                        yearMap.put(stockid, thisYear);
+                    }
+                    if (curYear != thisYear) {
+                        Double basenumber = basenumberMap.get(stockid);
+                        if (basenumber == null) {
+                            basenumber = 1.0;
+                        }
+                        Double lastnumber = lastnumberMap.get(stockid);
+                        if (lastnumber != null) {
+                            basenumberMap.put(stockid, lastnumber);
+                        } else {
+                            basenumberMap.put(stockid, basenumber);                            
+                        }
+                        yearMap.put(stockid, curYear);
+                    }
+                    Double value = StockDao.getValue(stock, periodInt);
+                    if (value != null) {
+                        value = 0.01 * value + 1;
+                        Double basenumber = basenumberMap.get(stockid);
+                        if (basenumber == null) {
+                            basenumber = 1.0;
+                        }
+                        value = value * basenumber;
+                    }
+                    if (value != null) {
+                        lastnumberMap.put(stockid, value);
+                    }
+                    mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
+                }
+            }
+            System.out.println("base " + basenumberMap.values());
+            System.out.println("retmap " + Arrays.asList(retMap.get("0P0000A30R")));
+        }
         System.out.println("nullnul" + nonn + " " + nu);
+        retMap = getReverseArrSparseFillHoles(conf, retMap);
 		return retMap;
 	}
+    
+    public static int maxHoleNumber() {
+        return 5;
+    }
+    
+    public static Map<String, Double[]> getReverse(Map<String, Double[]> listMap) {
+        Map<String, Double[]> retMap = new HashMap<>();
+        for (String id : listMap.keySet()) {
+            //retMap.put(id, ArraysUtil.getArrayNonNullReverse(listMap.get(id)));
+            Double[] array = listMap.get(id);
+            ArrayUtils.reverse(array);
+            retMap.put(id, array);
+        }
+        return retMap;
+    }
+    
+    public static Map<String, Double[]> getReverseArrSparseFillHoles(MyConfig conf, Map<String, Double[]> listMap) {
+        Map<String, Double[]> retMap = /*getReverse*/(listMap);
+        for (String id : listMap.keySet()) {
+            retMap.put(id, ArraysUtil.fixMapHoles(listMap.get(id), null, maxHoleNumber()));
+        }       
+        return retMap;
+    }
 }

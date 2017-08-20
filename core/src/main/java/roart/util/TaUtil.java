@@ -39,11 +39,13 @@ public class TaUtil {
 
     }
 
-    public Object[] getRsiAndDeltaFull(Double[] list, int days, int rsideltadays) {
-	double values[] = new double[list.length];
+    public Object[] getRsiAndDeltaFull(double[] values, int days, int rsideltadays) {
+	/*
+        double values[] = new double[list.length];
 	for (int i = 0; i < list.length; i++) {
             values[i] = list[i];
         }
+        */
         Object[] objs = getInnerRSI(values, values.length);
         return objs;
 
@@ -174,10 +176,11 @@ public class TaUtil {
         MInteger end = new MInteger();
         double rsi[] = new double[values.length];
         core.rsi(0, size - 1, values, 14, beg, end, rsi);
-        Object[] objs = new Object[3];
-        objs[0] = rsi;
-        objs[1] = beg;
-        objs[2] = end;
+        Object[] objs = new Object[4];
+        objs[RSIIDXRSI] = rsi;
+        objs[RSIIDXBEG] = beg;
+        objs[RSIIDXEND] = end;
+        objs[RSIIDXRSIFIXED] = ArraysUtil.makeFixed(rsi, beg.value, end.value, values.length);
         //log.info("rsi beg end " + beg.value + " " + end.value + Arrays.toString(rsi));
 		return objs;
 	}
@@ -519,10 +522,14 @@ public class TaUtil {
 	public static final int MACDIDXHIST = 2;
 	public static final int MACDIDXBEG = 3;
 	public static final int MACDIDXEND = 4;
+    public static final int MACDIDXMACDFIXED = 5;
+    public static final int MACDIDXSIGFIXED = 6;
+    public static final int MACDIDXHISTFIXED = 7;
 	
     public static final int RSIIDXRSI = 0;
     public static final int RSIIDXBEG = 1;
     public static final int RSIIDXEND = 2;
+    public static final int RSIIDXRSIFIXED = 3;
 
     private Object[] getInnerEMA(double[] values, int size) {
 		Core core = new Core();
@@ -552,12 +559,15 @@ public class TaUtil {
         double sig[] = new double[values.length];
         double hist[] = new double[values.length];
         core.macd(0, size - 1, values, 26, 12, 9, beg, end, macd, sig, hist);
-        Object[] objs = new Object[5];
-        objs[0] = macd;
-        objs[1] = sig;
-        objs[2] = hist;
+        Object[] objs = new Object[8];
+        objs[MACDIDXMACD] = macd;
+        objs[MACDIDXSIGN] = sig;
+        objs[MACDIDXHIST] = hist;
         objs[MACDIDXBEG] = beg;
         objs[MACDIDXEND] = end;
+        objs[MACDIDXMACDFIXED] = ArraysUtil.makeFixed(macd, beg.value, end.value, values.length);
+        objs[MACDIDXSIGFIXED] = ArraysUtil.makeFixed(sig, beg.value, end.value, values.length);
+        objs[MACDIDXHISTFIXED] = ArraysUtil.makeFixed(hist, beg.value, end.value, values.length);
         //System.out.println("outout1 " + Arrays.toString(macd));
         //System.out.println("outout2 " + Arrays.toString(sig));
         //System.out.println("outout3 " + Arrays.toString(hist));
@@ -890,14 +900,8 @@ public class TaUtil {
         return retindex;
     }
 
-    public Object[] getMomAndDeltaFull(Double[] list, int days, int macddeltadays, int histdeltadays) {
-        double values[] = new double[list.length];
-        log.info("before before " + list.length + " " + Arrays.toString(list));
-        //int size = ArraysUtil.getArrayNonNullReverse(list, values);
-        //log.info("before size " + size + Arrays.toString(values));
-        for (int i = 0; i < list.length; i++) {
-            values[i] = list[i];
-        }
+    public Object[] getMomAndDeltaFull(double[] values, int days, int macddeltadays, int histdeltadays) {
+        log.info("before before " + values.length + " " + values);
         Object[] objs = getInnerMACD(values, values.length);
         return objs;
     }

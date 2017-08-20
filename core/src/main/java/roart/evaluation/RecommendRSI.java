@@ -19,12 +19,19 @@ public abstract class RecommendRSI extends Recommend {
     }
 
     @Override
-    public Indicator getIndicator(Map<String, MarketData> marketdatamap, int category) throws Exception {
-        if (indicator == null) {
-            indicator = new IndicatorRSI(conf, null, marketdatamap, null, null, null, category);
+    public Indicator getIndicator(Map<String, MarketData> marketdatamap, int category, Map<String, Indicator> newIndicatorMap, Map<String, Indicator> usedIndicatorMap) throws Exception {
+        if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
+            return usedIndicatorMap.get(indicator());
         }
-        return indicator;
+
+        Indicator indicator = new IndicatorRSI(conf, null, marketdatamap, null, null, null, category);
+        
+        if (newIndicatorMap != null) {
+            newIndicatorMap.put(indicator(), indicator);
+        }
+       return indicator;
     }
+    
     @Override
     public String indicator() {
         return PipelineConstants.INDICATORRSI;

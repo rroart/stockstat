@@ -2,7 +2,7 @@ package roart.calculate;
 
 import java.util.Random;
 
-public class CalcMACDNode extends CalcNode {
+public class CalcComplexNode extends CalcNode {
 
     double minMutateThresholdRange;
     double maxMutateThresholdRange;
@@ -107,9 +107,12 @@ public class CalcMACDNode extends CalcNode {
             mythreshold = minmaxthreshold;
         }
         double myvalue = val - mythreshold;
-        if (divideminmaxthreshold) {
+        if (false || divideminmaxthreshold) {
             myvalue = myvalue / minmaxthreshold;
         }
+        
+        myvalue = myvalue / (maxMutateThresholdRange - minMutateThresholdRange);
+        
         if (changeSignWhole) {
             myvalue = -myvalue;
         }

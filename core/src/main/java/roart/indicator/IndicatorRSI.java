@@ -18,6 +18,7 @@ import roart.db.DbSpark;
 import roart.model.StockItem;
 //import roart.model.Stock;
 import roart.service.ControlService;
+import roart.util.ArraysUtil;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
@@ -32,9 +33,11 @@ public class IndicatorRSI extends Indicator {
     Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[]> listMap;
+    Map<String, double[]> truncListMap;
     Map<String, Double[]> rsiMap;
     Double[] emptyField;
     Map<String, Object[]> objectMap;
+    Map<String, Object[]> objectFixedMap;
 
     public IndicatorRSI(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
         super(conf, string, category);
@@ -45,6 +48,11 @@ public class IndicatorRSI extends Indicator {
         calculateRSIs(conf, marketdatamap, periodDataMap, category);        
     }
 
+    @Override
+    public String indicatorName() {
+        return PipelineConstants.INDICATORRSI;
+    }
+    
     @Override
     public Map<String, Object> getResultMap() {
         Map<String, Object> map = new HashMap<>();
@@ -59,7 +67,9 @@ public class IndicatorRSI extends Indicator {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.RESULT, rsiMap);
         map.put(PipelineConstants.OBJECT, objectMap);
+        map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
         map.put(PipelineConstants.LIST, listMap);
+        map.put(PipelineConstants.TRUNCLIST, truncListMap);
         return map;
     }
     
@@ -70,7 +80,8 @@ public class IndicatorRSI extends Indicator {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
-        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap);
+        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        this.truncListMap = ArraysUtil.getTruncList(this.listMap);
         log.info("time0 " + (System.currentTimeMillis() - time0));
         rsiMap = new HashMap();
         try {
@@ -93,7 +104,8 @@ public class IndicatorRSI extends Indicator {
         }
         long time1 = System.currentTimeMillis();
         TaUtil tu = new TaUtil();
-        objectMap = dbDao.doCalculationsArr(conf, listMap, key, this, conf.wantPercentizedPriceIndex());
+        objectMap = dbDao.doCalculationsArr(conf, truncListMap, key, this, conf.wantPercentizedPriceIndex());
+        //objectFixedMap = ArraysUtil.makeFixedMap(objectMap, conf.getDays());
         String market = conf.getMarket();
         String periodstr = key;
         //PeriodData perioddata = periodDataMap.get(periodstr);
@@ -130,8 +142,8 @@ public class IndicatorRSI extends Indicator {
     }
 
     @Override
-    public Object calculate(Double[] array) {
-        List<Double> list = Arrays.asList(array);
+    public Object calculate(double[] array) {
+        //List<Double> list = Arrays.asList(array);
         TaUtil tu = new TaUtil();
         Object[] objs = tu.getRsiAndDeltaFull(array, conf.getDays(), conf.getRSIDeltaDays());
         //Double[] rsi = tu.getRSI(list, conf.getDays(), conf.isRSIDeltaEnabled(), conf.getRSIDeltaDays());

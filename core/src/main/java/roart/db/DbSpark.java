@@ -154,6 +154,7 @@ public class DbSpark {
         return m;
     }
 
+    @Deprecated
     public static Map<String, Object[]> doCalculationsArr(Map<String, Double[]> listMap, String key, Indicator ind,  boolean wantPercentizedPriceIndex) {
         if (spark == null) {
             return null;
@@ -163,7 +164,7 @@ public class DbSpark {
         List<Row> rowList = new ArrayList<>();
         for (String id : listMap.keySet()) {
             Double[] values = listMap.get(id);
-            values = ArraysUtil.getArrayNonNullReverse(values);
+            //values = ArraysUtil.getArrayNonNullReverse(values);
             // TODO !!!
             if (wantPercentizedPriceIndex) {
            values = ArraysUtil.getPercentizedPriceIndex(values, key);
@@ -178,7 +179,37 @@ public class DbSpark {
         
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[])((WrappedArray)x.getAs("values")).array())));
+        Map<String, Object[]> objMap = null; //df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[])((WrappedArray)x.getAs("values")).array())));
+        //System.out.println("m size " + m.size());
+        log.info("time calc " + (System.currentTimeMillis() - time0));
+       return objMap;
+    }
+    
+    public static Map<String, Object[]> doCalculationsArrNonNull(Map<String, double[]> listMap, String key, Indicator ind,  boolean wantPercentizedPriceIndex) {
+        if (spark == null) {
+            return null;
+        }
+        long time0 = System.currentTimeMillis();
+        System.out.println("running spark");
+        List<Row> rowList = new ArrayList<>();
+        for (String id : listMap.keySet()) {
+            double[] values = listMap.get(id);
+            //values = ArraysUtil.getArrayNonNullReverse(values);
+            // TODO !!!
+            if (wantPercentizedPriceIndex) {
+           values = ArraysUtil.getPercentizedPriceIndex(values, key);
+            }
+            Row row = RowFactory.create(id, values);
+            rowList.add(row);
+        }
+        StructType schema = DataTypes
+                .createStructType(new StructField[] {
+                        DataTypes.createStructField("id", DataTypes.StringType, false),
+                        DataTypes.createStructField("values", DataTypes.createArrayType(DataTypes.DoubleType), false)});
+        
+        Dataset<Row> df = spark.createDataFrame(rowList, schema);
+        //df.show();
+        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((double[])((WrappedArray)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
        return objMap;

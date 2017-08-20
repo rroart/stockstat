@@ -10,6 +10,7 @@ import roart.mutation.Mutate;
 import roart.aggregate.Aggregator;
 import roart.aggregate.AggregatorRecommenderIndicator;
 import roart.aggregate.DataReader;
+import roart.aggregate.MLIndicator;
 import roart.aggregate.MLMACD;
 import roart.aggregate.RecommenderRSI;
 import roart.category.Category;
@@ -326,10 +327,11 @@ public class ControlService {
             String[] periodText,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories) throws Exception {
-        Aggregator[] aggregates = new Aggregator[3];
+        Aggregator[] aggregates = new Aggregator[4];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
         aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
         aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories);
+        aggregates[3] = new MLIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories);
         return aggregates;
     }
 
@@ -808,11 +810,12 @@ public class ControlService {
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
             Map<String, Indicator> indicatorMap = new HashMap<>();
             int category = Constants.PRICECOLUMN;
+            Map<String, Indicator> newIndicatorMap = new HashMap<>();
             for (String type : usedRecommenders.keySet()) {
                 List<Recommend> list = usedRecommenders.get(type);
                 for (Recommend recommend : list) {
                     String indicator = recommend.indicator();
-                    indicatorMap.put(indicator, recommend.getIndicator(marketdatamap, category));
+                    indicatorMap.put(indicator, recommend.getIndicator(marketdatamap, category, newIndicatorMap, null));
                 }
             }
 
@@ -822,7 +825,8 @@ public class ControlService {
                 List<Indicator> indicators = Recommend.getIndicators(recommender, usedRecommenders, indicatorMap);
                 List<String>[] recommendList = recommendKeyMap.get(recommender);
                 //indicators.add(indicatorMap.get(recommender));
-                Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators);
+                Recommend recommend = usedRecommenders.get(recommender).get(0);
+                Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays());
                 //IndicatorEvaluation recommend = new IndicatorEvaluation(null, null, null, false);
                 
                 List<String> buyList = recommendList[0];
@@ -839,18 +843,18 @@ public class ControlService {
                     System.out.println("r1");
                     ResultItemTableRow row = new ResultItemTableRow();
                     row.add(id);
-                    row.add(conf.configValueMap.get(id));
+                    row.add("" + conf.configValueMap.get(id));
                     System.out.println(buy.conf.configValueMap.get(id));
                     System.out.println(buy.conf.configValueMap.get(id).getClass().getName());
-                    row.add(buy.conf.configValueMap.get(id));
+                    row.add("" + buy.conf.configValueMap.get(id));
                     table.add(row);
                 }
                 for (String id : sellList) {
                     System.out.println("r2");
                     ResultItemTableRow row = new ResultItemTableRow();
                     row.add(id);
-                    row.add(conf.configValueMap.get(id));
-                    row.add(sell.conf.configValueMap.get(id));
+                    row.add("" +conf.configValueMap.get(id));
+                    row.add("" + sell.conf.configValueMap.get(id));
                     table.add(row);
                 }
                 // TODO have a boolean here

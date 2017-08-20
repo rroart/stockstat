@@ -162,4 +162,14 @@ public class MACDRecommendSimple extends RecommendMACD {
         return RecommendConstants.SIMPLE;
     }
 
+    
+    @Override
+    public int getFutureDays() {
+        return conf.getTestIndicatorRecommenderSimpleFutureDays();
+    }
+    
+    @Override
+    public int getIntervalDays() {
+        return conf.getTestIndicatorRecommenderSimpleIntervalDays();
+    }
 }

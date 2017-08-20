@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,6 +140,21 @@ public class ArraysUtil {
                 if (list[i] != null) {
                     list[i] *= 100 / first;
                 }
+            }
+        }
+        return list;
+    }
+
+    public static double[] getPercentizedPriceIndex(double[] list, String key) {
+        if (list == null) {
+            return list;
+        }
+        if ((CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key)) {
+            int i = 0;
+            double first = 0;
+            first = list[i];
+            for (; i < list.length; i ++) {
+                list[i] *= 100 / first;
             }
         }
         return list;
@@ -381,5 +397,130 @@ public class ArraysUtil {
         }
         return retlist;
     }
+
+    public static double[] convert(Double[] doubles) {
+        double ret[] = new double[doubles.length];
+        for (int i = 0; i < doubles.length; i ++) {
+            ret[i] = doubles[i];
+        }
+        return ret;
+    }
+
+    /**
+     * Goes through the array, smoothes out missing values (by using the previous),
+     * or nulls out, depending or whether a max number was passed
+     * 
+     * @param doubles
+     * @param maxHoleNumber
+     * @return Fixed array
+     */
+    
+    public static Double[] fixMapHoles(Double[] srcArray, Double[] dstArray, int maxHoleNumber) {
+        int length = srcArray.length;
+        if (dstArray == null) {
+            dstArray = srcArray;
+        } else {
+            for (int i = 0; i < length; i ++) {
+                dstArray[i] = srcArray[i];
+            }
+        }
+        Double[] retDouble = new Double[dstArray.length];
+        int start = searchBackwardNonNull(dstArray, length - 1);
+        if (start != length - 1) {
+            for (int k = 0; k < length; k++) {
+                dstArray[k] = null;
+            }                   
+            return retDouble;            
+        }
+        for (int i = start; i >= 0; i--) {
+            i = searchBackwardNull(dstArray, i);
+            int j = searchBackwardNonNull(dstArray, i);
+            if (i - j > maxHoleNumber) {
+                for (int k = 0; k <= i; k++) {
+                    dstArray[k] = null;
+                }
+                return dstArray;
+            } else {
+                //System.out.println(length + " " + i + " " + j);
+                if (i < 0 || j < 0) {
+                    //System.out.println(Arrays.asList(dstArray));
+                }
+                if (i < 0) {
+                    for (int k = 0; k < length; k++) {
+                        dstArray[k] = null;
+                    }                   
+                    return retDouble;
+                }
+                if (j < 0) {
+                    return dstArray;
+                }
+                double diff = (dstArray[i + 1] - dstArray[j]) / 3;
+                for (int k = j + 1; k <= i; k++) {
+                    dstArray[k] = dstArray[j] + diff * (k - j);
+                }
+            }
+            i = j;
+        }
+        return dstArray;
+    }
+
+    public static Map<String, double[]> getTruncList(Map<String, Double[]> listMap) {
+        Map<String, double[]> retMap = new HashMap<>();
+        for (String id : listMap.keySet()) {
+            retMap.put(id, getNonNull(listMap.get(id)));
+        }
+        return retMap;
+    }
+    
+    public static double[] getNonNull(Double[] doubles) {
+        int offset = searchForwardNonNull(doubles, 0, doubles.length);
+        double[] retArray = new double[doubles.length - offset];
+        for (int i = 0; i < doubles.length - offset; i++) {
+            if (doubles[i + offset] == null) {
+                int j = 0;
+            }
+            retArray[i] = doubles[i + offset];
+        }
+        return retArray;
+    }
+
+    private static int searchForwardNonNull(Double[] array, int i, int length) {
+        while (i < length && array[i] == null)  {
+            i++;
+        }
+        return i;
+    }
+
+    private static int searchBackwardNull(Double[] array, int i) {
+        while (i >= 0 && array[i] != null) {
+            i--;
+        }
+        return i;
+    }
+
+    private static int searchBackwardNonNull(Double[] array, int i) {
+        while (i >= 0 && array[i] == null) {
+            i--;
+        }
+        return i;
+    }
+
+    public static Map<String, Object[]> makeFixedMap(Map<String, Object[]> objectMap, int length) {
+        Map<String, Object[]> retMap = new HashMap<>();
+        for (String id : objectMap.keySet()) {
+            Object[] array = objectMap.get(id);
+            Object[] nullArray = new Object[length - array.length];
+            retMap.put(id, ArrayUtils.addAll(nullArray, array));
+        }
+        return retMap;
+    }
+
+    public static double[] makeFixed(double[] array, int begin, int end, int length) {
+        if (end == 0) {
+            return new double[length];
+        }
+        return ArrayUtils.addAll(new double[begin], ArrayUtils.subarray(array, 0, end));
+    }
+
 }
 

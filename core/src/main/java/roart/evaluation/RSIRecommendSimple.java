@@ -46,5 +46,15 @@ public class RSIRecommendSimple extends RecommendRSI {
         return RecommendConstants.SIMPLE;
     }
 
+    
+    @Override
+    public int getFutureDays() {
+        return conf.getTestIndicatorRecommenderSimpleFutureDays();
+    }
+    
+    @Override
+    public int getIntervalDays() {
+        return conf.getTestIndicatorRecommenderSimpleIntervalDays();
+    }
 }
 

@@ -2,7 +2,7 @@ package roart.config;
 
 import java.util.HashMap;
 import java.util.Map;
-import roart.calculate.CalcMACDNode;
+import roart.calculate.CalcComplexNode;
 import roart.category.CategoryConstants;
 
 public class ConfigConstants {
@@ -133,12 +133,12 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSBUYRSIDELTANODE = "aggregators.indicatorrecommender.complex.rsi.weightbuyrsideltanode";
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSSELLRSINODE = "aggregators.indicatorrecommender.complex.rsi.weightsellrsinode";
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSSELLRSIDELTANODE = "aggregators.indicatorrecommender.complex.rsi.weightsellrsideltanode";
-    @Deprecated
-    public static final String AGGREGATORSMACDRSI = "aggregators.macdrsi[@enable]";
-    @Deprecated
-    public static final String AGGREGATORSMACDRSIFUTUREDAYS = "aggregators.macdrsi.futuredays";
-    @Deprecated
-    public static final String AGGREGATORSMACDRSITHRESHOLD = "aggregators.macdrsi.threshold";
+    public static final String AGGREGATORSINDICATOR = "aggregators.indicator[@enable]";
+    public static final String AGGREGATORSINDICATORMACD = "aggregators.indicator.macd[@enable]";
+    public static final String AGGREGATORSINDICATORRSI = "aggregators.indicator.rsi[@enable]";
+    public static final String AGGREGATORSINDICATORFUTUREDAYS = "aggregators.indicator.futuredays";
+    public static final String AGGREGATORSINDICATORINTERVALDAYS = "aggregators.indicator.intervaldays";
+    public static final String AGGREGATORSINDICATORTHRESHOLD = "aggregators.indicator.threshold";
     public static Map<String, Class> map = new HashMap();
 
     public static void makeTypeMap() {
@@ -261,9 +261,12 @@ public class ConfigConstants {
         map.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSBUYRSIDELTANODE , String.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSSELLRSINODE, String.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSSELLRSIDELTANODE, String.class);
-        map.put(ConfigConstants.AGGREGATORSMACDRSI, Boolean.class);
-        map.put(ConfigConstants.AGGREGATORSMACDRSIFUTUREDAYS, Integer.class);
-        map.put(ConfigConstants.AGGREGATORSMACDRSITHRESHOLD, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORMACD, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORRSI, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, Double.class);
     }
 
     public static Map<String, Object> deflt = new HashMap();
@@ -387,9 +390,12 @@ public class ConfigConstants {
         deflt.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSBUYRSIDELTANODE , json);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSSELLRSINODE, json);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSSELLRSIDELTANODE, json);
-        deflt.put(ConfigConstants.AGGREGATORSMACDRSI, Boolean.FALSE);
-        deflt.put(ConfigConstants.AGGREGATORSMACDRSIFUTUREDAYS, 10);
-        deflt.put(ConfigConstants.AGGREGATORSMACDRSITHRESHOLD, 0);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORMACD, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORRSI, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, 10);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, 1);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, 0);
     }
 
     private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"useMax\":false}";
@@ -516,9 +522,12 @@ public class ConfigConstants {
         text.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDWEIGHTSSELLHISTOGRAMNODE ,"Sell weight histogram node");		
         text.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSSELLRSINODE, "Sell weight RSI node");
         text.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIWEIGHTSSELLRSIDELTANODE, "Sell weight RSI delta node");
-        text.put(ConfigConstants.AGGREGATORSMACDRSI, "MACD RSI ML up down classifier");
-        text.put(ConfigConstants.AGGREGATORSMACDRSIFUTUREDAYS, "MACD RSI days in the future for threshold");
-        text.put(ConfigConstants.AGGREGATORSMACDRSITHRESHOLD, "MACD RSI threshold for classifier");
+        text.put(ConfigConstants.AGGREGATORSINDICATOR, "ML indicator enable");
+        text.put(ConfigConstants.AGGREGATORSINDICATORMACD, "ML indicator MACD enable");
+        text.put(ConfigConstants.AGGREGATORSINDICATORRSI, "ML indicator RSI enable");
+        text.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, "ML indicator days in the future for threshold");
+        text.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, "ML indicator days in the future interval");
+        text.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, "ML indicator threshold for classifier");
 
     }
 
