@@ -341,7 +341,7 @@ public class ControlService {
             String[] periodText,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) throws Exception {
-        Pipeline[] categories = new DataReader[StockUtil.PERIODS + 3];
+        Pipeline[] categories = new Pipeline[StockUtil.PERIODS + 3];
         categories[0] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.INDEXVALUECOLUMN);
         categories[1] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.PRICECOLUMN);
         categories[2] = new ExtraReader(conf, 0);

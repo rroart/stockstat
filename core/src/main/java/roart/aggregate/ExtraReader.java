@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,13 +30,18 @@ public class ExtraReader extends Pipeline {
         
     }
     private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category) throws Exception {
+        retListMap = new HashMap<>();
+        retMapMap = new HashMap<>();
         String str0 = conf.getAggregatorsIndicatorExtras();
-        String str = "{ [ 'market' : 'cboevol', 'id' : 'VIX'], [ 'market' : 'tradcomm' , 'id' : 'CL1:COM' ], [ 'market' : 'tradcomm', 'id' : 'XAUUSD:CUR' ] ]   }";
+        //String str = "{ [ 'market' : 'cboevol', 'id' : 'VIX'], [ 'market' : 'tradcomm' , 'id' : 'CL1:COM' ], [ 'market' : 'tradcomm', 'id' : 'XAUUSD:CUR' ] ]   }";
+        String str = "[ { \"market\" : \"cboevol\", \"id\" : \"VIX\"}, { \"market\" : \"tradcomm\" , \"id\" : \"CL1:COM\" }, { \"market\" : \"tradcomm\", \"id\" : \"XAUUSD:CUR\" } ]";
         ObjectMapper mapper = new ObjectMapper();
-        List<MarketAndId> list = (List<MarketAndId>) mapper.readValue(str, List.class);
+        List<LinkedHashMap> list = (List<LinkedHashMap>) mapper.readValue(str, List.class);
         List<Pair> pairs = new ArrayList<>();
-        for (MarketAndId mi : list) {
-            pairs.add(new Pair(mi.getMarket(), mi.getId()));
+        for (LinkedHashMap mi : list) {
+            System.out.println("mi"+mi+" " + mi.toString());
+            pairs.add(new Pair(mi.get("market"), mi.get("id")));
+            //pairs.add(new Pair(mi.getMarket(), mi.getId()));
         }
         
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
