@@ -578,6 +578,10 @@ public class MyMyConfig extends MyPropertyConfig {
                && wantAggregatorsIndicatorML();
    }
    
+   public String getAggregatorsIndicatorExtras() {
+       return (String) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRAS);
+   }
+   
    public int getAggregatorsIndicatorFuturedays() {
        return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
    }

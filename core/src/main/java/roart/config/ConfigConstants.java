@@ -136,6 +136,7 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATOR = "aggregators.indicator[@enable]";
     public static final String AGGREGATORSINDICATORMACD = "aggregators.indicator.macd[@enable]";
     public static final String AGGREGATORSINDICATORRSI = "aggregators.indicator.rsi[@enable]";
+    public static final String AGGREGATORSINDICATOREXTRAS = "aggregators.indicator.extras";
     public static final String AGGREGATORSINDICATORFUTUREDAYS = "aggregators.indicator.futuredays";
     public static final String AGGREGATORSINDICATORINTERVALDAYS = "aggregators.indicator.intervaldays";
     public static final String AGGREGATORSINDICATORTHRESHOLD = "aggregators.indicator.threshold";
@@ -264,6 +265,7 @@ public class ConfigConstants {
         map.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORMACD, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORRSI, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, String.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, Double.class);
@@ -393,6 +395,7 @@ public class ConfigConstants {
         deflt.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORMACD, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORRSI, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
         deflt.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, 10);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, 1);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, 0);
@@ -525,6 +528,7 @@ public class ConfigConstants {
         text.put(ConfigConstants.AGGREGATORSINDICATOR, "ML indicator enable");
         text.put(ConfigConstants.AGGREGATORSINDICATORMACD, "ML indicator MACD enable");
         text.put(ConfigConstants.AGGREGATORSINDICATORRSI, "ML indicator RSI enable");
+        text.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "ML indicator extras");
         text.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, "ML indicator days in the future for threshold");
         text.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, "ML indicator days in the future interval");
         text.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, "ML indicator threshold for classifier");
