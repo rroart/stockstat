@@ -7,9 +7,11 @@ import roart.model.ResultItemTableRow;
 import roart.model.ResultItem;
 import roart.model.StockItem;
 import roart.mutation.Mutate;
+import roart.pipeline.Pipeline;
 import roart.aggregate.Aggregator;
 import roart.aggregate.AggregatorRecommenderIndicator;
 import roart.aggregate.DataReader;
+import roart.aggregate.ExtraReader;
 import roart.aggregate.MLIndicator;
 import roart.aggregate.MLMACD;
 import roart.aggregate.RecommenderRSI;
@@ -221,7 +223,7 @@ public class ControlService {
                 return null;
             }
 
-            DataReader[] datareaders = getDataReaders(conf, stocks,
+            Pipeline[] datareaders = getDataReaders(conf, stocks,
                     periodText, marketdatamap, periodDataMap, periodmap);
             
             Category[] categories = getCategories(conf, stocks,
@@ -335,13 +337,14 @@ public class ControlService {
         return aggregates;
     }
 
-    private DataReader[] getDataReaders(MyMyConfig conf, List<StockItem> stocks,
+    private Pipeline[] getDataReaders(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) throws Exception {
-        DataReader[] categories = new DataReader[StockUtil.PERIODS + 2];
+        Pipeline[] categories = new DataReader[StockUtil.PERIODS + 3];
         categories[0] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.INDEXVALUECOLUMN);
         categories[1] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.PRICECOLUMN);
+        categories[2] = new ExtraReader(conf, 0);
         for (int i = 0; i < StockUtil.PERIODS; i++) {
             categories[i + 2] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, i);
         }

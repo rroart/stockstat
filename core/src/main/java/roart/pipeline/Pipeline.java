@@ -2,9 +2,15 @@ package roart.pipeline;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import roart.config.MyMyConfig;
+import roart.indicator.Indicator;
 
 public abstract class Pipeline {
+
+    protected static Logger log = LoggerFactory.getLogger(Indicator.class);
 
     protected MyMyConfig conf;
     protected int category;
