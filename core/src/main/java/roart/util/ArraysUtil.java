@@ -145,11 +145,11 @@ public class ArraysUtil {
         return list;
     }
 
-    public static double[] getPercentizedPriceIndex(double[] list, String key) {
+    public static double[] getPercentizedPriceIndex(double[] list, String key, int category) {
         if (list == null) {
             return list;
         }
-        if ((CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key)) {
+        if (category < 0 || (CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key)) {
             int i = 0;
             double first = 0;
             first = list[i];

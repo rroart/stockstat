@@ -197,7 +197,7 @@ public class DbSpark {
             //values = ArraysUtil.getArrayNonNullReverse(values);
             // TODO !!!
             if (wantPercentizedPriceIndex) {
-           values = ArraysUtil.getPercentizedPriceIndex(values, key);
+           values = ArraysUtil.getPercentizedPriceIndex(values, key, ind.getCategory());
             }
             Row row = RowFactory.create(id, values);
             rowList.add(row);
