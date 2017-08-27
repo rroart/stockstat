@@ -520,6 +520,10 @@ public class MyMyConfig extends MyPropertyConfig {
         return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONELITE);
     }
 
+    public Integer getEvolutionEliteCloneAndMutate() {
+        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONELITECLONEANDMUTATE);
+    }
+
     public boolean wantAggregators() {
         return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORS); 
     }

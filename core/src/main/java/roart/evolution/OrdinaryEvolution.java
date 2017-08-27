@@ -21,7 +21,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         //MACDRecommend recommend = new MACDRecommend();
         int selectionSize = conf.getEvolutionSelect();
         List<String> keys = evaluation.getKeys();
-        Population population = new Population(selectionSize, conf, evaluation, keys);
+        Population population = new Population(selectionSize, conf, evaluation, keys, false);
         int category = 0;
         String market = null; //"tradcomm";
         //List<Double> macdLists[] = new ArrayList[4];
@@ -70,6 +70,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             List<Individual> children = crossover(conf.getEvolutionCrossover(), population.getIndividuals(), keyList, conf, false, useMax, evaluation);
             
             mutateList(population.getIndividuals(), conf.getEvolutionElite(), population.size(), conf.getEvolutionMutate(), false, keyList, useMax);
+            List<Individual> clonedmutated = clonedmutated(conf.getEvolutionEliteCloneAndMutate(), conf, evaluation, keyList);
             mutateList(children, 0, population.size(), conf.getEvolutionMutate(), true, keyList, useMax);
             
             population.getIndividuals().addAll(children);

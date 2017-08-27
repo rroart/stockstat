@@ -97,7 +97,8 @@ public class ConfigConstants {
     @Deprecated
     public static final String EVOLUTIONCHILDREN = "evolution.children";
     public static final String EVOLUTIONSELECT = "evolution.select";
-    public static final String EVOLUTIONELITE= "evolution.elite";
+    public static final String EVOLUTIONELITE = "evolution.elite";
+    public static final String EVOLUTIONELITECLONEANDMUTATE = "evolution.elitecloneandmutate";
     public static final String EVOLUTIONMUTATE = "evolution.mutate";
     public static final String EVOLUTIONCROSSOVER = "evolution.crossover";
     public static final String EVOLUTIONGENERATIONCREATE = "evolution.generationcreate";
@@ -229,7 +230,8 @@ public class ConfigConstants {
         map.put(ConfigConstants.EVOLUTIONCROSSOVER, Integer.class);
         map.put(ConfigConstants.EVOLUTIONGENERATIONCREATE, Integer.class);
         map.put(ConfigConstants.EVOLUTIONELITE, Integer.class);
-        map.put(ConfigConstants.EVOLUTIONMUTATE, Integer.class);
+        map.put(ConfigConstants.EVOLUTIONELITECLONEANDMUTATE, Integer.class);
+       map.put(ConfigConstants.EVOLUTIONMUTATE, Integer.class);
         map.put(ConfigConstants.EVOLUTIONSELECT, Integer.class);
         map.put(ConfigConstants.AGGREGATORS, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.class);
@@ -358,6 +360,7 @@ public class ConfigConstants {
         deflt.put(ConfigConstants.EVOLUTIONGENERATIONS, 2);
         deflt.put(ConfigConstants.EVOLUTIONCHILDREN, 4);
         deflt.put(ConfigConstants.EVOLUTIONELITE, 1);
+        deflt.put(ConfigConstants.EVOLUTIONELITECLONEANDMUTATE, 0);
         deflt.put(ConfigConstants.EVOLUTIONMUTATE, 1);
         deflt.put(ConfigConstants.EVOLUTIONCROSSOVER, 1);
         deflt.put(ConfigConstants.EVOLUTIONGENERATIONCREATE, 0);
@@ -494,6 +497,7 @@ public class ConfigConstants {
         text.put(ConfigConstants.EVOLUTIONCROSSOVER, "Evolution crossover");
         text.put(ConfigConstants.EVOLUTIONGENERATIONCREATE, "Evolution create random in a generation");
         text.put(ConfigConstants.EVOLUTIONELITE, "Evolution elite");
+        text.put(ConfigConstants.EVOLUTIONELITECLONEANDMUTATE, "Evolution elite clone and mutate");
         text.put(ConfigConstants.EVOLUTIONSELECT, "Evolution select population");
         text.put(ConfigConstants.EVOLUTIONMUTATE, "Evolution mutate");
         text.put(ConfigConstants.AGGREGATORS, "Enable aggregators");

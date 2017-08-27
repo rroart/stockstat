@@ -73,7 +73,12 @@ public abstract class EvolutionAlgorithm {
     }
 
     protected List<Individual> created(Integer evolutionGenerationCreate, MyMyConfig conf, Evaluation evaluation, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
-        Population population = new Population(evolutionGenerationCreate, conf, evaluation, keys);
+        Population population = new Population(evolutionGenerationCreate, conf, evaluation, keys, false);
+        return population.getIndividuals();
+    }
+    
+    protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, MyMyConfig conf, Evaluation evaluation, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
+        Population population = new Population(evolutionEliteCloneAndMutate, conf, evaluation, keys, false);
         return population.getIndividuals();
     }
     

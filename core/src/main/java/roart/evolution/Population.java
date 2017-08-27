@@ -20,13 +20,18 @@ public class Population {
     public Population(int populationSize) {
         this.population = new ArrayList<>();
     }
-    public Population(int populationSize, MyMyConfig conf, Evaluation evaluation, List<String> keyList) throws JsonParseException, JsonMappingException, IOException {
+    public Population(int populationSize, MyMyConfig conf, Evaluation evaluation, List<String> keyList, boolean doClone) throws JsonParseException, JsonMappingException, IOException {
         this.conf = conf;
         this.population = new ArrayList<>();
 
         for (int individualCount = 0; individualCount < populationSize; individualCount++) {
 
-            Individual individual = new Individual(conf, 0, evaluation).getNewWithValueCopyAndRandomFactory(conf, keyList);
+            Individual individual;
+            if (doClone) {
+                individual = new Individual(conf, 0, evaluation).getNewWithValueCopyFactory(conf, keyList, true);
+            } else {
+                individual = new Individual(conf, 0, evaluation).getNewWithValueCopyAndRandomFactory(conf, keyList);
+            }
             this.population.add(individual);
         }
     }
