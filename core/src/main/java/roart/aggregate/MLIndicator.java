@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,7 @@ import roart.ml.MLClassifyModel;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
 import roart.util.ArraysUtil;
@@ -61,6 +63,7 @@ public class MLIndicator extends Aggregator {
     Map<String, Object[]> objectMap;
     //Map<String, Double> resultMap;
     Map<String, Object[]> resultMap;
+    Map<Pair, String> catMap;
     /*
     Map<String, Double[]> momMap;
     Map<String, Double> buyMap;
@@ -110,7 +113,7 @@ public class MLIndicator extends Aggregator {
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
     public MLIndicator(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, MarketData> marketdatamap, 
-            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories/*, Indicator[] indicators*/) throws Exception {
+            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories/*, Indicator[] indicators*/, Pipeline[] datareaders) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
@@ -135,7 +138,7 @@ public class MLIndicator extends Aggregator {
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
-        calculateMomentums(conf, marketdatamap, periodDataMap, category, categories);        
+        calculateMomentums(conf, marketdatamap, periodDataMap, category, categories, datareaders);        
     }
 
     /*
@@ -217,8 +220,9 @@ public class MLIndicator extends Aggregator {
 
     // TODO make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, int category2, Category[] categories) throws Exception {
+            Map<String, PeriodData> periodDataMap, int category2, Category[] categories, Pipeline[] datareaders) throws Exception {
         Category cat = null;
+        int catInt = Constants.PRICECOLUMN;
         for (Category category : categories) {
             // TODO fix
             if (category.getTitle().equals(CategoryConstants.PRICE)) {
@@ -226,6 +230,16 @@ public class MLIndicator extends Aggregator {
                 break;
             }
         }
+        Map<String, Pipeline> pipelineMap = new HashMap<>();
+        for (Pipeline datareader : datareaders) {
+            pipelineMap.put(datareader.pipelineName(), datareader);
+        }
+        Map<Pair, List<StockItem>> retListMap;
+        Map<Pair, Map<Date, StockItem>> retMapMap;
+        retListMap = (Map<Pair, List<StockItem>>) pipelineMap.get(PipelineConstants.EXTRAREADER).getLocalResultMap().get(PipelineConstants.LIST);
+        catMap = (Map<Pair, String>) pipelineMap.get(PipelineConstants.EXTRAREADER).getLocalResultMap().get(PipelineConstants.CATMAP);
+        retMapMap = (Map<Pair, Map<Date, StockItem>>) pipelineMap.get(PipelineConstants.EXTRAREADER).getLocalResultMap().get(PipelineConstants.MAP);
+        List<Date> dateList = (List<Date>) pipelineMap.get(PipelineConstants.DATAREADER).getLocalResultMap().get(PipelineConstants.DATELIST);
         Map<String, Indicator> newIndicatorMap = new HashMap<>();
         Map<String, Indicator> usedIndicatorMap = cat.getIndicatorMap();
 
@@ -324,7 +338,7 @@ public class MLIndicator extends Aggregator {
         int macdlen = conf.getTableDays();
         int listlen = conf.getTableDays();
         double testRecommendQualBuySell = 0;
-        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), conf.getTableDays(), conf.getAggregatorsIndicatorIntervaldays());
+        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), conf.getTableDays(), conf.getAggregatorsIndicatorIntervaldays(), dateList, retListMap, retMapMap, catInt, catMap);
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj2[0];
         Map<double[], Double> mergedCatMap = new HashMap<>();
         for (int j = conf.getAggregatorsIndicatorFuturedays(); j < macdlen; j += conf.getAggregatorsIndicatorIntervaldays()) {

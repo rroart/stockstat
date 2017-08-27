@@ -271,6 +271,16 @@ Table days (R days): how many days to use for the graph or statistics
 	  </row>
 	  <row>
 	    <entry>
+	      evolution.elitecloneandmutate
+	    </entry>
+	    <entry>
+	      The number of elite that will be cloned mutated (unofficial)
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
 	      evolution.crossover
 	    </entry>
 	    <entry>
@@ -294,7 +304,7 @@ Table days (R days): how many days to use for the graph or statistics
 	      evolution.generationcreate
 	    </entry>
 	    <entry>
-	      The number to create per generation
+	      The number to create per generation (unofficial)
 	    </entry>
 	    <entry>
 	    </entry>
@@ -392,6 +402,26 @@ Table days (R days): how many days to use for the graph or statistics
 	    </entry>
 	    <entry>
 	      10
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.extras
+	    </entry>
+	    <entry>
+	      Extra indicators, set by json format of markets and ids
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.extrasdeltas
+	    </entry>
+	    <entry>
+	      Extra indicators delta days
+	    </entry>
+	    <entry>
 	    </entry>
 	  </row>
 	  <row>

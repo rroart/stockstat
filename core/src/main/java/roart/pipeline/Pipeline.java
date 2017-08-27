@@ -10,7 +10,7 @@ import roart.indicator.Indicator;
 
 public abstract class Pipeline {
 
-    protected static Logger log = LoggerFactory.getLogger(Indicator.class);
+    protected static Logger log = LoggerFactory.getLogger(Pipeline.class);
 
     protected MyMyConfig conf;
     protected int category;
@@ -22,4 +22,5 @@ public abstract class Pipeline {
 
     public abstract Map<String, Object> getLocalResultMap();
     public abstract Map<Integer, Map<String, Object>> getResultMap();
+    public abstract String pipelineName();
 }

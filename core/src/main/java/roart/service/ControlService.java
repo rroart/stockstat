@@ -230,7 +230,7 @@ public class ControlService {
                     periodText, marketdatamap, periodDataMap, periodmap);
             
             Aggregator[] aggregates = getAggregates(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, periodmap, categories);
+                    periodText, marketdatamap, periodDataMap, periodmap, categories, datareaders);
             
             ResultItemTableRow headrow = new ResultItemTableRow();
             //ri.add("Id");
@@ -328,12 +328,12 @@ public class ControlService {
     private Aggregator[] getAggregates(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories) throws Exception {
+            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders) throws Exception {
         Aggregator[] aggregates = new Aggregator[4];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
         aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
         aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories);
-        aggregates[3] = new MLIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories);
+        aggregates[3] = new MLIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories, datareaders);
         return aggregates;
     }
 
@@ -346,7 +346,7 @@ public class ControlService {
         categories[1] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.PRICECOLUMN);
         categories[2] = new ExtraReader(conf, 0);
         for (int i = 0; i < StockUtil.PERIODS; i++) {
-            categories[i + 2] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, i);
+            categories[i + 3] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, i);
         }
         return categories;
     }

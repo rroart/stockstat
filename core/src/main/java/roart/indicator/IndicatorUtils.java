@@ -2,6 +2,7 @@ package roart.indicator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,13 +10,22 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.util.Pair;
+import org.jfree.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import roart.pipeline.PipelineConstants;
 import roart.config.MyMyConfig;
+import roart.model.StockItem;
+import roart.util.Constants;
 import roart.util.MarketData;
+import roart.util.StockDao;
 import roart.util.TaUtil;
 
 public class IndicatorUtils {
+
+    protected static Logger log = LoggerFactory.getLogger(IndicatorUtils.class);
 
     /**
      * 
@@ -170,6 +180,106 @@ public class IndicatorUtils {
                     Indicator ind = indicators.get(idx++);
                     Object[] objsIndicator = objectMap.get(id);
                     Object[] arr = ind.getDayResult(objsIndicator, j);
+                    if (arr != null && arr.length > 0) {
+                        result = (Double[]) ArrayUtils.addAll(result, arr);
+                    } else {
+                        System.out.println("No obj for id" + id);
+                    }
+                }
+                if (result.length == arraySize) {
+                    indicatorMap.put(id, result);
+                    IndicatorUtils.addToLists(indicatorLists, result);
+               } else {
+                    System.out.println("discarding " + id);
+                    continue;
+                }
+                dayIndicatorMap.put(j, indicatorMap);
+            }
+        }
+        for (int i = 0; i < arraySize; i++) {
+            indicatorMinMax[i].add(Collections.min(indicatorLists[i]));
+            indicatorMinMax[i].add(Collections.max(indicatorLists[i]));
+        }
+        retobj[0] = dayIndicatorMap;
+        retobj[1] = indicatorMinMax;
+        retobj[2] = listList;
+        return retobj;
+    }
+
+    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators, int futureDays, int tableDays, int intervalDays, List<Date> dateList, Map<Pair, List<StockItem>> retListMap, Map<Pair, Map<Date, StockItem>> retMapMap, int category0, Map<Pair, String> catMap) throws Exception {
+        List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
+        List<Map<String, Double[]>> listList = new ArrayList<>();
+        int arraySize = 0;
+        for (Indicator indicator : indicators) {
+            Map<String, Object> resultMap = indicator.getLocalResultMap();
+            objectMapsList.add((Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT));
+            listList.add((Map<String, Double[]>) resultMap.get(PipelineConstants.LIST));
+            arraySize += indicator.getResultSize();
+            System.out.println("sizes " + listList.get(listList.size() - 1).size());
+        }
+        int extraStart = arraySize;
+        if (retMapMap != null) {
+            arraySize += 2 * retMapMap.keySet().size();
+            System.out.println("sizes " + arraySize);
+        }
+        Object[] retobj = new Object[3];
+        Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
+        List<Double> indicatorLists[] = new ArrayList[arraySize];
+        List<Double> indicatorMinMax[] = new ArrayList[arraySize];
+        for (int tmpj = 0; tmpj < arraySize; tmpj ++) {
+            indicatorLists[tmpj] = new ArrayList<>();
+            indicatorMinMax[tmpj] = new ArrayList<>();
+        }
+        // TODO copy the retain from aggregator?
+        Set<String> ids = new HashSet<>();
+        ids.addAll(listList.get(0).keySet());
+
+        log.info("listsize " + dateList.size());
+        // TODO change
+        for (int j = futureDays; j < tableDays; j += intervalDays) {
+            Map<String, Double[]> indicatorMap = new HashMap<>();
+            for (String id : listList.get(0).keySet()) {
+                Double[] result = new Double[0];
+                int idx = 0;
+                for (Map<String, Object[]> objectMap : objectMapsList) {
+                    Indicator ind = indicators.get(idx++);
+                    Object[] objsIndicator = objectMap.get(id);
+                    Object[] arr = ind.getDayResult(objsIndicator, j);
+                    if (arr != null && arr.length > 0) {
+                        result = (Double[]) ArrayUtils.addAll(result, arr);
+                    } else {
+                        System.out.println("No obj for id" + id);
+                    }
+                }
+                int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
+                Date date = dateList.get(j);
+                Date prevDate = dateList.get(j + 1 - deltas);
+                for (Pair pairKey : retMapMap.keySet()) {
+                    String market = (String) pairKey.getFirst();
+                    String id2 = (String) pairKey.getSecond();
+                    Object[] arr = null;
+                    Map<Date, StockItem> dateMap = retMapMap.get(pairKey); 
+                    StockItem stock = dateMap.get(date);
+                    StockItem prevStock = dateMap.get(prevDate);
+                    if (stock != null && prevStock != null) {
+                        String categoryString = catMap.get(pairKey);
+                        int category = 0;
+                        switch (categoryString) {
+                        case Constants.PRICE:
+                            category = Constants.PRICECOLUMN;
+                            break;
+                        case Constants.INDEX:
+                            category = Constants.INDEXVALUECOLUMN;
+                            break;
+                        }
+                        Double value = StockDao.getValue(stock, category);
+                        Double prevValue = StockDao.getValue(prevStock, category);
+                         if (value != null && prevValue != null) {
+                             arr = new Object[2];
+                             arr[0] = value;
+                             arr[1] = (value - prevValue) / (deltas - 1);
+                        }
+                    }
                     if (arr != null && arr.length > 0) {
                         result = (Double[]) ArrayUtils.addAll(result, arr);
                     } else {
