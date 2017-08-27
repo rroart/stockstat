@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jfree.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import roart.aggregate.Aggregator;
 import roart.indicator.Indicator;
@@ -12,6 +14,7 @@ import roart.indicator.IndicatorMACD;
 import roart.util.Constants;
 
 public abstract class MLClassifyModel {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     public abstract int getId();
     
     public abstract String getName();
@@ -30,7 +33,7 @@ public abstract class MLClassifyModel {
             try {
             val = "" + roundme(dao.eval(getId(), key, subType + mapType));
             } catch (Exception e) {
-                Log.error("Exception fix later, refactor", e);
+                log.error("Exception fix later, refactor", e);
             }
             objs[retindex++] = title + Constants.WEBBR +  subType + getName() + mapType +val;
         }
@@ -46,7 +49,7 @@ public abstract class MLClassifyModel {
             Map<String, Double[]> resultMap1 = mapResult.get(mapType);
             Double[] type = null;
             if (resultMap1 != null) {
-                resultMap1.get(id);
+                type = resultMap1.get(id);
             } else {
                 System.out.println("map null " + mapType);
             }
