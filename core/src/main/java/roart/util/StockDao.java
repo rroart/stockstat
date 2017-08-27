@@ -2,6 +2,7 @@ package roart.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,6 +199,16 @@ public class StockDao {
         retMap = getReverseArrSparseFillHoles(conf, retMap);
 		return retMap;
 	}
+    
+    public static List<Date> getDateList(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+            Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
+        List<Date> retList = new ArrayList<>();
+        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        for (int i = datedstocklists.length - 1; i >= 0; i--) {
+            retList.add(datedstocklists[i].get(0).getDate());
+        }
+        return retList;
+    }
     
     public static int maxHoleNumber() {
         return 5;
