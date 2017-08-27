@@ -93,7 +93,11 @@ public class RecommenderRSI extends Aggregator {
         if (obj != null) {
             val = obj[0];
         }
-        row.add(val);
+        if (obj == null) {
+            obj = new Object[2];
+        }
+        row.addarr(obj);
+        //row.add(val);
     }
 
 }
