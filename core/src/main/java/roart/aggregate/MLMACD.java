@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
 import com.tictactec.ta.lib.MInteger;
@@ -49,6 +50,7 @@ public class MLMACD extends Aggregator {
     Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[]> listMap;
+    Map<String, double[]> truncListMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
     Map<String, Object[]> objectMap;
@@ -223,6 +225,9 @@ public class MLMACD extends Aggregator {
         Object macd = cat.getResultMap().get(PipelineConstants.INDICATORMACDRESULT);
         Object list0 = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
         Object object = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
+        Object mom0 = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
+        momMap = (Map<String, Double[]>) mom0;
+        truncListMap = (Map<String, double[]>) cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.TRUNCLIST);
         
         DbAccess dbDao = DbDao.instance(conf);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
@@ -240,7 +245,7 @@ public class MLMACD extends Aggregator {
         log.info("time0 " + (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
         objectMap = new HashMap<>();
-        momMap = new HashMap<>();
+        //momMap = new HashMap<>();
         buyMap = new HashMap<>();
         sellMap = new HashMap<>();
         List<Double> macdLists[] = new ArrayList[4];
@@ -272,15 +277,15 @@ public class MLMACD extends Aggregator {
             MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
 
            //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            Double[] list = listMap.get(id);
+            double[] list = truncListMap.get(id);
             log.info("listsize"+ list.length);
             if (conf.wantPercentizedPriceIndex()) {
-            list = ArraysUtil.getPercentizedPriceIndex(list, key);
+            list = ArraysUtil.getPercentizedPriceIndex(list, key, 0);
             }
             log.info("beg end " + id + " "+ begOfArray.value + " " + endOfArray.value);
             //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
             log.info("list " + list.length + " " + Arrays.asList(list));
-            Double[] trunclist = ArraysUtil.getSubExclusive(list, begOfArray.value, begOfArray.value + endOfArray.value);
+            double[] trunclist = ArrayUtils.subarray(list, begOfArray.value, begOfArray.value + endOfArray.value);
             log.info("trunclist" + list.length + " " + Arrays.asList(trunclist));
             if (conf.wantML()) {
                 if (momentum != null && momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
@@ -548,7 +553,7 @@ public class MLMACD extends Aggregator {
     }
 
     private void getPosMap(Map<double[], Double> commonMap, Map<double[], Double> posMap, String id,
-            Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
+            double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer>[] map) {
         Map<Integer, Integer> pos = map[0];
         //System.out.println("Checking " + key + " " + id + " " + listsize + " " + histarr.length);
@@ -585,7 +590,7 @@ public class MLMACD extends Aggregator {
     static String labelFN = "FalseNegative";
 
     private void getNegMap(Map<double[], Double> commonMap, Map<double[], Double> negMap, String id,
-            Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
+            double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer>[] map) {
         Map<Integer, Integer> neg = map[1];
         Map<Integer, Integer> newNeg = ArraysUtil.getAcceptedRanges(neg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
@@ -609,7 +614,7 @@ public class MLMACD extends Aggregator {
     }
 
     private void getPosNegMap(Map<double[], Double> commonMap, Map<double[], Double> posnegMap, String id,
-            Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
+            double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer> posneg, String label, String labelopposite) {
         Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
         for (int start : newPosNeg.keySet()) {
@@ -630,13 +635,18 @@ public class MLMACD extends Aggregator {
     }
 
     private void getPosNegMap(Map<String, Map<double[], Double>> mapMap, String subType, String commonType, String posnegType , String id,
-            Double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
+            double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer> posneg, String label, String labelopposite) {
         Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
     //System.out.println("pnmap " + newPosNeg.keySet());
         for (int start : newPosNeg.keySet()) {
             int end = newPosNeg.get(start);
             String textlabel;
+            /*
+            if (list == null || list[end] == null || list[end + conf.getMACDDaysAfterZero()] == null) {
+                System.out.println("null");
+            }
+            */
             if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
                 textlabel = label;
             } else {
@@ -674,7 +684,7 @@ public class MLMACD extends Aggregator {
         map.put(key, val);
     }
 
-    private void printme(String label, int end, Double[] values, double[] array) {
+    private void printme(String label, int end, double[] values, double[] array) {
         String me1 = "";
         String me2 = "";
         for (int i = end - 3; i <= end + conf.getMACDDaysAfterZero(); i++) {
@@ -829,20 +839,46 @@ public class MLMACD extends Aggregator {
             }
         }
         emptyField = new Object[size];
-        log.info("fieldsizet " + size);
+        //log.info("fieldsizet " + size);
         return size;
     }
 
     @Override
     public void addResultItem(ResultItemTableRow row, StockItem stock) {
-        // TODO Auto-generated method stub
-        
+        Object[] objs = new Object[fieldSize];
+        int retindex = 0;
+        /*
+        List<MacdSubType> subTypes = wantedSubTypes();
+        for (MacdSubType subType : subTypes) {
+            for (MLClassifyDao mldao : mldaos) {
+                retindex = mldao.addResults(objs, retindex, this, title, key, subType.getType());
+                retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
+                                //System.out.println("retin2 " + retindex);
+            }
+        }*/
+        Object[] fields = resultMap.get(stock.getId());
+
+        //log.info("fieldsizet " + retindex);
+        row.addarr(fields);
     }
 
     @Override
     public void addResultItemTitle(ResultItemTableRow headrow) {
-        // TODO Auto-generated method stub
-        
+        int retindex = 0;
+        Object[] objs = new Object[fieldSize];
+        List<MacdSubType> subTypes = wantedSubTypes();
+        for (MacdSubType subType : subTypes) {
+            for (MLClassifyDao mldao : mldaos) {
+                //for (int mapTypeInt : getMapTypeList()) {
+                //String mapType = mapTypes.get(mapTypeInt);
+                //String mapName = subType.getType() + mapType;
+                retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
+                System.out.println("retin " + retindex);
+                //}
+            }
+        }
+        System.out.println("retindex " + retindex);
+        headrow.addarr(objs);
     }
     
 }
