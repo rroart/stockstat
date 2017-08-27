@@ -146,7 +146,7 @@ public class ArraysUtil {
     }
 
     public static double[] getPercentizedPriceIndex(double[] list, String key, int category) {
-        if (list == null) {
+        if (list == null || list.length == 0) {
             return list;
         }
         if (category < 0 || (CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key)) {
