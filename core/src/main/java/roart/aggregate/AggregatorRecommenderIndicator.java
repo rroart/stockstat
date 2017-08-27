@@ -134,7 +134,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
 
     @Override
     public void addResultItemTitle(ResultItemTableRow headrow) {
-        headrow.add("Ag"+title);
+        headrow.add("Ag22"+title);
+        headrow.add("Ag23"+title);
     }
 
     @Override
@@ -144,7 +145,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         if (obj != null) {
             val = obj[0];
         }
-        row.add(val);
+        row.addarr(obj);
     }
 
 }
