@@ -142,7 +142,7 @@ public class StockDao {
         			} else {
         			    nonn++;
         			}
-        			mapAdd(retMap, stockid, i, value, datedstocklists.length);
+        			mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
         		}
         	}
         }

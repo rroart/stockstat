@@ -1,6 +1,7 @@
 package roart.indicator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -247,13 +248,14 @@ public class IndicatorUtils {
                     Object[] arr = ind.getDayResult(objsIndicator, j);
                     if (arr != null && arr.length > 0) {
                         result = (Double[]) ArrayUtils.addAll(result, arr);
-                    } else {
+                     } else {
                         System.out.println("No obj for id" + id);
                     }
                 }
                 int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
-                Date date = dateList.get(j);
-                Date prevDate = dateList.get(j + 1 - deltas);
+                int size = dateList.size() - 1;
+                Date date = dateList.get(size - j);
+                Date prevDate = dateList.get(size - (j + (deltas - 1)));
                 for (Pair pairKey : retMapMap.keySet()) {
                     String market = (String) pairKey.getFirst();
                     String id2 = (String) pairKey.getSecond();
@@ -289,6 +291,7 @@ public class IndicatorUtils {
                 if (result.length == arraySize) {
                     indicatorMap.put(id, result);
                     IndicatorUtils.addToLists(indicatorLists, result);
+                    log.info("outid " + id + " " + Arrays.asList(result));
                } else {
                     System.out.println("discarding " + id);
                     continue;
