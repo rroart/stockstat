@@ -23,6 +23,7 @@ public class ExtraReader extends Pipeline {
 
     Map<Pair, List<StockItem>> retListMap;
     Map<Pair, Map<Date, StockItem>> retMapMap;
+    Map<Pair, String> catMap;
     
     public ExtraReader(MyMyConfig conf, int category) throws Exception {
         super(conf, category);
@@ -32,15 +33,19 @@ public class ExtraReader extends Pipeline {
     private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category) throws Exception {
         retListMap = new HashMap<>();
         retMapMap = new HashMap<>();
+        catMap = new HashMap<>();
         String str0 = conf.getAggregatorsIndicatorExtras();
         //String str = "{ [ 'market' : 'cboevol', 'id' : 'VIX'], [ 'market' : 'tradcomm' , 'id' : 'CL1:COM' ], [ 'market' : 'tradcomm', 'id' : 'XAUUSD:CUR' ] ]   }";
-        String str = "[ { \"market\" : \"cboevol\", \"id\" : \"VIX\"}, { \"market\" : \"tradcomm\" , \"id\" : \"CL1:COM\" }, { \"market\" : \"tradcomm\", \"id\" : \"XAUUSD:CUR\" } ]";
+        String str = "[ { \"market\" : \"cboevol\", \"id\" : \"VIX\", \"category\" : \"Index\"}, { \"market\" : \"tradcomm\" , \"id\" : \"CL1:COM\" , \"category\" : \"Price\" }, { \"market\" : \"tradcomm\", \"id\" : \"XAUUSD:CUR\" , \"category\" : \"Price\" } ]";
         ObjectMapper mapper = new ObjectMapper();
         List<LinkedHashMap> list = (List<LinkedHashMap>) mapper.readValue(str, List.class);
         List<Pair> pairs = new ArrayList<>();
         for (LinkedHashMap mi : list) {
             System.out.println("mi"+mi+" " + mi.toString());
-            pairs.add(new Pair(mi.get("market"), mi.get("id")));
+            Pair pair = new Pair(mi.get("market"), mi.get("id"));
+            String cat = (String) mi.get("category");
+            pairs.add(pair);
+            catMap.put(pair, cat);
             //pairs.add(new Pair(mi.getMarket(), mi.getId()));
         }
         
@@ -76,6 +81,7 @@ public class ExtraReader extends Pipeline {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.LIST, retListMap);
         map.put(PipelineConstants.MAP, retMapMap);
+        map.put(PipelineConstants.CATMAP, catMap);
         return map;
     }
     @Override
@@ -100,5 +106,10 @@ public class ExtraReader extends Pipeline {
             this.id = id;
         }
         
+    }
+
+    @Override
+    public String pipelineName() {
+        return PipelineConstants.EXTRAREADER;
     }
 }
