@@ -582,6 +582,10 @@ public class MyMyConfig extends MyPropertyConfig {
        return (String) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRAS);
    }
    
+   public Integer getAggregatorsIndicatorExtrasDeltas() {
+       return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
+   }
+   
    public int getAggregatorsIndicatorFuturedays() {
        return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
    }
