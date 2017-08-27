@@ -16,6 +16,7 @@ import roart.indicator.IndicatorRSI;
 import roart.indicator.IndicatorSTOCHRSI;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.predictor.PredictorLSTM;
 //import roart.model.Stock;
 import roart.util.Constants;
 import roart.util.MarketData;
@@ -43,6 +44,7 @@ public class CategoryPeriod extends Category {
         indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), i));
         indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), i));
         //indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), i));
+        predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, periodmap, getTitle(), i));
         }
         createIndicatorMap(periodText);
     }
