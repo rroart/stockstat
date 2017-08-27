@@ -1,7 +1,9 @@
 package roart.aggregate;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import roart.config.MyMyConfig;
@@ -19,6 +21,7 @@ public class DataReader extends Pipeline {
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
     Map<String, Double[]> listMap;
+    List<Date> dateList;
     Map<String, double[]> truncListMap;
 
     @Override
@@ -34,6 +37,7 @@ public class DataReader extends Pipeline {
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.LIST, listMap);
+        map.put(PipelineConstants.DATELIST, dateList);
         map.put(PipelineConstants.TRUNCLIST, truncListMap);
         return map;
     }
@@ -52,9 +56,16 @@ public class DataReader extends Pipeline {
         String dateme = dt.format(conf.getdate());
         // note that there are nulls in the lists with sparse
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.truncListMap = ArraysUtil.getTruncList(this.listMap);
+
         if (conf.wantPercentizedPriceIndex()) {
             
         }
+    }
+
+    @Override
+    public String pipelineName() {
+        return PipelineConstants.DATAREADER;
     }
 }
