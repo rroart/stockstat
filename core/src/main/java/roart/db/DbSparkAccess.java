@@ -35,7 +35,7 @@ public class DbSparkAccess extends DbAccess {
 
     public static DbAccess instance(MyMyConfig conf) {
         if (instance == null) {
-            instance = new DbHibernateAccess();
+            instance = new DbSparkAccess();
             new DbSpark(conf);
         }
         return instance;
