@@ -149,7 +149,7 @@ public class ArraysUtil {
         if (list == null || list.length == 0) {
             return list;
         }
-        if (category < 0 || (CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key)) {
+        if (category < 0 || (CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key) || ("cy").equals(key)) {
             int i = 0;
             double first = 0;
             first = list[i];
