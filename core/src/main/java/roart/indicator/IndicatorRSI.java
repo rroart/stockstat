@@ -80,7 +80,8 @@ public class IndicatorRSI extends Indicator {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
-        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        boolean currentYear = "cy".equals(key);
+       this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         this.truncListMap = ArraysUtil.getTruncList(this.listMap);
         log.info("time0 " + (System.currentTimeMillis() - time0));
         rsiMap = new HashMap();
