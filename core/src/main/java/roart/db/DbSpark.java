@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.io.StringReader;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.sql.SQLContext;
@@ -148,7 +149,7 @@ public class DbSpark {
         
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate(x.getAs("values"))));
+        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[])((WrappedArray)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
         return m;
@@ -196,8 +197,15 @@ public class DbSpark {
             double[] values = listMap.get(id);
             //values = ArraysUtil.getArrayNonNullReverse(values);
             // TODO !!!
+            if ("0P0000RVOF".equals(id)) {              
+                log.info("braz " + Arrays.toString(values));                
+            }
+
             if (wantPercentizedPriceIndex) {
            values = ArraysUtil.getPercentizedPriceIndex(values, key, ind.getCategory());
+            }
+            if ("0P0000RVOF".equals(id)) {              
+                log.info("braz " + Arrays.toString(values));                
             }
             Row row = RowFactory.create(id, values);
             rowList.add(row);
@@ -209,7 +217,7 @@ public class DbSpark {
         
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((double[])((WrappedArray)x.getAs("values")).array())));
+        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[])((WrappedArray)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
        return objMap;

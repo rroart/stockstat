@@ -3,6 +3,7 @@ package roart.indicator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,10 @@ public abstract class Indicator {
 
     public Object calculate(double[] array) {
         return null;
+    }
+
+    public Object calculate(Double[] array) {
+        return calculate(ArrayUtils.toPrimitive(array));
     }
 
    public List<Integer> getTypeList() {
