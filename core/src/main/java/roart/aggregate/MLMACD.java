@@ -697,7 +697,7 @@ public class MLMACD extends Aggregator {
 
     public void addEventRow(String text, String name, String id) {
         ResultItemTableRow event = new ResultItemTableRow();
-        event.add(key);
+        event.add("MLMACD " + key);
         event.add(text);
         event.add(name);
         event.add(id);

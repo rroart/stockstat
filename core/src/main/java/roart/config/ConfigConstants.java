@@ -139,6 +139,8 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATORRSI = "aggregators.indicator.rsi[@enable]";
     public static final String AGGREGATORSINDICATOREXTRAS = "aggregators.indicator.extras";
     public static final String AGGREGATORSINDICATOREXTRASDELTAS = "aggregators.indicator.extrasdeltas";
+    public static final String AGGREGATORSINDICATOREXTRASMACD = "aggregators.indicator.extrasmacd[@enable]";
+    public static final String AGGREGATORSINDICATOREXTRASRSI = "aggregators.indicator.extrasrsi[@enable]";
     public static final String AGGREGATORSINDICATORFUTUREDAYS = "aggregators.indicator.futuredays";
     public static final String AGGREGATORSINDICATORINTERVALDAYS = "aggregators.indicator.intervaldays";
     public static final String AGGREGATORSINDICATORTHRESHOLD = "aggregators.indicator.threshold";
@@ -270,6 +272,8 @@ public class ConfigConstants {
         map.put(ConfigConstants.AGGREGATORSINDICATORRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, String.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, Double.class);
@@ -402,6 +406,8 @@ public class ConfigConstants {
         deflt.put(ConfigConstants.AGGREGATORSINDICATORRSI, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, 2);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, 10);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, 1);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, 0);
@@ -537,6 +543,8 @@ public class ConfigConstants {
         text.put(ConfigConstants.AGGREGATORSINDICATORRSI, "ML indicator RSI enable");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "ML indicator extras");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, "ML indicator extras delta days");
+        text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, "ML indicator extras use MACD result");
+        text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, "ML indicator extras use MACD result");
         text.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, "ML indicator days in the future for threshold");
         text.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, "ML indicator days in the future interval");
         text.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, "ML indicator threshold for classifier");

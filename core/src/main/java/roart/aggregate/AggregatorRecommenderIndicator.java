@@ -20,6 +20,7 @@ import roart.indicator.Indicator;
 import roart.indicator.IndicatorUtils;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
 import roart.util.Constants;
 import roart.util.MarketData;
@@ -34,7 +35,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     Map<String, Double[]> resultMap;
     
     public AggregatorRecommenderIndicator(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories) throws Exception {
+            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders) throws Exception {
         super(conf, index, 0);
         // TODO fix
        String wanted = CategoryConstants.PRICE;
@@ -64,7 +65,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             for (Recommend recommend : list) {
                 String indicator = recommend.indicator();
                 if (indicator != null) {
-                    Indicator newIndicator = recommend.getIndicator(marketdatamap, category, newIndicatorMap, usedIndicatorMap);
+                    Indicator newIndicator = recommend.getIndicator(marketdatamap, category, newIndicatorMap, usedIndicatorMap, datareaders);
                     if (newIndicator != null) {
                         indicatorMap.put(indicator, newIndicator);
                     }

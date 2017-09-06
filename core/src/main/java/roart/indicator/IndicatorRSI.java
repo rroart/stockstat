@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 
+import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
@@ -31,21 +32,27 @@ public class IndicatorRSI extends Indicator {
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
-    String key;
     Map<String, Double[]> listMap;
     Map<String, double[]> truncListMap;
-    Map<String, Double[]> rsiMap;
-    Double[] emptyField;
+    Object[] emptyField;
     Map<String, Object[]> objectMap;
     Map<String, Object[]> objectFixedMap;
 
-    public IndicatorRSI(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    private int fieldSize = 0;
+
+    public IndicatorRSI(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         this.key = title;
-        calculateRSIs(conf, marketdatamap, periodDataMap, category);        
+        fieldSize = fieldSize();
+        if (isEnabled() && !onlyExtra) {
+            calculateRSIs(conf, marketdatamap, periodDataMap, category); 
+        }
+        if (wantForExtras()) {
+            calculateForExtras(datareaders);
+        }
     }
 
     @Override
@@ -56,7 +63,7 @@ public class IndicatorRSI extends Indicator {
     @Override
     public Map<String, Object> getResultMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put(PipelineConstants.INDICATORRSIRESULT, rsiMap);
+        map.put(PipelineConstants.INDICATORRSIRESULT, calculatedMap);
         map.put(PipelineConstants.INDICATORRSILIST, listMap);
         map.put(PipelineConstants.INDICATORRSIOBJECT, objectMap);
         return map;
@@ -65,11 +72,15 @@ public class IndicatorRSI extends Indicator {
     @Override
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put(PipelineConstants.RESULT, rsiMap);
+        map.put(PipelineConstants.RESULT, calculatedMap);
         map.put(PipelineConstants.OBJECT, objectMap);
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
         map.put(PipelineConstants.LIST, listMap);
         map.put(PipelineConstants.TRUNCLIST, truncListMap);
+        map.put(PipelineConstants.RESULT, calculatedMap);
+        map.put(PipelineConstants.MARKETOBJECT, marketObjectMap);
+        map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
+        map.put(PipelineConstants.MARKETRESULT, marketResultMap);
         return map;
     }
     
@@ -84,7 +95,6 @@ public class IndicatorRSI extends Indicator {
        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         this.truncListMap = ArraysUtil.getTruncList(this.listMap);
         log.info("time0 " + (System.currentTimeMillis() - time0));
-        rsiMap = new HashMap();
         try {
             long time2 = System.currentTimeMillis();
             /*
@@ -107,10 +117,15 @@ public class IndicatorRSI extends Indicator {
         TaUtil tu = new TaUtil();
         objectMap = dbDao.doCalculationsArr(conf, truncListMap, key, this, conf.wantPercentizedPriceIndex());
         //objectFixedMap = ArraysUtil.makeFixedMap(objectMap, conf.getDays());
-        String market = conf.getMarket();
-        String periodstr = key;
         //PeriodData perioddata = periodDataMap.get(periodstr);
-        for (String id : listMap.keySet()) {
+        calculatedMap = getCalculatedMap(conf, tu, objectMap, truncListMap);
+        log.info("time1 " + (System.currentTimeMillis() - time1));
+    }
+
+    @Override
+    protected Map<String, Double[]> getCalculatedMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap, Map<String, double[]> truncListMap) {
+        Map<String, Double[]> rsiMap = new HashMap<>();
+        for (String id : truncListMap.keySet()) {
             /*
         	List<Double> list = listMap.get(id);
             Pair<String, String> pair = new Pair<>(market, id);
@@ -120,7 +135,7 @@ public class IndicatorRSI extends Indicator {
              */
             Object[] objs = objectMap.get(id);
 
-            Double[] list = listMap.get(id);
+            //Double[] list = listMap.get(id);
             Double[] rsi = tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs);
             if (rsi != null) {
                 rsiMap.put(id, rsi);
@@ -134,7 +149,7 @@ public class IndicatorRSI extends Indicator {
                 //log.info("ind out " + Arrays.toString(rsi));
             }
         }
-        log.info("time1 " + (System.currentTimeMillis() - time1));
+        return rsiMap;
     }
 
     @Override
@@ -165,7 +180,7 @@ public class IndicatorRSI extends Indicator {
             System.out.println("key " + key + " : " + periodDataMap.keySet());
             log.info("key " + key + " : " + periodDataMap.keySet());
         }
-        Double[] rsi = rsiMap.get(id);
+        Object[] rsi = calculatedMap.get(id);
         if (rsi == null) {
             /*
             Double[] i = resultMap.values().iterator().next();
@@ -203,5 +218,36 @@ public class IndicatorRSI extends Indicator {
     public int getResultSize() {
         return 2;        
     }
+    
+    @Override
+    public boolean wantForExtras() {
+        return conf.wantAggregatorsIndicatorExtrasRSI();        
+    }
+
+    @Override
+    protected Map<String, Object[]> getResultMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap, Map<String, Double[]> momMap) {
+        Map<String, Object[]> result = new HashMap<>();
+        if (listMap == null) {
+            return result;
+        }
+        for (String id : listMap.keySet()) {
+            Double[] momentum = momMap.get(id);
+            Object[] fields = new Object[fieldSize];
+            result.put(id, fields);
+            if (momentum == null) {
+                System.out.println("zero mom for id " + id);
+            }
+            int retindex = tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
+        }
+        return result;
+    }
+
+    private int fieldSize() {
+        int size = 2;
+        emptyField = new Object[size];
+        log.info("fieldsizet " + size);
+        return size;
+    }
+    
 }
 

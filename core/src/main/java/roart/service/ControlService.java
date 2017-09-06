@@ -227,7 +227,7 @@ public class ControlService {
                     periodText, marketdatamap, periodDataMap, periodmap);
             
             Category[] categories = getCategories(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, periodmap);
+                    periodText, marketdatamap, periodDataMap, periodmap, datareaders);
             
             Aggregator[] aggregates = getAggregates(conf, stocks,
                     periodText, marketdatamap, periodDataMap, periodmap, categories, datareaders);
@@ -293,6 +293,20 @@ public class ControlService {
                 }
                    //System.out.print("first " + ri.get().size());
             }
+            for (int i = 0; i < aggregates.length; i++) {
+                Map<Integer, List<ResultItemTableRow>> tableMap = aggregates[i].otherTables();
+                if (tableMap == null) {
+                    continue;
+                }
+                for (Integer key : tableMap.keySet()) {
+                    List<ResultItemTableRow> resultItems = tableMap.get(key);
+                    ResultItemTable otherTable = otherTableMap.get(key);
+                    for (ResultItemTableRow row : resultItems) {
+                    otherTable.add(row);
+                    }
+                }
+                   //System.out.print("first " + ri.get().size());
+            }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -321,7 +335,7 @@ public class ControlService {
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) throws Exception {
         Category[] categories = new Category[1];
         //categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap);
-        categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap);
+        categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, null);
         return categories;
     }
 
@@ -330,7 +344,7 @@ public class ControlService {
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders) throws Exception {
         Aggregator[] aggregates = new Aggregator[4];
-        aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
+        aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories, datareaders);
         aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
         aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories);
         aggregates[3] = new MLIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories, datareaders);
@@ -341,25 +355,25 @@ public class ControlService {
             String[] periodText,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) throws Exception {
-        Pipeline[] categories = new Pipeline[StockUtil.PERIODS + 3];
-        categories[0] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.INDEXVALUECOLUMN);
-        categories[1] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.PRICECOLUMN);
-        categories[2] = new ExtraReader(conf, 0);
+        Pipeline[] datareaders = new Pipeline[StockUtil.PERIODS + 3];
+        datareaders[0] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.INDEXVALUECOLUMN);
+        datareaders[1] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.PRICECOLUMN);
+        datareaders[2] = new ExtraReader(conf, 0);
         for (int i = 0; i < StockUtil.PERIODS; i++) {
-            categories[i + 3] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, i);
+            datareaders[i + 3] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, i);
         }
-        return categories;
+        return datareaders;
     }
 
     private Category[] getCategories(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) throws Exception {
+            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Pipeline[] datareaders) throws Exception {
         Category[] categories = new Category[StockUtil.PERIODS + 2];
-        categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap);
-        categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap);
+        categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap, datareaders);
+        categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, datareaders);
         for (int i = 0; i < StockUtil.PERIODS; i++) {
-            categories[i + 2] = new CategoryPeriod(conf, i, periodText[i], stocks, marketdatamap, periodDataMap, periodmap);
+            categories[i + 2] = new CategoryPeriod(conf, i, periodText[i], stocks, marketdatamap, periodDataMap, periodmap, datareaders);
         }
         return categories;
     }
@@ -804,6 +818,8 @@ public class ControlService {
             int cat = Constants.PRICECOLUMN;
             
             DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, null, cat);
+            Pipeline[] datareaders = new Pipeline[1];
+            datareaders[0] = dataReader;
             
             // no...get this from the category
             // TODO make oo of this
@@ -818,7 +834,7 @@ public class ControlService {
                 List<Recommend> list = usedRecommenders.get(type);
                 for (Recommend recommend : list) {
                     String indicator = recommend.indicator();
-                    indicatorMap.put(indicator, recommend.getIndicator(marketdatamap, category, newIndicatorMap, null));
+                    indicatorMap.put(indicator, recommend.getIndicator(marketdatamap, category, newIndicatorMap, null, datareaders));
                 }
             }
 

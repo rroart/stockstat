@@ -54,18 +54,19 @@ public class DataReader extends Pipeline {
     private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category) throws Exception {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
+        MarketData marketData = marketdatamap.get(conf.getMarket());
         // note that there are nulls in the lists with sparse
-        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        boolean currentYear = false;
+        if (category >= 0) {
+            currentYear = "cy".equals(marketData.periodtext[category]);
+        }
+        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.truncListMap = ArraysUtil.getTruncList(this.listMap);
-
-        if (conf.wantPercentizedPriceIndex()) {
-            
-        }
     }
 
     @Override
     public String pipelineName() {
-        return PipelineConstants.DATAREADER;
+        return "" + this.category;
     }
 }

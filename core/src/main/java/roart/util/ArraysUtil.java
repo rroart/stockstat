@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -467,6 +468,14 @@ public class ArraysUtil {
     public static Map<String, double[]> getTruncList(Map<String, Double[]> listMap) {
         Map<String, double[]> retMap = new HashMap<>();
         for (String id : listMap.keySet()) {
+            retMap.put(id, getNonNull(listMap.get(id)));
+        }
+        return retMap;
+    }
+    
+    public static Map<Pair, double[]> getTruncList2(Map<Pair, Double[]> listMap) {
+        Map<Pair, double[]> retMap = new HashMap<>();
+        for (Pair id : listMap.keySet()) {
             retMap.put(id, getNonNull(listMap.get(id)));
         }
         return retMap;

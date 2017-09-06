@@ -63,7 +63,7 @@ public class MLIndicator extends Aggregator {
     Map<String, Object[]> objectMap;
     //Map<String, Double> resultMap;
     Map<String, Object[]> resultMap;
-    Map<Pair, String> catMap;
+    Map<Pair, String> pairCatMap;
     /*
     Map<String, Double[]> momMap;
     Map<String, Double> buyMap;
@@ -113,7 +113,7 @@ public class MLIndicator extends Aggregator {
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
     public MLIndicator(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, MarketData> marketdatamap, 
-            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories/*, Indicator[] indicators*/, Pipeline[] datareaders) throws Exception {
+            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories, Pipeline[] datareaders) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
@@ -234,12 +234,21 @@ public class MLIndicator extends Aggregator {
         for (Pipeline datareader : datareaders) {
             pipelineMap.put(datareader.pipelineName(), datareader);
         }
-        Map<Pair, List<StockItem>> retListMap;
-        Map<Pair, Map<Date, StockItem>> retMapMap;
-        retListMap = (Map<Pair, List<StockItem>>) pipelineMap.get(PipelineConstants.EXTRAREADER).getLocalResultMap().get(PipelineConstants.LIST);
-        catMap = (Map<Pair, String>) pipelineMap.get(PipelineConstants.EXTRAREADER).getLocalResultMap().get(PipelineConstants.CATMAP);
-        retMapMap = (Map<Pair, Map<Date, StockItem>>) pipelineMap.get(PipelineConstants.EXTRAREADER).getLocalResultMap().get(PipelineConstants.MAP);
-        List<Date> dateList = (List<Date>) pipelineMap.get(PipelineConstants.DATAREADER).getLocalResultMap().get(PipelineConstants.DATELIST);
+        //Map<Pair, List<StockItem>> pairListMap;
+        //Map<Pair, Map<Date, StockItem>> pairDateMap;
+        //pairListMap = (Map<Pair, List<StockItem>>) pipelineMap.get(PipelineConstants.EXTRAREADER).getLocalResultMap().get(PipelineConstants.PAIRLIST);
+        //pairCatMap = (Map<Pair, String>) pipelineMap.get(PipelineConstants.EXTRAREADER).getLocalResultMap().get(PipelineConstants.PAIRCATMAP);
+        //pairDateMap = (Map<Pair, Map<Date, StockItem>>) pipelineMap.get(PipelineConstants.EXTRAREADER).getLocalResultMap().get(PipelineConstants.PAIRDATELIST);
+        Pipeline extrareader = pipelineMap.get(PipelineConstants.EXTRAREADER);
+        Map<String, Object> localResults =  extrareader.getLocalResultMap();
+        Map<Pair, List<StockItem>> pairStockMap = (Map<Pair, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
+        Map<Pair, Map<Date, StockItem>> pairDateMap = (Map<Pair, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
+        Map<Pair, String> pairCatMap = (Map<Pair, String>) localResults.get(PipelineConstants.PAIRCAT);
+        Map<Pair, Double[]> pairListMap = (Map<Pair, Double[]>) localResults.get(PipelineConstants.PAIRLIST);
+        Map<Pair, List<Date>> pairDateListMap = (Map<Pair, List<Date>>) localResults.get(PipelineConstants.PAIRDATELIST);
+        Map<Pair, double[]> pairTruncListMap = (Map<Pair, double[]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
+
+        List<Date> dateList = (List<Date>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
         Map<String, Indicator> newIndicatorMap = new HashMap<>();
         Map<String, Indicator> usedIndicatorMap = cat.getIndicatorMap();
 
@@ -256,7 +265,7 @@ public class MLIndicator extends Aggregator {
             for (AggregatorMLIndicator ind : list) {
                 String indicator = ind.indicator();
                 if (indicator != null) {
-                indicatorMap.put(indicator, ind.getIndicator(marketdatamap, category, newIndicatorMap, usedIndicatorMap));
+                indicatorMap.put(indicator, ind.getIndicator(marketdatamap, category, newIndicatorMap, usedIndicatorMap, datareaders));
                 }
                 // TODO fix
                 Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
@@ -338,7 +347,7 @@ public class MLIndicator extends Aggregator {
         int macdlen = conf.getTableDays();
         int listlen = conf.getTableDays();
         double testRecommendQualBuySell = 0;
-        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), conf.getTableDays(), conf.getAggregatorsIndicatorIntervaldays(), dateList, retListMap, retMapMap, catInt, catMap);
+        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), conf.getTableDays(), conf.getAggregatorsIndicatorIntervaldays(), dateList, pairStockMap, pairDateMap, catInt, pairCatMap, categories, datareaders);
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj2[0];
         Map<double[], Double> mergedCatMap = new HashMap<>();
         for (int j = conf.getAggregatorsIndicatorFuturedays(); j < macdlen; j += conf.getAggregatorsIndicatorIntervaldays()) {
@@ -459,7 +468,7 @@ public class MLIndicator extends Aggregator {
                 List<Integer> list = new ArrayList<>();
                 //list.add(POSTYPE);
                 //list.add(NEGTYPE);
-                for (Integer type : list) {
+                //for (Integer type : list) {
                     /*
                     String name = mapTypes.get(null);
                     String mapName = subType.getType() + name;
@@ -468,21 +477,21 @@ public class MLIndicator extends Aggregator {
                         log.error("map null " + mapName);
                         continue;
                     }
-                    Map<Double, Long> countMap = myMap.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+*/                
+                    Map<Double, Long> countMap = mergedCatMap.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
                     String counts = "";
                     for (Double label : countMap.keySet()) {
                         counts += labelMapShort.get(label) + " : " + countMap.get(label) + " ";
                     }
-                    addEventRow(counts, subType.getName(), "");
-*/                
-                }
+                addEventRow(counts, "", "");
+                //}
             //}
         }
         if (conf.wantMLTimes()) {
             //Map<MLModel, Long> mapTime = new HashMap<>();
             for (MLClassifyModel model : mapTime.keySet()) {
                 ResultItemTableRow row = new ResultItemTableRow();
-                row.add(key);
+                row.add("MLIndicator " + key);
                 row.add(model.getEngineName());
                 row.add(model.getName());
                 row.add(mapTime.get(model));

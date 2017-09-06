@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
 import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
@@ -19,12 +20,12 @@ public abstract class RecommendRSI extends Recommend {
     }
 
     @Override
-    public Indicator getIndicator(Map<String, MarketData> marketdatamap, int category, Map<String, Indicator> newIndicatorMap, Map<String, Indicator> usedIndicatorMap) throws Exception {
+    public Indicator getIndicator(Map<String, MarketData> marketdatamap, int category, Map<String, Indicator> newIndicatorMap, Map<String, Indicator> usedIndicatorMap, Pipeline[] datareaders) throws Exception {
         if (usedIndicatorMap != null && usedIndicatorMap.containsKey(indicator())) {
             return usedIndicatorMap.get(indicator());
         }
 
-        Indicator indicator = new IndicatorRSI(conf, null, marketdatamap, null, null, null, category);
+        Indicator indicator = new IndicatorRSI(conf, null, marketdatamap, null, null, null, category, datareaders, false);
         
         if (newIndicatorMap != null) {
             newIndicatorMap.put(indicator(), indicator);

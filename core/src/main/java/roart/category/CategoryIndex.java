@@ -10,6 +10,7 @@ import roart.indicator.IndicatorRSI;
 import roart.indicator.IndicatorSTOCHRSI;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.pipeline.Pipeline;
 import roart.predictor.Predictor;
 import roart.predictor.PredictorLSTM;
 import roart.util.Constants;
@@ -27,13 +28,13 @@ public class CategoryIndex extends Category {
     public CategoryIndex(MyMyConfig conf, String string, List<StockItem> stocks,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
-            Map<String, Integer>[] periodmap) throws Exception {
-        super(conf, string, stocks);
+            Map<String, Integer>[] periodmap, Pipeline[] datareaders) throws Exception {
+        super(conf, string, stocks, datareaders);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
-        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN));
-        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN));
+        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
+        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
         //indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN));
         predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN));
         createIndicatorMap(Constants.INDEX);

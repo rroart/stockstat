@@ -16,6 +16,7 @@ import roart.indicator.IndicatorRSI;
 import roart.indicator.IndicatorSTOCHRSI;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.pipeline.Pipeline;
 import roart.predictor.PredictorLSTM;
 //import roart.model.Stock;
 import roart.util.Constants;
@@ -35,14 +36,14 @@ public class CategoryPeriod extends Category {
 
     public CategoryPeriod(MyMyConfig conf, int i, String periodText, List<StockItem> stocks,             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
-            Map<String, Integer>[] periodmap) throws Exception {
-        super(conf, periodText, stocks);
+            Map<String, Integer>[] periodmap, Pipeline[] datareaders) throws Exception {
+        super(conf, periodText, stocks, datareaders);
         this.periodmap = periodmap;
         period = i;
         indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), periodmap, period));
         if (periodText.equals("cy")) {
-        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), i));
-        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), i));
+        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), i, datareaders, false));
+        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), i, datareaders, false));
         //indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), i));
         predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, periodmap, getTitle(), i));
         }

@@ -16,7 +16,10 @@ import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
+import roart.aggregate.ExtraReader;
+import roart.category.Category;
 import roart.config.MyMyConfig;
 import roart.model.StockItem;
 import roart.util.Constants;
@@ -184,7 +187,7 @@ public class IndicatorUtils {
                     if (arr != null && arr.length > 0) {
                         result = (Double[]) ArrayUtils.addAll(result, arr);
                     } else {
-                        System.out.println("No obj for id" + id);
+                        System.out.println("No obj for id1 " + id);
                     }
                 }
                 if (result.length == arraySize) {
@@ -207,7 +210,7 @@ public class IndicatorUtils {
         return retobj;
     }
 
-    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators, int futureDays, int tableDays, int intervalDays, List<Date> dateList, Map<Pair, List<StockItem>> retListMap, Map<Pair, Map<Date, StockItem>> retMapMap, int category0, Map<Pair, String> catMap) throws Exception {
+    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators, int futureDays, int tableDays, int intervalDays, List<Date> dateList, Map<Pair, List<StockItem>> pairStockMap, Map<Pair, Map<Date, StockItem>> pairDateMap, int category, Map<Pair, String> pairCatMap, Category[] categories, Pipeline[] datareaders) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[]>> listList = new ArrayList<>();
         int arraySize = 0;
@@ -219,10 +222,24 @@ public class IndicatorUtils {
             System.out.println("sizes " + listList.get(listList.size() - 1).size());
         }
         int extraStart = arraySize;
-        if (retMapMap != null) {
-            arraySize += 2 * retMapMap.keySet().size();
+        // for extrareader data
+        if (pairDateMap != null) {
+            arraySize += 2 * pairDateMap.keySet().size();
             System.out.println("sizes " + arraySize);
         }
+        // for extrareader data end
+        // for more extra
+        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        ExtraReader extrareader = (ExtraReader) pipelineMap.get(PipelineConstants.EXTRAREADER);
+        //extrareader.setPa
+        Map<Pair, Double[]> retMap = extrareader.getExtraData2(conf, dateList, pairDateMap, pairCatMap, 0, null, null);
+        List<Indicator> allIndicators = getAllIndicators(conf, categories, pairCatMap, datareaders);
+        for (Indicator indicator : allIndicators) {
+            int aSize = indicator.getResultSize();
+            arraySize += pairCatMap.size() * aSize;
+        }
+
+        // for more extra end
         Object[] retobj = new Object[3];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
         List<Double> indicatorLists[] = new ArrayList[arraySize];
@@ -249,45 +266,15 @@ public class IndicatorUtils {
                     if (arr != null && arr.length > 0) {
                         result = (Double[]) ArrayUtils.addAll(result, arr);
                      } else {
-                        System.out.println("No obj for id" + id);
+                        System.out.println("No obj for id2 " + id);
                     }
                 }
-                int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
-                int size = dateList.size() - 1;
-                Date date = dateList.get(size - j);
-                Date prevDate = dateList.get(size - (j + (deltas - 1)));
-                for (Pair pairKey : retMapMap.keySet()) {
-                    String market = (String) pairKey.getFirst();
-                    String id2 = (String) pairKey.getSecond();
-                    Object[] arr = null;
-                    Map<Date, StockItem> dateMap = retMapMap.get(pairKey); 
-                    StockItem stock = dateMap.get(date);
-                    StockItem prevStock = dateMap.get(prevDate);
-                    if (stock != null && prevStock != null) {
-                        String categoryString = catMap.get(pairKey);
-                        int category = 0;
-                        switch (categoryString) {
-                        case Constants.PRICE:
-                            category = Constants.PRICECOLUMN;
-                            break;
-                        case Constants.INDEX:
-                            category = Constants.INDEXVALUECOLUMN;
-                            break;
-                        }
-                        Double value = StockDao.getValue(stock, category);
-                        Double prevValue = StockDao.getValue(prevStock, category);
-                         if (value != null && prevValue != null) {
-                             arr = new Object[2];
-                             arr[0] = value;
-                             arr[1] = (value - prevValue) / (deltas - 1);
-                        }
-                    }
-                    if (arr != null && arr.length > 0) {
-                        result = (Double[]) ArrayUtils.addAll(result, arr);
-                    } else {
-                        System.out.println("No obj for id" + id);
-                    }
-                }
+                // for extrareader data
+                result = ExtraReader.getExtraData(conf, dateList, pairDateMap, pairCatMap, j, id, result);
+                // for extrareader data end
+                // for more extrareader data
+                result = getExtraIndicatorsResult(conf, categories, j, result, pairDateMap, pairCatMap, datareaders, allIndicators);
+                // for more extrareader data end
                 if (result.length == arraySize) {
                     indicatorMap.put(id, result);
                     IndicatorUtils.addToLists(indicatorLists, result);
@@ -309,6 +296,87 @@ public class IndicatorUtils {
         return retobj;
     }
 
+    public static int getCategoryFromString(Map<Pair, String> pairCatMap, Pair pairKey) {
+        String categoryString = pairCatMap.get(pairKey);
+        int category = 0;
+        switch (categoryString) {
+        case Constants.PRICE:
+            category = Constants.PRICECOLUMN;
+            break;
+        case Constants.INDEX:
+            category = Constants.INDEXVALUECOLUMN;
+            break;
+        }
+        return category;
+    }
+
+    private static Double[] getExtraIndicatorsResult(MyMyConfig conf, Category[] categories, int j, Double[] result, Map<Pair, Map<Date, StockItem>> pairDateMap, Map<Pair, String> pairCatMap, Pipeline[] datareaders, List<Indicator> allIndicators) throws Exception {
+       for (Indicator indicator : allIndicators) {
+            if (indicator.wantForExtras()) {
+                Map<String, Object> localIndicatorResults =  indicator.getLocalResultMap();
+                Map<String, Map<String, Object[]>> marketObjectMap = (Map<String, Map<String, Object[]>>) localIndicatorResults.get(PipelineConstants.MARKETOBJECT);
+                //Map<String, Map<String, Object[]>> marketResultMap = (Map<String, Map<String, Object[]>>) localIndicatorResults.get(PipelineConstants.MARKETRESULT);
+                //Map<String, Map<String, Double[]>> marketMomMap = (Map<String, Map<String, Double[]>>) localIndicatorResults.get(PipelineConstants.MARKETCALCULATED);
+                for (String market : marketObjectMap.keySet()) {
+                    Map<String, Object[]> objectMap = marketObjectMap.get(market);
+                    for (String localId : objectMap.keySet()) {
+                        Object[] objsIndicator = objectMap.get(localId);
+                        Object[] arr = indicator.getDayResult(objsIndicator, j);
+                        if (arr != null && arr.length > 0) {
+                            result = (Double[]) ArrayUtils.addAll(result, arr);
+                        } else {
+                            System.out.println("No obj for id3 " + localId);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private static List<Indicator> getAllIndicators(MyMyConfig conf, Category[] categories,
+            Map<Pair, String> pairCatMap, Pipeline[] datareaders) throws Exception {
+        List<Indicator> allIndicators = new ArrayList<>();
+        Set<Pair> marketcatSet = new HashSet<>();
+        Set<String> indicatorSet = new HashSet<>();
+        for (Pair pair : pairCatMap.keySet()) {
+            String market = (String) pair.getFirst();
+            String id = (String) pair.getSecond();
+            String cat = pairCatMap.get(pair);
+            if (market.equals(conf.getMarket())) {
+                for (Category category : categories) {
+                    if (cat.equals(category.getTitle())) {
+                        Map<String, Indicator> indicatorMap = category.getIndicatorMap();
+                        for (String indicatorName : indicatorMap.keySet()) {
+                            Indicator indicator = indicatorMap.get(indicatorName);
+                            if (indicator.wantForExtras()) {
+                                allIndicators.add(indicator);
+                                indicatorSet.add(indicatorName);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //else {
+        //   Pair marketcat = new Pair(market, cat);
+        //if (marketcatSet.add(marketcat)) {
+        //if (indicatorSet.add(marketcat)) {
+        // TODO make indicator factory
+        //Indicator indicator = null;
+        if (indicatorSet.add(PipelineConstants.INDICATORMACD) && conf.wantAggregatorsIndicatorExtrasMACD()) {
+            allIndicators.add(new IndicatorMACD(conf, null, null, null, null, null, 42, datareaders, true));       
+        }
+        if (indicatorSet.add(PipelineConstants.INDICATORRSI) && conf.wantAggregatorsIndicatorExtrasRSI()) {
+            allIndicators.add(new IndicatorRSI(conf, null, null, null, null, null, 42, datareaders, true));       
+        }
+        //           allIndicators.add(indicator);
+        //        }
+        //    }
+        //}
+        return allIndicators;
+    }
+
     public static void addToLists(List<Double> macdLists[], Double[] momentum) throws Exception {
         for (int i = 0; i < macdLists.length; i ++) {
             List<Double> macdList = macdLists[i];
@@ -327,6 +395,14 @@ public class IndicatorUtils {
                 }
             }
         }
+    }
+
+    public static Map<String, Pipeline> getPipelineMap(Pipeline[] datareaders) {
+        Map<String, Pipeline> pipelineMap = new HashMap<>();
+        for (Pipeline datareader : datareaders) {
+            pipelineMap.put(datareader.pipelineName(), datareader);
+        }
+        return pipelineMap;
     }
 
 }

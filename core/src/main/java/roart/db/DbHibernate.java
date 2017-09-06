@@ -65,14 +65,28 @@ public class DbHibernate {
         for (String id : listMap.keySet()) {
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
             double [] list = listMap.get(id);
-            if (wantPercentizedPriceIndex && list.length > 0) {
+            if ("F00000HGSN".equals(id)) {              
+                log.info("braz " + Arrays.toString(list));                
+            }
+           if (wantPercentizedPriceIndex && list.length > 0) {
                 list = ArraysUtil.getPercentizedPriceIndex(list, key, indicator.getCategory());
             }
+           if ("F00000HGSN".equals(id)) {              
+               log.info("braz " + Arrays.toString(list));                
+           }
             log.info("beg end " + id + " "+ key);
             //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
             log.info("list " + list.length + " " + Arrays.asList(list));
             //double momentum = tu.getMom(list, conf.getDays());
+            if (list.length == 180) {
+                log.info("180");
+            } else {
+                log.info("not");
+            }
             Object[] objs = (Object[]) indicator.calculate(list);
+            if ("F00000HGSN".equals(id)) {
+                log.info("braz " + Arrays.asList(list));
+            }
             objectMap.put(id, objs);
         }
         return objectMap;

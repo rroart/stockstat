@@ -111,5 +111,19 @@ public class IndicatorSTOCHRSI extends Indicator {
         return objs;
     }
 
+    @Override
+    protected Map<String, Object[]> getResultMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap,
+            Map<String, Double[]> momMap) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected Map<String, Double[]> getCalculatedMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap,
+            Map<String, double[]> truncListMap) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
 

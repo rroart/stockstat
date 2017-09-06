@@ -1,5 +1,7 @@
 package roart.config;
 
+import org.apache.spark.api.java.Optional;
+
 public class MyMyConfig extends MyPropertyConfig {
 
     public MyMyConfig(MyConfig config) {
@@ -590,6 +592,14 @@ public class MyMyConfig extends MyPropertyConfig {
        return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
    }
    
+   public Boolean wantAggregatorsIndicatorExtrasMACD() {
+       return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD);
+   }
+   
+   public Boolean wantAggregatorsIndicatorExtrasRSI() {
+       return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI);
+   }
+   
    public int getAggregatorsIndicatorFuturedays() {
        return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
    }
@@ -602,4 +612,9 @@ public class MyMyConfig extends MyPropertyConfig {
        return (Double) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
    }
    
+   private Object getValueOrDefault(String key) {
+       Object retVal = configValueMap.get(key);
+       //System.out.println("r " + retVal + " " + deflt.get(key));
+       return Optional.ofNullable(retVal).orElse(deflt.get(key));
+   }
 }
