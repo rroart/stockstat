@@ -84,7 +84,7 @@ public class GraphCategoryPrice extends GraphCategory {
                             Pair<String, String> pair = new Pair(market, stock.getId());
                             if (ids.contains(pair)) {
                                 try {
-                                    Double value = StockDao.getSpecial(stock, Constants.PRICECOLUMN);
+                                    Double value = StockDao.getMainSpecial(stock, Constants.PRICECOLUMN);
                                     if (value == null) {
                                         continue;
                                     }

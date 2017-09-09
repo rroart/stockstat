@@ -42,8 +42,8 @@ public class PredictorLSTM extends Predictor {
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
     String key;
-    Map<String, Double[]> listMap;
-    Map<String, double[]> truncListMap;
+    Map<String, Double[][]> listMap;
+    Map<String, double[][]> truncListMap;
     Map<String, Object[]> resultMap;
     Object[] emptyField;
     Map<MLPredictModel, Long> mapTime = new HashMap<>();
@@ -166,8 +166,9 @@ public class PredictorLSTM extends Predictor {
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
-        this.truncListMap = ArraysUtil.getTruncList(this.listMap);
+        Map<String, Double[][]> retArray = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        this.listMap = retArray;
+        this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
         if (conf.wantPercentizedPriceIndex()) {
 
         }
@@ -200,7 +201,8 @@ public class PredictorLSTM extends Predictor {
             //Object[] full = tu.getMomAndDeltaFull(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
 
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            Double[] list = listMap.get(id);
+            Double[][] list0 = listMap.get(id);
+            Double[] list = list0[0];
             log.info("listsize"+ list.length);
             // TODO do not need?
             if (conf.wantPercentizedPriceIndex()) {
@@ -225,7 +227,8 @@ public class PredictorLSTM extends Predictor {
                             int horizon = conf.getPredictorLSTMHorizon();
                             int windowsize = conf.getPredictorLSTMWindowsize();
                             int epochs = conf.getPredictorLSTMEpochs();
-                            Double[] list = listMap.get(id);
+                            Double[][] list0 = listMap.get(id);
+                            Double[] list = list0[0];
                             // TODO check reverse. move up before if?
                             //list = ArraysUtil.getArrayNonNullReverse(list);
                             log.info("bla " + list.length + " " + windowsize);
@@ -308,7 +311,7 @@ public class PredictorLSTM extends Predictor {
 
     }
 
-    private boolean anythingHere(Map<String, Double[]> listMap2) {
+    private boolean anythingHere2(Map<String, Double[]> listMap2) {
         for (Double[] array : listMap2.values()) {
             for (int i = 0; i < array.length; i++) {
                 if (array[i] != null) {
@@ -319,7 +322,18 @@ public class PredictorLSTM extends Predictor {
         return false;
     }
 
-    public void addEventRow(String text, String name, String id) {
+    private boolean anythingHere(Map<String, Double[][]> listMap2) {
+        for (Double[][] array : listMap2.values()) {
+            for (int i = 0; i < array.length; i++) {
+                if (array[0][i] != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+  public void addEventRow(String text, String name, String id) {
         ResultItemTableRow event = new ResultItemTableRow();
         event.add(key);
         event.add(text);

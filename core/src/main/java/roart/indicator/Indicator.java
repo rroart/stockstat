@@ -1,10 +1,13 @@
 package roart.indicator;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
@@ -19,6 +22,9 @@ import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
+import roart.util.Constants;
+import roart.util.MarketData;
+import roart.util.PeriodData;
 import roart.util.TaUtil;
 
 public abstract class Indicator {
@@ -29,9 +35,14 @@ public abstract class Indicator {
     protected MyMyConfig conf;
     protected int category;
     protected String key;
+    protected int fieldSize = 0;
+    protected Map<String, MarketData> marketdatamap;
+    protected Map<String, PeriodData> periodDataMap;
+    protected Map<String, Integer>[] periodmap;
+    protected Object[] emptyField;
     
-    protected Map<String, Double[]> listMap;
-    protected Map<String, double[]> truncListMap;
+    protected Map<String, Double[][]> listMap;
+    protected Map<String, double[][]> truncListMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
     protected Map<String, Object[]> objectMap;
@@ -51,6 +62,8 @@ public abstract class Indicator {
     }
 
     abstract public boolean isEnabled();
+    protected abstract Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id);
+    protected abstract void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] momentum, Object[] fields);
 
     public Object[] getResultItemTitle() {
     	Object[] titleArray = new Object[1];
@@ -58,14 +71,39 @@ public abstract class Indicator {
         return titleArray;
     }
 
-    abstract public Object[] getResultItem(StockItem stock);
-
+    /*
     public Object calculate(double[] array) {
         return null;
     }
+*/
+    public Object calculate(double[][] array) {
+        return null;
+    }
 
+    /*
     public Object calculate(Double[] array) {
         return calculate(ArrayUtils.toPrimitive(array));
+    }
+*/
+    public Object calculate(Double[][] array) {
+        double[][] newArray = new double[array.length][];
+        for (int i = 0; i < array.length; i ++) {
+            newArray[i] = ArrayUtils.toPrimitive(array[i]);
+        }
+        return calculate(newArray);
+    }
+
+    public Object calculate(scala.collection.Seq[] objArray) {
+        System.out.println(objArray);
+        double[][] newArray = new double[objArray.length][];
+        for (int i = 0; i < objArray.length; i++) {
+            List list = scala.collection.JavaConversions.seqAsJavaList(objArray[0]);
+            Double[] array = new Double[list.size()];
+            System.out.println(list.toArray(array));
+            array = (Double[]) list.toArray(array);
+            newArray[i] = ArrayUtils.toPrimitive(array);
+        }
+        return calculate(newArray);
     }
 
    public List<Integer> getTypeList() {
@@ -89,10 +127,20 @@ public abstract class Indicator {
     }
 
     public Map<String, Object> getLocalResultMap() {
-        return null;
+        Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.RESULT, calculatedMap);
+        map.put(PipelineConstants.OBJECT, objectMap);
+        map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
+        map.put(PipelineConstants.LIST, listMap);
+        map.put(PipelineConstants.TRUNCLIST, truncListMap);
+        map.put(PipelineConstants.RESULT, calculatedMap);
+        map.put(PipelineConstants.MARKETOBJECT, marketObjectMap);
+        map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
+        map.put(PipelineConstants.MARKETRESULT, marketResultMap);
+        return map;
     }
-
-    public int getResultSize() {
+    
+public int getResultSize() {
         return 0;
     }
 
@@ -108,6 +156,38 @@ public abstract class Indicator {
         return false;        
     }
     
+
+    // TODO make an oo version of this
+    protected void calculateAll(MyMyConfig conf, Map<String, MarketData> marketdatamap,
+            Map<String, PeriodData> periodDataMap, int category, Pipeline[] datareaders) throws Exception {
+        DbAccess dbDao = DbDao.instance(conf);
+        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+        String dateme = dt.format(conf.getdate());
+        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        Pipeline datareader = pipelineMap.get("" + category);
+        this.listMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+        this.truncListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
+        if (!anythingHere(listMap)) {
+            System.out.println("empty"+key);
+            return;
+        }
+        List<Map> resultList = getMarketCalcResults(conf, dbDao, truncListMap);
+        objectMap = resultList.get(0);
+        calculatedMap = resultList.get(1);
+        resultMap = resultList.get(2);
+    }
+
+    private boolean anythingHere(Map<String, Double[][]> listMap2) {
+        for (Double[][] array : listMap2.values()) {
+            for (int i = 0; i < array.length; i++) {
+                if (array[0][i] != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     protected void calculateForExtras(Pipeline[] datareaders) {
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
 
@@ -116,21 +196,21 @@ public abstract class Indicator {
         Map<Pair, List<StockItem>> pairStockMap = (Map<Pair, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
         Map<Pair, Map<Date, StockItem>> pairDateMap = (Map<Pair, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
         Map<Pair, String> pairCatMap = (Map<Pair, String>) localResults.get(PipelineConstants.PAIRCAT);
-        Map<Pair, Double[]> pairListMap = (Map<Pair, Double[]>) localResults.get(PipelineConstants.PAIRLIST);
+        Map<Pair, Double[][]> pairListMap = (Map<Pair, Double[][]>) localResults.get(PipelineConstants.PAIRLIST);
         Map<Pair, List<Date>> pairDateListMap = (Map<Pair, List<Date>>) localResults.get(PipelineConstants.PAIRDATELIST);
-        Map<Pair, double[]> pairTruncListMap = (Map<Pair, double[]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
+        Map<Pair, double[][]> pairTruncListMap = (Map<Pair, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
         System.out.println("lockeys" + localResults.keySet());
         Map<Pair, List<StockItem>> pairMap = pairStockMap;
-        Map<String, Map<String, double[]>> marketListMap = new HashMap<>();
+        Map<String, Map<String, double[][]>> marketListMap = new HashMap<>();
         for(Pair pair : pairMap.keySet()) {
             String market = (String) pair.getFirst();
-            Map<String, double[]> aListMap = marketListMap.get(market);
+            Map<String, double[][]> aListMap = marketListMap.get(market);
             if (aListMap == null) {
                 aListMap = new HashMap<>();
                 marketListMap.put(market, aListMap);
             }
             String id = (String) pair.getSecond();
-            double[] truncList = pairTruncListMap.get(pair);
+            double[][] truncList = pairTruncListMap.get(pair);
             if (truncList == null) {
                 System.out.println("bl");
             }
@@ -149,7 +229,7 @@ public abstract class Indicator {
         //this.truncListMap = (Map<String, double[]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
         DbAccess dbDao = DbDao.instance(conf);
         for (String market : marketListMap.keySet()) {
-            Map<String, double[]> truncListMap = marketListMap.get(market);
+            Map<String, double[][]> truncListMap = marketListMap.get(market);
             List<Map> resultList = getMarketCalcResults(conf, dbDao, truncListMap);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
@@ -163,7 +243,7 @@ public abstract class Indicator {
         }
     }
  
-    protected List getMarketCalcResults(MyMyConfig conf, DbAccess dbDao, Map<String, double[]> truncListMap) {
+    protected List getMarketCalcResults(MyMyConfig conf, DbAccess dbDao, Map<String, double[][]> truncListMap) {
         List<Map> resultList = new ArrayList<>();
         if (truncListMap == null || truncListMap.isEmpty()) {
             return resultList;
@@ -189,7 +269,59 @@ public abstract class Indicator {
         return resultList;
     }
 
-    protected abstract Map<String, Object[]> getResultMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap, Map<String, Double[]> momMap);
-    protected abstract Map<String, Double[]> getCalculatedMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap, Map<String, double[]> truncListMap);
+    protected Map<String, Double[]> getCalculatedMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap, Map<String, double[][]> truncListMap) {
+        Map<String, Double[]> result = new HashMap<>();
+        for (String id : truncListMap.keySet()) {
+            Double[] calculated = getCalculated(conf, objectMap, id);
+            if (calculated != null) {
+                result.put(id, calculated);
+                // TODO and continue?
+            } else {
+                System.out.println("nothing for id" + id);
+            }
+        }
+        return result;
+    }
+
+    protected Map<String, Object[]> getResultMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap, Map<String, Double[]> momMap) {
+        Map<String, Object[]> result = new HashMap<>();
+        if (listMap == null) {
+            return result;
+        }
+        for (String id : listMap.keySet()) {
+            Double[] momentum = momMap.get(id);
+            Object[] fields = new Object[fieldSize];
+            result.put(id, fields);
+            if (momentum == null) {
+                System.out.println("zero mom for id " + id);
+            }
+            getFieldResult(conf, tu, momentum, fields);
+        }
+        return result;
+    }
+
+    public Object[] getResultItem(StockItem stock) {
+        TaUtil tu = new TaUtil();
+        String market = conf.getMarket();
+        String id = stock.getId();
+        Pair<String, String> pair = new Pair<>(market, id);
+        Set<Pair<String, String>> ids = new HashSet<>();
+        ids.add(pair);
+        String periodstr = key;
+        PeriodData perioddata = periodDataMap.get(periodstr);
+        if (perioddata == null) {
+            //System.out.println("key " + key + " : " + periodDataMap.keySet());
+            log.info("key " + key + " : " + periodDataMap.keySet());
+        }
+        if (resultMap == null) {
+            return emptyField;
+        }
+        Object[] result = resultMap.get(id);
+        if (result == null) {
+            result = emptyField;
+        }
+        return result;
+    }
+
 }
 

@@ -19,7 +19,7 @@ public abstract class DbAccess {
 
 	public abstract MetaItem getMarket(String market) throws Exception;
 
-    public abstract Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[]> listMap, String key,
+    public abstract Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[][]> listMap, String key,
             Indicator indicator, boolean wantPercentizedPriceIndex);
 
 }

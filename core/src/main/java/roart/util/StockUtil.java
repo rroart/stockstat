@@ -295,7 +295,7 @@ public class StockUtil {
     
     public static boolean hasSpecial(List<StockItem> stocks, int i) throws Exception {
         for (StockItem s : stocks) {
-            if (StockDao.getSpecial(s, i) != null) {
+            if (StockDao.getSpecial(s, i)[0] != null) {
                 return true;
             }
         }
@@ -313,7 +313,7 @@ public class StockUtil {
     
     public static boolean hasStockPeriod(List<StockItem> stocks, int i) throws Exception {
         for (StockItem s : stocks) {
-            if (StockDao.getPeriod(s, i) != null) {
+            if (StockDao.getPeriod(s, i)[0] != null) {
                 return true;
             }
             /*
@@ -349,7 +349,7 @@ public class StockUtil {
     
     public static boolean hasStockValue(List<StockItem> stocks, int i) throws Exception {
         for (StockItem s : stocks) {
-            if (StockDao.getValue(s, i) != null) {
+            if (StockDao.getValue(s, i)[0] != null) {
                 return true;
             }
         }
@@ -606,7 +606,7 @@ public class StockUtil {
                 if (i < list.size()) {
                     StockItem stock = list.get(i);
                     try {
-                        dataset.addValue(StockDao.getPeriod(stock, period), stock.getName() , new Integer(-j));
+                        dataset.addValue(StockDao.getMainPeriod(stock, period), stock.getName() , new Integer(-j));
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
@@ -629,7 +629,7 @@ public class StockUtil {
                 if (ids.contains(stock.getId())) {
                     try {
                         //log.info("info " + stock.getName() + " " + StockDao.getPeriod(stock, period + 1) + " " + new Integer(-j));
-                        dataset.addValue(StockDao.getValue(stock, period), stock.getName() , new Integer(-j));
+                        dataset.addValue(StockDao.getMainValue(stock, period), stock.getName() , new Integer(-j));
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                 
@@ -696,7 +696,7 @@ public class StockUtil {
                     Pair<String, String> pair = new Pair(market, stock.getId());
                     if (ids.contains(pair)) {
                         try {
-                            Double value = StockDao.getValue(stock, period);
+                            Double value = StockDao.getMainValue(stock, period);
                             if (value == null) {
                                 continue;
                             }
@@ -739,7 +739,7 @@ public class StockUtil {
                 if (ids.contains(stock.getId())) {
                     try {
                         //log.info("info " + stock.getName() + " " + StockDao.getSpecial(stock, type) + " " + new Integer(-j));
-                        dataset.addValue(StockDao.getSpecial(stock, type), stock.getName() , new Integer(-j));
+                        dataset.addValue(StockDao.getMainSpecial(stock, type), stock.getName() , new Integer(-j));
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                 
@@ -787,7 +787,7 @@ public class StockUtil {
                     Pair<String, String> pair = new Pair(market, stock.getId());
                     if (ids.contains(pair)) {
                         try {
-                            Double value = StockDao.getSpecial(stock, type);
+                            Double value = StockDao.getMainSpecial(stock, type);
                             if (value == null) {
                                 continue;
                             }
@@ -917,7 +917,7 @@ public class StockUtil {
                 if (i >= 0) {
                     StockItem stock = list.get(i);
                     try {
-                        dataset.addValue(StockDao.getPeriod(stock, period ), stock.getName() , new Integer(-j));
+                        dataset.addValue(StockDao.getMainPeriod(stock, period ), stock.getName() , new Integer(-j));
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
@@ -986,7 +986,7 @@ public class StockUtil {
                 }
                 try {
                     if (stock != null) {
-                        dataset.addValue(StockDao.getPeriod(stock, period), stock.getName() , new Integer(-j));
+                        dataset.addValue(StockDao.getMainPeriod(stock, period), stock.getName() , new Integer(-j));
                     }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
@@ -1042,7 +1042,7 @@ public class StockUtil {
             if (start >= 0) {
                 StockItem stock = listmain.get(start);
                 try {
-                    if (StockDao.getPeriod(stock, period) != null) {
+                    if (StockDao.getPeriod(stock, period)[0] != null) {
                         //start--;
                         break;
                     }
@@ -1081,7 +1081,7 @@ public class StockUtil {
             if (period == 0) {
                 Double periodval = null;
                 try {
-                    periodval = StockDao.getPeriod(stocklist.get(i), period);
+                    periodval = StockDao.getMainPeriod(stocklist.get(i), period);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -1110,7 +1110,7 @@ public class StockUtil {
             if (period == 0) {
                 Double periodval = null;
                 try {
-                    periodval = StockDao.getValue(stocklist.get(i), period);
+                    periodval = StockDao.getMainValue(stocklist.get(i), period);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -1139,7 +1139,7 @@ public class StockUtil {
             if (period == 0) {
                 Double periodval = null;
                 try {
-                    periodval = StockDao.getValue(stocklist.get(i), period);
+                    periodval = StockDao.getMainValue(stocklist.get(i), period);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

@@ -25,8 +25,8 @@ public class RecommenderRSI extends Aggregator {
     Map<String, Object[]> rsiMap;
     Map<String, Double> buyMap;
     Map<String, Double> sellMap;
-    Map<String, Double[]> listMap;
-    Map<String, double[]> truncListMap;
+    Map<String, Double[][]> listMap;
+    Map<String, double[][]> truncListMap;
    
     public RecommenderRSI(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories) throws Exception {
@@ -34,15 +34,8 @@ public class RecommenderRSI extends Aggregator {
          SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
-        this.truncListMap = ArraysUtil.getTruncList(this.listMap);
-     String wanted = CategoryConstants.PRICE;
-        Category cat = null;
-        for (Category category : categories) {
-            if (category.getTitle().equals(wanted)) {
-                cat = category;
-                break;
-            }
-        }
+        this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
+        Category cat = IndicatorUtils.getWantedCategory(categories);
         List<Double> rsiLists[] = new ArrayList[2];
         for (int i = 0; i < 2; i ++) {
             rsiLists[i] = new ArrayList<>();

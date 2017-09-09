@@ -4,6 +4,7 @@ import java.util.Map;
 
 import roart.config.MyMyConfig;
 import roart.model.StockItem;
+import roart.pipeline.PipelineConstants;
 //import roart.model.Stock;
 import roart.service.ControlService;
 import roart.util.Constants;
@@ -11,7 +12,6 @@ import roart.util.TaUtil;
 
 public class IndicatorMove extends Indicator {
 
-    Map<String, Integer>[] periodmap;
     // TODO fix category/period
     int period;
 
@@ -19,6 +19,7 @@ public class IndicatorMove extends Indicator {
         super(conf, string, period);
         this.periodmap = periodmap;
         this.period = period;
+        fieldSize = fieldSize();
     }
 
     @Override
@@ -26,6 +27,20 @@ public class IndicatorMove extends Indicator {
         return conf.isMoveEnabled();
     }
 
+    @Override
+    public String indicatorName() {
+        return PipelineConstants.INDICATORMOVE;
+    }
+    
+    private int fieldSize() {
+        int size = 1;
+        return size;
+    }
+    
+    @Override
+    protected void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] result, Object[] fields) {
+    }
+    
     @Override
     public Object[] getResultItem(StockItem stock) {
     	Object[] retArray = new Object[1];
@@ -39,17 +54,11 @@ public class IndicatorMove extends Indicator {
     }
 
     @Override
-    protected Map<String, Object[]> getResultMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap,
-            Map<String, Double[]> momMap) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    protected Map<String, Double[]> getCalculatedMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap,
-            Map<String, double[]> truncListMap) {
-        // TODO Auto-generated method stub
-        return null;
+    protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
+        Object[] objs = objectMap.get(id);
+        TaUtil tu = new TaUtil();
+        Double[] momentum = null; //periodmap[period].get(stock.getId());
+        return momentum;
     }
 
 }

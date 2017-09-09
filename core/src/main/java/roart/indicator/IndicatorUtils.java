@@ -20,6 +20,7 @@ import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
 import roart.aggregate.ExtraReader;
 import roart.category.Category;
+import roart.category.CategoryConstants;
 import roart.config.MyMyConfig;
 import roart.model.StockItem;
 import roart.util.Constants;
@@ -157,10 +158,14 @@ public class IndicatorUtils {
         int arraySize = 0;
         for (Indicator indicator : indicators) {
             Map<String, Object> resultMap = indicator.getLocalResultMap();
-            objectMapsList.add((Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT));
-            listList.add((Map<String, Double[]>) resultMap.get(PipelineConstants.LIST));
-            arraySize += indicator.getResultSize();
-            System.out.println("sizes " + listList.get(listList.size() - 1).size());
+            System.out.println("r " + resultMap.keySet() + " " + resultMap.get(PipelineConstants.OBJECT));
+            Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
+            if (objMap != null) {
+                objectMapsList.add(objMap);
+                listList.add((Map<String, Double[]>) resultMap.get(PipelineConstants.LIST));
+                arraySize += indicator.getResultSize();
+                System.out.println("sizes " + listList.get(listList.size() - 1).size());
+            }
         }
         Object[] retobj = new Object[3];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
@@ -172,6 +177,9 @@ public class IndicatorUtils {
         }
         // TODO copy the retain from aggregator?
         Set<String> ids = new HashSet<>();
+        if (listList.isEmpty()) {
+            return new Object[3];
+        }
         ids.addAll(listList.get(0).keySet());
 
         // TODO change
@@ -212,12 +220,12 @@ public class IndicatorUtils {
 
     public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators, int futureDays, int tableDays, int intervalDays, List<Date> dateList, Map<Pair, List<StockItem>> pairStockMap, Map<Pair, Map<Date, StockItem>> pairDateMap, int category, Map<Pair, String> pairCatMap, Category[] categories, Pipeline[] datareaders) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
-        List<Map<String, Double[]>> listList = new ArrayList<>();
+        List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = 0;
         for (Indicator indicator : indicators) {
             Map<String, Object> resultMap = indicator.getLocalResultMap();
             objectMapsList.add((Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT));
-            listList.add((Map<String, Double[]>) resultMap.get(PipelineConstants.LIST));
+            listList.add((Map<String, Double[][]>) resultMap.get(PipelineConstants.LIST));
             arraySize += indicator.getResultSize();
             System.out.println("sizes " + listList.get(listList.size() - 1).size());
         }
@@ -232,7 +240,7 @@ public class IndicatorUtils {
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         ExtraReader extrareader = (ExtraReader) pipelineMap.get(PipelineConstants.EXTRAREADER);
         //extrareader.setPa
-        Map<Pair, Double[]> retMap = extrareader.getExtraData2(conf, dateList, pairDateMap, pairCatMap, 0, null, null);
+        Map<Pair, Double[][]> retMap = extrareader.getExtraData2(conf, dateList, pairDateMap, pairCatMap, 0, null, null);
         List<Indicator> allIndicators = getAllIndicators(conf, categories, pairCatMap, datareaders);
         for (Indicator indicator : allIndicators) {
             int aSize = indicator.getResultSize();
@@ -403,6 +411,26 @@ public class IndicatorUtils {
             pipelineMap.put(datareader.pipelineName(), datareader);
         }
         return pipelineMap;
+    }
+
+    public static Category getWantedCategory(Category[] categories) throws Exception {
+        List<String> wantedList = new ArrayList<>();
+           wantedList.add(CategoryConstants.PRICE);
+           wantedList.add(CategoryConstants.INDEX);
+           wantedList.add("cy");
+            Category cat = null;
+            for (String wanted : wantedList) {
+                for (Category category : categories) {
+                    System.out.println(category.getTitle());
+                    if (cat == null && category.hasContent()) {
+                        if (category.getTitle().equals(wanted)) {
+                            cat = category;
+                            break;
+                        }
+                    }
+                }
+            }
+        return cat;
     }
 
 }

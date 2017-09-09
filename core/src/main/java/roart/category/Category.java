@@ -16,6 +16,7 @@ import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.predictor.Predictor;
+import roart.util.StockUtil;
 
 public abstract class Category {
 
@@ -28,7 +29,8 @@ public abstract class Category {
     protected List<Predictor> predictors = new ArrayList<>();
     private Map<String, Indicator> indicatorMap = new HashMap<>();
     protected Pipeline[] datareaders;
-    
+    protected int period;
+   
     public Category(MyMyConfig conf, String periodText, List<StockItem> stocks, Pipeline[] datareaders) {
         this.conf = conf;
         setTitle(periodText);
@@ -36,6 +38,10 @@ public abstract class Category {
         this.datareaders = datareaders;
     }
 
+    public int getPeriod() {
+        return period;
+    }
+    
     abstract public void addResultItemTitle(ResultItemTableRow r);
 
     abstract public void addResultItem(ResultItemTableRow r, StockItem stock);
@@ -123,6 +129,10 @@ public abstract class Category {
     
     public Map<String, Indicator> getIndicatorMap() {
         return indicatorMap;
+    }
+    
+    public boolean hasContent() throws Exception {
+        return StockUtil.hasStockValue(stocks, period);
     }
 }
 

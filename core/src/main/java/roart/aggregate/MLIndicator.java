@@ -57,7 +57,7 @@ public class MLIndicator extends Aggregator {
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
     String key;
-    Map<String, Double[]> listMap;
+    Map<String, Double[][]> listMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
     Map<String, Object[]> objectMap;
@@ -88,7 +88,7 @@ public class MLIndicator extends Aggregator {
         return objectMap;
     }
     
-    public Map<String, Double[]> getListMap() {
+    public Map<String, Double[][]> getListMap() {
         return listMap;
     }
     
@@ -177,7 +177,7 @@ public class MLIndicator extends Aggregator {
     
    public Map<double[], Double> getEvaluations(MyMyConfig conf, int j, Object retObj[]) throws JsonParseException, JsonMappingException, IOException {
        int listlen = conf.getTableDays();
-       List<Map<String, Double[]>> listList = (List<Map<String, Double[]>>) retObj[2];
+       List<Map<String, Double[][]>> listList = (List<Map<String, Double[][]>>) retObj[2];
        Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
        //List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
        Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
@@ -191,11 +191,11 @@ public class MLIndicator extends Aggregator {
        for (String id : indicatorMap.keySet()) {
            int newlistidx = listlen - 1 - j + conf.getAggregatorsIndicatorFuturedays();
            int curlistidx = listlen - 1 - j;
-           Double[] list = listList.get(0).get(id);
-           if (list[newlistidx] == null || list[curlistidx] == null) {
+           Double[][] list = listList.get(0).get(id);
+           if (list[0][newlistidx] == null || list[0][curlistidx] == null) {
                continue;
            }
-           double change = list[newlistidx]/list[curlistidx] - 1;
+           double change = list[0][newlistidx]/list[0][curlistidx] - 1;
            double[] merged = ArraysUtil.convert(indicatorMap.get(id));
            
            // cat 1.0 is for >= threshold, 2.0 is for belov
@@ -221,15 +221,9 @@ public class MLIndicator extends Aggregator {
     // TODO make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category2, Category[] categories, Pipeline[] datareaders) throws Exception {
-        Category cat = null;
-        int catInt = Constants.PRICECOLUMN;
-        for (Category category : categories) {
-            // TODO fix
-            if (category.getTitle().equals(CategoryConstants.PRICE)) {
-                cat = category;
-                break;
-            }
-        }
+        Category cat = IndicatorUtils.getWantedCategory(categories);
+        title = cat.getTitle();
+        key = title;
         Map<String, Pipeline> pipelineMap = new HashMap<>();
         for (Pipeline datareader : datareaders) {
             pipelineMap.put(datareader.pipelineName(), datareader);
@@ -244,9 +238,9 @@ public class MLIndicator extends Aggregator {
         Map<Pair, List<StockItem>> pairStockMap = (Map<Pair, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
         Map<Pair, Map<Date, StockItem>> pairDateMap = (Map<Pair, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
         Map<Pair, String> pairCatMap = (Map<Pair, String>) localResults.get(PipelineConstants.PAIRCAT);
-        Map<Pair, Double[]> pairListMap = (Map<Pair, Double[]>) localResults.get(PipelineConstants.PAIRLIST);
+        Map<Pair, Double[][]> pairListMap = (Map<Pair, Double[][]>) localResults.get(PipelineConstants.PAIRLIST);
         Map<Pair, List<Date>> pairDateListMap = (Map<Pair, List<Date>>) localResults.get(PipelineConstants.PAIRDATELIST);
-        Map<Pair, double[]> pairTruncListMap = (Map<Pair, double[]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
+        Map<Pair, double[][]> pairTruncListMap = (Map<Pair, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
 
         List<Date> dateList = (List<Date>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
         Map<String, Indicator> newIndicatorMap = new HashMap<>();
@@ -255,7 +249,7 @@ public class MLIndicator extends Aggregator {
         Map<String, List<AggregatorMLIndicator>> usedIndicators = AggregatorMLIndicator.getUsedAggregatorMLIndicators(conf);
         Set<String> ids = new HashSet<>();
         Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
-        Map<String, Double[]> list0 = (Map<String, Double[]>) localResultMap.get(localResultMap.keySet().iterator().next()).get(PipelineConstants.LIST);
+        Map<String, Double[][]> list0 = (Map<String, Double[][]>) localResultMap.get(localResultMap.keySet().iterator().next()).get(PipelineConstants.LIST);
         ids.addAll(list0.keySet());
         //AggregatorMLIndicator.getI
         TaUtil tu = new TaUtil();
@@ -279,7 +273,7 @@ public class MLIndicator extends Aggregator {
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        this.listMap = (Map<String, Double[]>) list0;
+        this.listMap = (Map<String, Double[][]>) list0;
         if (conf.wantPercentizedPriceIndex()) {
             
         }
@@ -315,7 +309,7 @@ public class MLIndicator extends Aggregator {
         //Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
         //Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
         //Map<String, Indicator> indicatorMap = new HashMap<>();
-        int category = Constants.PRICECOLUMN;
+        //int category = Constants.PRICECOLUMN;
         //Set<String> ids = new HashSet<>();
         ids.addAll(list0.keySet());
         List<String> keys = new ArrayList<>();
@@ -337,9 +331,10 @@ public class MLIndicator extends Aggregator {
             for (Indicator indicator : indicators) {
                 String indicatorName = indicator.indicatorName();
                     // TODO fix
-                    Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicatorName).get(PipelineConstants.LIST);
+                    Map<String, Double[][]> listMap = (Map<String, Double[][]>) cat.getIndicatorLocalResultMap().get(indicatorName).get(PipelineConstants.LIST);
                    //Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getResultMap().get(indicator);
-                    arrayResult = (Object[]) ArrayUtils.addAll(arrayResult, aResult.get(id));
+                    Double[][] aResult = listMap.get(id);
+                    arrayResult = (Object[]) ArrayUtils.addAll(arrayResult, aResult[0]);
             }
             result.put(id, arrayResult);
         }
@@ -347,7 +342,7 @@ public class MLIndicator extends Aggregator {
         int macdlen = conf.getTableDays();
         int listlen = conf.getTableDays();
         double testRecommendQualBuySell = 0;
-        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), conf.getTableDays(), conf.getAggregatorsIndicatorIntervaldays(), dateList, pairStockMap, pairDateMap, catInt, pairCatMap, categories, datareaders);
+        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), conf.getTableDays(), conf.getAggregatorsIndicatorIntervaldays(), dateList, pairStockMap, pairDateMap, cat.getPeriod(), pairCatMap, categories, datareaders);
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj2[0];
         Map<double[], Double> mergedCatMap = new HashMap<>();
         for (int j = conf.getAggregatorsIndicatorFuturedays(); j < macdlen; j += conf.getAggregatorsIndicatorIntervaldays()) {
@@ -568,7 +563,18 @@ public class MLIndicator extends Aggregator {
         }
     }
 */
-    private boolean anythingHere(Map<String, Double[]> listMap2) {
+    private boolean anythingHere(Map<String, Double[][]> listMap2) {
+        for (Double[][] array : listMap2.values()) {
+            for (int i = 0; i < array.length; i++) {
+                if (array[0][i] != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean anythingHere2(Map<String, Double[]> listMap2) {
         for (Double[] array : listMap2.values()) {
             for (int i = 0; i < array.length; i++) {
                 if (array[i] != null) {

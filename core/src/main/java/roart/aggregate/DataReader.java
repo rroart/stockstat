@@ -20,9 +20,9 @@ public class DataReader extends Pipeline {
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
-    Map<String, Double[]> listMap;
+    Map<String, Double[][]> listMap;
     List<Date> dateList;
-    Map<String, double[]> truncListMap;
+    Map<String, double[][]> truncListMap;
 
     @Override
     public Map<Integer, Map<String, Object>> getResultMap() {
@@ -62,7 +62,7 @@ public class DataReader extends Pipeline {
         }
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
-        this.truncListMap = ArraysUtil.getTruncList(this.listMap);
+        this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
     }
 
     @Override

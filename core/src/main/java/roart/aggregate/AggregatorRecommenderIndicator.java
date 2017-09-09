@@ -37,16 +37,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     public AggregatorRecommenderIndicator(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders) throws Exception {
         super(conf, index, 0);
-        // TODO fix
-       String wanted = CategoryConstants.PRICE;
-        Category cat = null;
-        for (Category category : categories) {
-            if (category.getTitle().equals(wanted)) {
-                cat = category;
-                break;
-            }
-        }
-        
+       Category cat = IndicatorUtils.getWantedCategory(categories);
         Map<String, Indicator> usedIndicatorMap = cat.getIndicatorMap();
         Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
         Map<String, Double[]> list0 = (Map<String, Double[]>) localResultMap.get(localResultMap.keySet().iterator().next()).get(PipelineConstants.LIST);
@@ -82,8 +73,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                 List<Recommend> list = usedRecommenders.get(type);
                 for (Recommend recommend : list) {
                     String indicator = recommend.indicator();
-                    Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
-                    arrayResult = (Double[]) ArrayUtils.addAll(arrayResult, aResult.get(id));
+                    Map<String, Double[][]> listMap = (Map<String, Double[][]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
+                    Double[][] aResult = listMap.get(id);
+                    arrayResult = (Double[]) ArrayUtils.addAll(arrayResult, aResult[0]);
                 }
             }
             result.put(id, arrayResult);

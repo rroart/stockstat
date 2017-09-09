@@ -15,8 +15,14 @@ import roart.config.MyConfig;
 
 public class StockDao {
 	
-    public static Double getPeriod(StockItem stock, int i) throws Exception {
-    	return stock.getPeriod(i);
+    public static Double getMainPeriod(StockItem stock, int i) throws Exception {
+        return stock.getPeriod(i);
+    }
+
+    public static Double[] getPeriod(StockItem stock, int i) throws Exception {
+        Double[] retValue = new Double[1];
+    	retValue[0] = stock.getPeriod(i);
+    	return retValue;
     }
 
     /**
@@ -28,7 +34,7 @@ public class StockDao {
      * @throws Exception
      */
     
-    public static Double getValue(StockItem stock, int i) throws Exception {
+    public static Double[] getValue(StockItem stock, int i) throws Exception {
         if (i >= 0) {
             return getPeriod(stock, i);
         } else {
@@ -36,12 +42,30 @@ public class StockDao {
         }
     }
     
-     public static Double getSpecial(StockItem stock, int i) throws Exception {
+    public static Double getMainValue(StockItem stock, int i) throws Exception {
+        if (i >= 0) {
+            return getMainPeriod(stock, i);
+        } else {
+            return getMainSpecial(stock, i);
+        }
+    }
+    
+     public static Double getMainSpecial(StockItem stock, int i) throws Exception {
         if (i == Constants.INDEXVALUECOLUMN) {
             return stock.getIndexvalue();
         }
         if (i == Constants.PRICECOLUMN) {
             return stock.getPrice();
+        }
+        throw new Exception("Out of range " + i);
+    }
+
+     public static Double[] getSpecial(StockItem stock, int i) throws Exception {
+        if (i == Constants.INDEXVALUECOLUMN) {
+            return stock.getIndexvalues();
+        }
+        if (i == Constants.PRICECOLUMN) {
+            return stock.getPrices();
         }
         throw new Exception("Out of range " + i);
     }
@@ -63,6 +87,17 @@ public class StockDao {
     	aList.add(value);
     }
     
+    public static void mapAdd(Map<String, List<Double>[]> aMap, String id, Double[] value) {
+        List<Double>[] aList = aMap.get(id);
+        for (int i = 0; i < value.length; i++) {
+        if (aList == null) {
+            aList = new ArrayList[3];
+            aMap.put(id, aList);
+        }
+        aList[i].add(value[i]);
+        }
+    }
+    
     public static void mapAdd(Map<String, Double[]> aMap, String id, int index, Double value, int length) {
         Double[] array = aMap.get(id);
         if (array == null) {
@@ -70,6 +105,17 @@ public class StockDao {
             aMap.put(id, array);
         }
         array[index] = value;
+    }
+    
+    public static void mapAdd(Map<String, Double[][]> aMap, String id, int index, Double[] value, int length) {
+        Double[][] array = aMap.get(id);
+        for (int i = 0; i < value.length; i++) {
+        if (array == null) {
+            array = new Double[value.length][length];
+            aMap.put(id, array);
+        }
+        array[i][index] = value[i];
+        }
     }
     
     /*
@@ -99,9 +145,9 @@ public class StockDao {
      * @throws Exception
      */
     
-    public static Map<String, List<Double>> getArr(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static Map<String, List<Double>[]> getArr(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap) throws Exception {
-        Map<String, List<Double>> retMap = new HashMap<>();
+        Map<String, List<Double>[]> retMap = new HashMap<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         //System.out.println("datstolen " + datedstocklists.length);
         int index = 0;
@@ -110,7 +156,7 @@ public class StockDao {
                 List<StockItem> stocklist = datedstocklists[i];
                 for (StockItem stock : stocklist) {
                     String stockid = stock.getId();
-                    Double value = StockDao.getValue(stock, periodInt);
+                    Double[] value = StockDao.getValue(stock, periodInt);
                     if (value != null) {
                         mapAdd(retMap, stockid, value);
                     }
@@ -120,9 +166,9 @@ public class StockDao {
         return retMap;
     }
 
-    public static Map<String, Double[]> getArrSparse(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static Map<String, Double[][]> getArrSparse(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
 			Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
-		Map<String, Double[]> retMap = new HashMap<>();
+		Map<String, Double[][]> retMap = new HashMap<>();
 		List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         System.out.println("datstolen " + datedstocklists.length);
 		int index = 0;
@@ -136,7 +182,7 @@ public class StockDao {
         		//System.out.println("datstolen2 " + stocklist.size());
         		for (StockItem stock : stocklist) {
         			String stockid = stock.getId();
-        			Double value = StockDao.getValue(stock, periodInt);
+        			Double[] value = StockDao.getValue(stock, periodInt);
         			if (value == null) {
         			    nu++;
         			} else {
@@ -177,26 +223,29 @@ public class StockDao {
                         }
                         yearMap.put(stockid, curYear);
                     }
-                    Double value = StockDao.getValue(stock, periodInt);
-                    if (value != null) {
-                        value = 0.01 * value + 1;
+                    //Double mainValue = StockDao.getMainValue(stock, periodInt);
+                    Double[] value = StockDao.getValue(stock, periodInt);
+                    for (int ii = 0; ii < value.length; ii++ ) {
+                    if (value[ii] != null) {
+                        value[ii] = 0.01 * value[ii] + 1;
                         Double basenumber = basenumberMap.get(stockid);
                         if (basenumber == null) {
                             basenumber = 1.0;
                         }
-                        value = value * basenumber;
+                        value[ii] = value[ii] * basenumber;
                     }
-                    if (value != null) {
-                        lastnumberMap.put(stockid, value);
+                    if (value != null && ii == 0) {
+                        lastnumberMap.put(stockid, value[ii]);
+                    }
                     }
                     mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
                 }
             }
             System.out.println("base " + basenumberMap.values());
-            System.out.println("retmap " + Arrays.asList(retMap.get("0P0000A30R")));
+            //System.out.println("retmap " + Arrays.asList(retMap.get("0P0000A30R")));
         }
         System.out.println("nullnul" + nonn + " " + nu);
-        retMap = getReverseArrSparseFillHoles(conf, retMap);
+        retMap = getReverseArrSparseFillHolesArr(conf, retMap);
 		return retMap;
 	}
     
@@ -222,6 +271,21 @@ public class StockDao {
             ArrayUtils.reverse(array);
             retMap.put(id, array);
         }
+        return retMap;
+    }
+    
+    public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(MyConfig conf, Map<String, Double[][]> listMap) {
+        Map<String, Double[][]> retMap = /*getReverse*/(listMap);
+        //System.out.println("carn " + Arrays.asList(listMap.get("F00000NMNP")));
+        for (String id : listMap.keySet()) {
+            Double[][] array = listMap.get(id);
+            Double[][] newArray = new Double[array.length][];
+            for (int i = 0; i < array.length; i ++) {
+                newArray[i] = ArraysUtil.fixMapHoles(array[i], null, maxHoleNumber());
+            }
+            retMap.put(id, newArray);
+        }      
+        //System.out.println("carn " + Arrays.asList(retMap.get("F00000NMNP")));
         return retMap;
     }
     

@@ -128,7 +128,7 @@ public class ArraysUtil {
         if (list == null) {
             return list;
         }
-        if ((CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key)) {
+        if ((CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key) || ("cy").equals(key)) {
             int i = 0;
             double first = 0;
             for (i = 0; i < list.length; i ++) {
@@ -147,13 +147,15 @@ public class ArraysUtil {
     }
 
     public static double[] getPercentizedPriceIndex(double[] list, String key, int category) {
+        return getPercentizedPriceIndex(list, key, category, list[0]);
+    }
+        
+    public static double[] getPercentizedPriceIndex(double[] list, String key, int category, double first) {
         if (list == null || list.length == 0) {
             return list;
         }
         if (category < 0 || (CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key) || ("cy").equals(key)) {
             int i = 0;
-            double first = 0;
-            first = list[i];
             for (; i < list.length; i ++) {
                 list[i] *= 100 / first;
             }
@@ -473,10 +475,36 @@ public class ArraysUtil {
         return retMap;
     }
     
+    public static Map<String, double[][]> getTruncListArr(Map<String, Double[][]> listMap) {
+        Map<String, double[][]> retMap = new HashMap<>();
+        for (String id : listMap.keySet()) {
+        Double[][] array = listMap.get(id);
+        double[][] newArray = new double[array.length][];
+        for (int i = 0; i < array.length; i++) {
+            newArray[i] = getNonNull(array[i]);
+        }
+        retMap.put(id, newArray);
+        }
+        return retMap;
+    }
+    
     public static Map<Pair, double[]> getTruncList2(Map<Pair, Double[]> listMap) {
         Map<Pair, double[]> retMap = new HashMap<>();
         for (Pair id : listMap.keySet()) {
             retMap.put(id, getNonNull(listMap.get(id)));
+        }
+        return retMap;
+    }
+    
+    public static Map<Pair, double[][]> getTruncList22(Map<Pair, Double[][]> listMap) {
+        Map<Pair, double[][]> retMap = new HashMap<>();
+        for (Pair id : listMap.keySet()) {
+            Double[][] array = listMap.get(id);
+            double[][] newArray = new double[array.length][];
+            for (int i = 0; i < array.length; i++) {
+                newArray[i] = getNonNull(array[i]);
+            }
+            retMap.put(id, newArray);
         }
         return retMap;
     }

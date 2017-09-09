@@ -34,9 +34,9 @@ public class ExtraReader extends Pipeline {
     Map<Pair, List<StockItem>> pairStockMap;
     Map<Pair, Map<Date, StockItem>> pairDateMap;
     Map<Pair, String> pairCatMap;
-    Map<Pair, Double[]> pairListMap;
+    Map<Pair, Double[][]> pairListMap;
     Map<Pair, List<Date>> pairDateListMap;
-    Map<Pair, double[]> pairTruncListMap;
+    Map<Pair, double[][]> pairTruncListMap;
     
     public ExtraReader(MyMyConfig conf, int category) throws Exception {
         super(conf, category);
@@ -222,8 +222,8 @@ public class ExtraReader extends Pipeline {
            StockItem prevStock = dateMap.get(prevDate);
            if (stock != null && prevStock != null) {
                int category = IndicatorUtils.getCategoryFromString(pairCatMap, pairKey);
-               Double value = StockDao.getValue(stock, category);
-               Double prevValue = StockDao.getValue(prevStock, category);
+               Double value = StockDao.getMainValue(stock, category);
+               Double prevValue = StockDao.getMainValue(prevStock, category);
                 if (value != null && prevValue != null) {
                     arr = new Object[2];
                     arr[0] = value;
@@ -239,14 +239,14 @@ public class ExtraReader extends Pipeline {
        return result;
    }
 
-   public Map<Pair, Double[]> getExtraData2(MyMyConfig conf, List<Date> dateList,
+   public Map<Pair, Double[][]> getExtraData2(MyMyConfig conf, List<Date> dateList,
            Map<Pair, Map<Date, StockItem>> pairDateMap, Map<Pair, String> pairCatMap, int j2, String id,
            Double[] result) throws Exception {
        int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
        int size = dateList.size() - 1;
        //Date date = dateList.get(size - j);
        //Date prevDate = dateList.get(size - (j + (deltas - 1)));
-       Map<Pair, Double[]> retMap = new HashMap<>();
+       Map<Pair, Double[][]> retMap = new HashMap<>();
        for (Pair pairKey : pairDateMap.keySet()) {
            String market = (String) pairKey.getFirst();
            String id2 = (String) pairKey.getSecond();
@@ -258,21 +258,25 @@ public class ExtraReader extends Pipeline {
                Date date = dateList.get(size - j);
                StockItem stock = dateMap.get(date);
                if (stock != null) {
-                   Double value = StockDao.getValue(stock, category);
+                   Double[] value = StockDao.getValue(stock, category);
                    mapAdd(retMap, pairKey, size - 1 - j, value, size);
                }
            }
        }
+       /*
        for (Double[] k : retMap.values()) {
            System.out.println("k " +  Arrays.toString(k));
        }
+       */
        System.out.println("d " + dateList);
-       retMap = getReverseArrSparseFillHoles(conf, retMap);
+       retMap = getReverseArrSparseFillHolesArr(conf, retMap);
+       /*
        for (Double[] k : retMap.values()) {
            System.out.println("k " +  Arrays.toString(k));
        }
+       */
        pairListMap = retMap;
-       pairTruncListMap = ArraysUtil.getTruncList2(this.pairListMap);
+       pairTruncListMap = ArraysUtil.getTruncList22(this.pairListMap);
        return retMap;
    }
 
@@ -283,6 +287,17 @@ public class ExtraReader extends Pipeline {
            aMap.put(id, array);
        }
        array[index] = value;
+   }
+
+   public static void mapAdd(Map<Pair, Double[][]> aMap, Pair id, int index, Double value[], int length) {
+       Double[][] array = aMap.get(id);
+       for (int i = 0; i < value.length; i++) {
+       if (array == null) {
+           array = new Double[value.length][length];
+           aMap.put(id, array);
+       }
+       array[i][index] = value[i];
+       }
    }
 
    public static Map<Pair, Double[]> getReverseArrSparseFillHoles(MyConfig conf, Map<Pair, Double[]> listMap) {
@@ -302,6 +317,22 @@ public class ExtraReader extends Pipeline {
    
    public static int maxHoleNumber() {
        return 35;
+   }
+
+   // TODO only dup due to maxholes and lacking parametrization of string/pair
+   public static Map<Pair, Double[][]> getReverseArrSparseFillHolesArr(MyConfig conf, Map<Pair, Double[][]> listMap) {
+       Map<Pair, Double[][]> retMap = /*getReverse*/(listMap);
+       //System.out.println("carn " + Arrays.asList(listMap.get("F00000NMNP")));
+       for (Pair id : listMap.keySet()) {
+           Double[][] array = listMap.get(id);
+           Double[][] newArray = new Double[array.length][];
+           for (int i = 0; i < array.length; i ++) {
+               newArray[i] = ArraysUtil.fixMapHoles(array[i], null, maxHoleNumber());
+           }
+           retMap.put(id, newArray);
+       }      
+       //System.out.println("carn " + Arrays.asList(retMap.get("F00000NMNP")));
+       return retMap;
    }
    
 }

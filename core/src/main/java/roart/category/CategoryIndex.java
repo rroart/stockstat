@@ -33,6 +33,7 @@ public class CategoryIndex extends Category {
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
+        period = Constants.INDEXVALUECOLUMN;
         indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
         indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
         //indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.INDEXVALUECOLUMN));

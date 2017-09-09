@@ -138,7 +138,7 @@ public class TaUtil {
 	            Pair<String, String> pair = new Pair(market, stock.getId());
 	            if (ids.contains(pair)) {
 	                try {
-	                    Double value = StockDao.getValue(stock, period);
+	                    Double value = StockDao.getMainValue(stock, period);
 	                    if (value == null) {
 	                        continue;
 	                    }
@@ -437,7 +437,7 @@ public class TaUtil {
 	            Pair<String, String> pair = new Pair(market, stock.getId());
 	            if (ids.contains(pair)) {
 	                try {
-	                    Double value = StockDao.getValue(stock, period);
+	                    Double value = StockDao.getMainValue(stock, period);
 	                    if (value == null) {
 	                        display = true;
 	                        continue;
@@ -500,7 +500,7 @@ public class TaUtil {
                 Pair<String, String> pair = new Pair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
-                        Double value = StockDao.getPeriod(stock, period);
+                        Double value = StockDao.getMainPeriod(stock, period);
                         if (value == null) {
                             continue;
                         }
@@ -626,70 +626,19 @@ public class TaUtil {
         return dataset;
     }
 
-	public Double[] getCCI(List<Double> low, List<Double> high, List<Double> close, int days, boolean wantdelta, int deltadays) {
-    	int retsize = 1;
-		if (wantdelta) {
-    		retsize++;
-    	}
-		Double[] retValues = new Double[retsize];
-		double lowArr[] = new double[days];
-		double highArr[] = new double[days];
-		double closeArr[] = new double[days];
-	    int size = ArraysUtil.getArrayNonNullReverse(low, lowArr);
-	    ArraysUtil.getArrayNonNullReverse(high, highArr);
-	    ArraysUtil.getArrayNonNullReverse(close, closeArr);
-	    Object[] objs = getInnerCCI(lowArr, highArr, closeArr, size);
-	    // TODO works here too?
-	    //retValues[0] = getCCI(objs);
-        if (wantdelta) {
-        	// TODO check works for this too?
-        	//retValues[1] = getCCIdelta(objs, deltadays);
-        }
-        return retValues;
+	public Object[] getCCI(double[] low, double[] high, double[] close, int days, boolean wantdelta, int deltadays) {
+	    Object[] objs = getInnerCCI(low, high, close, close.length);
+        return objs;
 	}
 
-    public Double[] getATR(List<Double> low, List<Double> high, List<Double> close, int days, boolean wantdelta, int deltadays) {
-        int retsize = 1;
-        if (wantdelta) {
-            retsize++;
-        }
-        Double[] retValues = new Double[retsize];
-        double lowArr[] = new double[days];
-        double highArr[] = new double[days];
-        double closeArr[] = new double[days];
-        int size = ArraysUtil.getArrayNonNullReverse(low, lowArr);
-        ArraysUtil.getArrayNonNullReverse(high, highArr);
-        ArraysUtil.getArrayNonNullReverse(close, closeArr);
-        Object[] objs = getInnerATR(lowArr, highArr, closeArr, size);
-        // TODO works here too?
-        //retValues[0] = getATR(objs);
-        if (wantdelta) {
-            // TODO check works for this too?
-            //retValues[1] = getATRdelta(objs, deltadays);
-        }
-        return retValues;
+    public Object[] getATR(double[] low, double[] high, double[] close, int days, boolean wantdelta, int deltadays) {
+        Object[] objs = getInnerATR(low, high, close, close.length);
+        return objs;
     }
 
-    public Double[] getSTOCH(List<Double> low, List<Double> high, List<Double> close, int days, boolean wantdelta, int deltadays) {
-        int retsize = 1;
-        if (wantdelta) {
-            retsize++;
-        }
-        Double[] retValues = new Double[retsize];
-        double lowArr[] = new double[days];
-        double highArr[] = new double[days];
-        double closeArr[] = new double[days];
-        int size = ArraysUtil.getArrayNonNullReverse(low, lowArr);
-        ArraysUtil.getArrayNonNullReverse(high, highArr);
-        ArraysUtil.getArrayNonNullReverse(close, closeArr);
-        Object[] objs = getInnerSTOCH(lowArr, highArr, closeArr, size);
-        // TODO works here too?
-        //retValues[0] = getSTOCH(objs);
-        if (wantdelta) {
-            // TODO check works for this too?
-            //retValues[1] = getSTOCHdelta(objs, deltadays);
-        }
-        return retValues;
+    public Object[] getSTOCH(double[] low, double[] high, double[] close, int days, boolean wantdelta, int deltadays) {
+        Object[] objs = getInnerSTOCH(low, high, close, close.length);
+        return objs;
     }
 
 	public Double[] getRSI(List<Double> list, int days, boolean wantdelta, int deltadays) {
@@ -708,22 +657,9 @@ public class TaUtil {
         return retValues;
 	}
 
-	public Double[] getSTOCHRSI(List<Double> list, int days, boolean wantdelta, int deltadays) {
-    	int retsize = 2;
-		if (wantdelta) {
-    		retsize += 2;
-    	}
-		Double[] retValues = new Double[retsize];
-		double values[] = new double[days];
-	    int size = ArraysUtil.getArrayNonNullReverse(list, values);
-	    Object[] objs = getInnerSTOCHRSI(values, size);
-        retValues[0] = getArr(objs, 0, 3);
-        retValues[1] = getArr(objs, 1, 3);
-        if (wantdelta) {
-        	retValues[2] = getArrDelta(objs, 0, 3, deltadays);
-        	retValues[3] = getArrDelta(objs, 1, 3, deltadays);
-        }
-        return retValues;
+	public Object[] getSTOCHRSI(double[][] list, int days, int deltadays) {
+	    Object[] objs = getInnerSTOCHRSI(list[0], list[0].length);
+        return objs;
 	}
 
 	private double getRSI(Object[] objs) {

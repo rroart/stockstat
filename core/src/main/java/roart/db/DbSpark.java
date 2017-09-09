@@ -91,7 +91,12 @@ public class DbSpark {
 			String name = row.getAs("name");
 			Date date = row.getAs("date");
 			Double indexvalue = row.getAs("indexvalue");
+            Double indexvaluelow = row.getAs("indexvaluelow");
+            Double indexvaluehigh = row.getAs("indexvaluehigh");
 			Double price = row.getAs("price");
+            Double pricelow = row.getAs("pricelow");
+            Double pricehigh = row.getAs("pricehigh");
+            Integer volume = row.getAs("volume");
 			String currency = row.getAs("currency");
 			Double period1 = row.getAs("period1");
 			Double period2 = row.getAs("period2");
@@ -99,7 +104,10 @@ public class DbSpark {
 			Double period4 = row.getAs("period4");
 			Double period5 = row.getAs("period5");
 			Double period6 = row.getAs("period6");
-			retList.add(new StockItem(dbid, marketid, id, name, date, indexvalue, price, currency, period1, period2, period3, period4, period5, period6));			
+            Double period7 = row.getAs("period7");
+            Double period8 = row.getAs("period8");
+            Double period9 = row.getAs("period9");
+			retList.add(new StockItem(dbid, marketid, id, name, date, indexvalue, indexvaluelow, indexvaluehigh, price, pricelow, pricehigh, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9));			
 		}
 		log.info("time0 " + (System.currentTimeMillis() - time0));
 		{
@@ -145,11 +153,11 @@ public class DbSpark {
         StructType schema = DataTypes
                 .createStructType(new StructField[] {
                         DataTypes.createStructField("id", DataTypes.StringType, false),
-                        DataTypes.createStructField("values", DataTypes.createArrayType(DataTypes.DoubleType), false)});
+                        DataTypes.createStructField("values", DataTypes.createArrayType(DataTypes.createArrayType(DataTypes.DoubleType)), false)});
         
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[])((WrappedArray)x.getAs("values")).array())));
+        Map<String, Object[]> m = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[][])((WrappedArray)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
         return m;
@@ -186,7 +194,7 @@ public class DbSpark {
        return objMap;
     }
     
-    public static Map<String, Object[]> doCalculationsArrNonNull(Map<String, double[]> listMap, String key, Indicator ind,  boolean wantPercentizedPriceIndex) {
+    public static Map<String, Object[]> doCalculationsArrNonNull(Map<String, double[][]> listMap, String key, Indicator ind,  boolean wantPercentizedPriceIndex) {
         if (spark == null) {
             return null;
         }
@@ -194,15 +202,17 @@ public class DbSpark {
         System.out.println("running spark");
         List<Row> rowList = new ArrayList<>();
         for (String id : listMap.keySet()) {
-            double[] values = listMap.get(id);
+            double[][] values = listMap.get(id);
             //values = ArraysUtil.getArrayNonNullReverse(values);
             // TODO !!!
             if ("0P0000RVOF".equals(id)) {              
                 log.info("braz " + Arrays.toString(values));                
             }
 
-            if (wantPercentizedPriceIndex) {
-           values = ArraysUtil.getPercentizedPriceIndex(values, key, ind.getCategory());
+            if (wantPercentizedPriceIndex && values.length > 0 && values[0].length > 0) {
+                double first = values[0][0];
+                for(int i = 0; i < values.length; i ++)
+       values[i] = ArraysUtil.getPercentizedPriceIndex(values[i], key, ind.getCategory(), first);
             }
             if ("0P0000RVOF".equals(id)) {              
                 log.info("braz " + Arrays.toString(values));                
@@ -213,11 +223,12 @@ public class DbSpark {
         StructType schema = DataTypes
                 .createStructType(new StructField[] {
                         DataTypes.createStructField("id", DataTypes.StringType, false),
-                        DataTypes.createStructField("values", DataTypes.createArrayType(DataTypes.DoubleType), false)});
+                        DataTypes.createStructField("values", DataTypes.createArrayType(DataTypes.createArrayType(DataTypes.DoubleType)), false)});
+        //DataTypes.createStructField("values", DataTypes.createArrayType(DataTypes.NullType), false)});
         
         Dataset<Row> df = spark.createDataFrame(rowList, schema);
         //df.show();
-        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((Double[])((WrappedArray)x.getAs("values")).array())));
+        Map<String, Object[]> objMap = df.collectAsList().stream().collect(Collectors.toMap(x -> x.getAs("id"), x -> (Object[])ind.calculate((scala.collection.Seq[])((WrappedArray)x.getAs("values")).array())));
         //System.out.println("m size " + m.size());
         log.info("time calc " + (System.currentTimeMillis() - time0));
        return objMap;

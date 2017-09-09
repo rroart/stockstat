@@ -28,7 +28,7 @@ public class DbSparkAccess extends DbAccess {
 	}
 
     @Override
-    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[]> listMap, String key,
+    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[][]> listMap, String key,
             Indicator indicator, boolean wantPercentizedPriceIndex) {
         return DbSpark.doCalculationsArrNonNull(listMap, key, indicator, wantPercentizedPriceIndex);
     }

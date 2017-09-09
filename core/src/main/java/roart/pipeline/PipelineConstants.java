@@ -29,6 +29,11 @@ public class PipelineConstants {
 
     public static final String INDICATORMACD = "indicatormacd";
     public static final String INDICATORRSI = "indicatorrsi";
+    public static final String INDICATORMOVE = "indicatormove";
+    public static final String INDICATORATR = "indicatoratr";
+    public static final String INDICATORCCI = "indicatorcci";
+    public static final String INDICATORSTOCH = "indicatorstoch";
+    public static final String INDICATORSTOCHRSI = "indicatorstochrsi";
     public static final String DATAREADER = "datareader";
     public static final String EXTRAREADER = "extrareader";
 

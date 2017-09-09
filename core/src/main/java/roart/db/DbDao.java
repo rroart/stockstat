@@ -57,7 +57,7 @@ public class DbDao {
 		return access.getAll(type);
 	}
 
-    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[]> listMap, String key, Indicator indicator, boolean wantPercentizedPriceIndex) {
+    public Map<String, Object[]> doCalculationsArr(MyMyConfig conf, Map<String, double[][]> listMap, String key, Indicator indicator, boolean wantPercentizedPriceIndex) {
         if (access == null) {
             return null;
         }

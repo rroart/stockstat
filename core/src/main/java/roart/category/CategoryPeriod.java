@@ -10,7 +10,6 @@ import org.apache.commons.math3.util.Pair;
 import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
-import roart.indicator.IndicatorMACDderiv;
 import roart.indicator.IndicatorMove;
 import roart.indicator.IndicatorRSI;
 import roart.indicator.IndicatorSTOCHRSI;
@@ -31,8 +30,6 @@ public class CategoryPeriod extends Category {
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
-
-    private int period;
 
     public CategoryPeriod(MyMyConfig conf, int i, String periodText, List<StockItem> stocks,             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
@@ -73,7 +70,7 @@ public class CategoryPeriod extends Category {
 
             if (StockUtil.hasStockPeriod(stocks, period)) {
                 //System.out.print("1");
-                r.add(StockDao.getPeriod(stock, period));
+                r.add(StockDao.getPeriod(stock, period)[0]);
                 for (Indicator indicator : indicators) {
                     //System.out.print("2");
                     if (indicator.isEnabled()) {

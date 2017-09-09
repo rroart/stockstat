@@ -30,7 +30,7 @@ public class DbHibernate {
     	List<Stock> stocks = Stock.getAll(market);
 		List<StockItem> stockitems = new ArrayList<>();
 		for (Stock stock : stocks) {
-			StockItem stockItem = new StockItem(stock.getDbid(), stock.getMarketid(), stock.getId(), stock.getName(), stock.getDate(), stock.getIndexvalue(), stock.getPrice(), stock.getCurrency(), stock.getPeriod1(), stock.getPeriod2(), stock.getPeriod3(), stock.getPeriod4(), stock.getPeriod5(), stock.getPeriod6());
+			StockItem stockItem = new StockItem(stock.getDbid(), stock.getMarketid(), stock.getId(), stock.getName(), stock.getDate(), stock.getIndexvalue(), stock.getIndexvaluelow(), stock.getIndexvaluehigh(), stock.getPrice(), stock.getPricelow(), stock.getPricehigh(), stock.getVolume(), stock.getCurrency(), stock.getPeriod1(), stock.getPeriod2(), stock.getPeriod3(), stock.getPeriod4(), stock.getPeriod5(), stock.getPeriod6(), stock.getPeriod7(), stock.getPeriod8(), stock.getPeriod9());
 			stockitems.add(stockItem);
 		}
 		log.info("time0 " + (System.currentTimeMillis() - time0));
@@ -60,16 +60,18 @@ public class DbHibernate {
         }
         return objectMap;
     }
-    public static Map<String, Object[]> doCalculationsArrNonNull(MyConfig conf, Map<String, double[]> listMap, String key, Indicator indicator, boolean wantPercentizedPriceIndex) {
+    public static Map<String, Object[]> doCalculationsArrNonNull(MyConfig conf, Map<String, double[][]> listMap, String key, Indicator indicator, boolean wantPercentizedPriceIndex) {
         Map<String, Object[]> objectMap = new HashMap<>();
         for (String id : listMap.keySet()) {
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            double [] list = listMap.get(id);
+            double [][] list = listMap.get(id);
             if ("F00000HGSN".equals(id)) {              
                 log.info("braz " + Arrays.toString(list));                
             }
-           if (wantPercentizedPriceIndex && list.length > 0) {
-                list = ArraysUtil.getPercentizedPriceIndex(list, key, indicator.getCategory());
+           if (wantPercentizedPriceIndex && list.length > 0 && list[0].length > 0) {
+               double first = list[0][0];
+               for(int i = 0; i < list.length; i ++)
+                list[i] = ArraysUtil.getPercentizedPriceIndex(list[i], key, indicator.getCategory(), first);
             }
            if ("F00000HGSN".equals(id)) {              
                log.info("braz " + Arrays.toString(list));                

@@ -23,6 +23,7 @@ import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;
+import roart.indicator.IndicatorUtils;
 import roart.ml.MLClassifyDao;
 import roart.ml.MLClassifyModel;
 import roart.model.ResultItemTable;
@@ -49,8 +50,8 @@ public class MLMACD extends Aggregator {
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
     String key;
-    Map<String, Double[]> listMap;
-    Map<String, double[]> truncListMap;
+    Map<String, Double[][]> listMap;
+    Map<String, double[][]> truncListMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
     Map<String, Object[]> objectMap;
@@ -76,7 +77,7 @@ public class MLMACD extends Aggregator {
         return objectMap;
     }
     
-    public Map<String, Double[]> getListMap() {
+    public Map<String, Double[][]> getListMap() {
         return listMap;
     }
     
@@ -215,26 +216,22 @@ public class MLMACD extends Aggregator {
     // TODO make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category2, Category[] categories) throws Exception {
-        Category cat = null;
-        for (Category category : categories) {
-            if (category.getTitle().equals(CategoryConstants.PRICE)) {
-                cat = category;
-                break;
-            }
-        }
+        Category cat = IndicatorUtils.getWantedCategory(categories);
+        title = cat.getTitle();
+        key = title;
         Object macd = cat.getResultMap().get(PipelineConstants.INDICATORMACDRESULT);
         Object list0 = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
         Object object = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
         Object mom0 = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
         momMap = (Map<String, Double[]>) mom0;
-        truncListMap = (Map<String, double[]>) cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.TRUNCLIST);
+        truncListMap = (Map<String, double[][]>) cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.TRUNCLIST);
         
         DbAccess dbDao = DbDao.instance(conf);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        this.listMap = (Map<String, Double[]>) list0;
+        this.listMap = (Map<String, Double[][]>) list0;
         if (conf.wantPercentizedPriceIndex()) {
             
         }
@@ -266,6 +263,7 @@ public class MLMACD extends Aggregator {
         Map<String, Map<double[], Double>> mapMap = new HashMap<>();
        // System.out.println("allids " + listMap.size());
         for (String id : listMap.keySet()) {
+            System.out.println("t " + Arrays.toString(listMap.get(id)[0]));
             Object[] objs = objectMap.get(id);
             Double[] momentum = momMap.get(id);
             if (momentum == null) {
@@ -277,15 +275,16 @@ public class MLMACD extends Aggregator {
             MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
 
            //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            double[] list = truncListMap.get(id);
+            double[][] list = truncListMap.get(id);
+            System.out.println("t " + Arrays.toString(list[0]));
             log.info("listsize"+ list.length);
-            if (conf.wantPercentizedPriceIndex()) {
-            list = ArraysUtil.getPercentizedPriceIndex(list, key, 0);
+            if (conf.wantPercentizedPriceIndex() && list[0].length > 0) {
+            list[0] = ArraysUtil.getPercentizedPriceIndex(list[0], key, 0);
             }
             log.info("beg end " + id + " "+ begOfArray.value + " " + endOfArray.value);
             //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
             log.info("list " + list.length + " " + Arrays.asList(list));
-            double[] trunclist = ArrayUtils.subarray(list, begOfArray.value, begOfArray.value + endOfArray.value);
+            double[] trunclist = ArrayUtils.subarray(list[0], begOfArray.value, begOfArray.value + endOfArray.value);
             log.info("trunclist" + list.length + " " + Arrays.asList(trunclist));
             if (conf.wantML()) {
                 if (momentum != null && momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
@@ -344,15 +343,15 @@ public class MLMACD extends Aggregator {
             Map<String, Map<String, double[]>> mapIdMap= new HashMap<>();
             for (String id : listMap.keySet()) {
                 //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-                Double[] list = listMap.get(id);
-                list = ArraysUtil.getPercentizedPriceIndex(list, key);
+                Double[][] list = listMap.get(id);
+                list[0] = ArraysUtil.getPercentizedPriceIndex(list[0], key);
                 Object[] objs = objectMap.get(id);
                 double[] macdarr = (double[]) objs[0];
                 double[] histarr = (double[]) objs[2];
                 MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
                 MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
                 //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
-                Double[] trunclist = ArraysUtil.getSubExclusive(list, begOfArray.value, begOfArray.value + endOfArray.value);
+                Double[] trunclist = ArraysUtil.getSubExclusive(list[0], begOfArray.value, begOfArray.value + endOfArray.value);
                 //System.out.println("trunc " + list.length + " " + trunclist.length);
                 int trunclistsize = trunclist.length; //endOfArray.value;
                 if (endOfArray.value == 0) {
@@ -541,7 +540,18 @@ public class MLMACD extends Aggregator {
         }
     }
 
-    private boolean anythingHere(Map<String, Double[]> listMap2) {
+    private boolean anythingHere(Map<String, Double[][]> listMap2) {
+        for (Double[][] array : listMap2.values()) {
+            for (int i = 0; i < array.length; i++) {
+                if (array[0][i] != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean anythingHere2(Map<String, Double[]> listMap2) {
         for (Double[] array : listMap2.values()) {
             for (int i = 0; i < array.length; i++) {
                 if (array[i] != null) {

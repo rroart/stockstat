@@ -11,6 +11,8 @@ import org.apache.commons.math3.util.Pair;
 
 import roart.config.MyMyConfig;
 import roart.model.StockItem;
+import roart.pipeline.Pipeline;
+import roart.pipeline.PipelineConstants;
 //import roart.model.Stock;
 import roart.service.ControlService;
 import roart.util.Constants;
@@ -21,102 +23,85 @@ import roart.util.TaUtil;
 
 public class IndicatorATR extends Indicator {
 
-    Map<String, MarketData> marketdatamap;
-    Map<String, PeriodData> periodDataMap;
-    Map<String, Integer>[] periodmap;
-    String key;
-    Map<String, List<Double>> listMap;
-    Map<String, Double[]> resultMap;
-
     // TODO extend to three cats
-    public IndicatorATR(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    public IndicatorATR(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         this.key = title;
-        calculateATRs(conf, marketdatamap, periodDataMap, category);        
+        fieldSize = fieldSize();
+        if (isEnabled() && !onlyExtra) {
+            calculateAll(conf, marketdatamap, periodDataMap, category, datareaders);
+        }
+        if (wantForExtras()) {
+            calculateForExtras(datareaders);
+        }
     }
 
-	private void calculateATRs(MyMyConfig conf, Map<String, MarketData> marketdatamap,
-			Map<String, PeriodData> periodDataMap, int category) throws Exception {
-		SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String dateme = dt.format(conf.getdate());
-        long time0 = System.currentTimeMillis();
-        // TODO three lists
-        this.listMap = StockDao.getArr(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap);
-        log.info("time0 " + (System.currentTimeMillis() - time0));
-        long time1 = System.currentTimeMillis();
-        resultMap = new HashMap();
-        TaUtil tu = new TaUtil();
-        String market = conf.getMarket();
-        String periodstr = key;
-        PeriodData perioddata = periodDataMap.get(periodstr);
-        for (String id : listMap.keySet()) {
-        	/*
-        	List<Double> list = listMap.get(id);
-            Pair<String, String> pair = new Pair<>(market, id);
-            Set<Pair<String, String>> ids = new HashSet<>();
-            ids.add(pair);
-            double rsi = tu.getRSI2(conf.getDays(), market, id, ids, marketdatamap, perioddata, periodstr);
-            */
-            List<Double> list = listMap.get(id);
-            // TODO add low high later
-            Double[] momentum = tu.getATR(list, list, list, conf.getDays(), conf.isATRDeltaEnabled(), conf.getATRDeltaDays());
-            resultMap.put(id, momentum);
-        }
-        log.info("time1 " + (System.currentTimeMillis() - time1));
-	}
-
-    @Override
+	@Override
     public boolean isEnabled() {
         return conf.isATREnabled();
     }
 
     @Override
-    public Object[] getResultItem(StockItem stock) {
-    	TaUtil tu = new TaUtil();
-        String market = conf.getMarket();
-        String id = stock.getId();
-        Pair<String, String> pair = new Pair(market, id);
-        Set<Pair<String, String>> ids = new HashSet<>();
-        ids.add(pair);
-        String periodstr = key;
-        PeriodData perioddata = periodDataMap.get(periodstr);
-        if (perioddata == null) {
-            System.out.println("key " + key + " : " + periodDataMap.keySet());
-            log.info("key " + key + " : " + periodDataMap.keySet());
-        }
-        Double[] atr = resultMap.get(id);
-        return atr;
+    public String indicatorName() {
+        return PipelineConstants.INDICATORATR;
     }
-
+    
+    private int fieldSize() {
+        int size = 1;
+        if (conf.isATRDeltaEnabled()) {
+            size++;
+        }
+        emptyField = new Object[size];
+        return size;
+    }
+    
     @Override
-    public Object[] getResultItemTitle() {
-    	int size = 1;
-    	if (conf.isATRDeltaEnabled()) {
-    		size++;
-    	}
-    	Object[] objs = new Object[size];
-    	objs[0] = title;
-    	if (conf.isATRDeltaEnabled()) {
-    		objs[1] = Constants.DELTA + title;
-    	}
+    public Object calculate(double[][] array) {
+        if (array.length != 180 && array.length > 0) {
+            log.info("180");
+        }
+        TaUtil tu = new TaUtil();
+        Object[] objs = tu.getATR(array[1], array[2], array[0], conf.getDays(), conf.isATRDeltaEnabled(), conf.getATRDeltaDays());
         return objs;
     }
 
     @Override
-    protected Map<String, Object[]> getResultMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap,
-            Map<String, Double[]> momMap) {
-        // TODO Auto-generated method stub
-        return null;
+    protected void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] result, Object[] fields) {
+        int retindex = tu.getRSIAndDelta(conf.isATRDeltaEnabled(),  result, fields);
     }
 
     @Override
-    protected Map<String, Double[]> getCalculatedMap(MyMyConfig conf, TaUtil tu, Map<String, Object[]> objectMap,
-            Map<String, double[]> truncListMap) {
-        // TODO Auto-generated method stub
-        return null;
+    protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
+        Object[] objs = objectMap.get(id);
+        TaUtil tu = new TaUtil();
+        Double[] atr = tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs);
+        return atr;
+    }
+
+    @Override
+    public Object[] getDayResult(Object[] objs, int offset) {
+        TaUtil tu = new TaUtil();
+        return tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, offset);
+    }
+        
+    // TODO call tautil
+    @Override
+    public int getResultSize() {
+        return 2;        
+    }
+
+    @Override
+    public Object[] getResultItemTitle() {
+        Object[] objs = new Object[fieldSize];
+        objs[0] = title;
+        if (conf.isATRDeltaEnabled()) {
+            objs[1] = Constants.DELTA + title;
+        }
+        emptyField = new Double[fieldSize];
+        return objs;
     }
 
 }
