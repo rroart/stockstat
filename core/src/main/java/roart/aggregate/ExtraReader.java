@@ -54,6 +54,11 @@ public class ExtraReader extends Pipeline {
         String str0 = conf.getAggregatorsIndicatorExtras();
         //String str = "{ [ 'market' : 'cboevol', 'id' : 'VIX'], [ 'market' : 'tradcomm' , 'id' : 'CL1:COM' ], [ 'market' : 'tradcomm', 'id' : 'XAUUSD:CUR' ] ]   }";
         String str = "[ { \"market\" : \"cboevol\", \"id\" : \"VIX\", \"category\" : \"Index\"}, { \"market\" : \"tradcomm\" , \"id\" : \"CL1:COM\" , \"category\" : \"Price\" }, { \"market\" : \"tradcomm\", \"id\" : \"XAUUSD:CUR\" , \"category\" : \"Price\" } ]";
+        //str = "";
+        str = str0;
+        if (str == null || str.isEmpty()) {
+            return;
+        }
         ObjectMapper mapper = new ObjectMapper();
         List<LinkedHashMap> list = (List<LinkedHashMap>) mapper.readValue(str, List.class);
         List<Pair> pairs = new ArrayList<>();
