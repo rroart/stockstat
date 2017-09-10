@@ -544,7 +544,7 @@ public class ConfigConstants {
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "ML indicator extras");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, "ML indicator extras delta days");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, "ML indicator extras use MACD result");
-        text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, "ML indicator extras use MACD result");
+        text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, "ML indicator extras use RSI result");
         text.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, "ML indicator days in the future for threshold");
         text.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, "ML indicator days in the future interval");
         text.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, "ML indicator threshold for classifier");
