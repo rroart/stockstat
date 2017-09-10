@@ -389,6 +389,12 @@ public class MLMACD extends Aggregator {
                             }
                             Map<String, Double[]> classifyResult = mldao.classify(this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, labelMapShort, mapTime);
                             mapResult2.put(mapType, classifyResult);
+                            Map<Double, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> e[0], Collectors.counting()));
+                            String counts = "classified ";
+                            for (Double label : countMap.keySet()) {
+                                counts += labelMapShort.get(label) + " : " + countMap.get(label) + " ";
+                            }
+                            addEventRow(counts, subType.getName(), "");                 
                         }
                         mapResult1.put(model, mapResult2);
                     }

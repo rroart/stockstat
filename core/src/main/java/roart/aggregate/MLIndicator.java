@@ -378,6 +378,12 @@ public class MLIndicator extends Aggregator {
                             //System.out.println("mapget " + mapName + " " + mapMap.keySet());
                             Map<double[], Double> map = mergedCatMap;
                             System.out.println(map.values());
+                            System.out.println("len1 " + arrayLength);
+                            int i = 0;
+                                    for (double[] val: map.keySet()) {
+                                        System.out.println(Arrays.toString(val));
+                                        if (i++ >= 5) break;
+                                    }
                             mldao.learntest(this, map, null, arrayLength, key, MYTITLE, 2, mapTime);  
                 }
             } catch (Exception e) {
@@ -407,9 +413,21 @@ public class MLIndicator extends Aggregator {
                             } else {
                                 log.info("keyset " + map.keySet());
                             }
+                            System.out.println("len0 " + arrayLength);
+                            int i = 0;
+                                    for (double[] val: map.values()) {
+                                        System.out.println(Arrays.toString(val));
+                                        if (i++ >= 5) break;
+                                    }
                             Map<String, Double[]> classifyResult = mldao.classify(this, map, model, arrayLength, key, MYTITLE, 2, labelMapShort, mapTime);
                             mapResult.put(model, classifyResult);
-                         //mapResult1.put(model, mapResult2);
+                            Map<Double, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> e[0], Collectors.counting()));
+                            String counts = "classified ";
+                            for (Double label : countMap.keySet()) {
+                                counts += labelMapShort.get(label) + " : " + countMap.get(label) + " ";
+                            }
+                            addEventRow(counts, "", "");                 
+                        //mapResult1.put(model, mapResult2);
                            // mapResult.put("0", mapResult2);
                     }
                 }
