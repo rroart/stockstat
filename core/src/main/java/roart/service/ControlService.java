@@ -815,7 +815,7 @@ public class ControlService {
             //Category[] categories = getCategoriesSmall(conf, stocks,
             //       periodText, marketdatamap, periodDataMap, null);
 
-            int cat = Constants.PRICECOLUMN;
+            int cat = IndicatorUtils.getWantedCategory(stocks, periodDataMap.get("cy"));
             
             DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, null, cat);
             Pipeline[] datareaders = new Pipeline[1];
@@ -828,7 +828,7 @@ public class ControlService {
             Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
             Map<String, Indicator> indicatorMap = new HashMap<>();
-            int category = Constants.PRICECOLUMN;
+            int category = cat;
             Map<String, Indicator> newIndicatorMap = new HashMap<>();
             for (String type : usedRecommenders.keySet()) {
                 List<Recommend> list = usedRecommenders.get(type);
