@@ -2,6 +2,7 @@ package roart.evaluation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ public class IndicatorEvaluation extends Evaluation {
     @Override
     public double getEvaluations(MyMyConfig conf, int j) throws JsonParseException, JsonMappingException, IOException {
         int listlen = conf.getTableDays();
-        List<Map<String, Double[]>> listList = (List<Map<String, Double[]>>) retObj[2];
+        List<Map<String, Double[][]>> listList = (List<Map<String, Double[][]>>) retObj[2];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
         //List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
         Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
@@ -73,9 +74,10 @@ public class IndicatorEvaluation extends Evaluation {
             return 0;
         }
         for (String id : indicatorMap.keySet()) {
+            //System.out.println(Arrays.toString(indicatorMap.get(id)));
             int newlistidx = listlen - 1 - j + conf.getTestIndicatorRecommenderComplexFutureDays();
             int curlistidx = listlen - 1 - j;
-            Double[] list = listList.get(0).get(id);
+            Double[] list = listList.get(0).get(id)[0];
             if (list[newlistidx] == null || list[curlistidx] == null) {
                 continue;
             }
