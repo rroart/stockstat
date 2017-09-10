@@ -192,6 +192,9 @@ public int getResultSize() {
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
 
         Pipeline extrareader = pipelineMap.get(PipelineConstants.EXTRAREADER);
+        if (extrareader == null) {
+            return;
+        }
         Map<String, Object> localResults =  extrareader.getLocalResultMap();
         Map<Pair, List<StockItem>> pairStockMap = (Map<Pair, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
         Map<Pair, Map<Date, StockItem>> pairDateMap = (Map<Pair, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
