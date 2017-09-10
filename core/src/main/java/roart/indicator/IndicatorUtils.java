@@ -25,7 +25,9 @@ import roart.config.MyMyConfig;
 import roart.model.StockItem;
 import roart.util.Constants;
 import roart.util.MarketData;
+import roart.util.PeriodData;
 import roart.util.StockDao;
+import roart.util.StockUtil;
 import roart.util.TaUtil;
 
 public class IndicatorUtils {
@@ -431,6 +433,23 @@ public class IndicatorUtils {
                 }
             }
         return cat;
+    }
+
+    public static Integer getWantedCategory(List<StockItem> stocks, PeriodData periodData) throws Exception {
+        if (StockUtil.hasStockValue(stocks, Constants.PRICECOLUMN)) {
+            return Constants.PRICECOLUMN;
+        }
+        if (StockUtil.hasStockValue(stocks, Constants.PRICECOLUMN)) {
+            return Constants.PRICECOLUMN;
+        }
+        Set<Pair<String, Integer>> pairs = periodData.pairs;
+        for (Pair pair : pairs) {
+            int cat = (int) pair.getSecond();
+            if (StockUtil.hasStockValue(stocks, cat)) {
+                return cat;
+            }
+        }
+        return null;
     }
 
 }
