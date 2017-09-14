@@ -75,9 +75,9 @@ public class RecommenderRSI extends Aggregator {
 
     @Override
     public void addResultItemTitle(ResultItemTableRow headrow) {
-        headrow.add("Ag2"+"buy");
-        headrow.add("Ag2"+"sell");
-            }
+        headrow.add("RSI " + Constants.WEBBR + "buy");
+        headrow.add("RSI " + Constants.WEBBR + "sell");
+    }
 
     @Override
     public void addResultItem(ResultItemTableRow row, StockItem stock) {
