@@ -102,7 +102,10 @@ public class CalcComplexNode extends CalcNode {
         if (!useMax) {
             minmaxthreshold = minMutateThresholdRange;
         }
-        double mythreshold = threshold;
+        double mythreshold = 0;
+        if (usethreshold) {
+            mythreshold = threshold;
+        }
         if (useminmaxthreshold) {
             mythreshold = minmaxthreshold;
         }
