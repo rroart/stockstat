@@ -296,9 +296,11 @@ public class IndicatorUtils {
                 dayIndicatorMap.put(j, indicatorMap);
             }
         }
+        if (!dayIndicatorMap.isEmpty()) {
         for (int i = 0; i < arraySize; i++) {
             indicatorMinMax[i].add(Collections.min(indicatorLists[i]));
             indicatorMinMax[i].add(Collections.max(indicatorLists[i]));
+        }
         }
         retobj[0] = dayIndicatorMap;
         retobj[1] = indicatorMinMax;
