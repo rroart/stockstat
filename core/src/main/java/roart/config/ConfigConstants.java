@@ -93,6 +93,7 @@ public class ConfigConstants {
     public static final String TESTRECOMMENDITERATIONS = "test.recommend.iterations";
     @Deprecated
     public static final String TESTRECOMMENDPERIOD = "test.recommend.period";
+    public static final String EVOLUTION = "evolution";
     public static final String EVOLUTIONGENERATIONS = "evolution.generations";
     @Deprecated
     public static final String EVOLUTIONCHILDREN = "evolution.children";
@@ -227,6 +228,8 @@ public class ConfigConstants {
         map.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, Integer.class);
         map.put(ConfigConstants.TESTRECOMMENDITERATIONS, Integer.class);
         map.put(ConfigConstants.TESTRECOMMENDPERIOD, String.class);
+        map.put(ConfigConstants.EVOLUTION, String.class);
+        //map.put(ConfigConstants.EVOLUTION, Boolean.class);
         map.put(ConfigConstants.EVOLUTIONGENERATIONS, Integer.class);
         map.put(ConfigConstants.EVOLUTIONCHILDREN, Integer.class);
         map.put(ConfigConstants.EVOLUTIONCROSSOVER, Integer.class);
@@ -363,6 +366,8 @@ public class ConfigConstants {
         deflt.put(ConfigConstants.TESTRECOMMENDPERIOD, CategoryConstants.PRICE);
         deflt.put(ConfigConstants.EVOLUTIONGENERATIONS, 2);
         deflt.put(ConfigConstants.EVOLUTIONCHILDREN, 4);
+        //deflt.put(ConfigConstants.EVOLUTION, Boolean.FALSE);
+        deflt.put(ConfigConstants.EVOLUTION, "");
         deflt.put(ConfigConstants.EVOLUTIONELITE, 1);
         deflt.put(ConfigConstants.EVOLUTIONELITECLONEANDMUTATE, 0);
         deflt.put(ConfigConstants.EVOLUTIONMUTATE, 1);
@@ -498,6 +503,7 @@ public class ConfigConstants {
         text.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, "Deprecated Test recommender interval times");
         text.put(ConfigConstants.TESTRECOMMENDITERATIONS, "Deprecated Test recommender iterations");
         text.put(ConfigConstants.TESTRECOMMENDPERIOD, "Deprecated Test recommender period");
+        text.put(ConfigConstants.EVOLUTION, "Evolution enable");
         text.put(ConfigConstants.EVOLUTIONGENERATIONS, "Evolution generations");
         text.put(ConfigConstants.EVOLUTIONCHILDREN, "Deprecated Evolution children");
         text.put(ConfigConstants.EVOLUTIONCROSSOVER, "Evolution crossover");
