@@ -732,7 +732,7 @@ public class ControlService {
     */
 
     public List<ResultItem> getTestRecommender(MyMyConfig conf) {
-        conf.disableML();
+        //conf.disableML();
         log.info("mydate " + conf.getdate());
         log.info("mydate " + conf.getDays());
         createOtherTables();
