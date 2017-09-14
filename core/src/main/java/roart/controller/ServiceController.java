@@ -176,7 +176,9 @@ public class ServiceController {
             throws Exception {
         ServiceResult result = new ServiceResult();
         try {
-            result.list = getInstance().getTestRecommender( new MyMyConfig(param.config));
+            MyMyConfig aConfig = new MyMyConfig(param.config);
+            result.list = getInstance().getTestRecommender( aConfig);
+            result.config = aConfig;
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);
             result.error = e.getMessage();
