@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
 import com.tictactec.ta.lib.MInteger;
@@ -201,12 +202,12 @@ public class PredictorLSTM extends Predictor {
             //Object[] full = tu.getMomAndDeltaFull(list, conf.getDays(), conf.isMACDDeltaEnabled(), conf.getMACDDeltaDays(), conf.isMACDHistogramDeltaEnabled(), conf.getMACDHistogramDeltaDays());
 
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
-            Double[][] list0 = listMap.get(id);
-            Double[] list = list0[0];
+            double[][] list0 = truncListMap.get(id);
+            double[] list = list0[0];
             log.info("listsize"+ list.length);
             // TODO do not need?
             if (conf.wantPercentizedPriceIndex()) {
-                list = ArraysUtil.getPercentizedPriceIndex(list, key);
+                //list = ArraysUtil.getPercentizedPriceIndex(list, key);
             }
             //log.info("beg end " + id + " "+ begOfArray.value + " " + endOfArray.value);
             //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
@@ -227,8 +228,8 @@ public class PredictorLSTM extends Predictor {
                             int horizon = conf.getPredictorLSTMHorizon();
                             int windowsize = conf.getPredictorLSTMWindowsize();
                             int epochs = conf.getPredictorLSTMEpochs();
-                            Double[][] list0 = listMap.get(id);
-                            Double[] list = list0[0];
+                            double[][] list0 = truncListMap.get(id);
+                            double[] list = list0[0];
                             // TODO check reverse. move up before if?
                             //list = ArraysUtil.getArrayNonNullReverse(list);
                             log.info("bla " + list.length + " " + windowsize);
@@ -236,7 +237,8 @@ public class PredictorLSTM extends Predictor {
                                 Map map = null;
                                 String mapName = null;
                                 List next = null;
-                                LearnTestPredict result = mldao.learntestpredict(this, list, next, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime, windowsize, horizon, epochs);  
+                                Double[] list3 = ArrayUtils.toObject(list);
+                                LearnTestPredict result = mldao.learntestpredict(this, list3, next, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime, windowsize, horizon, epochs);  
                                 mapResult.put(id, result);
                             }
                         }
