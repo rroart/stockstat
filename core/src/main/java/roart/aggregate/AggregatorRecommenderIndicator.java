@@ -278,6 +278,11 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         for (String recommender : usedRecommenders.keySet()) {
         Map<String, Double[]> resultMap = allResult.get(recommender);
         Double[] aResult = resultMap.get(stock.getId());
+        int size = usedRecommenders.keySet().size();
+        if (aResult == null || aResult.length < size) {
+            aResult = new Double[size];
+        }
+        //if (aResult == null || aResult)
         arrayResult = (Double[]) ArrayUtils.addAll(arrayResult, aResult);
      }
         row.addarr(arrayResult);
