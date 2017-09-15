@@ -142,6 +142,8 @@ public class MyVaadinUI extends UI
 
     ControlService controlService = null;
 
+    VerticalLayout controlPanelTab;
+
     @Override
     protected void init(VaadinRequest request) {
 
@@ -151,7 +153,6 @@ public class MyVaadinUI extends UI
         guiSize.x = com.vaadin.server.Page.getCurrent().getBrowserWindowWidth();
         guiSize.y = com.vaadin.server.Page.getCurrent().getBrowserWindowHeight();
         VerticalLayout searchTab;
-        VerticalLayout controlPanelTab;
         VerticalLayout configTab;
 
         com.vaadin.server.Page.getCurrent().setTitle("Stock statistics by Roar Thronæs");
@@ -536,6 +537,10 @@ public class MyVaadinUI extends UI
                     displayResultListsTab(layout, list); 
                     tabsheet.addComponent(layout);
                     tabsheet.getTab(layout).setClosable(true);
+                    if (doSet) {
+                        VerticalLayout newComponent = getControlPanelTab();
+                        tabsheet.replaceComponent(controlPanelTab, newComponent);
+                    }
                     Notification.show("New result available");
                     //displayResults();
                 } catch (Exception e) {
