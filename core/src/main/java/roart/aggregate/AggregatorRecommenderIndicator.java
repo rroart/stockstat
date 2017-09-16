@@ -150,8 +150,6 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             // find recommendations
             int macdlen = conf.getTableDays();
             int listlen = conf.getTableDays();
-            double buyRecommendValue= 0;
-            double sellRecommendValue= 0;
             //transform(conf, buyList);
             resultMap = new HashMap<>();
             for (String id : ids) {
@@ -162,6 +160,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                 if (mergedResult == null || mergedResult.length == 0) {
                     continue;
                 }
+                double buyRecommendValue = 0;
+                double sellRecommendValue = 0;
                 for (int i = 0; i < buyKeys.size(); i++) {
                     String key = buyKeys.get(i);
                     // TODO temp fix
