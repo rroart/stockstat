@@ -110,7 +110,7 @@ public class CalcComplexNode extends CalcNode {
             mythreshold = minmaxthreshold;
         }
         double myvalue = val - mythreshold;
-        if (false || divideminmaxthreshold) {
+        if (false && divideminmaxthreshold) {
             myvalue = myvalue / minmaxthreshold;
         }
         
