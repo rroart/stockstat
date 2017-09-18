@@ -20,7 +20,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public int getDays() {
-    	    return (Integer) configValueMap.get(ConfigConstants.MISCMYDAYS);
+    	    return (Integer) getValueOrDefault(ConfigConstants.MISCMYDAYS);
     	}
 
     /*
@@ -29,7 +29,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public int getTopBottom() {
-    	    return (Integer) configValueMap.get(ConfigConstants.MISCMYTOPBOTTOM);
+    	    return (Integer) getValueOrDefault(ConfigConstants.MISCMYTOPBOTTOM);
     	}
 
     /*
@@ -38,7 +38,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public int getTableDays() {
-    	    return (Integer) configValueMap.get(ConfigConstants.MISCMYTBLEDAYS);
+    	    return (Integer) getValueOrDefault(ConfigConstants.MISCMYTBLEDAYS);
     	}
 
     /*
@@ -47,7 +47,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public int getTableIntervalDays() {
-    	    return (Integer) configValueMap.get(ConfigConstants.MISCMYTABLEINTERVALDAYS);
+    	    return (Integer) getValueOrDefault(ConfigConstants.MISCMYTABLEINTERVALDAYS);
     	}
 
     /*
@@ -56,7 +56,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public int getTableMoveIntervalDays() {
-    	    return (Integer) configValueMap.get(ConfigConstants.MISCMYTABLEMOVEINTERVALDAYS);
+    	    return (Integer) getValueOrDefault(ConfigConstants.MISCMYTABLEMOVEINTERVALDAYS);
     	}
 
     /*
@@ -65,7 +65,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isEqualize() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.MISCMYEQUALIZE);
+    	    return (Boolean) getValueOrDefault(ConfigConstants.MISCMYEQUALIZE);
     	}
 
     /*
@@ -75,11 +75,11 @@ public class MyMyConfig extends MyPropertyConfig {
     */
     	
     	public boolean wantIndicators() {
-            return (Boolean) configValueMap.get(ConfigConstants.INDICATORS);	    
+            return (Boolean) getValueOrDefault(ConfigConstants.INDICATORS);	    
     	}
 
     public boolean isMoveEnabled() {
-        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMOVE)
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMOVE)
                 && wantIndicators();
     }
 
@@ -89,7 +89,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isMACDEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACD)
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACD)
             && wantIndicators();
     	}
 
@@ -104,7 +104,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isCCIDeltaEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSCCIDELTA);
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSCCIDELTA);
     	}
 
     /*
@@ -113,7 +113,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isATRDeltaEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSATRDELTA);
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSATRDELTA);
     	}
 
     /*
@@ -122,7 +122,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isSTOCHDeltaEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCHSTOCHDELTA);
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSSTOCHSTOCHDELTA);
     	}
 
     /*
@@ -131,7 +131,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isRSIDeltaEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSRSIDELTA);
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSRSIDELTA);
     	}
 
     /*
@@ -140,7 +140,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isSTOCHRSIDeltaEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCHRSI);
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSSTOCHRSI);
     	}
 
     /*
@@ -149,11 +149,11 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isMACDDeltaEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDMACDMOMENTUMDELTA);
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDMOMENTUMDELTA);
     	}
 
     public boolean isMACDHistogramDeltaEnabled() {
-        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA);
     }
 
     /*
@@ -162,7 +162,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isRSIEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSRSI)
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSRSI)
             && wantIndicators();
     	}
 
@@ -172,7 +172,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isSTOCHRSIEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCHRSI)
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSSTOCHRSI)
                     && wantIndicators();
     	}
 
@@ -182,7 +182,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isCCIEnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSCCI)
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSCCI)
                     && wantIndicators();
     	}
 
@@ -192,7 +192,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isATREnabled() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSATR)
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSATR)
                     && wantIndicators();
     	}
 
@@ -202,7 +202,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isSTOCHEnabled() {		
-    	    return (Boolean) configValueMap.get(ConfigConstants.INDICATORSSTOCH)
+    	    return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSSTOCH)
                     && wantIndicators();
     	}
 
@@ -212,7 +212,7 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isGraphEqualize() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.MISCMYGRAPHEQUALIZE);
+    	    return (Boolean) getValueOrDefault(ConfigConstants.MISCMYGRAPHEQUALIZE);
     	}
 
     /*
@@ -221,11 +221,11 @@ public class MyMyConfig extends MyPropertyConfig {
     	}
     */
     	public boolean isGraphEqUnify() {
-    	    return (Boolean) configValueMap.get(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY);
+    	    return (Boolean) getValueOrDefault(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY);
     	}
 
     public int getMACDDeltaDays() {
-    	return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDACDMOMENTUMDELTADAYS);
+    	return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDACDMOMENTUMDELTADAYS);
     }
 
     /*
@@ -234,7 +234,7 @@ public class MyMyConfig extends MyPropertyConfig {
     }
     */
     public int getMACDHistogramDeltaDays() {
-    	return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDMACHHISTOGRAMDELTADAYS);
+    	return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHHISTOGRAMDELTADAYS);
     }
 
     /*
@@ -243,7 +243,7 @@ public class MyMyConfig extends MyPropertyConfig {
     }
     */
     public int getRSIDeltaDays() {
-    	return (Integer) configValueMap.get(ConfigConstants.INDICATORSRSIDELTADAYS);
+    	return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIDELTADAYS);
     }
 
     /*
@@ -252,7 +252,7 @@ public class MyMyConfig extends MyPropertyConfig {
     }
     */
     public int getSTOCHRSIDeltaDays() {
-    	return (Integer) configValueMap.get(ConfigConstants.INDICATORSSTOCHRSIDELTADAYS);
+    	return (Integer) getValueOrDefault(ConfigConstants.INDICATORSSTOCHRSIDELTADAYS);
     }
 
     /*
@@ -261,7 +261,7 @@ public class MyMyConfig extends MyPropertyConfig {
     }
     */
     public int getCCIDeltaDays() {
-    	return (Integer) configValueMap.get(ConfigConstants.INDICATORSCCIDELTADAYS);
+    	return (Integer) getValueOrDefault(ConfigConstants.INDICATORSCCIDELTADAYS);
     }
 
     /*
@@ -270,7 +270,7 @@ public class MyMyConfig extends MyPropertyConfig {
     }
     */
     public int getATRDeltaDays() {
-    	return (Integer) configValueMap.get(ConfigConstants.INDICATORSATRDELTADAYS);
+    	return (Integer) getValueOrDefault(ConfigConstants.INDICATORSATRDELTADAYS);
     }
 
     /*  
@@ -279,7 +279,7 @@ public class MyMyConfig extends MyPropertyConfig {
     }
     */
     public int getSTOCHDeltaDays() {
-    	return (Integer) configValueMap.get(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS);
+    	return (Integer) getValueOrDefault(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS);
     }
 
     /*
@@ -292,7 +292,7 @@ public class MyMyConfig extends MyPropertyConfig {
          * @return
          */
         public int getMACDDaysBeforeZero() {
-            return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
+            return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
         }
 
     /**
@@ -300,15 +300,15 @@ public class MyMyConfig extends MyPropertyConfig {
      * @return
      */
     public int getMACDDaysAfterZero() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
     }
 
     public  boolean wantMACDScore() {
-        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTS);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTS);
     }
 
     public  boolean wantRSIScore() {
-        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTS);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTS);
     }
 
     public void disableML() {
@@ -316,101 +316,101 @@ public class MyMyConfig extends MyPropertyConfig {
     }
 
     public  boolean wantML() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNING);
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNING);
     }
 
     public  boolean wantMLSpark() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKML)
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKML)
         && wantML();
     }
 
     public  boolean wantMLTensorflow() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOW)
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOW)
         && wantML();
     }
 
     public  boolean wantMCP() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKMLMCP)
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMCP)
                 && wantMLSpark();
     }
 
     public  boolean wantLR() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARKMLLR)
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLR)
         && wantMLSpark();
     }
 
     public  boolean wantDNN() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN)
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN)
         && wantMLTensorflow();
     }
 
     public  boolean wantL() {
-        return (Boolean) configValueMap.get(ConfigConstants.MACHINELEARNINGTENSORFLOWL)
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWL)
         && wantMLTensorflow();
     }
 
     public  int weightBuyHist() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAM);
     }
 
     public  int weightBuyHistDelta() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAMDELTA);
     }
 
     public  int weightBuyMacd() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUM);
     }
 
     public  int weightBuyMacdDelta() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUMDELTA);
     }
 
     public  int weightSellHist() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAM);
     }
 
     public  int weightSellHistDelta() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAMDELTA);
     }
 
     public  int weightSellMacd() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUM);
     }
 
     public  int weightSellMacdDelta() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUMDELTA);
     }
 
     public  boolean wantRecommenderRSI() {
-        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTS);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTS);
     }
 
     public  boolean wantRecommenderMACD() {
-        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTS);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTS);
     }
 
     public  int buyWeightRSI() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUY);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUY);
     }
 
     public  int buyWeightRSIDelta() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUYDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUYDELTA);
     }
 
     public  int sellWeightRSI() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELL);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELL);
     }
 
     public  int sellWeightRSIDelta() {
-        return (Integer) configValueMap.get(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELLDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELLDELTA);
     }
 
     public  boolean wantMLHist() {
-        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML);
     }
 
     public  boolean wantMLMacd() {
-        return (Boolean) configValueMap.get(ConfigConstants.INDICATORSMACDMACHINELEARNINGMOMENTUMML);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHINELEARNINGMOMENTUMML);
     }
 
     public boolean wantMLTimes() {
@@ -437,163 +437,163 @@ public class MyMyConfig extends MyPropertyConfig {
 
     public boolean wantDbSpark() {
         System.out.println("sp " + (Boolean) configValueMap.get(ConfigConstants.DATABASESPARK));
-        return (Boolean) configValueMap.get(ConfigConstants.DATABASESPARK);
+        return (Boolean) getValueOrDefault(ConfigConstants.DATABASESPARK);
     }
 
     public boolean wantDbHibernate() {
         System.out.println("hb " + (Boolean) configValueMap.get(ConfigConstants.DATABASEHIBERNATE));
-        return (Boolean) configValueMap.get(ConfigConstants.DATABASEHIBERNATE);
+        return (Boolean) getValueOrDefault(ConfigConstants.DATABASEHIBERNATE);
     }
 
     public boolean wantPredictors() {
-        return (Boolean) configValueMap.get(ConfigConstants.PREDICTORS); 
+        return (Boolean) getValueOrDefault(ConfigConstants.PREDICTORS); 
     }
 
     public boolean wantPredictorLSTM() {
-        return (Boolean) configValueMap.get(ConfigConstants.PREDICTORSLSTM) 
+        return (Boolean) getValueOrDefault(ConfigConstants.PREDICTORSLSTM) 
                 && wantPredictors() 
                 && wantMLTensorflow();
     }
 
     public Integer getPredictorLSTMHorizon() {
-        return (Integer) configValueMap.get(ConfigConstants.PREDICTORSLSTMHORIZON);
+        return (Integer) getValueOrDefault(ConfigConstants.PREDICTORSLSTMHORIZON);
     }
 
     public Integer getPredictorLSTMEpochs() {
-        return (Integer) configValueMap.get(ConfigConstants.PREDICTORSLSTMEPOCHS);
+        return (Integer) getValueOrDefault(ConfigConstants.PREDICTORSLSTMEPOCHS);
     }
 
     public Integer getPredictorLSTMWindowsize() {
-        return (Integer) configValueMap.get(ConfigConstants.PREDICTORSLSTMWINDOWSIZE);
+        return (Integer) getValueOrDefault(ConfigConstants.PREDICTORSLSTMWINDOWSIZE);
     }
 
     @Deprecated
     public Integer getTestRecommendIntervalTimes() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDINTERVALTIMES);
+        return (Integer) getValueOrDefault(ConfigConstants.TESTRECOMMENDINTERVALTIMES);
     }
 
     @Deprecated
    public Integer getTestRecommendIterations() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTRECOMMENDITERATIONS);
+        return (Integer) getValueOrDefault(ConfigConstants.TESTRECOMMENDITERATIONS);
     }
 
     @Deprecated
     public String getTestRecommendPeriod() {
-        return (String) configValueMap.get(ConfigConstants.TESTRECOMMENDPERIOD);
+        return (String) getValueOrDefault(ConfigConstants.TESTRECOMMENDPERIOD);
     }
 
     public Integer getTestIndicatorRecommenderComplexFutureDays() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTINDICATORRECOMMENDERCOMPLEXFUTUREDAYS);
+        return (Integer) getValueOrDefault(ConfigConstants.TESTINDICATORRECOMMENDERCOMPLEXFUTUREDAYS);
     }
 
     public Integer getTestIndicatorRecommenderComplexIntervalDays() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTINDICATORRECOMMENDERCOMPLEXINTERVALDAYS);
+        return (Integer) getValueOrDefault(ConfigConstants.TESTINDICATORRECOMMENDERCOMPLEXINTERVALDAYS);
     }
 
     public Integer getTestIndicatorRecommenderSimpleFutureDays() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTINDICATORRECOMMENDERSIMPLEFUTUREDAYS);
+        return (Integer) getValueOrDefault(ConfigConstants.TESTINDICATORRECOMMENDERSIMPLEFUTUREDAYS);
     }
 
     public Integer getTestIndicatorRecommenderSimpleIntervalDays() {
-        return (Integer) configValueMap.get(ConfigConstants.TESTINDICATORRECOMMENDERSIMPLEINTERVALDAYS);
+        return (Integer) getValueOrDefault(ConfigConstants.TESTINDICATORRECOMMENDERSIMPLEINTERVALDAYS);
     }
 
     public Integer getEvolutionGenerations() {
-        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONGENERATIONS);
+        return (Integer) getValueOrDefault(ConfigConstants.EVOLUTIONGENERATIONS);
     }
 
     public Integer getEvolutionCrossover() {
-        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONCROSSOVER);
+        return (Integer) getValueOrDefault(ConfigConstants.EVOLUTIONCROSSOVER);
     }
 
     public Integer getEvolutionGenerationCreate() {
-        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONGENERATIONCREATE);
+        return (Integer) getValueOrDefault(ConfigConstants.EVOLUTIONGENERATIONCREATE);
     }
 
     public Integer getEvolutionMutate() {
-        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONMUTATE);
+        return (Integer) getValueOrDefault(ConfigConstants.EVOLUTIONMUTATE);
     }
 
     public Integer getEvolutionSelect() {
-        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONSELECT);
+        return (Integer) getValueOrDefault(ConfigConstants.EVOLUTIONSELECT);
     }
 
     public Integer getEvolutionElite() {
-        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONELITE);
+        return (Integer) getValueOrDefault(ConfigConstants.EVOLUTIONELITE);
     }
 
     public Integer getEvolutionEliteCloneAndMutate() {
-        return (Integer) configValueMap.get(ConfigConstants.EVOLUTIONELITECLONEANDMUTATE);
+        return (Integer) getValueOrDefault(ConfigConstants.EVOLUTIONELITECLONEANDMUTATE);
     }
 
     public boolean wantAggregators() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORS); 
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORS); 
     }
 
     public boolean wantMACDRSIRecommender() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER) 
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER) 
                 && wantAggregators();
     }
 
     public boolean wantRecommenderSimpleMACD() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACD) 
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACD) 
                 && wantIndicatorRecommenderSimple();
     }
 
     public boolean wantRecommenderComplexMACD() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD) 
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD) 
                 && wantIndicatorRecommenderComplex();
     }
 
     public boolean wantRecommenderSimpleRSI() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSI) 
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSI) 
                 && wantIndicatorRecommenderSimple();
     }
 
     public boolean wantRecommenderComplexRSI() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI) 
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI) 
                 && wantIndicatorRecommenderComplex();
     }
 
     public boolean wantIndicatorRecommenderSimple() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLE) 
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLE) 
                 && wantIndicatorRecommender();
     }
 
     public boolean wantIndicatorRecommenderComplex() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX) 
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX) 
                 && wantIndicatorRecommender();
     }
 
    public boolean wantIndicatorRecommender() {
-        return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER) 
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER) 
                 && wantAggregators();
     }
 
    public boolean wantAggregatorsIndicatorML() {
-       return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOR);
+       return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOR);
    }
    
    public boolean wantAggregatorsIndicatorMACD() {
-       return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORMACD)
+       return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORMACD)
                && wantAggregatorsIndicatorML();
    }
    
    public boolean wantAggregatorsIndicatorRSI() {
-       return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORRSI)
+       return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRSI)
                && wantAggregatorsIndicatorML();
    }
    
    public String getAggregatorsIndicatorExtras() {
-       return (String) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRAS);
+       return (String) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRAS);
    }
    
    public Integer getAggregatorsIndicatorExtrasDeltas() {
-       return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
+       return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
    }
    
    public Boolean wantAggregatorsIndicatorExtrasMACD() {
-       return (Boolean) configValueMap.get(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD);
+       return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD);
    }
    
    public Boolean wantAggregatorsIndicatorExtrasRSI() {
@@ -601,15 +601,15 @@ public class MyMyConfig extends MyPropertyConfig {
    }
    
    public int getAggregatorsIndicatorFuturedays() {
-       return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
+       return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
    }
    
    public int getAggregatorsIndicatorIntervaldays() {
-       return (Integer) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
+       return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
    }
    
    public double getAggregatorsIndicatorThreshold() {
-       return (Double) configValueMap.get(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
+       return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
    }
    
    private Object getValueOrDefault(String key) {
