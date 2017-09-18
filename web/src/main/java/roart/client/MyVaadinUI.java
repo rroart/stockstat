@@ -540,6 +540,7 @@ public class MyVaadinUI extends UI
                     if (doSet) {
                         VerticalLayout newComponent = getControlPanelTab();
                         tabsheet.replaceComponent(controlPanelTab, newComponent);
+                        controlPanelTab = newComponent;
                     }
                     Notification.show("New result available");
                     //displayResults();
