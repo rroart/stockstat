@@ -322,7 +322,7 @@ public class ControlService {
                     //System.out.print("others " + r.get().size());
                 }
                 for (int i = 0; i < aggregates.length; i++) {
-                    //System.out.println("ag " + aggregates[i].toString());
+                    System.out.println("ag " + aggregates[i].getName());
                     //aggregates[i].
                     //System.out.print("others " + r.get().size());
                 }

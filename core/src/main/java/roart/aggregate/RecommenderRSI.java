@@ -92,5 +92,10 @@ public class RecommenderRSI extends Aggregator {
         row.addarr(obj);
         //row.add(val);
     }
+    
+    @Override
+    public String getName() {
+        return PipelineConstants.RECOMMENDERRSI;
+    }
 
 }

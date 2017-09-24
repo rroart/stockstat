@@ -897,5 +897,11 @@ public class MLMACD extends Aggregator {
         headrow.addarr(objs);
     }
     
+   
+    @Override
+    public String getName() {
+        return PipelineConstants.MLMACD;
+    }
+    
 }
 

@@ -10,6 +10,7 @@
     <module>core</module>
     <module>db</module>
     <module>eureka</module>
+    <module>iclij</module>
     <module>input</module>
     <module>web</module>
     <module>distribution</module>

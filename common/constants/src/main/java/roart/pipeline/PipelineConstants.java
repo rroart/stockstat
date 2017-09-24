@@ -37,4 +37,8 @@ public class PipelineConstants {
     public static final String DATAREADER = "datareader";
     public static final String EXTRAREADER = "extrareader";
 
+    public static final String MLINDICATOR = "mlindicator";
+    public static final String MLMACD = "mlmacd";
+    public static final String RECOMMENDERRSI = "recommenderrsi";
+    public static final String AGGREGATORRECOMMENDERINDICATOR = "aggregatorrecommenderindicator";
 }

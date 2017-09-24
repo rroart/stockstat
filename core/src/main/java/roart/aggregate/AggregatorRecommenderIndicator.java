@@ -287,4 +287,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
      }
         row.addarr(arrayResult);
     }
+    
+    @Override
+    public String getName() {
+        return PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
+    }
 }

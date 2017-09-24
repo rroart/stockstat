@@ -60,5 +60,10 @@ public abstract class Aggregator {
         return null;
     } 
 
+    public String getTitle() {
+        return title;
+    }
+    
+    public abstract String getName();
     //public abstract void addResultItemTitle(ResultItemTableRow headrow);
 }
