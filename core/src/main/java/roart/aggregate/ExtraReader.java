@@ -238,7 +238,7 @@ public class ExtraReader extends Pipeline {
            if (arr != null && arr.length > 0) {
                result = (Double[]) ArrayUtils.addAll(result, arr);
            } else {
-               System.out.println("No obj for id" + id);
+               //System.out.println("No obj for id" + id);
            }
        }
        return result;

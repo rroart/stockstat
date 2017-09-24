@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.calculate.CalcDoubleNode;
 import roart.calculate.CalcComplexNode;
 import roart.calculate.CalcNode;
-import roart.config.ConfigConstants;
+import roart.config.ConfigConstantMaps;
 import roart.config.MyConfig;
 import roart.config.MyMyConfig;
 import roart.evolution.FitnessBuySellMACD;
@@ -81,7 +81,7 @@ public class IndicatorEvaluation extends Evaluation {
             if (list[newlistidx] == null || list[curlistidx] == null) {
                 continue;
             }
-            double change = (list[newlistidx]/list[curlistidx] - 1) * 100;
+            double change = (list[newlistidx]/list[curlistidx] - 1) / 100;
             Double[] momrsi = indicatorMap.get(id);
             for (int i = 0; i < keys.size(); i++) {
                 String key = keys.get(i);
@@ -89,7 +89,7 @@ public class IndicatorEvaluation extends Evaluation {
                 CalcNode node = (CalcNode) conf.configValueMap.get(key);
                 //node.setDoBuy(useMax);
                 double value = momrsi[i];
-                recommend += node.calc(value, 0) * change;
+                recommend += node.calc(value, 0) * change * 100;
             }
         }
         return recommend;

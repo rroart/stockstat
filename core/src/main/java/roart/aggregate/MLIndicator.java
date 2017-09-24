@@ -24,7 +24,7 @@ import com.tictactec.ta.lib.MInteger;
 import roart.calculate.CalcNode;
 import roart.category.Category;
 import roart.category.CategoryConstants;
-import roart.config.ConfigConstants;
+import roart.config.ConfigConstantMaps;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;
@@ -363,6 +363,9 @@ public class MLIndicator extends Aggregator {
         Map<MLClassifyModel, Map<String, Double[]>> mapResult = new HashMap<>();
         log.info("Period " + title + " " + mapMap.keySet());
         if (conf.wantML()) {
+            if (mergedCatMap.keySet().isEmpty()) {
+                int jj = 0;
+            }
             int arrayLength = mergedCatMap.keySet().iterator().next().length;
             for(double[] array : mergedCatMap.keySet()) {
                 if (array.length != arrayLength) {

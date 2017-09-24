@@ -53,12 +53,12 @@ public class MyPropertyConfig extends MyConfig {
             Document doc = configxml.getDocument();
             configTreeMap = new ConfigTreeMap();
             configValueMap = new HashMap<String, Object>();
-            ConfigConstants.makeDefaultMap();
-            ConfigConstants.makeTextMap();
-            ConfigConstants.makeTypeMap();
-            deflt = ConfigConstants.deflt;
-            type = ConfigConstants.map;
-            text = ConfigConstants.text;
+            ConfigConstantMaps.makeDefaultMap();
+            ConfigConstantMaps.makeTextMap();
+            ConfigConstantMaps.makeTypeMap();
+            deflt = ConfigConstantMaps.deflt;
+            type = ConfigConstantMaps.map;
+            text = ConfigConstantMaps.text;
             handleDoc(doc.getDocumentElement(), configTreeMap, "");
             //print(configTreeMap, 0);
             //System.out.println("root " + root);
@@ -99,7 +99,7 @@ public class MyPropertyConfig extends MyConfig {
             //System.out.println("root " + configxml.getList("/config"));
             //System.out.println("root " + configxml.getList("/misc"));
             //System.out.println("root " + configxml.getList("misc"));
-            ConfigConstants.makeTypeMap();
+            ConfigConstantMaps.makeTypeMap();
             Iterator<String> iter = configxml.getKeys();
             //System.out.println("keys " + ConfigConstants.map.keySet());
             while(iter.hasNext()) {
@@ -107,7 +107,7 @@ public class MyPropertyConfig extends MyConfig {
                 //System.out.println("s " + s + " " + configxml.getString(s) + " " + configxml.getProperty(s));
                 Object o = null;
                 String text = s;
-                Class myclass = ConfigConstants.map.get(text);
+                Class myclass = ConfigConstantMaps.map.get(text);
 
                 if (myclass == null) {
                     System.out.println("Unknown " + text);

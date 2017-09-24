@@ -19,7 +19,7 @@ import com.tictactec.ta.lib.MInteger;
 
 import roart.category.Category;
 import roart.category.CategoryConstants;
-import roart.config.ConfigConstants;
+import roart.config.ConfigConstantMaps;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;

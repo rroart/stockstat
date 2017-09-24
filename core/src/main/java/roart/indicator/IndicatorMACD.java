@@ -19,7 +19,7 @@ import com.tictactec.ta.lib.MInteger;
 
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
-import roart.config.ConfigConstants;
+import roart.config.ConfigConstantMaps;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;

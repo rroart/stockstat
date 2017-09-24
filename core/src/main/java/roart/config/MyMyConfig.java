@@ -1,6 +1,6 @@
 package roart.config;
 
-import org.apache.spark.api.java.Optional;
+import java.util.Optional;
 
 public class MyMyConfig extends MyPropertyConfig {
 

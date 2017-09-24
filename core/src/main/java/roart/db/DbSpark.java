@@ -1,6 +1,6 @@
 package roart.db;
 
-import roart.config.ConfigConstants;
+import roart.config.ConfigConstantMaps;
 import roart.config.MyMyConfig;
 import roart.config.MyPropertyConfig;
 import roart.indicator.Indicator;

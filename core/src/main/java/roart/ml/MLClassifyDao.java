@@ -10,6 +10,7 @@ import java.util.HashSet;
 
 import roart.aggregate.Aggregator;
 import roart.aggregate.MLMACD;
+import roart.config.ConfigConstantMaps;
 import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.indicator.Indicator;

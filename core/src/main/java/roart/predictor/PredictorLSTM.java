@@ -17,7 +17,7 @@ import org.apache.commons.math3.util.Pair;
 
 import com.tictactec.ta.lib.MInteger;
 
-import roart.config.ConfigConstants;
+import roart.config.ConfigConstantMaps;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;

@@ -197,14 +197,14 @@ public class IndicatorUtils {
                     if (arr != null && arr.length > 0) {
                         result = (Double[]) ArrayUtils.addAll(result, arr);
                     } else {
-                        System.out.println("No obj for id1 " + id);
+                        //System.out.println("No obj for id1 " + id);
                     }
                 }
                 if (result.length == arraySize) {
                     indicatorMap.put(id, result);
                     IndicatorUtils.addToLists(indicatorLists, result);
                } else {
-                    System.out.println("discarding " + id);
+                    //System.out.println("discarding " + id);
                     continue;
                 }
                 dayIndicatorMap.put(j, indicatorMap);
@@ -276,7 +276,7 @@ public class IndicatorUtils {
                     if (arr != null && arr.length > 0) {
                         result = (Double[]) ArrayUtils.addAll(result, arr);
                      } else {
-                        System.out.println("No obj for id2 " + id);
+                        //System.out.println("No obj for id2 " + id);
                     }
                 }
                 // for extrareader data
@@ -290,7 +290,7 @@ public class IndicatorUtils {
                     IndicatorUtils.addToLists(indicatorLists, result);
                     log.info("outid " + id + " " + Arrays.asList(result));
                } else {
-                    System.out.println("discarding " + id);
+                    //System.out.println("discarding " + id);
                     continue;
                 }
                 dayIndicatorMap.put(j, indicatorMap);
@@ -337,7 +337,7 @@ public class IndicatorUtils {
                         if (arr != null && arr.length > 0) {
                             result = (Double[]) ArrayUtils.addAll(result, arr);
                         } else {
-                            System.out.println("No obj for id3 " + localId);
+                            //System.out.println("No obj for id3 " + localId);
                         }
                     }
                 }

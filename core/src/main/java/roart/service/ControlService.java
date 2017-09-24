@@ -20,7 +20,7 @@ import roart.category.CategoryConstants;
 import roart.category.CategoryIndex;
 import roart.category.CategoryPeriod;
 import roart.category.CategoryPrice;
-import roart.config.ConfigConstants;
+import roart.config.ConfigConstantMaps;
 import roart.config.MyMyConfig;
 import roart.config.MyPropertyConfig;
 import roart.db.DbDao;
@@ -145,11 +145,12 @@ public class ControlService {
     
     /**
      * Create result lists
+     * @param maps 
      * 
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(MyMyConfig conf) {
+    public List<ResultItem> getContent(MyMyConfig conf, Map<String, Map<String, Object>> maps) {
         log.info("mydate " + conf.getdate());
         log.info("mydate " + conf.getDays());
         createOtherTables();
@@ -306,6 +307,25 @@ public class ControlService {
                     }
                 }
                    //System.out.print("first " + ri.get().size());
+            }
+            if (maps != null) {
+            for (int i = 0; i < datareaders.length; i++) {
+                Map map = datareaders[i].getLocalResultMap();
+                maps.put(datareaders[i].pipelineName(), map);
+                log.info("pi " + datareaders[i].pipelineName());
+                //System.out.print("others " + r.get().size());
+            }
+                for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
+                    Map map = categories[i].getIndicatorLocalResultMap();
+                    maps.put(categories[i].getTitle(), map);
+                    log.info("ca " + categories[i].getTitle());
+                    //System.out.print("others " + r.get().size());
+                }
+                for (int i = 0; i < aggregates.length; i++) {
+                    //System.out.println("ag " + aggregates[i].toString());
+                    //aggregates[i].
+                    //System.out.print("others " + r.get().size());
+                }
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

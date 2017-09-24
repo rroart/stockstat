@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -112,8 +113,13 @@ public class ServiceController {
 	public ServiceResult getContent(@RequestBody ServiceParam param)
 			throws Exception {
 		ServiceResult result = new ServiceResult();
+		Map<String, Map<String, Object>> maps = null;
+		if (param.wantMaps) {
+		    maps = new HashMap<>();
+		}
 		try {
-			result.list = getInstance().getContent( new MyMyConfig(param.config));
+			result.list = getInstance().getContent( new MyMyConfig(param.config), maps);
+			result.maps = maps;
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
