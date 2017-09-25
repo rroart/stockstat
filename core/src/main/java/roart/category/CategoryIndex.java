@@ -73,7 +73,7 @@ public class CategoryIndex extends Category {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.INDEXVALUECOLUMN)) {
                 Object[] array = resultMap.get(stock.getId());
-                r.addarr(Arrays.copyOfRange(array, 1, dataArraySize));
+                r.addarr(Arrays.copyOfRange(array, 0, dataArraySize));
                 for (Indicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItem(stock));
