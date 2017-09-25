@@ -131,5 +131,4 @@ class HttpService:
         
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return Response(json.dumps({}), mimetype='application/json')
-        
+        return Response(json.dumps({"prob": accuracy_score}), mimetype='application/json')

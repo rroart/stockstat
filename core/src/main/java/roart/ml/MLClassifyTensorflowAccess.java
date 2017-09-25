@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.aggregate.Aggregator;
+import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
@@ -44,11 +45,11 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 	}
 	
     @Override
-    public void learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
+    public Double learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
             int outcomes) {
         //List<MLModel> models = getModels();
         //for (MLModel modelInt : models) {
-        learntestInner(map, size, period, mapname, outcomes, model);
+        return learntestInner(map, size, period, mapname, outcomes, model);
     //}
     }
 
@@ -72,7 +73,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 */
     
-    private void learntestInner(Map<double[], Double> map, int size, String period, String mapname, int outcomes,
+    private Double learntestInner(Map<double[], Double> map, int size, String period, String mapname, int outcomes,
             MLClassifyModel model) {
         List<List<Object>> listlist = new ArrayList<>();
         for (double[] key : map.keySet()) {
@@ -107,6 +108,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         log.info("evalin " + param.modelInt + period + mapname);
         LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, "http://localhost:8000/learntest");
         //System.out.println("test " + test.outcomes);
+        return test.prob;
     }
 
     @Override
@@ -173,5 +175,10 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return retMap;
     }
 
- }
+    @Override
+    public String getName() {
+        return ConfigConstants.TENSORFLOW;
+    }
+
+}
 

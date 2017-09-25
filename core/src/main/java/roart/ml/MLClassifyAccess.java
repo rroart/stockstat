@@ -16,13 +16,14 @@ public abstract class MLClassifyAccess {
 
     protected List<MLClassifyModel> models;
     
-    public abstract void learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes);
+    public abstract Double learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes);
 
     public abstract Double eval(int modelInt, String period, String mapname);
 
     public abstract Map<String, Double[]> classify(Aggregator indicator, Map<String, double[]> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap);
 
     public abstract List<MLClassifyModel> getModels();
-        
+
+    public abstract String getName();
 }
 

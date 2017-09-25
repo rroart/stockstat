@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.aggregate.Aggregator;
+import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.db.DbSpark;
 import roart.indicator.Indicator;
@@ -60,11 +61,11 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         }
     }
     @Override
-    public void learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period,
+    public Double learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period,
             String mapname, int outcomes) {
         //List<MLModel> models = model.getModels();
         //for (MLModel modelInt : models) {
-       learntestInner(map, model, size, period, mapname, outcomes);       
+       return learntestInner(map, model, size, period, mapname, outcomes);       
     //}
     }
 
@@ -152,54 +153,62 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return null;
     }
 
-    public void learntestInner(Map<double[], Double> map, MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes) {
+    public Double learntestInner(Map<double[], Double> map, MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes) {
+        Double accuracy = null;
         long time0 = System.currentTimeMillis();
-           if (spark == null) {
-                return;
-            }
-            if (map.isEmpty()) {
-                return;
-            }
-            Map<Double, Long> counts =
-                    map.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));       
-           log.info("learning distribution " + counts);
-            try {
-             Dataset<Row> data = SparkUtil.createDFfromMap(spark, map);
-        Dataset<Row>[] splits = data.randomSplit(new double[]{0.6, 0.4}, 1234);
-        Dataset<Row> train = splits[0];
-        Dataset<Row> test = splits[1];
-        log.info("data size " + map.size() + " " + train.count());
-        if (train.count() == 0) {
-            train = data;
-            test = data;
+        if (spark == null) {
+            return null;
         }
-        MLClassifySparkModel sparkModel = (MLClassifySparkModel) mlmodel;
-        Model model = sparkModel.getModel(train, size, outcomes);
-        
-        modelMap.put(mlmodel.getId()+period+mapname, model);
-                    // compute accuracy on the test set                                         
-                    Dataset<Row> result = model.transform(test);
-                    //result.schema().toString();
-                    //result.show();
-                    Dataset<Row> predictionAndLabels = result.select("prediction", "label");
-                    //predictionAndLabels.show();
-                    MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
-                      .setMetricName("accuracy");
-                    double eval = evaluator.evaluate(predictionAndLabels);
-                    log.info("Test set accuracy for " + mapname + " " + mlmodel.getId() + " " + period + " = " + eval);
-                    accuracyMap.put(mlmodel.getId()+period+mapname, eval);
+        if (map.isEmpty()) {
+            return null;
+        }
+        Map<Double, Long> counts =
+                map.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));       
+        log.info("learning distribution " + counts);
+        try {
+            Dataset<Row> data = SparkUtil.createDFfromMap(spark, map);
+            Dataset<Row>[] splits = data.randomSplit(new double[]{0.6, 0.4}, 1234);
+            Dataset<Row> train = splits[0];
+            Dataset<Row> test = splits[1];
+            log.info("data size " + map.size() + " " + train.count());
+            if (train.count() == 0) {
+                train = data;
+                test = data;
+            }
+            MLClassifySparkModel sparkModel = (MLClassifySparkModel) mlmodel;
+            Model model = sparkModel.getModel(train, size, outcomes);
 
-       
-    } catch (Exception e) {
-        log.error("Exception", e);
-    } finally {
-        log.info("time learn test model " + mlmodel.getName() + " " + period + " " + map.size() + " " + (System.currentTimeMillis() - time0));
-    }
+            modelMap.put(mlmodel.getId()+period+mapname, model);
+            // compute accuracy on the test set                                         
+            Dataset<Row> result = model.transform(test);
+            //result.schema().toString();
+            //result.show();
+            Dataset<Row> predictionAndLabels = result.select("prediction", "label");
+            //predictionAndLabels.show();
+            MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
+                    .setMetricName("accuracy");
+            double eval = evaluator.evaluate(predictionAndLabels);
+            log.info("Test set accuracy for " + mapname + " " + mlmodel.getId() + " " + period + " = " + eval);
+            accuracyMap.put(mlmodel.getId()+period+mapname, eval);
+            accuracy = eval;
+
+        } catch (Exception e) {
+            log.error("Exception", e);
+        } finally {
+            log.info("time learn test model " + mlmodel.getName() + " " + period + " " + map.size() + " " + (System.currentTimeMillis() - time0));
+        }
+        return accuracy;
     }
     
     public Double evalInner(int modelInt, String period, String mapname) {
         //System.out.println("str vs " + modelStr+period+mapname + " :" + accuracyMap.keySet());
         return accuracyMap.get(modelInt+period+mapname);
     }
+    
+    @Override
+    public String getName() {
+        return ConfigConstants.SPARK;
+    }
+
 }
 

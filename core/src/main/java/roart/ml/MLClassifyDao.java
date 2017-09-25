@@ -47,14 +47,18 @@ public class MLClassifyDao {
         }
     }
 
-    public void learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel modeln, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
+    public Map<String, Double> learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel modeln, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
+        Map<String, Double> probMap = new HashMap<>();
+        int i = 0;
         for (MLClassifyModel model : getModels()) {
             long time1 = System.currentTimeMillis();
-            access.learntest(indicator, map, model, size, period, mapname, outcomes);
+            Double prob = access.learntest(indicator, map, model, size, period, mapname, outcomes);
+            probMap.put(model.getName(), prob);
             long time = (System.currentTimeMillis() - time1);
             log.info("time " + model + " " + period + " " + mapname + " " + time);
             MLMACD.mapAdder(mapTime, model, time);
         }
+        return probMap;
     }
 
     public Double eval(int modelInt, String period, String mapname) {
@@ -102,4 +106,7 @@ public class MLClassifyDao {
             return retindex;
     }
 
+    public String getName() {
+        return access.getName();
+    }
 }

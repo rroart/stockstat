@@ -47,22 +47,13 @@ import roart.util.TaUtil;
 import scala.collection.mutable.WrappedArray;
 
 public class MLIndicator extends Aggregator {
-/*
-    public MLMACD(MyMyConfig conf, String string, int category) {
-        super(conf, string, category);
-        // TODO Auto-generated constructor stub
-    }
-*/
-    Map<String, MarketData> marketdatamap;
+
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[][]> listMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
-    Map<String, Object[]> objectMap;
-    //Map<String, Double> resultMap;
-    Map<String, Object[]> resultMap;
     Map<Pair, String> pairCatMap;
     /*
     Map<String, Double[]> momMap;
@@ -113,11 +104,10 @@ public class MLIndicator extends Aggregator {
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
     public MLIndicator(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, MarketData> marketdatamap, 
-            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories, Pipeline[] datareaders) throws Exception {
+            Map<String, PeriodData> periodDataMap, String title, int category, Category[] categories, Pipeline[] datareaders) throws Exception {
         super(conf, string, category);
-        this.marketdatamap = marketdatamap;
-        this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
+        this.periodmap = periodmap;
         this.key = title;
         makeMapTypes();
         if (conf.wantML()) {
@@ -283,6 +273,7 @@ public class MLIndicator extends Aggregator {
         }
         log.info("time0 " + (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
+        probabilityMap = new HashMap<>();
         objectMap = new HashMap<>();
         /*
         momMap = new HashMap<>();
@@ -387,8 +378,9 @@ public class MLIndicator extends Aggregator {
                                         System.out.println(Arrays.toString(val));
                                         if (i++ >= 5) break;
                                     }
-                            mldao.learntest(this, map, null, arrayLength, key, MYTITLE, 2, mapTime);  
-                }
+                            Map<String, Double> prob = mldao.learntest(this, map, null, arrayLength, key, MYTITLE, 2, mapTime);  
+                            probabilityMap.put(mldao.getName(), prob);
+                    }
             } catch (Exception e) {
                 log.error("Exception", e);
             }

@@ -9,6 +9,7 @@ public class PipelineConstants {
     public static final String MAP = "map";
     public static final String TRUNCLIST = "trunclist";
     public static final String RESULT = "result";
+    public static final String PROBABILITY = "probability";
     public static final String PAIRDATE = "pairdate";
     public static final String PAIRLIST = "pairlist";
     public static final String PAIRDATELIST = "pairdatelist";
@@ -41,4 +42,6 @@ public class PipelineConstants {
     public static final String MLMACD = "mlmacd";
     public static final String RECOMMENDERRSI = "recommenderrsi";
     public static final String AGGREGATORRECOMMENDERINDICATOR = "aggregatorrecommenderindicator";
+
+    public static final String LSTM = "lstm";
 }

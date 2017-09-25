@@ -33,33 +33,21 @@ import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
 import roart.util.ArraysUtil;
 import roart.util.Constants;
-import roart.util.MarketData;
 import roart.util.PeriodData;
 import roart.util.StockDao;
 import roart.util.TaUtil;
 import scala.collection.mutable.WrappedArray;
 
 public class MLMACD extends Aggregator {
-/*
-    public MLMACD(MyMyConfig conf, String string, int category) {
-        super(conf, string, category);
-        // TODO Auto-generated constructor stub
-    }
-*/
-    Map<String, MarketData> marketdatamap;
+
+    //Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
-    Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[][]> listMap;
     Map<String, double[][]> truncListMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
-    Map<String, Object[]> objectMap;
-    //Map<String, Double> resultMap;
-    Map<String, Object[]> resultMap;
     Map<String, Double[]> momMap;
-    Map<String, Double> buyMap;
-    Map<String, Double> sellMap;
     Object[] emptyField;
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
     
@@ -101,11 +89,9 @@ public class MLMACD extends Aggregator {
 
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
-    public MLMACD(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, MarketData> marketdatamap, 
-            Map<String, PeriodData> periodDataMap, /*Map<String, Integer>[] periodmap,*/ String title, int category, Category[] categories) throws Exception {
+    public MLMACD(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, PeriodData> periodDataMap, 
+            String title, int category, Category[] categories) throws Exception {
         super(conf, string, category);
-        this.marketdatamap = marketdatamap;
-        this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         this.key = title;
         makeWantedSubTypes();
@@ -128,7 +114,7 @@ public class MLMACD extends Aggregator {
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
-        calculateMomentums(conf, marketdatamap, periodDataMap, category, categories);        
+        calculateMomentums(conf, periodDataMap, category, categories);        
     }
 
     private abstract class MacdSubType {
@@ -214,8 +200,8 @@ public class MLMACD extends Aggregator {
        }
    }
     // TODO make an oo version of this
-    private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, int category2, Category[] categories) throws Exception {
+    private void calculateMomentums(MyMyConfig conf, Map<String, PeriodData> periodDataMap,
+            int category2, Category[] categories) throws Exception {
         Category cat = IndicatorUtils.getWantedCategory(categories);
         title = cat.getTitle();
         key = title;
@@ -243,8 +229,6 @@ public class MLMACD extends Aggregator {
         resultMap = new HashMap<>();
         objectMap = new HashMap<>();
         //momMap = new HashMap<>();
-        buyMap = new HashMap<>();
-        sellMap = new HashMap<>();
         List<Double> macdLists[] = new ArrayList[4];
         for (int i = 0; i < 4; i ++) {
             macdLists[i] = new ArrayList<>();
@@ -331,7 +315,8 @@ public class MLMACD extends Aggregator {
                                 log.error("map null " + mapName);
                                 continue;
                             }
-                            mldao.learntest(this, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime);  
+                            Map<String, Double> prob = mldao.learntest(this, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime);  
+                            probabilityMap.put(mldao.getName(), prob);
                         }
                     }
                 }
