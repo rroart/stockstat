@@ -1,5 +1,6 @@
 package roart.category;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,13 +10,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.config.MyMyConfig;
+import roart.db.DbAccess;
+import roart.db.DbDao;
 import roart.indicator.Indicator;
+import roart.indicator.IndicatorUtils;
 import roart.model.ResultItem;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
+import roart.pipeline.PipelineConstants;
 import roart.predictor.Predictor;
+import roart.util.Constants;
+import roart.util.MarketData;
+import roart.util.PeriodData;
+import roart.util.StockDao;
 import roart.util.StockUtil;
 
 public abstract class Category {
@@ -30,6 +39,8 @@ public abstract class Category {
     private Map<String, Indicator> indicatorMap = new HashMap<>();
     protected Pipeline[] datareaders;
     protected int period;
+    protected Map<String, Object[]> resultMap;
+    int dataArraySize;
    
     public Category(MyMyConfig conf, String periodText, List<StockItem> stocks, Pipeline[] datareaders) {
         this.conf = conf;
@@ -100,16 +111,14 @@ public abstract class Category {
     
     public Map<String, Map<String, Object>> getIndicatorLocalResultMap() {
         Map<String, Map<String, Object>> map = new HashMap<>();
-        /*
         for (Predictor predictor : predictors) {
             if (predictor.isEnabled()) {
-                Map<String, Object> tmpMap = predictor.getResultMap();
+                Map<String, Object> tmpMap = predictor.getLocalResultMap();
                 if (tmpMap != null) {
-                    map.putAll(tmpMap);
+                    map.put(predictor.predictorName(), tmpMap);
                 }
             }
         }
-        */
         for (Indicator indicator : indicators) {
             if (indicator.isEnabled()) {
                 Map<String, Object> tmpMap = indicator.getLocalResultMap();
@@ -134,5 +143,35 @@ public abstract class Category {
     public boolean hasContent() throws Exception {
         return StockUtil.hasStockValue(stocks, period);
     }
+    
+    public Map<String, Object> getLocalResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.RESULT, resultMap);
+        return map;
+    }
+    
+    public Double[] getData(StockItem stock) throws Exception {
+        return StockDao.getValue(stock, period);
+    }
+    
+    public void createResultMap(MyMyConfig conf, List<StockItem> stocks) throws Exception {
+        DbAccess dbDao = DbDao.instance(conf);
+        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+        String dateme = dt.format(conf.getdate());
+        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        Pipeline datareader = pipelineMap.get("" + period);
+        resultMap = new HashMap<>();
+        dataArraySize = 0;
+        for (StockItem stock : stocks) {
+            Double[] value = getData(stock);
+            resultMap.put(stock.getId(), value);
+            for (int i = dataArraySize; i < value.length; i++) {
+                if (value[i] != null) {
+                    dataArraySize = i + 1;
+                }
+            }
+        }
+    }
+
 }
 

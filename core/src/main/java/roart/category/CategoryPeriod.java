@@ -37,6 +37,7 @@ public class CategoryPeriod extends Category {
         super(conf, periodText, stocks, datareaders);
         this.periodmap = periodmap;
         period = i;
+        createResultMap(conf, stocks);
         indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), periodmap, period));
         if (periodText.equals("cy")) {
         indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), i, datareaders, false));
@@ -70,7 +71,7 @@ public class CategoryPeriod extends Category {
 
             if (StockUtil.hasStockPeriod(stocks, period)) {
                 //System.out.print("1");
-                r.add(StockDao.getPeriod(stock, period)[0]);
+                r.addarr(resultMap.get(stock.getId()));
                 for (Indicator indicator : indicators) {
                     //System.out.print("2");
                     if (indicator.isEnabled()) {

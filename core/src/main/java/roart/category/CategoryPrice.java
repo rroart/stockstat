@@ -1,5 +1,6 @@
 package roart.category;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ public class CategoryPrice extends Category {
         this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         period = Constants.PRICECOLUMN;
+        createResultMap(conf, stocks);
         indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
         indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
         //indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN));
@@ -46,6 +48,10 @@ public class CategoryPrice extends Category {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
                 r.add(getTitle());
+                if (dataArraySize > 1) {
+                    r.add(getTitle() + " l");
+                    r.add(getTitle() + " h");
+                }
                 r.add("Currency");
                 for (Predictor predictor : predictors) {
                     if (predictor.isEnabled()) {
@@ -67,7 +73,8 @@ public class CategoryPrice extends Category {
     public void addResultItem(ResultItemTableRow r, StockItem stock) {
         try {
             if (StockUtil.hasSpecial(stocks, Constants.PRICECOLUMN)) {
-                r.add(stock.getPrice());
+                Object[] array = resultMap.get(stock.getId());
+                r.addarr(Arrays.copyOfRange(array, 0, dataArraySize));
                 r.add(stock.getCurrency());
                 for (Predictor predictor : predictors) {
                     if (predictor.isEnabled()) {
