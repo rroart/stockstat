@@ -322,7 +322,7 @@ public class ControlService {
                     //System.out.print("others " + r.get().size());
                 }
                 for (int i = 0; i < aggregates.length; i++) {
-                    System.out.println("ag " + aggregates[i].getName());
+                    log.info("ag " + aggregates[i].getName());
                     //aggregates[i].
                     //System.out.print("others " + r.get().size());
                 }
@@ -366,7 +366,7 @@ public class ControlService {
         Aggregator[] aggregates = new Aggregator[4];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories, datareaders);
         aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
-        aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories);
+        aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, periodDataMap, CategoryConstants.PRICE, 0, categories);
         aggregates[3] = new MLIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories, datareaders);
         return aggregates;
     }

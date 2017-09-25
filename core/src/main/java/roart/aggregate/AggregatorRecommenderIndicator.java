@@ -39,10 +39,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
 
     //Map<String, Object[]> macdMap;
     Map<String, Double[]> listMap;
-    Map<String, Object[]> objectMap;
-    Map<String, Double[]> resultMap;
     Map<String, List<Recommend>> usedRecommenders;
-    Map<String, Map<String, Double[]>> allResult;
+    Map<String, Map<String, Double[]>> resultMap;
     
     public AggregatorRecommenderIndicator(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders) throws Exception {
@@ -114,7 +112,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         }
         }
         TaUtil tu = new TaUtil();
-        allResult = new HashMap<>();
+        resultMap = new HashMap<>();
         for (String recommender : usedRecommenders.keySet()) {
         //for (String type : indicatorMap.keySet()) {
             List<Indicator> indicators = Recommend.getIndicators(recommender, usedRecommenders, indicatorMap);
@@ -151,7 +149,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             int macdlen = conf.getTableDays();
             int listlen = conf.getTableDays();
             //transform(conf, buyList);
-            resultMap = new HashMap<>();
+            Map<String, Double[]> indicatorResultMap;
+            indicatorResultMap = new HashMap<>();
             for (String id : ids) {
                 Double[] aResult = new Double[2]; 
                 System.out.println("ttt " + result.get(id));
@@ -195,9 +194,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     sellRecommendValue += node.calc(value, 0);
                 }
                 aResult[1] = sellRecommendValue;              
-               resultMap.put(id, aResult);
+               indicatorResultMap.put(id, aResult);
             }
-            allResult.put(recommender, resultMap);
+            resultMap.put(recommender, indicatorResultMap);
         }
     }
 
@@ -261,7 +260,18 @@ public class AggregatorRecommenderIndicator extends Aggregator {
 
     @Override
     public Object[] getResultItem(StockItem stock) {
-        return resultMap.get(stock.getId());
+        Double[] arrayResult = new Double[0];
+        for (String recommender : usedRecommenders.keySet()) {
+            Map<String, Double[]> indicatorResultMap = resultMap.get(recommender);
+            Double[] aResult = indicatorResultMap.get(stock.getId());
+            int size = usedRecommenders.keySet().size();
+            if (aResult == null || aResult.length < size) {
+                aResult = new Double[size];
+            }
+            //if (aResult == null || aResult)
+            arrayResult = (Double[]) ArrayUtils.addAll(arrayResult, aResult);
+        }
+        return arrayResult;
     }
 
     @Override
@@ -274,17 +284,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
 
     @Override
     public void addResultItem(ResultItemTableRow row, StockItem stock) {
-        Double[] arrayResult = new Double[0];
-        for (String recommender : usedRecommenders.keySet()) {
-        Map<String, Double[]> resultMap = allResult.get(recommender);
-        Double[] aResult = resultMap.get(stock.getId());
-        int size = usedRecommenders.keySet().size();
-        if (aResult == null || aResult.length < size) {
-            aResult = new Double[size];
-        }
-        //if (aResult == null || aResult)
-        arrayResult = (Double[]) ArrayUtils.addAll(arrayResult, aResult);
-     }
+        Object[] arrayResult = getResultItem(stock);
         row.addarr(arrayResult);
     }
     
@@ -292,4 +292,12 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     public String getName() {
         return PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
     }
+
+    @Override
+    public Map<String, Object> getLocalResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.RESULT, resultMap);
+        return map;
+    }
+    
 }

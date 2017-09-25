@@ -47,7 +47,7 @@ public class RecommenderRSI extends Aggregator {
         for (String id : listMap.keySet()) {
        // TODO not yet RSIRecommend.getBuySellRecommendations(buyMap, sellMap, conf, rsiLists, listMap, rsiMap, buyList, sellList);
         if (conf.wantRSIScore() && rsi != null) {
-            String market = "tradcomm";
+            String market = null;
             Double[] rsiA = (Double[]) rsiMap.get(id);
             if (rsiA != null) {
             IndicatorUtils.addToLists(marketdatamap, category, rsiLists, market, rsiA);

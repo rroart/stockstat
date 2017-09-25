@@ -28,6 +28,7 @@ import roart.model.LearnTestPredict;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
 import roart.util.ArraysUtil;
 import roart.util.Constants;
@@ -429,5 +430,8 @@ public class PredictorLSTM extends Predictor {
         map.put(key, val);
     }
 
+    public String predictorName() {
+        return PipelineConstants.LSTM;
+    }
 }
 

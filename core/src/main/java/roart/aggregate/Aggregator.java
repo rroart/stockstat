@@ -1,5 +1,6 @@
 package roart.aggregate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.pipeline.PipelineConstants;
 
 public abstract class Aggregator {
 
@@ -19,6 +21,13 @@ public abstract class Aggregator {
     protected MyMyConfig conf;
     protected int category;
     
+    protected Map<String, Object[]> objectMap;
+    protected Map<String, Object[]> objectFixedMap;
+    //Map<String, Double> resultMap;
+    protected Map<String, Double[]> calculatedMap;
+    protected Map<String, Object> probabilityMap;
+    protected Map<String, Object[]> resultMap;
+
     public Aggregator(MyMyConfig conf, String string, int category) {
         this.title = string;
         this.conf = conf;
@@ -66,4 +75,14 @@ public abstract class Aggregator {
     
     public abstract String getName();
     //public abstract void addResultItemTitle(ResultItemTableRow headrow);
+
+    public Map<String, Object> getLocalResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.RESULT, calculatedMap);
+        map.put(PipelineConstants.PROBABILITY, probabilityMap);
+        map.put(PipelineConstants.OBJECT, objectMap);
+        map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
+        return map;
+    }
+    
 }

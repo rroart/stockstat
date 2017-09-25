@@ -1,5 +1,6 @@
 package roart.predictor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import roart.config.MyMyConfig;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
+import roart.pipeline.PipelineConstants;
 
 public abstract class Predictor {
 
@@ -18,7 +20,8 @@ public abstract class Predictor {
     protected String title;
     protected MyMyConfig conf;
     protected int category;
-    
+    protected Map<String, Object[]> resultMap;
+   
     public Predictor(MyMyConfig conf, String string, int category) {
         this.title = string;
         this.conf = conf;
@@ -55,5 +58,13 @@ public abstract class Predictor {
         return null;
     }
 
+    public Map<String, Object> getLocalResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.RESULT, resultMap);
+        return map;
+    }
+
+    public abstract String predictorName();
+    
 }
 
