@@ -441,8 +441,8 @@ public class IndicatorUtils {
         if (StockUtil.hasStockValue(stocks, Constants.PRICECOLUMN)) {
             return Constants.PRICECOLUMN;
         }
-        if (StockUtil.hasStockValue(stocks, Constants.PRICECOLUMN)) {
-            return Constants.PRICECOLUMN;
+        if (StockUtil.hasStockValue(stocks, Constants.INDEXVALUECOLUMN)) {
+            return Constants.INDEXVALUECOLUMN;
         }
         Set<Pair<String, Integer>> pairs = periodData.pairs;
         for (Pair pair : pairs) {
