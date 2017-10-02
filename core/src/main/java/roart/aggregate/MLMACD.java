@@ -228,6 +228,7 @@ public class MLMACD extends Aggregator {
         log.info("time0 " + (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
         objectMap = new HashMap<>();
+        probabilityMap = new HashMap<>();
         //momMap = new HashMap<>();
         List<Double> macdLists[] = new ArrayList[4];
         for (int i = 0; i < 4; i ++) {
