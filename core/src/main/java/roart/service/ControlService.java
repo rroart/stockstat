@@ -8,6 +8,7 @@ import roart.model.ResultItem;
 import roart.model.StockItem;
 import roart.mutation.Mutate;
 import roart.pipeline.Pipeline;
+import roart.pipeline.PipelineConstants;
 import roart.aggregate.Aggregator;
 import roart.aggregate.AggregatorRecommenderIndicator;
 import roart.aggregate.DataReader;
@@ -52,6 +53,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -323,6 +325,8 @@ public class ControlService {
                 }
                 for (int i = 0; i < aggregates.length; i++) {
                     log.info("ag " + aggregates[i].getName());
+                    Map map = aggregates[i].getLocalResultMap();
+                    maps.put(aggregates[i].getName(), map);
                     //aggregates[i].
                     //System.out.print("others " + r.get().size());
                 }
@@ -917,4 +921,37 @@ public class ControlService {
         }
     }
     
+    public void getDates(MyMyConfig conf, Map<String, Map<String, Object>> maps) {
+        List<StockItem> stocks = null;
+        try {
+            stocks = StockItem.getAll(conf.getMarket(), conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        if (stocks == null) {
+            return;
+        }
+        log.info("stocks " + stocks.size());
+        String[] periodText = getPeriodText(conf.getMarket(), conf);
+        Set<String> markets = new HashSet();
+        markets.add(conf.getMarket());
+        Integer days = conf.getDays();
+
+        ResultItemTable table = new ResultItemTable();
+        List<ResultItemTable> otherTables = new ArrayList<>();
+        otherTables.add(mlTimesTable);
+        otherTables.add(eventTable);
+        
+        try {
+            Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+            List<String> dates = new ArrayList(stockdatemap.keySet());
+            Collections.sort(dates);
+            Map<String, Object> map = new HashMap<>();
+            map.put(PipelineConstants.DATELIST, dates);
+            maps.put(PipelineConstants.DATELIST, map);
+        } catch (Exception e) {
+            log.error("E ", e);
+            return;
+        }
+    }
 }

@@ -94,6 +94,25 @@ public class ServiceController {
 		return result;
 	}
 
+    @RequestMapping(value = "/" + EurekaConstants.GETDATES,
+            method = RequestMethod.POST)
+    public ServiceResult getDates(@RequestBody ServiceParam param)
+            throws Exception {
+        ServiceResult result = new ServiceResult();
+        Map<String, Map<String, Object>> maps = null;
+        if (param.wantMaps) {
+            maps = new HashMap<>();
+        }
+        try {
+            getInstance().getDates( new MyMyConfig(param.config), maps);
+            result.maps = maps;
+        } catch (Exception e) {
+            log.error(roart.util.Constants.EXCEPTION, e);
+            result.error = e.getMessage();
+        }
+        return result;
+    }
+
     @RequestMapping(value = "/" + EurekaConstants.GETSTOCKS,
 			method = RequestMethod.POST)
 	public ServiceResult getStocks(@RequestBody ServiceParam param)
