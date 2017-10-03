@@ -1,7 +1,7 @@
 FROM debian:stretch
 MAINTAINER <roart@nvg.ntnu.no>
 
-RUN apt-get update && apt-get upgrade
+RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y openjdk-8-jdk curl procps
 RUN curl -s https://d3kbcqa49mib13.cloudfront.net/spark-2.1.0-bin-hadoop2.7.tgz | tar -xz -C /usr/local
 
