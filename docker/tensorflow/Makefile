@@ -1,7 +1,7 @@
 SUBDIRS = classify predict
 
-all: $(SUBDIRS)
+all files: $(SUBDIRS)
 $(SUBDIRS):
-	$(MAKE) -C $@
+	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 .PHONY: all $(SUBDIRS)
