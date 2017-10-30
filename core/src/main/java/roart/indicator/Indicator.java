@@ -2,6 +2,7 @@ package roart.indicator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -137,6 +138,20 @@ public abstract class Indicator {
         map.put(PipelineConstants.MARKETOBJECT, marketObjectMap);
         map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
         map.put(PipelineConstants.MARKETRESULT, marketResultMap);
+        try {
+        System.out.println("vix " + Arrays.asList(listMap.get("VIX")[0]));
+        System.out.println("vix " + Arrays.asList(truncListMap.get("VIX")[0]));
+        System.out.println("vix " + Arrays.asList(objectMap.get("VIX")[2]));
+        Object[] o = (Object[]) objectMap.get("VIX");
+        System.out.println("vix " + Arrays.asList((double[])o[2]) + " " + o[2]);
+        double[] i = (double[]) o[2];
+        double[] j = (double[]) o[1];
+        double[] k = (double[]) o[0];
+        System.out.println("i " + i.getClass().getName() + Arrays.asList(i));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            int jj = 0;
+        }
         return map;
     }
     
