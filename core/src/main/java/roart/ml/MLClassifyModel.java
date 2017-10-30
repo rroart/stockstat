@@ -21,7 +21,9 @@ public abstract class MLClassifyModel {
     
     //public abstract int addTitles(Object[] objs, int retindex, String title, String key, String subType, List<Integer> typeList, Map<Integer, String> mapTypes, MLDao dao);
     //@Override
+    @Deprecated
     public int addTitles(Object[] objs, int retindex, Aggregator indicator, String title, String key, String subType, List<Integer> typeList0, Map<Integer, String> mapTypes0, MLClassifyDao dao) {
+        if (true) return retindex;
         List<Integer> typeList = indicator.getTypeList();
         Map<Integer, String> mapTypes = indicator.getMapTypes();
        for (int mapTypeInt : typeList) {
@@ -40,8 +42,10 @@ public abstract class MLClassifyModel {
         return retindex;
     }
     
+    @Deprecated
     //public int addResults(Object[] fields, int retindex, String id, Aggregator indicator, Map<Integer, Map<String, Double[]>> commonIdTypeModelHistMap,String subType, List<Integer> typeList0, Map<Integer, String> mapTypes0 ) {
         public int addResults(Object[] fields, int retindex, String id, MLClassifyModel model, Aggregator indicator, Map<String, Map<String, Double[]>> mapResult, Map<Double, String> labelMapShort) {
+        if (true) return retindex;
         List<Integer> typeList = indicator.getTypeList();
         Map<Integer, String> mapTypes = indicator.getMapTypes();
         for (int mapTypeInt : typeList) {
@@ -74,6 +78,10 @@ public abstract class MLClassifyModel {
         return typeList.size();
     }
 
+     public int getReturnSize() {
+        return 1;
+    }
+    
     public abstract String getEngineName();
 
 }

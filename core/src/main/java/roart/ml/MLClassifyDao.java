@@ -47,20 +47,21 @@ public class MLClassifyDao {
         }
     }
 
-    public Map<String, Double> learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel modeln, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
+    public Double learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
         Map<String, Double> probMap = new HashMap<>();
         int i = 0;
-        for (MLClassifyModel model : getModels()) {
+        //for (MLClassifyModel model : getModels()) {
             long time1 = System.currentTimeMillis();
             Double prob = access.learntest(indicator, map, model, size, period, mapname, outcomes);
-            probMap.put(model.getName(), prob);
+            //probMap.put(model.getName(), prob);
             long time = (System.currentTimeMillis() - time1);
             log.info("time " + model + " " + period + " " + mapname + " " + time);
             MLMACD.mapAdder(mapTime, model, time);
-        }
-        return probMap;
+        //}
+        return prob;
     }
 
+    @Deprecated
     public Double eval(int modelInt, String period, String mapname) {
         return access.eval(modelInt, period, mapname);
     }
@@ -87,6 +88,7 @@ public class MLClassifyDao {
         return size;
     }
 
+    @Deprecated
     //public int addTitles(Object[] objs, int retindex, String title, String key, String subType, List<Integer> typeList, Map<Integer, String> mapTypes, MLDao dao) {
     public int addTitles(Object[] objs, int retindex, Aggregator indicator, String title, String key, String subType) {
         for (MLClassifyModel model : getModels()) {
@@ -99,6 +101,7 @@ public class MLClassifyDao {
         return access.getModels();
     }
 
+    @Deprecated
     public int addResults(Object[] objs, int retindex, String id, MLClassifyModel model, Aggregator indicator, Map<String, Map<String, Double[]>> mapResult, Map<Double, String> labelMapShort) {
         //for (MLModel model : getModels()) {
             retindex = model.addResults(objs, retindex, id, model, indicator, mapResult, labelMapShort);
