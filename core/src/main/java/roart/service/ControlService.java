@@ -23,7 +23,7 @@ import roart.category.CategoryPeriod;
 import roart.category.CategoryPrice;
 import roart.config.ConfigConstantMaps;
 import roart.config.MyMyConfig;
-import roart.config.MyPropertyConfig;
+import roart.config.MyXMLConfig;
 import roart.db.DbDao;
 import roart.evaluation.IndicatorEvaluation;
 import roart.evaluation.Recommend;
@@ -246,7 +246,9 @@ public class ControlService {
                     //System.out.print("first " + ri.get().size());
                 }
                 for (int i = 0; i < aggregates.length; i++) {
+                    if (aggregates[i].isEnabled()) {
                     aggregates[i].addResultItemTitle(headrow);
+                    }
                     //System.out.print("first " + ri.get().size());
                 }
             } catch (Exception e) {
@@ -274,7 +276,9 @@ public class ControlService {
                         //System.out.print("others " + r.get().size());
                     }
                     for (int i = 0; i < aggregates.length; i++) {
+                        if (aggregates[i].isEnabled()) {
                         aggregates[i].addResultItem(row, stock);
+                        }
                         //System.out.print("others " + r.get().size());
                     }
                 } catch (Exception e) {
