@@ -19,7 +19,7 @@ import java.util.Set;
 import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.config.MyMyConfig;
-import roart.config.MyPropertyConfig;
+import roart.config.MyXMLConfig;
 import roart.db.DbDao;
 import roart.model.GUISize;
 import roart.model.ResultItem;
@@ -70,7 +70,7 @@ public class ServiceController {
             throws Exception {
         ServiceResult result = new ServiceResult();
         try {
-            result.config = MyPropertyConfig.instance();
+            result.config = MyXMLConfig.getConfigInstance();
             System.out.println("configs " + result.config);
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);

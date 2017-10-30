@@ -2,7 +2,7 @@ package roart.db;
 
 import roart.config.ConfigConstantMaps;
 import roart.config.MyMyConfig;
-import roart.config.MyPropertyConfig;
+import roart.config.MyXMLConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.model.MetaItem;
