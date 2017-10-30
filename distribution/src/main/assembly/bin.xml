@@ -37,11 +37,29 @@
       <outputDirectory>lib</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>${project.basedir}/../iclij/iclij-core/target</directory>
+      <includes>
+	<include>*.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/../bin</directory>
       <includes>
 	<include>*</include>
       </includes>
       <outputDirectory>bin</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../tensorflow</directory>
+      <includes>
+	<include>tfmain.py</include>
+	<include>kemain.py</include>
+	<include>run-tf.sh</include>
+	<include>run-ke.sh</include>
+	<include>config2.yaml</include>
+      </includes>
+      <outputDirectory>tensorflow</outputDirectory>
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/</directory>

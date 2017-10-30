@@ -27,6 +27,7 @@
         <mapping package="roart.model" />
         <mapping class="roart.model.Stock"/>
         <mapping class="roart.model.Meta"/>
+	<mapping class="roart.model.Memory"/>
 
     </session-factory>
 
