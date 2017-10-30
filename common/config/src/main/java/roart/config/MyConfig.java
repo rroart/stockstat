@@ -10,14 +10,6 @@ import org.slf4j.LoggerFactory;
 
 public class MyConfig {
 
-    protected static Logger log = LoggerFactory.getLogger(MyConfig.class);
-    
-    protected static MyConfig instance = null;
-    
-    public static MyConfig instance() {
-        return instance;
-    }
-    
     public MyConfig() {
     }
     
