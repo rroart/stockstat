@@ -60,6 +60,8 @@ public abstract class Predictor {
 
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.CATEGORY, category);
+        map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);
         return map;
     }
