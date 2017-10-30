@@ -23,16 +23,16 @@ public class RSIRecommendSimple extends RecommendRSI {
     @Override
     public  List<String> getBuyList() {
         List<String> buyList = new ArrayList<>();
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIWEIGHTSBUYRSI);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIWEIGHTSBUYRSIDELTA);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIBUYWEIGHTRSI);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIBUYWEIGHTRSIDELTA);
         return buyList;
     }
 
     @Override
     public  List<String> getSellList() {
         List<String> sellList = new ArrayList<>();
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIWEIGHTSSELLRSI);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIWEIGHTSSELLRSIDELTA);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSISELLWEIGHTRSI);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSISELLWEIGHTRSIDELTA);
         return sellList;
     }
 

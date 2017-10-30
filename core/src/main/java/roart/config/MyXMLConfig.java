@@ -18,6 +18,8 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.io.FileLocator;
 import org.apache.commons.configuration2.io.FileLocator.FileLocatorBuilder;
 import org.apache.commons.configuration2.tree.ImmutableNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,20 +27,35 @@ import org.w3c.dom.NodeList;
 
 import roart.util.Constants;
 
-public class MyPropertyConfig extends MyConfig {
+public class MyXMLConfig {
 
-     public static MyPropertyConfig instance() {
+    protected static Logger log = LoggerFactory.getLogger(MyConfig.class);
+   
+    protected static MyXMLConfig instance = null;
+    
+   public static MyXMLConfig instance() {
         if (instance == null) {
-            instance = new MyPropertyConfig();
+            instance = new MyXMLConfig();
         }
-        return (MyPropertyConfig) instance;
+        return instance;
+    }
+
+    protected static MyConfig configInstance = null;
+    
+     public static MyConfig getConfigInstance() {
+        if (configInstance == null) {
+            configInstance = new MyConfig();
+            if (instance == null) { 
+                instance();
+            }
+        }
+        return (MyConfig) configInstance;
     }
     
     private static Configuration config = null;
     private static XMLConfiguration configxml = null;
     
-    public MyPropertyConfig() {
-        super();
+    public MyXMLConfig() {
         try {
             //config = new PropertiesConfiguration(ConfigConstants.PROPFILE);
             configxml = new XMLConfiguration();
@@ -51,15 +68,15 @@ public class MyPropertyConfig extends MyConfig {
             configxml.read(stream);
             String root = configxml.getRootElementName();
             Document doc = configxml.getDocument();
-            configTreeMap = new ConfigTreeMap();
-            configValueMap = new HashMap<String, Object>();
+            configInstance.configTreeMap = new ConfigTreeMap();
+            configInstance.configValueMap = new HashMap<String, Object>();
             ConfigConstantMaps.makeDefaultMap();
             ConfigConstantMaps.makeTextMap();
             ConfigConstantMaps.makeTypeMap();
-            deflt = ConfigConstantMaps.deflt;
-            type = ConfigConstantMaps.map;
-            text = ConfigConstantMaps.text;
-            handleDoc(doc.getDocumentElement(), configTreeMap, "");
+            configInstance.deflt = ConfigConstantMaps.deflt;
+            configInstance.type = ConfigConstantMaps.map;
+            configInstance.text = ConfigConstantMaps.text;
+            handleDoc(doc.getDocumentElement(), configInstance.configTreeMap, "");
             //print(configTreeMap, 0);
             //System.out.println("root " + root);
             //System.out.println("maps "+ configTreeMap);
@@ -131,7 +148,7 @@ public class MyPropertyConfig extends MyConfig {
                     System.out.println("unknown " + myclass.getName());
                     log.info("unknown " + myclass.getName());
                 }
-                configValueMap.put(s, o);
+                configInstance.configValueMap.put(s, o);
             }
             //((AbstractConfiguration) config).setDelimiterParsingDisabled(true);
         } catch (Exception e) {

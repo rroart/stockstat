@@ -2,7 +2,7 @@ package roart.config;
 
 import java.util.Optional;
 
-public class MyMyConfig extends MyPropertyConfig {
+public class MyMyConfig extends MyConfig {
 
     public MyMyConfig(MyConfig config) {
         this.configTreeMap = config.configTreeMap;
@@ -304,11 +304,11 @@ public class MyMyConfig extends MyPropertyConfig {
     }
 
     public  boolean wantMACDScore() {
-        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTS);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMEND);
     }
 
     public  boolean wantRSIScore() {
-        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTS);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMEND);
     }
 
     public void disableML() {
@@ -350,59 +350,59 @@ public class MyMyConfig extends MyPropertyConfig {
     }
 
     public  int weightBuyHist() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTHISTOGRAM);
     }
 
     public  int weightBuyHistDelta() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYHISTOGRAMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTHISTOGRAMDELTA);
     }
 
     public  int weightBuyMacd() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMOMENTUM);
     }
 
     public  int weightBuyMacdDelta() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSBUYMOMENTUMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMOMENTUMDELTA);
     }
 
     public  int weightSellHist() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTHISTOGRAM);
     }
 
     public  int weightSellHistDelta() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLHISTOGRAMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTHISTOGRAMDELTA);
     }
 
     public  int weightSellMacd() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMOMENTUM);
     }
 
     public  int weightSellMacdDelta() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTSSELLMOMENTUMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMOMENTUMDELTA);
     }
 
     public  boolean wantRecommenderRSI() {
-        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTS);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMEND);
     }
 
     public  boolean wantRecommenderMACD() {
-        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDWEIGHTS);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMEND);
     }
 
     public  int buyWeightRSI() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUY);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDBUYWEIGHT);
     }
 
     public  int buyWeightRSIDelta() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUYDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDBUYWEIGHTDELTA);
     }
 
     public  int sellWeightRSI() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELL);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDSELLWEIGHT);
     }
 
     public  int sellWeightRSIDelta() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELLDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSRSIRECOMMENDSELLWEIGHTDELTA);
     }
 
     public  boolean wantMLHist() {

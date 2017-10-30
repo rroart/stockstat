@@ -23,8 +23,8 @@ public abstract class RSIRecommend extends RecommendRSI {
     @Override
     public  List<String> getBuyList() {
         List<String> buyList = new ArrayList<>();
-        buyList.add(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUY);
-        buyList.add(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUYDELTA);
+        buyList.add(ConfigConstants.INDICATORSRSIRECOMMENDBUYWEIGHT);
+        buyList.add(ConfigConstants.INDICATORSRSIRECOMMENDBUYWEIGHTDELTA);
         //buyList.add(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUY);
         //buyList.add(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSBUYDELTA);
         return buyList;
@@ -33,8 +33,8 @@ public abstract class RSIRecommend extends RecommendRSI {
     @Override
     public  List<String> getSellList() {
         List<String> sellList = new ArrayList<>();
-        sellList.add(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELL);
-        sellList.add(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELLDELTA);
+        sellList.add(ConfigConstants.INDICATORSRSIRECOMMENDSELLWEIGHT);
+        sellList.add(ConfigConstants.INDICATORSRSIRECOMMENDSELLWEIGHTDELTA);
         //sellList.add(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELL);
         //sellList.add(ConfigConstants.INDICATORSRSIRECOMMENDWEIGHTSSELLDELTA);
         return sellList;
