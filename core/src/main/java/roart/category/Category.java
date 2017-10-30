@@ -115,6 +115,8 @@ public abstract class Category {
             if (predictor.isEnabled()) {
                 Map<String, Object> tmpMap = predictor.getLocalResultMap();
                 if (tmpMap != null) {
+                    System.out.println("Adding predictor " + predictor.predictorName());
+                    System.out.println("exist " + map.containsKey(predictor.predictorName()));
                     map.put(predictor.predictorName(), tmpMap);
                 }
             }
@@ -123,6 +125,8 @@ public abstract class Category {
             if (indicator.isEnabled()) {
                 Map<String, Object> tmpMap = indicator.getLocalResultMap();
                 if (tmpMap != null) {
+                    System.out.println("Adding indicator " + indicator.indicatorName());
+                    System.out.println("exist " + map.containsKey(indicator.indicatorName()));
                     map.put(indicator.indicatorName(), tmpMap);
                 }
            }
