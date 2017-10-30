@@ -16,6 +16,7 @@
     <module>distribution</module>
   </modules>
   <build>
+  <pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -27,7 +28,8 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
-</plugins>
+    </plugins>
+  </pluginManagement>
 </build>
   <dependencies>
     <dependency>

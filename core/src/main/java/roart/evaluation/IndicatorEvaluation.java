@@ -81,6 +81,7 @@ public class IndicatorEvaluation extends Evaluation {
             if (list[newlistidx] == null || list[curlistidx] == null) {
                 continue;
             }
+	    // TODO change filtering?
             double change = (list[newlistidx]/list[curlistidx] - 1) / 100;
             Double[] momrsi = indicatorMap.get(id);
             for (int i = 0; i < keys.size(); i++) {
@@ -89,7 +90,7 @@ public class IndicatorEvaluation extends Evaluation {
                 CalcNode node = (CalcNode) conf.configValueMap.get(key);
                 //node.setDoBuy(useMax);
                 double value = momrsi[i];
-                recommend += node.calc(value, 0) * change * 100;
+                recommend += node.calc(value, 0) * change * 100 * 100;
             }
         }
         return recommend;

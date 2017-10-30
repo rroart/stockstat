@@ -46,7 +46,6 @@ public class PredictorLSTM extends Predictor {
     String key;
     Map<String, Double[][]> listMap;
     Map<String, double[][]> truncListMap;
-    Map<String, Object[]> resultMap;
     Object[] emptyField;
     Map<MLPredictModel, Long> mapTime = new HashMap<>();
 
