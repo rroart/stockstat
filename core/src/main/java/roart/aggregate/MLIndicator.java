@@ -34,6 +34,7 @@ import roart.ml.MLClassifyDao;
 import roart.ml.MLClassifyModel;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
+import roart.model.ResultMeta;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
@@ -128,7 +129,9 @@ public class MLIndicator extends Aggregator {
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
-        calculateMomentums(conf, marketdatamap, periodDataMap, category, categories, datareaders);        
+        if (isEnabled()) {
+            calculateMomentums(conf, marketdatamap, periodDataMap, category, categories, datareaders);        
+        }
     }
 
     /*
@@ -212,6 +215,7 @@ public class MLIndicator extends Aggregator {
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category2, Category[] categories, Pipeline[] datareaders) throws Exception {
         Category cat = IndicatorUtils.getWantedCategory(categories);
+        category = cat.getPeriod();
         title = cat.getTitle();
         key = title;
         Map<String, Pipeline> pipelineMap = new HashMap<>();
@@ -273,7 +277,10 @@ public class MLIndicator extends Aggregator {
         }
         log.info("time0 " + (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
+        otherResultMap = new HashMap<>();
         probabilityMap = new HashMap<>();
+        resultMetaArray = new ArrayList<>();
+        otherMeta = new ArrayList<>();
         objectMap = new HashMap<>();
         /*
         momMap = new HashMap<>();
@@ -357,6 +364,7 @@ public class MLIndicator extends Aggregator {
             if (mergedCatMap.keySet().isEmpty()) {
                 int jj = 0;
             }
+            // TODO add a null check
             int arrayLength = mergedCatMap.keySet().iterator().next().length;
             for(double[] array : mergedCatMap.keySet()) {
                 if (array.length != arrayLength) {
@@ -371,15 +379,33 @@ public class MLIndicator extends Aggregator {
                             //String mapName = mapType;
                             //System.out.println("mapget " + mapName + " " + mapMap.keySet());
                             Map<double[], Double> map = mergedCatMap;
-                            System.out.println(map.values());
+                            for (MLClassifyModel model : mldao.getModels()) {          
+                                System.out.println(map.values());
                             System.out.println("len1 " + arrayLength);
                             int i = 0;
                                     for (double[] val: map.keySet()) {
                                         System.out.println(Arrays.toString(val));
                                         if (i++ >= 5) break;
                                     }
-                            Map<String, Double> prob = mldao.learntest(this, map, null, arrayLength, key, MYTITLE, 2, mapTime);  
-                            probabilityMap.put(mldao.getName(), prob);
+                            Double testAccuracy = mldao.learntest(this, map, model, arrayLength, key, MYTITLE, 2, mapTime);  
+                            probabilityMap.put(mldao.getName(), testAccuracy);
+                            Map<Object, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
+                            // make OO of this, create object
+                            Object[] meta = new Object[6];
+                            meta[0] = mldao.getName();
+                            meta[1] = model.getName();
+                            meta[2] = model.getReturnSize();
+                            meta[3] = countMap;
+                            meta[4] = testAccuracy;
+                            resultMetaArray.add(meta);
+                            ResultMeta resultMeta = new ResultMeta();
+                            resultMeta.setMlName(mldao.getName());
+                            resultMeta.setModelName(model.getName());
+                            resultMeta.setReturnSize(model.getReturnSize());
+                            resultMeta.setLearnMap(countMap);
+                            resultMeta.setTestAccuracy(testAccuracy);
+                            getResultMetas().add(resultMeta);
+                    }
                     }
             } catch (Exception e) {
                 log.error("Exception", e);
@@ -396,7 +422,8 @@ public class MLIndicator extends Aggregator {
            // List<MacdSubType> subTypes = wantedSubTypes();
             //for (MacdSubType subType : subTypes) {
                 //Map<MLClassifyModel, Map<String, Double[]>> mapResult1 = new HashMap<>();
-                for (MLClassifyDao mldao : mldaos) {
+            int testCount = 0;   
+            for (MLClassifyDao mldao : mldaos) {
                     // map from posnegcom to map<id, result>
                     Map<String, Map<String, Double[]>> mapResult2 = new HashMap<>();
                     for (MLClassifyModel model : mldao.getModels()) {
@@ -416,12 +443,20 @@ public class MLIndicator extends Aggregator {
                                     }
                             Map<String, Double[]> classifyResult = mldao.classify(this, map, model, arrayLength, key, MYTITLE, 2, labelMapShort, mapTime);
                             mapResult.put(model, classifyResult);
-                            Map<Double, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> e[0], Collectors.counting()));
+                            Map<String, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
                             String counts = "classified ";
-                            for (Double label : countMap.keySet()) {
-                                counts += labelMapShort.get(label) + " : " + countMap.get(label) + " ";
+                            for (String label : countMap.keySet()) {
+                                counts += label + " : " + countMap.get(label) + " ";
                             }
-                            addEventRow(counts, "", "");                 
+                            addEventRow(counts, "", "");  
+                            //Object[] meta = new Object[3];
+                            //meta[0] = mldao.getName();
+                            //meta[1] = model.getEngineName();
+                            Object[] meta = resultMetaArray.get(testCount++);
+                            meta[5] = countMap;
+                            ResultMeta resultMeta = getResultMetas().get(testCount - 1);
+                            resultMeta.setClassifyMap(countMap);
+                            //resultMeta.add(meta);
                         //mapResult1.put(model, mapResult2);
                            // mapResult.put("0", mapResult2);
                     }
@@ -460,7 +495,25 @@ public class MLIndicator extends Aggregator {
                                 //Map<String, Double[]> mapResult3 = mapResult2.get(mapType);
                                 //String mapName = subType.getType() + mapType;
                                 //System.out.println("fields " + fields.length + " " + retindex);
-                                retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
+                            List<Integer> typeList = getTypeList();
+                            Map<Integer, String> mapTypes = getMapTypes();
+                            for (int mapTypeInt : typeList) {
+                                String mapType = mapTypes.get(mapTypeInt);
+                                Map<String, Double[]> resultMap1 = mapResult2.get(mapType);
+                                Double[] aType = null;
+                                if (resultMap1 != null) {
+                                    aType = resultMap1.get(id);
+                                } else {
+                                    System.out.println("map null " + mapType);
+                                }
+                                fields[retindex++] = aType != null ? labelMapShort2.get(aType[0]) : null;
+                                if (model.getReturnSize() > 1) {
+                                fields[retindex++] = aType != null ? aType[1] : null;
+                                } else {
+                                    int jj =0;
+                                }
+             retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
+                              }
                             //}
                         }   
                     }
@@ -492,6 +545,9 @@ public class MLIndicator extends Aggregator {
                         counts += labelMapShort.get(label) + " : " + countMap.get(label) + " ";
                     }
                 addEventRow(counts, "", "");
+                //Object[] meta = new Object[1];
+                //meta[0] = countMap;
+                //resultMeta.add(meta);
                 //}
             //}
         }
@@ -791,7 +847,7 @@ public class MLIndicator extends Aggregator {
 
     @Override
     public boolean isEnabled() {
-        return conf.isMACDEnabled();
+        return conf.wantAggregatorsIndicatorML();
     }
 
     @Override
@@ -833,16 +889,7 @@ public class MLIndicator extends Aggregator {
         if (conf.isMACDDeltaEnabled()) {
             objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
         }
-        // TODO make OO of this
-        //List<MacdSubType> subTypes = wantedSubTypes();
-        //for (MacdSubType subType : subTypes) {
-            for (MLClassifyDao mldao : mldaos) {
-                //for (int mapTypeInt : getMapTypeList()) {
-                    //String mapType = mapTypes.get(mapTypeInt);
-                    //String mapName = subType.getType() + mapType;
-                    retindex = mldao.addTitles(objs, retindex, this, title, key, MYTITLE);
-                //}
-            }
+        retindex = getTitles(retindex, objs);
        // }
         //emptyField = new Double[size];
         log.info("fieldsizet " + retindex);
@@ -883,18 +930,56 @@ public class MLIndicator extends Aggregator {
         Object[] objs = new Object[fieldSize];
        // List<MacdSubType> subTypes = wantedSubTypes();
        // for (MacdSubType subType : subTypes) {
-            for (MLClassifyDao mldao : mldaos) {
-                //for (int mapTypeInt : getMapTypeList()) {
-                //String mapType = mapTypes.get(mapTypeInt);
-                //String mapName = subType.getType() + mapType;
-                retindex = mldao.addTitles(objs, retindex, this, title, key, "");
-                //}
-            }
+            retindex = getTitles(retindex, objs);
        // }
         System.out.println("retindex " + retindex);
         headrow.addarr(objs);
     }
+
+    private int getTitles2(int retindex, Object[] objs) {
+        for (MLClassifyDao mldao : mldaos) {
+            retindex = mldao.addTitles(objs, retindex, this, title, key, MYTITLE);
+        }
+        return retindex;
+    }
     
+    private int getTitles(int retindex, Object[] objs) {
+        // TODO make OO of this
+        //List<MacdSubType> subTypes = wantedSubTypes();
+        //for (MacdSubType subType : subTypes) {
+            for (MLClassifyDao mldao : mldaos) {
+                for (MLClassifyModel model : mldao.getModels()) {
+                    //for (int mapTypeInt : getMapTypeList()) {
+                    //String mapType = mapTypes.get(mapTypeInt);
+                    //String mapName = subType.getType() + mapType;
+                    List<Integer> typeList = getTypeList();
+                    Map<Integer, String> mapTypes = getMapTypes();
+                    for (int mapTypeInt : typeList) {
+                        String mapType = mapTypes.get(mapTypeInt);
+                        String val = "";
+                        //String lr = "" + DbSpark.eval("LogisticRegression ", title, "common");
+                        String lr = "";
+                        // TODO workaround
+                        try {
+                            val = "" + MLClassifyModel.roundme((Double) probabilityMap.get(mldao.getName()));
+                            //val = "" + MLClassifyModel.roundme(mldao.eval(model . getId(), key, subType + mapType));
+                        } catch (Exception e) {
+                            log.error("Exception fix later, refactor", e);
+                        }
+                        objs[retindex++] = title + Constants.WEBBR +  model.getName() + mapType + " " + val;
+                        if (model.getReturnSize() > 1) {
+                        objs[retindex++] = title + Constants.WEBBR +  model.getName() + mapType + " prob ";
+                        }
+                        //retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
+                    }
+                }
+                //System.out.println("sizei "+retindex);
+                //}
+           // }
+        }
+        return retindex;
+    }
+
     @Override
     public String getName() {
         return PipelineConstants.MLINDICATOR;

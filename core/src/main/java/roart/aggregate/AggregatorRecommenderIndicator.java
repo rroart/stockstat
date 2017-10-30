@@ -53,7 +53,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         usedRecommenders = Recommend.getUsedRecommenders(conf);
         Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
         Map<String, Indicator> indicatorMap = new HashMap<>();
-        int category = cat.getPeriod();
+        this.category = cat.getPeriod();
+        this.title = cat.getTitle();
         Set<String> ids = new HashSet<>();
         ids.addAll(list0.keySet());
         Map<String, Indicator> newIndicatorMap = new HashMap<>();
@@ -296,6 +297,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     @Override
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.CATEGORY, category);
+        map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);
         return map;
     }

@@ -10,6 +10,7 @@ public class EurekaConstants {
 	public static final String GETCONTENTGRAPH2 = "getcontentgraph2";
 	public static final String GETMARKETS = "getmarkets";
 	public static final String GETSTOCKS = "getstocks";
+    public static final String GETDATES = "getdates";
     public static final String SETCONFIG = "setconfig";
     public static final String GETTESTRECOMMENDER = "gettestrecommender";
 }
