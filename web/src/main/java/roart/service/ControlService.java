@@ -23,8 +23,8 @@ public class ControlService {
     public MyConfig conf;
     
     public ControlService() {
-    	conf = MyConfig.instance();
-    	//getConfig();
+    	//conf = MyXMLConfig.configInstance();
+    	getConfig();
     }
   
     public void getConfig() {
