@@ -358,6 +358,7 @@ public class MLMACD extends Aggregator {
             for (String id : listMap.keySet()) {
                 //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
                 Double[][] list = listMap.get(id);
+                Double[] origMain = Arrays.copyOf(list[0], list[0].length);
                 list[0] = ArraysUtil.getPercentizedPriceIndex(list[0], key);
                 Object[] objs = objectMap.get(id);
                 double[] macdarr = (double[]) objs[0];
@@ -366,6 +367,7 @@ public class MLMACD extends Aggregator {
                 MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
                 //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);
                 Double[] trunclist = ArraysUtil.getSubExclusive(list[0], begOfArray.value, begOfArray.value + endOfArray.value);
+                Double[] trunclistOrig = ArraysUtil.getSubExclusive(origMain, begOfArray.value, begOfArray.value + endOfArray.value);
                 //System.out.println("trunc " + list.length + " " + trunclist.length);
                 int trunclistsize = trunclist.length; //endOfArray.value;
                 if (endOfArray.value == 0) {
@@ -374,7 +376,7 @@ public class MLMACD extends Aggregator {
                 List<MacdSubType> subTypes = wantedSubTypes();
                 for (MacdSubType subType : subTypes) {
                     double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
-                    getMlMappings(subType.getName(), subType.getType(), labelMapShort, mapIdMap, id, aMacdArray, endOfArray, trunclist);
+                    getMlMappings(subType.getName(), subType.getType(), labelMapShort, mapIdMap, id, aMacdArray, endOfArray, trunclist, trunclistOrig);
                 }
             }
 
@@ -566,7 +568,7 @@ public class MLMACD extends Aggregator {
 
     private void getMlMappings(String name, String subType, Map<Double, String> labelMapShort, Map<String, Map<String, double[]>> mapIdMap,
             String id, double[] array, MInteger endOfArray,
-            Double[] valueList) {
+            Double[] valueList, Double[] valueListOrig) {
         Map<String, double[]> offsetMap = mapGetter(mapIdMap, subType);
         Map<String, double[]> commonMap = mapGetter(mapIdMap, subType + CMNTYPESTR);
         Map<String, double[]> posMap = mapGetter(mapIdMap, subType + POSTYPESTR);
@@ -594,6 +596,7 @@ public class MLMACD extends Aggregator {
             }
             double[] doubleArray = new double[] { endOfArray.value - end };
             offsetMap.put(id, doubleArray);
+            System.out.println("t " + subType + " " + id + " " + valueListOrig[end]);
             double[] truncArray = ArraysUtil.getSub(array, start, end);
             commonMap.put(id, truncArray);
             if (!newNeg.isEmpty()) {

@@ -336,7 +336,7 @@ public class ServiceUtil {
             // TODO add more offset
             // TODO verify dates and offsets
             calculateMLMACD(market, daysafterzero, baseDate, futureDate, categoryTitle, resultMap, resultMetaArray,
-                    categoryValueMap, resultMeta);
+                    categoryValueMap, resultMeta, offset);
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);
@@ -344,7 +344,7 @@ public class ServiceUtil {
     }
     private static void calculateMLMACD(String market, int daysafterzero, Date baseDate, Date futureDate,
             String categoryTitle, Map<String, List<Object>> resultMap, List<List> resultMetaArray,
-            Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta) throws Exception {
+            Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, int offset) throws Exception {
         int resultIndex = 0;
         int count = 0;
         for (List meta : resultMetaArray) {
@@ -394,14 +394,15 @@ public class ServiceUtil {
                     log.error("The offset should not be null for " + key);
                     continue;
                 }
-                int offset = (int) Math.round(off.get(0));
-                Double valFuture = mainList.get(mainList.size() - 1 - offset);
-                Double valNow = mainList.get(mainList.size() - 1 - daysafterzero - offset);
+                int offsetZero = (int) Math.round(off.get(0));
+                Double valFuture = mainList.get(mainList.size() - 1 - offset - offsetZero);
+                Double valNow = mainList.get(mainList.size() - 1 - daysafterzero - offset - offsetZero);
                 Double tfpnProb = null;
                 if (returnSize > 1) {
                     tfpnProb = (Double) list.get(resultIndex + 1);
                 }
                 if (valFuture != null && valNow != null) {
+                    System.out.println("vals " + key + " " + valNow + " " + valFuture);
                     total++;
                     if (tfpn.equals(TP)) {
                         tpSize++;
