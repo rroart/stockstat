@@ -58,32 +58,32 @@ public class MemoryItem {
         if (threshold != null) {
             ret += "Threshold " + threshold + "\n";
         }
-        ret += "Confidence " + confidence + " (positives/size : " + positives + "/" + size + ")\n";
+        ret += "Confidence " + nullToEmpty(confidence) + " (positives/size : " + positives + "/" + size + ")\n";
         if (learnConfidence != null) {
-            ret += "Learning confidence " + learnConfidence + "\n";
+            ret += "Learning confidence " + nullToEmpty(learnConfidence) + "\n";
         }
         if (tpSize != null) {
             ret += "TP " + tp + " / " + tpSize + " " + nullToEmpty(tpConf) + "\n";
             if (tpProb != null) {
-                ret += "Prob " + tpProb + " / " + tpSize + " " + tpProbConf + "\n";
+                ret += "Prob " + tpProb + " / " + tpSize + " " + nullToEmpty(tpProbConf) + "\n";
             }
         }
         if (tnSize != null) {
             ret += "TN " + tn + " / " + tnSize + " " + nullToEmpty(tnConf) + "\n";
             if (tnProb != null) {
-                ret += "Prob " + tnProb + " / " + tnSize + " " + tnProbConf + "\n";
+                ret += "Prob " + tnProb + " / " + tnSize + " " + nullToEmpty(tnProbConf) + "\n";
             }
         }
         if (fpSize != null) {
             ret += "FP " + fp + " / " + fpSize + " " + nullToEmpty(fpConf) + "\n";
             if (fpProb != null) {
-                ret += "Prob " + fpProb + " / " + fpSize + " " + fpProbConf + "\n";
+                ret += "Prob " + fpProb + " / " + fpSize + " " + nullToEmpty(fpProbConf) + "\n";
             }
         }
         if (fnSize != null) {
             ret += "FN " + fn + " / " + fnSize + " " + nullToEmpty(fnConf) + "\n";
             if (fnProb != null) {
-                ret += "Prob " + fnProb + " / " + fnSize + " " + fnProbConf + "\n";
+                ret += "Prob " + fnProb + " / " + fnSize + " " + nullToEmpty(fnProbConf) + "\n";
             }
         }
         return ret;

@@ -402,7 +402,7 @@ public class ServiceUtil {
                     tfpnProb = (Double) list.get(resultIndex + 1);
                 }
                 if (valFuture != null && valNow != null) {
-                    System.out.println("vals " + key + " " + valNow + " " + valFuture);
+                    //System.out.println("vals " + key + " " + valNow + " " + valFuture);
                     total++;
                     if (tfpn.equals(TP)) {
                         tpSize++;
@@ -461,10 +461,10 @@ public class ServiceUtil {
                 memory.setFpProb(goodFPprob);
                 memory.setTnProb(goodTNprob);
                 memory.setFnProb(goodFNprob);      
-                Double goodTPprobConf = goodTPprob / goodTP;
-                Double goodFPprobConf = goodFPprob / goodFP;
-                Double goodTNprobConf = goodTNprob / goodTN;
-                Double goodFNprobConf = goodFNprob / goodFN;
+                Double goodTPprobConf = goodTP != 0 ? goodTPprob / goodTP : null;
+                Double goodFPprobConf = goodFP != 0 ? goodFPprob / goodFP : null;
+                Double goodTNprobConf = goodTN != 0 ? goodTNprob / goodTN : null;
+                Double goodFNprobConf = goodFN != 0 ? goodFNprob / goodFN : null;
                 memory.setTpProbConf(goodTPprobConf);
                 memory.setFpProbConf(goodFPprobConf);
                 memory.setTnProbConf(goodTNprobConf);
@@ -498,12 +498,12 @@ public class ServiceUtil {
             Integer totalClass = tpClassOrig + tnClassOrig + fpClassOrig + fnClassOrig;
             Integer totalSize = tpSizeOrig + tnSizeOrig + fpSizeOrig + fnSizeOrig;
             Double learnConfidence = 0.0;
-            learnConfidence = (double) (
+            learnConfidence = keys != 0 && totalClass != 0 && totalSize != 0 ? (double) (
                     ( doTP ? Math.abs((double) tpClassOrig / totalClass - (double) tpSizeOrig / totalSize) : 0) +
                     ( doFP ? Math.abs((double) fpClassOrig / totalClass - (double) fpSizeOrig / totalSize) : 0) +
                     ( doTN ? Math.abs((double) tnClassOrig / totalClass - (double) tnSizeOrig / totalSize) : 0) +
                     ( doFN ? Math.abs((double) fnClassOrig / totalClass - (double) fnSizeOrig / totalSize) : 0)
-                    ) / keys;
+                    ) / keys : null;
             String info = null; 
             if (tpSizeOrig != null) {
                 info = "Classified / learned: ";
@@ -526,7 +526,7 @@ public class ServiceUtil {
             memory.setFpConf(fpConf);
             memory.setFnConf(fnConf);
             memory.setSize(total);
-            Double conf = ((double) goodTP + goodTN + goodFP + goodFN) / total;
+            Double conf = total != 0 ? ((double) goodTP + goodTN + goodFP + goodFN) / total : null;
             memory.setPositives(goodTP + goodTN + goodFP + goodFN);
             memory.setConfidence(conf);
             memory.setLearnConfidence(learnConfidence);
