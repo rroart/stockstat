@@ -264,6 +264,7 @@ public class ServiceUtil {
         incMemory.setFuturedays(futuredays);
         incMemory.setFuturedate(futureDate);
         incMemory.setComponent(ConfigConstants.PREDICTORS);
+        incMemory.setSubcomponent("inc");
         incMemory.setCategory(categoryTitle);
         incMemory.setPositives(goodInc);
         incMemory.setSize(total);
@@ -275,6 +276,7 @@ public class ServiceUtil {
         decMemory.setFuturedays(futuredays);
         decMemory.setFuturedate(futureDate);
         decMemory.setComponent(ConfigConstants.PREDICTORS);
+        decMemory.setSubcomponent("dec");
         decMemory.setCategory(categoryTitle);
         decMemory.setPositives(goodDec);
         decMemory.setSize(total);
