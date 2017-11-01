@@ -125,6 +125,9 @@ public class ServiceUtil {
                     change = valFuture / valNow;
                 }
             }
+            if (change == null) {
+                continue;
+            }
             List<Double> vals = recommendBuySell.get(key);
             if (vals == null) {
                 continue;
