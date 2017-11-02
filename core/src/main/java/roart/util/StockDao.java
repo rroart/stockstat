@@ -254,7 +254,10 @@ public class StockDao {
         List<Date> retList = new ArrayList<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         for (int i = datedstocklists.length - 1; i >= 0; i--) {
-            retList.add(datedstocklists[i].get(0).getDate());
+            List<StockItem> list = datedstocklists[i];
+            if (!list.isEmpty()) {
+                retList.add(list.get(0).getDate());
+            }
         }
         return retList;
     }
