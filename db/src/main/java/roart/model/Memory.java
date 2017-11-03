@@ -327,6 +327,7 @@ public class Memory implements Serializable {
     @Transient
     public void save() throws Exception {
         HibernateUtil.currentSession().save(this);
+        HibernateUtil.commit();
     }
 
 }
