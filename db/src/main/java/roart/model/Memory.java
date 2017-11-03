@@ -29,6 +29,8 @@ public class Memory implements Serializable {
     @Column
     private Date date;
     @Column
+    private Integer usedsec;
+    @Column
     private String market;
     @Column
     private Double testaccuracy;
@@ -115,6 +117,12 @@ public class Memory implements Serializable {
     }
     public void setDate(Date date) {
         this.date = date;
+    }
+    public Integer getUsedsec() {
+        return usedsec;
+    }
+    public void setUsedsec(Integer usedsec) {
+        this.usedsec = usedsec;
     }
     public String getMarket() {
         return market;

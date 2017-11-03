@@ -1,11 +1,14 @@
 package roart.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MemoryItem {
     //private Long id;
     private Date record;
     private Date date;
+    private Integer usedsec;
     private String market;
     private Double testaccuracy;
     private Double confidence;
@@ -45,6 +48,9 @@ public class MemoryItem {
     @Override
     public String toString() {
         String ret = "Record " + record + "\n";
+        if (usedsec != null) {
+            ret += "Used time: " + usedsec + "seconds.\n";
+        }
         ret += component + " : " + category + " : " + date + " futuredays " + futuredays + " " + futuredate + "\n";
         if (subcomponent != null) {
             ret += subcomponent + "\n";
@@ -111,6 +117,12 @@ public class MemoryItem {
     }
     public void setDate(Date date) {
         this.date = date;
+    }
+    public Integer getUsedsec() {
+        return usedsec;
+    }
+    public void setUsedsec(Integer usedsec) {
+        this.usedsec = usedsec;
     }
     public String getMarket() {
         return market;
@@ -346,6 +358,68 @@ public class MemoryItem {
         memory.setTpProb(getTpProb());
         memory.setTpProbConf(getTpProbConf());
         memory.setTpSize(getTpSize());
+        memory.setUsedsec(getUsedsec());
         memory.save();
     }
+    
+    public static List<MemoryItem> getAll() throws Exception {
+        List<Memory> memories = Memory.getAll();
+        List<MemoryItem> memoryItems = new ArrayList<>();
+        for (Memory memory : memories) {
+            MemoryItem memoryItem = getMemoryItem(memory);
+            memoryItems.add(memoryItem);
+        }
+        return memoryItems;
+    }
+
+   public static List<MemoryItem> getAll(String market) throws Exception {
+        List<Memory> memories = Memory.getAll(market);
+        List<MemoryItem> memoryItems = new ArrayList<>();
+        for (Memory memory : memories) {
+            MemoryItem memoryItem = getMemoryItem(memory);
+            memoryItems.add(memoryItem);
+        }
+        return memoryItems;
+    }
+
+    private static MemoryItem getMemoryItem(Memory memory) {
+        MemoryItem memoryItem = new MemoryItem();
+        memoryItem.setCategory(memory.getCategory());
+        memoryItem.setComponent(memory.getComponent());
+        memoryItem.setConfidence(memory.getConfidence());
+        memoryItem.setDate(memory.getDate());
+        memoryItem.setFn(memory.getFn());
+        memoryItem.setFnConf(memory.getFnConf());
+        memoryItem.setFnProb(memory.getFnProb());
+        memoryItem.setFnProbConf(memory.getFnProbConf());
+        memoryItem.setFnSize(memory.getFnSize());
+        memoryItem.setFp(memory.getFp());
+        memoryItem.setFpConf(memory.getFpConf());
+        memoryItem.setFpProb(memory.getFpProb());
+        memoryItem.setFpProbConf(memory.getFpProbConf());
+        memoryItem.setFpSize(memory.getFpSize());
+        memoryItem.setFuturedate(memory.getFuturedate());
+        memoryItem.setFuturedays(memory.getFuturedays());
+        memoryItem.setInfo(memory.getInfo());
+        memoryItem.setLearnConfidence(memory.getLearnConfidence());
+        memoryItem.setMarket(memory.getMarket());
+        memoryItem.setPositives(memory.getPositives());
+        memoryItem.setSize(memory.getSize());
+        memoryItem.setSubcomponent(memory.getSubcomponent());
+        memoryItem.setTestaccuracy(memory.getTestaccuracy());
+        memoryItem.setThreshold(memory.getThreshold());
+        memoryItem.setTn(memory.getTn());
+        memoryItem.setTnConf(memory.getTnConf());
+        memoryItem.setTnProb(memory.getTnProb());
+        memoryItem.setTnProbConf(memory.getTnProbConf());
+        memoryItem.setTnSize(memory.getTnSize());
+        memoryItem.setTp(memory.getTp());
+        memoryItem.setTpConf(memory.getTpConf());
+        memoryItem.setTpProb(memory.getTpProb());
+        memoryItem.setTpProbConf(memory.getTpProbConf());
+        memoryItem.setTpSize(memory.getTpSize());
+        memoryItem.setUsedsec(memory.getUsedsec());
+        return memoryItem;
+    }
+
 }
