@@ -61,10 +61,16 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> maps = srv.getContent();
         Map recommendMaps = maps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         //System.out.println("m3 " + recommendMaps.keySet());
+        if (recommendMaps == null) {
+            return;
+        }
         Integer category = (Integer) recommendMaps.get(PipelineConstants.CATEGORY);
         String categoryTitle = (String) recommendMaps.get(PipelineConstants.CATEGORYTITLE);
         Map<String, Map<String, List<Double>>> resultMap = (Map<String, Map<String, List<Double>>>) recommendMaps.get(PipelineConstants.RESULT);
         //System.out.println("m4 " + resultMap.keySet());
+        if (resultMap == null) {
+            return;
+        }
         Map<String, List<Double>> recommendBuySell = resultMap.get("complex");
         //System.out.println("m5 " + recommendBuySell.keySet());
         Set<Double> buyset = new HashSet<>();
@@ -206,12 +212,19 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> result0 = srv.getContent();
 
         Map<String, Map<String, Object>> maps = result0;
+        if (maps == null) {
+            return;
+        }
         //System.out.println("mapkey " + maps.keySet());
         //System.out.println(maps.get("-1").keySet());
         //System.out.println(maps.get("-2").keySet());
         //System.out.println(maps.get("Index").keySet());
         String wantedCat = getWantedCategory(maps, PipelineConstants.LSTM);
+        if (wantedCat == null) {
+            return;
+        }
         Map map = (Map) maps.get(wantedCat).get(PipelineConstants.LSTM);
+        
         //System.out.println("lstm " + map.keySet());
         Integer category = (Integer) map.get(PipelineConstants.CATEGORY);
         String categoryTitle = (String) map.get(PipelineConstants.CATEGORYTITLE);
@@ -323,6 +336,9 @@ public class ServiceUtil {
         Integer category = (Integer) mlMACDMaps.get(PipelineConstants.CATEGORY);
         String categoryTitle = (String) mlMACDMaps.get(PipelineConstants.CATEGORYTITLE);
         Map<String, List<Object>> resultMap = (Map<String, List<Object>>) mlMACDMaps.get(PipelineConstants.RESULT);
+        if (resultMap == null) {
+            return;
+        }
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) mlMACDMaps.get(PipelineConstants.PROBABILITY);
         List<List> resultMetaArray = (List<List>) mlMACDMaps.get(PipelineConstants.RESULTMETAARRAY);
         //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
@@ -587,6 +603,9 @@ public class ServiceUtil {
         List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
         //System.out.println("m4 " + resultMap.keySet());
         //System.out.println("m4 " + probabilityMap.keySet());
+        if (resultMap == null) {
+            return;
+        }
         int size = resultMap.values().iterator().next().size();
         Map<String, Object>[] aMap = new HashMap[size];
         for (int i = 0; i < size; i++) {

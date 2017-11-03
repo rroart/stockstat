@@ -444,6 +444,9 @@ public class IndicatorUtils {
         if (StockUtil.hasStockValue(stocks, Constants.INDEXVALUECOLUMN)) {
             return Constants.INDEXVALUECOLUMN;
         }
+        if (periodData == null) {
+            return null;
+        }
         Set<Pair<String, Integer>> pairs = periodData.pairs;
         for (Pair pair : pairs) {
             int cat = (int) pair.getSecond();

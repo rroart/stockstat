@@ -843,8 +843,10 @@ public class ControlService {
             //Category[] categories = getCategoriesSmall(conf, stocks,
             //       periodText, marketdatamap, periodDataMap, null);
 
-            int cat = IndicatorUtils.getWantedCategory(stocks, periodDataMap.get("cy"));
-            
+            Integer cat = IndicatorUtils.getWantedCategory(stocks, periodDataMap.get("cy"));
+            if (cat == null) {
+                return null;
+            }
             DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, null, cat);
             Pipeline[] datareaders = new Pipeline[1];
             datareaders[0] = dataReader;

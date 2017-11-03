@@ -206,6 +206,9 @@ public class MLMACD extends Aggregator {
     private void calculateMomentums(MyMyConfig conf, Map<String, PeriodData> periodDataMap,
             int category2, Category[] categories) throws Exception {
         Category cat = IndicatorUtils.getWantedCategory(categories);
+        if (cat == null) {
+            return;
+        }
         category = cat.getPeriod();
         title = cat.getTitle();
         key = title;
@@ -960,7 +963,10 @@ public class MLMACD extends Aggregator {
                                 //System.out.println("retin2 " + retindex);
             }
         }*/
-        Object[] fields = resultMap.get(stock.getId());
+        Object[] fields = objs; 
+        if (resultMap != null) {
+            fields = resultMap.get(stock.getId());
+        }
 
         //log.info("fieldsizet " + retindex);
         row.addarr(fields);

@@ -215,6 +215,9 @@ public class MLIndicator extends Aggregator {
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category2, Category[] categories, Pipeline[] datareaders) throws Exception {
         Category cat = IndicatorUtils.getWantedCategory(categories);
+        if (cat == null) {
+            return;
+        }
         category = cat.getPeriod();
         title = cat.getTitle();
         key = title;
@@ -918,7 +921,10 @@ public class MLIndicator extends Aggregator {
 //            for (MLClassifyDao mldao : mldaos) {
   //              retindex = mldao.addTitles(objs, retindex, this, title, key, "grr");
     //        }
-        Object[] fields = resultMap.get(stock.getId());
+        Object[] fields = objs;
+        if (resultMap != null) {
+            fields = resultMap.get(stock.getId());
+        }
         //}
         //log.info("fieldsizet " + retindex);
         row.addarr(fields);        

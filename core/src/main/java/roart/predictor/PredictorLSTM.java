@@ -46,7 +46,7 @@ public class PredictorLSTM extends Predictor {
     String key;
     Map<String, Double[][]> listMap;
     Map<String, double[][]> truncListMap;
-    Object[] emptyField;
+    Object[] emptyField = new Object[1];
     Map<MLPredictModel, Long> mapTime = new HashMap<>();
 
     List<ResultItemTableRow> mlTimesTableRows = null;
@@ -374,7 +374,10 @@ public class PredictorLSTM extends Predictor {
             log.info("key " + key + " : " + periodDataMap.keySet());
         }
         //double momentum = resultMap.get(id);
-        Object[] result = resultMap.get(id);
+        Object[] result = null;
+        if (resultMap != null) {
+            result = resultMap.get(id);
+        }
         if (result == null) {
             /*
             Double[] i = resultMap.values().iterator().next();
@@ -407,6 +410,7 @@ public class PredictorLSTM extends Predictor {
     }
 
     private int fieldSize() {
+        emptyField = new Object[1];
         if (true) return 1;
         int size = 0;
         List<PredSubType> subTypes = wantedSubTypes();

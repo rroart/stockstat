@@ -46,6 +46,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders) throws Exception {
         super(conf, index, 0);
        Category cat = IndicatorUtils.getWantedCategory(categories);
+       if (cat == null) {
+           return;
+       }
         Map<String, Indicator> usedIndicatorMap = cat.getIndicatorMap();
         Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
         Map<String, Double[]> list0 = (Map<String, Double[]>) localResultMap.get(localResultMap.keySet().iterator().next()).get(PipelineConstants.LIST);
@@ -262,6 +265,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     @Override
     public Object[] getResultItem(StockItem stock) {
         Double[] arrayResult = new Double[0];
+        if (usedRecommenders == null) {
+            return arrayResult;
+        }
         for (String recommender : usedRecommenders.keySet()) {
             Map<String, Double[]> indicatorResultMap = resultMap.get(recommender);
             Double[] aResult = indicatorResultMap.get(stock.getId());
@@ -277,6 +283,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
 
     @Override
     public void addResultItemTitle(ResultItemTableRow headrow) {
+        if (usedRecommenders == null) {
+            return;
+        }
         for (String recommender : usedRecommenders.keySet()) {
         headrow.add("Buy" + Constants.WEBBR  + recommender);
         headrow.add("Sell" + Constants.WEBBR  + recommender);
