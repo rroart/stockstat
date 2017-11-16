@@ -157,6 +157,7 @@ public class ServiceUtil {
         }      
         MemoryItem buyMemory = new MemoryItem();
         buyMemory.setMarket(market);
+        buyMemory.setRecord(new Date());
         buyMemory.setDate(baseDate);
         buyMemory.setUsedsec(usedsec);
         buyMemory.setFuturedays(futuredays);
@@ -170,6 +171,7 @@ public class ServiceUtil {
         buyMemory.save();
         MemoryItem sellMemory = new MemoryItem();
         sellMemory.setMarket(market);
+        sellMemory.setRecord(new Date());
         sellMemory.setDate(baseDate);
         sellMemory.setUsedsec(usedsec);
         sellMemory.setFuturedays(futuredays);
@@ -279,6 +281,7 @@ public class ServiceUtil {
         //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
         MemoryItem incMemory = new MemoryItem();
         incMemory.setMarket(market);
+        incMemory.setRecord(new Date());
         incMemory.setDate(baseDate);
         incMemory.setUsedsec(usedsec);
         incMemory.setFuturedays(futuredays);
@@ -292,6 +295,7 @@ public class ServiceUtil {
         incMemory.save();
         MemoryItem decMemory = new MemoryItem();
         decMemory.setMarket(market);
+        decMemory.setRecord(new Date());
         decMemory.setDate(baseDate);
         decMemory.setUsedsec(usedsec);
         decMemory.setFuturedays(futuredays);
@@ -333,6 +337,7 @@ public class ServiceUtil {
         srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
         srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
+        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);
         Map<String, Map<String, Object>> result0 = srv.getContent();
 
         Map<String, Map<String, Object>> maps = result0;
@@ -475,6 +480,7 @@ public class ServiceUtil {
             }
             //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
             memory.setMarket(market);
+            memory.setRecord(new Date());
             memory.setDate(baseDate);
             memory.setUsedsec(usedsec);
             memory.setFuturedays(daysafterzero);
@@ -562,6 +568,7 @@ public class ServiceUtil {
             memory.setPositives(goodTP + goodTN + goodFP + goodFN);
             memory.setConfidence(conf);
             memory.setLearnConfidence(learnConfidence);
+            memory.setPosition(count);
             memory.save();
             System.out.println(memory);
             resultIndex += returnSize;
@@ -730,6 +737,7 @@ public class ServiceUtil {
             }
             //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
             memory.setMarket(market);
+            memory.setRecord(new Date());
             memory.setDate(baseDate);
             memory.setUsedsec(usedsec);
             memory.setFuturedays(futuredays);
@@ -801,6 +809,7 @@ public class ServiceUtil {
             memory.setPositives(goodTP + goodTN);
             memory.setConfidence(conf);
             memory.setLearnConfidence(learnConfidence);
+            memory.setPosition(count);
             memory.save();
             System.out.println(memory);
             resultIndex += returnSize;
