@@ -96,9 +96,10 @@ public class Memory implements Serializable {
     private Double fnProb;
     @Column
     private Double fnProbConf;
+    @Column
+    private Integer position;
 
     public Memory() {
-        this.record = new Date();
     }
     public Long getId() {
         return id;
@@ -321,6 +322,12 @@ public class Memory implements Serializable {
     }
     public void setFnProbConf(Double fnProbConf) {
         this.fnProbConf = fnProbConf;
+    }
+    public Integer getPosition() {
+        return position;
+    }
+    public void setPosition(Integer position) {
+        this.position = position;
     }
     @Transient
     public static List<Memory> getAll() throws Exception {
