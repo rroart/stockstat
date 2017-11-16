@@ -324,8 +324,8 @@ public class ServiceUtil {
             }
         }
         int daysafterzero = (int) srv.conf.getMACDDaysAfterZero();
-        String baseDateStr = stocks.get(stocks.size() - 1 - 2 * daysafterzero - offset);
-        String futureDateStr = stocks.get(stocks.size() - 1 - daysafterzero - offset);
+        String baseDateStr = stocks.get(stocks.size() - 1 - 1 * daysafterzero - offset);
+        String futureDateStr = stocks.get(stocks.size() - 1 - 0 * daysafterzero - offset);
         //System.out.println("da " + + daysafterzero + " " + baseDateStr);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         Date baseDate = dt.parse(baseDateStr);
