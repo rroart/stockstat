@@ -42,16 +42,20 @@ public class MemoryItem {
     private Double fnConf;
     private Double fnProb;
     private Double fnProbConf;
+    private Integer position;
     public MemoryItem() {
-        this.record = new Date();
     }
     @Override
     public String toString() {
         String ret = "Record " + record + "\n";
+        ret += "Market : " + market + "\n";
         if (usedsec != null) {
-            ret += "Used time: " + usedsec + "seconds.\n";
+            ret += "Used time: " + usedsec + " seconds.\n";
         }
         ret += component + " : " + category + " : " + date + " futuredays " + futuredays + " " + futuredate + "\n";
+        if (position != null) {
+            ret += "Position : " + position + "\n";
+        }
         if (subcomponent != null) {
             ret += subcomponent + "\n";
         }
@@ -322,6 +326,12 @@ public class MemoryItem {
     public void setFnProbConf(Double fnProbConf) {
         this.fnProbConf = fnProbConf;
     }
+    public Integer getPosition() {
+        return position;
+    }
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
     public void save() throws Exception {
         Memory memory = new Memory();
         memory.setCategory(getCategory());
@@ -344,6 +354,8 @@ public class MemoryItem {
         memory.setLearnConfidence(getLearnConfidence());
         memory.setMarket(getMarket());
         memory.setPositives(getPositives());
+        memory.setPosition(getPosition());
+        memory.setRecord(getRecord());
         memory.setSize(getSize());
         memory.setSubcomponent(getSubcomponent());
         memory.setTestaccuracy(getTestaccuracy());
@@ -403,6 +415,8 @@ public class MemoryItem {
         memoryItem.setInfo(memory.getInfo());
         memoryItem.setLearnConfidence(memory.getLearnConfidence());
         memoryItem.setMarket(memory.getMarket());
+        memoryItem.setPosition(memory.getPosition());
+        memoryItem.setRecord(memory.getRecord());
         memoryItem.setPositives(memory.getPositives());
         memoryItem.setSize(memory.getSize());
         memoryItem.setSubcomponent(memory.getSubcomponent());
