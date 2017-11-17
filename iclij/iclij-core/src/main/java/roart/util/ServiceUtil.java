@@ -35,7 +35,7 @@ public class ServiceUtil {
     private static String INC = "Inc";
     private static String DEC = "Dec";
     
-    public static void doRecommender(String market, Integer offset, String aDate) throws Exception {
+    public static void doRecommender(String market, Integer offset, String aDate, boolean doSave) throws Exception {
         long time0 = System.currentTimeMillis();
         ControlService srv = new ControlService();
         srv.getConfig();
@@ -94,7 +94,7 @@ public class ServiceUtil {
         //System.out.println("k2 " + categoryValueMap.keySet());
         int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
         calculateRecommender(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell, buyMedian,
-                sellMedian, result, categoryValueMap, usedsec);
+                sellMedian, result, categoryValueMap, usedsec, doSave);
         try {
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class ServiceUtil {
     }
     private static void calculateRecommender(String market, int futuredays, Date baseDate, Date futureDate,
             String categoryTitle, Map<String, List<Double>> recommendBuySell, double buyMedian, double sellMedian,
-            Map<String, Map<String, Object>> result, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec) throws Exception {
+            Map<String, Map<String, Object>> result, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave) throws Exception {
         Set<Double> changeSet = new HashSet<>();
         for (String key : categoryValueMap.keySet()) {
             List<List<Double>> resultList = categoryValueMap.get(key);
@@ -168,7 +168,9 @@ public class ServiceUtil {
         buyMemory.setPositives(goodBuy);
         buyMemory.setSize(totalBuy);
         buyMemory.setConfidence((double) goodBuy / totalBuy);
-        buyMemory.save();
+        if (doSave) {
+            buyMemory.save();
+        }
         MemoryItem sellMemory = new MemoryItem();
         sellMemory.setMarket(market);
         sellMemory.setRecord(new Date());
@@ -182,14 +184,16 @@ public class ServiceUtil {
         sellMemory.setPositives(goodSell);
         sellMemory.setSize(totalSell);
         sellMemory.setConfidence((double) goodSell / totalSell);
-        sellMemory.save();
+        if (doSave) {
+            sellMemory.save();
+        }
         //System.out.println("testing buy " + goodBuy + " " + totalBuy + " sell " + goodSell + " " + totalSell);
         //System.out.println("k3 " + categoryValueMap.get("VIX"));
         //System.out.println(result.get("Index").keySet());
         System.out.println(buyMemory);
         System.out.println(sellMemory);
     }
-    public static void doPredict(String market, Integer offset, String aDate) throws Exception {
+    public static void doPredict(String market, Integer offset, String aDate, boolean doSave) throws Exception {
         long time0 = System.currentTimeMillis();
         ControlService srv = new ControlService();
         srv.getConfig();
@@ -243,7 +247,7 @@ public class ServiceUtil {
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
         int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-        calculatePredictor(market, futuredays, baseDate, futureDate, categoryTitle, resultMap, categoryValueMap, usedsec);
+        calculatePredictor(market, futuredays, baseDate, futureDate, categoryTitle, resultMap, categoryValueMap, usedsec, doSave);
         try {
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
@@ -252,7 +256,7 @@ public class ServiceUtil {
     }
     private static void calculatePredictor(String market, int futuredays, Date baseDate, Date futureDate,
             String categoryTitle, Map<String, List<Double>> resultMap,
-            Map<String, List<List<Double>>> categoryValueMap, Integer usedsec) throws Exception {
+            Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave) throws Exception {
         long total = 0;
         long goodInc = 0;
         long goodDec = 0;
@@ -292,7 +296,9 @@ public class ServiceUtil {
         incMemory.setPositives(goodInc);
         incMemory.setSize(total);
         incMemory.setConfidence((double) goodInc / total);
-        incMemory.save();
+        if (doSave) {
+            incMemory.save();
+        }
         MemoryItem decMemory = new MemoryItem();
         decMemory.setMarket(market);
         decMemory.setRecord(new Date());
@@ -306,12 +312,14 @@ public class ServiceUtil {
         decMemory.setPositives(goodDec);
         decMemory.setSize(total);
         decMemory.setConfidence((double) goodDec / total);
-        decMemory.save();
+        if (doSave) {
+            decMemory.save();
+        }
         System.out.println(incMemory);
         System.out.println(decMemory);
     }
 
-    public static void doMLMACD(String market, Integer offset, String aDate) throws ParseException {
+    public static void doMLMACD(String market, Integer offset, String aDate, boolean doSave) throws ParseException {
         long time0 = System.currentTimeMillis();
         ControlService srv = new ControlService();
         srv.getConfig();
@@ -372,7 +380,7 @@ public class ServiceUtil {
             // TODO verify dates and offsets
             int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
             calculateMLMACD(market, daysafterzero, baseDate, futureDate, categoryTitle, resultMap, resultMetaArray,
-                    categoryValueMap, resultMeta, offset, usedsec);
+                    categoryValueMap, resultMeta, offset, usedsec, doSave);
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);
@@ -380,7 +388,7 @@ public class ServiceUtil {
     }
     private static void calculateMLMACD(String market, int daysafterzero, Date baseDate, Date futureDate,
             String categoryTitle, Map<String, List<Object>> resultMap, List<List> resultMetaArray,
-            Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, int offset, Integer usedsec) throws Exception {
+            Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, int offset, Integer usedsec, boolean doSave) throws Exception {
         int resultIndex = 0;
         int count = 0;
         for (List meta : resultMetaArray) {
@@ -569,14 +577,16 @@ public class ServiceUtil {
             memory.setConfidence(conf);
             memory.setLearnConfidence(learnConfidence);
             memory.setPosition(count);
-            memory.save();
+            if (doSave) {
+                memory.save();
+            }
             System.out.println(memory);
             resultIndex += returnSize;
             count++;
         }
     }
 
-    public static void doMLIndicator(String market, Integer offset, String aDate) throws ParseException {
+    public static void doMLIndicator(String market, Integer offset, String aDate, boolean doSave) throws ParseException {
         long time0 = System.currentTimeMillis();
         ControlService srv = new ControlService();
         srv.getConfig();
@@ -646,14 +656,14 @@ public class ServiceUtil {
         //System.out.println("k2 " + categoryValueMap.keySet());
         try {
             int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-            calculateMLindicator(market, futuredays, baseDate, futureDate, threshold, resultMap, size, categoryValueMap, resultMeta, categoryTitle, usedsec);
+            calculateMLindicator(market, futuredays, baseDate, futureDate, threshold, resultMap, size, categoryValueMap, resultMeta, categoryTitle, usedsec, doSave);
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);
         }
     }
     private static void calculateMLindicator(String market, int futuredays, Date baseDate, Date futureDate, double threshold,
-            Map<String, List<Object>> resultMap, int size0, Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, String categoryTitle, Integer usedsec) throws Exception {
+            Map<String, List<Object>> resultMap, int size0, Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, String categoryTitle, Integer usedsec, boolean doSave) throws Exception {
         int resultIndex = 0;
         int count = 0;
         for (ResultMeta meta : resultMeta) {
@@ -810,7 +820,9 @@ public class ServiceUtil {
             memory.setConfidence(conf);
             memory.setLearnConfidence(learnConfidence);
             memory.setPosition(count);
-            memory.save();
+            if (doSave) {
+                memory.save();
+            }
             System.out.println(memory);
             resultIndex += returnSize;
             count++;
