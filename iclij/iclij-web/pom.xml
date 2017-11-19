@@ -3,6 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+        <parent>
+          <groupId>roart</groupId>
+          <artifactId>stockstat-iclij</artifactId>
+          <relativePath>../pom.xml</relativePath>
+          <version>0.5-SNAPSHOT</version>
+        </parent>
+
 	<groupId>roart</groupId>
 	<artifactId>iclij-web</artifactId>
 	<packaging>war</packaging>
