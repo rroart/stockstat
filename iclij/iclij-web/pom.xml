@@ -11,10 +11,10 @@
         </parent>
 
 	<groupId>roart</groupId>
-	<artifactId>iclij-web</artifactId>
+	<artifactId>stockstat-iclij-web</artifactId>
 	<packaging>war</packaging>
 	<version>0.1</version>
-	<name>Stockstat IcliJ Web</name>
+	<name>Stock Statistics Iclij Web</name>
 
 	<prerequisites>
 		<maven>3</maven>
@@ -73,6 +73,81 @@
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
 		</dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-model</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-constants</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-config</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-service</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-eureka</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.netflix.eureka</groupId>
+      <artifactId>eureka-client</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>3.2.0.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>3.2.0.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-netflix-core</artifactId>
+      <version>1.0.0.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-commons</artifactId>
+      <version>1.1.7.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-model</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-constants</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-config</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-service</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
 	</dependencies>
 
 	<build>
