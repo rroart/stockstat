@@ -2,14 +2,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>roart</groupId>
-    <artifactId>stockstat-parent</artifactId>
+    <artifactId>stockstat-iclij</artifactId>
     <relativePath>../pom.xml</relativePath>
     <version>0.5-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-iclij-core</artifactId>
   <packaging>jar</packaging>
-  <name>Stockstat IcliJ</name>
+  <name>Stock Statistics Iclij Core</name>
   <build>
     <plugins>
       <plugin>
@@ -140,6 +140,41 @@
       <artifactId>stockstat-db</artifactId>
       <version>0.5-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-eureka</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-model</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-constants</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-config</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-service</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+  <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-configuration2</artifactId>
+    <version>${commons.version}</version>
+  </dependency>
+<dependency>
+    <groupId>commons-beanutils</groupId>
+    <artifactId>commons-beanutils</artifactId>
+    <version>1.9.3</version>
+</dependency>
 <dependency>
    <groupId>net.sf.tweety</groupId>
    <artifactId>beliefdynamics</artifactId>
@@ -156,5 +191,10 @@
     <version>2.7.0</version>
     <scope>compile</scope>
 </dependency>
+  <!--dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-math3</artifactId>
+    <version>${commons.math3.version}</version>
+  </dependency-->
   </dependencies>
 </project>
