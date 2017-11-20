@@ -851,7 +851,7 @@ public class MLMACD extends Aggregator {
 
     @Override
     public boolean isEnabled() {
-        return conf.isMACDEnabled() && conf.wantML();
+        return conf.wantMLMACD();
     }
 
     @Override
