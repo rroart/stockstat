@@ -14,6 +14,7 @@
   <packaging>pom</packaging>
   <name>Stock Statistics IcliJ</name>
 <modules>
+  <module>iclij-common</module>
   <module>iclij-core</module>
   <module>iclij-web</module>
 </modules>
