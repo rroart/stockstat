@@ -154,6 +154,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, Double.class);
+        map.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.class);
     }
 
     public static Map<String, Object> deflt = new HashMap();
@@ -302,9 +303,11 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, 10);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, 1);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, 0);
+        deflt.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);
     }
 
-    private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"useMax\":false}";
+    //private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"useMax\":false}";
+    private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"weight\":31.0,\"useMax\":false}";
 
     public static Map<String, String> text = new HashMap();
 
@@ -452,6 +455,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, "ML indicator days in the future for threshold");
         text.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, "ML indicator days in the future interval");
         text.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, "ML indicator threshold for classifier");
+        text.put(ConfigConstants.AGGREGATORSMLMACD, "MLMACD aggreagator enable");
 
     }
 
