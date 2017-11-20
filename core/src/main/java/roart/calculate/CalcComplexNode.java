@@ -11,11 +11,11 @@ public class CalcComplexNode extends CalcNode {
     boolean useminmaxthreshold;
     boolean usethreshold;
 
-    boolean divideminmaxthreshold;
+    //boolean divideminmaxthreshold;
 
     int weight;
 
-    boolean changeSignWhole;
+    //boolean changeSignWhole;
 
     // not mutatable
 
@@ -64,6 +64,7 @@ public class CalcComplexNode extends CalcNode {
         this.usethreshold = usethreshold;
     }
 
+    /*
     public boolean isDivideminmaxthreshold() {
         return divideminmaxthreshold;
     }
@@ -71,7 +72,8 @@ public class CalcComplexNode extends CalcNode {
     public void setDivideminmaxthreshold(boolean divideminmaxthreshold) {
         this.divideminmaxthreshold = divideminmaxthreshold;
     }
-
+*/
+    
     public int getWeight() {
         return weight;
     }
@@ -80,6 +82,7 @@ public class CalcComplexNode extends CalcNode {
         this.weight = weight;
     }
 
+    /*
     public boolean isChangeSignWhole() {
         return changeSignWhole;
     }
@@ -87,7 +90,8 @@ public class CalcComplexNode extends CalcNode {
     public void setChangeSignWhole(boolean changeSignWhole) {
         this.changeSignWhole = changeSignWhole;
     }
-
+*/
+    
     public boolean isUseMax() {
         return useMax;
     }
@@ -110,15 +114,19 @@ public class CalcComplexNode extends CalcNode {
             mythreshold = minmaxthreshold;
         }
         double myvalue = val - mythreshold;
+        // if usemax...?
+        /*
         if (false && divideminmaxthreshold) {
             myvalue = myvalue / minmaxthreshold;
         }
-        
+        */
         myvalue = myvalue / (maxMutateThresholdRange - minMutateThresholdRange);
         
+        /*
         if (changeSignWhole) {
             myvalue = -myvalue;
         }
+        */
         return myvalue * weight;
     }
 
@@ -127,8 +135,8 @@ public class CalcComplexNode extends CalcNode {
         Random rand = new Random();
         getUseminmaxthreshold(rand);
         getUsethreshold(rand);
-        getDivideminmaxthreshold(rand);
-        getChangeSignWhole(rand);
+        //getDivideminmaxthreshold(rand); // not
+        //getChangeSignWhole(rand); // not
         getWeight(rand);
         getThreshold(rand);
     }
@@ -145,6 +153,7 @@ public class CalcComplexNode extends CalcNode {
         weight = 1 + rand.nextInt(100);
     }
 
+    /*
     private void getChangeSignWhole(Random rand) {
         changeSignWhole = rand.nextBoolean();
     }
@@ -152,6 +161,7 @@ public class CalcComplexNode extends CalcNode {
     private void getDivideminmaxthreshold(Random rand) {
         divideminmaxthreshold = rand.nextBoolean();
     }
+    */
 
     private void getUsethreshold(Random rand) {
         usethreshold = rand.nextBoolean();
@@ -164,7 +174,7 @@ public class CalcComplexNode extends CalcNode {
     @Override
     public void mutate() {
         Random rand = new Random();
-        int task = rand.nextInt(6);
+        int task = rand.nextInt(4);
         switch (task) {
         case 0:
             getUseminmaxthreshold(rand);
@@ -173,17 +183,19 @@ public class CalcComplexNode extends CalcNode {
             getUsethreshold(rand);
             break;
         case 2:
+            getWeight(rand);
+            break;
+        case 3: 
+            getThreshold(rand);
+            break;
+            /*
+        case 2:
             getDivideminmaxthreshold(rand);
             break;
         case 3:
             getChangeSignWhole(rand);
             break;
-        case 4:
-            getWeight(rand);
-            break;
-        case 5: 
-            getThreshold(rand);
-            break;
+            */
         default:
             System.out.println("Too many");
             break;
