@@ -12,7 +12,7 @@
   <artifactId>stockstat-iclij</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Stock Statistics IcliJ</name>
+  <name>Stock Statistics Iclij</name>
 <modules>
   <module>iclij-common</module>
   <module>iclij-core</module>
