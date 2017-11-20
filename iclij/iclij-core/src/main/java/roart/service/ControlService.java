@@ -3,7 +3,6 @@ package roart.service;
 import roart.model.ResultItem;
 import roart.pipeline.PipelineConstants;
 import roart.config.ConfigTreeMap;
-import roart.config.MyConfig;
 import roart.config.MyMyConfig;
 
 import java.util.List;
@@ -39,9 +38,9 @@ public class ControlService {
         for (String key : map.keySet()) {
             Object value = map.get(key);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
-            System.out.println("k " + key + " " + value);
+            //System.out.println("k " + key + " " + value);
             if (value != null) {
-                System.out.println("cls " + value.getClass().getName());
+                //System.out.println("cls " + value.getClass().getName());
             }
         }
         ConfigTreeMap map2 = conf.configTreeMap;
@@ -51,8 +50,8 @@ public class ControlService {
     
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
-        System.out.print(space.substring(0, indent));
-        System.out.println("map2 " + map2.name + " " + map2.enabled);
+        //System.out.print(space.substring(0, indent));
+        //System.out.println("map2 " + map2.name + " " + map2.enabled);
         Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
         for (String key : map3.keySet()) {
         print(map3.get(key), indent + 1);
