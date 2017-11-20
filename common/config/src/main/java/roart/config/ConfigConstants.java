@@ -151,4 +151,5 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATORFUTUREDAYS = "aggregators.indicator.futuredays";
     public static final String AGGREGATORSINDICATORINTERVALDAYS = "aggregators.indicator.intervaldays";
     public static final String AGGREGATORSINDICATORTHRESHOLD = "aggregators.indicator.threshold";
+    public static final String AGGREGATORSMLMACD = "aggregators.mlmacd[@enable]";
 }

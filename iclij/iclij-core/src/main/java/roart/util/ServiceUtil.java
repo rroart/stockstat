@@ -19,18 +19,21 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.config.ConfigConstants;
+import roart.config.IclijXMLConfig;
+import roart.model.IncDecItem;
 import roart.model.MemoryItem;
 import roart.model.ResultMeta;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
+import roart.service.IclijServiceResult;
 
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
 
-    final private static String TP = "TP";
-    final private static String TN = "TN";
-    final private static String FP = "FP";
-    final private static String FN = "FN";
+    private final static String TP = "TP";
+    private final static String TN = "TN";
+    private final static String FP = "FP";
+    private final static String FN = "FN";
 
     private static String INC = "Inc";
     private static String DEC = "Dec";
@@ -916,6 +919,16 @@ public class ServiceUtil {
             }
         }
         return cat;
+    }
+    public static IclijServiceResult getContent() throws Exception {
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        
+        List<IncDecItem> list = IncDecItem.getAll();
+        IclijServiceResult result = new IclijServiceResult();
+        List<List> lists = new ArrayList<>();
+        lists.add(list);
+        result.lists = lists;
+        return result;
     }
 
 }

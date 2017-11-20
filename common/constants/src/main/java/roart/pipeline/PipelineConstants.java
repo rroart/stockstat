@@ -4,6 +4,7 @@ public class PipelineConstants {
     public static final String OBJECT = "object";
     public static final String OBJECTFIXED = "objectfixed";
     public static final String LIST = "list";
+    public static final String NAME = "name";
     public static final String RETLIST = "retlist";
     public static final String DATELIST = "datelist";
     public static final String MAP = "map";

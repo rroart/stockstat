@@ -574,6 +574,12 @@ public class MyMyConfig extends MyConfig {
        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOR);
    }
    
+   public boolean wantMLMACD() {
+       return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACD)
+               && isMACDEnabled() 
+               && wantML();
+   }
+   
    public boolean wantAggregatorsIndicatorMACD() {
        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORMACD)
                && wantAggregatorsIndicatorML();

@@ -22,6 +22,7 @@ import roart.category.CategoryIndex;
 import roart.category.CategoryPeriod;
 import roart.category.CategoryPrice;
 import roart.config.ConfigConstantMaps;
+import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.config.MyXMLConfig;
 import roart.db.DbDao;
@@ -376,6 +377,10 @@ public class ControlService {
         aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
         aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, periodDataMap, CategoryConstants.PRICE, 0, categories);
         aggregates[3] = new MLIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories, datareaders);
+        System.out.println(conf.configValueMap.get(ConfigConstants.MACHINELEARNING));
+        System.out.println(conf.configValueMap.get(ConfigConstants.AGGREGATORSMLMACD));
+        System.out.println(conf.configValueMap.get(ConfigConstants.INDICATORSMACD));
+        System.out.println(conf.configValueMap.get(ConfigConstants.INDICATORS));
         return aggregates;
     }
 

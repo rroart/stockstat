@@ -2,6 +2,7 @@ package roart.util;
 
 public class EurekaConstants {
 	public static final String STOCKSTAT = "STOCKSTAT";
+	public static final String ICLIJ = "iclij";
 	public static final String CONFIGURE = "configure";
     public static final String GETCONFIG = "getconfig";
 	public static final String GETCONTENTSTAT = "getcontentstat";

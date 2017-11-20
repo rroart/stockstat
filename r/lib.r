@@ -2,6 +2,7 @@
                                         # install.packages("RPostgreSQL")
 require("RPostgreSQL")
 require("TTR")
+require("zoo")
                                         #require("ggplot2")
                                         #require("tabplot")
                                         #require("gridExtra")
@@ -16,6 +17,7 @@ VALUE <- 1
 MACD <- 2
 RSI <- 3
 
+nafix <- 0
                                         # out of use
 splitdate <- function(stocks) {
     list <- list()
@@ -466,19 +468,30 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
                                         #                    cat(el$date)
                     }
                     myc <- c(getonedfvalue(el, period))
-                    if (mydf$id == "F00000IRBFF") {
-                        str(" gr3 ")
+                    if (mydf$id == "0P0000RVOF") {
+                        str(" gr2 ")
+                        str(length(myc))
                         cat(myc)
                     }
                     myclen <- length(myc)
                     myc <- head(myc, n=(myclen-headskipmacd))
                     myc <- tail(myc, n=macddays)
                                         #str(myc)
+                    if (mydf$id == "0P0000RVOF") {
+                        str(" gr3 ")
+                        str(length(myc))
+                        cat(myc)
+                    }
                     if (percentize) {
                         if (periodtext == "Price" || periodtext == "Index") {
                             first = myc[1]
                             myc <- myc * (100 / first)
                         }
+                    }
+                    if (mydf$id == "0P0000RVOF") {
+                        str(" gr4 ")
+                        str(length(myc))
+                        cat(myc)
                     }
                     momhist <- getmomhist(myc, deltadays)
                                         #str(mom)
@@ -515,7 +528,7 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
                                         #                    cat(el$date)
                     }
                     myc <- c(getonedfvalue(el, period))
-                    if (mydf$id == "F00000IRBFF") {
+                    if (mydf$id == "0P0000RVOF") {
                         str(" gr2 ")
                         cat(myc)
                     }
@@ -524,6 +537,12 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
                     myc <- tail(myc, n=macddays)
                                         #str(myc)
                                         #                str(mydf$id)
+                    if (percentize) {
+                        if (periodtext == "Price" || periodtext == "Index") {
+                            first = myc[1]
+                            myc <- myc * (100 / first)
+                        }
+                    }
                     rsi <- getrsi(myc)
                                         #str(mom)
                     rsilist[i] <- rsi
@@ -776,6 +795,8 @@ getmacd <- function(m) {
             retlist2[c] <- second
             retlist3[c] <- first - second
             c <- c + 1
+        } else {
+#            print("nana")
         }
     }
                                         #    str(retlist1)
@@ -1176,6 +1197,8 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wa
                         c <- c + 1
                         bigretl <- getelem3(id, days, datedstocklists, period, topbottom)
                         l <- unlist(bigretl[[1]])
+                        str("gaga")
+                        cat(l)
                         if (scalebeginning100 == 1) {
                             str("minmax")
                             str(l)
@@ -1362,7 +1385,12 @@ getmyrsi <- function(myma) {
 }
 
 fixna <- function(v) {
-    return(v[!is.na(v)])
+    if (nafix == 1) {
+        return(v[!is.na(v)])
+    } else {
+        return (na.approx(v))
+    }
+    
 }
 
 fixpercent <- function(v) {

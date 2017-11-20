@@ -239,6 +239,9 @@ public class Main {
             Element period4Elem = (Element) elem.getElementsByTagName(Constants.PERIOD4).item(0);
             Element period5Elem = (Element) elem.getElementsByTagName(Constants.PERIOD5).item(0);
             Element period6Elem = (Element) elem.getElementsByTagName(Constants.PERIOD6).item(0);
+            Element period7Elem = (Element) elem.getElementsByTagName(Constants.PERIOD7).item(0);
+            Element period8Elem = (Element) elem.getElementsByTagName(Constants.PERIOD8).item(0);
+            Element period9Elem = (Element) elem.getElementsByTagName(Constants.PERIOD9).item(0);
             String marketid = marketidElem.getTextContent();
             String period1 = null;
             if (period1Elem != null) {
@@ -263,6 +266,18 @@ public class Main {
             String period6 = null;
             if (period6Elem != null) {
             period6 = reformat(period6Elem.getTextContent());
+            }
+            String period7 = null;
+            if (period7Elem != null) {
+            period6 = reformat(period7Elem.getTextContent());
+            }
+            String period8 = null;
+            if (period8Elem != null) {
+            period8 = reformat(period8Elem.getTextContent());
+            }
+            String period9 = null;
+            if (period9Elem != null) {
+            period9 = reformat(period9Elem.getTextContent());
             }
             Meta meta = Meta.ensureExistence(marketid);
             if (period1 == null || period1.equals("-")) {
@@ -294,6 +309,21 @@ public class Main {
                 meta.setPeriod6(null);
             } else {
                 meta.setPeriod6(new String(period6));
+            }
+            if (period7 == null || period7.equals("-")) {
+                meta.setPeriod7(null);
+            } else {
+                meta.setPeriod7(new String(period7));
+            }
+            if (period8 == null || period8.equals("-")) {
+                meta.setPeriod8(null);
+            } else {
+                meta.setPeriod8(new String(period8));
+            }
+            if (period9 == null || period9.equals("-")) {
+                meta.setPeriod9(null);
+            } else {
+                meta.setPeriod9(new String(period9));
             }
 
         }

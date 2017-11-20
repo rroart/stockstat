@@ -1,6 +1,5 @@
 package roart.servlet.listeners;
 
-import roart.config.MyConfig;
 import roart.service.ControlService;
 import roart.util.Constants;
 import roart.util.EurekaUtil;

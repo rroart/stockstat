@@ -30,7 +30,8 @@ For making simple stats and graphs.
     Installing
   </title>
 <para>
-Get git from <ulink url="https://github.com/rroart/stockstat">here</ulink>.
+  Get git from <ulink url="https://github.com/rroart/stockstat">here</ulink>.
+  Go to bin/ and start service-simple.sh
 </para>
 <para>
   <itemizedlist>
@@ -88,6 +89,24 @@ Need to provide postgres with a database stockstat, and username/password stocks
   </para>
   <sect1>
     <title>
+      Mandatory
+    </title>
+    <sect2>
+      <title>
+	Databases
+      </title>
+      <para>
+	You may choose to connect to PostgreSQL directly with Hibernate,
+	then set database.hibernate enable=true.
+	Or you may connect to PostgreSQL more indirectly via Spark,
+	then set database.spark enable=true, but then you will also need
+	to add a Spark service pointed to by the configuration
+	database.spark.sparkmaster
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>
       Non-mandatory
     </title>
     <sect2>
@@ -101,7 +120,145 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  database.spark.sparkmaster=...
 	</programlisting>
     </para>
-</sect2>
+    </sect2>
+    <sect2>
+      <title>
+	Machine learning
+      </title>
+      <para>
+	Machine learning is used for classifying/predicting,
+	set machinelearning enable=true to enable this.
+	We are using two engines for this, Spark and Tensorflow.
+	Set machinelearning.sparkml enable=true to use Spark.
+	Set master with machinelearning.sparkml.sparkmaster.
+	Set machinelearning.sparkml.mcp enable=true to use
+	, and set
+	machinelearning.sparkml.lr enable=true to use
+	Logistic Regression.
+	To use Tensorflow, set machinelearning.tensorflow enable=true.
+	Here, set machinelearning.tensorflow.dnn enable=true to use the
+	 classifier, and machinelearning.tensorflow.l
+	enable=true to use the Logistic regression.
+    <table>
+      <title>
+	Evolution settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	      machinelearning
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.sparkml
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.sparkml.sparkmaster
+	    </entry>
+	    <entry>
+	      The spark master
+	    </entry>
+	    <entry>
+	      spark://127.0.0.1:7077
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.sparkml.mcp
+	    </entry>
+	    <entry>
+	      Multilayer Perceptron Classifier
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.sparkml.lr
+	    </entry>
+	    <entry>
+	      Logistic Regression
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.tensorflow
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.tensorflow.dnn
+	    </entry>
+	    <entry>
+	    Deep Neural Network
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.tensorflow.l
+	    </entry>
+	    <entry>
+	      Logistic Regression
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+      </para>
+    </sect2>
   </sect1>
 </chapter>
 <chapter>
@@ -124,7 +281,7 @@ There are two phases, data acquisition and usage.
     </listitem>
     <listitem>
       <para>
-      meta: marketid period1 period2 period3 period4 period5 period6
+      meta: marketid period1 period2 period3 period4 period5 period6-9
       </para>
     </listitem>
     <listitem>
@@ -199,7 +356,9 @@ Table days (R days): how many days to use for the graph or statistics
       Spark
     </title>
     <para>
-      Not yet in use
+      Spark need driver libraries, download from for instance
+      central.maven.org/maven2/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar
+      and place in spark-2.1.0-bin-hadoop2.7/lib
     </para>
     <para>
       My current has no configuration. The only configuration lies in my current startup scripts, which goes:
@@ -426,6 +585,28 @@ Table days (R days): how many days to use for the graph or statistics
 	  </row>
 	  <row>
 	    <entry>
+	      aggregators.indicator.extrasmacd
+	    </entry>
+	    <entry>
+	      Extra indicators use macd result
+	    </entry>
+	    <entry>
+	      False
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.extrasrsi
+	    </entry>
+	    <entry>
+	      Extra indicators use rsi result
+	    </entry>
+	    <entry>
+	      False
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
 	      aggregators.indicator.intervaldays
 	    </entry>
 	    <entry>
@@ -620,4 +801,12 @@ Table days (R days): how many days to use for the graph or statistics
     </table>
   </para>
 </chapter>
+<chapter id="docker">
+  <title>
+    Docker
+  </title>
+  <para>
+    Docker support is provided.
+  </para>
+</chapter>   
 </book>

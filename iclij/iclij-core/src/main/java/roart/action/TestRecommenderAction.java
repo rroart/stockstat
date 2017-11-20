@@ -2,7 +2,7 @@ package roart.action;
 
 import roart.service.ControlService;
 
-public class TestRecommderAction extends Action {
+public class TestRecommenderAction extends Action {
 
     @Override
     public void goal() throws InterruptedException {

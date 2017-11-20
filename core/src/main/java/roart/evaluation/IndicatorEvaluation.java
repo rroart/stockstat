@@ -90,7 +90,7 @@ public class IndicatorEvaluation extends Evaluation {
                 CalcNode node = (CalcNode) conf.configValueMap.get(key);
                 //node.setDoBuy(useMax);
                 double value = momrsi[i];
-                recommend += node.calc(value, 0) * change * 100 * 100;
+                recommend += node.calc(value, 0) * change * 1000 * 100;
             }
         }
         return recommend;
@@ -242,7 +242,6 @@ public class IndicatorEvaluation extends Evaluation {
                 node.setWeight(tmpNum * 100 / total);
             }
         }
-        
     }
 
     @Override
