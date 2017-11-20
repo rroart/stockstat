@@ -21,9 +21,11 @@ public class DataReader extends Pipeline {
     Map<String, PeriodData> periodDataMap;
     Map<String, Integer>[] periodmap;
     Map<String, Double[][]> listMap;
+    Map<String, String> nameMap;
     List<Date> dateList;
     Map<String, double[][]> truncListMap;
-
+    String categoryTitle;
+    
     @Override
     public Map<Integer, Map<String, Object>> getResultMap() {
         Map<Integer, Map<String, Object>> resultMap = new HashMap<>();
@@ -37,8 +39,10 @@ public class DataReader extends Pipeline {
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.LIST, listMap);
+        map.put(PipelineConstants.NAME, nameMap);
         map.put(PipelineConstants.DATELIST, dateList);
         map.put(PipelineConstants.TRUNCLIST, truncListMap);
+        map.put(PipelineConstants.CATEGORYTITLE, categoryTitle);
         return map;
     }
     
@@ -58,10 +62,12 @@ public class DataReader extends Pipeline {
         // note that there are nulls in the lists with sparse
         boolean currentYear = false;
         if (category >= 0) {
-            currentYear = "cy".equals(marketData.periodtext[category]);
+            categoryTitle = marketData.periodtext[category];
+            currentYear = "cy".equals(categoryTitle);
         }
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        this.nameMap = StockDao.getNameMap(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
     }
 
