@@ -262,6 +262,18 @@ public class StockDao {
         return retList;
     }
     
+    public static Map<String, String> getNameMap(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+            Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
+        Map<String, String> retList = new HashMap<>();
+        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        int i = datedstocklists.length - 1;
+        List<StockItem> list = datedstocklists[i];
+        for (StockItem stock : list) {
+            retList.put(stock.getId(), stock.getName());
+        }
+        return retList;
+    }
+    
     public static int maxHoleNumber() {
         return 5;
     }
