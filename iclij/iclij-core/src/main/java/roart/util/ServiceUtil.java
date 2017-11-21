@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.config.ConfigConstants;
+import roart.config.IclijConfig;
 import roart.config.IclijXMLConfig;
+import roart.config.TradeMarket;
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
 import roart.model.ResultMeta;
@@ -922,11 +926,24 @@ public class ServiceUtil {
     }
     public static IclijServiceResult getContent() throws Exception {
         IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
         
-        List<IncDecItem> list = IncDecItem.getAll();
-        IclijServiceResult result = new IclijServiceResult();
+        List<IncDecItem> listAll = IncDecItem.getAll();
         List<List> lists = new ArrayList<>();
-        lists.add(list);
+        List<TradeMarket> markets = instance.getTradeMarkets();
+        for (TradeMarket market : markets) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, - market.getRecordage() );
+            Date olddate = cal.getTime();
+            listAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
+            List<IncDecItem> currentIncDecs = listAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
+            currentIncDecs = currentIncDecs.stream().filter(m -> market.getMarket().equals(m.getMarket())).collect(Collectors.toList());
+            List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
+            List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
+            lists.add(listInc);
+            lists.add(listDec);
+        }
+        IclijServiceResult result = new IclijServiceResult();
         result.lists = lists;
         return result;
     }
