@@ -228,7 +228,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCMLSTATS, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCOTHERSTATS, Boolean.TRUE);
-        deflt.put(ConfigConstants.MISCMYDAYS, Integer.class);
+        deflt.put(ConfigConstants.MISCMYDAYS, 180);
         deflt.put(ConfigConstants.MISCMYTOPBOTTOM, 10);
         deflt.put(ConfigConstants.MISCMYTBLEDAYS, 180);
         deflt.put(ConfigConstants.MISCMYTABLEMOVEINTERVALDAYS, 5);
@@ -307,7 +307,7 @@ public class ConfigConstantMaps {
     }
 
     //private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"useMax\":false}";
-    private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"weight\":31.0,\"useMax\":false}";
+    private final static String json = null; // "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"weight\":31.0,\"useMax\":false}";
 
     public static Map<String, String> text = new HashMap();
 

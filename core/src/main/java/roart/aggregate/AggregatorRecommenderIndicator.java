@@ -226,8 +226,16 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                 jsonValue = (String) conf.deflt.get(key);
                 //System.out.println(conf.deflt);
             }
-            CalcNode anode = mapper.readValue(jsonValue, CalcNode.class);
-            CalcNode node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);
+            CalcNode anode;
+            CalcNode node;
+            if (jsonValue == null || jsonValue.isEmpty()) {
+                anode = new CalcComplexNode();
+                anode.randomize();
+                node = anode;
+            } else {
+                anode = mapper.readValue(jsonValue, CalcNode.class);
+                node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);
+            }
             conf.configValueMap.put(key, node);
         }
     }
