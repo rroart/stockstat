@@ -267,7 +267,7 @@ public class StockDao {
         Map<String, String> retList = new HashMap<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         int i = datedstocklists.length - 1;
-        List<StockItem> list = datedstocklists[i];
+        List<StockItem> list = datedstocklists[0];
         for (StockItem stock : list) {
             retList.put(stock.getId(), stock.getName());
         }
