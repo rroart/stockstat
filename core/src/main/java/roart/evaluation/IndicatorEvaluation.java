@@ -30,12 +30,14 @@ public class IndicatorEvaluation extends Evaluation {
     public MyMyConfig conf;
     public Object[] retObj;
     public boolean useMax;
+    public List<String> disableList;
     
-    public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b) {
+    public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList) {
         this.conf = conf;
         this.keys = keys;
         this.retObj = retObj;
         this.useMax = b;
+        this.disableList = disableList;
     }
 
     public  List<String> getBuyList() {
@@ -82,15 +84,22 @@ public class IndicatorEvaluation extends Evaluation {
                 continue;
             }
 	    // TODO change filtering?
-            double change = (list[newlistidx]/list[curlistidx] - 1) / 100;
+            double change = (list[newlistidx]/list[curlistidx] - 1);
             Double[] momrsi = indicatorMap.get(id);
             for (int i = 0; i < keys.size(); i++) {
                 String key = keys.get(i);
+                if (disableList.contains(key)) {
+                    continue;
+                }
                 // TODO temp fix
                 CalcNode node = (CalcNode) conf.configValueMap.get(key);
                 //node.setDoBuy(useMax);
                 double value = momrsi[i];
-                recommend += node.calc(value, 0) * change * 1000 * 100;
+                if (!useMax) {
+                    int jj = 0;
+                    //change = - change;
+                }
+                recommend += node.calc(value, 0) * change /* conf.testRecommendFactor()*/;
             }
         }
         return recommend;
@@ -153,6 +162,9 @@ public class IndicatorEvaluation extends Evaluation {
     @Override
     public void mutate(Map<String, Object> configValueMap, List<String> keys) {
         for (String key : keys) {
+            if (disableList.contains(key)) {
+                continue;
+            }
             CalcNode node = (CalcNode) configValueMap.get(key);
             node.mutate();
         }
@@ -163,6 +175,9 @@ public class IndicatorEvaluation extends Evaluation {
         List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
+            if (disableList.contains(key)) {
+                continue;
+            }
             String name = null;
             if (key.contains("simple")) {
                 name = "Double";
@@ -181,6 +196,9 @@ public class IndicatorEvaluation extends Evaluation {
         ObjectMapper mapper = new ObjectMapper();
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
+            if (disableList.contains(key)) {
+                continue;
+            }
             Object value = conf.configValueMap.get(key);
             if (value instanceof Integer) {
                 CalcNode anode = new CalcDoubleNode();
@@ -192,8 +210,18 @@ public class IndicatorEvaluation extends Evaluation {
                 jsonValue = (String) conf.deflt.get(key);
                 //System.out.println(conf.deflt);
             }
-            CalcNode anode = mapper.readValue(jsonValue, CalcNode.class);
-            CalcNode node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);
+            CalcNode anode;
+            CalcNode node;
+            if (jsonValue == null || jsonValue.isEmpty()) {
+                anode = new CalcComplexNode();
+                //anode.randomize();
+                node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);
+                node.randomize();
+                //node = anode;
+            } else {
+                anode = mapper.readValue(jsonValue, CalcNode.class);
+                node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);
+            }
             conf.configValueMap.put(key, node);
         }
     }
@@ -203,6 +231,9 @@ public class IndicatorEvaluation extends Evaluation {
         // TODO implement default somewhere else
         ObjectMapper mapper = new ObjectMapper();
         for (String key : keys) {
+            if (disableList.contains(key)) {
+                continue;
+            }
             CalcNode node = (CalcNode) conf.configValueMap.get(key);
             if (node instanceof CalcComplexNode) {
                 String string = mapper.writeValueAsString(node);
@@ -218,6 +249,9 @@ public class IndicatorEvaluation extends Evaluation {
     public void normalize(Map<String, Object> map, List<String> keys) {
         int total = 0;
         for (String key : keys) {
+            if (disableList.contains(key)) {
+                continue;
+            }
             CalcNode anode = (CalcNode) map.get(key);
             int tmpNum = 0;
             if (anode instanceof CalcComplexNode) {
@@ -230,6 +264,9 @@ public class IndicatorEvaluation extends Evaluation {
             total += tmpNum;
         }
         for (String key : keys) {
+            if (disableList.contains(key)) {
+                continue;
+            }
             CalcNode anode = (CalcNode) map.get(key);
             int tmpNum = 0;
             if (anode instanceof CalcComplexNode) {

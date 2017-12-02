@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -137,7 +138,11 @@ public class ServiceController {
 		    maps = new HashMap<>();
 		}
 		try {
-			result.list = getInstance().getContent( new MyMyConfig(param.config), maps);
+		    List<String> disableList = param.confList;
+		    if (disableList == null) {
+		        disableList = new ArrayList<>();
+		    }
+			result.list = getInstance().getContent( new MyMyConfig(param.config), maps, disableList);
 			result.maps = maps;
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
@@ -202,7 +207,11 @@ public class ServiceController {
         ServiceResult result = new ServiceResult();
         try {
             MyMyConfig aConfig = new MyMyConfig(param.config);
-            result.list = getInstance().getTestRecommender( aConfig);
+            List<String> disableList = param.confList;
+            if (disableList == null) {
+                disableList = new ArrayList<>();
+            }
+            result.list = getInstance().getTestRecommender( aConfig, disableList);
             result.config = aConfig;
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);

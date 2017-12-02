@@ -41,10 +41,12 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     Map<String, Double[]> listMap;
     Map<String, List<Recommend>> usedRecommenders;
     Map<String, Map<String, Double[]>> resultMap;
-    
+    public List<String> disableList;
+ 
     public AggregatorRecommenderIndicator(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders) throws Exception {
+            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders, List<String> disableList) throws Exception {
         super(conf, index, 0);
+        this.disableList = disableList;
        Category cat = IndicatorUtils.getWantedCategory(categories);
        if (cat == null) {
            return;
@@ -167,6 +169,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                 double sellRecommendValue = 0;
                 for (int i = 0; i < buyKeys.size(); i++) {
                     String key = buyKeys.get(i);
+                    if (disableList.contains(key)) {
+                        continue;
+                    }
                     // TODO temp fix
                     Object o = conf.configValueMap.get(key);
                     if (o instanceof Integer) {
@@ -174,6 +179,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                         buyRecommendValue += mergedResult[i] * oint;
                         continue;
                     }
+                    Object tmp = conf.configValueMap.get(key);
                     CalcNode node = (CalcNode) conf.configValueMap.get(key);
                     //node.setDoBuy(useMax);
                     if (mergedResult.length < buyKeys.size()) {
@@ -185,6 +191,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                 aResult[0] = buyRecommendValue;              
                 for (int i = 0; i < sellKeys.size(); i++) {
                     String key = sellKeys.get(i);
+                    if (disableList.contains(key)) {
+                        continue;
+                    }
                     // TODO temp fix
                     Object o = conf.configValueMap.get(key);
                     if (o instanceof Integer) {
@@ -211,6 +220,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         ObjectMapper mapper = new ObjectMapper();
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
+            if (disableList.contains(key)) {
+                continue;
+            }
             Object value = conf.configValueMap.get(key);
             // this if is added to the original
             if (value instanceof CalcNode) {
@@ -230,8 +242,10 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             CalcNode node;
             if (jsonValue == null || jsonValue.isEmpty()) {
                 anode = new CalcComplexNode();
-                anode.randomize();
-                node = anode;
+                //anode.randomize();
+                node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);
+                node.randomize();
+                //node = anode;
             } else {
                 anode = mapper.readValue(jsonValue, CalcNode.class);
                 node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);

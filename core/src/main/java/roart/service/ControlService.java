@@ -153,7 +153,7 @@ public class ControlService {
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(MyMyConfig conf, Map<String, Map<String, Object>> maps) {
+    public List<ResultItem> getContent(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList) {
         log.info("mydate " + conf.getdate());
         log.info("mydate " + conf.getDays());
         createOtherTables();
@@ -234,7 +234,7 @@ public class ControlService {
                     periodText, marketdatamap, periodDataMap, periodmap, datareaders);
             
             Aggregator[] aggregates = getAggregates(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, periodmap, categories, datareaders);
+                    periodText, marketdatamap, periodDataMap, periodmap, categories, datareaders, disableList);
             
             ResultItemTableRow headrow = new ResultItemTableRow();
             //ri.add("Id");
@@ -371,9 +371,9 @@ public class ControlService {
     private Aggregator[] getAggregates(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders) throws Exception {
+            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders, List<String> disableList) throws Exception {
         Aggregator[] aggregates = new Aggregator[4];
-        aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories, datareaders);
+        aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories, datareaders, disableList);
         aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
         aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, periodDataMap, CategoryConstants.PRICE, 0, categories);
         aggregates[3] = new MLIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories, datareaders);
@@ -764,7 +764,7 @@ public class ControlService {
     } 
     */
 
-    public List<ResultItem> getTestRecommender(MyMyConfig conf) {
+    public List<ResultItem> getTestRecommender(MyMyConfig conf, List<String> disableList) {
         //conf.disableML();
         log.info("mydate " + conf.getdate());
         log.info("mydate " + conf.getDays());
@@ -885,8 +885,8 @@ public class ControlService {
                 
                 List<String> buyList = recommendList[0];
                 List<String> sellList = recommendList[1];
-                IndicatorEvaluation recommendBuy = new IndicatorEvaluation(conf, buyList, retObj, true);
-                IndicatorEvaluation recommendSell = new IndicatorEvaluation(conf, sellList, retObj, false);
+                IndicatorEvaluation recommendBuy = new IndicatorEvaluation(conf, buyList, retObj, true, disableList);
+                IndicatorEvaluation recommendSell = new IndicatorEvaluation(conf, sellList, retObj, false, disableList);
                 
                 OrdinaryEvolution evolution = new OrdinaryEvolution();
                 
