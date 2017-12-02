@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
 
@@ -15,6 +17,7 @@ import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.model.ResultMeta;
 import roart.pipeline.PipelineConstants;
+import roart.service.ControlService;
 
 public class ComponentMLMACD extends Component {
     @Override
@@ -30,8 +33,10 @@ public class ComponentMLMACD extends Component {
     }
 
     @Override
-    public void handle(MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
-       //System.out.println(resultMaps.keySet());
+    public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
+        //if (true) return;
+        //System.out.println(resultMaps.keySet());
+        resultMaps = srv.getContent();
         Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLMACD);
         //System.out.println("mlm " + mlMACDMaps.keySet());
         Integer category = (Integer) mlMACDMaps.get(PipelineConstants.CATEGORY);
@@ -73,14 +78,8 @@ public class ComponentMLMACD extends Component {
                     }
                     boolean increase = false;
                     //System.out.println(okConfMap.keySet());
-                    for (Object[] keyss : okConfMap.keySet()) {
-                        if (keys[0].equals(keyss[0])) {
-                            if (keys[1].equals(keyss[1])) {
-                                keys = keyss;
-                                break;
-                            }
-                        }
-                    }
+                    Set<Object[]> keyset = okConfMap.keySet();
+                    keys = getRealKeys(keys, keyset);
                     //System.out.println(okListMap.keySet());
                     if (tfpn.equals(FindProfitAction.TP) || tfpn.equals(FindProfitAction.FN)) {
                         increase = true;
@@ -100,7 +99,23 @@ public class ComponentMLMACD extends Component {
         }
 
     }
-    private static IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, List<MemoryItem> memoryList, Map<String, String> nameMap) {
+
+    static Object[] getRealKeys(Object[] keys, Set<Object[]> keyset) {
+        for (Object[] keyss : keyset) {
+            if (keys[0].equals(keyss[0])) {
+                if (keys[1] == null && keyss[1] == null) {
+                    keys = keyss;
+                    break;
+                }
+                if (keys[1].equals(keyss[1])) {
+                    keys = keyss;
+                    break;
+                }
+            }
+        }
+        return keys;
+    }
+    static IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, List<MemoryItem> memoryList, Map<String, String> nameMap) {
         MemoryItem memory = memoryList.get(0);
         IncDecItem val = map.get(key);
         if (val == null) {
@@ -116,6 +131,15 @@ public class ComponentMLMACD extends Component {
         val.setScore(val.getScore() + add);
         val.setDescription(val.getDescription() + memory.getSubcomponent() + ", ");
         return val;
+    }
+
+    @Override
+    public void improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
+            Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
+            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
+        // TODO Auto-generated method stub
+        System.out.println("Component not impl " + this.getClass().getName());
+        
     }
 }
 
