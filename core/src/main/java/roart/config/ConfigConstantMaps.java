@@ -94,6 +94,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, Integer.class);
         map.put(ConfigConstants.TESTRECOMMENDITERATIONS, Integer.class);
         map.put(ConfigConstants.TESTRECOMMENDPERIOD, String.class);
+        map.put(ConfigConstants.TESTRECOMMENDFACTOR, Integer.class);
         map.put(ConfigConstants.EVOLUTION, String.class);
         //map.put(ConfigConstants.EVOLUTION, Boolean.class);
         map.put(ConfigConstants.EVOLUTIONGENERATIONS, Integer.class);
@@ -243,6 +244,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.TESTRECOMMENDINTERVALTIMES, 10);
         deflt.put(ConfigConstants.TESTRECOMMENDITERATIONS, 100);
         deflt.put(ConfigConstants.TESTRECOMMENDPERIOD, CategoryConstants.PRICE);
+        deflt.put(ConfigConstants.TESTRECOMMENDFACTOR, 10);
         deflt.put(ConfigConstants.EVOLUTIONGENERATIONS, 2);
         deflt.put(ConfigConstants.EVOLUTIONCHILDREN, 4);
         //deflt.put(ConfigConstants.EVOLUTION, Boolean.FALSE);
