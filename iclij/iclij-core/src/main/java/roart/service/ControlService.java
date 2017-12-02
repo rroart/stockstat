@@ -7,6 +7,7 @@ import roart.config.MyMyConfig;
 
 import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -91,9 +92,13 @@ public class ControlService {
      */
 
     public Map<String, Map<String, Object>> getContent() {
+        return getContent(new ArrayList<>());
+    }
+    public Map<String, Map<String, Object>> getContent(List<String> disableList) {
         ServiceParam param = new ServiceParam();
         param.config = conf;
         param.wantMaps = true;
+        param.confList = disableList;
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
         return result.maps;
         //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
@@ -169,9 +174,10 @@ public class ControlService {
         getConfig();
     }
 
-    public List<ResultItem> getTestRecommender(boolean doSet) {
+    public List<ResultItem> getTestRecommender(boolean doSet, List<String> disableList) {
         ServiceParam param = new ServiceParam();
         param.config = conf;
+        param.confList = disableList;
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETTESTRECOMMENDER);
         if (doSet) {
             conf = new MyMyConfig(result.config);
