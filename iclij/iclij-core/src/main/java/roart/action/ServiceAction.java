@@ -1,5 +1,6 @@
 package roart.action;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import roart.util.ServiceUtil;
@@ -20,16 +21,16 @@ public class ServiceAction extends Action {
         try {
             switch (task) {
             case RECOMMENDER:
-                ServiceUtil.doRecommender(market, 0, null, true);
+                ServiceUtil.doRecommender(market, 0, null, true, new ArrayList<>(), true);
                 break;
             case PREDICTOR:
-                ServiceUtil.doPredict(market, 0, null, true);
+                ServiceUtil.doPredict(market, 0, null, true, true);
                 break;
             case MLMACD:
-                ServiceUtil.doMLMACD(market, 0, null, true);
+                ServiceUtil.doMLMACD(market, 0, null, true, true);
                 break;
             case MLINDICATOR:
-                ServiceUtil.doMLIndicator(market, 0, null, true);
+                ServiceUtil.doMLIndicator(market, 0, null, true, true);
                 break;
             }
         } catch (Exception e) {
