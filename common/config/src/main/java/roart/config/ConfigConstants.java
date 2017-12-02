@@ -91,6 +91,7 @@ public class ConfigConstants {
     public static final String TESTRECOMMENDITERATIONS = "test.recommend.iterations";
     @Deprecated
     public static final String TESTRECOMMENDPERIOD = "test.recommend.period";
+    public static final String TESTRECOMMENDFACTOR = "test.recommend.factor";
     public static final String EVOLUTION = "evolution";
     public static final String EVOLUTIONGENERATIONS = "evolution.generations";
     @Deprecated

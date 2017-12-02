@@ -68,7 +68,11 @@ public class MyMyConfig extends MyConfig {
     	    return (Boolean) getValueOrDefault(ConfigConstants.MISCMYEQUALIZE);
     	}
 
-    /*
+        public int testRecommendFactor() {
+            return (int) getValueOrDefault(ConfigConstants.TESTRECOMMENDFACTOR);
+        }
+
+   /*
     	public void setMoveEnabled(Boolean bool) {
     	    moveEnabled = bool;
     	}

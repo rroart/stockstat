@@ -1,5 +1,6 @@
 package roart.service;
 
+import java.util.List;
 import java.util.Set;
 
 import roart.config.MyConfig;
@@ -11,4 +12,5 @@ public class ServiceParam {
     public Set<String> ids;
     public String market;
     public boolean wantMaps;
+    public List<String> confList;
 }

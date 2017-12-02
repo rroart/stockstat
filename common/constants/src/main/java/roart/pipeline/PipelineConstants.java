@@ -47,7 +47,7 @@ public class PipelineConstants {
     public static final String MLMACD = "mlmacd";
     public static final String RECOMMENDERRSI = "recommenderrsi";
     public static final String AGGREGATORRECOMMENDERINDICATOR = "aggregatorrecommenderindicator";
-
+    public static final String PREDICTORSLSTM = "predictorslstm";
     public static final String LSTM = "lstm";
     
     public static final String CATEGORY = "category"; 
