@@ -133,7 +133,7 @@ public class CalcComplexNode extends CalcNode {
     @Override
     public void randomize() {
         Random rand = new Random();
-        getUseminmaxthreshold(rand);
+        //getUseminmaxthreshold(rand);
         getUsethreshold(rand);
         //getDivideminmaxthreshold(rand); // not
         //getChangeSignWhole(rand); // not
@@ -142,11 +142,14 @@ public class CalcComplexNode extends CalcNode {
     }
 
     private void getThreshold(Random rand) {
+        /*
         if (useMax) {
             threshold = rand.nextDouble() * maxMutateThresholdRange;
         } else {
             threshold = rand.nextDouble() * minMutateThresholdRange;       
         }
+        */
+        threshold = minMutateThresholdRange + rand.nextDouble() * (maxMutateThresholdRange - minMutateThresholdRange);
     }
 
     private void getWeight(Random rand) {
@@ -174,18 +177,20 @@ public class CalcComplexNode extends CalcNode {
     @Override
     public void mutate() {
         Random rand = new Random();
-        int task = rand.nextInt(4);
+        int task = rand.nextInt(3);
         switch (task) {
+        /*
         case 0:
             getUseminmaxthreshold(rand);
             break;
-        case 1:
+            */
+        case 0:
             getUsethreshold(rand);
             break;
-        case 2:
+        case 1:
             getWeight(rand);
             break;
-        case 3: 
+        case 2: 
             getThreshold(rand);
             break;
             /*
