@@ -7,6 +7,7 @@ import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
+import roart.service.ControlService;
 
 public class ComponentPredictor extends Component {
 
@@ -21,12 +22,20 @@ public class ComponentPredictor extends Component {
     }
 
     @Override
-    public void handle(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
+    public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
             Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
         // TODO Auto-generated method stub
         System.out.println("Component not impl " + this.getClass().getName());
 
+    }
+    @Override
+    public void improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
+            Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
+            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
+        // TODO Auto-generated method stub
+        System.out.println("Component not impl " + this.getClass().getName());
+        
     }
 }
 
