@@ -5,6 +5,8 @@ public class Market {
 
     private Short time;
     
+    private Short improvetime;
+    
     private String id;
 
     public Market() {
@@ -25,6 +27,14 @@ public class Market {
 
     public void setTime(Short time) {
         this.time = time;
+    }
+
+    public Short getImprovetime() {
+        return improvetime;
+    }
+
+    public void setImprovetime(Short improvetime) {
+        this.improvetime = improvetime;
     }
 
     public String getId() {
