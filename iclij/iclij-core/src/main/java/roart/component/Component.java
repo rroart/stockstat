@@ -7,6 +7,7 @@ import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
+import roart.service.ControlService;
 
 public abstract class Component {
     public abstract void enable(MyMyConfig conf);
@@ -16,6 +17,7 @@ public abstract class Component {
         conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
     }
-    public abstract void handle(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap);
+    public abstract void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap);
+    public abstract void improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap);
 }
 
