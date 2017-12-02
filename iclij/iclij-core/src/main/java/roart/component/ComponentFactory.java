@@ -8,7 +8,7 @@ public class ComponentFactory {
         switch (component) {
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
             return new ComponentRecommender();
-        case ConfigConstants.PREDICTORS:
+        case PipelineConstants.PREDICTORSLSTM:
             return new ComponentPredictor();
         case PipelineConstants.MLMACD:
             return new ComponentMLMACD();
