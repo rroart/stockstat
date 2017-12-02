@@ -2,6 +2,7 @@ package roart.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
 import roart.action.MainAction;
+import roart.action.UpdateDBAction;
 import roart.config.ConfigConstants;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
@@ -58,28 +60,28 @@ public class ServiceController {
             method = RequestMethod.GET)
     public void getRecommender(@PathVariable String market)
             throws Exception {
-        ServiceUtil.doRecommender(market, 0, null, true);
+        ServiceUtil.doRecommender(market, 0, null, true, new ArrayList<>(), true);
     }
 
     @RequestMapping(value = "/predictor/{market}",
             method = RequestMethod.GET)
     public void getPredict(@PathVariable String market)
             throws Exception {
-        ServiceUtil.doPredict(market, 0, null, true);
+        ServiceUtil.doPredict(market, 0, null, true, true);
     }
 
     @RequestMapping(value = "/mlmacd/{market}",
             method = RequestMethod.GET)
     public void getMLMACD(@PathVariable String market)
             throws Exception {
-        ServiceUtil.doMLMACD(market, 0, null, true);
+        ServiceUtil.doMLMACD(market, 0, null, true, true);
     }
 
     @RequestMapping(value = "/mlindicator/{market}",
             method = RequestMethod.GET)
     public void getMLIndicator(@PathVariable String market)
             throws Exception {
-        ServiceUtil.doMLIndicator(market, 0, null, true);
+        ServiceUtil.doMLIndicator(market, 0, null, true, true);
     }
 
     @RequestMapping(value = "/findprofit",
@@ -96,6 +98,15 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         new ImproveProfitAction().goal();
+    }
+
+
+    @RequestMapping(value = "/updatedb",
+            method = RequestMethod.GET)
+    public void getUpdateDb()
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        new UpdateDBAction().goal();
     }
 
 }
