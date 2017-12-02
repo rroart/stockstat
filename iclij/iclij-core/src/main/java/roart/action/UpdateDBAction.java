@@ -19,7 +19,7 @@ public class UpdateDBAction extends Action {
     private List<String> getComponents() {
         List<String> components = new ArrayList<>();
         components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        components.add(ConfigConstants.PREDICTORS);
+        components.add(PipelineConstants.PREDICTORSLSTM);
         components.add(PipelineConstants.MLMACD);
         components.add(PipelineConstants.MLINDICATOR);
         return components;
@@ -27,7 +27,7 @@ public class UpdateDBAction extends Action {
 
     @Override
     public void goal() throws InterruptedException {
-        if (true) return;
+        //if (true) return;
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         //instance.
         List<MemoryItem> memory = null;
@@ -80,7 +80,7 @@ public class UpdateDBAction extends Action {
             case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
                 MainAction.goals.add(new ServiceAction(market, ServiceAction.Task.RECOMMENDER));
                 break;
-            case ConfigConstants.PREDICTORS:
+            case PipelineConstants.PREDICTORSLSTM:
                 MainAction.goals.add(new ServiceAction(market, ServiceAction.Task.PREDICTOR));
                 break;
             case PipelineConstants.MLMACD:
