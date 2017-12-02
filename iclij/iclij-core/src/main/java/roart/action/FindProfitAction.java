@@ -79,7 +79,7 @@ public class FindProfitAction extends Action {
                 if (confidences.isEmpty()) {
                     int jj = 0;
                 }
-                confidences = confidences.stream().filter(m -> !m.isNaN()).collect(Collectors.toList());
+                confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
                 Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
                 if (!minOpt.isPresent()) {
                     continue;
@@ -102,17 +102,16 @@ public class FindProfitAction extends Action {
             }
             ControlService srv = new ControlService();
             srv.getConfig();
-            Component.disabler(srv.conf);
             srv.conf.setMarket(market.getMarket());
             Map<String, Component> componentMap = new HashMap<>();
             for (String componentName : listComponent.keySet()) {
                 Component component = ComponentFactory.factory(componentName);
-                component.enable(srv.conf);
                 componentMap.put(componentName, component);
             }
             
             Map<String, IncDecItem> buys = new HashMap<>();
             Map<String, IncDecItem> sells = new HashMap<>();
+            Component.disabler(srv.conf);
             Map<String, Map<String, Object>> result0 = srv.getContent();
             Map<String, Map<String, Object>> maps = result0;
             Map<String, String> nameMap = null;
@@ -126,7 +125,9 @@ public class FindProfitAction extends Action {
             for (String componentName : listComponent.keySet()) {
                 List<Integer> positions = listComponent.get(componentName);
                 Component component = componentMap.get(componentName);
-                component.handle(srv.conf, maps, positions, buys, sells, okConfMap, okListMap, nameMap);
+                Component.disabler(srv.conf);
+                component.enable(srv.conf);
+                component.handle(srv, srv.conf, maps, positions, buys, sells, okConfMap, okListMap, nameMap);
                //System.out.println("Buys: " + market.getMarket() + buys);
                //System.out.println("Sells: " + market.getMarket() + sells);           
             }
