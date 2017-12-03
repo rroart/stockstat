@@ -96,7 +96,7 @@ public class DbSpark {
 			Double price = row.getAs("price");
             Double pricelow = row.getAs("pricelow");
             Double pricehigh = row.getAs("pricehigh");
-            Integer volume = row.getAs("volume");
+            Long volume = row.getAs("volume");
 			String currency = row.getAs("currency");
 			Double period1 = row.getAs("period1");
 			Double period2 = row.getAs("period2");
