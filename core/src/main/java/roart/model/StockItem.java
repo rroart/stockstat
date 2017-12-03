@@ -22,11 +22,11 @@ public class StockItem {
 	private Double price;
     private Double pricelow;
     private Double pricehigh;
-    private Integer volume;
+    private Long volume;
 	private String currency;
 	private Double[] period = new Double[9];
 
-	public StockItem(String dbid, String marketid, String id, String name, Date date, Double indexvalue, Double indexvaluelow, Double indexvaluehigh, Double price, Double pricelow, Double pricehigh, Integer volume, String currency, Double period1, Double period2, Double period3, Double period4, Double period5, Double period6, Double period7, Double period8, Double period9) throws Exception {
+	public StockItem(String dbid, String marketid, String id, String name, Date date, Double indexvalue, Double indexvaluelow, Double indexvaluehigh, Double price, Double pricelow, Double pricehigh, Long volume, String currency, Double period1, Double period2, Double period3, Double period4, Double period5, Double period6, Double period7, Double period8, Double period9) throws Exception {
 		this.dbid = dbid;
 		this.marketid = marketid;
 		this.id = id;
@@ -155,11 +155,11 @@ public class StockItem {
         return prices;
     }
 
-    public Integer getVolume() {
+    public Long getVolume() {
         return volume;
     }
 
-    public void setVolume(Integer volume) {
+    public void setVolume(Long volume) {
         this.volume = volume;
     }
 

@@ -50,7 +50,7 @@ private Double pricelow;
 @Column
 private Double pricehigh;
 @Column
-private Integer volume;
+private Long volume;
 @Column
 private String currency;
 @Column
@@ -175,11 +175,11 @@ public void setPricehigh(Double pricehigh) {
     this.pricehigh = pricehigh;
 }
 
-public Integer getVolume() {
+public Long getVolume() {
 	return volume;
 }
 
-public void setVolume(Integer volume) {
+public void setVolume(Long volume) {
 	this.volume = volume;
 }
 

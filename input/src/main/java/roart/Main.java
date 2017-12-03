@@ -152,7 +152,7 @@ public class Main {
         if (volume == null || volume.equals("-")) {
             stock.setVolume(null);
         } else {
-            stock.setVolume(new Integer(volume));
+            stock.setVolume(new Long(volume));
         }
 	    stock.setCurrency(currency);
 	    if (price == null || price.equals("-")) {
