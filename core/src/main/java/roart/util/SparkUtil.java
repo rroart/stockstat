@@ -35,8 +35,8 @@ public class SparkUtil {
         sparkconf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         //sparkconf.set("spark.driver.extraClassPath", "lib/postgresql-9.1-901-1.jdbc4.jar" );
         //sparkconf.set("spark.executor.extraClassPath", "lib/postgresql-9.1-901-1.jdbc4.jar" );
-        sparkconf.set("spark.driver.extraClassPath", "/home/roart/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar" );
-        sparkconf.set("spark.executor.extraClassPath", "/home/roart/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar" );
+        //sparkconf.set("spark.driver.extraClassPath", "/home/roart/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar" );
+        //sparkconf.set("spark.executor.extraClassPath", "/home/roart/.m2/repository/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar" );
         //sparkconf.set("spark.kryo.registrator", "org.apache.mahout.sparkbindings.io.MahoutKryoRegistrator");
         String userDir = System.getProperty("user.dir");
         log.info("user.dir " + userDir);
