@@ -33,7 +33,7 @@ public class IclijXMLConfig {
    
     protected static IclijXMLConfig instance = null;
    
-    public static String configFile = "/home/roart/src/stockstatspark/iclij/iclij-core/iclij.xml";
+    public static String configFile = "iclij.xml";
     
    public static IclijXMLConfig instance() {
         if (instance == null) {
