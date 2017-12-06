@@ -194,7 +194,7 @@ public int getResultSize() {
 
     private boolean anythingHere(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
-            for (int i = 0; i < array.length; i++) {
+            for (int i = 0; i < array[0].length; i++) {
                 if (array[0][i] != null) {
                     return true;
                 }
