@@ -260,8 +260,10 @@ public class IndicatorUtils {
         }
         // TODO copy the retain from aggregator?
         Set<String> ids = new HashSet<>();
+        if (!listList.isEmpty()) {
         ids.addAll(listList.get(0).keySet());
-
+        }
+        
         log.info("listsize " + dateList.size());
         // TODO change
         for (int j = futureDays; j < tableDays; j += intervalDays) {
