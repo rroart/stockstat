@@ -70,29 +70,33 @@ public class IndicatorSTOCHRSI extends Indicator {
         return objs;
     }
 
-    @Override
-    protected void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] result, Object[] fields) {
-        int retindex = tu.getMomAndDelta(conf.isSTOCHRSIDeltaEnabled(), conf.isSTOCHRSIDeltaEnabled(), result, fields);
-    }
-
    @Override
     protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-        Double[] stoch = tu.getMomAndDelta(conf.getSTOCHRSIDeltaDays(), conf.getSTOCHRSIDeltaDays(), objs);
+        Double[] stoch = tu.getSRSIAndDelta(conf.getSTOCHRSIDeltaDays(), conf.getSTOCHRSIDeltaDays(), objs);
         return stoch;
     }
+
+   @Override
+   protected void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] result, Object[] fields) {
+       int retindex = tu.getSRSIAndDelta(conf.isSTOCHRSIDeltaEnabled(), conf.isSTOCHRSIDeltaEnabled(), result, fields);
+   }
 
     @Override
     public Object[] getDayResult(Object[] objs, int offset) {
         TaUtil tu = new TaUtil();
-        return tu.getMomAndDelta(conf.getSTOCHRSIDeltaDays(), conf.getSTOCHRSIDeltaDays(), objs, offset);
+        return tu.getSRSIAndDelta(conf.getSTOCHRSIDeltaDays(), conf.getSTOCHRSIDeltaDays(), objs, offset);
     }
     
     // TODO call tautil
     @Override
     public int getResultSize() {
-        return 4;        
+        int size = 2;
+        if (conf.isSTOCHRSIDeltaEnabled()) {
+            size += 2;
+        }
+        return size;    
     }
 
     @Override

@@ -32,7 +32,7 @@ public class TaUtil {
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
         List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
-        int size = getArr(days, market, id, ids, periodInt, datedstocklists, values);
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, values, null, null);
         //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
         Object[] objs = getInnerRSI(values, size);
         return objs;
@@ -58,7 +58,7 @@ public class TaUtil {
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
         List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
-        int size = getArr(days, market, id, ids, periodInt, datedstocklists, values);
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, values, null, null);
         //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
         Object[] objs = getInnerSTOCHRSI(values, size);
         return objs;
@@ -75,7 +75,7 @@ public class TaUtil {
         double high[] = new double[days];
         double close[] = new double[days];
         // TODO make new getarr for low high
-        int size = getArr(days, market, id, ids, periodInt, datedstocklists, close);
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, close, low, high);
         //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
         Object[] objs = getInnerCCI(low, high, close, size);
         return objs;
@@ -92,7 +92,7 @@ public class TaUtil {
         double high[] = new double[days];
         double close[] = new double[days];
         // TODO make new getarr for low high
-        int size = getArr(days, market, id, ids, periodInt, datedstocklists, close);
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, close, low, high);
         //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
         Object[] objs = getInnerATR(low, high, close, size);
         return objs;
@@ -109,7 +109,7 @@ public class TaUtil {
         double high[] = new double[days];
         double close[] = new double[days];
         // TODO make new getarr for low high
-        int size = getArr(days, market, id, ids, periodInt, datedstocklists, close);
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, close, low, high);
         //int size = getArr2(days, market, ids, periodInt, datedstocklists, values);
         Object[] objs = getInnerSTOCH(low, high, close, size);
         return objs;
@@ -218,11 +218,15 @@ public class TaUtil {
         MInteger end = new MInteger();
         double rsi[] = new double[close.length];
         double rsi2[] = new double[close.length];
+        MAType optInFastD;
+        optInFastD = MAType.Sma;
+        core.stochF(0, size - 1, high, low, close, /*14, */ 5, 3, optInFastD, beg, end, rsi, rsi2);
         //core.stoch .stoch(0, size - 1, close, 14, beg, end, rsi, rsi2);
-        Object[] objs = new Object[3];
+        Object[] objs = new Object[4];
         objs[0] = rsi;
-        objs[1] = beg;
-        objs[2] = end;
+        objs[1] = rsi2;
+        objs[2] = beg;
+        objs[3] = end;
 		return objs;
 	}
 
@@ -305,12 +309,12 @@ public class TaUtil {
         int size = beg.value + end.value;
         size--;
         for (int i = 0; i < beg.value; i++) {
-            dataset.addValue(0, "rsi" , new Integer(i - size));
-            dataset.addValue(0, "rsi2" , new Integer(i - size));
+            dataset.addValue(0, "srsi" , new Integer(i - size));
+            dataset.addValue(0, "srsi2" , new Integer(i - size));
         }
         for (int i = 0; i < end.value; i++) {
-            dataset.addValue(rsi[i], "rsi" , new Integer(i + beg.value - size));
-            dataset.addValue(rsi2[i], "rsi2" , new Integer(i + beg.value - size));
+            dataset.addValue(rsi[i], "srsi" , new Integer(i + beg.value - size));
+            dataset.addValue(rsi2[i], "srsi2" , new Integer(i + beg.value - size));
             if ("EUCA000699".equals(id)) {
                 log.info("hist i " + i + " " + rsi[i]);
             }
@@ -374,18 +378,21 @@ public class TaUtil {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
         Object objs[] = getSTOCH(days, market, id, ids, marketdatamap, perioddata, periodstr);
         double stoch[] = (double[]) objs[0];
+        double stoch2[] = (double[]) objs[1];
         for (int i = 0; i < stoch.length; i ++) {
             //log.info("grr3 " + i + " " + macd[i]);
         }
-        MInteger beg = (MInteger) objs[1];
-        MInteger end = (MInteger) objs[2];
+        MInteger beg = (MInteger) objs[2];
+        MInteger end = (MInteger) objs[3];
         int size = beg.value + end.value;
         size--;
         for (int i = 0; i < beg.value; i++) {
             dataset.addValue(0, "stoch" , new Integer(i - size));
+            dataset.addValue(0, "stoch2" , new Integer(i - size));
         }
         for (int i = 0; i < end.value; i++) {
             dataset.addValue(stoch[i], "stoch" , new Integer(i + beg.value - size));
+            dataset.addValue(stoch2[i], "stoch2" , new Integer(i + beg.value - size));
             if ("EUCA000699".equals(id)) {
                 log.info("hist i " + i + " " + stoch[i]);
             }
@@ -400,20 +407,22 @@ public class TaUtil {
         Integer periodInt = StockUtil.getPeriodByMarket(market, pairs);
         List<StockItem> datedstocklists[] = marketdata.datedstocklists;
         double values[] = new double[days];
-        int size = getArr(days, market, id, ids, periodInt, datedstocklists, values);
+        int size = getArr(days, market, id, ids, periodInt, datedstocklists, values, null, null);
         log.info("before " + size + " " + java.util.Arrays.toString(values));
         Object[] objs = getInnerMACD(values, size);
         return objs;
     }
 
 	private int getArr(int days, String market, String id, Set<Pair<String, String>> ids, Integer periodInt,
-			List<StockItem>[] datedstocklists, double[] values) {
+			List<StockItem>[] datedstocklists, double[] values, double[] low, double[] high) {
 	    int size = 0;
 	    boolean display = false;
 	    int count = 0;
 	    int downcount = Math.min(days, datedstocklists.length);
 	    //System.out.println("downc " + downcount);
 	    List<Double> listd = new ArrayList<>();
+	    List<Double> liste = new ArrayList<>();
+	    List<Double> listf = new ArrayList<>();
         for (int j = 0; j < datedstocklists.length  && downcount > 0 ; j++) {
 	    //for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
 	        //        for (int j = datedstocklists.length - 1; j >= 0 && downcount > 0 ; j--) {
@@ -437,17 +446,32 @@ public class TaUtil {
 	            Pair<String, String> pair = new Pair(market, stock.getId());
 	            if (ids.contains(pair)) {
 	                try {
-	                    Double value = StockDao.getMainValue(stock, period);
+                        Double[] allValues = StockDao.getValue(stock, period);
+	                    Double value = allValues[0];
 	                    if (value == null) {
 	                        display = true;
 	                        continue;
+	                    }
+	                    Double alow = null;
+	                    Double ahigh = null;
+	                    if (allValues.length > 1) {
+	                        alow = allValues[1];
+	                        ahigh = allValues[2];
 	                    }
 	                    if (j == 0) {
 	                        //System.out.println("jj 0");
 	                    }
 	                    double val = value;
 	                    values[count] = value;
+	                    if (low != null) {
+	                        low[count] = alow;
+	                    }
+	                    if (high != null) {
+	                        high[count] = ahigh;
+	                    }
 	                    listd.add(val);
+			    liste.add(alow);
+			    listf.add(ahigh);
 	                    count++;
 	                    downcount--;
 	                    size++;
@@ -460,11 +484,25 @@ public class TaUtil {
 	        }    
 	    }
         Collections.reverse(listd);
+        Collections.reverse(liste);
+        Collections.reverse(listf);
         Object[] newarr = listd.toArray();
+        Object[] newars = liste.toArray();
+        Object[] newart = listf.toArray();
         log.info("arrarr " + newarr + " " + values + " " + size + " " + newarr.length);
         for (int i = 0; i < size; i ++) {
             values[i] = (double) newarr[i];
         }
+	if (low != null) {
+        for (int i = 0; i < size; i ++) {
+            low[i] = (double) newars[i];
+        }
+	}
+	if (high != null) {
+        for (int i = 0; i < size; i ++) {
+            high[i] = (double) newart[i];
+        }
+	}
         //System.arraycopy(newarr, 0, values, 0, size);
 	    //System.out.println("thearr " + Arrays.toString(values));
         if (display) {
@@ -531,6 +569,27 @@ public class TaUtil {
     public static final int RSIIDXEND = 2;
     public static final int RSIIDXRSIFIXED = 3;
 
+    public static final int ONEIDXARRONE = 0;
+    public static final int ONEIDXBEG = 1;
+    public static final int ONEIDXEND = 2;
+    public static final int ONEIDXARRONEFIXED = 3;
+    
+    public static final int TWOIDXARRONE = 0;
+    public static final int TWOIDXARRTWO = 1;
+    public static final int TWOIDXBEG = 2;
+    public static final int TWOIDXEND = 3;
+    public static final int TWOIDXARRONEFIXED = 4;
+    public static final int TWOIDXARRTWOFIXED = 5;
+    
+    public static final int THREEIDXARRONE = 0;
+    public static final int THREEIDXARRTWO = 1;
+    public static final int THREEIDXARRTHREE = 2;
+    public static final int THREEIDXBEG = 3;
+    public static final int THREEIDXEND = 4;
+    public static final int THREEIDXARRONEFIXED = 5;
+    public static final int THREEIDXARRTWOFIXED = 6;
+    public static final int THREEIDXARRTHREEFIXED = 7;
+    
     private Object[] getInnerEMA(double[] values, int size) {
 		Core core = new Core();
         MInteger beg26 = new MInteger();
@@ -789,6 +848,23 @@ public class TaUtil {
         return retValues;
     }
 
+    public Double[] getSRSIAndDelta(int onedeltadays, int twodeltadays, Object[] objs, int offset) {
+        MInteger end = (MInteger) objs[TWOIDXEND];
+        if (end.value < offset + Math.max(onedeltadays, twodeltadays)) {
+            //System.out.println("too short" + end.value + " " + macddeltadays + " " + histdeltadays);
+            return null;
+        }
+        int retindex = 0;
+        Double[] retValues = new Double[4];
+        //MInteger begin = (MInteger) objs[IDXBEG];
+        // System.out.println("long enough " + offset + " " + begin.value + " " + end.value + " " + any.length + " " + any1.length + " " + any2.length + " " + macddeltadays + " " + histdeltadays);
+        retValues[retindex++] = getArrayValueAtOffset(objs, TWOIDXARRONE, TWOIDXEND, offset);
+        retValues[retindex++] = getArrayValueAtOffsetDelta(objs, TWOIDXARRONE, TWOIDXEND, twodeltadays, offset);
+        retValues[retindex++] = getArrayValueAtOffset(objs, TWOIDXARRTWO, TWOIDXEND, offset);
+        retValues[retindex++] = getArrayValueAtOffsetDelta(objs, TWOIDXARRTWO, TWOIDXEND, twodeltadays, offset);
+        return retValues;
+    }
+
     public Double[] getRsiAndDelta(int rsideltadays, Object[] objs) {
         return getRsiAndDelta(rsideltadays, objs, 0);
     }
@@ -815,6 +891,33 @@ public class TaUtil {
         }
         retValues[retindex++] = objs[2];
         if (wantmacddelta) {
+            retValues[retindex++] = objs[3];
+        }
+        return retindex;
+    }
+
+    public Double[] getSRSIAndDelta(int onedeltadays, int twodeltadays, Object[] objs) {
+        return getSRSIAndDelta(onedeltadays, twodeltadays, objs, 0);
+    }
+
+    public int getSRSIAndDelta(boolean wantonedelta, boolean wanttwodelta, Double[] objs, Object[] retValues) {
+        if (objs == null) {
+            int retindex = 2;
+            if (wanttwodelta) {
+                retindex++;
+            }
+            if (wantonedelta) {
+                retindex++;
+            }
+            return retindex;
+        }
+        int retindex = 0;
+        retValues[retindex++] = objs[0];
+        if (wanttwodelta) {
+            retValues[retindex++] = objs[1];
+        }
+        retValues[retindex++] = objs[2];
+        if (wantonedelta) {
             retValues[retindex++] = objs[3];
         }
         return retindex;
@@ -868,4 +971,26 @@ public class TaUtil {
         }
         return rsi[end.value - offset - 1];
     }
+
+    private Double getArrayValueAtOffset(Object[] objs, int arrayindex, int endvalueindex, int offset) {
+        double hist[] = (double[]) objs[arrayindex];
+        MInteger end = (MInteger) objs[endvalueindex];
+        if (end.value == 0) {
+            return null;
+        }
+        return hist[end.value - offset - 1];
+    }
+    private Double getArrayValueAtOffsetDelta(Object[] objs, int arrayindex, int endvalueindex, int deltadays, int offset) {
+        double hist[] = (double[]) objs[arrayindex];
+        MInteger end = (MInteger) objs[endvalueindex];
+        if (end.value == 0) {
+            return null;
+        }
+        double delta = 0;
+        int min = Math.max(0, end.value - offset - deltadays);
+        delta = hist[end.value - offset - 1] - hist[min];
+        return delta/(deltadays - 1);
+    }
+    
+
 }

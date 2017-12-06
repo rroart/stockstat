@@ -14,8 +14,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import roart.config.MyMyConfig;
 import roart.graphindicator.GraphIndicator;
+import roart.graphindicator.GraphIndicatorATR;
+import roart.graphindicator.GraphIndicatorCCI;
 import roart.graphindicator.GraphIndicatorMACD;
 import roart.graphindicator.GraphIndicatorRSI;
+import roart.graphindicator.GraphIndicatorSTOCH;
 import roart.graphindicator.GraphIndicatorSTOCHRSI;
 import roart.ml.MLPredictDao;
 import roart.ml.MLPredictModel;
@@ -47,6 +50,9 @@ public class GraphCategoryPrice extends GraphCategory {
         indicators.add(new GraphIndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, title));
         indicators.add(new GraphIndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, title));
         indicators.add(new GraphIndicatorSTOCHRSI(conf, title + " SRSI", marketdatamap, periodDataMap, title));
+        indicators.add(new GraphIndicatorSTOCH(conf, title + " STOCH", marketdatamap, periodDataMap, title));
+        indicators.add(new GraphIndicatorCCI(conf, title + " CCI", marketdatamap, periodDataMap, title));
+        indicators.add(new GraphIndicatorATR(conf, title + " ATR", marketdatamap, periodDataMap, title));
         //predictors.add(new PredictorLSTM(conf, title + "LSTM", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
         //predictors.add();
     }

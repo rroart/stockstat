@@ -49,9 +49,9 @@ public class IndicatorSTOCH extends Indicator {
     }
     
     private int fieldSize() {
-        int size = 1;
+        int size = 2;
         if (conf.isSTOCHDeltaEnabled()) {
-            size++;
+            size += 2;
         }
         emptyField = new Object[size];
         return size;
@@ -71,35 +71,44 @@ public class IndicatorSTOCH extends Indicator {
     protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-        Double[] result = tu.getRsiAndDelta(conf.getSTOCHDeltaDays(), objs);
+        Double[] result = tu.getSRSIAndDelta(conf.getSTOCHDeltaDays(), conf.getSTOCHDeltaDays(), objs);
         return result;
     }
 
     @Override
     protected void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] result, Object[] fields) {
-        int retindex = tu.getRSIAndDelta(conf.isSTOCHDeltaEnabled(),  result, fields);
+        int retindex = tu.getSRSIAndDelta(conf.isSTOCHDeltaEnabled(), conf.isSTOCHDeltaEnabled(), result, fields);
     }
 
     @Override
     public Object[] getDayResult(Object[] objs, int offset) {
         TaUtil tu = new TaUtil();
-        return tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, offset);
+        return tu.getSRSIAndDelta(conf.getRSIDeltaDays(), conf.getRSIDeltaDays(), objs, offset);
     }
     
     // TODO call tautil
     @Override
     public int getResultSize() {
-        return 2;        
+        int size = 2;
+        if (conf.isSTOCHDeltaEnabled()) {
+            size += 2;
+        }
+        return size;        
     }
 
     @Override
     public Object[] getResultItemTitle() {
-        Object[] objs = new Object[fieldSize];
-        objs[0] = title;
+        int size = 2;
         if (conf.isSTOCHDeltaEnabled()) {
-            objs[1] = Constants.DELTA + title;
+            size += 2;
         }
-        emptyField = new Double[fieldSize];
+        Object[] objs = new Object[size];
+        objs[0] = title;
+        objs[1] = title + "2";
+        if (conf.isSTOCHDeltaEnabled()) {
+            objs[2] = Constants.DELTA + title;
+            objs[3] = Constants.DELTA + title + "2";
+        }
         return objs;
     }
 
