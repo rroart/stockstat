@@ -112,26 +112,27 @@ public class ComponentMLIndicator extends Component {
         permList.add(ConfigConstants.AGGREGATORSINDICATORMACD);
         permList.add(ConfigConstants.AGGREGATORSINDICATORRSI);
         int size = permList.size();
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < 2; j++) {
+        int bitsize = (1 << size) - 1;
+        for (int i = 1; i < bitsize; i++) {
+            for (int j = 0; j < size; j++) {
                 System.out.println("Doing " + i + " " + j);
-                if (j != 0) {
-                    srv.conf.configValueMap.put(permList.get(i), Boolean.TRUE);
+                if ((i & (1 << j)) != 0) {
+                    srv.conf.configValueMap.put(permList.get(j), Boolean.TRUE);
                 } else {
-                    srv.conf.configValueMap.put(permList.get(i), Boolean.FALSE);
+                    srv.conf.configValueMap.put(permList.get(j), Boolean.FALSE);
                 }
-                try {
-                    List<Double> newConfidenceList = new ArrayList<>();
-                    List<MemoryItem> memories = ServiceUtil.doMLIndicator(srv, market, 0, null, false, false);
-                    for(MemoryItem memory : memories) {
-                        newConfidenceList.add(memory.getConfidence());
-                        //System.out.println(memory);
-                    }
-                    System.out.println("New confidences " + newConfidenceList);
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+            }
+            try {
+                List<Double> newConfidenceList = new ArrayList<>();
+                List<MemoryItem> memories = ServiceUtil.doMLIndicator(srv, market, 0, null, false, false);
+                for(MemoryItem memory : memories) {
+                    newConfidenceList.add(memory.getConfidence());
+                    //System.out.println(memory);
                 }
+                System.out.println("New confidences " + newConfidenceList);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
     }
