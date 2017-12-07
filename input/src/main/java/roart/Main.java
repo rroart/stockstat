@@ -269,7 +269,7 @@ public class Main {
             }
             String period7 = null;
             if (period7Elem != null) {
-            period6 = reformat(period7Elem.getTextContent());
+            period7 = reformat(period7Elem.getTextContent());
             }
             String period8 = null;
             if (period8Elem != null) {
