@@ -56,6 +56,26 @@
               </execution>
             </executions>
           </plugin>
+	  <plugin>
+	    <groupId>com.googlecode.maven-download-plugin</groupId>
+	    <artifactId>download-maven-plugin</artifactId>
+	    <version>1.3.0</version>
+	    <executions>
+	      <execution>
+		<!-- the wget goal actually binds itself to this phase by default -->
+		<phase>process-resources</phase>
+		<goals>
+		  <goal>wget</goal>
+		</goals>
+		<configuration>
+		  <url>http://central.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.4.2.v20170220/jetty-runner-9.4.2.v20170220.jar</url>
+		  <outputFileName>jetty-runner-9.4.2.v20170220.jar</outputFileName>
+		  <!-- default target location, just to demonstrate the parameter -->
+		  <outputDirectory>/tmp/jetty-runner</outputDirectory>
+		</configuration>
+	      </execution>
+	    </executions>
+	  </plugin>
         </plugins>
       </build>
     </project>
