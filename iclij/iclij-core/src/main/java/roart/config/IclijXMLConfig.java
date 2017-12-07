@@ -33,7 +33,7 @@ public class IclijXMLConfig {
    
     protected static IclijXMLConfig instance = null;
    
-    public static String configFile = "iclij.xml";
+    public static String configFile = "../conf/iclij.xml";
     
    public static IclijXMLConfig instance() {
         if (instance == null) {
@@ -68,97 +68,102 @@ public class IclijXMLConfig {
             InputStream stream = new FileInputStream(new File(configFile));         
             configxml = fileBuilder.getConfiguration();
             configxml.read(stream);
-            String root = configxml.getRootElementName();
-            Document doc = configxml.getDocument();
-            configInstance.configTreeMap = new ConfigTreeMap();
-            configInstance.configValueMap = new HashMap<String, Object>();
-            IclijConfigConstantMaps.makeDefaultMap();
-            IclijConfigConstantMaps.makeTextMap();
-            IclijConfigConstantMaps.makeTypeMap();
-            configInstance.deflt = IclijConfigConstantMaps.deflt;
-            configInstance.type = IclijConfigConstantMaps.map;
-            configInstance.text = IclijConfigConstantMaps.text;
-            handleDoc(doc.getDocumentElement(), configInstance.configTreeMap, "");
-            //print(configTreeMap, 0);
-            //System.out.println("root " + root);
-            //System.out.println("maps "+ configTreeMap);
-            //makeTypeMap();
-            //configxml.load(ConfigConstants.CONFIGFILE);
-            //configxml.initFileLocator(new FileLocator(new FileLocatorBuilder()));
-            //System.out.println("m " + configxml.getProperty("markets"));
-            List<HierarchicalConfiguration<ImmutableNode>> fields = configxml.childConfigurationsAt("config");
-            for (HierarchicalConfiguration field : fields) {
-                //System.out.println("field" + field.toString());
-            }
-            //configxml.childConfigurationsAt();
-            //new XMLConfiguration("_config.xml");
-            fields = configxml.childConfigurationsAt("markets");
-            for (HierarchicalConfiguration field : fields) {
-                //System.out.println("field" + field.toString());
-                Iterator<String> iter = field.getKeys();
-                while(iter.hasNext()) {
-                    String s = iter.next();
-                    //System.out.println("s1 " + s);
-                }
-
-            }
-            fields = (configxml).childConfigurationsAt("/misc");
-            for (HierarchicalConfiguration field : fields) {
-                //System.out.println("field" + field.toString());
-            }
-            fields = ( configxml).childConfigurationsAt("misc");
-            for (HierarchicalConfiguration field : fields) {
-                //System.out.println("field" + field.toString());
-                Iterator<String> iter = field.getKeys();
-                while(iter.hasNext()) {
-                    String s = iter.next();
-                    //System.out.println("s2 " + s);
-                }
-            }
-            //System.out.println("root " + configxml.getList("config"));
-            //System.out.println("root " + configxml.getList("/config"));
-            //System.out.println("root " + configxml.getList("/misc"));
-            //System.out.println("root " + configxml.getList("misc"));
-            IclijConfigConstantMaps.makeTypeMap();
-            Iterator<String> iter = configxml.getKeys();
-            //System.out.println("kk " + configxml.getList("markets.market"));
-            //System.out.println("keys " + ConfigConstants.map.keySet());
-            while(iter.hasNext()) {
-                String s = iter.next();
-                //System.out.println("s " + s + " " + configxml.getString(s) + " " + configxml.getProperty(s));
-                Object o = null;
-                String text = s;
-                Class myclass = IclijConfigConstantMaps.map.get(text);
-
-                if (myclass == null) {
-                    //System.out.println("Unknown " + text);
-                    log.info("Unknown " + text);
-                    continue;
-                }
-                switch (myclass.getName()) {
-                case "java.lang.String":
-                    o = configxml.getString(s);
-                    break;
-                case "java.lang.Integer":
-                    o = configxml.getInt(s);
-                    break;
-                case "java.lang.Double":
-                    o = configxml.getDouble(s);
-                    break;
-                case "java.lang.Boolean":
-                    o = configxml.getBoolean(s);
-                    break;
-                default:
-                    //System.out.println("unknown " + myclass.getName());
-                    log.info("unknown " + myclass.getName());
-                }
-                configInstance.configValueMap.put(s, o);
-            }
-            //((AbstractConfiguration) config).setDelimiterParsingDisabled(true);
         } catch (Exception e) {
             e.printStackTrace();
             log.error(Constants.EXCEPTION, e); 
+            log.error("Config file not found, can not continue");
+            System.out.println("Config file not found, can not continue");
+            System.exit(1);
         }
+        Document doc = configxml.getDocument();
+        configInstance.configTreeMap = new ConfigTreeMap();
+        configInstance.configValueMap = new HashMap<String, Object>();
+        IclijConfigConstantMaps.makeDefaultMap();
+        IclijConfigConstantMaps.makeTextMap();
+        IclijConfigConstantMaps.makeTypeMap();
+        configInstance.deflt = IclijConfigConstantMaps.deflt;
+        configInstance.type = IclijConfigConstantMaps.map;
+        configInstance.text = IclijConfigConstantMaps.text;
+        handleDoc(doc.getDocumentElement(), configInstance.configTreeMap, "");
+        //print(configTreeMap, 0);
+        //System.out.println("root " + root);
+        //System.out.println("maps "+ configTreeMap);
+        //makeTypeMap();
+        //configxml.load(ConfigConstants.CONFIGFILE);
+        //configxml.initFileLocator(new FileLocator(new FileLocatorBuilder()));
+        //System.out.println("m " + configxml.getProperty("markets"));
+        printoutnot();
+        Iterator<String> iter = configxml.getKeys();
+        //System.out.println("kk " + configxml.getList("markets.market"));
+        //System.out.println("keys " + ConfigConstants.map.keySet());
+        while(iter.hasNext()) {
+            String s = iter.next();
+            //System.out.println("s " + s + " " + configxml.getString(s) + " " + configxml.getProperty(s));
+            Object o = null;
+            String text = s;
+            Class myclass = IclijConfigConstantMaps.map.get(text);
+
+            if (myclass == null) {
+                //System.out.println("Unknown " + text);
+                log.info("Unknown " + text);
+                continue;
+            }
+            switch (myclass.getName()) {
+            case "java.lang.String":
+                o = configxml.getString(s);
+                break;
+            case "java.lang.Integer":
+                o = configxml.getInt(s);
+                break;
+            case "java.lang.Double":
+                o = configxml.getDouble(s);
+                break;
+            case "java.lang.Boolean":
+                o = configxml.getBoolean(s);
+                break;
+            default:
+                //System.out.println("unknown " + myclass.getName());
+                log.info("unknown " + myclass.getName());
+            }
+            configInstance.configValueMap.put(s, o);
+        }
+            //((AbstractConfiguration) config).setDelimiterParsingDisabled(true);
+    }
+
+    private void printoutnot() {
+        List<HierarchicalConfiguration<ImmutableNode>> fields = configxml.childConfigurationsAt("config");
+        for (HierarchicalConfiguration field : fields) {
+            //System.out.println("field" + field.toString());
+        }
+        //configxml.childConfigurationsAt();
+        //new XMLConfiguration("_config.xml");
+        fields = configxml.childConfigurationsAt("markets");
+        for (HierarchicalConfiguration field : fields) {
+            //System.out.println("field" + field.toString());
+            Iterator<String> iter = field.getKeys();
+            while(iter.hasNext()) {
+                String s = iter.next();
+                //System.out.println("s1 " + s);
+            }
+
+        }
+        fields = (configxml).childConfigurationsAt("/misc");
+        for (HierarchicalConfiguration field : fields) {
+            //System.out.println("field" + field.toString());
+        }
+        fields = ( configxml).childConfigurationsAt("misc");
+        for (HierarchicalConfiguration field : fields) {
+            //System.out.println("field" + field.toString());
+            Iterator<String> iter = field.getKeys();
+            while(iter.hasNext()) {
+                String s = iter.next();
+                //System.out.println("s2 " + s);
+            }
+        }
+        //System.out.println("root " + configxml.getList("config"));
+        //System.out.println("root " + configxml.getList("/config"));
+        //System.out.println("root " + configxml.getList("/misc"));
+        //System.out.println("root " + configxml.getList("misc"));
     }
 
     private void print(ConfigTreeMap map2, int indent) {
