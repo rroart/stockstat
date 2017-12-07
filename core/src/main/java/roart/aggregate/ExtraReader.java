@@ -165,7 +165,7 @@ public class ExtraReader extends Pipeline {
 
     // TODO duplicated
     private String[] getPeriodText(String market, MyMyConfig conf) {
-        String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6" };
+        String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6", "Period7", "Period8", "Period9" };
         MetaItem meta = null;
         try {
             meta = MetaItem.getById(market, conf);

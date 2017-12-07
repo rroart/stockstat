@@ -132,7 +132,10 @@ public class DbSpark {
 				String period4 = row.getAs("period4");
 				String period5 = row.getAs("period5");
 				String period6 = row.getAs("period6");
-				return new MetaItem(marketid, period1, period2, period3, period4, period5, period6);
+                String period7 = row.getAs("period7");
+                String period8 = row.getAs("period8");
+                String period9 = row.getAs("period9");
+				return new MetaItem(marketid, period1, period2, period3, period4, period5, period6, period7, period8, period9);
 			}
 		}
 		return null;

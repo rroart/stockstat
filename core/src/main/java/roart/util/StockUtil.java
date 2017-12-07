@@ -24,8 +24,8 @@ public class StockUtil {
 
     private static Logger log = LoggerFactory.getLogger(StockUtil.class);
 
-    public final static int PERIODS = 6;
-    public final static int ALLPERIODS = 8;
+    public static final int PERIODS = 9;
+    public static final int ALLPERIODS = 11;
 
     /**
      * Create sorted tables for all periods in a time interval
@@ -89,7 +89,7 @@ public class StockUtil {
 
     public static List<StockItem>[][] getListSorted(List<StockItem> datedstocklists[], int count)
                     throws Exception {
-        Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator, StockUtil.StockPeriod6Comparator };
+        Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator, StockUtil.StockPeriod6Comparator , StockUtil.StockPeriod7Comparator , StockUtil.StockPeriod8Comparator , StockUtil.StockPeriod9Comparator };
 
         // make sorted period1, sorted current day
         // make sorted period1, sorted day offset
@@ -525,6 +525,42 @@ public class StockUtil {
 
             Double comp1 = stock1.getPeriod(5);
             Double comp2 = stock2.getPeriod(5);
+
+            return compDoubleInner(comp1, comp2);
+        }
+
+    };
+
+    public static Comparator<StockItem> StockPeriod7Comparator = new Comparator<StockItem>() {
+
+        public int compare(StockItem stock1, StockItem stock2) {
+
+            Double comp1 = stock1.getPeriod(6);
+            Double comp2 = stock2.getPeriod(6);
+
+            return compDoubleInner(comp1, comp2);
+        }
+
+    };
+
+    public static Comparator<StockItem> StockPeriod8Comparator = new Comparator<StockItem>() {
+
+        public int compare(StockItem stock1, StockItem stock2) {
+
+            Double comp1 = stock1.getPeriod(7);
+            Double comp2 = stock2.getPeriod(7);
+
+            return compDoubleInner(comp1, comp2);
+        }
+
+    };
+
+    public static Comparator<StockItem> StockPeriod9Comparator = new Comparator<StockItem>() {
+
+        public int compare(StockItem stock1, StockItem stock2) {
+
+            Double comp1 = stock1.getPeriod(8);
+            Double comp2 = stock2.getPeriod(8);
 
             return compDoubleInner(comp1, comp2);
         }
