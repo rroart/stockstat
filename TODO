@@ -15,10 +15,8 @@ Add interest
 Fix problem when extras use same market
 Make stock value to return a new class instead of double[]
 Use genetic algorithms for finding neural net config
-Put spark jdbc driver in predefined place, not my homedir
 Move move
 Check all use of configs
-Finalize new indicators
 Metadata on title row
 Rearrange buy/sell
 Change result map keys, due to overlap
@@ -39,3 +37,6 @@ Use 4 macd with ml
 Mlindicator scale down/improveaction?
 Recommender combine keys/improveaction?
 Pipeline iclij
+Remove findprofit both inc dec, go to improve
+RSI and usemax
+StockUtil update periods number
