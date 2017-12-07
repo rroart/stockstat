@@ -44,6 +44,27 @@
       <outputDirectory>lib</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>${project.basedir}/../iclij/iclij-web/target</directory>
+      <includes>
+	<include>*.war</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>/tmp/jetty-runner</directory>
+      <includes>
+	<include>jetty-runner-9.4.2.v20170220.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../r</directory>
+      <includes>
+	<include>r/lib.r</include>
+      </includes>
+      <outputDirectory>r</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/../bin</directory>
       <includes>
 	<include>*</include>
@@ -74,6 +95,13 @@
 	<include>DOCUMENTATION.pdf</include>
       </includes>
       <outputDirectory/>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../conf</directory>
+      <includes>
+	<include>*</include>
+      </includes>
+      <outputDirectory>conf</outputDirectory>
     </fileSet>
   </fileSets>
   <!--files>
