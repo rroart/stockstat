@@ -1,0 +1,36 @@
+<div>
+  <div>
+    <div>
+      <!--h2>Config tree</h2-->
+      <!--h3>{{elem.name}}</h3-->
+      <label>{{textname}}</label>
+      <!--h3>{{typename}}</h3-->
+	<!--form>
+	  <label>{{textname}}</label><input type="checkbox" name="{{name}}" value="checkboxvalue"/>
+</form-->
+	  <input *ngIf='checkbox && checkboxvalue' type="checkbox" checked (change)="switchMe($event)"/>
+	  <input *ngIf='checkbox && !checkboxvalue' type="checkbox" (change)="switchMe($event)"/>
+	<!--form (keyup.enter)="methodInsideYourComponent(value)">
+	  <label>{{textname}}</label><input type="text" name="{{name}}" value="{{myvalue}}" #newvalue/>
+	  </form-->
+	  <input *ngIf='!checkbox && myvalue != null' #atext (keyup.enter)="onSubmit(atext.value)" value="{{myvalue}}"/>
+      
+      <!--h3>{{myvalue}}</h3-->
+      <ul>
+	<div *ngFor="let value of values2">
+	  <li>
+	    <treeview [elem]="value" [text]="text" [type]="type" [configValueMap]="configValueMap"></treeview>
+	    </li>
+	</div>
+	</ul>
+      <!--div *ngFor="let value of values">
+	<treeview-component [elem]="value"></treeview-component>
+    </div-->
+	<div class="form-group">
+	  <!--select class="form-control" id="market" name="market" [(ngModel)]="cboevol" #market="ngModel">
+            <option *ngFor="let market of config.configTreeMap" value="{{market}}">{{market}}</option>
+	    
+	  </select-->
+	</div>
+  </div>
+</div>

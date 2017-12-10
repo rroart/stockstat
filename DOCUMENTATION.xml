@@ -1,0 +1,2531 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!--!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.docbook.org/xml/5.0/dtd/docbook.dtd"-->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<book>
+<title>
+Stock statistics
+</title>
+  <bookinfo>
+    <author>
+      <firstname>Roar</firstname>
+<surname>Thronæs</surname>
+</author>
+    <abstract>
+      <para>
+	Stock statistics is an app for making simple stats and graphs.
+      </para>
+    </abstract>
+  </bookinfo>
+<chapter>
+  <title>
+    Introduction
+  </title>
+<para>
+For making simple stats and graphs.
+</para>
+</chapter>
+<chapter>
+  <title>
+    Installing
+  </title>
+<para>
+  Get git from <ulink url="https://github.com/rroart/stockstat">here</ulink>.
+  Go to bin/ and start service-simple.sh
+</para>
+<para>
+  <itemizedlist>
+    <title>
+      Required software
+    </title>
+    <listitem>
+      <para>
+	Maven
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+	Java 8
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+	PostgreSQL
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+	R
+      </para>
+    </listitem>
+  </itemizedlist>
+</para>
+<para>
+  The software is built with maven. Use mvn package, and then mvn install to install the common library components. Use mvn jetty:run to run the app.
+</para>
+<para>
+Database:
+Need to provide postgres with a database stockstat, and username/password stockstat/password. Use the following:
+<programlisting>
+  su - root
+  su - postgres
+  psql
+  create database stockstat;
+  create user stockstat with password 'password';
+  grant all privileges on database stockstat to stockstat;
+</programlisting>
+</para>
+</chapter>
+<chapter>
+  <title>
+    Configuration
+  </title>
+  <para>
+    Sample files are not yet available.
+  </para>
+  <para>
+    Configure with stockstat.xml:
+    See sample file stockstat.xml, it contains the complete configuration structure.
+  </para>
+  <sect1>
+    <title>
+      Mandatory
+    </title>
+    <sect2>
+      <title>
+	Databases
+      </title>
+      <para>
+	You may choose to connect to PostgreSQL directly with Hibernate,
+	then set database.hibernate enable=true.
+	Or you may connect to PostgreSQL more indirectly via Spark,
+	then set database.spark enable=true, but then you will also need
+	to add a Spark service pointed to by the configuration
+	database.spark.sparkmaster
+      </para>
+    </sect2>
+  </sect1>
+  <sect1>
+    <title>
+      Non-mandatory
+    </title>
+    <sect2>
+      <title>
+	Spark
+      </title>
+      <para>
+	Not yet in active use
+	<programlisting>
+	  database.spark[@enable]=true
+	  database.spark.sparkmaster=...
+	  ../jars
+	  #lib/...
+	  #conf/spark-defaults.conf
+	</programlisting>
+    </para>
+    </sect2>
+    <sect2>
+      <title>
+	Machine learning
+      </title>
+      <para>
+	Machine learning is used for classifying/predicting,
+	set machinelearning enable=true to enable this.
+	We are using two engines for this, Spark and Tensorflow.
+	Set machinelearning.sparkml enable=true to use Spark.
+	Set master with machinelearning.sparkml.sparkmaster.
+	Set machinelearning.sparkml.mcp enable=true to use
+	multilayer perceptron classifier, and set
+	machinelearning.sparkml.lr enable=true to use
+	Logistic Regression.
+	To use Tensorflow, set machinelearning.tensorflow enable=true.
+	Here, set machinelearning.tensorflow.dnn enable=true to use the
+	 classifier, and machinelearning.tensorflow.l
+	 enable=true to use the Logistic regression.
+	 To use Spark, see <link linkend="spark" endterm="sparkterm">Spark</link> and <link linkend="docker" endterm="dockerterm">Docker</link>.
+	 To use Tensorflow, see <link linkend="tensorflow" endterm="tensorflowterm">Tensorflow</link> and <link linkend="docker" endterm="dockerterm">Docker</link>.
+    <table>
+      <title>
+	Machine learning settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	      machinelearning
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.sparkml
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.sparkml.sparkmaster
+	    </entry>
+	    <entry>
+	      The spark master
+	    </entry>
+	    <entry>
+	      spark://127.0.0.1:7077
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.sparkml.mcp
+	    </entry>
+	    <entry>
+	      Multilayer Perceptron Classifier
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.sparkml.lr
+	    </entry>
+	    <entry>
+	      Logistic Regression
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.tensorflow
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.tensorflow.dnn
+	    </entry>
+	    <entry>
+	    Deep Neural Network
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.tensorflow.l
+	    </entry>
+	    <entry>
+	      Logistic Regression
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+    <table>
+      <title>
+	Indicator settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	      indicators
+	    </entry>
+	    <entry>
+	      Indicator
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.move
+	    </entry>
+	    <entry>
+	      Simple move indicator
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd
+	    </entry>
+	    <entry>
+	      MACD
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.macdhistogramdelta
+	    </entry>
+	    <entry>
+	      Use histogram change
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.macdhistogramdeltadays
+	    </entry>
+	    <entry>
+	      Number of days past for calculating change
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.macdmomentumdelta
+	    </entry>
+	    <entry>
+	      Use momentum change
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.macdmomentumdeltadays
+	    </entry>
+	    <entry>
+	      Number of days past for calculating change
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend
+	    </entry>
+	    <entry>
+	      Enable MACD recommender
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.buy
+	    </entry>
+	    <entry>
+	      ?
+	    </entry>
+	    <entry>
+	      ""
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.buy.weighthistogram
+	    </entry>
+	    <entry>
+	      Recommender weight for histogram
+	    </entry>
+	    <entry>
+	      40
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.buy.weighthistogramdelta
+	    </entry>
+	    <entry>
+	      Recommender weight for histogram delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.buy.weightmomemtum
+	    </entry>
+	    <entry>
+	      Recommender weight for momentum
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.buy.weightmomemtumdelta
+	    </entry>
+	    <entry>
+	      Recommender weight for momentum delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.sell
+	    </entry>
+	    <entry>
+	      ?
+	    </entry>
+	    <entry>
+	      ""
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.sell.weighthistogram
+	    </entry>
+	    <entry>
+	      Recommender weight for histogram
+	    </entry>
+	    <entry>
+	      40
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.sell.weighthistogramdelta
+	    </entry>
+	    <entry>
+	      Recommender weight for histogram delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.sell.weightmomemtum
+	    </entry>
+	    <entry>
+	      Recommender weight for momentum
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.sell.weightmomemtumdelta
+	    </entry>
+	    <entry>
+	      Recommender weight for momentum delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.machinelearning
+	    </entry>
+	    <entry>
+	      Use MACD machine learning
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.machinelearning.momemtumml
+	    </entry>
+	    <entry>
+	      Use MACD machine learning for momentum
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.machinelearning.histogramml
+	    </entry>
+	    <entry>
+	      Use MACD machine learning for histogram
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.daysbeforezero
+	    </entry>
+	    <entry>
+	      Minimum number of consequecutive days before zero turn
+	    </entry>
+	    <entry>
+	      25
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.daysafterzero
+	    </entry>
+	    <entry>
+	      Number of consequecutive days after zero turn for checking increase/decrease
+	    </entry>
+	    <entry>
+	      10
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi
+	    </entry>
+	    <entry>
+	      Use RSI indicator
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi.rsidelta
+	    </entry>
+	    <entry>
+	      Use RSI delta
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi.rsideltadays
+	    </entry>
+	    <entry>
+	      Number of days past for calculating change
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.stochrsi
+	    </entry>
+	    <entry>
+	      StochRSI indicator
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.stochrsi.stochrsidelta
+	    </entry>
+	    <entry>
+	      Use indicator change
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.stochrsi.stochrsideltadays
+	    </entry>
+	    <entry>
+	      Number of days past for calculating change
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi.recommend
+	    </entry>
+	    <entry>
+	      Use RSI recommender
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi.recommend.buy
+	    </entry>
+	    <entry>
+	      ?
+	    </entry>
+	    <entry>
+	      ""
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi.recommend.buy.weight
+	    </entry>
+	    <entry>
+	      RSI buy weigth
+	    </entry>
+	    <entry>
+	      50
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi.recommend.buy.weightdelta
+	    </entry>
+	    <entry>
+	      RSI delta buy weight
+	    </entry>
+	    <entry>
+	      50
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi.recommend.sell
+	    </entry>
+	    <entry>
+	      ?
+	    </entry>
+	    <entry>
+	      ""
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi.recommend.sell.weight
+	    </entry>
+	    <entry>
+	      RSI sell weight
+	    </entry>
+	    <entry>
+	      50
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.rsi.recommend.sell.weightdelta
+	    </entry>
+	    <entry>
+	      RSI delta sell weight
+	    </entry>
+	    <entry>
+	      50
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.cci
+	    </entry>
+	    <entry>
+	      CCI indicator
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.cci.ccidelta
+	    </entry>
+	    <entry>
+	      Use indicator change
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.cci.ccideltadays
+	    </entry>
+	    <entry>
+	      Number of days past for calculating change
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.atr
+	    </entry>
+	    <entry>
+	      ATR indicator
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.atr.atrdelta
+	    </entry>
+	    <entry>
+	      Use indicator change
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.atr.atrdeltadays
+	    </entry>
+	    <entry>
+	      	      Number of days past for calculating change
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.stoch
+	    </entry>
+	    <entry>
+	      Stoch indicator
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.stoch.stochdelta
+	    </entry>
+	    <entry>
+	      Use indicator change
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.stoch.stochdeltadays
+	    </entry>
+	    <entry>
+	      Number of days past for calculating change
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      predictors
+	    </entry>
+	    <entry>
+	      Use predictors
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      predictors.lstm
+	    </entry>
+	    <entry>
+	      Use LSTM predictor
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      predictors.lstm.windowsize
+	    </entry>
+	    <entry>
+	      Windowsize (sliding)
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+predictors.lstm.horizon
+	    </entry>
+	    <entry>
+	      The prediction horizon
+	    </entry>
+	    <entry>
+	      5
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+predictors.lstm.epochs
+	    </entry>
+	    <entry>
+	      Epochs (repeats...? explain)
+	    </entry>
+	    <entry>
+	      5
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.percentizepriceindex
+	    </entry>
+	    <entry>
+	      Change prices to percentages, starting at 100
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.mlstats
+	    </entry>
+	    <entry>
+	      Time stats for Machine Learning usage
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.otherstats
+	    </entry>
+	    <entry>
+	      Other stats, like MACD histogram/horizon changing sign
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.mydays
+	    </entry>
+	    <entry>
+	      Number of days to display
+	    </entry>
+	    <entry>
+	      180
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.mytopbottom
+	    </entry>
+	    <entry>
+	      Number of items to display in graph
+	    </entry>
+	    <entry>
+	      10
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.mytabledays
+	    </entry>
+	    <entry>
+	      Number of table days (explain diff)
+	    </entry>
+	    <entry>
+	      180
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.mytablemoveintervaldays
+	    </entry>
+	    <entry>
+	      For move indicator, the days between each move
+	    </entry>
+	    <entry>
+	      5
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.mytableintervaldays
+	    </entry>
+	    <entry>
+	      The interval when displaying table graph.
+	    </entry>
+	    <entry>
+	      1
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.myequalize
+	    </entry>
+	    <entry>
+	      Enable equalizing (explain...)
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.mygraphequalize
+	    </entry>
+	    <entry>
+	      Enable graph equalizing (explain...)
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.mygraphequalizeunify
+	    </entry>
+	    <entry>
+	      Unified graph equalizing
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+test.indicatorrecommender.complex.futuredays
+	    </entry>
+	    <entry>
+	      Number of future days for doing the classification
+	    </entry>
+	    <entry>
+	      10
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+test.indicatorrecommender.complex.intervaldays
+	    </entry>
+	    <entry>
+	      Interval between sample days
+	    </entry>
+	    <entry>
+	      5
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+test.indicatorrecommender.simple.futuredays
+	    </entry>
+	    <entry>
+	      Number of future days for doing the classification
+	    </entry>
+	    <entry>
+	      10
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+test.indicatorrecommender.simple.intervaldays
+	    </entry>
+	    <entry>
+	      Interval between sample days
+	    </entry>
+	    <entry>
+	      5
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+test.recommend.intervaltimes
+	    </entry>
+	    <entry>
+	      deprecated?
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+test.recommend.iterations
+	    </entry>
+	    <entry>
+	      deprecated?
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+test.recommend.period
+	    </entry>
+	    <entry>
+	      deprecated?
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+test.recommend.factor
+	    </entry>
+	    <entry>
+	      To deprecate
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+evolution
+	    </entry>
+	    <entry>
+	      Use evolution (fix...)
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+evolution.generations
+	    </entry>
+	    <entry>
+	      Number of generations (iterations)
+	    </entry>
+	    <entry>
+	      2
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+evolution.children
+	    </entry>
+	    <entry>
+	      Number of children (crossover), check depr
+	    </entry>
+	    <entry>
+	      4
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+evolution.select
+	    </entry>
+	    <entry>
+	      Number to select per generation
+	    </entry>
+	    <entry>
+	      16
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+evolution.elite
+	    </entry>
+	    <entry>
+	      Number of elite
+	    </entry>
+	    <entry>
+	      1
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+evolution.elitecloneandmutate
+	    </entry>
+	    <entry>
+	      Number of elite to clone and mutate
+	    </entry>
+	    <entry>
+	      0
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+evolution.mutate
+	    </entry>
+	    <entry>
+	      Number of mutations
+	    </entry>
+	    <entry>
+	      1
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+evolution.crossover
+	    </entry>
+	    <entry>
+	      Number of crossover
+	    </entry>
+	    <entry>
+	      1
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+evolution.generationcreate
+	    </entry>
+	    <entry>
+	      Number to be created
+	    </entry>
+	    <entry>
+	      0
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators
+	    </entry>
+	    <entry>
+	      Use aggregations of earlier results
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender
+	    </entry>
+	    <entry>
+	      Use aggregated recommender
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple
+	    </entry>
+	    <entry>
+	      Use simple recommender
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd
+	    </entry>
+	    <entry>
+	      Use simple recommender MACD
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.buy
+	    </entry>
+	    <entry>
+	      Use simple recommender MACD buy
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.buy.weighthistogram
+	    </entry>
+	    <entry>
+	      Simple recommender buy weight for histogram
+	    </entry>
+	    <entry>
+	      40
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.buy.weighthistogramdelta
+	    </entry>
+	    <entry>
+	      Simple recommender buy weight for histogram delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.buy.weightmomemtum
+	    </entry>
+	    <entry>
+	      Simple recommender buy weight for momentum
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.buy.weightmomemtumdelta
+	    </entry>
+	    <entry>
+	      Simple recommender buy weight for momentum delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.sell
+	    </entry>
+	    <entry>
+	      Use simple recommender MACD sell
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.sell.weighthistogram
+	    </entry>
+	    <entry>
+	      Simple recommender sell weight for histogram
+	    </entry>
+	    <entry>
+	      40
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.sell.weighthistogramdelta
+	    </entry>
+	    <entry>
+	      Simple recommender sell weight for histogram delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.sell.weightmomemtum
+	    </entry>
+	    <entry>
+	      Simple recommender sell weight for momentum
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.sell.weightmomemtumdelta
+	    </entry>
+	    <entry>
+	      Simple recommender sell weight for momentum delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.rsi
+	    </entry>
+	    <entry>
+	      Use recommender for simple RSI
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.rsi.buy
+	    </entry>
+	    <entry>
+	      Use recommender for simple RSI buy
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.rsi.buy.weightrsi
+	    </entry>
+	    <entry>
+	      Simple recommender buy weight for RSI
+	    </entry>
+	    <entry>
+	      50
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.rsi.buy.weightrsidelta
+	    </entry>
+	    <entry>
+	      Simple recommender buy weight for RSI delta
+	    </entry>
+	    <entry>
+	      50
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.rsi.sell
+	    </entry>
+	    <entry>
+	      Use recommender for simple RSI sell
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.rsi.sell.weightrsi
+	    </entry>
+	    <entry>
+	      Simple recommender sell weight for RSI
+	    </entry>
+	    <entry>
+	      50
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.rsi.sell.weightrsidelta
+	    </entry>
+	    <entry>
+	      Simple recommender buy weight for RSI delta
+	    </entry>
+	    <entry>
+	      50
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex
+	    </entry>
+	    <entry>
+	      Use complex recommender
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd
+	    </entry>
+	    <entry>
+	      Use complex recommender for MACD
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.buy
+	    </entry>
+	    <entry>
+	      Use complex recommender for MACD buy
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.buy.weighthistogramnode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.buy.weighthistogramdeltanode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.buy.weightmomemtumnode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.buy.weightmomemtumdeltanode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.sell
+	    </entry>
+	    <entry>
+	      Use complex recommender for MACD sell
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.sell.weighthistogramnode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.sell.weighthistogramdeltanode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.sell.weightmomemtumnode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.sell.weightmomemtumdeltanode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.rsi
+	    </entry>
+	    <entry>
+	      Use complex recommender for RSI
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.rsi.buy
+	    </entry>
+	    <entry>
+	      Use complex recommender for RSI buy
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.rsi.buy.weightrsinode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.rsi.buy.weightrsideltanode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.rsi.sell
+	    </entry>
+	    <entry>
+	      Use complex recommender for RSI sell
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.rsi.sell.weightrsinode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.rsi.sell.weightrsideltanode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator
+	    </entry>
+	    <entry>
+	      Use aggregated indicator
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator.macd
+	    </entry>
+	    <entry>
+	      Use aggregated indicator with MACD
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator.rsi
+	    </entry>
+	    <entry>
+	      Use aggregated indicator with RSI
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator.extras
+	    </entry>
+	    <entry>
+	      JSON object describing the units from other markets to use
+	    </entry>
+	    <entry>
+	      ""
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator.extrasdeltas
+	    </entry>
+	    <entry>
+	      The delta days
+	    </entry>
+	    <entry>
+	      2
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator.extrasmacd
+	    </entry>
+	    <entry>
+	      Use extras with MACD
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator.extrasrsi
+	    </entry>
+	    <entry>
+	      Use extras with RSI
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator.futuredays
+	    </entry>
+	    <entry>
+	      Number of future days for doing the classification
+	    </entry>
+	    <entry>
+	      10
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator.intervaldays
+	    </entry>
+	    <entry>
+	      Interval days for going backward
+	    </entry>
+	    <entry>
+	      1
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicator.threshold
+	    </entry>
+	    <entry>
+	      The threshold for classifying increase or decrease.
+	    </entry>
+	    <entry>
+	      0
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.mlmacd
+	    </entry>
+	    <entry>
+	      Use the Machine Learning MACD
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+    <table>
+      <title>
+	Machine learning settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+    <table>
+      <title>
+	Machine learning settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+    <table>
+      <title>
+	Machine learning settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+    <table>
+      <title>
+	Machine learning settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+    <table>
+      <title>
+	Machine learning settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+    <table>
+      <title>
+	Machine learning settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+  </para>
+  <para>
+    Stockstat supports a handful of indicators. MACD, RSI and STOCHRSI require only the price or index at the end of the day. The indicators ATR, CCI and STOCH however, require also the minimum and maximum price or index from that day.
+    In addition, Stockstat uses (some non-standard) value change (delta) for the last number of days (deltadays). 
+  </para>
+  <para>
+    MACD has the most extensive machine learning support in Stockstat.
+    When the MACD indicator histogram or momentum changes sign, it may be a buy or sell indicator. The downside is, there are a lot of false positives/negatives.
+    It has been attempted to make the system learn what is true/false positives/negatives based on a consequecutive number of days before zero (turning sign) and then a number of consequecutive days after zero, with only one crossing of the zero. 
+  </para>
+  <para>
+    Evolutionary programming has been used to make some formula to make recommendations based on the MACD and RSI values.
+
+    If you want to use this, you have to press get recommender and set, for each market you will use.
+  </para>
+    </sect2>
+  </sect1>
+</chapter>
+<chapter>
+  <title>
+    Data acquisition
+  </title>
+<para>
+There are two phases, data acquisition and usage.
+</para>
+<para>
+  The input format dtd is
+  <itemizedlist>
+    <title>
+      DTD
+    </title>
+    <listitem>
+      <para>
+      market: meta? rows
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      meta: marketid period1 period2 period3 period4 period5 period6-9
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      rows: row*
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+      row: id marketid name date indexvalue price currency period1 period2 period3 period4 period5 period6
+      </para>
+    </listitem>
+  </itemizedlist>
+  This have so far been used for gathering info from web on a daily basis. It may also be used for entering historic data. Typically, web pages (choose a name based on this) for markets contain rows with stocks, commodities etc, and the price, currency, index and increased value for given periods. The given periods are named in the meta to indicate the time period, be it one day, one week, one month. The included xslts show how to transform from the web to this xml format.
+  Then run
+  <programlisting>
+    java -jar target/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar my.xml
+  </programlisting>
+  with a param file of that format, here my.xml.
+  This may be run from cron, or once if importing historical data.
+  If importing historical data, the period values must be computed in the xml file to be input.
+  </para>
+</chapter>
+<chapter id="webapp">
+  <title>
+    Webapp
+  </title>
+  <para>
+    The webapp is pretty basic. You can choose a market under get market, then set the wanted date, reset the date (then it will choose the most recent day), or reload (in case date reset, or new data loaded). If getting stats, all elements in the markets will be statistically compared. There are a number of parameter settings.
+    The control panel have options for choosing whether to show plain movements, MACD or RSI.
+    <itemizedlist>
+      <title>
+	Parameters
+      </title>
+      <listitem>
+	<para>
+	  Single interval days (R tableintervaldays): for the resulting list, a base for the delta of moving up compared to the previous time.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Table move interval days (R tablemoveintervaldays): for the resulting list, a base for the delta of moving up compared to the previous time.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+Table days (R days): how many days to use for the graph or statistics
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Table interval days (R tableintervaldays): interval between days for above
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  Table top/bottom (R topbottom): number to show in top/bottom chart
+	</para>
+	</listitem>
+    </itemizedlist>
+  </para>
+  <para>
+    Then, below, there is a possibility of choosing elements from different markets, and the displaying them, as best as is possible. When choosing a market, it is possible to choose an item from that market, and add to a list that is to be displayed by clicking choose graph. There is a choice for equalizing the graphich table for price and index in an additional table, setting each max value to 100%. This is to ensure a more meaningful comparison, since the meanings/scales for each dataset may be different. The merge choice is not yet in use.
+  </para>
+</chapter>
+<chapter>
+  <title>
+    External software configuration
+  </title>
+  <sect1 id="spark">
+    <title id="sparkterm">
+      Spark
+    </title>
+    <para>
+      Spark need driver libraries, download from for instance
+      central.maven.org/maven2/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar
+      and place in spark-2.1.0-bin-hadoop2.7/lib
+    </para>
+    <para>
+      My current has no configuration. The only configuration lies in my current startup scripts, which goes:
+      <programlisting>
+	SPARK_MASTER_IP=127.0.0.1  ./sbin/start-master.sh --webui-port 8088 &amp;
+	./sbin/start-slave.sh  -c 1 -m 1G spark://127.0.0.1:7077 &amp;
+      </programlisting>
+    </para>
+  </sect1>
+</chapter>
+<chapter id="tensorflow">
+  <title id="tensorflow">
+    Tensorflow
+  </title>
+  <sect1>
+    <title>
+    </title>
+    <para>
+      Tensorflow needs the following installed for Python 3:
+      <programlisting>
+       keras
+       nameko
+       numpy
+       pandas
+       sklearn
+       tensorflow
+       werkzeug
+      </programlisting>
+    </para>
+  </sect1>
+</chapter>
+<chapter id="recommend">
+  <title>
+    Recommendation
+  </title>
+  <para>
+    It is difficult to find the right formula for recommendations.
+    For this, an evolutionary algorithm is used.
+    <table>
+      <title>
+	Evolution settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	      evolution.generations
+	    </entry>
+	    <entry>
+	      How many generation (iterations) we will have.
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.select
+	    </entry>
+	    <entry>
+	      The size of the population after each selection
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.elite
+	    </entry>
+	    <entry>
+	      The number of best fitted that will not mutate
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.elitecloneandmutate
+	    </entry>
+	    <entry>
+	      The number of elite that will be cloned mutated (unofficial)
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.crossover
+	    </entry>
+	    <entry>
+	      The number of crossover to make a new individual
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.mutate
+	    </entry>
+	    <entry>
+	      The number to mutate
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      evolution.generationcreate
+	    </entry>
+	    <entry>
+	      The number to create per generation (unofficial)
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+  </para>
+</chapter>
+<chapter id="mlmacd">
+  <title>
+    ML MACD
+  </title>
+  <para>
+    <programlisting>
+      daysbeforezero
+      daysafterzero
+    </programlisting>
+    This will check the MACD histogram curve for being all positive or
+    negative the number daysbeforezero.
+    Regarding of whether the value/index has increased/decreased the
+    number daysafterzero, we label it as true/false negative/positive.
+    Based on this, we try to label fresh MACD turns that has not net passed
+    the daysafterzero time.
+  </para>
+</chapter>
+<chapter id="aggregateml">
+  <title>
+    Aggregated ML
+  </title>
+  <para>
+    For learning which MACD, RSI indicators make it above or belov a up/down
+    threshold a certain number of days in the future.
+    <table>
+      <title>
+	ML settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	    <entry>
+	      Default
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	      aggregators.indicator
+	    </entry>
+	    <entry>
+	      Enabling
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.macd
+	    </entry>
+	    <entry>
+	      Enabling
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.rsi
+	    </entry>
+	    <entry>
+	      Enabling
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.futuredays
+	    </entry>
+	    <entry>
+	      Number of future days for doing the classification
+	    </entry>
+	    <entry>
+	      10
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.extras
+	    </entry>
+	    <entry>
+	      Extra indicators, set by json format of markets and ids
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.extrasdeltas
+	    </entry>
+	    <entry>
+	      Extra indicators delta days
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.extrasmacd
+	    </entry>
+	    <entry>
+	      Extra indicators use macd result
+	    </entry>
+	    <entry>
+	      False
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.extrasrsi
+	    </entry>
+	    <entry>
+	      Extra indicators use rsi result
+	    </entry>
+	    <entry>
+	      False
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.intervaldays
+	    </entry>
+	    <entry>
+	      The number of days back from current interval
+	    </entry>
+	    <entry>
+	      1
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      aggregators.indicator.threshold
+	    </entry>
+	    <entry>
+	      The up/down percentage threshold
+	    </entry>
+	    <entry>
+	      0
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+    <table>
+      <title>
+	Machine learning settings
+      </title>
+            <tgroup cols="3">
+        <colspec colnum="1" colname="col1" colwidth="1*"/>
+        <colspec colnum="2" colname="col2" colwidth="1*"/>
+        <colspec colnum="3" colname="col3" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>   
+	      Config setting
+	    </entry>
+	    <entry>
+	      Dependency
+	    </entry>
+	    <entry>
+	      ...
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	    <entry>
+	    </entry>
+	  </row>
+	</tbody>
+	    </tgroup>
+    </table>
+  </para>
+</chapter>
+<chapter id="R">
+  <title>
+    R
+  </title>
+  <para>
+    Usage is by sourcing the r/lib.r.
+    <programlisting>
+      source r/libr.r
+    </programlisting>
+    This is defining variables, functions and reading in all of the database.
+    After this is done, the following functions may be used (with =? parameters as optional with default):
+    <itemizedlist>
+      <title>
+	Functions
+      </title>
+      <listitem>
+	<para>
+    devoffs() : closing all windows.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+    getcontentgraph(mydate, days, tableintervaldays, ids, periodtext) : show a graph for given ids    
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+	out
+    getrisinggraph(market, mydate, days, tableintervaldays, topbottom, myperiodtexts) : show a graph over best risers (outdated)
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+    getbottomgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=?, macddays=?, wantrise=?, wantmacd=?, wantrsi=?) : show the bottom for period
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+    gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=?, macddays=?, reverse=?, wantrise=?, wantmacd=?, wantrsi=?) : show the top for period
+      </para>
+    </listitem>
+    </itemizedlist>
+    The parameters used for this are:
+    <table>
+      <title>
+	Parameters
+      </title>
+      <tgroup cols="2">
+	<colspec colnum="1" colname="col1" colwidth="1*"/>
+	<colspec colnum="2" colname="col2" colwidth="1*"/>
+	<thead>
+	  <row>
+	    <entry>
+	      Parameter
+	    </entry>
+	    <entry>
+	      Description
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+      <row>
+	<entry>
+	  market
+	</entry>
+	<entry>the chosen market
+      </entry>
+    </row>
+    <row>
+      <entry>
+    mydate	</entry>
+	<entry>the recent date, alternative NULL for getting the most recent, or a number for the previous days.
+      </entry>
+    </row>
+    <row>
+      <entry>
+    days	</entry>
+	<entry>the number of days to display
+      </entry>
+    </row>
+    <row>
+      <entry>
+    tableintervaldays	</entry>
+	<entry>the interval between the days for the graph (1 is recommended)
+      </entry>
+    </row>
+    <row>
+      <entry>
+    tablemoveintervaldays	</entry>
+	<entry>the interval between the days
+      </entry>
+    </row>
+    <row>
+      <entry>
+    topbottom	</entry>
+	<entry>number to show
+      </entry>
+    </row>
+    <row>
+      <entry>
+    myperiodtexts/periodtext	</entry>
+	<entry>a list or single periods to display
+      </entry>
+    </row>
+    <row>
+      <entry>
+    ids	</entry>
+	<entry>specific ids to display
+      </entry>
+    </row>
+    <row>
+      <entry>
+	wantrise
+    </entry>
+    <entry>
+      boolean for whether to display rise in tablemoveintervaldays between days
+      </entry>
+    </row>
+    <row>
+      <entry>
+	reverse
+    </entry>
+    <entry>
+      boolean for whether to show reversed order, default FALSE
+      </entry>
+    </row>
+    <row>
+      <entry>
+	wantmacd
+    </entry>
+    <entry>
+      boolean for whether to display the MACD momementum, default FALSE
+      </entry>
+    </row>
+    <row>
+      <entry>
+	wantrsi
+    </entry>
+    <entry>
+      boolean for whether to display the RSI, default FALSE
+      </entry>
+    </row>
+    <row>
+      <entry>
+	macddays
+    </entry>
+    <entry>
+      number of days used for computing MACD and RSI, default 60
+      </entry>
+    </row>
+    <row>
+      <entry>
+	sort
+    </entry>
+    <entry>
+      for what to sort on (VALUE, MACD, RSI), default VALUE
+      </entry>
+    </row>
+    <row>
+      <entry>
+    </entry>
+	<entry>
+      </entry>
+    </row>
+	</tbody>
+      </tgroup>
+    </table>
+  </para>
+</chapter>
+<chapter id="docker">
+  <title>
+    Docker
+  </title>
+  <para>
+    Docker support is provided.
+  </para>
+</chapter>   
+</book>

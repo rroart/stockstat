@@ -35,14 +35,22 @@ public class Main {
 	    Element nameElem = (Element) elem.getElementsByTagName(Constants.NAME).item(0);
 	    Element dateElem = (Element) elem.getElementsByTagName(Constants.DATE).item(0);
 	    Element indexvalueElem = (Element) elem.getElementsByTagName(Constants.INDEXVALUE).item(0);
+        Element indexvaluelowElem = (Element) elem.getElementsByTagName(Constants.INDEXVALUELOW).item(0);
+        Element indexvaluehighElem = (Element) elem.getElementsByTagName(Constants.INDEXVALUEHIGH).item(0);
 	    Element priceElem = (Element) elem.getElementsByTagName(Constants.PRICE).item(0);
+        Element pricelowElem = (Element) elem.getElementsByTagName(Constants.PRICELOW).item(0);
+        Element pricehighElem = (Element) elem.getElementsByTagName(Constants.PRICEHIGH).item(0);
 	    Element currElem = (Element) elem.getElementsByTagName(Constants.CURRENCY).item(0);
+        Element volumeElem = (Element) elem.getElementsByTagName(Constants.VOLUME).item(0);
 	    Element period1Elem = (Element) elem.getElementsByTagName(Constants.PERIOD1).item(0);
 	    Element period2Elem = (Element) elem.getElementsByTagName(Constants.PERIOD2).item(0);
 	    Element period3Elem = (Element) elem.getElementsByTagName(Constants.PERIOD3).item(0);
 	    Element period4Elem = (Element) elem.getElementsByTagName(Constants.PERIOD4).item(0);
         Element period5Elem = (Element) elem.getElementsByTagName(Constants.PERIOD5).item(0);
         Element period6Elem = (Element) elem.getElementsByTagName(Constants.PERIOD6).item(0);
+        Element period7Elem = (Element) elem.getElementsByTagName(Constants.PERIOD7).item(0);
+        Element period8Elem = (Element) elem.getElementsByTagName(Constants.PERIOD8).item(0);
+        Element period9Elem = (Element) elem.getElementsByTagName(Constants.PERIOD9).item(0);
 	    String id = idElem.getTextContent();
 	    if (id == null || id.isEmpty()) {
 	    	continue;
@@ -54,14 +62,34 @@ public class Main {
 	    if (indexvalueElem != null) {
 	      indexvalue = reformat(indexvalueElem.getTextContent());
 	    }
+        String indexvaluelow = null;
+        if (indexvaluelowElem != null) {
+          indexvaluelow = reformat(indexvaluelowElem.getTextContent());
+        }
+        String indexvaluehigh = null;
+        if (indexvaluehighElem != null) {
+          indexvaluehigh = reformat(indexvaluehighElem.getTextContent());
+        }
 	    String price = null;
 	    if (priceElem != null) {
 	      price = reformat(priceElem.getTextContent());
 	    }
+        String pricelow = null;
+        if (pricelowElem != null) {
+          pricelow = reformat(pricelowElem.getTextContent());
+        }
+        String pricehigh = null;
+        if (pricehighElem != null) {
+          pricehigh = reformat(pricehighElem.getTextContent());
+        }
 	    String currency = null;
 	    if (currElem != null) {
 	        currency = currElem.getTextContent();
 	    }
+        String volume = null;
+        if (volumeElem != null) {
+            volume = reformat(volumeElem.getTextContent());
+        }
 	    String period1 = null;
 	    if (period1Elem != null) {
 	    period1 = reformat(period1Elem.getTextContent());
@@ -86,6 +114,18 @@ public class Main {
         if (period6Elem != null) {
         period6 = reformat(period6Elem.getTextContent());
         }
+        String period7 = null;
+        if (period7Elem != null) {
+        period7 = reformat(period7Elem.getTextContent());
+        }
+        String period8 = null;
+        if (period8Elem != null) {
+        period8 = reformat(period8Elem.getTextContent());
+        }
+        String period9 = null;
+        if (period9Elem != null) {
+        period9 = reformat(period9Elem.getTextContent());
+        }
 	    String dbid = marketid + "_" + id + "_" + datestr;
 	    Stock stock = Stock.ensureExistence(dbid);
 	    stock.setId(id);
@@ -99,12 +139,37 @@ public class Main {
 	    } else {
 	    	stock.setIndexvalue(new Double(indexvalue));
 	    }
+        if (indexvaluelow == null || indexvaluelow.equals("-")) {
+            stock.setIndexvaluelow(null);
+        } else {
+            stock.setIndexvaluelow(new Double(indexvaluelow));
+        }
+        if (indexvaluehigh == null || indexvaluehigh.equals("-")) {
+            stock.setIndexvaluehigh(null);
+        } else {
+            stock.setIndexvaluehigh(new Double(indexvaluehigh));
+        }
+        if (volume == null || volume.equals("-")) {
+            stock.setVolume(null);
+        } else {
+            stock.setVolume(new Long(volume));
+        }
 	    stock.setCurrency(currency);
 	    if (price == null || price.equals("-")) {
 	    	stock.setPrice(null);
 	    } else {
 	    	stock.setPrice(new Double(price));
 	    }
+        if (pricelow == null || pricelow.equals("-")) {
+            stock.setPricelow(null);
+        } else {
+            stock.setPricelow(new Double(pricelow));
+        }
+        if (pricehigh == null || pricehigh.equals("-")) {
+            stock.setPricehigh(null);
+        } else {
+            stock.setPricehigh(new Double(pricehigh));
+        }
 	    if (period1 == null || period1.equals("-")) {
 	    	stock.setPeriod1(null);
 	    } else {
@@ -135,6 +200,21 @@ public class Main {
         } else {
             stock.setPeriod6(new Double(period6));
         }
+        if (period7 == null || period7.equals("-")) {
+            stock.setPeriod7(null);
+        } else {
+            stock.setPeriod7(new Double(period7));
+        }
+        if (period8 == null || period8.equals("-")) {
+            stock.setPeriod8(null);
+        } else {
+            stock.setPeriod8(new Double(period8));
+        }
+        if (period9 == null || period9.equals("-")) {
+            stock.setPeriod9(null);
+        } else {
+            stock.setPeriod9(new Double(period9));
+        }
 	    //String  = Elem.getTextContent();
 	    //Element Elem = elem.getElementsByTagName();
 	} 
@@ -159,6 +239,9 @@ public class Main {
             Element period4Elem = (Element) elem.getElementsByTagName(Constants.PERIOD4).item(0);
             Element period5Elem = (Element) elem.getElementsByTagName(Constants.PERIOD5).item(0);
             Element period6Elem = (Element) elem.getElementsByTagName(Constants.PERIOD6).item(0);
+            Element period7Elem = (Element) elem.getElementsByTagName(Constants.PERIOD7).item(0);
+            Element period8Elem = (Element) elem.getElementsByTagName(Constants.PERIOD8).item(0);
+            Element period9Elem = (Element) elem.getElementsByTagName(Constants.PERIOD9).item(0);
             String marketid = marketidElem.getTextContent();
             String period1 = null;
             if (period1Elem != null) {
@@ -183,6 +266,18 @@ public class Main {
             String period6 = null;
             if (period6Elem != null) {
             period6 = reformat(period6Elem.getTextContent());
+            }
+            String period7 = null;
+            if (period7Elem != null) {
+            period7 = reformat(period7Elem.getTextContent());
+            }
+            String period8 = null;
+            if (period8Elem != null) {
+            period8 = reformat(period8Elem.getTextContent());
+            }
+            String period9 = null;
+            if (period9Elem != null) {
+            period9 = reformat(period9Elem.getTextContent());
             }
             Meta meta = Meta.ensureExistence(marketid);
             if (period1 == null || period1.equals("-")) {
@@ -214,6 +309,21 @@ public class Main {
                 meta.setPeriod6(null);
             } else {
                 meta.setPeriod6(new String(period6));
+            }
+            if (period7 == null || period7.equals("-")) {
+                meta.setPeriod7(null);
+            } else {
+                meta.setPeriod7(new String(period7));
+            }
+            if (period8 == null || period8.equals("-")) {
+                meta.setPeriod8(null);
+            } else {
+                meta.setPeriod8(new String(period8));
+            }
+            if (period9 == null || period9.equals("-")) {
+                meta.setPeriod9(null);
+            } else {
+                meta.setPeriod9(new String(period9));
             }
 
         }

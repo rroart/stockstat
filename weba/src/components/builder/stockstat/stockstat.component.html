@@ -1,0 +1,30 @@
+<div>
+  <div>
+    <div *ngIf='marketList2'>
+      <h2>Get markets</h2>
+      <!--h3>test{{marketList2}}test</h3-->
+      <!--div *ngIf='marketList2.markets'>
+	  <h2>grr000</h2>
+</div>
+<div *ngIf='marketList2.markets.length == 0'>
+  <h2>grr</h2>
+</div>
+<div *ngIf='marketList2.markets.length > 0'>
+  <h2>grr3</h2>
+</div-->
+      <!--select [(ngModel)]="cboevol">
+          <option *ngFor="#market of marketList2|async" value="market">{{market}}</option>
+</select-->
+      <!--h1>middle</h1-->
+      <!--select [(ngModel)]="cboevol">
+          <option *ngFor="let market of marketList3.markets" value="market">{{market}}</option>
+	    </select-->
+	  <select id="market" name="market" [(ngModel)]="market">
+            <option *ngFor="let market of marketList2" value="{{market}}">{{market}}</option>
+	    
+	  </select>
+	    <button type="submit" (click)="getmarket()">Get market</button>
+	      <h1>end</h1>
+        </div>
+    </div>
+</div>

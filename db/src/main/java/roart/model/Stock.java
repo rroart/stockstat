@@ -40,7 +40,17 @@ private Date date;
 @Column
 private Double indexvalue;
 @Column
+private Double indexvaluelow;
+@Column
+private Double indexvaluehigh;
+@Column
 private Double price;
+@Column
+private Double pricelow;
+@Column
+private Double pricehigh;
+@Column
+private Long volume;
 @Column
 private String currency;
 @Column
@@ -55,6 +65,12 @@ private Double period4;
 private Double period5;
 @Column
 private Double period6;
+@Column
+private Double period7;
+@Column
+private Double period8;
+@Column
+private Double period9;
 
 /*
 	public Stock(String dbid, String id, String name, Date date, Double kurs, String currency, Double day, Double week, Double month, Double sofaryear) {
@@ -119,6 +135,22 @@ public void setIndexvalue(Double indexvalue) {
     this.indexvalue = indexvalue;
 }
 
+public Double getIndexvaluelow() {
+    return indexvaluelow;
+}
+
+public void setIndexvaluelow(Double indexvaluelow) {
+    this.indexvaluelow = indexvaluelow;
+}
+
+public Double getIndexvaluehigh() {
+    return indexvaluehigh;
+}
+
+public void setIndexvaluehigh(Double indexvaluehigh) {
+    this.indexvaluehigh = indexvaluehigh;
+}
+
 public Double getPrice() {
 	return price;
 }
@@ -127,12 +159,36 @@ public void setPrice(Double price) {
 	this.price = price;
 }
 
+public Double getPricelow() {
+    return pricelow;
+}
+
+public void setPricelow(Double pricelow) {
+    this.pricelow = pricelow;
+}
+
+public Double getPricehigh() {
+    return pricehigh;
+}
+
+public void setPricehigh(Double pricehigh) {
+    this.pricehigh = pricehigh;
+}
+
+public Long getVolume() {
+	return volume;
+}
+
+public void setVolume(Long volume) {
+	this.volume = volume;
+}
+
 public String getCurrency() {
-	return currency;
+    return currency;
 }
 
 public void setCurrency(String currency) {
-	this.currency = currency;
+    this.currency = currency;
 }
 
 public Double getPeriod1() {
@@ -181,6 +237,30 @@ public Double getPeriod6() {
 
 public void setPeriod6(Double period6) {
     this.period6 = period6;
+}
+
+public Double getPeriod7() {
+    return period7;
+}
+
+public void setPeriod7(Double period7) {
+    this.period7 = period7;
+}
+
+public Double getPeriod8() {
+    return period8;
+}
+
+public void setPeriod8(Double period8) {
+    this.period8 = period8;
+}
+
+public Double getPeriod9() {
+    return period9;
+}
+
+public void setPeriod9(Double period9) {
+    this.period9 = period9;
 }
 
 @Transient

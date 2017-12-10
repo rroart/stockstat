@@ -1,5 +1,42 @@
-r quantmod
-java quantlib
-getmarketdatamap + 15, change to sufficient size
-spark dataframe for java
-Pred algo test many and verif 
+Use R quantmod
+Use Java quantlib
+Fixed left
+Eureka wait for notify
+Indicator/predictor save created/generated data
+Drop classifier eval and get percentage when doing model learntest
+Save tensorflow config to xml file
+Use swarm algorithm
+Use fuzzy logic or uncertainty
+Stockstat metadata for imports
+Dockerize tensorflow etc
+Use defaults for config
+Use volume
+Add interest
+Fix problem when extras use same market
+Make stock value to return a new class instead of double[]
+Use genetic algorithms for finding neural net config
+Move move
+Check all use of configs
+Metadata on title row
+Rearrange buy/sell
+Change result map keys, due to overlap
+Stockst komb 1m 1w m macd etc
+Jenkins / owasp
+Aggregator recommender gets problem with old tradcurr data
+Mlind? use pure gold oil price
+Memory with time spent.
+Start with no recent data, then most time spenders.
+Cboe lacked index
+Nordfund tab date
+Tradcomm p1 empty
+Mornind - date
+Evolutionary neural net
+ReName calc
+Use testaccuracy in iclij
+Use 4 macd with ml
+Mlindicator scale down/improveaction?
+Recommender combine keys/improveaction?
+Pipeline iclij
+Remove findprofit both inc dec, go to improve
+RSI and usemax
+StockUtil update periods number

@@ -1,21 +1,28 @@
 package roart.client;
 
+import roart.config.ConfigTreeMap;
+import roart.model.GUISize;
+import roart.model.ResultItemBytes;
+import roart.model.ResultItemTable;
+import roart.model.ResultItemTableRow;
+import roart.model.ResultItemText;
 import roart.model.ResultItem;
-import roart.model.Stock;
 import roart.util.Constants;
-import roart.util.SvgUtil;
 import roart.service.ControlService;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,34 +31,18 @@ import java.io.InputStream;
 
 
 import java.io.OutputStream;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import javax.imageio.ImageIO;
 //import roart.beans.session.misc.Unit;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -147,19 +138,22 @@ public class MyVaadinUI extends UI
     private TabSheet tabsheet = null;
     public Label statLabel = null;
 
-    public static int x = 0, y = 0;
-    
+    public static GUISize guiSize = new GUISize();
+
     ControlService controlService = null;
-    
+
+    VerticalLayout controlPanelTab;
+
     @Override
     protected void init(VaadinRequest request) {
-        
+
         controlService = new ControlService();
+        controlService.getConfig();
         final VerticalLayout layout = new VerticalLayout();
-        x = com.vaadin.server.Page.getCurrent().getBrowserWindowWidth();
-        y = com.vaadin.server.Page.getCurrent().getBrowserWindowHeight();
+        guiSize.x = com.vaadin.server.Page.getCurrent().getBrowserWindowWidth();
+        guiSize.y = com.vaadin.server.Page.getCurrent().getBrowserWindowHeight();
         VerticalLayout searchTab;
-        VerticalLayout controlPanelTab;
+        VerticalLayout configTab;
 
         com.vaadin.server.Page.getCurrent().setTitle("Stock statistics by Roar Thronæs");
 
@@ -186,11 +180,15 @@ public class MyVaadinUI extends UI
         // This tab gets its caption from the component caption
         controlPanelTab = getControlPanelTab();
         getSession().setAttribute("controlpanel", controlPanelTab);
+        // This tab gets its caption from the component caption
+        configTab = getConfigTab();
+        getSession().setAttribute("config", configTab);
 
         tabsheet.addTab(searchTab);
         // This tab gets its caption from the component caption
         tabsheet.addTab(controlPanelTab);
         //tabsheet.addTab(statTab);
+        tabsheet.addTab(configTab);
 
         HorizontalLayout bottomLine = new HorizontalLayout();
         bottomLine.setHeight("10%");
@@ -203,17 +201,55 @@ public class MyVaadinUI extends UI
     }
 
     private VerticalLayout getControlPanelTab() {
+        boolean isProductionMode = VaadinService.getCurrent()
+                .getDeploymentConfiguration().isProductionMode();
         VerticalLayout tab = new VerticalLayout();
         tab.setCaption("Control Panel");
+        HorizontalLayout horMisc = new HorizontalLayout();
+        horMisc.setHeight("20%");
+        horMisc.setWidth("90%");
+        /*
+        horMisc.addComponent(getMove());
         HorizontalLayout horMACD = new HorizontalLayout();
         horMACD.setHeight("20%");
         horMACD.setWidth("90%");
         horMACD.addComponent(getMACD());
-        horMACD.addComponent(getMove());
-        horMACD.addComponent(getRSI());
+        horMACD.addComponent(getMACDDelta());
+        horMACD.addComponent(getMACDHistogramDelta());
+        HorizontalLayout horRSI = new HorizontalLayout();
+        horRSI.setHeight("20%");
+        horRSI.setWidth("90%");
+        horRSI.addComponent(getRSI());
+        horRSI.addComponent(getRSIDelta());
+         */
+        // not yet
+        /*
+        horMACD.addComponent(getCCI());
+        horMACD.addComponent(getCCIDelta());
+        horMACD.addComponent(getATR());
+        horMACD.addComponent(getATRDelta());
+        horMACD.addComponent(getSTOCH());
+        horMACD.addComponent(getSTOCHDelta());
+        horRSI.addComponent(getSTOCHRSI());
+        horRSI.addComponent(getSTOCHRSIDelta());
+         */
         HorizontalLayout horStat = new HorizontalLayout();
         horStat.setHeight("20%");
         horStat.setWidth("90%");
+        horStat.addComponent(new Label("b1"));
+        VerticalLayout v1 = new VerticalLayout();
+        horStat.addComponent(v1);
+
+        v1.addComponent(new Label("b2"));
+        HorizontalLayout h1 = new HorizontalLayout();
+        v1.addComponent(h1);
+
+        h1.addComponent(new Label("b3"));
+        VerticalLayout v2 = new VerticalLayout();
+        h1.addComponent(v2);
+
+        v2.addComponent(new Label("b4"));
+
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
         horDb.setHeight("20%");
@@ -224,10 +260,17 @@ public class MyVaadinUI extends UI
 	tab.addComponent(getCleanup2());
 	tab.addComponent(getCleanupfs());
          */
+        HorizontalLayout horTree = new HorizontalLayout();
+        ConfigTreeMap map2 = controlService.conf.configTreeMap;
+        componentMap = new HashMap<>();
+        print(map2, horTree);
 
-        tab.addComponent(horMACD);
+        tab.addComponent(horMisc);
+        //tab.addComponent(horMACD);
+        //tab.addComponent(horRSI);
         tab.addComponent(horStat);
         tab.addComponent(horDb);
+        tab.addComponent(horTree);
         /*
 	HorizontalLayout bla2 = new HorizontalLayout();
 	tab.addComponent(bla2);
@@ -243,6 +286,90 @@ public class MyVaadinUI extends UI
         return tab;
     }
 
+    Map<String, Component> componentMap ;
+    private void print(ConfigTreeMap map2, HorizontalLayout tab) {
+        Map<String, Object> map = controlService.conf.configValueMap;
+        String name = map2.name;
+        System.out.println("name " + name);
+        Object object = map.get(name);
+        Component o = null;
+        String text = controlService.conf.text.get(name);
+        if (object == null) {
+            //System.out.println("null for " + name);
+            String labelname = name;
+            int last = name.lastIndexOf(".");
+            if (last >=0) {
+                labelname = name.substring(last + 1);
+            }
+            o = new Label(labelname + "    ");
+            tab.addComponent(o);
+            componentMap.put(name, o);
+        } else {
+            switch (object.getClass().getName()) {
+            case "java.lang.String":
+                o = getStringField(text, name);
+                break;
+            case "java.lang.Double":
+                o = getDoubleField(text, name);
+                break;
+            case "java.lang.Integer":
+                o = getIntegerField(text, name);
+                break;
+            case "java.lang.Boolean":
+                o = getCheckbox(text, name);
+                break;
+            default:
+                System.out.println("unknown " + object.getClass().getName());
+                log.info("unknown " + object.getClass().getName());
+
+            }
+            tab.addComponent(o);
+            componentMap.put(name, o);
+        }
+        //System.out.print(space.substring(0, indent));
+        //System.out.println("map2 " + map2.name + " " + map2.enabled);
+        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        if (!map3.keySet().isEmpty()) {
+            VerticalLayout h = new VerticalLayout();
+            tab.addComponent(h);
+            h.addComponent(new Label(">"));
+            HorizontalLayout n1 = new HorizontalLayout();
+            h.addComponent(n1);
+
+            n1.addComponent(new Label(">"));
+            VerticalLayout h1 = new VerticalLayout();
+            n1.addComponent(h1);
+
+            for (String key : map3.keySet()) {
+                System.out.println("key " + key);
+                HorizontalLayout n = new HorizontalLayout();
+                h1.addComponent(n);
+                print(map3.get(key), n);
+                //Object value = map.get(key);
+                //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
+            }
+        }
+    }
+
+    private VerticalLayout getConfigTab() {
+        boolean isProductionMode = VaadinService.getCurrent()
+                .getDeploymentConfiguration().isProductionMode();
+        String DELIMITER = " = ";
+
+        VerticalLayout tab = new VerticalLayout();
+        tab.setCaption("Configuration");
+        HorizontalLayout hor = new HorizontalLayout();
+        hor.setHeight("20%");
+        hor.setWidth("90%");
+        /*
+   if (!isProductionMode) {
+    hor.addComponent(getDbEngine());
+    }
+         */
+        tab.addComponent(hor);
+        return tab;
+    }
+
     private VerticalLayout getSearchTab() {
         //displayResults(new ControlService());
         VerticalLayout tab = new VerticalLayout();
@@ -255,8 +382,9 @@ public class MyVaadinUI extends UI
         horStat.setWidth("90%");
         horStat.addComponent(getDate());
         horStat.addComponent(getResetDate());
+        horStat.addComponent(getMarket());
         horStat.addComponent(getStat());
-       //horStat.addComponent(getOverlapping());
+        //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
         horDb.setHeight("20%");
         horDb.setWidth("60%");
@@ -267,23 +395,50 @@ public class MyVaadinUI extends UI
         horDb2.setHeight("20%");
         horDb2.setWidth("60%");
         //horDb.addComponent(getDbItem());
+        /*
         horDb2.addComponent(getDays());
         horDb2.addComponent(getTableDays());
         horDb2.addComponent(getTableIntervalDays());
         horDb2.addComponent(getTopBottom());
+        HorizontalLayout horMACD = new HorizontalLayout();
+        horMACD.setHeight("20%");
+        horMACD.setWidth("90%");
+
+        horMACD.addComponent(getMACDDeltaDays());
+        horMACD.addComponent(getMACDHistogramDeltaDays());
+         */
+        // not yet:
+        /*
+        horDb2.addComponent(getATRDeltaDays());
+        horDb2.addComponent(getCCIDeltaDays());
+        horDb2.addComponent(getSTOCHDeltaDays());
+         */
+        /*
+        HorizontalLayout horRSI = new HorizontalLayout();
+        horRSI.setHeight("20%");
+        horRSI.setWidth("90%");
+        horRSI.addComponent(getRSIDeltaDays());
+        horRSI.addComponent(getSTOCHRSIDeltaDays());
         HorizontalLayout horDb3 = new HorizontalLayout();
         horDb3.setHeight("20%");
         horDb3.setWidth("60%");
         horDb3.addComponent(getTableMoveIntervalDays());
+         */
         /*
         horDb3.addComponent(getTodayZero());
-        */
+         */
         //horDb3.addComponent(getEqualize());
 
         VerticalLayout verManualList = new VerticalLayout();
         verManualList.setHeight("20%");
         verManualList.setWidth("60%");
-        
+
+        HorizontalLayout horTester = new HorizontalLayout();
+        horTester.setHeight("20%");
+        horTester.setWidth("60%");
+        horTester.addComponent(getTestRecommender(false));
+        horTester.addComponent(getTestRecommender(true));
+
         HorizontalLayout horManual = new HorizontalLayout();
         horManual.setHeight("20%");
         horManual.setWidth("60%");
@@ -294,18 +449,21 @@ public class MyVaadinUI extends UI
         horChooseGraph.setHeight("20%");
         horChooseGraph.setWidth("60%");
         //horDb.addComponent(getDbItem());
-        horChooseGraph.addComponent(getEqualizeGraph());
-        horChooseGraph.addComponent(getEqualizeUnify());
-       horChooseGraph.addComponent(getChooseGraph(verManualList));
+        //horChooseGraph.addComponent(getEqualizeGraph());
+        //horChooseGraph.addComponent(getEqualizeUnify());
+        horChooseGraph.addComponent(getChooseGraph(verManualList));
 
         //tab.addComponent(horNewInd);
         tab.addComponent(horStat);
         tab.addComponent(horDb); 
         tab.addComponent(horDb2);
-        tab.addComponent(horDb3);
+        //tab.addComponent(horDb3);
+        //tab.addComponent(horMACD);
+        //tab.addComponent(horRSI);
         tab.addComponent(horManual);
         tab.addComponent(verManualList);
         tab.addComponent(horChooseGraph);
+        tab.addComponent(horTester);
         return tab;
     }
 
@@ -332,9 +490,9 @@ public class MyVaadinUI extends UI
                 time = time * 1000;
                 date = new Date(time);
                 try {
-                    controlService.setdate(date);
+                    controlService.conf.setdate(date);
                     Notification.show("Request sent");
-                    displayResults();
+                    //displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -350,9 +508,57 @@ public class MyVaadinUI extends UI
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {
-                    controlService.setdate(null);
+                    controlService.conf.setdate(null);
                     Notification.show("Request sent");
                     //displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getTestRecommender(boolean doSet) {
+        String set = "";
+        if (doSet) {
+            set = "and set";
+        }
+        Button button = new Button("Test recommender" + set);
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {                    
+                    Notification.show("Request sent");
+
+                    List<ResultItem> list = controlService.getTestRecommender(doSet);
+                    log.info("listsize " + list.size());
+                    VerticalLayout layout = new VerticalLayout();
+                    layout.setCaption("Results");
+                    displayResultListsTab(layout, list); 
+                    tabsheet.addComponent(layout);
+                    tabsheet.getTab(layout).setClosable(true);
+                    if (doSet) {
+                        VerticalLayout newComponent = getControlPanelTab();
+                        tabsheet.replaceComponent(controlPanelTab, newComponent);
+                        controlPanelTab = newComponent;
+                    }
+                    Notification.show("New result available");
+                    //displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getMarket() {
+        Button button = new Button("Get market data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -378,20 +584,20 @@ public class MyVaadinUI extends UI
 
     private ListSelect getMarkets() {
         ListSelect ls = new ListSelect("Get market");
-        Set<String> languages = null;
+        Set<String> marketSet = null;
         try {
-            List<String> langs = Stock.getMarkets();
-            langs.remove(null);
-            languages = new TreeSet<String>(langs);
+            List<String> markets = controlService.getMarkets();
+            markets.remove(null);
+            marketSet = new TreeSet<String>(markets);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return ls;
         }
-        log.info("languages " + languages);
-        if (languages == null ) {
+        log.info("languages " + marketSet);
+        if (marketSet == null ) {
             return ls;
         }
-        ls.addItems(languages);
+        ls.addItems(marketSet);
         ls.setNullSelectionAllowed(false);
         // Show 5 items and a scrollbar if there are more                       
         ls.setRows(5);
@@ -401,9 +607,9 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value                              
                 try {
-                    controlService.setMarket(value);
+                    controlService.conf.setMarket(value);
                     Notification.show("Request sent");
-                    displayResults();
+                    //displayResults();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -414,14 +620,14 @@ public class MyVaadinUI extends UI
         return ls;
     }
 
-    Set<Pair> chosen = new HashSet<Pair>();
-    
+    Set<Pair<String, String>> chosen = new HashSet<>();
+
     private Button getChooseGraph(VerticalLayout ver) {
         Button button = new Button("Choose graph");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {
-                    
+
                     Notification.show("Request sent");
                     displayResultsGraph(chosen);
                     chosen.clear();
@@ -436,20 +642,20 @@ public class MyVaadinUI extends UI
 
     private ListSelect getMarkets2(HorizontalLayout horManual, VerticalLayout verManualList) {
         ListSelect ls = new ListSelect("Market");
-        Set<String> languages = null;
+        Set<String> marketSet = null;
         try {
-            List<String> langs = Stock.getMarkets();
-            langs.remove(null);
-            languages = new TreeSet<String>(langs);
+            List<String> markets = controlService.getMarkets();
+            markets.remove(null);
+            marketSet = new TreeSet<String>(markets);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return ls;
         }
-        log.info("languages " + languages);
-        if (languages == null ) {
+        log.info("languages " + marketSet);
+        if (marketSet == null ) {
             return ls;
         }
-        ls.addItems(languages);
+        ls.addItems(marketSet);
         ls.setNullSelectionAllowed(false);
         // Show 5 items and a scrollbar if there are more                       
         ls.setRows(5);
@@ -473,26 +679,14 @@ public class MyVaadinUI extends UI
 
     private ListSelect getUnits(String market, ListSelect ls2, VerticalLayout verManualList) {
         ListSelect ls = new ListSelect("Units");
-        Set<String> languages = null;
+        Set<String> stockSet = null;
         System.out.println("m " + market);
-        List<Stock> stocks = null;
-        try {
-            stocks = Stock.getAll(market);
-            stocks.remove(null);
-            languages = new TreeSet<String>();
-            for (Stock stock : stocks) {
-                languages.add(stock.getName());
-            }
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
+        final Map<String, String> stockMap = controlService.getStocks(market);
+        log.info("stocks " + stockSet);
+        if (stockSet == null ) {
             return ls;
         }
-        final List<Stock> finalstocks = stocks;
-        log.info("languages " + languages);
-        if (languages == null ) {
-            return ls;
-        }
-        ls.addItems(languages);
+        ls.addItems(stockSet);
         ls.setNullSelectionAllowed(false);
         // Show 5 items and a scrollbar if there are more                       
         ls.setRows(5);
@@ -503,9 +697,10 @@ public class MyVaadinUI extends UI
                 // Do something with the value                              
                 try {
                     String id = null;
-                    for (Stock stock : finalstocks) {
-                        if (value.equals(stock.getName())) {
-                            id = stock.getId();
+                    for (String stockid : stockMap.keySet()) {
+                        String stockname = stockMap.get(stockid);
+                        if (value.equals(stockname)) {
+                            id = stockid;
                             break;
                         }
                     }
@@ -524,10 +719,10 @@ public class MyVaadinUI extends UI
         ls.setImmediate(true);
         return ls;
     }
-
+    /*
    private TextField getDays() {
         TextField tf = new TextField("Single interval days");
-        tf.setValue("" + new ControlService().getDays());
+        tf.setValue("" + controlService.conf.getDays());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -536,7 +731,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setDays(new Integer(value));
+                    controlService.conf.setDays(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -549,9 +744,177 @@ public class MyVaadinUI extends UI
         return tf;
     }
 
+   private TextField getMACDHistogramDeltaDays() {
+       TextField tf = new TextField("MACD histogram delta days");
+       tf.setValue("" + controlService.conf.getMACDHistogramDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setMACDHistogramDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getMACDDeltaDays() {
+       TextField tf = new TextField("MACD delta days");
+       tf.setValue("" + controlService.conf.getMACDDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setMACDDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getRSIDeltaDays() {
+       TextField tf = new TextField("RSI delta days");
+       tf.setValue("" + controlService.conf.getRSIDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setRSIDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getSTOCHRSIDeltaDays() {
+       TextField tf = new TextField("STOCH RSI delta days");
+       tf.setValue("" + controlService.conf.getSTOCHRSIDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setSTOCHRSIDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getCCIDeltaDays() {
+       TextField tf = new TextField("CCI delta days");
+       tf.setValue("" + controlService.conf.getCCIDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setCCIDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getATRDeltaDays() {
+       TextField tf = new TextField("ATR delta days");
+       tf.setValue("" + controlService.conf.getATRDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setATRDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
+   private TextField getSTOCHDeltaDays() {
+       TextField tf = new TextField("STOCH delta days");
+       tf.setValue("" + controlService.conf.getATRDeltaDays());
+
+       // Handle changes in the value
+       tf.addValueChangeListener(new Property.ValueChangeListener() {
+           public void valueChange(ValueChangeEvent event) {
+               // Assuming that the value type is a String
+               String value = (String) event.getProperty().getValue();
+               // Do something with the value
+               try {
+                   controlService.conf.setSTOCHDeltaDays(new Integer(value));
+                   Notification.show("Request sent");
+                   displayResults();
+               } catch (Exception e) {
+                   log.error(Constants.EXCEPTION, e);
+               }
+           }
+       });
+       // Fire value changes immediately when the field loses focus
+       tf.setImmediate(true);
+       return tf;
+   }
+
     private TextField getTableIntervalDays() {
         TextField tf = new TextField("Table interval days");
-        tf.setValue("" + controlService.getTableIntervalDays());
+        tf.setValue("" + controlService.conf.getTableIntervalDays());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -560,7 +923,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setTableIntervalDays(new Integer(value));
+                    controlService.conf.setTableIntervalDays(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -575,7 +938,7 @@ public class MyVaadinUI extends UI
 
     private TextField getTableMoveIntervalDays() {
         TextField tf = new TextField("Table move interval days");
-        tf.setValue("" + controlService.getTableMoveIntervalDays());
+        tf.setValue("" + controlService.conf.getTableMoveIntervalDays());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -584,7 +947,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setTableMoveIntervalDays(new Integer(value));
+                    controlService.conf.setTableMoveIntervalDays(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -599,7 +962,7 @@ public class MyVaadinUI extends UI
 
     private TextField getTableDays() {
         TextField tf = new TextField("Table days");
-        tf.setValue("" + new ControlService().getTableDays());
+        tf.setValue("" + controlService.conf.getTableDays());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -608,7 +971,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setTableDays(new Integer(value));
+                    controlService.conf.setTableDays(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -623,7 +986,7 @@ public class MyVaadinUI extends UI
 
     private TextField getTopBottom() {
         TextField tf = new TextField("Table top/bottom");
-        tf.setValue("" + new ControlService().getTopBottom());
+        tf.setValue("" + controlService.conf.getTopBottom());
 
         // Handle changes in the value
         tf.addValueChangeListener(new Property.ValueChangeListener() {
@@ -632,7 +995,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setTopBottom(new Integer(value));
+                    controlService.conf.setTopBottom(new Integer(value));
                     Notification.show("Request sent");
                     displayResults();
                 } catch (Exception e) {
@@ -645,60 +1008,107 @@ public class MyVaadinUI extends UI
         tf.setImmediate(true);
         return tf;
     }
-
+     */
     private void displayResults() {
-        List list = controlService.getContent();
-        Layout layout = displayResultListsTab(list);
-        List listGraph = controlService.getContentGraph();
-        displayListGraphTab(layout, listGraph);
+        List<ResultItem> list = controlService.getContent();
+        log.info("listsize " + list.size());
+        VerticalLayout layout = new VerticalLayout();
+        layout.setCaption("Results");
+        displayResultListsTab(layout, list);
+        List listGraph = controlService.getContentGraph(guiSize);
+        displayResultListsTab(layout, listGraph);
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
+        Notification.show("New result available");
     }
 
 
     private void displayResultsStat() {
         List list = controlService.getContentStat();
-        Layout layout = displayResultListsTab(list);
+        VerticalLayout layout = new VerticalLayout();
+        layout.setCaption("Results");
+        displayResultListsTab(layout, list);
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
+        Notification.show("New result available");
     }
 
-    private void displayResultsGraph(Set<Pair> ids) {
-        VerticalLayout tab = new VerticalLayout();
-        tab.setCaption("Graph results");
-        tabsheet.addComponent(tab);
-        tabsheet.getTab(tab).setClosable(true);
-        List listGraph = controlService.getContentGraph(ids);
-        displayListGraphTab(tab, listGraph);
+    private void displayResultsGraph(Set<Pair<String, String>> ids) {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setCaption("Graph results");
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
+        List listGraph = controlService.getContentGraph(ids, guiSize);
+        displayResultListsTab(layout, listGraph);
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
+        Notification.show("New result available");       
     }
 
-    protected void displayListGraphTab(Layout layout, List<StreamResource> listGraph) {
-        if (listGraph == null) {
-            return;
-        }
-        for (StreamResource resource : listGraph) {
-            //SvgUtil. bla3(layout, resource);
-            //SvgUtil. bla5(layout, resource);
-            //if (true) continue;
-            Image image = new Image ("Image", resource);
-            //Embedded image = new Embedded("1", img);
-            int xsize = 100 + 300 + 10 * controlService.getTableDays();
-            int ysize = 200 + 400 + 10 * controlService.getTopBottom();
-            //System.out.println("xys1 " + xsize + " " + ysize);
-            if (xsize + 100 > x) {
-                xsize = x - 100;
+    private StreamResource getStreamResource(byte[] bytes) {
+        //System.out.println("bytes " + bytes.length + " "+ new String(bytes));
+        //System.out.println("size " + (300 + 10 * xsize) + " " + (400 + 10 * ysize));
+        StreamResource resource = new StreamResource(new StreamSource() {
+            @Override
+            public InputStream getStream() {
+                try {
+                    return new ByteArrayInputStream(bytes);
+                } catch (Exception e) {
+                    //log.error(Constants.EXCEPTION, e);
+                    return null;
+                }
             }
-            /*
+        }, "/tmp/svg3.svg");
+        return resource;
+    }
+
+    protected void addListStream(Layout layout, ResultItemBytes item) {
+        byte[] bytes = item.bytes;
+        //SvgUtil. bla3(layout, resource);
+        //SvgUtil. bla5(layout, resource);
+        //if (true) continue;
+        StreamResource resource = getStreamResource(bytes);
+        Image image = new Image ("Image", resource);
+        //Embedded image = new Embedded("1", img);
+        int xsize = 100 + 300 + 10 * 120 /*controlService.conf.getTableDays()*/;
+        int ysize = 200 + 400 + 10 * 10 /*controlService.conf.getTopBottom()*/;
+        //System.out.println("xys1 " + xsize + " " + ysize);
+        if (xsize + 100 > guiSize.x) {
+            xsize = guiSize.x - 100;
+        }
+        /*
             if (ysize + 200 > y) {
                 ysize = y - 200;
             }
-            */
-            //System.out.println("xys2 " + xsize + " " + ysize);
-            image.setHeight(ysize, Sizeable.Unit.PIXELS );
-            image.setWidth(xsize, Sizeable.Unit.PIXELS );
-            layout.addComponent(image);
+         */
+        //System.out.println("xys2 " + xsize + " " + ysize);
+        /*
+            InputStream is = new ByteArrayInputStream(bytes);
+            try {
+                BufferedImage anImage = ImageIO.read(is);
+                if (anImage != null) {
+                xsize = anImage.getWidth();
+                ysize = anImage.getHeight();
+                }
+                System.out.println("sizeme " + xsize + " " + ysize);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+         */
+        // TODO matching svgutil change
+        xsize = 1024;
+        ysize = 768;
+        if (!item.fullsize) {
+            ysize = 384;
         }
+        image.setHeight(ysize, Sizeable.Unit.PIXELS );
+        image.setWidth(xsize, Sizeable.Unit.PIXELS );
+        layout.addComponent(image);
     }
-
+    /*
     private CheckBox getEqualize() {
         CheckBox cb = new CheckBox("Equalize sample sets");
-        cb.setValue(new ControlService().isEqualize());
+        cb.setValue(controlService.conf.isEqualize());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -707,7 +1117,31 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setEqualize(value);
+                    controlService.conf.setEqualize(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+     */
+    private CheckBox getCheckbox(String text, String configKey) {
+        CheckBox cb = new CheckBox(text);
+        Boolean origValue = (Boolean) controlService.conf.configValueMap.get(configKey);
+        cb.setValue(origValue);
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.configValueMap.put(configKey, value );
+                    // TODO handle hiding
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -718,9 +1152,80 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
+    private TextField getStringField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        String origValue = (String) controlService.conf.configValueMap.get(configKey);
+
+        tf.setValue(origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.configValueMap.put(configKey, value );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        tf.setImmediate(true);
+        return tf;
+    }
+
+    private TextField getIntegerField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        Integer origValue = (Integer) controlService.conf.configValueMap.get(configKey);
+
+        tf.setValue("" + origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.configValueMap.put(configKey, new Integer(value) );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        tf.setImmediate(true);
+        return tf;
+    }
+    private TextField getDoubleField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        Double origValue = (Double) controlService.conf.configValueMap.get(configKey);
+
+        tf.setValue("" + origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.configValueMap.put(configKey, new Double(value) );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        tf.setImmediate(true);
+        return tf;
+    }
+    /*
     private CheckBox getMove() {
         CheckBox cb = new CheckBox("Enable chart move");
-        cb.setValue(new ControlService().isMoveEnabled());
+        cb.setValue(controlService.conf.isMoveEnabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -729,7 +1234,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setMoveEnabled(value);
+                    controlService.conf.setMoveEnabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -742,7 +1247,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getMACD() {
         CheckBox cb = new CheckBox("Enable MACD");
-        cb.setValue(new ControlService().isMACDenabled());
+        cb.setValue(controlService.conf.isMACDEnabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -751,7 +1256,161 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setMACDenabled(value);
+                    controlService.conf.setMACDEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getMACDDelta() {
+        CheckBox cb = new CheckBox("Enable MACD delta");
+        cb.setValue(controlService.conf.isMACDDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setMACDDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getMACDHistogramDelta() {
+        CheckBox cb = new CheckBox("Enable MACD histogram delta");
+        cb.setValue(controlService.conf.isMACDHistogramDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setMACDHistogramDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getRSIDelta() {
+        CheckBox cb = new CheckBox("Enable RSI delta");
+        cb.setValue(controlService.conf.isRSIDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setRSIDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getSTOCHRSIDelta() {
+        CheckBox cb = new CheckBox("Enable STOCH RSI delta (caution)");
+        cb.setValue(controlService.conf.isSTOCHRSIDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setSTOCHRSIDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getCCIDelta() {
+        CheckBox cb = new CheckBox("Enable CCI delta");
+        cb.setValue(controlService.conf.isCCIDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setCCIDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getATRDelta() {
+        CheckBox cb = new CheckBox("Enable ATR delta");
+        cb.setValue(controlService.conf.isATRDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setATRDeltaEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getSTOCHDelta() {
+        CheckBox cb = new CheckBox("Enable STOCH delta");
+        cb.setValue(controlService.conf.isSTOCHDeltaEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setSTOCHDeltaEnabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -764,7 +1423,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getRSI() {
         CheckBox cb = new CheckBox("Enable RSI");
-        cb.setValue(new ControlService().isRSIenabled());
+        cb.setValue(controlService.conf.isRSIEnabled());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -773,7 +1432,95 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setRSIenabled(value);
+                    controlService.conf.setRSIEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getSTOCHRSI() {
+        CheckBox cb = new CheckBox("Enable STOCH RSI");
+        cb.setValue(controlService.conf.isSTOCHRSIEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setSTOCHRSIEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+    private CheckBox getCCI() {
+        CheckBox cb = new CheckBox("Enable CCI");
+        cb.setValue(controlService.conf.isCCIEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setCCIEnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getATR() {
+        CheckBox cb = new CheckBox("Enable ATR");
+        cb.setValue(controlService.conf.isATREnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setATREnabled(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        cb.setImmediate(true);
+        return cb;
+    }
+
+   private CheckBox getSTOCH() {
+        CheckBox cb = new CheckBox("Enable STOCH");
+        cb.setValue(controlService.conf.isSTOCHEnabled());
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getProperty().getValue();
+                // Do something with the value
+                try {
+                    controlService.conf.setSTOCHEnabled(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -786,7 +1533,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getEqualizeGraph() {
         CheckBox cb = new CheckBox("Equalize graphic table");
-        cb.setValue(new ControlService().isGraphEqualize());
+        cb.setValue(controlService.conf.isGraphEqualize());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -795,7 +1542,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setGraphEqualize(value);
+                    controlService.conf.setGraphEqualize(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -808,7 +1555,7 @@ public class MyVaadinUI extends UI
 
     private CheckBox getEqualizeUnify() {
         CheckBox cb = new CheckBox("Equalize merge price and index table");
-        cb.setValue(new ControlService().isGraphEqUnify());
+        cb.setValue(controlService.conf.isGraphEqUnify());
 
         // Handle changes in the value
         cb.addValueChangeListener(new Property.ValueChangeListener() {
@@ -817,7 +1564,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.setGraphEqUnify(value);
+                    controlService.conf.setGraphEqUnify(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -828,7 +1575,37 @@ public class MyVaadinUI extends UI
         return cb;
     }
 
-    void addListTable(VerticalLayout ts, List<ResultItem> strarr) {
+    private ListSelect getDbEngine() {
+    	ListSelect ls = new ListSelect("Select search engine");
+    	String[] engines = ConfigConstants.dbvalues;
+    	ls.addItems(engines);
+        ls.setNullSelectionAllowed(false);
+        // Show 5 items and a scrollbar if there are more                       
+        ls.setRows(5);
+        ls.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String                 
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value                              
+    		    try {
+    		        System.out.println("new val " + value);
+    			controlService.dbengine(value.equals(ConfigConstants.SPARK));
+    			Notification.show("Request sent");
+    		    } catch (Exception e) {
+    			log.error(Constants.EXCEPTION, e);
+    		    }
+    		}
+    	    });
+    	// Fire value changes immediately when the field loses focus
+    	ls.setImmediate(true);
+    	return ls;
+    }
+     */  
+    void addListText(VerticalLayout ts, ResultItemText str) {
+        ts.addComponent(new Label(str.text));
+    }
+
+    void addListTable(VerticalLayout ts, ResultItemTable strarr) {
         if (strarr.size() <= 1) {
             return;
         }
@@ -844,50 +1621,138 @@ public class MyVaadinUI extends UI
                 break;
             }
         }
+        try {
+            log.info("arr " + 0 + " " + strarr.get(0).getarr().length + " " + Arrays.toString(strarr.get(0).getarr()));
+            for (int i = 0; i < columns; i++) {
+                Object object = null;
+                for (int j = 1; j < strarr.size(); j++) {
+                    object = strarr.get(j).get().get(i);
+                    if (object != null) {
+                        break;
+                    }
+                }
+                //Object object = strarr.get(1).get().get(i);
+                if (object == null) {
+                    table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+                    continue;
+                }
+                switch (object.getClass().getName()) {
+                case "java.lang.String":
+                    if (i == 0 && strarr.get(0).get().get(0).equals(Constants.IMG)) {
+                        table.addContainerProperty(strarr.get(0).get().get(i), Button.class, null);
+                    } else {
+                        table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+                    }
+                    break;
+                case "java.lang.Integer":
+                    table.addContainerProperty(strarr.get(0).get().get(i), Integer.class, null);
+                    break;
+                case "java.lang.Double":
+                    table.addContainerProperty(strarr.get(0).get().get(i), Double.class, null);
+                    break;
+                case "java.util.Date":
+                    table.addContainerProperty(strarr.get(0).get().get(i), Date.class, null);
+                    break;
+                case "java.sql.Timestamp":
+                    table.addContainerProperty(strarr.get(0).get().get(i), Timestamp.class, null);
+                    break;
+                default:
+                    log.error("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
+                    System.out.println("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
+                    break;
+                }
+                //table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);        	
+        }
+        log.info("strarr size " + strarr.size());
+        for (int i = 1; i < strarr.size(); i++) {
+            log.info("str arr " + i);
+            ResultItemTableRow str = strarr.get(i);
+            try {
+                if (strarr.get(0).get().get(0).equals(Constants.IMG)) {
+                    String id = (String) str.get().get(0);
+                    str.get().set(0, getImage(id));
+                    //Object myid = table.addItem(str.getarr(), i); 
+                    //log.info("myid " + str.getarr().length + " " + myid);
+                }
+                Object myid = table.addItem(str.getarr(), i);
+                if (myid == null) {
+                    log.error("addItem failed for" + Arrays.toString(str.getarr()));
+                }
+            } catch (Exception e) {
+                log.error("i " + i + " " + str.get().get(0));
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        //table.setPageLength(table.size());
+        log.info("tabledata " + table.getColumnHeaders().length + " " + table.size() + " " + Arrays.toString(table.getColumnHeaders()));
+        ts.addComponent(table);
+    }
+
+    /*
+    void addListTable(VerticalLayout ts, ResultItemTable resulttable) {
+    	log.info("t " + resulttable.size());
+    	if (resulttable.size() <= 1) {
+            return;
+        }
+
+        Table table = new Table("Table");
+        table.setWidth("90%");
+        int columns = resulttable.get(0).get().size();
+        int mdcolumn = 0;
+        for (int i=0; i<resulttable.size(); i++) {
+            if (resulttable.get(i).get().size() != columns) {
+                log.error("column differs " + columns + " found " + resulttable.get(i).get().size());
+                System.out.println("column differs " + columns + " found " + resulttable.get(i).get().size() + " " + i + " : " + resulttable.get(i).get().get(1) + " " +resulttable.get(i).get() );
+                break;
+            }
+        }
         for (int i = 0; i < columns; i++) {
             Object object = null;
-            for (int j = 1; j < strarr.size(); j++) {
-                object = strarr.get(j).get().get(i);
+            for (int j = 1; j < resulttable.size(); j++) {
+                object = resulttable.get(j).get().get(i);
                 if (object != null) {
                     break;
                 }
             }
             //Object object = strarr.get(1).get().get(i);
             if (object == null) {
-                table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+                table.addContainerProperty(resulttable.get(0).get().get(i), String.class, null);
                 continue;
             }
             switch (object.getClass().getName()) {
             case "java.lang.String":
-                if (i == 0 && strarr.get(0).get().get(0).equals(Constants.IMG)) {
-                    table.addContainerProperty(strarr.get(0).get().get(i), Button.class, null);
+                if (i == 0 && resulttable.get(0).get().get(0).equals(Constants.IMG)) {
+                    table.addContainerProperty(resulttable.get(0).get().get(i), Button.class, null);
                 } else {
-                    table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
+                    table.addContainerProperty(resulttable.get(0).get().get(i), String.class, null);
                 }
                 break;
             case "java.lang.Integer":
-                table.addContainerProperty(strarr.get(0).get().get(i), Integer.class, null);
+                table.addContainerProperty(resulttable.get(0).get().get(i), Integer.class, null);
                 break;
             case "java.lang.Double":
-                table.addContainerProperty(strarr.get(0).get().get(i), Double.class, null);
+                table.addContainerProperty(resulttable.get(0).get().get(i), Double.class, null);
                 break;
             case "java.util.Date":
-                table.addContainerProperty(strarr.get(0).get().get(i), Date.class, null);
+                table.addContainerProperty(resulttable.get(0).get().get(i), Date.class, null);
                 break;
             case "java.sql.Timestamp":
-                table.addContainerProperty(strarr.get(0).get().get(i), Timestamp.class, null);
+                table.addContainerProperty(resulttable.get(0).get().get(i), Timestamp.class, null);
                 break;
             default:
-                log.error("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
-                System.out.println("not found" + strarr.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
+                log.error("not found" + resulttable.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
+                System.out.println("not found" + resulttable.get(0).get().get(i).getClass().getName() + "|" + object.getClass().getName());
                 break;
             }
             //table.addContainerProperty(strarr.get(0).get().get(i), String.class, null);
         }
-        for (int i = 1; i < strarr.size(); i++) {
-            ResultItem str = strarr.get(i);
+        for (int i = 1; i < resulttable.size(); i++) {
+            ResultItemTableRow str = resulttable.get(i);
             try {
-                if (strarr.get(0).get().get(0).equals(Constants.IMG)) {
+                if (resulttable.get(0).get().get(0).equals(Constants.IMG)) {
                     String id = (String) str.get().get(0);
                     str.get().set(0, getImage(id));
                     table.addItem(str.getarr(), i);                    
@@ -901,6 +1766,7 @@ public class MyVaadinUI extends UI
         //table.setPageLength(table.size());
         ts.addComponent(table);
     }
+     */
 
     private Button getImage(final String id) {
         Button button = new Button("Img");
@@ -908,9 +1774,9 @@ public class MyVaadinUI extends UI
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 String idarr[] = id.split(",");
-                Set<Pair> ids = new HashSet<Pair>();
+                Set<Pair<String, String>> ids = new HashSet<>();
                 for (String id : idarr) {
-                    ids.add(new Pair(controlService.getMarket(), id));
+                    ids.add(new Pair(controlService.conf.getMarket(), id));
                 }
                 displayResultsGraph(ids);
                 Notification.show("Request sent");
@@ -943,39 +1809,27 @@ public class MyVaadinUI extends UI
     }
 
     @SuppressWarnings("rawtypes")
-    public void displayResultLists(List<List> lists) {
-        VerticalLayout tab = new VerticalLayout();
-        tab.setCaption("Search results");
+    public void displayResultListsTab(Layout tab, List<ResultItem>/*<List>*/ lists) {
+
+        final String table = (new ResultItemTable()).getClass().getName();
+        final String text = (new ResultItemText()).getClass().getName();
+        final String stream = (new ResultItemBytes()).getClass().getName();
 
         VerticalLayout result = getResultTemplate();
         if (lists != null) {
-            for (List<ResultItem> list : lists) {
-                addListTable(result, list);
+            for (ResultItem item : lists) {
+                if (table.equals(item.getClass().getName())) {
+                    addListTable(result, (ResultItemTable) item);
+                }
+                if (text.equals(item.getClass().getName())) {
+                    addListText(result, (ResultItemText) item);
+                }
+                if (stream.equals(item.getClass().getName())) {
+                    addListStream(result, (ResultItemBytes) item);
+                }
             }
         }
         tab.addComponent(result);
-
-        tabsheet.addComponent(tab);
-        tabsheet.getTab(tab).setClosable(true);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public Layout displayResultListsTab(List<List> lists) {
-        VerticalLayout tab = new VerticalLayout();
-        tab.setCaption("Results");
-
-        VerticalLayout result = getResultTemplate();
-        if (lists != null) {
-            for (List<ResultItem> list : lists) {
-                addListTable(result, list);
-            }
-        }
-        tab.addComponent(result);
-
-        tabsheet.addComponent(tab);
-        tabsheet.getTab(tab).setClosable(true);
-        Notification.show("New result available");
-        return tab;
     }
 
     public void notify(String text) {

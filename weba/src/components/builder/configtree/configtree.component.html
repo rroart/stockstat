@@ -1,0 +1,33 @@
+<div>
+  <div>
+    <div>
+      <h2>Config tree root</h2>
+      <!--h3>{{name}}</h3-->
+      <h3>{{textname}}</h3>
+      <h3>{{myvalue}}</h3>
+	<!--h3>{{text.get(name)}}</h3-->
+      <!--h4>{{values2}}</h4>
+      <h4>{{values2}}</h4-->
+      <!--div *ngFor="let value of values2">
+	<h4>{{value.name}}</h4>
+</div-->
+      <!--ul>
+      <div *ngFor="let value of values2">
+	<li>{{value.configTreeMap}}</li>
+      </div>
+      </ul-->
+      <ul>
+	<div *ngFor="let value of values2">
+	  <li>
+	    <treeview [elem]="value" [text]="text" [type]="type" [configValueMap]="configValueMap"></treeview>
+	    </li>
+	</div>
+	</ul>
+	<div class="form-group">
+	  <!--select class="form-control" id="market" name="market" [(ngModel)]="cboevol" #market="ngModel">
+            <option *ngFor="let market of config.configTreeMap" value="{{market}}">{{market}}</option>
+	    
+	  </select-->
+	</div>
+  </div>
+</div>

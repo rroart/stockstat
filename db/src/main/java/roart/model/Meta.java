@@ -40,6 +40,12 @@ private String period4;
 private String period5;
 @Column
 private String period6;
+@Column
+private String period7;
+@Column
+private String period8;
+@Column
+private String period9;
 
 public String getMarketid() {
     return marketid;
@@ -95,6 +101,30 @@ public String getPeriod6() {
 
 public void setPeriod6(String period6) {
     this.period6 = period6;
+}
+
+public String getPeriod7() {
+    return period7;
+}
+
+public void setPeriod7(String period7) {
+    this.period7 = period7;
+}
+
+public String getPeriod8() {
+    return period8;
+}
+
+public void setPeriod8(String period8) {
+    this.period8 = period8;
+}
+
+public String getPeriod9() {
+    return period9;
+}
+
+public void setPeriod9(String period9) {
+    this.period9 = period9;
 }
 
 @Transient

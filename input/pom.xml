@@ -4,18 +4,54 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-input</artifactId>
   <packaging>jar</packaging>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <name>Stock Statistics Input</name>
+  <build>
+    <plugins>
+      <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>roart.Main</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+     <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+                <archive>
+                    <manifest>
+                        <mainClass>roart.Main</mainClass>
+                    </manifest>
+                </archive>
+        </configuration>
+     </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-db</artifactId>
-      <version>0.4-SNAPSHOT</version>
+      <version>0.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

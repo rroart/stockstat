@@ -1,2 +1,3 @@
 both R and java, for single display, skips blanks
 empty nordfund entry, check date -
+jackson creating a duplicate arr in json
