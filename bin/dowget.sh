@@ -10,7 +10,7 @@ if [ "$domv" = "1" ]; then
 DATE=`date +%Y.%m.%d.%H`
 DIRNAME=`dirname $0`
 mkdir $DIRNAME/$DATE
-mv /tmp/*.xml $DIRNAME/$DATE
+mv /tmp/nord*.xml /tmp/morn*.xml /tmp/cboe*.xml /tmp/trad*.xml $DIRNAME/$DATE
 fi
 mv sok.html\?sok\=1 sok.html\?sok\=1.old
 wget "https://www.nordnet.no/mux/web/fonder/sok.html?sok=1"
