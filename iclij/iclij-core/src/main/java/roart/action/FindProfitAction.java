@@ -147,8 +147,12 @@ public class FindProfitAction extends Action {
             for(IncDecItem item : buys.values()) {
                 String key = item.getId();
                 if (listMap3 == null) {
+                    if (categoryMap != null) {
                     System.out.println(categoryMap.keySet());
+                    }
+                    if (maps != null) {
                     System.out.println(maps.keySet());
+                    }
                      System.out.println("market" + market.getMarket() + "null map");
                     continue;
                 }
