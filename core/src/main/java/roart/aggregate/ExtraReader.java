@@ -78,10 +78,10 @@ public class ExtraReader extends Pipeline {
             List<StockItem> stocks = null;
             try {
                 stocks = StockItem.getAll(market, conf);
+                log.info("stocks " + stocks.size());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            log.info("stocks " + stocks.size());
             if (stocks == null) {
                 continue;
             }
