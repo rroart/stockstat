@@ -29,6 +29,7 @@ Start with no recent data, then most time spenders.
 Cboe lacked index
 Nordfund tab date
 Tradcomm p1 empty
+Tradcurr p2 empty
 Mornind - date
 Evolutionary neural net
 ReName calc
@@ -40,3 +41,5 @@ Pipeline iclij
 Remove findprofit both inc dec, go to improve
 RSI and usemax
 StockUtil update periods number
+Configure limit for empty hole limit
+calcnodecomplex usemax min/max
