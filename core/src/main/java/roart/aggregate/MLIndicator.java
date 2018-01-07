@@ -418,8 +418,10 @@ public class MLIndicator extends Aggregator {
             System.out.println(dayIndicatorMap.keySet());
             Map<String, Double[]> indicatorMap2 = dayIndicatorMap.get(conf.getAggregatorsIndicatorFuturedays());
             Map<String, double[]> indicatorMap3 = new HashMap<>();
+            if (indicatorMap2 != null) {
             for (String id : indicatorMap2.keySet()) {
                 indicatorMap3.put(id, ArraysUtil.convert(indicatorMap2.get(id)));
+            }
             }
             // map from h/m + posnegcom to map<model, results>
            // List<MacdSubType> subTypes = wantedSubTypes();
