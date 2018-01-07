@@ -10,7 +10,7 @@ if [ "$domv" = "1" ]; then
 DATE=`date +%Y.%m.%d.%H`
 DIRNAME=`dirname $0`
 mkdir $DIRNAME/$DATE
-mv /tmp/*.xml $DIRNAME/$DATE
+mv /tmp/nord*.xml /tmp/morn*.xml /tmp/cboe*.xml /tmp/trad*.xml $DIRNAME/$DATE
 fi
 mv introduction.aspx introduction.aspx.old
 wget http://www.cboe.com/micro/volatility/introduction.aspx
