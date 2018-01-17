@@ -1,43 +1,16 @@
 package roart.indicator;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.commons.math3.util.Pair;
-
-import com.tictactec.ta.lib.MInteger;
-
+import roart.config.MyMyConfig;
+import roart.ml.MLClassifyModel;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
-import roart.config.ConfigConstantMaps;
-import roart.config.MyMyConfig;
-import roart.db.DbAccess;
-import roart.db.DbDao;
-import roart.db.DbSpark;
-import roart.evaluation.MACDRecommend;
-import roart.ml.MLClassifyDao;
-import roart.ml.MLClassifyModel;
-import roart.model.ResultItemTable;
-import roart.model.ResultItemTableRow;
-import roart.model.StockItem;
-import roart.service.ControlService;
-import roart.util.ArraysUtil;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.TaUtil;
-import scala.collection.mutable.WrappedArray;
 
 public class IndicatorMACD extends Indicator {
 
@@ -85,7 +58,7 @@ public class IndicatorMACD extends Indicator {
             size++;
         }
         emptyField = new Object[size];
-        log.info("fieldsizet " + size);
+        log.info("fieldsizet {}", size);
         return size;
     }
     
@@ -95,21 +68,19 @@ public class IndicatorMACD extends Indicator {
             log.info("180");
         }
         TaUtil tu = new TaUtil();
-        Object[] objs = tu.getMomAndDeltaFull(array[0], conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
-        return objs;
+        return tu.getMomAndDeltaFull(array[0], conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
     }
 
     @Override
     protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-        Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs);
-        return momentum;
+        return tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs);
     }
 
     @Override
     protected void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] momentum, Object[] fields) {
-        int retindex = tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
+        tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
     }
 
     @Override
@@ -137,7 +108,7 @@ public class IndicatorMACD extends Indicator {
         if (conf.isMACDDeltaEnabled()) {
             objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
         }
-        log.info("fieldsizet " + retindex);
+        log.info("fieldsizet {}", retindex);
         return objs;
     }
 

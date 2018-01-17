@@ -1,31 +1,15 @@
 package roart.indicator;
 
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.math3.util.Pair;
-
+import roart.config.MyMyConfig;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
-import roart.config.MyMyConfig;
-import roart.db.DbAccess;
-import roart.db.DbDao;
-import roart.db.DbSpark;
-import roart.model.StockItem;
-//import roart.model.Stock;
-import roart.service.ControlService;
-import roart.util.ArraysUtil;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.TaUtil;
-import scala.collection.mutable.WrappedArray;
 
 public class IndicatorRSI extends Indicator {
 
@@ -58,7 +42,7 @@ public class IndicatorRSI extends Indicator {
     public String indicatorName() {
         return PipelineConstants.INDICATORRSI;
     }
-    
+
     private int fieldSize() {
         int size = 1;
         if (conf.isRSIDeltaEnabled()) {
@@ -67,25 +51,23 @@ public class IndicatorRSI extends Indicator {
         emptyField = new Object[size];
         return size;
     }
-    
+
     @Override
     public Object calculate(double[][] array) {
         TaUtil tu = new TaUtil();
-        Object[] objs = tu.getRsiAndDeltaFull(array[0], conf.getDays(), conf.getRSIDeltaDays());
-        return objs;
+        return tu.getRsiAndDeltaFull(array[0], conf.getDays(), conf.getRSIDeltaDays());
     }
 
     @Override
     protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-         Double[] rsi = tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs);
-        return rsi;
+        return tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs);
     }
 
     @Override
     protected void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] momentum, Object[] fields) {
-        int retindex = tu.getRSIAndDelta(conf.isRSIDeltaEnabled(),  momentum, fields);
+        tu.getRSIAndDelta(conf.isRSIDeltaEnabled(),  momentum, fields);
     }
 
     @Override
@@ -93,7 +75,7 @@ public class IndicatorRSI extends Indicator {
         TaUtil tu = new TaUtil();
         return tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, offset);
     }
-        
+
     // TODO call tautil
     @Override
     public int getResultSize() {
@@ -119,6 +101,6 @@ public class IndicatorRSI extends Indicator {
         map.put(PipelineConstants.INDICATORRSIOBJECT, objectMap);
         return map;
     }
-    
+
 }
 

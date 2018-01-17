@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.config.MyMyConfig;
 import roart.evaluation.Evaluation;
-import roart.mutation.Mutate;
 
 public class Individual  implements Comparable<Individual>{
     public MyMyConfig conf;
@@ -25,22 +24,21 @@ public class Individual  implements Comparable<Individual>{
     public Individual getNewWithValueCopyFactory(MyMyConfig conf, List<String> keys, boolean doScore) throws JsonParseException, JsonMappingException, IOException {
         MyMyConfig newConf = Individual.getNewWithValueCopy(conf);
         evaluation.transformToNode(newConf, keys);
-        double fitness = 0.0;
+        double myfitness = 0.0;
         if (doScore) {
-            fitness = evaluation.getFitness(newConf, keys);
+            myfitness = evaluation.getFitness(newConf, keys);
         }
-        return new Individual(newConf, fitness, evaluation);
+        return new Individual(newConf, myfitness, evaluation);
     }
-    
+
     public Individual getNewWithValueCopyAndRandomFactory(MyMyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
         MyMyConfig newConf = Individual.getNewWithValueCopy(conf);
         evaluation.transformToNode(newConf, keys);
-        //ControlService.getRandom(newConf.configValueMap, keys);
         evaluation.getRandom(newConf.configValueMap, keys);
-        double fitness = evaluation.getFitness(newConf, keys);
-        return new Individual(newConf, fitness, evaluation);
+        double myfitness = evaluation.getFitness(newConf, keys);
+        return new Individual(newConf, myfitness, evaluation);
     }
-    
+
     public Individual crossover(Individual pop1, Individual pop2, List<String> keys, boolean doScore) throws JsonParseException, JsonMappingException, IOException {
         Random rand = new Random();
         Map<String, Object> configValueMap = new HashMap<>(pop1.conf.configValueMap);
@@ -56,35 +54,34 @@ public class Individual  implements Comparable<Individual>{
         MyMyConfig config = new MyMyConfig(conf);
         evaluation.normalize(configValueMap, keys);
         config.configValueMap = configValueMap;
-        double fitness = 0.0;
+        double myfitness = 0.0;
         if (doScore) {
-            fitness = evaluation.getFitness(conf, keys);
+            myfitness = evaluation.getFitness(conf, keys);
         }
-        
-        return new Individual(config, fitness, evaluation);
+
+        return new Individual(config, myfitness, evaluation);
     }
 
     @Override
     public int compareTo(Individual arg0) {
         return Double.compare(arg0.fitness, fitness);
     }
-    
+
     public void mutate(List<String> keys) throws JsonParseException, JsonMappingException, IOException {
         evaluation.mutate(conf.configValueMap, keys);
-                 //Mutate.mutate(conf.configValueMap, keys);
         evaluation.normalize(conf.configValueMap, keys);
-            fitness = evaluation.getFitness(conf, keys);
+        fitness = evaluation.getFitness(conf, keys);
     }
     public void recalculateScore(List<String> keys) throws JsonParseException, JsonMappingException, IOException {
-         fitness = evaluation.getFitness(conf, keys);
-        
+        fitness = evaluation.getFitness(conf, keys);
+
     }
 
     @Override
     public String toString() {
         return "" + fitness;
     }
-    
+
     public double getFitness() {
         return fitness;
     }

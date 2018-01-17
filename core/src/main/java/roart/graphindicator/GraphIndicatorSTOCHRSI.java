@@ -46,9 +46,9 @@ public class GraphIndicatorSTOCHRSI extends GraphIndicator {
             int topbottom = conf.getTopBottom();
             PeriodData perioddata = periodDataMap.get(periodText);
             TaUtil tu = new TaUtil();
-            for (Pair id : ids) {
-                String market = (String) id.getFirst();
-                String stockid = (String) id.getSecond();
+            for (Pair<String, String> id : ids) {
+                String market = id.getFirst();
+                String stockid = id.getSecond();
                 DefaultCategoryDataset dataset = tu.getSTOCHRSIChart(days, market, stockid, ids, marketdatamap, perioddata, periodText);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Period " + periodText, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, 1);

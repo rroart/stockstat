@@ -1,13 +1,12 @@
 package roart.indicator;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -18,12 +17,10 @@ import org.slf4j.LoggerFactory;
 import roart.config.MyMyConfig;
 import roart.db.DbAccess;
 import roart.db.DbDao;
-import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
-import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
 import roart.util.TaUtil;
@@ -41,14 +38,13 @@ public abstract class Indicator {
     protected Map<String, PeriodData> periodDataMap;
     protected Map<String, Integer>[] periodmap;
     protected Object[] emptyField;
-    
+
     protected Map<String, Double[][]> listMap;
     protected Map<String, double[][]> truncListMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
     protected Map<String, Object[]> objectMap;
     protected Map<String, Object[]> objectFixedMap;
-    //Map<String, Double> resultMap;
     protected Map<String, Double[]> calculatedMap;
     protected Map<String, Object[]> resultMap;
 
@@ -62,30 +58,20 @@ public abstract class Indicator {
         this.category = category;
     }
 
-    abstract public boolean isEnabled();
+    public abstract boolean isEnabled();
     protected abstract Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id);
     protected abstract void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] momentum, Object[] fields);
 
     public Object[] getResultItemTitle() {
-    	Object[] titleArray = new Object[1];
-    	titleArray[0] = title;
+        Object[] titleArray = new Object[1];
+        titleArray[0] = title;
         return titleArray;
     }
 
-    /*
-    public Object calculate(double[] array) {
-        return null;
-    }
-*/
     public Object calculate(double[][] array) {
         return null;
     }
 
-    /*
-    public Object calculate(Double[] array) {
-        return calculate(ArrayUtils.toPrimitive(array));
-    }
-*/
     public Object calculate(Double[][] array) {
         double[][] newArray = new double[array.length][];
         for (int i = 0; i < array.length; i ++) {
@@ -95,19 +81,17 @@ public abstract class Indicator {
     }
 
     public Object calculate(scala.collection.Seq[] objArray) {
-        System.out.println(objArray);
         double[][] newArray = new double[objArray.length][];
         for (int i = 0; i < objArray.length; i++) {
             List list = scala.collection.JavaConversions.seqAsJavaList(objArray[0]);
             Double[] array = new Double[list.size()];
-            System.out.println(list.toArray(array));
             array = (Double[]) list.toArray(array);
             newArray[i] = ArrayUtils.toPrimitive(array);
         }
         return calculate(newArray);
     }
 
-   public List<Integer> getTypeList() {
+    public List<Integer> getTypeList() {
         return null;
     }
 
@@ -120,7 +104,7 @@ public abstract class Indicator {
     }
 
     public Map<String, Object> getResultMap() {
-         return null;
+        return null;
     }
 
     public Object[] getDayResult(Object[] objs, int offset) {
@@ -138,24 +122,10 @@ public abstract class Indicator {
         map.put(PipelineConstants.MARKETOBJECT, marketObjectMap);
         map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);
         map.put(PipelineConstants.MARKETRESULT, marketResultMap);
-        try {
-        System.out.println("vix " + Arrays.asList(listMap.get("VIX")[0]));
-        System.out.println("vix " + Arrays.asList(truncListMap.get("VIX")[0]));
-        System.out.println("vix " + Arrays.asList(objectMap.get("VIX")[2]));
-        Object[] o = (Object[]) objectMap.get("VIX");
-        System.out.println("vix " + Arrays.asList((double[])o[2]) + " " + o[2]);
-        double[] i = (double[]) o[2];
-        double[] j = (double[]) o[1];
-        double[] k = (double[]) o[0];
-        System.out.println("i " + i.getClass().getName() + Arrays.asList(i));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            int jj = 0;
-        }
         return map;
     }
-    
-public int getResultSize() {
+
+    public int getResultSize() {
         return 0;
     }
 
@@ -166,24 +136,22 @@ public int getResultSize() {
     public int getCategory() {
         return category;
     }
-    
+
     public boolean wantForExtras() {
         return false;        
     }
-    
+
 
     // TODO make an oo version of this
     protected void calculateAll(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, int category, Pipeline[] datareaders) throws Exception {
         DbAccess dbDao = DbDao.instance(conf);
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String dateme = dt.format(conf.getdate());
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         Pipeline datareader = pipelineMap.get("" + category);
         this.listMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
         this.truncListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
         if (!anythingHere(listMap)) {
-            System.out.println("empty"+key);
+            log.info("empty {}", key);
             return;
         }
         List<Map> resultList = getMarketCalcResults(conf, dbDao, truncListMap);
@@ -211,44 +179,37 @@ public int getResultSize() {
             return;
         }
         Map<String, Object> localResults =  extrareader.getLocalResultMap();
-        Map<Pair, List<StockItem>> pairStockMap = (Map<Pair, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
-        Map<Pair, Map<Date, StockItem>> pairDateMap = (Map<Pair, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
-        Map<Pair, String> pairCatMap = (Map<Pair, String>) localResults.get(PipelineConstants.PAIRCAT);
-        Map<Pair, Double[][]> pairListMap = (Map<Pair, Double[][]>) localResults.get(PipelineConstants.PAIRLIST);
-        Map<Pair, List<Date>> pairDateListMap = (Map<Pair, List<Date>>) localResults.get(PipelineConstants.PAIRDATELIST);
-        Map<Pair, double[][]> pairTruncListMap = (Map<Pair, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
-        System.out.println("lockeys" + localResults.keySet());
-        Map<Pair, List<StockItem>> pairMap = pairStockMap;
+        Map<Pair<String, String>, List<StockItem>> pairStockMap = (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
+        Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
+        Map<Pair<String, String>, String> pairCatMap = (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
+        Map<Pair<String, String>, Double[][]> pairListMap = (Map<Pair<String, String>, Double[][]>) localResults.get(PipelineConstants.PAIRLIST);
+        Map<Pair<String, String>, List<Date>> pairDateListMap = (Map<Pair<String, String>, List<Date>>) localResults.get(PipelineConstants.PAIRDATELIST);
+        Map<Pair<String, String>, double[][]> pairTruncListMap = (Map<Pair<String, String>, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
+        log.info("lockeys {}", localResults.keySet());
+        Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
         Map<String, Map<String, double[][]>> marketListMap = new HashMap<>();
-        for(Pair pair : pairMap.keySet()) {
-            String market = (String) pair.getFirst();
+        for(Pair<String, String> pair : pairMap.keySet()) {
+            String market = pair.getFirst();
             Map<String, double[][]> aListMap = marketListMap.get(market);
             if (aListMap == null) {
                 aListMap = new HashMap<>();
                 marketListMap.put(market, aListMap);
             }
-            String id = (String) pair.getSecond();
+            String id = pair.getSecond();
             double[][] truncList = pairTruncListMap.get(pair);
-            if (truncList == null) {
-                System.out.println("bl");
-            }
-            //double[] aTruncList = truncListMap.get(id);
             if (truncList != null) {
                 aListMap.put(id, truncList);
             }
         }
-        Pipeline datareader = pipelineMap.get("" + category);
-
         marketObjectMap = new HashMap<>();
         marketCalculatedMap = new HashMap<>();
         marketResultMap = new HashMap<>();
-        
-        //this.listMap = (Map<String, Double[]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
-        //this.truncListMap = (Map<String, double[]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
+
         DbAccess dbDao = DbDao.instance(conf);
-        for (String market : marketListMap.keySet()) {
-            Map<String, double[][]> truncListMap = marketListMap.get(market);
-            List<Map> resultList = getMarketCalcResults(conf, dbDao, truncListMap);
+        for (Entry<String, Map<String, double[][]>> entry : marketListMap.entrySet()) {
+            String market = entry.getKey();
+            Map<String, double[][]> myTruncListMap = entry.getValue();
+            List<Map> resultList = getMarketCalcResults(conf, dbDao, myTruncListMap);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
             }
@@ -260,30 +221,29 @@ public int getResultSize() {
             marketResultMap.put(market, aResultMap);
         }
     }
- 
+
     protected List getMarketCalcResults(MyMyConfig conf, DbAccess dbDao, Map<String, double[][]> truncListMap) {
         List<Map> resultList = new ArrayList<>();
         if (truncListMap == null || truncListMap.isEmpty()) {
             return resultList;
         }
         long time0 = System.currentTimeMillis();
-        log.info("time0 " + (System.currentTimeMillis() - time0));
+        log.info("time0 {}", (System.currentTimeMillis() - time0));
 
         long time2 = System.currentTimeMillis();
-        Map<String, Object[]> objectMap = dbDao.doCalculationsArr(conf, truncListMap, key, this, conf.wantPercentizedPriceIndex());
+        Map<String, Object[]> myObjectMap = dbDao.doCalculationsArr(conf, truncListMap, key, this, conf.wantPercentizedPriceIndex());
 
-        log.info("time2 " + (System.currentTimeMillis() - time2));
+        log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
         TaUtil tu = new TaUtil();
-        //PeriodData perioddata = periodDataMap.get(periodstr);
-        log.info("listmap " + truncListMap.size() + " " + truncListMap.keySet());
-        Map<String, Double[]> calculatedMap = getCalculatedMap(conf, tu, objectMap, truncListMap);
+        log.info("listmap {} {}", truncListMap.size(), truncListMap.keySet());
+        Map<String, Double[]> myCalculatedMap = getCalculatedMap(conf, tu, myObjectMap, truncListMap);
 
-        Map<String, Object[]> resultMap = getResultMap(conf, tu, objectMap, calculatedMap);
-        log.info("time1 " + (System.currentTimeMillis() - time1));
-        resultList.add(objectMap);
-        resultList.add(calculatedMap);
-        resultList.add(resultMap);
+        Map<String, Object[]> myResultMap = getResultMap(conf, tu, myObjectMap, myCalculatedMap);
+        log.info("time1 {}", (System.currentTimeMillis() - time1));
+        resultList.add(myObjectMap);
+        resultList.add(myCalculatedMap);
+        resultList.add(myResultMap);
         return resultList;
     }
 
@@ -295,7 +255,7 @@ public int getResultSize() {
                 result.put(id, calculated);
                 // TODO and continue?
             } else {
-                System.out.println("nothing for id" + id);
+                log.info("nothing for id {}", id);
             }
         }
         return result;
@@ -311,7 +271,7 @@ public int getResultSize() {
             Object[] fields = new Object[fieldSize];
             result.put(id, fields);
             if (momentum == null) {
-                System.out.println("zero mom for id " + id);
+                log.info("zero mom for id {}", id);
             }
             getFieldResult(conf, tu, momentum, fields);
         }
@@ -319,7 +279,6 @@ public int getResultSize() {
     }
 
     public Object[] getResultItem(StockItem stock) {
-        TaUtil tu = new TaUtil();
         String market = conf.getMarket();
         String id = stock.getId();
         Pair<String, String> pair = new Pair<>(market, id);
@@ -328,8 +287,7 @@ public int getResultSize() {
         String periodstr = key;
         PeriodData perioddata = periodDataMap.get(periodstr);
         if (perioddata == null) {
-            //System.out.println("key " + key + " : " + periodDataMap.keySet());
-            log.info("key " + key + " : " + periodDataMap.keySet());
+            log.info("key {} {}", key, periodDataMap.keySet());
         }
         if (resultMap == null) {
             return emptyField;

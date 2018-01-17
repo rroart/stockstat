@@ -16,12 +16,8 @@ public  class MLClassifySparkMCPModel  extends MLClassifySparkModel {
     }
 
     public Model getModel(Dataset<Row> train, int size, int outcomes) {
-        //int[] layers = new int[]{size + 1, size + 1, size + 1, CATS + 1};
-        //int[] layers = new int[]{size, size + 2, size + 4, CATS + 1};
         int[] layers = new int[]{size, outcomes + 1, outcomes + 1, outcomes + 1};
-        //int[] layers = new int[]{size, 15, 15, outcomes + 1};
-        //int[] layers = new int[]{size, size, size, outcomes + 1};
-         MultilayerPerceptronClassifier trainer = new MultilayerPerceptronClassifier()
+        MultilayerPerceptronClassifier trainer = new MultilayerPerceptronClassifier()
                 .setLayers(layers)
                 .setBlockSize(128)
                 .setSeed(1234L)

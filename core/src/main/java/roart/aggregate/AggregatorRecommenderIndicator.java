@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.calculate.CalcComplexNode;
 import roart.calculate.CalcDoubleNode;
 import roart.calculate.CalcNode;
+import roart.calculate.CalcNodeUtils;
 import roart.category.Category;
 import roart.category.CategoryConstants;
 import roart.config.MyConfig;
@@ -37,7 +39,6 @@ import roart.util.TaUtil;
 
 public class AggregatorRecommenderIndicator extends Aggregator {
 
-    //Map<String, Object[]> macdMap;
     Map<String, Double[]> listMap;
     Map<String, List<Recommend>> usedRecommenders;
     Map<String, Map<String, Double[]>> resultMap;
@@ -64,8 +65,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         ids.addAll(list0.keySet());
         Map<String, Indicator> newIndicatorMap = new HashMap<>();
 
-        for (String type : usedRecommenders.keySet()) {
-            List<Recommend> list = usedRecommenders.get(type);
+        for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
+            List<Recommend> list = entry.getValue();
             for (Recommend recommend : list) {
                 String indicator = recommend.indicator();
                 if (indicator != null) {
@@ -80,88 +81,34 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             }
         }
         Map<String, Double[]> result = new HashMap<>();
-        List<String> indDebug = new ArrayList<>();/*
-        if (false) {
-            List<Recommend> list = usedRecommenders.values().iterator().next(); //get(type);
-            //List<Recommend> list2 = usedRecommenders.values().iterator().next(); //get(type);
-            //System.out.println("l1 " + list.get);
-            for (Recommend recommend : list) {
-                String indicator = recommend.indicator();
-                indDebug.add(indicator);
-                buyKeys.addAll(recommend.getBuyList());
-            }
-            for (String key : buyKeys) {
-                Object o = conf.configValueMap.get(key);
-                CalcNode node = (CalcNode) conf.configValueMap.get(key);
-                transformToNode(conf, buyKeys, true, macdrsiMinMax);
-            }
-        }
-*/
-        //List<Recommend> baseList = usedRecommenders.values().iterator().next(); //get(type);
-        if (false) {
-            for (String id : ids) {
-            Double[] arrayResult = new Double[0];
-            //for (String indicator : usedIndicatorMap.keySet()) {
-                //List<Recommend> list2 = usedRecommenders.values().iterator().next(); //get(type);
-                //System.out.println("l1 " + list.get);
-            for (String type : usedRecommenders.keySet()) {
-                List<Recommend> list = usedRecommenders.get(type);
-                for (Recommend recommend : list) {
-                    String indicator = recommend.indicator();
-                    Map<String, Double[]> listMap = (Map<String, Double[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.RESULT);
-                    //System.out.println(Arrays.toString(listMap.get(id)));
-                    Double[] aResult = listMap.get(id);
-                    arrayResult = (Double[]) ArrayUtils.addAll(arrayResult, aResult);
-                }
-            }
-            result.put(id, arrayResult);
-        }
-        }
         TaUtil tu = new TaUtil();
         resultMap = new HashMap<>();
-        for (String recommender : usedRecommenders.keySet()) {
-        //for (String type : indicatorMap.keySet()) {
+        for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
+            String recommender = entry.getKey();
             List<Indicator> indicators = Recommend.getIndicators(recommender, usedRecommenders, indicatorMap);
-            //indicators.add(indicatorMap.get(type));
             // We just want the config, any in the list will do
-            //Recommend recommend = usedRecommenders.get(recommender).get(0);
-            //System.out.println("li " + recommend.getBuyList());
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, 0 /*recommend.getFutureDays()*/, 1 /*conf.getTableDays()*/, 1 /*recommend.getIntervalDays()*/);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, 0 /*recommend.getFutureDays()*/, 1 /*conf.getTableDays()*/, 1 /*recommend.getIntervalDays()*/, null);
             Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
             result = dayIndicatorMap.get(0);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
             List<String> buyKeys = new ArrayList<>();
             List<String> sellKeys = new ArrayList<>();
             {
-                //List<Recommend> list = usedRecommenders.values().iterator().next(); //get(type);
-                //List<Recommend> list2 = usedRecommenders.values().iterator().next(); //get(type);
-                //System.out.println("l1 " + list.get);
-                List<Recommend> recommenders = usedRecommenders.get(recommender);
+                List<Recommend> recommenders = entry.getValue();
                 for (Recommend recommend : recommenders) {
-                    String indicator = recommend.indicator();
-                    //indDebug.add(indicator);
                     buyKeys.addAll(recommend.getBuyList());
                     sellKeys.addAll(recommend.getSellList());
                 }
-                //for (String key : keys) {
-                    //Object o = conf.configValueMap.get(key);
-                    //CalcNode node = (CalcNode) conf.configValueMap.get(key);
-                    transformToNode(conf, buyKeys, true, macdrsiMinMax);
-                    transformToNode(conf, sellKeys, false, macdrsiMinMax);
-                //}
+                CalcNodeUtils.transformToNode(conf, buyKeys, true, macdrsiMinMax, disableList);
+                CalcNodeUtils.transformToNode(conf, sellKeys, false, macdrsiMinMax, disableList);
             }
-            //Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
             // find recommendations
-            int macdlen = conf.getTableDays();
-            int listlen = conf.getTableDays();
-            //transform(conf, buyList);
             Map<String, Double[]> indicatorResultMap;
             indicatorResultMap = new HashMap<>();
             for (String id : ids) {
                 Double[] aResult = new Double[2]; 
                 System.out.println("ttt " + result.get(id));
-                //System.out.println(result.get(id).getClass().getName());
-                Double[] mergedResult = (Double[]) result.get(id);
+                Double[] mergedResult = result.get(id);
                 if (mergedResult == null || mergedResult.length == 0) {
                     continue;
                 }
@@ -213,71 +160,6 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         }
     }
 
-    // TODO duplicated...
-    public void transformToNode(MyConfig conf, List<String> keys, boolean useMax, List<Double>[] macdrsiMinMax) throws JsonParseException, JsonMappingException, IOException {
-        // TODO implement default somewhere else
-        //List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
-        ObjectMapper mapper = new ObjectMapper();
-        for (int i = 0; i < keys.size(); i++) {
-            String key = keys.get(i);
-            if (disableList.contains(key)) {
-                continue;
-            }
-            Object value = conf.configValueMap.get(key);
-            // this if is added to the original
-            if (value instanceof CalcNode) {
-                continue;
-            }
-            if (value instanceof Integer) {
-                CalcNode anode = new CalcDoubleNode();
-                conf.configValueMap.put(key, anode);
-                return;
-            }
-            String jsonValue = (String) conf.configValueMap.get(key);
-            if (jsonValue == null || jsonValue.isEmpty()) {
-                jsonValue = (String) conf.deflt.get(key);
-                //System.out.println(conf.deflt);
-            }
-            CalcNode anode;
-            CalcNode node;
-            if (jsonValue == null || jsonValue.isEmpty()) {
-                anode = new CalcComplexNode();
-                //anode.randomize();
-                node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);
-                node.randomize();
-                //node = anode;
-            } else {
-                anode = mapper.readValue(jsonValue, CalcNode.class);
-                node = CalcNodeFactory.get(anode.className, jsonValue, macdrsiMinMax, i, useMax);
-            }
-            conf.configValueMap.put(key, node);
-        }
-    }
-
-    // TODO duplicated
-    private static class CalcNodeFactory {
-        public static CalcNode get(String name, String jsonValue, List<Double>[] macdrsiMinMax, int index, boolean useMax) throws JsonParseException, JsonMappingException, IOException {
-            // TODO check class name
-            CalcComplexNode anode;
-            if (name != null && name.equals("Double")) {
-                CalcDoubleNode aanode = new CalcDoubleNode();
-                return aanode;
-            }
-            if (jsonValue == null) {
-                anode = new CalcComplexNode();
-            } else {
-                ObjectMapper mapper = new ObjectMapper();
-                anode = (CalcComplexNode) mapper.readValue(jsonValue, CalcComplexNode.class);
-            }
-            List<Double> minmax = macdrsiMinMax[index];
-            double minMutateThresholdRange =  minmax.get(0);
-            double maxMutateThresholdRange = minmax.get(1);
-            anode.setMinMutateThresholdRange(minMutateThresholdRange);
-            anode.setMaxMutateThresholdRange(maxMutateThresholdRange);
-            anode.setUseMax(useMax);
-            return anode;
-        }
-    }
 
     @Override
     public boolean isEnabled() {
@@ -297,8 +179,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             if (aResult == null || aResult.length < size) {
                 aResult = new Double[size];
             }
-            //if (aResult == null || aResult)
-            arrayResult = (Double[]) ArrayUtils.addAll(arrayResult, aResult);
+            arrayResult = ArrayUtils.addAll(arrayResult, aResult);
         }
         return arrayResult;
     }

@@ -1,12 +1,12 @@
 package roart.ml;
 
-public class MLPredictTensorflowLSTMModel  extends MLPredictTensorflowModel {
+public class MLPredictTensorflowLSTMModel extends MLPredictTensorflowModel {
     @Override
-   public int getId() {
+    public int getId() {
         return 1;
     }
     @Override
-   public String getName() {
+    public String getName() {
         return "LSTM";
     }
 }
