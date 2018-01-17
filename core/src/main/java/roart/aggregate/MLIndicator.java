@@ -243,8 +243,10 @@ public class MLIndicator extends Aggregator {
             log.info("Indicatormap keys {}", dayIndicatorMap.keySet());
             Map<String, Double[]> indicatorMap2 = dayIndicatorMap.get(conf.getAggregatorsIndicatorFuturedays());
             Map<String, double[]> indicatorMap3 = new HashMap<>();
-            for (Entry<String, Double[]> indicatorEntry : indicatorMap2.entrySet()) {
-                indicatorMap3.put(indicatorEntry.getKey(), ArraysUtil.convert(indicatorEntry.getValue()));
+            if (indicatorMap2 != null) {
+                for (Entry<String, Double[]> indicatorEntry : indicatorMap2.entrySet()) {
+                    indicatorMap3.put(indicatorEntry.getKey(), ArraysUtil.convert(indicatorEntry.getValue()));
+                }
             }
             doClassifications(mapResult, arrayLength, labelMapShort, indicatorMap3);
         }
