@@ -1,25 +1,13 @@
 package roart.indicator;
 
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.math3.util.Pair;
 
 import roart.config.MyMyConfig;
-import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
-//import roart.model.Stock;
-import roart.service.ControlService;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.TaUtil;
 
 // TODO warning this looks weird, avoid for now?
@@ -66,21 +54,19 @@ public class IndicatorSTOCHRSI extends Indicator {
             log.info("180");
         }
         TaUtil tu = new TaUtil();
-        Object[] objs = tu.getSTOCHRSI(array, conf.getDays(), conf.getSTOCHRSIDeltaDays());
-        return objs;
+        return tu.getSTOCHRSI(array, conf.getDays(), conf.getSTOCHRSIDeltaDays());
     }
 
    @Override
     protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-        Double[] stoch = tu.getSRSIAndDelta(conf.getSTOCHRSIDeltaDays(), conf.getSTOCHRSIDeltaDays(), objs);
-        return stoch;
+        return tu.getSRSIAndDelta(conf.getSTOCHRSIDeltaDays(), conf.getSTOCHRSIDeltaDays(), objs);
     }
 
    @Override
    protected void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] result, Object[] fields) {
-       int retindex = tu.getSRSIAndDelta(conf.isSTOCHRSIDeltaEnabled(), conf.isSTOCHRSIDeltaEnabled(), result, fields);
+       tu.getSRSIAndDelta(conf.isSTOCHRSIDeltaEnabled(), conf.isSTOCHRSIDeltaEnabled(), result, fields);
    }
 
     @Override

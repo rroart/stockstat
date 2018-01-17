@@ -1,29 +1,21 @@
 package roart.category;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.math3.util.Pair;
 
 import roart.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorMove;
 import roart.indicator.IndicatorRSI;
-import roart.indicator.IndicatorSTOCHRSI;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.predictor.PredictorLSTM;
-//import roart.model.Stock;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.StockUtil;
-import roart.util.TaUtil;
 
 public class CategoryPeriod extends Category {
 
@@ -40,10 +32,9 @@ public class CategoryPeriod extends Category {
         createResultMap(conf, stocks);
         indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), periodmap, period));
         if (periodText.equals("cy")) {
-        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), i, datareaders, false));
-        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), i, datareaders, false));
-        //indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), i));
-        predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, periodmap, getTitle(), i));
+            indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), i, datareaders, false));
+            indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), i, datareaders, false));
+            predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, periodmap, getTitle(), i));
         }
         createIndicatorMap(periodText);
     }
@@ -67,15 +58,10 @@ public class CategoryPeriod extends Category {
     @Override
     public void addResultItem(ResultItemTableRow r, StockItem stock) {
         try {
-            //System.out.print("0"+period+"0 ");
-
             if (StockUtil.hasStockPeriod(stocks, period)) {
-                //System.out.print("1");
                 r.addarr(resultMap.get(stock.getId()));
                 for (Indicator indicator : indicators) {
-                    //System.out.print("2");
                     if (indicator.isEnabled()) {
-                        //System.out.print("ri");
                         r.addarr(indicator.getResultItem(stock));
                     }
                 }

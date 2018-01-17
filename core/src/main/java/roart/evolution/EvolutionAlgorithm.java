@@ -17,7 +17,7 @@ import roart.evaluation.Evaluation;
 public abstract class EvolutionAlgorithm {
 
     public abstract Individual getFittest(MyMyConfig conf,Evaluation recommender) throws Exception;
-	
+
     protected void printmap(Map<String, Object> map, List<String> keys) throws JsonProcessingException {
         for (String key : keys) {
             Object obj = map.get(key);
@@ -32,25 +32,25 @@ public abstract class EvolutionAlgorithm {
         }
         System.out.println("");
     }   
-    
+
     protected void mutateList(List<Individual> population, int start, int size,
             int testRecommendMutate, boolean scoreAll, List<String> keys, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
-    Random rand = new Random();
-    List<Individual> populationCopies = new ArrayList<>(population);
-    int populationSize = Math.min(size, population.size());
-    int randMax = populationSize;
-    for (int i = 0; i < testRecommendMutate && randMax > 1 ; i--, randMax--) {
-        int idx = start + rand.nextInt(randMax - start);
-        Individual pop = populationCopies.get(idx);
-        populationCopies.remove(idx);
-        pop.mutate(keys);
-   }
-    if (!scoreAll) {
-        return;
-    }
-    for (Individual pop : populationCopies) {
-        pop.recalculateScore(keys);
-    }
+        Random rand = new Random();
+        List<Individual> populationCopies = new ArrayList<>(population);
+        int populationSize = Math.min(size, population.size());
+        int randMax = populationSize;
+        for (int i = 0; i < testRecommendMutate && randMax > 1 ; i--, randMax--) {
+            int idx = start + rand.nextInt(randMax - start);
+            Individual pop = populationCopies.get(idx);
+            populationCopies.remove(idx);
+            pop.mutate(keys);
+        }
+        if (!scoreAll) {
+            return;
+        }
+        for (Individual pop : populationCopies) {
+            pop.recalculateScore(keys);
+        }
     }
 
     protected List<Individual> crossover(int childrenNum, List<Individual> population, List<String> keys, MyMyConfig conf, boolean doScore, boolean doBuy2, Evaluation recommend) throws JsonParseException, JsonMappingException, IOException {
@@ -76,10 +76,10 @@ public abstract class EvolutionAlgorithm {
         Population population = new Population(evolutionGenerationCreate, conf, evaluation, keys, false);
         return population.getIndividuals();
     }
-    
+
     protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, MyMyConfig conf, Evaluation evaluation, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
         Population population = new Population(evolutionEliteCloneAndMutate, conf, evaluation, keys, false);
         return population.getIndividuals();
     }
-    
+
 }

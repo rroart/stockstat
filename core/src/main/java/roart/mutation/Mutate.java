@@ -10,7 +10,7 @@ public class Mutate {
     public static void mutate(Map<String, Double> map) {
         Random random = new Random();
         int len = map.size();
-        List<String> keys = new ArrayList(map.keySet());
+        List<String> keys = new ArrayList<>(map.keySet());
         int key0 = random.nextInt(len);
         String str0 = keys.get(key0);
         keys.remove(key0);

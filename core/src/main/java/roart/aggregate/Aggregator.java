@@ -25,7 +25,6 @@ public abstract class Aggregator {
     
     protected Map<String, Object[]> objectMap;
     protected Map<String, Object[]> objectFixedMap;
-    //Map<String, Double> resultMap;
     protected Map<String, Double[]> calculatedMap;
     protected Map<String, Object> probabilityMap;
     protected Map<String, Object[]> otherResultMap;
@@ -49,7 +48,7 @@ public abstract class Aggregator {
         this.resultMetas = resultMetas;
     }
 
-    abstract public boolean isEnabled();
+    public abstract boolean isEnabled();
 
     public Object[] getResultItemTitle() {
         Object[] titleArray = new Object[1];
@@ -57,7 +56,7 @@ public abstract class Aggregator {
         return titleArray;
     }
 
-    abstract public Object[] getResultItem(StockItem stock);
+    public abstract Object[] getResultItem(StockItem stock);
 
     public Object calculate(double[] array) {
         return null;
@@ -80,7 +79,6 @@ public abstract class Aggregator {
     public abstract void addResultItemTitle(ResultItemTableRow headrow);
 
     public Map<String, Object> getResultMap() {
-        // TODO Auto-generated method stub
         return null;
     } 
 
@@ -89,7 +87,6 @@ public abstract class Aggregator {
     }
     
     public abstract String getName();
-    //public abstract void addResultItemTitle(ResultItemTableRow headrow);
 
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
