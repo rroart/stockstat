@@ -41,5 +41,6 @@ Pipeline iclij
 Remove findprofit both inc dec, go to improve
 RSI and usemax
 StockUtil update periods number
+Parametrize jdbc setting
 Configure limit for empty hole limit
 calcnodecomplex usemax min/max
