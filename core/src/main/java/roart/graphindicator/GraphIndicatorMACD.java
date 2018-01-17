@@ -44,13 +44,12 @@ public class GraphIndicatorMACD extends GraphIndicator {
             String periodText = key;
             int days = conf.getTableDays();
             int topbottom = conf.getTopBottom();
-            //System.out.println("check2 " + periodText + " " + periodDataMap.keySet());
-            log.info("check2 " + periodText + " " + periodDataMap.keySet());
+            log.info("check2 {} {}", periodText, periodDataMap.keySet());
             PeriodData perioddata = periodDataMap.get(periodText);
             TaUtil tu = new TaUtil();
-            for (Pair id : ids) {
-                String market = (String) id.getFirst();
-                String stockid = (String) id.getSecond();
+            for (Pair<String, String> id : ids) {
+                String market = id.getFirst();
+                String stockid = id.getSecond();
                 DefaultCategoryDataset dataset = tu.getMACDChart(days, market, stockid, ids, marketdatamap, perioddata, periodText);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Period " + periodText, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, 1);

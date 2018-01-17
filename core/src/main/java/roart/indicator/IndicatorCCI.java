@@ -1,24 +1,13 @@
 package roart.indicator;
 
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.math3.util.Pair;
 
 import roart.config.MyMyConfig;
-import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
-//import roart.model.Stock;
-import roart.service.ControlService;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.TaUtil;
 
 public class IndicatorCCI extends Indicator {
@@ -60,21 +49,19 @@ public class IndicatorCCI extends Indicator {
     @Override
     public Object calculate(double[][] array) {
         TaUtil tu = new TaUtil();
-        Object[] objs = tu.getCCI(array[1], array[2], array[0], conf.getDays(), conf.isCCIDeltaEnabled(), conf.getCCIDeltaDays());
-        return objs;
+        return tu.getCCI(array[1], array[2], array[0], conf.getDays(), conf.isCCIDeltaEnabled(), conf.getCCIDeltaDays());
     }
 
     @Override
     protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-        Double[] cci = tu.getRsiAndDelta(conf.getCCIDeltaDays(), objs);
-        return cci;
+        return tu.getRsiAndDelta(conf.getCCIDeltaDays(), objs);
     }
 
     @Override
     protected void getFieldResult(MyMyConfig conf, TaUtil tu, Double[] result, Object[] fields) {
-        int retindex = tu.getRSIAndDelta(conf.isCCIDeltaEnabled(),  result, fields);
+        tu.getRSIAndDelta(conf.isCCIDeltaEnabled(),  result, fields);
     }
 
     @Override

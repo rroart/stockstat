@@ -38,5 +38,14 @@ public static final String INDEX = "Index";
 
 public static final String DELTA = "Δ";
 
-public static final String WEBBR = "<br/>"; 
+public static final String WEBBR = "<br/>";
+
+public static final String TP = "TP";
+public static final String TN = "TN";
+public static final String FP = "FP";
+public static final String FN = "FN";
+
+public static final String INC = "Inc";
+public static final String DEC = "Dec";
+
 }

@@ -1,29 +1,21 @@
 package roart.category;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.config.MyMyConfig;
-import roart.db.DbAccess;
-import roart.db.DbDao;
 import roart.indicator.Indicator;
-import roart.indicator.IndicatorUtils;
-import roart.model.ResultItem;
-import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
 import roart.predictor.Predictor;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
 import roart.util.StockDao;
 import roart.util.StockUtil;
 
@@ -53,16 +45,12 @@ public abstract class Category {
         return period;
     }
     
-    abstract public void addResultItemTitle(ResultItemTableRow r);
+    public abstract void addResultItemTitle(ResultItemTableRow r);
 
-    abstract public void addResultItem(ResultItemTableRow r, StockItem stock);
+    public abstract void addResultItem(ResultItemTableRow r, StockItem stock);
 
     public static void mapAdder(Map<Integer, List<ResultItemTableRow>> map, Integer key, List<ResultItemTableRow> add) {
-        List<ResultItemTableRow> val = map.get(key);
-        if (val == null) {
-            val = new ArrayList<>();
-            map.put(key, val);
-        }
+        List<ResultItemTableRow> val = map.computeIfAbsent(key, k -> new ArrayList<>());
         val.addAll(add);
     }
 
@@ -73,8 +61,8 @@ public abstract class Category {
             if (tables == null) {
                 continue;
             }
-            for (Integer key : tables.keySet()) {
-                mapAdder(allTablesMap, key, tables.get(key));
+            for (Entry<Integer, List<ResultItemTableRow>> entry : tables.entrySet()) {
+                mapAdder(allTablesMap, entry.getKey(), entry.getValue());
             }
         }
         return allTablesMap;
@@ -159,11 +147,6 @@ public abstract class Category {
     }
     
     public void createResultMap(MyMyConfig conf, List<StockItem> stocks) throws Exception {
-        DbAccess dbDao = DbDao.instance(conf);
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String dateme = dt.format(conf.getdate());
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        Pipeline datareader = pipelineMap.get("" + period);
         resultMap = new HashMap<>();
         dataArraySize = 0;
         for (StockItem stock : stocks) {

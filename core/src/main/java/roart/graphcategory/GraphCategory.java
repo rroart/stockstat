@@ -21,8 +21,8 @@ public abstract class GraphCategory {
 
     protected String title;
     protected MyMyConfig conf;
-    protected List<GraphIndicator> indicators = new ArrayList();
-    protected List<Predictor> predictors = new ArrayList();
+    protected List<GraphIndicator> indicators = new ArrayList<>();
+    protected List<Predictor> predictors = new ArrayList<>();
 
     public GraphCategory(MyMyConfig conf, String periodText) {
         this.conf = conf;
