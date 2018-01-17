@@ -226,7 +226,7 @@ public class MLIndicator extends Aggregator {
         // map from h/m to model to posnegcom map<model, results>
         Map<MLClassifyModel, Map<String, Double[]>> mapResult = new HashMap<>();
         log.info("Period {} {}", title, mapMap.keySet());
-        if (conf.wantML()) {
+        if (conf.wantML() && !mergedCatMap.keySet().isEmpty()) {
             if (mergedCatMap.keySet().isEmpty()) {
                 log.info("Merget set empty");
             }
