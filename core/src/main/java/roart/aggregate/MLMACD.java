@@ -404,8 +404,11 @@ public class MLMACD extends Aggregator {
                 for (MLClassifyModel model : mldao.getModels()) {
                     for (int mapTypeInt : getMapTypeList()) {
                         Map<String, Double[]> classifyResult = doClassifications(conf, mapMap, labelMapShort, mapIdMap,
-                                subType, mldao, mapResult2, model, mapTypeInt);
-                        Map<String, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
+                                subType, mldao, mapResult2, model, mapTypeInt);                        
+                        Map<String, Long> countMap = null;
+                        if (classifyResult != null) {
+                            countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
+                        }
                         if (countMap == null) {
                             continue;
                         }
