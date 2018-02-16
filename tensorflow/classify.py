@@ -1,4 +1,5 @@
 import learntest as lt
+import device
 
 import pandas as pd
 import tensorflow as tf
@@ -15,6 +16,9 @@ global dictclass
 dictclass = {}
 global count
 count = 0
+
+pu = device.get_pu()
+print("Using pu ", pu)
 
 class Classify:
     def do_eval(self, request):
@@ -75,18 +79,20 @@ class Classify:
             testcat = cat
         feature_columns = [tf.contrib.layers.real_valued_column("", dimension=25)]
         global count
-        count = count + 1                                                
+        count = count + 1
         if myobj.modelInt == 1:
             #print("mod1")
-            classifier = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns,
-                                                        hidden_units=[10, 20, 10],
-                                                        n_classes=myobj.outcomes,
-                                                        model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+            with tf.device(pu):
+                classifier = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns,
+                                                            hidden_units=[10, 20, 10],
+                                                            n_classes=myobj.outcomes,
+                                                            model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
         if myobj.modelInt == 2:
             #print("mod2")
-            classifier = tf.contrib.learn.LinearClassifier(
-                feature_columns=feature_columns,
-                model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+            with tf.device(pu):
+                classifier = tf.contrib.learn.LinearClassifier(
+                    feature_columns=feature_columns,
+                    model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
         global dictclass
         dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname] = classifier
         def get_train_inputs():
