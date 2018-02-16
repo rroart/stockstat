@@ -22,9 +22,12 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     private MyMyConfig conf;
 
+    private String tensorflowServer;
+
     public MLClassifyTensorflowAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();
+        tensorflowServer = conf.getTensorflowServer();
     }
 
     private void findModels() {
@@ -82,7 +85,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.mapname = mapname;
         param.outcomes = outcomes;
         log.info("evalin {} {} {}", param.modelInt, period, mapname);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, "http://localhost:8000/learntest");
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntest");
         return test.prob;
     }
 
@@ -93,7 +96,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.period = period;
         param.mapname = mapname;
         log.info("evalout {} {} {}", modelInt, period, mapname);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, "http://localhost:8000/eval");
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/eval");
         return test.prob;
     }
 
@@ -131,7 +134,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         for(Object[] obj : objobj) {
             log.info("inner {}", Arrays.asList(obj));
         }
-        LearnTestClassify ret = EurekaUtil.sendMe(LearnTestClassify.class, param, "http://localhost:8000/classify");
+        LearnTestClassify ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/classify");
         Object[] cat = ret.cat;
         Map<String, Double[]> retMap = new HashMap<>();
         for (int j = 0; j < retList.size(); j ++) {

@@ -622,6 +622,10 @@ public class MyMyConfig extends MyConfig {
        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
    }
    
+   public String getTensorflowServer() {
+       return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER);              
+   }
+   
    private Object getValueOrDefault(String key) {
        Object retVal = configValueMap.get(key);
        //System.out.println("r " + retVal + " " + deflt.get(key));

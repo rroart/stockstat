@@ -24,6 +24,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, String.class);
         map.put(ConfigConstants.INDICATORS, Boolean.class);
         map.put(ConfigConstants.INDICATORSMOVE, Boolean.class);
         map.put(ConfigConstants.INDICATORSMACD, Boolean.class);
@@ -174,6 +175,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, "http://localhost:8000");
         deflt.put(ConfigConstants.INDICATORS, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMOVE, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);
@@ -328,6 +330,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, "Enable Tensorflow");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, "Enable Tensorflow DNN");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, "Enable Tensorflow L");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, "Tensorflow Server");
         text.put(ConfigConstants.INDICATORS, "Enable indicators");
         text.put(ConfigConstants.INDICATORSMOVE, "Enable move indicator");
         text.put(ConfigConstants.INDICATORSMACD, "Enable MACD indicator");

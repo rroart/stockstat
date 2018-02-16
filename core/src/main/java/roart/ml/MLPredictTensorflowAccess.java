@@ -21,9 +21,12 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
 
     private MyMyConfig conf;
 
+    private String tensorflowServer;
+    
     public MLPredictTensorflowAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();
+        tensorflowServer = conf.getTensorflowServer();
     }
 
     private void findModels() {
@@ -58,7 +61,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
         param.horizon = horizon;
         param.epochs = epochs;
         log.info("evalin {} {} {}", param.modelInt, period, mapname);
-        return EurekaUtil.sendMe(LearnTestPredict.class, param, "http://localhost:8001/learntestpredict");
+        return EurekaUtil.sendMe(LearnTestPredict.class, param, tensorflowServer + "/learntestpredict");
     }
 
     @Override
@@ -68,7 +71,8 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
         param.period = period;
         param.mapname = mapname;
         log.info("evalout {} {} {}", modelInt, period, mapname);
-        LearnTestPredict test = EurekaUtil.sendMe(LearnTestPredict.class, param, "http://localhost:8000/eval");
+        System.out.println("NOTHERE0");
+        LearnTestPredict test = EurekaUtil.sendMe(LearnTestPredict.class, param, tensorflowServer + "/eval");
         return test.prob;
     }
 
@@ -106,7 +110,8 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
         for(Object[] obj : objobj) {
             log.info("inner {}", Arrays.asList(obj));
         }
-        LearnTestPredict ret = EurekaUtil.sendMe(LearnTestPredict.class, param, "http://localhost:8000/classify");
+        System.out.println("NOTHERE0");
+        LearnTestPredict ret = EurekaUtil.sendMe(LearnTestPredict.class, param, tensorflowServer + "/classify");
         Object[] cat = ret.cat;
         Map<String, Double[]> retMap = new HashMap<>();
         for (int j = 0; j < retList.size(); j ++) {

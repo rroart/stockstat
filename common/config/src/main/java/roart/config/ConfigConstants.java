@@ -19,6 +19,7 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGTENSORFLOW = "machinelearning.tensorflow[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWDNN = "machinelearning.tensorflow.dnn[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWL = "machinelearning.tensorflow.l[@enable]";
+    public static final String MACHINELEARNINGTENSORFLOWSERVER = "machinelearning.tensorflow.server";
     public static final String INDICATORS = "indicators[@enable]";
     public static final String INDICATORSMOVE = "indicators.move[@enable]";
     public static final String INDICATORSMACD = "indicators.macd[@enable]";
