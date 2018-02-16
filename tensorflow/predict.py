@@ -1,4 +1,5 @@
-import learntestpredict
+import learntestpredict as ltp
+import device
 
 import os
 import time
@@ -105,7 +106,7 @@ class Predict:
         print("entering")
         print(request.get_data(as_text=True))
         #print(request.get_data(as_text=True))
-        myobj = json.loads(request.get_data(as_text=True), object_hook=learntestpredict.LearnTestPredict)
+        myobj = json.loads(request.get_data(as_text=True), object_hook=ltp.LearnTestPredict)
         print(myobj.array)
         print(type(myobj.array))
         array = myobj.array
