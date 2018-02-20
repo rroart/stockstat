@@ -24,7 +24,7 @@ class Classify:
     def do_eval(self, request):
         global dicteval
         #print(request.get_data(as_text=True))
-        myobj = json.loads(request.get_data(as_text=True), object_hook=LearnTest)
+        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         print("geteval" + str(myobj.modelInt) + myobj.period + myobj.mapname)
         accuracy_score = dicteval[str(myobj.modelInt) + myobj.period + myobj.mapname]
         return Response(json.dumps({"prob": accuracy_score}), mimetype='application/json')
@@ -33,7 +33,7 @@ class Classify:
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
-        myobj = json.loads(request.get_data(as_text=True), object_hook=LearnTest)
+        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         array = np.array(myobj.array, dtype='f')
         global dictclass
         classifier = dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname]
