@@ -22,6 +22,11 @@ class HttpService:
     def do_learntest(self, request):
         return cl.do_learntest(request)
 
-    @http('POST', '/learntestpredict')
-    def do_learntestpredict(self, request):
+    @http('POST', '/predictone')
+    def do_learntestpredictone(self, request):
         return pr.do_learntest(request)
+
+    @http('POST', '/predict')
+    def do_learntestpredict():
+        return pr.do_learntestlist(request)
+

@@ -22,9 +22,13 @@ def do_classify():
 def do_learntest():
     return cl.do_learntest(request)
 
-@app.route('/learntestpredict', methods=['POST'])
+@app.route('/predictone', methods=['POST'])
 def do_learntestpredict():
     return pr.do_learntest(request)
+
+@app.route('/predict', methods=['POST'])
+def do_learntestpredict2():
+    return pr.do_learntestlist(request)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)

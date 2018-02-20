@@ -1,4 +1,6 @@
 class LearnTestPredict:
+    def __init__(self, listarray):
+        vars(self).update(listarray)
     def __init__(self, array):
         vars(self).update(array)
     def __init__(self, cat):
@@ -23,6 +25,8 @@ class LearnTestPredict:
         vars(self).update(slide)
     def __init__(self, predicted):
         vars(self).update(predicted)
+    def __init__(self, listpredicted):
+        vars(self).update(listpredicted)
     def __init__(self, accuracy):
         vars(self).update(windowsize)
     def __init__(self, windowsize):
