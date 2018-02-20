@@ -11,7 +11,6 @@ import java.util.HashSet;
 import roart.config.ConfigConstantMaps;
 import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
-import roart.model.LearnTestPredict;
 import roart.predictor.Predictor;
 import roart.predictor.PredictorLSTM;
 
@@ -43,17 +42,17 @@ public class MLPredictDao {
         }
     }
 
-    public LearnTestPredict learntestpredict(Predictor predictor, Double[] list, List<Double> next, Map<double[], Double> map, MLPredictModel modeln, int size, String period, String mapname, int outcomes, Map<MLPredictModel, Long> mapTime, int windowsize, int horizon, int epochs) {
-        LearnTestPredict predict = null;
+    public Double[] predictone(Predictor predictor, Double[] list, MLPredictModel modeln, int size, String period, int outcomes, Map<MLPredictModel, Long> mapTime, int windowsize, int horizon, int epochs) {
+        Double[] predict = null;
         for (MLPredictModel model : getModels()) {
             long time1 = System.currentTimeMillis();
-            predict = access.learntestpredict(predictor, list, next, map, model, size, period, mapname, outcomes, windowsize, horizon, epochs);
+            predict = access.predictone(predictor, list, model, size, period, outcomes, windowsize, horizon, epochs);
             long time = (System.currentTimeMillis() - time1);
-            log.info("time {} {} {} {} {}", model, period, mapname, time, predict.predicted);
+            log.info("time {} {} {} {}", model, period, time, predict);
             PredictorLSTM.mapAdder(mapTime, model, time);
             return predict;
         }
-        return predict;
+        return null;
     }
 
     // TODO delete?
@@ -63,11 +62,11 @@ public class MLPredictDao {
         return access.eval(modelInt, period, mapname);
     }
 
-    public Map<String, Double[]> predict(Predictor indicator, Map<String, double[]> map, MLPredictModel model, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap, Map<MLPredictModel, Long> mapTime) {
+    public Map<String, Double[]> predict(Predictor indicator, Map<String, Double[]> map, MLPredictModel model, int size, String period, int outcomes, Map<MLPredictModel, Long> mapTime, int windowsize, int horizon, int epochs) {
         long time1 = System.currentTimeMillis();
-        Map<String, Double[]> resultAccess = access.predict(indicator, map, model, size, period, mapname, outcomes, shortMap);
+        Map<String, Double[]> resultAccess = access.predict(indicator, map, model, size, period, outcomes, windowsize, horizon, epochs);
         long time = (System.currentTimeMillis() - time1);
-        log.info("time {} {} {} {}", model, period, mapname, time);
+        log.info("time {} {} {}", model, period, time);
         PredictorLSTM.mapAdder(mapTime, model, time);
         return resultAccess;
     }
@@ -92,7 +91,7 @@ public class MLPredictDao {
         return access.getModels();
     }
 
-    public int addResults(Object[] objs, int retindex, String id, MLPredictModel model, Predictor indicator, Map<String, LearnTestPredict> mapResult, Map<Double, String> labelMapShort) {
+    public int addResults(Object[] objs, int retindex, String id, MLPredictModel model, Predictor indicator, Map<String, Double[]> mapResult, Map<Double, String> labelMapShort) {
          retindex = model.addResults(objs, retindex, id, model, indicator, mapResult, labelMapShort);
          return retindex;
     }

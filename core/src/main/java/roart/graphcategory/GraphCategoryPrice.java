@@ -22,7 +22,6 @@ import roart.graphindicator.GraphIndicatorSTOCHRSI;
 import roart.ml.MLPredictDao;
 import roart.ml.MLPredictModel;
 import roart.model.GUISize;
-import roart.model.LearnTestPredict;
 import roart.model.ResultItem;
 import roart.model.ResultItemBytes;
 import roart.model.StockItem;
@@ -96,8 +95,7 @@ public class GraphCategoryPrice extends GraphCategory {
                             }
                         }
                     }
-                    LearnTestPredict pred = predictme((Double[])endlist.toArray());
-                    Double[] predme = pred.predicted;
+                    Double[] predme = predictme((Double[])endlist.toArray());
                     for (int k = 0; k < predme.length; k++) {
                         dataset.addValue(predme[k], "p", new Integer(k+1));
                     }
@@ -137,7 +135,7 @@ public class GraphCategoryPrice extends GraphCategory {
         }
     }
 
-    LearnTestPredict predictme(Double[] list) {
+    Double[] predictme(Double[] list) {
         MLPredictDao mldao = new MLPredictDao("tensorflow", conf);
         int horizon = conf.getPredictorLSTMHorizon();
         int windowsize = conf.getPredictorLSTMWindowsize();
@@ -145,12 +143,9 @@ public class GraphCategoryPrice extends GraphCategory {
         // TODO check reverse. move up before if?
         log.info("list {} {}", list.length, windowsize);
         if (list != null && list.length > 2 * windowsize ) {
-            Map map = null;
-            String mapName = null;
-            List next = null;
             String key = null;
             Map<MLPredictModel, Long> mapTime = null;
-            LearnTestPredict result = mldao.learntestpredict(null, list, next, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime, windowsize, horizon, epochs);  
+            Double[] result = mldao.predictone(null, list, null, conf.getMACDDaysBeforeZero(), key, 4, mapTime, windowsize, horizon, epochs);  
             return result;
         }
         return null;
