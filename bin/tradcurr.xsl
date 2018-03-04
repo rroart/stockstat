@@ -80,18 +80,38 @@
 	<currency>
 	  <xsl:value-of select="@data-ticker"/>
 	</currency>
-	<period1>
+	<xsl:variable name="content1">
 	  <xsl:copy-of select="translate(td[5]/text(), '&#x20;&#x9;&#xD;&#xA;&#x25;&#x2c;', '')"/>
-	</period1>
-	<period2>
+	</xsl:variable>
+	<xsl:if test="string-length($content1) > 0">
+          <period1>
+            <xsl:value-of select="$content1"/>
+          </period1>
+	</xsl:if>
+	<xsl:variable name="content2">
 	  <xsl:copy-of select="translate(td[6]/text(), '&#x20;&#x9;&#xD;&#xA;&#x25;&#x2c;', '')"/>
-	</period2>
-	<period3>
+	</xsl:variable>
+	<xsl:if test="string-length($content2) > 0">
+          <period2>
+            <xsl:value-of select="$content2"/>
+          </period2>
+	</xsl:if>
+	<xsl:variable name="content3">
 	  <xsl:copy-of select="translate(td[7]/text(), '&#x20;&#x9;&#xD;&#xA;&#x25;&#x2c;', '')"/>
-	</period3>
-	<period4>
+	</xsl:variable>
+	<xsl:if test="string-length($content3) > 0">
+          <period3>
+            <xsl:value-of select="$content3"/>
+          </period3>
+	</xsl:if>
+	<xsl:variable name="content4">
 	  <xsl:copy-of select="translate(td[8]/text(), '&#x20;&#x9;&#xD;&#xA;&#x25;&#x2c;', '')"/>
-	</period4>
+	</xsl:variable>
+	<xsl:if test="string-length($content4) > 0">
+          <period4>
+            <xsl:value-of select="$content4"/>
+          </period4>
+	</xsl:if>
       </row>
       </xsl:if>
     </xsl:template>
