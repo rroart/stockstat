@@ -3,7 +3,6 @@ package roart.graphcategory;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,11 +23,9 @@ import roart.ml.MLPredictDao;
 import roart.ml.MLPredictModel;
 import roart.model.GUISize;
 import roart.model.LearnTestPredict;
+import roart.model.ResultItem;
 import roart.model.ResultItemBytes;
 import roart.model.StockItem;
-import roart.predictor.PredictorLSTM;
-import roart.model.ResultItem;
-import roart.util.ArraysUtil;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
@@ -53,8 +50,6 @@ public class GraphCategoryPrice extends GraphCategory {
         indicators.add(new GraphIndicatorSTOCH(conf, title + " STOCH", marketdatamap, periodDataMap, title));
         indicators.add(new GraphIndicatorCCI(conf, title + " CCI", marketdatamap, periodDataMap, title));
         indicators.add(new GraphIndicatorATR(conf, title + " ATR", marketdatamap, periodDataMap, title));
-        //predictors.add(new PredictorLSTM(conf, title + "LSTM", marketdatamap, periodDataMap, periodmap, title, Constants.PRICECOLUMN));
-        //predictors.add();
     }
 
     @Override
@@ -65,18 +60,16 @@ public class GraphCategoryPrice extends GraphCategory {
                 int days = conf.getTableDays();
                 int topbottom = conf.getTopBottom();
 
-                System.out.println("check " + periodText + " " + periodDataMap.keySet());
+                log.info("check {} {}", periodText, periodDataMap.keySet());
                 PeriodData perioddata = periodDataMap.get(periodText);
-                //PeriodData perioddata = new PeriodData();
                 DefaultCategoryDataset dataseteq = null;
                 if (conf.isGraphEqualize()) {    
                     dataseteq = new DefaultCategoryDataset( );
                 }
                 DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.PRICECOLUMN, conf.isGraphEqualize(), dataseteq);
                 if (conf.wantPredictorLSTM()){
-                    Pair pair2 = ids.iterator().next();
-                    String market = (String) pair2.getFirst();
-                    String id = (String) pair2.getSecond();
+                    Pair<String, String> pair2 = ids.iterator().next();
+                    String market = pair2.getFirst();
                     MarketData marketdata = marketdatamap.get(market);
                     List<StockItem>[] datedstocklists = marketdata.datedstocklists;
                     List<Double> endlist = new ArrayList<>();
@@ -95,22 +88,22 @@ public class GraphCategoryPrice extends GraphCategory {
                                         continue;
                                     }
                                     String stockName = stock.getName();
-                                    log.info("info " + stockName + " " + value + " " + new Integer(-j));
+                                    log.info("info {} {} {}", stockName, value, new Integer(-j));
                                     endlist.add(value);
                                 } catch (Exception e) {
-                                    log.error("E", e);
+                                    log.error(Constants.EXCEPTION, e);
                                 }
                             }
                         }
                     }
-                     LearnTestPredict pred = predictme((Double[])endlist.toArray());
+                    LearnTestPredict pred = predictme((Double[])endlist.toArray());
                     Double[] predme = pred.predicted;
                     for (int k = 0; k < predme.length; k++) {
                         dataset.addValue(predme[k], "p", new Integer(k+1));
                     }
                 }
                 if (dataset != null) {
-                    String currency = null; //datedstocklists[0].get(0).getCurrency();
+                    String currency = null;
                     if (currency == null) {
                         currency = "Value";
                     }
@@ -122,7 +115,7 @@ public class GraphCategoryPrice extends GraphCategory {
                     retlist.add(stream);
                 }
                 if (dataset != null && dataseteq != null) {
-                    String currency = null; //datedstocklists[0].get(0).getCurrency();
+                    String currency = null; 
                     if (currency == null) {
                         currency = "Value";
                     }
@@ -143,22 +136,20 @@ public class GraphCategoryPrice extends GraphCategory {
             log.error(Constants.EXCEPTION, e);
         }
     }
-    
+
     LearnTestPredict predictme(Double[] list) {
         MLPredictDao mldao = new MLPredictDao("tensorflow", conf);
         int horizon = conf.getPredictorLSTMHorizon();
         int windowsize = conf.getPredictorLSTMWindowsize();
         int epochs = conf.getPredictorLSTMEpochs();
-        //Double[] list = listMap.get(id);
         // TODO check reverse. move up before if?
-        //list = ArraysUtil.getArrayNonNullReverse(list);
-        log.info("bla " + list.length + " " + windowsize);
+        log.info("list {} {}", list.length, windowsize);
         if (list != null && list.length > 2 * windowsize ) {
             Map map = null;
             String mapName = null;
             List next = null;
             String key = null;
-            Map<MLPredictModel, Long> mapTime = null; //new HashMap<>();;
+            Map<MLPredictModel, Long> mapTime = null;
             LearnTestPredict result = mldao.learntestpredict(null, list, next, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime, windowsize, horizon, epochs);  
             return result;
         }

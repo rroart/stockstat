@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
@@ -60,7 +61,7 @@ public class ArraysUtil {
         return i;
     }
 
-   /**
+    /**
      * This will search an array, and return the gruoupings of positive and negative numbers
      * This returns an array of two maps, the first is for positive, the second for negative ranges.
      * The key is low value, while the value is the high value.
@@ -68,7 +69,7 @@ public class ArraysUtil {
      * @param array
      * @return a resulting array
      */
-    
+
     public static Map<Integer, Integer>[] searchForward(double[] array, int maxlen) {
         int length = array.length;
         if (maxlen > 0) {
@@ -87,7 +88,7 @@ public class ArraysUtil {
                     prevval = array[i];
                 }
                 prev = i;
-           } else {
+            } else {
                 i = searchForwardPositive(array, i, length);                       
                 retmap[1].put(prev, i - 1);
                 if (i < length) {
@@ -98,12 +99,11 @@ public class ArraysUtil {
         }
         return retmap;
     }
-    
+
     private Map<Integer, Integer>[] searchBackward(double[] array) {
         Map<Integer, Integer>[] retmap = new HashMap[2];
         retmap[0] = new HashMap<>();
         retmap[1] = new HashMap<>();
-        double prevval = array[array.length - 1];
         int prev = array.length - 1;
         for (int i = array.length - 1; i >=0; i--) {
             if (prev >= 0) {
@@ -123,7 +123,7 @@ public class ArraysUtil {
      * @param key whether price/index, if not, then skip
      * @return new array
      */
-    
+
     public static Double[] getPercentizedPriceIndex(Double[] list, String key) {
         if (list == null) {
             return list;
@@ -149,7 +149,7 @@ public class ArraysUtil {
     public static double[] getPercentizedPriceIndex(double[] list, String key, int category) {
         return getPercentizedPriceIndex(list, key, category, list[0]);
     }
-        
+
     public static double[] getPercentizedPriceIndex(double[] list, String key, int category, double first) {
         if (list == null || list.length == 0) {
             return list;
@@ -177,16 +177,16 @@ public class ArraysUtil {
         }
         return true;
     }
-    
+
     private static int getArrayNonNullReversenot(List<Double> list, double[] values) {
-    	int count = values.length;
-    	for (Double val : list) {
-    		// TODO bounds check
-        	if (val != null && count > 0) {
-        		values[--count] = val;
-        	}
+        int count = values.length;
+        for (Double val : list) {
+            // TODO bounds check
+            if (val != null && count > 0) {
+                values[--count] = val;
+            }
         }
-    	return values.length - count;
+        return values.length - count;
     }
 
     /**
@@ -196,7 +196,7 @@ public class ArraysUtil {
      * @param values output, without null values
      * @return the non null number
      */
-    
+
     static int getArrayNonNullReverse(List<Double> list, double[] values) {
         int count = 0;
         boolean display = false;
@@ -207,7 +207,6 @@ public class ArraysUtil {
             if (val != null && count < values.length) {
                 newList.add(val);
                 count++;
-                //values[count++] = val;
             } 
             if (val == null) {
                 display = true;
@@ -218,7 +217,7 @@ public class ArraysUtil {
             values[i] = newList.get(i);
         }
         if (display) {
-            log.info("mydisplay " + list);
+            log.info("mydisplay {}", list);
         }
         return count;
     }
@@ -233,7 +232,6 @@ public class ArraysUtil {
             if (val != null && count < values.length) {
                 newList.add(val);
                 count++;
-                //values[count++] = val;
             } 
             if (val == null) {
                 display = true;
@@ -244,7 +242,7 @@ public class ArraysUtil {
             values[i] = newList.get(i);
         }
         if (display) {
-            log.info("mydisplay " + list);
+            log.info("mydisplay {}", list);
         }
         return count;
     }
@@ -255,25 +253,22 @@ public class ArraysUtil {
         }
         ArrayList<Double> list = new ArrayList<>(Arrays.asList(array));
         list.removeAll(Collections.singleton(null)); 
-        if (list.size() != array.length) {
-            //System.out.println("shrink from " + array.length + " to " + list.size());
-        }
         Collections.reverse(list);
         Double[] newArray = new Double[list.size()];
         return list.toArray(newArray);
     }
 
-   private static int getArrayNonNull(List<Double> list, double[] values) {
-    	int size = 0;
-    	for (Double val : list) {
-    		// TODO bounds check
-        	if (val != null && size < values.length) {
-        		values[size++] = val;
-        	}
+    private static int getArrayNonNull(List<Double> list, double[] values) {
+        int size = 0;
+        for (Double val : list) {
+            // TODO bounds check
+            if (val != null && size < values.length) {
+                values[size++] = val;
+            }
         }
-    	return size;
+        return size;
     }
-    
+
     /**
      * Get accepted ranges
      * where the range end should be have least a number of elements after it
@@ -285,7 +280,7 @@ public class ArraysUtil {
      * @param size of the array with the ranges
      * @return resized accepted ranges
      */
-    
+
     public static Map<Integer, Integer> getAcceptedRanges(Map<Integer, Integer> map, int before, int after, int size) {
         Map<Integer, Integer> retMap = new HashMap<>();
         for (int start : map.keySet()) {
@@ -311,11 +306,12 @@ public class ArraysUtil {
      * @param size of the array with the ranges
      * @return resized fresh range
      */
-    
+
     public static Map<Integer, Integer> getFreshRanges(Map<Integer, Integer> map, int before, int after, int size) {
         Map<Integer, Integer> retMap = new HashMap<>();
-        for (int start : map.keySet()) {
-            int end = map.get(start);
+        for (Entry<Integer, Integer> entry : map.entrySet()) {
+            int start = entry.getKey();
+            int end = entry.getValue();
             if (end - start + 1 >= before) {
                 // TODO check exact limit
                 start = end - before + 1;
@@ -336,7 +332,7 @@ public class ArraysUtil {
      * @param end end, inclusive
      * @return sub part
      */
-    
+
     public static double[] getSub(double[] arr, int start, int end) {
         double[] retArr = new double[end - start + 1];
         for (int i = start; i <= end; i++) {
@@ -352,7 +348,7 @@ public class ArraysUtil {
      * @param end end, inclusive
      * @return sub part
      */
-    
+
     public static Double[] getSubInclusive(Double[] arr, int start, int end) {        
         Double[] retArr = new Double[end - start + 1];
         for (int i = start; i <= end; i++) {
@@ -368,13 +364,13 @@ public class ArraysUtil {
      * @param end end, exclusive
      * @return sub part
      */
-    
+
     public static Double[] getSubExclusive(Double[] arr, int start, int end) {
         return getSubInclusive(arr, start, end - 1);
     }
-    
+
     public static List<Double[]> splitEpocsWindowsize(Double[] arr, int minepocs, int windowsize) {
-        log.info("mysplits " + arr.length + " " + minepocs + " " + windowsize);
+        log.info("mysplits {} {} {}", arr.length, minepocs, windowsize);
         if (arr.length < (windowsize + minepocs)) {
             return null;
         }
@@ -387,7 +383,7 @@ public class ArraysUtil {
             windowslide = arr.length / (epocs + 1);
             windowslide--;
         }
-        System.out.println("ws"+windowslide);
+        log.info("ws {}", windowslide);
         int startidx = 0;
         for (int i = 0; i < epocs; i++) {
             Double[] smallarr = new Double[windowsize];
@@ -396,13 +392,13 @@ public class ArraysUtil {
             }
             retlist.add(smallarr);
             startidx += windowslide;
-            System.out.println("wn"+startidx+ " " +i);
+            log.info("wn {} {}", startidx, i);
         }
         return retlist;
     }
 
     public static double[] convert(Double[] doubles) {
-        double ret[] = new double[doubles.length];
+        double[] ret = new double[doubles.length];
         for (int i = 0; i < doubles.length; i ++) {
             ret[i] = doubles[i];
         }
@@ -417,7 +413,7 @@ public class ArraysUtil {
      * @param maxHoleNumber
      * @return Fixed array
      */
-    
+
     public static Double[] fixMapHoles(Double[] srcArray, Double[] dstArray, int maxHoleNumber) {
         int length = srcArray.length;
         if (dstArray == null) {
@@ -444,10 +440,6 @@ public class ArraysUtil {
                 }
                 return dstArray;
             } else {
-                //System.out.println(length + " " + i + " " + j);
-                if (i < 0 || j < 0) {
-                    //System.out.println(Arrays.asList(dstArray));
-                }
                 if (false && i < 0) {
                     for (int k = 0; k < length; k++) {
                         dstArray[k] = null;
@@ -469,53 +461,50 @@ public class ArraysUtil {
 
     public static Map<String, double[]> getTruncList(Map<String, Double[]> listMap) {
         Map<String, double[]> retMap = new HashMap<>();
-        for (String id : listMap.keySet()) {
-            retMap.put(id, getNonNull(listMap.get(id)));
+        for (Entry<String, Double[]> entry : listMap.entrySet()) {
+            retMap.put(entry.getKey(), getNonNull(entry.getValue()));
         }
         return retMap;
     }
-    
+
     public static Map<String, double[][]> getTruncListArr(Map<String, Double[][]> listMap) {
         Map<String, double[][]> retMap = new HashMap<>();
-        for (String id : listMap.keySet()) {
-        Double[][] array = listMap.get(id);
-        double[][] newArray = new double[array.length][];
-        for (int i = 0; i < array.length; i++) {
-            newArray[i] = getNonNull(array[i]);
-        }
-        retMap.put(id, newArray);
-        }
-        return retMap;
-    }
-    
-    public static Map<Pair, double[]> getTruncList2(Map<Pair, Double[]> listMap) {
-        Map<Pair, double[]> retMap = new HashMap<>();
-        for (Pair id : listMap.keySet()) {
-            retMap.put(id, getNonNull(listMap.get(id)));
-        }
-        return retMap;
-    }
-    
-    public static Map<Pair, double[][]> getTruncList22(Map<Pair, Double[][]> listMap) {
-        Map<Pair, double[][]> retMap = new HashMap<>();
-        for (Pair id : listMap.keySet()) {
-            Double[][] array = listMap.get(id);
+        for (Entry<String, Double[][]> entry : listMap.entrySet()) {
+            Double[][] array = entry.getValue();
             double[][] newArray = new double[array.length][];
             for (int i = 0; i < array.length; i++) {
                 newArray[i] = getNonNull(array[i]);
             }
-            retMap.put(id, newArray);
+            retMap.put(entry.getKey(), newArray);
         }
         return retMap;
     }
-    
+
+    public static Map<Pair<String, String>, double[]> getTruncList2(Map<Pair<String, String>, Double[]> listMap) {
+        Map<Pair<String, String>, double[]> retMap = new HashMap<>();
+        for (Entry<Pair<String, String>, Double[]> entry : listMap.entrySet()) {
+            retMap.put(entry.getKey(), getNonNull(entry.getValue()));
+        }
+        return retMap;
+    }
+
+    public static Map<Pair<String, String>, double[][]> getTruncList22(Map<Pair<String, String>, Double[][]> listMap) {
+        Map<Pair<String, String>, double[][]> retMap = new HashMap<>();
+        for (Entry<Pair<String, String>, Double[][]> entry : listMap.entrySet()) {
+            Double[][] array = entry.getValue();
+            double[][] newArray = new double[array.length][];
+            for (int i = 0; i < array.length; i++) {
+                newArray[i] = getNonNull(array[i]);
+            }
+            retMap.put(entry.getKey(), newArray);
+        }
+        return retMap;
+    }
+
     public static double[] getNonNull(Double[] doubles) {
         int offset = searchForwardNonNull(doubles, 0, doubles.length);
         double[] retArray = new double[doubles.length - offset];
         for (int i = 0; i < doubles.length - offset; i++) {
-            if (doubles[i + offset] == null) {
-                int j = 0;
-            }
             retArray[i] = doubles[i + offset];
         }
         return retArray;
@@ -544,10 +533,10 @@ public class ArraysUtil {
 
     public static Map<String, Object[]> makeFixedMap(Map<String, Object[]> objectMap, int length) {
         Map<String, Object[]> retMap = new HashMap<>();
-        for (String id : objectMap.keySet()) {
-            Object[] array = objectMap.get(id);
+        for (Entry<String, Object[]> entry : objectMap.entrySet()) {
+            Object[] array = entry.getValue();
             Object[] nullArray = new Object[length - array.length];
-            retMap.put(id, ArrayUtils.addAll(nullArray, array));
+            retMap.put(entry.getKey(), ArrayUtils.addAll(nullArray, array));
         }
         return retMap;
     }

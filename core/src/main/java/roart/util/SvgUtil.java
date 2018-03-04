@@ -1,12 +1,10 @@
 package roart.util;
 
 import java.awt.Rectangle;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -41,13 +39,12 @@ public class SvgUtil {
      */
 
     public static JFreeChart getChart(DefaultCategoryDataset dataset, String title, String titleX, String titleY, int xsize, int ysize) {
-        JFreeChart lineChart = ChartFactory.createLineChart(
+        return ChartFactory.createLineChart(
                 title,
                 titleX, titleY,
                 dataset,
                 PlotOrientation.VERTICAL,
                 true,true,false);
-        return lineChart;
     }
 
     /**
@@ -107,27 +104,17 @@ public class SvgUtil {
      */
 
     public static OutputStream chartToStream(JFreeChart chart, String name, int xsize2, int ysize2, int days, int topbottom, GUISize guiSize, int size) {
-        //StreamResource resource = null;
         try {
             int xsize = 0*200 + 1*100 + 300 + 10 * days;
             int ysize = 0*200 + 1*200 + 400 + 10 * topbottom;
-            //System.out.println("gui " + guiSize.x + " " + guiSize.y);
-            //System.out.println("xys3 " + xsize + " " + ysize);
             if (xsize + 0*100 > guiSize.x) {
                 xsize = guiSize.x - 0*100 - 200;
             }
-            /*
-            if (ysize + 200 > MyVaadinUI.y) {
-                ysize = MyVaadinUI.y - 200 - 200;
-            }
-            */
-            //System.out.println("xys4 " + xsize + " " + ysize);
             // TODO gui size is wrong, temp fix
             xsize = 1024;
             ysize = 768;
             ysize = size * ysize / 100;
-            OutputStream out = SvgUtil.exportChartAsSVG(chart, new Rectangle(xsize, ysize), new File(name));
-            return out;
+            return SvgUtil.exportChartAsSVG(chart, new Rectangle(xsize, ysize), new File(name));
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -19,13 +19,12 @@ import roart.graphindicator.GraphIndicatorRSI;
 import roart.graphindicator.GraphIndicatorSTOCH;
 import roart.graphindicator.GraphIndicatorSTOCHRSI;
 import roart.model.GUISize;
-import roart.model.ResultItemBytes;
 import roart.model.ResultItem;
+import roart.model.ResultItemBytes;
 //import roart.model.Stock;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.StockUtil;
 import roart.util.SvgUtil;
 
@@ -57,7 +56,6 @@ public class GraphCategoryIndex extends GraphCategory {
                 int topbottom = conf.getTopBottom();
 
                 PeriodData perioddata = periodDataMap.get(periodText);
-                //PeriodData perioddata = new PeriodData();
                 DefaultCategoryDataset dataseteq = null;
                 if (conf.isGraphEqualize()) {    
                     dataseteq = new DefaultCategoryDataset( );

@@ -87,7 +87,7 @@ public class ServiceController {
 		ServiceResult result = new ServiceResult();
 		try {
 			result.markets = getInstance().getMarkets();
-			System.out.println("markets "+ result.markets.size());
+			log.info("Marketsize {}", result.markets.size());
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();

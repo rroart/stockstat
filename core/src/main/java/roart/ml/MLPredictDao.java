@@ -28,8 +28,7 @@ public class MLPredictDao {
     }
 
     private void instance(String type, MyMyConfig conf) {
-        System.out.println("instance " + type);
-        log.info("instance " + type);
+        log.info("instance {}", type);
         if (type == null) {
             return;
         }
@@ -37,7 +36,6 @@ public class MLPredictDao {
         if (true || access == null) {
             if (type.equals(ConfigConstants.SPARK)) {
                 access = new MLPredictSparkAccess(conf);
-                //new MlSpark();
             }
             if (type.equals(ConfigConstants.TENSORFLOW)) {
                 access = new MLPredictTensorflowAccess(conf);
@@ -51,7 +49,7 @@ public class MLPredictDao {
             long time1 = System.currentTimeMillis();
             predict = access.learntestpredict(predictor, list, next, map, model, size, period, mapname, outcomes, windowsize, horizon, epochs);
             long time = (System.currentTimeMillis() - time1);
-            log.info("time " + model + " " + period + " " + mapname + " " + time + " " + predict.predicted);
+            log.info("time {} {} {} {} {}", model, period, mapname, time, predict.predicted);
             PredictorLSTM.mapAdder(mapTime, model, time);
             return predict;
         }
@@ -59,22 +57,18 @@ public class MLPredictDao {
     }
 
     // TODO delete?
-    
+
     @Deprecated
     public Double eval(int modelInt, String period, String mapname) {
         return access.eval(modelInt, period, mapname);
     }
 
     public Map<String, Double[]> predict(Predictor indicator, Map<String, double[]> map, MLPredictModel model, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap, Map<MLPredictModel, Long> mapTime) {
-        //Map<MLModel, Map<String, Double[]>> result = new HashMap<>();
-        //for (MLModel model : getModels()) {
-            long time1 = System.currentTimeMillis();
-            Map<String, Double[]> resultAccess = access.predict(indicator, map, model, size, period, mapname, outcomes, shortMap);
-            long time = (System.currentTimeMillis() - time1);
-            log.info("time " + model + " " + period + " " + mapname + " " + time);
-            PredictorLSTM.mapAdder(mapTime, model, time);
-            //result.put(model, resultAccess);
-        //}
+        long time1 = System.currentTimeMillis();
+        Map<String, Double[]> resultAccess = access.predict(indicator, map, model, size, period, mapname, outcomes, shortMap);
+        long time = (System.currentTimeMillis() - time1);
+        log.info("time {} {} {} {}", model, period, mapname, time);
+        PredictorLSTM.mapAdder(mapTime, model, time);
         return resultAccess;
     }
 
@@ -87,7 +81,6 @@ public class MLPredictDao {
         return size;
     }
 
-    //public int addTitles(Object[] objs, int retindex, String title, String key, String subType, List<Integer> typeList, Map<Integer, String> mapTypes, MLDao dao) {
     public int addTitles(Object[] objs, int retindex, Predictor indicator, String title, String key, String subType) {
         for (MLPredictModel model : getModels()) {
             retindex = model.addTitles(objs, retindex, indicator, title, key, subType, null, null, this);
@@ -100,10 +93,8 @@ public class MLPredictDao {
     }
 
     public int addResults(Object[] objs, int retindex, String id, MLPredictModel model, Predictor indicator, Map<String, LearnTestPredict> mapResult, Map<Double, String> labelMapShort) {
-        //for (MLModel model : getModels()) {
-            retindex = model.addResults(objs, retindex, id, model, indicator, mapResult, labelMapShort);
-        //}
-            return retindex;
+         retindex = model.addResults(objs, retindex, id, model, indicator, mapResult, labelMapShort);
+         return retindex;
     }
 
 }

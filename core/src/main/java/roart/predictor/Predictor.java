@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.config.MyMyConfig;
-import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.PipelineConstants;
@@ -28,7 +27,7 @@ public abstract class Predictor {
         this.category = category;
     }
 
-    abstract public boolean isEnabled();
+    public abstract boolean isEnabled();
 
     public Object[] getResultItemTitle() {
     	Object[] titleArray = new Object[1];
@@ -36,7 +35,7 @@ public abstract class Predictor {
         return titleArray;
     }
 
-    abstract public Object[] getResultItem(StockItem stock);
+    public abstract Object[] getResultItem(StockItem stock);
 
     public Object calculate(Double[] array) {
         return null;

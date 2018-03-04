@@ -15,16 +15,14 @@ public abstract class Evaluation {
     public List<String> getKeys() {
         return keys;
     }
-    
-    //public  abstract List<String> getBuyList();
-    //public abstract List<String> getSellList();
-        public abstract double getEvaluations(MyMyConfig conf, int j) throws JsonParseException, JsonMappingException, IOException;
-        public abstract void mutate(Map<String, Object> configValueMap, List<String> keys);
-        public abstract void getRandom(Map<String, Object> configValueMap, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
-        public abstract void transformToNode(MyConfig newConf, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
-        public abstract void normalize(Map<String, Object> configValueMap, List<String> keys);
-        public abstract void transformFromNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
 
-        public abstract double getFitness(MyMyConfig testConfig, List<String> keys)
-                throws JsonParseException, JsonMappingException, IOException;
+    public abstract double getEvaluations(MyMyConfig conf, int j) throws JsonParseException, JsonMappingException, IOException;
+    public abstract void mutate(Map<String, Object> configValueMap, List<String> keys);
+    public abstract void getRandom(Map<String, Object> configValueMap, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
+    public abstract void transformToNode(MyConfig newConf, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
+    public abstract void normalize(Map<String, Object> configValueMap, List<String> keys);
+    public abstract void transformFromNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
+
+    public abstract double getFitness(MyMyConfig testConfig, List<String> keys)
+            throws JsonParseException, JsonMappingException, IOException;
 }

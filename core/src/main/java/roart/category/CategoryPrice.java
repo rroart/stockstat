@@ -20,7 +20,6 @@ import roart.predictor.PredictorLSTM;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.StockUtil;
 
 public class CategoryPrice extends Category {
@@ -41,7 +40,6 @@ public class CategoryPrice extends Category {
         createResultMap(conf, stocks);
         indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
         indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        //indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN));
         indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
         indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
         indicators.add(new IndicatorATR(conf, getTitle() + " ATR", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));

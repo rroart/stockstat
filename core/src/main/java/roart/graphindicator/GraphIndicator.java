@@ -23,13 +23,13 @@ public abstract class GraphIndicator {
         this.conf = conf;
     }
 
-    abstract public boolean isEnabled();
+    public abstract boolean isEnabled();
 
     public String getResultItemTitle() {
         return title;
     }
 
-    abstract public void getResult(List<ResultItem> retlist, Set<Pair<String, String>> ids, GUISize guiSize);
+    public abstract void getResult(List<ResultItem> retlist, Set<Pair<String, String>> ids, GUISize guiSize);
 
 }
 

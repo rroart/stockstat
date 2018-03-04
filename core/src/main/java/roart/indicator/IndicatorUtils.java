@@ -8,25 +8,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
-import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
+import roart.aggregate.ExtraData;
 import roart.aggregate.ExtraReader;
 import roart.category.Category;
 import roart.category.CategoryConstants;
 import roart.config.MyMyConfig;
 import roart.model.StockItem;
+import roart.pipeline.Pipeline;
+import roart.pipeline.PipelineConstants;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.PeriodData;
-import roart.util.StockDao;
 import roart.util.StockUtil;
 import roart.util.TaUtil;
 
@@ -68,8 +68,6 @@ public class IndicatorUtils {
                 if (momentum != null) {
                     momMap.put(id, momentum);
                     IndicatorUtils.addToLists(macdLists, momentum);
-                } else {
-                    //System.out.println("No macd for id" + id);
                 }
             }
             dayMomMap.put(j, momMap);
@@ -103,8 +101,6 @@ public class IndicatorUtils {
                 if (rsi != null) {
                     rsiMap.put(id, rsi);
                     IndicatorUtils.addToLists(rsiLists, rsi);
-                } else {
-                    //System.out.println("No macd for id" + id);
                 }
             }
             dayRsiMap.put(j, rsiMap);
@@ -118,12 +114,13 @@ public class IndicatorUtils {
         return retobj;
     }
 
+    @Deprecated
     public static Object[] getDayMomRsiMap(MyMyConfig conf, Map<String, Object[]> objectMacdMap, Map<String, Double[]> listMacdMap, Map<String, Object[]> objectRsiMap, Map<String, Double[]> listRsiMap, 
             TaUtil tu) throws Exception {
         Object[] retobj = new Object[2];
         Map<Integer, Map<String, Double[]>> dayMomRsiMap = new HashMap<>();
-        List<Double> macdrsiLists[] = new ArrayList[6];
-        List<Double> macdrsiMinMax[] = new ArrayList[6];
+        List<Double>[] macdrsiLists = new ArrayList[6];
+        List<Double>[] macdrsiMinMax = new ArrayList[6];
         for (int tmpj = 0; tmpj < 4 + 2; tmpj ++) {
             macdrsiLists[tmpj] = new ArrayList<>();
             macdrsiMinMax[tmpj] = new ArrayList<>();
@@ -139,8 +136,6 @@ public class IndicatorUtils {
                     Double[] momrsi = ArrayUtils.addAll(momentum, rsi);
                     momrsiMap.put(id, momrsi);
                     IndicatorUtils.addToLists(macdrsiLists, momrsi);
-                } else {
-                    //System.out.println("No macd for id" + id);
                 }
             }
             dayMomRsiMap.put(j, momrsiMap);
@@ -154,163 +149,207 @@ public class IndicatorUtils {
         return retobj;
     }
 
+    @Deprecated
     public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators, int futureDays, int tableDays, int intervalDays) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
-        List<Map<String, Double[]>> listList = new ArrayList<>();
+        List<Map<String, Double[][]>> listList = new ArrayList<>();
         int arraySize = 0;
         for (Indicator indicator : indicators) {
             Map<String, Object> resultMap = indicator.getLocalResultMap();
-            System.out.println("r " + resultMap.keySet() + " " + resultMap.get(PipelineConstants.OBJECT));
             Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) {
                 objectMapsList.add(objMap);
-                listList.add((Map<String, Double[]>) resultMap.get(PipelineConstants.LIST));
+                listList.add((Map<String, Double[][]>) resultMap.get(PipelineConstants.LIST));
                 arraySize += indicator.getResultSize();
                 System.out.println("sizes " + listList.get(listList.size() - 1).size());
             }
         }
         Object[] retobj = new Object[3];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
-        List<Double> indicatorLists[] = new ArrayList[arraySize];
-        List<Double> indicatorMinMax[] = new ArrayList[arraySize];
+        List<Double>[] indicatorLists = new ArrayList[arraySize];
+        List<Double>[] indicatorMinMax = new ArrayList[arraySize];
         for (int tmpj = 0; tmpj < arraySize; tmpj ++) {
             indicatorLists[tmpj] = new ArrayList<>();
             indicatorMinMax[tmpj] = new ArrayList<>();
         }
+        if (listList.isEmpty()) {
+            return retobj;
+        }
         // TODO copy the retain from aggregator?
         Set<String> ids = new HashSet<>();
-        if (listList.isEmpty()) {
-            return new Object[3];
-        }
         ids.addAll(listList.get(0).keySet());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // TODO change
         for (int j = futureDays; j < tableDays; j += intervalDays) {
             Map<String, Double[]> indicatorMap = new HashMap<>();
             for (String id : listList.get(0).keySet()) {
                 Double[] result = new Double[0];
-                int idx = 0;
-                for (Map<String, Object[]> objectMap : objectMapsList) {
-                    Indicator ind = indicators.get(idx++);
-                    Object[] objsIndicator = objectMap.get(id);
-                    Object[] arr = ind.getDayResult(objsIndicator, j);
-                    if (arr != null && arr.length > 0) {
-                        result = (Double[]) ArrayUtils.addAll(result, arr);
-                    } else {
-                        //System.out.println("No obj for id1 " + id);
-                    }
-                }
+                result = getCommonResult(indicators, objectMapsList, j, id, result);
+
+
+
+
+
+
+
+
+
+
                 if (result.length == arraySize) {
                     indicatorMap.put(id, result);
                     IndicatorUtils.addToLists(indicatorLists, result);
-               } else {
-                    //System.out.println("discarding " + id);
+                    log.info("outid {} {}", id, Arrays.asList(result));
+                } else {
                     continue;
                 }
                 dayIndicatorMap.put(j, indicatorMap);
             }
         }
-        for (int i = 0; i < arraySize; i++) {
-            indicatorMinMax[i].add(Collections.min(indicatorLists[i]));
-            indicatorMinMax[i].add(Collections.max(indicatorLists[i]));
-        }
+        findMinMax(arraySize, dayIndicatorMap, indicatorLists, indicatorMinMax);
         retobj[0] = dayIndicatorMap;
         retobj[1] = indicatorMinMax;
         retobj[2] = listList;
         return retobj;
     }
 
-    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators, int futureDays, int tableDays, int intervalDays, List<Date> dateList, Map<Pair, List<StockItem>> pairStockMap, Map<Pair, Map<Date, StockItem>> pairDateMap, int category, Map<Pair, String> pairCatMap, Category[] categories, Pipeline[] datareaders) throws Exception {
+    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<Indicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
+        int arraySize = getCommonArraySizeAndObjectMap(indicators, objectMapsList, listList);
+        Object[] retobj = new Object[3];
+        Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
+        List<Double>[] indicatorLists = new ArrayList[arraySize];
+        List<Double>[] indicatorMinMax = new ArrayList[arraySize];
+        for (int tmpj = 0; tmpj < arraySize; tmpj ++) {
+            indicatorLists[tmpj] = new ArrayList<>();
+            indicatorMinMax[tmpj] = new ArrayList<>();
+        }
+        if (listList.isEmpty()) {
+            return retobj;
+        }
+        // TODO copy the retain from aggregator?
+        Set<String> ids = new HashSet<>();
+        ids.addAll(listList.get(0).keySet());
+
+        List<Indicator> allIndicators = new ArrayList<>();
+        // for extrareader data
+        if (extraData != null) {
+            arraySize = getExtraDataSize(conf, extraData, arraySize, allIndicators);
+        }
+
+        // for more extra end
+        // TODO change
+        for (int j = futureDays; j < tableDays; j += intervalDays) {
+            Map<String, Double[]> indicatorMap = new HashMap<>();
+            for (String id : listList.get(0).keySet()) {
+                Double[] result = new Double[0];
+                result = getCommonResult(indicators, objectMapsList, j, id, result);
+                if (extraData != null) {
+                    // for extrareader data
+                    result = ExtraReader.getExtraData(conf, extraData.dateList, extraData.pairDateMap, extraData.pairCatMap, j, id, result);
+                    // for extrareader data end
+                    // for more extrareader data
+                    result = getExtraIndicatorsResult(extraData.categories, j, result, extraData.pairDateMap, extraData.pairCatMap, extraData.datareaders, allIndicators);
+                    // for more extrareader data end
+                }
+                if (result.length == arraySize) {
+                    indicatorMap.put(id, result);
+                    IndicatorUtils.addToLists(indicatorLists, result);
+                    log.info("outid {} {}", id, Arrays.asList(result));
+                } else {
+                    continue;
+                }
+                dayIndicatorMap.put(j, indicatorMap);
+            }
+        }
+        findMinMax(arraySize, dayIndicatorMap, indicatorLists, indicatorMinMax);
+        retobj[0] = dayIndicatorMap;
+        retobj[1] = indicatorMinMax;
+        retobj[2] = listList;
+        return retobj;
+    }
+
+    private static void findMinMax(int arraySize, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
+            List<Double>[] indicatorLists, List<Double>[] indicatorMinMax) {
+        if (!dayIndicatorMap.isEmpty()) {
+            for (int i = 0; i < arraySize; i++) {
+                indicatorMinMax[i].add(Collections.min(indicatorLists[i]));
+                indicatorMinMax[i].add(Collections.max(indicatorLists[i]));
+            }
+        }
+    }
+
+    private static Double[] getCommonResult(List<Indicator> indicators, List<Map<String, Object[]>> objectMapsList,
+            int j, String id, Double[] result) {
+        int idx = 0;
+        for (Map<String, Object[]> objectMap : objectMapsList) {
+            Indicator ind = indicators.get(idx++);
+            Object[] objsIndicator = objectMap.get(id);
+            result = appendDayResult(j, result, ind, objsIndicator);
+        }
+        return result;
+    }
+
+    private static int getCommonArraySizeAndObjectMap(List<Indicator> indicators, List<Map<String, Object[]>> objectMapsList,
+            List<Map<String, Double[][]>> listList) {
         int arraySize = 0;
         for (Indicator indicator : indicators) {
             Map<String, Object> resultMap = indicator.getLocalResultMap();
-            objectMapsList.add((Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT));
-            listList.add((Map<String, Double[][]>) resultMap.get(PipelineConstants.LIST));
-            arraySize += indicator.getResultSize();
-            System.out.println("sizes " + listList.get(listList.size() - 1).size());
+            Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
+            if (objMap != null) { 
+                objectMapsList.add(objMap);
+                listList.add((Map<String, Double[][]>) resultMap.get(PipelineConstants.LIST));
+                arraySize += indicator.getResultSize();
+                log.info("sizes {}", listList.get(listList.size() - 1).size());
+            }
         }
-        int extraStart = arraySize;
-        // for extrareader data
-        if (pairDateMap != null) {
-            arraySize += 2 * pairDateMap.keySet().size();
+        return arraySize;
+    }
+
+    private static int getExtraDataSize(MyMyConfig conf, ExtraData extraData, int arraySize,
+            List<Indicator> allIndicators) throws Exception {
+        if (extraData.pairDateMap != null) {
+            arraySize += 2 * extraData.pairDateMap.keySet().size();
             System.out.println("sizes " + arraySize);
         }
         // for extrareader data end
         // for more extra
-        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
-        ExtraReader extrareader = (ExtraReader) pipelineMap.get(PipelineConstants.EXTRAREADER);
-        //extrareader.setPa
-        Map<Pair, Double[][]> retMap = extrareader.getExtraData2(conf, dateList, pairDateMap, pairCatMap, 0, null, null);
-        List<Indicator> allIndicators = getAllIndicators(conf, categories, pairCatMap, datareaders);
+        getAllIndicators(allIndicators, conf, extraData.categories, extraData.pairCatMap, extraData.datareaders);
         for (Indicator indicator : allIndicators) {
             int aSize = indicator.getResultSize();
-            arraySize += pairCatMap.size() * aSize;
+            arraySize += extraData.pairCatMap.size() * aSize;
         }
-
-        // for more extra end
-        Object[] retobj = new Object[3];
-        Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
-        List<Double> indicatorLists[] = new ArrayList[arraySize];
-        List<Double> indicatorMinMax[] = new ArrayList[arraySize];
-        for (int tmpj = 0; tmpj < arraySize; tmpj ++) {
-            indicatorLists[tmpj] = new ArrayList<>();
-            indicatorMinMax[tmpj] = new ArrayList<>();
-        }
-        // TODO copy the retain from aggregator?
-        Set<String> ids = new HashSet<>();
-        if (!listList.isEmpty()) {
-        ids.addAll(listList.get(0).keySet());
-        }
-        
-        log.info("listsize " + dateList.size());
-        // TODO change
-        for (int j = futureDays; j < tableDays; j += intervalDays) {
-            Map<String, Double[]> indicatorMap = new HashMap<>();
-            for (String id : listList.get(0).keySet()) {
-                Double[] result = new Double[0];
-                int idx = 0;
-                for (Map<String, Object[]> objectMap : objectMapsList) {
-                    Indicator ind = indicators.get(idx++);
-                    Object[] objsIndicator = objectMap.get(id);
-                    Object[] arr = ind.getDayResult(objsIndicator, j);
-                    if (arr != null && arr.length > 0) {
-                        result = (Double[]) ArrayUtils.addAll(result, arr);
-                     } else {
-                        //System.out.println("No obj for id2 " + id);
-                    }
-                }
-                // for extrareader data
-                result = ExtraReader.getExtraData(conf, dateList, pairDateMap, pairCatMap, j, id, result);
-                // for extrareader data end
-                // for more extrareader data
-                result = getExtraIndicatorsResult(conf, categories, j, result, pairDateMap, pairCatMap, datareaders, allIndicators);
-                // for more extrareader data end
-                if (result.length == arraySize) {
-                    indicatorMap.put(id, result);
-                    IndicatorUtils.addToLists(indicatorLists, result);
-                    log.info("outid " + id + " " + Arrays.asList(result));
-               } else {
-                    //System.out.println("discarding " + id);
-                    continue;
-                }
-                dayIndicatorMap.put(j, indicatorMap);
-            }
-        }
-        if (!dayIndicatorMap.isEmpty()) {
-        for (int i = 0; i < arraySize; i++) {
-            indicatorMinMax[i].add(Collections.min(indicatorLists[i]));
-            indicatorMinMax[i].add(Collections.max(indicatorLists[i]));
-        }
-        }
-        retobj[0] = dayIndicatorMap;
-        retobj[1] = indicatorMinMax;
-        retobj[2] = listList;
-        return retobj;
+        log.info("listsize {}", extraData.dateList.size());
+        return arraySize;
     }
 
-    public static int getCategoryFromString(Map<Pair, String> pairCatMap, Pair pairKey) {
+    public static int getCategoryFromString(Map<Pair<String, String>, String> pairCatMap, Pair<String, String> pairKey) {
         String categoryString = pairCatMap.get(pairKey);
         int category = 0;
         switch (categoryString) {
@@ -324,23 +363,16 @@ public class IndicatorUtils {
         return category;
     }
 
-    private static Double[] getExtraIndicatorsResult(MyMyConfig conf, Category[] categories, int j, Double[] result, Map<Pair, Map<Date, StockItem>> pairDateMap, Map<Pair, String> pairCatMap, Pipeline[] datareaders, List<Indicator> allIndicators) throws Exception {
-       for (Indicator indicator : allIndicators) {
+    private static Double[] getExtraIndicatorsResult(Category[] categories, int j, Double[] result, Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap, Map<Pair<String, String>, String> pairCatMap, Pipeline[] datareaders, List<Indicator> allIndicators) throws Exception {
+        for (Indicator indicator : allIndicators) {
             if (indicator.wantForExtras()) {
                 Map<String, Object> localIndicatorResults =  indicator.getLocalResultMap();
                 Map<String, Map<String, Object[]>> marketObjectMap = (Map<String, Map<String, Object[]>>) localIndicatorResults.get(PipelineConstants.MARKETOBJECT);
-                //Map<String, Map<String, Object[]>> marketResultMap = (Map<String, Map<String, Object[]>>) localIndicatorResults.get(PipelineConstants.MARKETRESULT);
-                //Map<String, Map<String, Double[]>> marketMomMap = (Map<String, Map<String, Double[]>>) localIndicatorResults.get(PipelineConstants.MARKETCALCULATED);
-                for (String market : marketObjectMap.keySet()) {
-                    Map<String, Object[]> objectMap = marketObjectMap.get(market);
-                    for (String localId : objectMap.keySet()) {
-                        Object[] objsIndicator = objectMap.get(localId);
-                        Object[] arr = indicator.getDayResult(objsIndicator, j);
-                        if (arr != null && arr.length > 0) {
-                            result = (Double[]) ArrayUtils.addAll(result, arr);
-                        } else {
-                            //System.out.println("No obj for id3 " + localId);
-                        }
+                for (Entry<String, Map<String, Object[]>> marketEntry : marketObjectMap.entrySet()) {
+                    Map<String, Object[]> objectMap = marketEntry.getValue();
+                    for (Entry<String, Object[]> entry : objectMap.entrySet()) {
+                        Object[] objsIndicator = entry.getValue();
+                        result = appendDayResult(j, result, indicator, objsIndicator);
                     }
                 }
             }
@@ -348,47 +380,42 @@ public class IndicatorUtils {
         return result;
     }
 
-    private static List<Indicator> getAllIndicators(MyMyConfig conf, Category[] categories,
-            Map<Pair, String> pairCatMap, Pipeline[] datareaders) throws Exception {
-        List<Indicator> allIndicators = new ArrayList<>();
-        Set<Pair> marketcatSet = new HashSet<>();
+    private static Double[] appendDayResult(int j, Double[] result, Indicator indicator, Object[] objsIndicator) {
+        Object[] arr = indicator.getDayResult(objsIndicator, j);
+        if (arr != null && arr.length > 0) {
+            result = (Double[]) ArrayUtils.addAll(result, arr);
+        }
+        return result;
+    }
+
+    private static void getAllIndicators(List<Indicator> allIndicators, MyMyConfig conf, Category[] categories,
+            Map<Pair<String, String>, String> pairCatMap, Pipeline[] datareaders) throws Exception {
         Set<String> indicatorSet = new HashSet<>();
-        for (Pair pair : pairCatMap.keySet()) {
-            String market = (String) pair.getFirst();
-            String id = (String) pair.getSecond();
-            String cat = pairCatMap.get(pair);
+        for (Entry<Pair<String, String>, String> pairEntry : pairCatMap.entrySet()) {
+            String market = pairEntry.getKey().getFirst();
+            String cat = pairEntry.getValue();
             if (market.equals(conf.getMarket())) {
                 for (Category category : categories) {
                     if (cat.equals(category.getTitle())) {
                         Map<String, Indicator> indicatorMap = category.getIndicatorMap();
-                        for (String indicatorName : indicatorMap.keySet()) {
-                            Indicator indicator = indicatorMap.get(indicatorName);
+                        for (Entry<String, Indicator> entry : indicatorMap.entrySet()) {
+                            Indicator indicator = entry.getValue();
                             if (indicator.wantForExtras()) {
                                 allIndicators.add(indicator);
-                                indicatorSet.add(indicatorName);
+                                indicatorSet.add(entry.getKey());
                             }
                         }
                     }
                 }
             }
         }
-        //else {
-        //   Pair marketcat = new Pair(market, cat);
-        //if (marketcatSet.add(marketcat)) {
-        //if (indicatorSet.add(marketcat)) {
         // TODO make indicator factory
-        //Indicator indicator = null;
         if (indicatorSet.add(PipelineConstants.INDICATORMACD) && conf.wantAggregatorsIndicatorExtrasMACD()) {
             allIndicators.add(new IndicatorMACD(conf, null, null, null, null, null, 42, datareaders, true));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORRSI) && conf.wantAggregatorsIndicatorExtrasRSI()) {
             allIndicators.add(new IndicatorRSI(conf, null, null, null, null, null, 42, datareaders, true));       
         }
-        //           allIndicators.add(indicator);
-        //        }
-        //    }
-        //}
-        return allIndicators;
     }
 
     public static void addToLists(List<Double> macdLists[], Double[] momentum) throws Exception {
@@ -401,12 +428,10 @@ public class IndicatorUtils {
     }
 
     public static void addToLists(Map<String, MarketData> marketdatamap, int category, List<Double> macdLists[], String market, Double[] momentum) throws Exception {
-        {
-            for (int i = 0; i < macdLists.length; i ++) {
-                List<Double> macdList = macdLists[i];
-                if (momentum[i] != null) {
-                    macdList.add(momentum[i]);
-                }
+        for (int i = 0; i < macdLists.length; i ++) {
+            List<Double> macdList = macdLists[i];
+            if (momentum[i] != null) {
+                macdList.add(momentum[i]);
             }
         }
     }
@@ -421,21 +446,18 @@ public class IndicatorUtils {
 
     public static Category getWantedCategory(Category[] categories) throws Exception {
         List<String> wantedList = new ArrayList<>();
-           wantedList.add(CategoryConstants.PRICE);
-           wantedList.add(CategoryConstants.INDEX);
-           wantedList.add("cy");
-            Category cat = null;
-            for (String wanted : wantedList) {
-                for (Category category : categories) {
-                    System.out.println(category.getTitle());
-                    if (cat == null && category.hasContent()) {
-                        if (category.getTitle().equals(wanted)) {
-                            cat = category;
-                            break;
-                        }
-                    }
+        wantedList.add(CategoryConstants.PRICE);
+        wantedList.add(CategoryConstants.INDEX);
+        wantedList.add("cy");
+        Category cat = null;
+        for (String wanted : wantedList) {
+            for (Category category : categories) {
+                if (cat == null && category.hasContent() && category.getTitle().equals(wanted)) {
+                    cat = category;
+                    break;
                 }
             }
+        }
         return cat;
     }
 
@@ -450,7 +472,7 @@ public class IndicatorUtils {
             return null;
         }
         Set<Pair<String, Integer>> pairs = periodData.pairs;
-        for (Pair pair : pairs) {
+        for (Pair<String, Integer> pair : pairs) {
             int cat = (int) pair.getSecond();
             if (StockUtil.hasStockValue(stocks, cat)) {
                 return cat;

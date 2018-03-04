@@ -9,6 +9,6 @@ public class PeriodData {
 
     public String date0;
     public String date1;
-    public Set<Pair<String, Integer>> pairs = new HashSet();
+    public Set<Pair<String, Integer>> pairs = new HashSet<>();
     
 }
