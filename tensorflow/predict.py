@@ -293,7 +293,7 @@ class Predict:
             array = myobj.arraylist[i]
             predicted = self.do_learntestone(array, myobj)
             predictedlist.append(predicted)
-        backend.clear_session()
+            backend.clear_session()
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         print(predictedlist)
