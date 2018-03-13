@@ -2,6 +2,8 @@ package roart.service;
 
 import roart.model.GUISize;
 import roart.model.ResultItem;
+import roart.queue.Queues;
+import roart.thread.ClientRunner;
 import roart.config.ConfigTreeMap;
 import roart.config.MyConfig;
 
@@ -25,11 +27,12 @@ public class ControlService {
     public ControlService() {
     	//conf = MyXMLConfig.configInstance();
     	getConfig();
+    	startThreads();
     }
   
     public void getConfig() {
         ServiceParam param = new ServiceParam();
-        param.config = conf;
+        param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
         conf = result.config;
         Map<String, Object> map = conf.configValueMap;
@@ -61,15 +64,15 @@ public class ControlService {
 
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
-        param.config = conf;
+        param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETMARKETS);
         return result.markets;    	
     }
     
     public Map<String, String> getStocks(String market) {
         ServiceParam param = new ServiceParam();
-        param.config = conf;
-        param.market = market;
+        param.setConfig(conf);
+        param.setMarket(market);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETSTOCKS);
         return result.stocks;   	
     }
@@ -80,10 +83,12 @@ public class ControlService {
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent() {
+    public void getContent() {
         ServiceParam param = new ServiceParam();
-        param.config = conf;
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
+        param.setConfig(conf);
+        param.setWebpath(EurekaConstants.GETCONTENT);
+        Queues.clientQueue.add(param);
+        //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
 	/*
         for (Object o : (List)((List)result.list2)) {
 			//for (Object o : (List)((List)result.list).get(0)) {
@@ -95,7 +100,7 @@ public class ControlService {
 		 	}
 		}
 		*/
-       return result.list;
+       //return result.list;
     }
 
     /**
@@ -107,8 +112,8 @@ public class ControlService {
 
     public List getContentGraph(GUISize guiSize) {
         ServiceParam param = new ServiceParam();
-        param.config = conf;
-        param.guiSize = guiSize;
+        param.setConfig(conf);
+        param.setGuiSize(guiSize);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH);
         return result.list;
     }
@@ -128,9 +133,9 @@ public class ControlService {
     		idset.add(pair.getFirst() + "," + pair.getSecond());
     	}
     	ServiceParam param = new ServiceParam();
-        param.config = conf;
-        param.ids = idset;
-        param.guiSize = guiSize;
+        param.setConfig(conf);
+        param.setIds(idset);
+        param.setGuiSize(guiSize);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH2);
         return result.list;
     }
@@ -147,25 +152,43 @@ public class ControlService {
 
     public List getContentStat() {
         ServiceParam param = new ServiceParam();
-        param.config = conf;
+        param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTSTAT);
         return result.list;
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         ServiceParam param = new ServiceParam();
-        param.config = conf;
+        param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.SETCONFIG);
         getConfig();
     }
 
     public List<ResultItem> getTestRecommender(boolean doSet) {
         ServiceParam param = new ServiceParam();
-        param.config = conf;
+        param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETTESTRECOMMENDER);
         if (doSet) {
             conf = result.config;
         }
         return result.list;
     }
+    
+    private static ClientRunner clientRunnable = null;
+    public static Thread clientWorker = null;
+
+    public static void startThreads() {
+        if (clientRunnable == null) {
+            startClientWorker();
+        }
+    }
+
+    public static void startClientWorker() {
+        clientRunnable = new ClientRunner();
+        clientWorker = new Thread(clientRunnable);
+        clientWorker.setName("ClientWorker");
+        clientWorker.start();
+        //log.info("starting client worker");                               
+    }
+
 }

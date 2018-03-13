@@ -1010,7 +1010,8 @@ public class MyVaadinUI extends UI
     }
      */
     private void displayResults() {
-        List<ResultItem> list = controlService.getContent();
+        controlService.getContent();
+        /*
         log.info("listsize " + list.size());
         VerticalLayout layout = new VerticalLayout();
         layout.setCaption("Results");
@@ -1020,6 +1021,7 @@ public class MyVaadinUI extends UI
         tabsheet.addComponent(layout);
         tabsheet.getTab(layout).setClosable(true);
         Notification.show("New result available");
+        */
     }
 
 
