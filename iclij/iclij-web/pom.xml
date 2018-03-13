@@ -97,11 +97,23 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-common-eureka</artifactId>
       <version>0.5-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>  <!-- declare the exclusion here -->
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions> 
     </dependency>
     <dependency>
       <groupId>com.netflix.eureka</groupId>
       <artifactId>eureka-client</artifactId>
       <version>1.6.1</version>
+      <exclusions>
+        <exclusion>  <!-- declare the exclusion here -->
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions> 
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -148,6 +160,21 @@
       <artifactId>stockstat-iclij-common-service</artifactId>
       <version>0.5-SNAPSHOT</version>
     </dependency>
+    <dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-jsr310</artifactId>
+    <version>2.5.4</version>
+</dependency>
+    <dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-annotations</artifactId>
+    <version>2.5.4</version>
+</dependency>
+    <dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.5.4</version>
+</dependency>
 	</dependencies>
 
 	<build>

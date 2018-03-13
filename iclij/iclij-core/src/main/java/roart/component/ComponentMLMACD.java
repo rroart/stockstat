@@ -1,8 +1,8 @@
 package roart.component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -127,7 +127,7 @@ public class ComponentMLMACD extends Component {
         IncDecItem val = map.get(key);
         if (val == null) {
             val = new IncDecItem();
-            val.setRecord(new Date());
+            val.setRecord(LocalDate.now());
             val.setId(key);
             val.setMarket(memory.getMarket());
             val.setDescription("");
@@ -141,15 +141,14 @@ public class ComponentMLMACD extends Component {
     }
 
     @Override
-    public void improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
+    public Map<String, String> improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
             Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
-        // TODO Auto-generated method stub
-        System.out.println("Component not impl " + this.getClass().getName());
-        
+        log.info("Component not impl {}" + this.getClass().getName());
+        return new HashMap<>();
     }
 
-    public List<MemoryItem> calculateMLMACD(String market, int daysafterzero, Date baseDate, Date futureDate,
+    public List<MemoryItem> calculateMLMACD(String market, int daysafterzero, LocalDate baseDate, LocalDate futureDate,
             String categoryTitle, Map<String, List<Object>> resultMap, List<List> resultMetaArray,
             Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, int offset, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
@@ -252,7 +251,7 @@ public class ComponentMLMACD extends Component {
             }
             //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
             memory.setMarket(market);
-            memory.setRecord(new Date());
+            memory.setRecord(LocalDate.now());
             memory.setDate(baseDate);
             memory.setUsedsec(usedsec);
             memory.setFuturedays(daysafterzero);

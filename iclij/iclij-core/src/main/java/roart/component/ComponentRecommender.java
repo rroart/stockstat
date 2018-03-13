@@ -1,13 +1,18 @@
 package roart.component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
@@ -15,9 +20,12 @@ import roart.model.IncDecItem;
 import roart.model.MemoryItem;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
+import roart.util.Constants;
 import roart.util.ServiceUtil;
 
 public class ComponentRecommender extends Component {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+    
     @Override
     public void enable(MyMyConfig conf) {
         conf.configValueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);                
@@ -69,8 +77,9 @@ public class ComponentRecommender extends Component {
         List<MyElement> list0 = new ArrayList<>();
         List<MyElement> list1 = new ArrayList<>();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
-        for (String key : categoryValueMap.keySet()) {
-            List<List<Double>> resultList = categoryValueMap.get(key);
+        for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+            String key = entry.getKey();
+            List<List<Double>> resultList = entry.getValue();
             List<Double> mainList = resultList.get(0);
             if (mainList == null) {
                 continue;
@@ -115,7 +124,7 @@ public class ComponentRecommender extends Component {
 
     private IncDecItem getIncDec(MyElement element, double confidence, String recommendation, Map<String, String> nameMap, String market) {
         IncDecItem incdec = new IncDecItem();
-        incdec.setRecord(new Date());
+        incdec.setRecord(LocalDate.now());
         incdec.setId(element.getKey());
         incdec.setMarket(market);
         incdec.setDescription(recommendation);
@@ -145,15 +154,15 @@ public class ComponentRecommender extends Component {
         return sellList;
     }
     @Override
-    public void improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
+    public Map<String, String> improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> badConfMap,
             Map<Object[], List<MemoryItem>> badListMap, Map<String, String> nameMap) {
-        // TODO Auto-generated method stub
-        //if (true) return;
+        Map<String, String> retMap = new HashMap<>();
         List<String> list = getBuy();
-        handleBuySell(conf, badListMap, list);
+        retMap.putAll(handleBuySell(conf, badListMap, list));
         list = getSell();
-        handleBuySell(conf, badListMap, list);
+        retMap.putAll(handleBuySell(conf, badListMap, list));
+        return retMap;
     }
 
     private List<List<String>> disableAllButOne(List<String> list) {
@@ -162,7 +171,7 @@ public class ComponentRecommender extends Component {
         int bitsize = (1 << size) - 1;
         for (int i = 0; i < size; i++) {
             int pattern = bitsize - (1 << i);
-            System.out.println("using " + Integer.toBinaryString(pattern));
+            log.info("using {}", Integer.toBinaryString(pattern));
             List<String> aList = new ArrayList<>();
             for (int j = 0; j < size; j++) {
                 if ((pattern & (1 << j)) != 0) {
@@ -174,7 +183,8 @@ public class ComponentRecommender extends Component {
         return listPerm;
     }
     
-    private void handleBuySell(MyMyConfig conf, Map<Object[], List<MemoryItem>> badListMap, List<String> list) {
+    private Map<String, String> handleBuySell(MyMyConfig conf, Map<Object[], List<MemoryItem>> badListMap, List<String> list) {
+        Map<String, String> retMap = new HashMap<>();
         //List<List<String>> listPerm = getAllPerms(list);
         List<List<String>> listPerm = disableAllButOne(list);
         String market = badListMap.values().iterator().next().get(0).getMarket();
@@ -182,29 +192,29 @@ public class ComponentRecommender extends Component {
         srv.getConfig();            
         // plus testrecommendfactor
         int factor = 100;
-        System.out.println("market " + market);
-        System.out.println("factor " + factor);
+        log.info("market ", market);
+        log.info("factor ", factor);
         srv.conf.configValueMap.put(ConfigConstants.TESTRECOMMENDFACTOR, factor);
         int index = 0;
-        for (List aList : listPerm) {
-            System.out.println("For disable " + Integer.toHexString(index++));
+        for (List<String> aList : listPerm) {
+            log.info("For disable {}", Integer.toHexString(index++));
             try {
                 List<MemoryItem> memories = ServiceUtil.doRecommender(srv, market, 0, null, false, aList, false);
                 if (memories == null) {
-                    System.out.println("No memories in " + market);
+                    log.info("No memories in {}", market);
                     continue;
                 }
                 List<Double> newConfidenceList = new ArrayList<>();
                 for(MemoryItem memory : memories) {
-                    //System.out.println(memory);
                     newConfidenceList.add(memory.getConfidence());
                 }
-                System.out.println("New confidences " + newConfidenceList);
+                log.info("New confidences {}", newConfidenceList);
+                retMap.put(aList.toString(), newConfidenceList.toString());
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(Constants.EXCEPTION, e);
             }
         }
+        return retMap;
     }
 
     private List<List<String>> getAllPerms(List<String> list) {
@@ -223,7 +233,7 @@ public class ComponentRecommender extends Component {
         return listPerm;
     }
     
-    public List<MemoryItem> calculateRecommender(String market, int futuredays, Date baseDate, Date futureDate,
+    public List<MemoryItem> calculateRecommender(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
             String categoryTitle, Map<String, List<Double>> recommendBuySell, double buyMedian, double sellMedian,
             Map<String, Map<String, Object>> result, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
@@ -240,8 +250,8 @@ public class ComponentRecommender extends Component {
 
     private Set<Double> getChangeSet(int futuredays, Map<String, List<List<Double>>> categoryValueMap) {
         Set<Double> changeSet = new HashSet<>();
-        for (String key : categoryValueMap.keySet()) {
-            List<List<Double>> resultList = categoryValueMap.get(key);
+        for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+            List<List<Double>> resultList = entry.getValue();
             List<Double> mainList = resultList.get(0);
             if (mainList != null) {
                 Double valFuture = mainList.get(mainList.size() - 1);
@@ -255,7 +265,7 @@ public class ComponentRecommender extends Component {
         return changeSet;
     }
 
-    public void getMemories(String market, int futuredays, Date baseDate, Date futureDate,
+    public void getMemories(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
             String categoryTitle, Map<String, List<Double>> recommendBuySell, double buyMedian, double sellMedian,
             Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave,
             List<MemoryItem> memoryList, Double medianChange, Set<Double> changeSet, boolean doPrint) throws Exception {
@@ -264,13 +274,15 @@ public class ComponentRecommender extends Component {
         long totalBuy = 0;
         long totalSell = 0;
         Optional<Double> minOpt = changeSet.parallelStream().reduce(Double::min);
-        if (!minOpt.isPresent()) {
+        Double minChange = 0.0;
+        if (minOpt.isPresent()) {
+            minChange = minOpt.get();
         }
-        Double minChange = minOpt.get();
         Optional<Double> maxOpt = changeSet.parallelStream().reduce(Double::max);
-        if (!maxOpt.isPresent()) {
+        Double maxChange = 0.0;
+        if (maxOpt.isPresent()) {
+            maxChange = maxOpt.get();
         }
-        Double maxChange = maxOpt.get();
         Double diffChange = maxChange - minChange;
         List<Double> buyList = new ArrayList<>();
         List<Double> sellList = new ArrayList<>();
@@ -346,7 +358,7 @@ public class ComponentRecommender extends Component {
         }      
         MemoryItem buyMemory = new MemoryItem();
         buyMemory.setMarket(market);
-        buyMemory.setRecord(new Date());
+        buyMemory.setRecord(LocalDate.now());
         buyMemory.setDate(baseDate);
         buyMemory.setUsedsec(usedsec);
         buyMemory.setFuturedays(futuredays);
@@ -362,7 +374,7 @@ public class ComponentRecommender extends Component {
         }
         MemoryItem sellMemory = new MemoryItem();
         sellMemory.setMarket(market);
-        sellMemory.setRecord(new Date());
+        sellMemory.setRecord(LocalDate.now());
         sellMemory.setDate(baseDate);
         sellMemory.setUsedsec(usedsec);
         sellMemory.setFuturedays(futuredays);

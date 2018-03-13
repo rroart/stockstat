@@ -1,9 +1,13 @@
 package roart.component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
@@ -14,6 +18,8 @@ import roart.service.ControlService;
 
 public class ComponentPredictor extends Component {
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+    
     @Override
     public void enable(MyMyConfig conf) {
         conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.TRUE);                
@@ -28,20 +34,18 @@ public class ComponentPredictor extends Component {
     public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
             Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
-        // TODO Auto-generated method stub
-        System.out.println("Component not impl " + this.getClass().getName());
-
+        log.info("Component not impl {}", this.getClass().getName());
     }
+    
     @Override
-    public void improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
+    public Map<String, String> improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
             Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
-        // TODO Auto-generated method stub
-        System.out.println("Component not impl " + this.getClass().getName());
-        
+        log.info("Component not impl {}", this.getClass().getName());
+        return new HashMap<>();        
     }
 
-    public List<MemoryItem> calculatePredictor(String market, int futuredays, Date baseDate, Date futureDate,
+    public List<MemoryItem> calculatePredictor(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
             String categoryTitle, Map<String, List<Double>> resultMap,
             Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
@@ -73,7 +77,7 @@ public class ComponentPredictor extends Component {
         //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
         MemoryItem incMemory = new MemoryItem();
         incMemory.setMarket(market);
-        incMemory.setRecord(new Date());
+        incMemory.setRecord(LocalDate.now());
         incMemory.setDate(baseDate);
         incMemory.setUsedsec(usedsec);
         incMemory.setFuturedays(futuredays);
@@ -89,7 +93,7 @@ public class ComponentPredictor extends Component {
         }
         MemoryItem decMemory = new MemoryItem();
         decMemory.setMarket(market);
-        decMemory.setRecord(new Date());
+        decMemory.setRecord(LocalDate.now());
         decMemory.setDate(baseDate);
         decMemory.setUsedsec(usedsec);
         decMemory.setFuturedays(futuredays);

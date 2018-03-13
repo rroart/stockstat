@@ -1,15 +1,18 @@
 package roart.component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.action.FindProfitAction;
 import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.model.IncDecItem;
@@ -17,12 +20,15 @@ import roart.model.MemoryItem;
 import roart.model.ResultMeta;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
+import roart.util.Constants;
 import roart.util.ServiceUtil;
 import roart.util.ServiceUtilConstants;
 
 public class ComponentMLIndicator extends Component {
-    private static String INC = "Inc";
-    private static String DEC = "Dec";
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+    
+    private static final String INC = "Inc";
+    private static final String DEC = "Dec";
     
     @Override
     public void enable(MyMyConfig conf) {
@@ -103,10 +109,10 @@ public class ComponentMLIndicator extends Component {
 
     }
     @Override
-    public void improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
+    public Map<String, String> improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> badConfMap,
             Map<Object[], List<MemoryItem>> badListMap, Map<String, String> nameMap) {
-        // TODO Auto-generated method stub
+        Map<String, String> retMap = new HashMap<>();
         List<String> permList = new ArrayList<>();
         String market = badListMap.values().iterator().next().get(0).getMarket();
         ControlService srv = new ControlService();
@@ -116,10 +122,12 @@ public class ComponentMLIndicator extends Component {
         int size = permList.size();
         int bitsize = (1 << size) - 1;
         for (int i = 1; i < bitsize; i++) {
+            String key = "";
             for (int j = 0; j < size; j++) {
-                System.out.println("Doing " + i + " " + j);
+                log.info("Doing {} {}", i, j);
                 if ((i & (1 << j)) != 0) {
                     srv.conf.configValueMap.put(permList.get(j), Boolean.TRUE);
+                    key = key + permList.get(j);
                 } else {
                     srv.conf.configValueMap.put(permList.get(j), Boolean.FALSE);
                 }
@@ -129,17 +137,17 @@ public class ComponentMLIndicator extends Component {
                 List<MemoryItem> memories = ServiceUtil.doMLIndicator(srv, market, 0, null, false, false);
                 for(MemoryItem memory : memories) {
                     newConfidenceList.add(memory.getConfidence());
-                    //System.out.println(memory);
                 }
-                System.out.println("New confidences " + newConfidenceList);
+                log.info("New confidences []", newConfidenceList);
+                retMap.put(key, newConfidenceList.toString());
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(Constants.EXCEPTION, e);
             }
         }
+        return retMap;
     }
 
-    public List<MemoryItem> calculateMLindicator(String market, int futuredays, Date baseDate, Date futureDate, double threshold,
+    public List<MemoryItem> calculateMLindicator(String market, int futuredays, LocalDate baseDate, LocalDate futureDate, double threshold,
             Map<String, List<Object>> resultMap, int size0, Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, String categoryTitle, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;
@@ -225,7 +233,7 @@ public class ComponentMLIndicator extends Component {
             }
             //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
             memory.setMarket(market);
-            memory.setRecord(new Date());
+            memory.setRecord(LocalDate.now());
             memory.setDate(baseDate);
             memory.setUsedsec(usedsec);
             memory.setFuturedays(futuredays);

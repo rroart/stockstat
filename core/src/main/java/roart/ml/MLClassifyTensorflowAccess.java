@@ -134,7 +134,12 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         for(Object[] obj : objobj) {
             log.info("inner {}", Arrays.asList(obj));
         }
-        LearnTestClassify ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/classify");
+        LearnTestClassify ret = null;
+        try {
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/classify");
+        } catch (Exception e) {
+            log.error("Exception", e);
+        }
         Object[] cat = ret.cat;
         Map<String, Double[]> retMap = new HashMap<>();
         for (int j = 0; j < retList.size(); j ++) {

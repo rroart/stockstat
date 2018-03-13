@@ -1,11 +1,15 @@
 package roart.model;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import roart.util.TimeUtil;
+
 public class IncDecItem {
-    private Date record;
+    private LocalDate record;
     
     private String market;
 
@@ -18,12 +22,14 @@ public class IncDecItem {
     private String description;
 
     private Double score;
+
+    private Boolean verified;
     
-    public Date getRecord() {
+    public LocalDate getRecord() {
         return record;
     }
 
-    public void setRecord(Date record) {
+    public void setRecord(LocalDate record) {
         this.record = record;
     }
 
@@ -75,6 +81,14 @@ public class IncDecItem {
         this.score = score;
     }
 
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
     @Override
     public String toString() {
         return market + " " + record + " " + increase + " " + id + " " + name + " " + score + " " + description; 
@@ -87,7 +101,7 @@ public class IncDecItem {
         incdec.setIncrease(isIncrease());
         incdec.setMarket(getMarket());
         incdec.setName(getName());
-        incdec.setRecord(getRecord());
+        incdec.setRecord(TimeUtil.convertDate(getRecord()));
         incdec.setScore(getScore());
         incdec.save();
     }
@@ -119,7 +133,7 @@ public class IncDecItem {
         incdecItem.setIncrease(incdec.isIncrease());
         incdecItem.setMarket(incdec.getMarket());
         incdecItem.setName(incdec.getName());
-        incdecItem.setRecord(incdec.getRecord());
+        incdecItem.setRecord(TimeUtil.convertDate(incdec.getRecord()));
         incdecItem.setScore(incdec.getScore());
         return incdecItem;
     }

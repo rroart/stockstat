@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.configuration2.XMLConfiguration;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -53,6 +55,14 @@ public class IclijConfig {
         return map;
 
      }
+    
+    public boolean getAutorun() throws JsonParseException, JsonMappingException, IOException {
+        XMLConfiguration conf = IclijXMLConfig.getConfigXML();
+        if (conf.containsKey("autorun[@enable]")) {
+            return conf.getBoolean("autorun[@enable]");
+        }
+        return true;
+    }
     
      public int getDays() {
         return (Integer) getValueOrDefault(ConfigConstants.MISCMYDAYS);

@@ -54,9 +54,9 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		try {
-            System.out.println("new market" + param.config.getMarket());
-            System.out.println("new market" + param.config);
-            System.out.println("new some " + param.config.configValueMap.get(ConfigConstants.DATABASESPARKSPARKMASTER));
+            System.out.println("new market" + param.getConfig().getMarket());
+            System.out.println("new market" + param.getConfig());
+            System.out.println("new some " + param.getConfig().configValueMap.get(ConfigConstants.DATABASESPARKSPARKMASTER));
 			//getInstance().config(param.config);
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
@@ -101,11 +101,11 @@ public class ServiceController {
             throws Exception {
         ServiceResult result = new ServiceResult();
         Map<String, Map<String, Object>> maps = null;
-        if (param.wantMaps) {
+        if (param.isWantMaps()) {
             maps = new HashMap<>();
         }
         try {
-            getInstance().getDates( new MyMyConfig(param.config), maps);
+            getInstance().getDates( new MyMyConfig(param.getConfig()), maps);
             result.maps = maps;
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);
@@ -120,7 +120,7 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		try {
-			result.stocks = getInstance().getStocks(param.market,  new MyMyConfig(param.config));
+			result.stocks = getInstance().getStocks(param.getMarket(),  new MyMyConfig(param.getConfig()));
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -134,15 +134,15 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		Map<String, Map<String, Object>> maps = null;
-		if (param.wantMaps) {
+		if (param.isWantMaps()) {
 		    maps = new HashMap<>();
 		}
 		try {
-		    List<String> disableList = param.confList;
+		    List<String> disableList = param.getConfList();
 		    if (disableList == null) {
 		        disableList = new ArrayList<>();
 		    }
-			result.list = getInstance().getContent( new MyMyConfig(param.config), maps, disableList);
+			result.list = getInstance().getContent( new MyMyConfig(param.getConfig()), maps, disableList);
 			result.maps = maps;
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
@@ -157,7 +157,7 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		try {
-			result.list = getInstance().getContentStat( new MyMyConfig(param.config));
+			result.list = getInstance().getContentStat( new MyMyConfig(param.getConfig()));
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -171,7 +171,7 @@ public class ServiceController {
 			throws Exception {
 		ServiceResult result = new ServiceResult();
 		try {
-			result.list = getInstance().getContentGraph( new MyMyConfig(param.config), param.guiSize);
+			result.list = getInstance().getContentGraph( new MyMyConfig(param.getConfig()), param.getGuiSize());
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -187,12 +187,12 @@ public class ServiceController {
 		try {
 			// TODO fix quick workaround for serialization
 			Set<Pair<String,String>> ids = new HashSet<>();
-			for (String union : param.ids) {
+			for (String union : param.getIds()) {
 				String[] idsplit = union.split(",");
 				Pair<String, String> pair = new Pair(idsplit[0], idsplit[1]);
 				ids.add(pair);
 			}
-			result.list = getInstance().getContentGraph( new MyMyConfig(param.config), ids, param.guiSize);
+			result.list = getInstance().getContentGraph( new MyMyConfig(param.getConfig()), ids, param.getGuiSize());
 		} catch (Exception e) {
 			log.error(roart.util.Constants.EXCEPTION, e);
 			result.error = e.getMessage();
@@ -206,8 +206,8 @@ public class ServiceController {
             throws Exception {
         ServiceResult result = new ServiceResult();
         try {
-            MyMyConfig aConfig = new MyMyConfig(param.config);
-            List<String> disableList = param.confList;
+            MyMyConfig aConfig = new MyMyConfig(param.getConfig());
+            List<String> disableList = param.getConfList();
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }

@@ -5,15 +5,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import roart.config.ConfigConstants;
 import roart.config.IclijXMLConfig;
 import roart.service.ControlService;
 
 public class MainAction extends Action {
-    public static Queue<Action> goals = new LinkedList<>();
+
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+    
     public static Action updateDBACtion;
     @Override
-    public void goal() throws InterruptedException {
+    public void goal(Action parent) throws InterruptedException {
         IclijXMLConfig.getConfigInstance();
         System.out.println("Start");
         ControlService srv = new ControlService();
@@ -38,27 +43,27 @@ public class MainAction extends Action {
                 if (doUpdateDB) {
                     addIfNotContaining(updateDBACtion);
                 }
-                if (goals.isEmpty()) {
-                    goals.add(new FindProfitAction());
-                    goals.add(new ImproveProfitAction());  
+                if (getGoals().isEmpty()) {
+                    getGoals().add(new FindProfitAction());
+                    getGoals().add(new ImproveProfitAction());  
                 }
             }
-            if (goals.isEmpty()) {
+            if (getGoals().isEmpty()) {
                 try {
                     Thread.sleep(3600 * 1000);
                 } catch (Exception e) {
                 }
                 addIfNotContaining(updateDBACtion);
             } else {
-                Action action = goals.poll();
-                action.goal();
+                Action action = getGoals().poll();
+                action.goal(this);
             }
         }
     }
     
     public void addIfNotContaining(Action action) {
-        if (!goals.contains(action)) {
-            goals.add(action);
+        if (!getGoals().contains(action)) {
+            getGoals().add(action);
         }
 
     }

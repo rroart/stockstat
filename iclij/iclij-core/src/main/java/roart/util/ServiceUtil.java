@@ -2,15 +2,15 @@ package roart.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,6 +20,12 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import roart.action.Action;
+import roart.action.FindProfitAction;
+import roart.action.ImproveProfitAction;
+import roart.action.UpdateDBAction;
+import roart.action.VerifyProfitAction;
+import roart.component.Component;
 import roart.component.ComponentMLIndicator;
 import roart.component.ComponentMLMACD;
 import roart.component.ComponentPredictor;
@@ -27,12 +33,17 @@ import roart.component.ComponentRecommender;
 import roart.config.ConfigConstants;
 import roart.config.IclijConfig;
 import roart.config.IclijXMLConfig;
+import roart.config.MyConfig;
 import roart.config.TradeMarket;
+import roart.config.VerifyConfig;
+import roart.constants.IclijPipelineConstants;
 import roart.model.IncDecItem;
+import roart.model.MapList;
 import roart.model.MemoryItem;
 import roart.model.ResultMeta;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
+import roart.service.IclijServiceList;
 import roart.service.IclijServiceResult;
 
 public class ServiceUtil {
@@ -43,7 +54,7 @@ public class ServiceUtil {
         srv.getConfig();
         return doRecommender(srv, market, offset, aDate, doSave, disableList, doPrint);
     }
-    
+
     public static List<MemoryItem> doRecommender(ControlService srv, String market, Integer offset, String aDate, boolean doSave, List<String> disableList, boolean doPrint) throws Exception {
         long time0 = System.currentTimeMillis();
         srv.conf.setMarket(market);
@@ -57,12 +68,12 @@ public class ServiceUtil {
         int futuredays = (int) srv.conf.getTestIndicatorRecommenderComplexFutureDays();
         String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
         String futureDateStr = stocks.get(stocks.size() - 1 - offset);
-        //System.out.println("da " + + futuredays + " " + baseDateStr);
+        log.info("Base future date {} {}", baseDateStr, futureDateStr);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        Date baseDate = dt.parse(baseDateStr);
-        Date futureDate = dt.parse(futureDateStr);
+        LocalDate baseDate = TimeUtil.convertDate(dt.parse(baseDateStr));
+        LocalDate futureDate = TimeUtil.convertDate(dt.parse(futureDateStr));
 
-        srv.conf.setdate(baseDate);
+        srv.conf.setdate(TimeUtil.convertDate(baseDate));
         srv.getTestRecommender(true, disableList);
         srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
@@ -95,7 +106,7 @@ public class ServiceUtil {
         double buyMedian = median(buyset);
         double sellMedian = median(sellset);
 
-        srv.conf.setdate(futureDate);
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
         Map<String, Map<String, Object>> result = srv.getContent();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
@@ -103,7 +114,7 @@ public class ServiceUtil {
         return new ComponentRecommender().calculateRecommender(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell, buyMedian,
                 sellMedian, result, categoryValueMap, usedsec, doSave, doPrint);
     }
-    private static void getMemoriesOld(String market, int futuredays, Date baseDate, Date futureDate,
+    private static void getMemoriesOld(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
             String categoryTitle, Map<String, List<Double>> recommendBuySell, double buyMedian, double sellMedian,
             Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave,
             List<MemoryItem> memoryList, Double medianChange, boolean doPrint) throws Exception {
@@ -146,7 +157,7 @@ public class ServiceUtil {
         }      
         MemoryItem buyMemory = new MemoryItem();
         buyMemory.setMarket(market);
-        buyMemory.setRecord(new Date());
+        buyMemory.setRecord(LocalDate.now());
         buyMemory.setDate(baseDate);
         buyMemory.setUsedsec(usedsec);
         buyMemory.setFuturedays(futuredays);
@@ -162,7 +173,7 @@ public class ServiceUtil {
         }
         MemoryItem sellMemory = new MemoryItem();
         sellMemory.setMarket(market);
-        sellMemory.setRecord(new Date());
+        sellMemory.setRecord(LocalDate.now());
         sellMemory.setDate(baseDate);
         sellMemory.setUsedsec(usedsec);
         sellMemory.setFuturedays(futuredays);
@@ -180,8 +191,8 @@ public class ServiceUtil {
         //System.out.println("k3 " + categoryValueMap.get("VIX"));
         //System.out.println(result.get("Index").keySet());
         if (doPrint) {
-        System.out.println(buyMemory);
-        System.out.println(sellMemory);
+            System.out.println(buyMemory);
+            System.out.println(sellMemory);
         }
         memoryList.add(buyMemory);
         memoryList.add(sellMemory);
@@ -205,12 +216,12 @@ public class ServiceUtil {
         int futuredays = (int) srv.conf.getPredictorLSTMHorizon();
         String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
         String futureDateStr = stocks.get(stocks.size() - 1 - offset);
-        //System.out.println("da " + + futuredays + " " + baseDateStr);
+        log.info("Base future date {} {}", baseDateStr, futureDateStr);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
 
-        Date baseDate = dt.parse(baseDateStr);
-        Date futureDate = dt.parse(futureDateStr);
-        srv.conf.setdate(baseDate);
+        LocalDate baseDate = TimeUtil.convertDate(dt.parse(baseDateStr));
+        LocalDate futureDate = TimeUtil.convertDate(dt.parse(futureDateStr));
+        srv.conf.setdate(TimeUtil.convertDate(baseDate));
         srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
         srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
         srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
@@ -232,12 +243,12 @@ public class ServiceUtil {
             return null;
         }
         Map map = (Map) maps.get(wantedCat).get(PipelineConstants.LSTM);
-        
+
         //System.out.println("lstm " + map.keySet());
         Integer category = (Integer) map.get(PipelineConstants.CATEGORY);
         String categoryTitle = (String) map.get(PipelineConstants.CATEGORYTITLE);
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) map.get(PipelineConstants.RESULT);
-        srv.conf.setdate(futureDate);
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
         srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> result = srv.getContent();
@@ -265,12 +276,12 @@ public class ServiceUtil {
         int daysafterzero = (int) srv.conf.getMACDDaysAfterZero();
         String baseDateStr = stocks.get(stocks.size() - 1 - 1 * daysafterzero - offset);
         String futureDateStr = stocks.get(stocks.size() - 1 - 0 * daysafterzero - offset);
-        //System.out.println("da " + + daysafterzero + " " + baseDateStr);
+        log.info("Base future date {} {}", baseDateStr, futureDateStr);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        Date baseDate = dt.parse(baseDateStr);
-        Date futureDate = dt.parse(futureDateStr);
+        LocalDate baseDate = TimeUtil.convertDate(dt.parse(baseDateStr));
+        LocalDate futureDate = TimeUtil.convertDate(dt.parse(futureDateStr));
 
-        srv.conf.setdate(baseDate);
+        srv.conf.setdate(TimeUtil.convertDate(baseDate));
         srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
         srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
         srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
@@ -300,7 +311,7 @@ public class ServiceUtil {
         //System.out.println("m4 " + resultMetaArray);
         //System.out.println("m4 " + resultMap.keySet());
         //System.out.println("m4 " + probabilityMap.keySet());
-        srv.conf.setdate(futureDate);
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
         srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> result = srv.getContent();
@@ -323,7 +334,7 @@ public class ServiceUtil {
         srv.getConfig();
         return doMLIndicator(srv, market, offset, aDate, doSave, doPrint);
     }
-    
+
     public static List<MemoryItem> doMLIndicator(ControlService srv, String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws ParseException {
         long time0 = System.currentTimeMillis();
         srv.conf.setMarket(market);
@@ -338,12 +349,12 @@ public class ServiceUtil {
         double threshold = srv.conf.getAggregatorsIndicatorThreshold();
         String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
         String futureDateStr = stocks.get(stocks.size() - 1 - offset);
-        //System.out.println("da " + + futuredays + " " + baseDateStr);
+        log.info("Base future date {} {}", baseDateStr, futureDateStr);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
 
-        Date baseDate = dt.parse(baseDateStr);
-        Date futureDate = dt.parse(futureDateStr);
-        srv.conf.setdate(baseDate);
+        LocalDate baseDate = TimeUtil.convertDate(dt.parse(baseDateStr));
+        LocalDate futureDate = TimeUtil.convertDate(dt.parse(futureDateStr));
+        srv.conf.setdate(TimeUtil.convertDate(baseDate));
         //srv.getTestRecommender(true);
         srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);
         srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
@@ -384,7 +395,7 @@ public class ServiceUtil {
                 }
             }
         }
-        srv.conf.setdate(futureDate);
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
         srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> result = srv.getContent();
@@ -456,35 +467,139 @@ public class ServiceUtil {
     public static IclijServiceResult getContent() throws Exception {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        
+
         List<IncDecItem> listAll = IncDecItem.getAll();
-        List<List> lists = new ArrayList<>();
+        List<IclijServiceList> lists = new ArrayList<>();
         List<TradeMarket> markets = instance.getTradeMarkets();
         for (TradeMarket market : markets) {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, - market.getRecordage() );
-            Date olddate = cal.getTime();
+            LocalDate olddate = LocalDate.now().minusDays(market.getRecordage());
             listAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
             List<IncDecItem> currentIncDecs = listAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
             currentIncDecs = currentIncDecs.stream().filter(m -> market.getMarket().equals(m.getMarket())).collect(Collectors.toList());
             List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
-            // and a new list for common items
-            List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
-            List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
-            List<IncDecItem> listIncDec = listInc.stream().filter(m -> decIds.contains(m.getId())).collect(Collectors.toList());
-            List<IncDecItem> listDecInc = listDec.stream().filter(m -> incIds.contains(m.getId())).collect(Collectors.toList());
-            listInc.removeAll(listIncDec);
-            listDec.removeAll(listDecInc);
-            listIncDec.addAll(listDecInc);
-            lists.add(listInc);
-            lists.add(listDec);
-            if (!listIncDec.isEmpty()) {
-                lists.add(listIncDec);
-            }
+            List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+            List<IclijServiceList> subLists = getServiceList(market.getMarket(), listInc, listDec, listIncDec);
+            lists.addAll(subLists);
         }
         IclijServiceResult result = new IclijServiceResult();
         result.lists = lists;
+        return result;
+    }
+
+    private static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
+            List<IncDecItem> listIncDec) {
+        List<IclijServiceList> subLists = new ArrayList<>();
+        if (!listInc.isEmpty()) {
+            IclijServiceList inc = new IclijServiceList();
+            inc.setTitle(market + " " + "Increase");
+            inc.setList(listInc);
+            subLists.add(inc);
+        }
+        if (!listDec.isEmpty()) {
+            IclijServiceList dec = new IclijServiceList();
+            dec.setTitle(market + " " + "Decrease");
+            dec.setList(listDec);
+            subLists.add(dec);
+        }
+        if (!listIncDec.isEmpty()) {
+            IclijServiceList incDec = new IclijServiceList();
+            incDec.setTitle(market + " " + "Increase and decrease");
+            incDec.setList(listIncDec);
+            subLists.add(incDec);
+        }
+        return subLists;
+    }
+
+    private static List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec) {
+        // and a new list for common items
+        List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        List<IncDecItem> listIncDec = listInc.stream().filter(m -> decIds.contains(m.getId())).collect(Collectors.toList());
+        List<IncDecItem> listDecInc = listDec.stream().filter(m -> incIds.contains(m.getId())).collect(Collectors.toList());
+
+        listInc.removeAll(listIncDec);
+        listDec.removeAll(listDecInc);
+        listIncDec.addAll(listDecInc);
+        return listIncDec;
+    }
+
+    public static IclijServiceResult getVerify(VerifyConfig config) throws InterruptedException, ParseException {
+        IclijServiceResult result = new IclijServiceResult();
+        result.lists = new ArrayList<>();
+        List<IclijServiceList> retLists = result.lists;
+        String market = config.getMarket();
+        if (market == null) {
+            return result;
+        }
+        int days = config.getDays();
+        LocalDate date = config.getDate();
+        ControlService srv = new ControlService();
+        srv.getConfig();
+        srv.conf.setMarket(market);
+        List<String> stocks = srv.getDates(market);
+        int offset = 0;
+        if (date != null) {
+            String aDate = TimeUtil.convertDate2(date);
+            int index = stocks.indexOf(aDate);
+            if (index >= 0) {
+                offset = stocks.size() - index;
+            }
+        } else {
+            String aDate = stocks.get(stocks.size() - 1);
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            date = TimeUtil.convertDate(dt.parse(aDate));
+        }
+        log.info("Main date {} ", date);
+        UpdateDBAction updateDbAction = new UpdateDBAction();
+        boolean save = false;
+        Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(market, date, days + offset, save);
+        FindProfitAction findProfitAction = new FindProfitAction();
+        ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
+        List<MemoryItem> allMemoryItems = new ArrayList<>();
+        for (Action serviceAction : serviceActions) {
+            serviceAction.goal(null);
+            Map<String, Object> resultMap = serviceAction.getLocalResultMap();
+            List<MemoryItem> memoryItems = (List<MemoryItem>) resultMap.get(IclijPipelineConstants.MEMORY);
+            allMemoryItems.addAll(memoryItems);            
+        }
+        IclijServiceList memories = new IclijServiceList();
+        memories.setTitle("Memories");
+        memories.setList(allMemoryItems);
+        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, date, allMemoryItems);
+        List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
+        List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
+        List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+        List<IclijServiceList> subLists = getServiceList(market, listInc, listDec, listIncDec);
+        retLists.addAll(subLists);
+        if (false) {
+        Map<String, String> map = improveProfitAction.getImprovements(market, save, date, allMemoryItems);        
+        List<MapList> mapList = improveProfitAction.getList(map);
+        IclijServiceList resultMap = new IclijServiceList();
+        resultMap.setTitle("Improve Profit Info");
+        resultMap.setList(mapList);
+        retLists.add(resultMap);
+        }
+
+        LocalDate futureDate = date;
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
+        Component.disabler(srv.conf);
+        Map<String, Map<String, Object>> resultMaps = srv.getContent();
+        Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
+        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+
+        VerifyProfitAction verify = new VerifyProfitAction();
+        List<MapList> inc = verify.doVerify(listInc, days, true, categoryValueMap);
+        IclijServiceList incMap = new IclijServiceList();
+        incMap.setTitle("Increase verify");
+        incMap.setList(inc);
+        List<MapList> dec = verify.doVerify(listDec, days, false, categoryValueMap);
+        IclijServiceList decMap = new IclijServiceList();
+        incMap.setTitle("Decrease verify");
+        incMap.setList(dec);
+        retLists.add(incMap);
+        retLists.add(decMap);
         return result;
     }
 

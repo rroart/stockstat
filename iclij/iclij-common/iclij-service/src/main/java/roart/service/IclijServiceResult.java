@@ -10,5 +10,5 @@ public class IclijServiceResult {
     public Map<String, String> stocks;
     public Map<String, Map<String, Object>> maps;
     public String error;
-    public List<List> lists;
+    public List<IclijServiceList> lists;
 }
