@@ -1,9 +1,7 @@
 package roart.model;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import roart.util.TimeUtil;
@@ -23,7 +21,11 @@ public class IncDecItem {
 
     private Double score;
 
+    // not saved
     private Boolean verified;
+    
+    // not saved
+    private String verificationComment;
     
     public LocalDate getRecord() {
         return record;
@@ -89,9 +91,17 @@ public class IncDecItem {
         this.verified = verified;
     }
 
+    public String getVerificationComment() {
+        return verificationComment;
+    }
+
+    public void setVerificationComment(String verificationComment) {
+        this.verificationComment = verificationComment;
+    }
+
     @Override
     public String toString() {
-        return market + " " + record + " " + increase + " " + id + " " + name + " " + score + " " + description; 
+        return market + " " + record + " " + increase + " " + id + " " + name + " " + score + " " + description + " " + verified + " " + verificationComment; 
     }
     
     public void save() throws Exception {

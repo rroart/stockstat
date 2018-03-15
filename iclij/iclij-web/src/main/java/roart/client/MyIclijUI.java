@@ -607,6 +607,7 @@ public class MyIclijUI extends UI {
             table.addColumn(IncDecItem::getScore).setCaption("Score");
             table.addColumn(IncDecItem::getDescription).setCaption("Description");
             table.addColumn(IncDecItem::getVerified).setCaption("Verified");
+            table.addColumn(IncDecItem::getVerificationComment).setCaption("Comment");
             table.setWidth("90%");
             table.setItems(mylist);
             System.out.println("added");

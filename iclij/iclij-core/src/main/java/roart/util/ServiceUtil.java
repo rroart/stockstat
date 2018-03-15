@@ -551,6 +551,10 @@ public class ServiceUtil {
             date = TimeUtil.convertDate(dt.parse(aDate));
         }
         log.info("Main date {} ", date);
+        String aDate = stocks.get(stocks.size() - 1 - offset - days);
+        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+        LocalDate oldDate = TimeUtil.convertDate(dt.parse(aDate));
+        log.info("Old date {} ", oldDate);
         UpdateDBAction updateDbAction = new UpdateDBAction();
         boolean save = false;
         Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(market, date, days + offset, save);
@@ -590,11 +594,11 @@ public class ServiceUtil {
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
 
         VerifyProfitAction verify = new VerifyProfitAction();
-        List<MapList> inc = verify.doVerify(listInc, days, true, categoryValueMap);
+        List<MapList> inc = verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
         IclijServiceList incMap = new IclijServiceList();
         incMap.setTitle("Increase verify");
         incMap.setList(inc);
-        List<MapList> dec = verify.doVerify(listDec, days, false, categoryValueMap);
+        List<MapList> dec = verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
         IclijServiceList decMap = new IclijServiceList();
         incMap.setTitle("Decrease verify");
         incMap.setList(dec);
