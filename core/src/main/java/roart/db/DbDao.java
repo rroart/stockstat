@@ -40,10 +40,10 @@ public class DbDao {
 	}
 
 	public static DbAccess instance(MyMyConfig conf) {
-	    if (conf.wantDbSpark()) {
+	    if (false && conf.wantDbSpark()) {
 	        return DbSparkAccess.instance(conf);
 	    }
-        if (conf.wantDbHibernate()) {
+        if (true || conf.wantDbHibernate()) {
             return DbHibernateAccess.instance();
         }
         System.out.println("ret null");
