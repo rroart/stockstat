@@ -289,7 +289,7 @@ public class MyVaadinUI extends UI
     Map<String, Component> componentMap ;
     private void print(ConfigTreeMap map2, HorizontalLayout tab) {
         Map<String, Object> map = controlService.conf.configValueMap;
-        String name = map2.name;
+        String name = map2.getName();
         System.out.println("name " + name);
         Object object = map.get(name);
         Component o = null;
@@ -328,7 +328,7 @@ public class MyVaadinUI extends UI
         }
         //System.out.print(space.substring(0, indent));
         //System.out.println("map2 " + map2.name + " " + map2.enabled);
-        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         if (!map3.keySet().isEmpty()) {
             VerticalLayout h = new VerticalLayout();
             tab.addComponent(h);
@@ -1010,7 +1010,7 @@ public class MyVaadinUI extends UI
     }
      */
     private void displayResults() {
-        controlService.getContent();
+        controlService.getContent(this);
         /*
         log.info("listsize " + list.size());
         VerticalLayout layout = new VerticalLayout();
@@ -1832,6 +1832,9 @@ public class MyVaadinUI extends UI
             }
         }
         tab.addComponent(result);
+        tabsheet.addComponent(tab);
+        tabsheet.getTab(tab).setClosable(true);
+        Notification.show("New result available");
     }
 
     public void notify(String text) {
