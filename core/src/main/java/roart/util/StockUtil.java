@@ -141,6 +141,7 @@ public class StockUtil {
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             date = dt.format(datedate);                
         }
+        log.info("datemapsize {}", list.size());
         int index = getStockDate(list, date);
         if (index >= 0) {
             if (date == null) {

@@ -170,6 +170,9 @@ public class ControlService {
             Map<String, PeriodData> periodDataMap = getPerioddatamap(markets,
                     marketdatamap);
 
+            if (stocks.size() != marketdatamap.get(conf.getMarket()).stocks.size()) {
+                log.error("Sizes {} {}", stocks.size(), marketdatamap.get(conf.getMarket()).stocks.size());
+            }
             idNameMap = new HashMap<>();
             // sort based on date
             for (String key : stockidmap.keySet()) {
@@ -590,6 +593,7 @@ public class ControlService {
             String[] periodText = getPeriodText(market, conf);
             marketdata.periodtext = periodText;
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+            System.out.println("grr " + stockdatemap.keySet());
             // the main list, based on freshest or specific date.
 
             /*
@@ -706,6 +710,7 @@ public class ControlService {
         try {
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+            log.info("datemapsize {}", stockdatemap.size());
             if (conf.getdate() == null) {
                 getCurrentDate(conf, stockdatemap);
             }
@@ -715,6 +720,9 @@ public class ControlService {
             Map<String, PeriodData> periodDataMap = getPerioddatamap(markets,
                     marketdatamap);
 
+            if (stocks.size() != marketdatamap.get(conf.getMarket()).stocks.size()) {
+                log.error("Sizes {} {}", stocks.size(), marketdatamap.get(conf.getMarket()).stocks.size());
+            }
             idNameMap = new HashMap<>();
             // sort based on date
             for (Entry<String, List<StockItem>> entry : stockidmap.entrySet()) {
