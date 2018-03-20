@@ -4,6 +4,7 @@ import roart.model.GUISize;
 import roart.model.ResultItem;
 import roart.queue.Queues;
 import roart.thread.ClientRunner;
+import roart.client.MyVaadinUI;
 import roart.config.ConfigTreeMap;
 import roart.config.MyConfig;
 
@@ -18,6 +19,8 @@ import roart.util.EurekaUtil;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vaadin.ui.VerticalLayout;
 
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
@@ -52,8 +55,8 @@ public class ControlService {
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
         System.out.print(space.substring(0, indent));
-        System.out.println("map2 " + map2.name + " " + map2.enabled);
-        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        System.out.println("map2 " + map2.getName() + " " + map2.getEnabled());
+        Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         for (String key : map3.keySet()) {
         print(map3.get(key), indent + 1);
             //Object value = map.get(key);
@@ -83,11 +86,12 @@ public class ControlService {
      * @return the tabular result lists
      */
 
-    public void getContent() {
+    public void getContent(MyVaadinUI ui) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setWebpath(EurekaConstants.GETCONTENT);
-        Queues.clientQueue.add(param);
+        new CoreThread(ui, param).run();
+        //Queues.clientQueue.add(param);
         //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
 	/*
         for (Object o : (List)((List)result.list2)) {
@@ -191,4 +195,24 @@ public class ControlService {
         //log.info("starting client worker");                               
     }
 
+    class CoreThread extends Thread {
+        private ServiceParam param;
+        private MyVaadinUI ui;
+        
+        public CoreThread(MyVaadinUI ui, ServiceParam param) {
+            this.ui = ui;
+            this.param = param;
+        }
+        
+        @Override
+        public void run() {
+            ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), param.getWebpath());
+            ui.access(() -> {
+                VerticalLayout layout = new VerticalLayout();
+                layout.setCaption("Results");
+                ui.displayResultListsTab(layout, result.list);
+                ui.notify("New results");
+            });
+        }
+    }
 }
