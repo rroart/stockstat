@@ -323,7 +323,15 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNING);
     }
 
-    public  boolean wantMLSpark() {
+    public  boolean wantMLMP() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGMP);
+    }
+
+    public int getMLMPCpuFraction() {
+        return (Integer) getValueOrDefault(ConfigConstants.MACHINELEARNINGMPCPUFRACTION);
+    }
+
+   public  boolean wantMLSpark() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKML)
         && wantML();
     }
