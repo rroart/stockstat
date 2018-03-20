@@ -144,7 +144,7 @@ public class ImproveProfitAction extends Action {
     private List<Market> getMarkets(IclijConfig instance) {
         List<Market> markets = null;
         try { 
-            markets = instance.getMarkets();
+            markets = IclijXMLConfig.getMarkets(instance);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -166,7 +166,7 @@ public class ImproveProfitAction extends Action {
     private List<TradeMarket> getTradeMarkets(IclijConfig instance) {
         List<TradeMarket> markets = null;
         try { 
-            markets = instance.getTradeMarkets();
+            markets = IclijXMLConfig.getTradeMarkets(instance);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -2,6 +2,7 @@ package roart.service;
 
 import java.util.Set;
 
+import roart.config.IclijConfig;
 import roart.config.VerifyConfig;
 
 public class IclijServiceParam {
@@ -11,9 +12,11 @@ public class IclijServiceParam {
     
     private boolean wantMaps;
     
-    private VerifyConfig verifyConfig;
+    private IclijConfig iclijConfig;
+    
+    //private VerifyConfig verifyConfig;
 
-    private String webPath;
+    private String webpath;
     
     public Set<String> getIds() {
         return ids;
@@ -39,6 +42,7 @@ public class IclijServiceParam {
         this.wantMaps = wantMaps;
     }
 
+    /*
     public VerifyConfig getVerifyConfig() {
         return verifyConfig;
     }
@@ -46,13 +50,22 @@ public class IclijServiceParam {
     public void setVerifyConfig(VerifyConfig verifyConfig) {
         this.verifyConfig = verifyConfig;
     }
+*/
+    
+    public IclijConfig getIclijConfig() {
+        return iclijConfig;
+    }
+
+    public void setIclijConfig(IclijConfig iclijConfig) {
+        this.iclijConfig = iclijConfig;
+    }
 
     public String getWebpath() {
-        return webPath;
+        return webpath;
     }
 
     public void setWebpath(String webpath) {
-        this.webPath = webpath;
+        this.webpath = webpath;
     }
     
 }

@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.config.ConfigConstants;
+import roart.config.IclijConfig;
 import roart.config.MyMyConfig;
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
@@ -49,15 +50,15 @@ public class ComponentRecommender extends Component {
     @Override
     public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
-            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
+            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config) {
         // TODO Auto-generated method stub
         srv.getTestRecommender(true, new ArrayList<>());
         resultMaps = srv.getContent();
         String market = okListMap.values().iterator().next().get(0).getMarket();
-        findBuySellRecommendations(resultMaps, nameMap, market, buys, sells, okConfMap, okListMap);
+        findBuySellRecommendations(resultMaps, nameMap, market, buys, sells, okConfMap, okListMap, srv, config);
     }
 
-    private void findBuySellRecommendations(Map<String, Map<String, Object>> resultMaps, Map<String, String> nameMap, String market, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap) {
+    private void findBuySellRecommendations(Map<String, Map<String, Object>> resultMaps, Map<String, String> nameMap, String market, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, ControlService srv, IclijConfig config) {
         Object[] keys = new Object[2];
         keys[0] = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
         keys[1] = null;
@@ -94,12 +95,12 @@ public class ComponentRecommender extends Component {
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         int listSize = list0.size();
-        int recommend = 10;
+        int recommend = config.recommendTopBottom();
         if (listSize < recommend * 3) {
             return;
         }
         List<MyElement> topList = list0.subList(0, recommend);
-        List<MyElement> bottomList = list0.subList(listSize - 10, listSize);
+        List<MyElement> bottomList = list0.subList(listSize - recommend, listSize);
         Double max = list0.get(0).getValue();
         Double min = list0.get(listSize - 1).getValue();
         Double diff = max - min;

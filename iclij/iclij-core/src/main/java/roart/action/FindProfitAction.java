@@ -46,17 +46,18 @@ public class FindProfitAction extends Action {
 
         // find recommended picks
 
+        IclijConfig config = IclijXMLConfig.getConfigInstance();
         boolean save = true;
         List<TradeMarket> markets = getMarkets();
         for (TradeMarket market : markets) {
             LocalDate olddate = LocalDate.now();        
             olddate = olddate.minusDays(market.getRecordage());
             List<MemoryItem> marketMemory = getMarketMemory(market.getMarket());
-            getPicks(market, save, olddate, marketMemory);
+            getPicks(market, save, olddate, marketMemory, config);
         }
     }
 
-    public Map<String, IncDecItem>[] getPicks(String market, boolean save, LocalDate date, List<MemoryItem> memoryItems) {
+    public Map<String, IncDecItem>[] getPicks(String market, boolean save, LocalDate date, List<MemoryItem> memoryItems, IclijConfig config) {
         List<TradeMarket> markets = getMarkets();
         TradeMarket foundTradeMarket = null;
         // TODO check if two markets
@@ -74,10 +75,10 @@ public class FindProfitAction extends Action {
             buysell[1] = sells;
             return buysell;
         }
-        return getPicks(foundTradeMarket, save, date, memoryItems);
+        return getPicks(foundTradeMarket, save, date, memoryItems, config);
     }
     
-    private Map<String, IncDecItem>[] getPicks(TradeMarket market, boolean save, LocalDate olddate, List<MemoryItem> marketMemory) {
+    private Map<String, IncDecItem>[] getPicks(TradeMarket market, boolean save, LocalDate olddate, List<MemoryItem> marketMemory, IclijConfig config) {
         Map<String, IncDecItem>[] buysell = new Map[2];
         if (marketMemory == null) {
             return buysell;
@@ -104,7 +105,7 @@ public class FindProfitAction extends Action {
         Map<String, Map<String, Object>> result0 = srv.getContent();
         Map<String, Map<String, Object>> maps = result0;
         Map<String, String> nameMap = getNameMap(maps);
-        handleComponent(okListMap, okConfMap, listComponent, srv, componentMap, buys, sells, maps, nameMap);
+        handleComponent(okListMap, okConfMap, listComponent, srv, componentMap, buys, sells, maps, nameMap, config);
         String category = market.getInccategory();
         Double threshold = market.getIncthreshold();
         Map<String, Object> categoryMap = maps.get(category);
@@ -190,14 +191,14 @@ public class FindProfitAction extends Action {
     private void handleComponent(Map<Object[], List<MemoryItem>> okListMap, Map<Object[], Double> okConfMap,
             Map<String, List<Integer>> listComponent, ControlService srv, Map<String, Component> componentMap,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<String, Map<String, Object>> maps,
-            Map<String, String> nameMap) {
+            Map<String, String> nameMap, IclijConfig config) {
         for (Entry<String, List<Integer>> entry : listComponent.entrySet()) {
             List<Integer> positions = entry.getValue();
             String componentName = entry.getKey();
             Component component = componentMap.get(componentName);
             Component.disabler(srv.conf);
             component.enable(srv.conf);
-            component.handle(srv, srv.conf, maps, positions, buys, sells, okConfMap, okListMap, nameMap);
+            component.handle(srv, srv.conf, maps, positions, buys, sells, okConfMap, okListMap, nameMap, config);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           
         }
@@ -261,7 +262,7 @@ public class FindProfitAction extends Action {
         //instance.
         List<TradeMarket> markets = null;
         try { 
-            markets = instance.getTradeMarkets();
+            markets = IclijXMLConfig.getTradeMarkets(instance);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

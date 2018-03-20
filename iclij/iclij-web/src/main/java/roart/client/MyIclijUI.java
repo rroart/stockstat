@@ -2,7 +2,9 @@ package roart.client;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,6 +27,7 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
@@ -39,6 +42,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import roart.config.ConfigTreeMap;
 import roart.model.IncDecItem;
 import roart.model.MapList;
 import roart.model.MemoryItem;
@@ -77,7 +81,7 @@ public class MyIclijUI extends UI {
         EurekaUtil.initEurekaClient();
 
         controlService = new IclijWebControlService();
-        //controlService.getConfig();
+        controlService.getConfig();
         final VerticalLayout layout = new VerticalLayout();
 
         VerticalLayout searchTab;
@@ -133,6 +137,7 @@ public class MyIclijUI extends UI {
     public static class MyUIServlet extends VaadinServlet {
     }
     
+    /*
     private TextField getDays() {
         TextField tf = new TextField("Verify days");
         tf.setValue("" + controlService.getVerifyConfig().getDays());
@@ -156,7 +161,8 @@ public class MyIclijUI extends UI {
         //tf.setImmediate(true);
         return tf;
     }
-
+*/
+    
     private Button getVerify() {
         Button button = new Button("Get verification data");
         button.addClickListener(new Button.ClickListener() {
@@ -214,7 +220,7 @@ public class MyIclijUI extends UI {
                 String value = values.iterator().next();
                 // Do something with the value                              
                 try {
-                    controlService.getVerifyConfig().setMarket(value);
+                    controlService.getIclijConf().setMarket(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -255,9 +261,9 @@ public class MyIclijUI extends UI {
         horDb.setHeight("20%");
         horDb.setWidth("60%");
         HorizontalLayout horTree = new HorizontalLayout();
-        //ConfigTreeMap map2 = controlService.conf.configTreeMap;
-        //componentMap = new HashMap<>();
-        //print(map2, horTree);
+        ConfigTreeMap map2 = controlService.getIclijConf().getConfigTreeMap();
+        componentMap = new HashMap<>();
+        print(map2, horTree);
 
         tab.addComponent(horMisc);
         //tab.addComponent(horMACD);
@@ -267,15 +273,15 @@ public class MyIclijUI extends UI {
         tab.addComponent(horTree);
         return tab;
     }
-/*
+
     Map<String, Component> componentMap ;
     private void print(ConfigTreeMap map2, HorizontalLayout tab) {
-        Map<String, Object> map = controlService.conf.configValueMap;
-        String name = map2.name;
+        Map<String, Object> map = controlService.getIclijConf().getConfigValueMap();
+        String name = map2.getName();
         System.out.println("name " + name);
         Object object = map.get(name);
         Component o = null;
-        String text = controlService.conf.text.get(name);
+        String text = controlService.getIclijConf().getText().get(name);
         if (object == null) {
             //System.out.println("null for " + name);
             String labelname = name;
@@ -310,7 +316,7 @@ public class MyIclijUI extends UI {
         }
         //System.out.print(space.substring(0, indent));
         //System.out.println("map2 " + map2.name + " " + map2.enabled);
-        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         if (!map3.keySet().isEmpty()) {
             VerticalLayout h = new VerticalLayout();
             tab.addComponent(h);
@@ -332,7 +338,7 @@ public class MyIclijUI extends UI {
             }
         }
     }
-*/
+
     private VerticalLayout getConfigTab() {
         boolean isProductionMode = VaadinService.getCurrent()
                 .getDeploymentConfiguration().isProductionMode();
@@ -364,7 +370,7 @@ public class MyIclijUI extends UI {
         horStat.setWidth("90%");
         horStat.addComponent(getDate());
         horStat.addComponent(getResetDate());
-        horStat.addComponent(getDays());
+        //horStat.addComponent(getDays());
         horStat.addComponent(getVerify());
         horStat.addComponent(getMarket());
         horStat.addComponent(getMarkets());
@@ -452,7 +458,7 @@ public class MyIclijUI extends UI {
     }
     private void displayResults() {
         //System.out.println("h0");
-        controlService.getContent();
+        controlService.getContent(this);
         //System.out.println("h1");
         /*
         log.info("listsize " + list.size());
@@ -468,7 +474,7 @@ public class MyIclijUI extends UI {
     }
 
     private void displayVerify() {
-        controlService.getVerify();
+        controlService.getVerify(this);
         /*
         log.info("listsize {}", list.size());
         VerticalLayout layout = new VerticalLayout();
@@ -646,7 +652,7 @@ public class MyIclijUI extends UI {
                 // Assuming that the value type is a String                 
                 LocalDate date = (LocalDate) event.getValue();
                 try {
-                    controlService.getVerifyConfig().setDate(date);
+                    controlService.getIclijConf().setDate(date);
                     Notification.show("Request sent");
                     //displayResults();
                 } catch (Exception e) {
@@ -664,7 +670,7 @@ public class MyIclijUI extends UI {
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {
-                    controlService.getVerifyConfig().setDate(null);
+                    controlService.getIclijConf().setDate(null);
                     Notification.show("Request sent");
                     //displayResults();
                 } catch (Exception e) {
@@ -702,7 +708,7 @@ public class MyIclijUI extends UI {
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value                              
                 try {
-                    controlService.conf.setMarket(value);
+                    controlService.getConf().setMarket(value);
                     Notification.show("Request sent");
                     //displayResults();
                 } catch (Exception e) {
@@ -716,5 +722,100 @@ public class MyIclijUI extends UI {
     }
 
 */
+    private CheckBox getCheckbox(String text, String configKey) {
+        CheckBox cb = new CheckBox(text);
+        Boolean origValue = (Boolean) controlService.getIclijConf().getConfigValueMap().get(configKey);
+        cb.setValue(origValue);
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new HasValue.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getValue();
+                // Do something with the value
+                try {
+                    controlService.getIclijConf().getConfigValueMap().put(configKey, value );
+                    // TODO handle hiding
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //cb.setImmediate(true);
+        return cb;
+    }
+
+    private TextField getStringField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        tf.setSizeFull();
+        String origValue = (String) controlService.getIclijConf().getConfigValueMap().get(configKey);
+
+        tf.setValue(origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new HasValue.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getValue();
+                // Do something with the value
+                try {
+                    controlService.getIclijConf().getConfigValueMap().put(configKey, value );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //tf.setImmediate(true);
+        return tf;
+    }
+
+    private TextField getIntegerField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        Integer origValue = (Integer) controlService.getIclijConf().getConfigValueMap().get(configKey);
+
+        tf.setValue("" + origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new HasValue.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getValue();
+                // Do something with the value
+                try {
+                    controlService.getIclijConf().getConfigValueMap().put(configKey, new Integer(value) );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //tf.setImmediate(true);
+        return tf;
+    }
+    private TextField getDoubleField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        Double origValue = (Double) controlService.getIclijConf().getConfigValueMap().get(configKey);
+
+        tf.setValue("" + origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new HasValue.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getValue();
+                // Do something with the value
+                try {
+                    controlService.getIclijConf().getConfigValueMap().put(configKey, new Double(value) );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //tf.setImmediate(true);
+        return tf;
+    }
 
 }

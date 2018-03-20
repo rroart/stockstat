@@ -53,7 +53,7 @@ public class ControlService {
         String space = "      ";
         //System.out.print(space.substring(0, indent));
         //System.out.println("map2 " + map2.name + " " + map2.enabled);
-        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         for (String key : map3.keySet()) {
         print(map3.get(key), indent + 1);
             //Object value = map.get(key);

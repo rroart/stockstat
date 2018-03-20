@@ -5,7 +5,9 @@ import roart.model.IncDecItem;
 import roart.model.ResultItem;
 import roart.queue.IclijQueues;
 import roart.thread.ClientRunner;
+import roart.client.MyIclijUI;
 import roart.config.ConfigTreeMap;
+import roart.config.IclijConfig;
 import roart.config.MyConfig;
 import roart.config.VerifyConfig;
 
@@ -23,12 +25,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 
 public class IclijWebControlService {
     private static Logger log = LoggerFactory.getLogger(IclijWebControlService.class);
 
-    public MyConfig conf;
+    private MyConfig conf;
+ 
+    private IclijConfig iclijConf;
     
+    public IclijWebControlService() {
+        //conf = MyXMLConfig.configInstance();
+        //getConfig();
+        //verifyConfig = new VerifyConfig();
+        startThreads();
+        UI ui = com.vaadin.ui.UI.getCurrent();
+        // temp hack :(
+        ClientRunner.uiset.clear();
+        ClientRunner.uiset.put(ui, "");
+    }
+  
+    /*
     private VerifyConfig verifyConfig;
     
     public VerifyConfig getVerifyConfig() {
@@ -38,24 +55,30 @@ public class IclijWebControlService {
     public void setVerifyConfig(VerifyConfig verifyConfig) {
         this.verifyConfig = verifyConfig;
     }
-
-    public IclijWebControlService() {
-    	//conf = MyXMLConfig.configInstance();
-    	//getConfig();
-        verifyConfig = new VerifyConfig();
-        startThreads();
-        UI ui = com.vaadin.ui.UI.getCurrent();
-        // temp hack :(
-        ClientRunner.uiset.clear();
-        ClientRunner.uiset.put(ui, "");
+*/
+    
+    public MyConfig getConf() {
+        return conf;
     }
-  
+
+    public void setConf(MyConfig conf) {
+        this.conf = conf;
+    }
+
+    public IclijConfig getIclijConf() {
+        return iclijConf;
+    }
+
+    public void setIclijConf(IclijConfig iclijConf) {
+        this.iclijConf = iclijConf;
+    }
+
     public void getConfig() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
-        conf = result.config;
-        Map<String, Object> map = conf.configValueMap;
+        IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
+        iclijConf = result.getIclijConfig();
+        Map<String, Object> map = iclijConf.getConfigValueMap();
         for (Entry<String, Object> entry : map.entrySet()) {
             Object value = entry.getValue();
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
@@ -64,7 +87,7 @@ public class IclijWebControlService {
                 System.out.println("cls " + value.getClass().getName());
             }
         }
-        ConfigTreeMap map2 = conf.configTreeMap;
+        ConfigTreeMap map2 = iclijConf.getConfigTreeMap();
         print(map2, 0);
        
     }
@@ -72,8 +95,8 @@ public class IclijWebControlService {
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
         System.out.print(space.substring(0, indent));
-        System.out.println("map2 " + map2.name + " " + map2.enabled);
-        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        System.out.println("map2 " + map2.getName() + " " + map2.getEnabled());
+        Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         for (String key : map3.keySet()) {
         print(map3.get(key), indent + 1);
             //Object value = map.get(key);
@@ -103,11 +126,12 @@ public class IclijWebControlService {
      * @return the tabular result lists
      */
 
-    public void getContent() {
+    public void getContent(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         //param.setConfig(conf);
         param.setWebpath(EurekaConstants.GETCONTENT);
-        IclijQueues.clientQueue.add(param);
+        new IclijThread(ui, param).run();
+        //IclijQueues.clientQueue.add(param);
         //IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
 	/*
         for (Object o : (List)((List)result.list2)) {
@@ -128,11 +152,13 @@ public class IclijWebControlService {
      * @return the tabular result lists
      */
 
-    public void getVerify() {
+    public void getVerify(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        param.setVerifyConfig(verifyConfig);
+        //param.setVerifyConfig(verifyConfig);
+        param.setIclijConfig(getIclijConf());
         param.setWebpath(EurekaConstants.GETVERIFY);
-        IclijQueues.clientQueue.add(param);
+        new IclijThread(ui, param).run();
+        //IclijQueues.clientQueue.add(param);
         //IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), EurekaConstants.GETVERIFY);
         /*
         for (Object o : (List)((List)result.list2)) {
@@ -235,4 +261,24 @@ public class IclijWebControlService {
         //log.info("starting client worker");                               
     }
 
+    class IclijThread extends Thread {
+        private IclijServiceParam param;
+        private MyIclijUI ui;
+        
+        public IclijThread(MyIclijUI ui, IclijServiceParam param) {
+            this.ui = ui;
+            this.param = param;
+        }
+        
+        @Override
+        public void run() {
+            IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), param.getWebpath());
+            ui.access(() -> {
+                VerticalLayout layout = new VerticalLayout();
+                layout.setCaption("Results");
+                ui.displayResultListsTab(layout, result.getLists());
+                ui.notify("New results");
+            });
+        }
+    }
 }

@@ -28,12 +28,20 @@ public class UpdateDBAction extends Action {
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    private List<String> getComponents() {
+    private List<String> getComponents(IclijConfig config) {
         List<String> components = new ArrayList<>();
-        components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        //components.add(PipelineConstants.PREDICTORSLSTM);
-        components.add(PipelineConstants.MLMACD);
-        components.add(PipelineConstants.MLINDICATOR);
+        if (config.wantsRecommender()) {
+            components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        }
+        if (config.wantsPredictor()) {
+            components.add(PipelineConstants.PREDICTORSLSTM);
+        }
+        if (config.wantsMLIndicator()) {
+            components.add(PipelineConstants.MLMACD);
+        }
+        if (config.wantsMLIndicator()) {
+            components.add(PipelineConstants.MLINDICATOR);
+        }
         return components;
     }
 
@@ -52,7 +60,7 @@ public class UpdateDBAction extends Action {
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         List<Market> markets = null;
         try { 
-            markets = instance.getMarkets();
+            markets = IclijXMLConfig.getMarkets(instance);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -74,6 +82,7 @@ public class UpdateDBAction extends Action {
     }
 
     private List<MemoryItem> findMarketComponentsToCheck(List<Market> markets) {
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
         List<MemoryItem> toCheck = new ArrayList<>();
         for (Market market : markets) {
             List<MemoryItem> marketMemory = null;
@@ -86,7 +95,7 @@ public class UpdateDBAction extends Action {
                 log.error("Marketmemory null for {}", market.getMarket());
                 continue;
             }
-            for (String component : getComponents()) {
+            for (String component : getComponents(instance)) {
                 List<MemoryItem> marketComponents = marketMemory.stream().filter(m -> component.equals(m.getComponent())).collect(Collectors.toList());
                 Collections.sort(marketComponents, (o1, o2) -> (o2.getRecord().compareTo(o1.getRecord())));
                 MemoryItem last = marketComponents.get(0);
@@ -105,14 +114,14 @@ public class UpdateDBAction extends Action {
         return toCheck;
     }
 
-    public Queue<Action> findAllMarketComponentsToCheck(String marketName, LocalDate date, int days, boolean save) {
+    public Queue<Action> findAllMarketComponentsToCheck(String marketName, LocalDate date, int days, boolean save, IclijConfig config) {
         List<Market> markets = getMarkets();
         Queue<Action> goals = new LinkedList<>();
         for (Market market : markets) {
             if (!market.getMarket().equals(marketName)) {
                 continue;
             }
-            for (String component : getComponents()) {
+            for (String component : getComponents(config)) {
                 ServiceAction serviceAction = new ComponentFactory().factory(market.getMarket(), component);
                 if (serviceAction != null) {
                     serviceAction.setDate(date);

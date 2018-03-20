@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.config.ConfigConstants;
+import roart.config.IclijConfig;
 import roart.config.MyMyConfig;
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
@@ -33,7 +34,7 @@ public class ComponentPredictor extends Component {
     @Override
     public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
-            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
+            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config) {
         log.info("Component not impl {}", this.getClass().getName());
     }
     

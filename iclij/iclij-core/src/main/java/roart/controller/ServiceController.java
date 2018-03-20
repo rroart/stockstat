@@ -52,6 +52,13 @@ public class ServiceController {
         return instance;
     }
 
+    @RequestMapping(value = "/" + EurekaConstants.GETCONFIG,
+            method = RequestMethod.POST)
+    public IclijServiceResult getConfig(/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getConfig();
+    }
+
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENT,
             method = RequestMethod.POST)
     public IclijServiceResult getContent(/*@PathVariable String market*/)
@@ -63,7 +70,7 @@ public class ServiceController {
             method = RequestMethod.POST)
     public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)
             throws Exception {
-        return ServiceUtil.getVerify(param.getVerifyConfig());
+        return ServiceUtil.getVerify(param.getIclijConfig());
     }
 
     @RequestMapping(value = "/recommender/{market}",

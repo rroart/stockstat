@@ -464,13 +464,23 @@ public class ServiceUtil {
         }
         return cat;
     }
+    
+    public static IclijServiceResult getConfig() throws Exception {
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        IclijServiceResult result = new IclijServiceResult();
+        result.setIclijConfig(instance);
+        return result;
+    }
+    
     public static IclijServiceResult getContent() throws Exception {
+        IclijXMLConfig i = new IclijXMLConfig();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IncDecItem> listAll = IncDecItem.getAll();
         List<IclijServiceList> lists = new ArrayList<>();
-        List<TradeMarket> markets = instance.getTradeMarkets();
+        List<TradeMarket> markets = conf.getTradeMarkets(instance);
         for (TradeMarket market : markets) {
             LocalDate olddate = LocalDate.now().minusDays(market.getRecordage());
             listAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
@@ -483,7 +493,7 @@ public class ServiceUtil {
             lists.addAll(subLists);
         }
         IclijServiceResult result = new IclijServiceResult();
-        result.lists = lists;
+        result.setLists(lists);
         return result;
     }
 
@@ -524,15 +534,15 @@ public class ServiceUtil {
         return listIncDec;
     }
 
-    public static IclijServiceResult getVerify(VerifyConfig config) throws InterruptedException, ParseException {
+    public static IclijServiceResult getVerify(IclijConfig config) throws InterruptedException, ParseException {
         IclijServiceResult result = new IclijServiceResult();
-        result.lists = new ArrayList<>();
-        List<IclijServiceList> retLists = result.lists;
+        result.setLists(new ArrayList<>());
+        List<IclijServiceList> retLists = result.getLists();
         String market = config.getMarket();
         if (market == null) {
             return result;
         }
-        int days = config.getDays();
+        int days = config.verificationDays();
         LocalDate date = config.getDate();
         ControlService srv = new ControlService();
         srv.getConfig();
@@ -557,7 +567,7 @@ public class ServiceUtil {
         log.info("Old date {} ", oldDate);
         UpdateDBAction updateDbAction = new UpdateDBAction();
         boolean save = false;
-        Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(market, date, days + offset, save);
+        Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(market, date, days + offset, save, config);
         FindProfitAction findProfitAction = new FindProfitAction();
         ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
         List<MemoryItem> allMemoryItems = new ArrayList<>();
@@ -570,7 +580,7 @@ public class ServiceUtil {
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
         memories.setList(allMemoryItems);
-        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, date, allMemoryItems);
+        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, date, allMemoryItems, config);
         List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
         List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
@@ -604,6 +614,7 @@ public class ServiceUtil {
         incMap.setList(dec);
         retLists.add(incMap);
         retLists.add(decMap);
+        retLists.add(memories);
         return result;
     }
 

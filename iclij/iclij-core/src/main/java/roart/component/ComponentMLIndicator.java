@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.config.ConfigConstants;
+import roart.config.IclijConfig;
 import roart.config.MyMyConfig;
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
@@ -43,8 +44,7 @@ public class ComponentMLIndicator extends Component {
     @Override
     public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
-            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
-        // TODO Auto-generated method stub
+            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config) {
         resultMaps = srv.getContent();
         Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLINDICATOR);
         //System.out.println("mlm " + mlMACDMaps.keySet());

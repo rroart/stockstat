@@ -12,7 +12,7 @@ public class VerifyConfig {
 
     private String market;
 
-    private Integer days = 10;
+    //private Integer days = 10;
 
     public void setDate(LocalDate date) {
         this.date = date;
@@ -30,6 +30,7 @@ public class VerifyConfig {
         return market;
     }
 
+    /*
     public Integer getDays() {
         return days;
     }
@@ -37,5 +38,5 @@ public class VerifyConfig {
     public void setDays(Integer mydays) {
         this.days = mydays;
     }
-
+*/
 }
