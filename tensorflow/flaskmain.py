@@ -22,6 +22,10 @@ def do_classify():
 def do_learntest():
     return cl.do_learntest(request)
 
+@app.route('/learntestclassify', methods=['POST'])
+def do_learntestclassify():
+    return cl.do_learntestclassify(request)
+
 @app.route('/predictone', methods=['POST'])
 def do_learntestpredict():
     return pr.do_learntest(request)

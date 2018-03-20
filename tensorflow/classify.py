@@ -27,16 +27,24 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         print("geteval" + str(myobj.modelInt) + myobj.period + myobj.mapname)
         accuracy_score = dicteval[str(myobj.modelInt) + myobj.period + myobj.mapname]
-        return Response(json.dumps({"prob": accuracy_score}), mimetype='application/json')
+        return Response(json.dumps({"accuracy": accuracy_score}), mimetype='application/json')
 
     def do_classify(self, request):
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
-        array = np.array(myobj.array, dtype='f')
         global dictclass
         classifier = dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname]
+        intlist = self.do_classifyinner(myobj, classifier)
+        print(len(intlist))
+        print(intlist)
+        dt = datetime.now()
+        print ("millis ", (dt.timestamp() - timestamp)*1000)
+        return Response(json.dumps({"classifycatarray": intlist}), mimetype='application/json')
+        
+    def do_classifyinner(self, myobj, classifier):
+        array = np.array(myobj.classifyarray, dtype='f')
         def get_classifier_inputs():
             x = tf.constant(array)
             return x
@@ -47,20 +55,27 @@ class Classify:
             # NOTE changing prediction back again. see other NOTE
             prediction = int(prediction + 1)
             intlist.append(prediction)
-            
-        print(len(intlist))
-        print(intlist)
-        dt = datetime.now()
-        print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return Response(json.dumps({"cat": intlist}), mimetype='application/json')
+        return intlist
 
     def do_learntest(self, request):
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
-        array = np.array(myobj.array, dtype='f')
-        cat = np.array(myobj.cat, dtype='i')
+        (classifier, accuracy_score) = self.do_learntestinner(myobj)
+        global dictclass
+        dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname] = classifier
+        global dicteval
+        dicteval[str(myobj.modelInt) + myobj.period + myobj.mapname] = float(accuracy_score)
+        print("seteval" + str(myobj.modelInt) + myobj.period + myobj.mapname)
+        
+        dt = datetime.now()
+        print ("millis ", (dt.timestamp() - timestamp)*1000)
+        return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
+
+    def do_learntestinner(self, myobj):
+        array = np.array(myobj.trainingarray, dtype='f')
+        cat = np.array(myobj.trainingcatarray, dtype='i')
         # NOTE class range 1 - 4 will be changed to 0 - 3
         # to avoid risk of being classified as 0 later
         cat = cat - 1
@@ -93,8 +108,6 @@ class Classify:
                 classifier = tf.contrib.learn.LinearClassifier(
                     feature_columns=feature_columns,
                     model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
-        global dictclass
-        dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname] = classifier
         def get_train_inputs():
             x = tf.constant(train)
             y = tf.constant(traincat)
@@ -110,11 +123,17 @@ class Classify:
         accuracy_score = classifier.evaluate(input_fn = get_test_inputs, steps=1)["accuracy"]
 
         print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
-        global dicteval
-        dicteval[str(myobj.modelInt) + myobj.period + myobj.mapname] = float(accuracy_score)
-        print("seteval" + str(myobj.modelInt) + myobj.period + myobj.mapname)
-        
+        return classifier, accuracy_score
+    
+    def do_learntestclassify(self, request):
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        #print(request.get_data(as_text=True))
+        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        (classifier, accuracy_score) = self.do_learntestinner(myobj)
+        intlist = self.do_classifyinner(myobj, classifier)
+        print(len(intlist))
+        print(intlist)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return Response(json.dumps({"prob": float(accuracy_score)}), mimetype='application/json')
-    
+        return Response(json.dumps({"classifycatarray": intlist, "accuracy": float(accuracy_score)}), mimetype='application/json')
