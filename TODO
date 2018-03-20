@@ -67,3 +67,9 @@ GUI choice for do improveprofitaction
 Implement clientqueue
 Iclji gui ui temp hack remove
 Iclij w/ ml time stats
+Subclass incdecitem instead of having non-saved
+Spark truncates getAll?
+Thread/multitask change
+Vaadin threads
+Cleanup recommender buy/sell duality
+For ose etc, new cy/1m calc

@@ -178,6 +178,28 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  </row>
 	  <row>
 	    <entry>
+	      machinelearning.mp
+	    </entry>
+	    <entry>
+	      Enable multi-threading in machinelearning part
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      machinelearning.mp.cpufraction
+	    </entry>
+	    <entry>
+	      The number of multi-processes, number is total cpu count (with hyperthreading) / cpufraction.
+	    </entry>
+	    <entry>
+	      4 (constant, is not yet settable)
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
 	      machinelearning.sparkml
 	    </entry>
 	    <entry>
@@ -2659,5 +2681,11 @@ indicators.macd.daysafterzero
       </tgroup>
     </table>
  </para>
+</chapter>
+<chapter>
+  <title>NOTES</title>
+  <para>
+    The Db Spark backend has been temporarily disabled due to truncation bug?
+  </para>
 </chapter>
 </book>
