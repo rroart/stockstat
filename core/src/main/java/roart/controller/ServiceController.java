@@ -24,6 +24,7 @@ import roart.config.MyXMLConfig;
 import roart.db.DbDao;
 import roart.model.GUISize;
 import roart.model.ResultItem;
+import roart.queue.MyExecutors;
 import roart.service.ControlService;
 import roart.service.ServiceParam;
 import roart.service.ServiceResult;
@@ -223,6 +224,7 @@ public class ServiceController {
 	public static void main(String[] args) throws Exception {
 	    //DbDao.instance("hibernate");
         //DbDao.instance("spark");
+	    MyExecutors.init();
 		SpringApplication.run(ServiceController.class, args);
 	}
 
