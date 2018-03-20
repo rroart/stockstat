@@ -12,6 +12,8 @@ public class ConfigConstants {
     public static final String DATABASESPARKSPARKMASTER = "database.spark.sparkmaster";
     public static final String DATABASEHIBERNATE = "database.hibernate[@enable]";
     public static final String MACHINELEARNING = "machinelearning[@enable]";
+    public static final String MACHINELEARNINGMP = "machinelearning.mp[@enable]";
+    public static final String MACHINELEARNINGMPCPUFRACTION = "machinelearning.mp.cpufraction";
     public static final String MACHINELEARNINGSPARKML = "machinelearning.sparkml[@enable]";
     public static final String MACHINELEARNINGSPARMMLSPARKMASTER = "machinelearning.sparkml.sparkmaster";
     public static final String MACHINELEARNINGSPARKMLMCP = "machinelearning.sparkml.mcp[@enable]";
