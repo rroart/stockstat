@@ -90,7 +90,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setWebpath(EurekaConstants.GETCONTENT);
-        new CoreThread(ui, param).run();
+        new CoreThread(ui, param).start();
         //Queues.clientQueue.add(param);
         //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
 	/*

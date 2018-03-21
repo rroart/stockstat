@@ -130,7 +130,7 @@ public class IclijWebControlService {
         IclijServiceParam param = new IclijServiceParam();
         //param.setConfig(conf);
         param.setWebpath(EurekaConstants.GETCONTENT);
-        new IclijThread(ui, param).run();
+        new IclijThread(ui, param).start();
         //IclijQueues.clientQueue.add(param);
         //IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
 	/*
@@ -157,7 +157,7 @@ public class IclijWebControlService {
         //param.setVerifyConfig(verifyConfig);
         param.setIclijConfig(getIclijConf());
         param.setWebpath(EurekaConstants.GETVERIFY);
-        new IclijThread(ui, param).run();
+        new IclijThread(ui, param).start();
         //IclijQueues.clientQueue.add(param);
         //IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), EurekaConstants.GETVERIFY);
         /*
