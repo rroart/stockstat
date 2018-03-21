@@ -398,17 +398,17 @@ public class MLMACD extends Aggregator {
                             Callable callable = new MLClassifyLearnTestPredictCallable(mldao, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime, map2, labelMapShort);  
                             Future<LearnTestClassifyResult> future = MyExecutors.run(callable);
                             futureList.add(future);
-                            futureMap.put(future, new FutureMap(subType, model, mapType));
+                            futureMap.put(future, new FutureMap(subType, model, mapType, resultMetaArray.size() - 1));
                         }
                     }
                 }
             }
-            int testCount = 0;
             for (Future<LearnTestClassifyResult> future: futureList) {
                 FutureMap futMap = futureMap.get(future);
                 MacdSubType subType = futMap.getSubType();
                 MLClassifyModel model = futMap.getModel();
                 String mapType = futMap.getMapType();
+                int testCount = futMap.getTestCount();
                 LearnTestClassifyResult result = future.get();
                 Map<String, Double[]> classifyResult = result.getCatMap();
                 Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
@@ -426,7 +426,6 @@ public class MLMACD extends Aggregator {
                 addEventRow(subType, countMap2);
                 Map<String, double[]> offsetMap = mapIdMap.get(subType.getType());
                 handleResultMeta(testCount, offsetMap, countMap2);
-                testCount++;
             }
         } catch (Exception e) {
             log.error("Exception", e);
@@ -553,6 +552,9 @@ public class MLMACD extends Aggregator {
                 }
             }
             //System.out.println("ri" + retindex);
+            if (retindex != fieldSize) {
+                int jj = 0;
+            }
         }
     }
 
@@ -1045,11 +1047,14 @@ public class MLMACD extends Aggregator {
 
         private String mapType;
 
-        public FutureMap(MacdSubType subType, MLClassifyModel model, String mapType) {
+        private int testCount;
+        
+        public FutureMap(MacdSubType subType, MLClassifyModel model, String mapType, int testCount) {
             super();
             this.subType = subType;
             this.model = model;
             this.mapType = mapType;
+            this.testCount = testCount;
         }
 
         public MacdSubType getSubType() {
@@ -1074,6 +1079,14 @@ public class MLMACD extends Aggregator {
 
         public void setMapType(String mapType) {
             this.mapType = mapType;
+        }
+
+        public int getTestCount() {
+            return testCount;
+        }
+
+        public void setTestCount(int testCount) {
+            this.testCount = testCount;
         }
 
     }

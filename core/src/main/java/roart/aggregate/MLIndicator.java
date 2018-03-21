@@ -368,14 +368,14 @@ public class MLIndicator extends Aggregator {
                     Callable callable = new MLClassifyLearnTestPredictCallable(mldao, this, map1, model, arrayLength, key, MYTITLE, 4, mapTime, map, labelMapShort);  
                     Future<LearnTestClassifyResult> future = MyExecutors.run(callable);
                     futureList.add(future);
-                    futureMap.put(future, new FutureMap(mldao, model));
+                    futureMap.put(future, new FutureMap(mldao, model, resultMetaArray.size() - 1));
                 }
             }
-            int testCount = 0;
             for (Future<LearnTestClassifyResult> future: futureList) {
                 FutureMap futMap = futureMap.get(future);
                 MLClassifyDao mldao = futMap.getDao();
                 MLClassifyModel model = futMap.getModel();
+                int testCount = futMap.getTestCount();
                 LearnTestClassifyResult result = future.get();
                 Map<String, Double[]> classifyResult = result.getCatMap();
                 probabilityMap.put(mldao.getName(), result.getAccuracy());
@@ -383,7 +383,6 @@ public class MLIndicator extends Aggregator {
                 ResultMeta resultMeta = getResultMetas().get(testCount);
                 meta[4] = result.getAccuracy();
                 resultMeta.setTestAccuracy(result.getAccuracy());
-                getResultMetas().add(resultMeta);
                 mapResult.put(model, classifyResult);
                 Map<String, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
                 StringBuilder counts = new StringBuilder("classified ");
@@ -393,7 +392,6 @@ public class MLIndicator extends Aggregator {
                 addEventRow(counts.toString(), "", "");  
                 meta[5] = countMap;
                 resultMeta.setClassifyMap(countMap);
-                testCount++;
             }
         } catch (Exception e1) {
             log.error("Exception", e1);
@@ -723,10 +721,13 @@ public class MLIndicator extends Aggregator {
 
         private MLClassifyModel model;
 
-        public FutureMap(MLClassifyDao dao, MLClassifyModel model) {
+        private int testCount;
+        
+        public FutureMap(MLClassifyDao dao, MLClassifyModel model, int testCount) {
             super();
             this.dao = dao;
             this.model = model;
+            this.testCount = testCount;
         }
 
         public MLClassifyDao getDao() {
@@ -743,6 +744,14 @@ public class MLIndicator extends Aggregator {
 
         public void setModel(MLClassifyModel model) {
             this.model = model;
+        }
+
+        public int getTestCount() {
+            return testCount;
+        }
+
+        public void setTestCount(int testCount) {
+            this.testCount = testCount;
         }
     }
 }
