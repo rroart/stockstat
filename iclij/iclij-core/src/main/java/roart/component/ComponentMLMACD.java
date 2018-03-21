@@ -199,7 +199,7 @@ public class ComponentMLMACD extends Component {
                 }
                 List<Double> off = offsetMap.get(key);
                 if (off == null) {
-                    log.error("The offset should not be null for " + key);
+                    log.error("The offset should not be null for {}", key);
                     continue;
                 }
                 int offsetZero = (int) Math.round(off.get(0));
@@ -280,10 +280,16 @@ public class ComponentMLMACD extends Component {
                 memory.setTnProbConf(goodTNprobConf);
                 memory.setFnProbConf(goodFNprobConf);                
             }
-            Integer tpClassOrig = countMapClass.containsKey(ServiceUtilConstants.TP) ? countMapClass.get(ServiceUtilConstants.TP) : 0;
-            Integer tnClassOrig = countMapClass.containsKey(ServiceUtilConstants.TN) ? countMapClass.get(ServiceUtilConstants.TN) : 0;
-            Integer fpClassOrig = countMapClass.containsKey(ServiceUtilConstants.FP) ? countMapClass.get(ServiceUtilConstants.FP) : 0;
-            Integer fnClassOrig = countMapClass.containsKey(ServiceUtilConstants.FN) ? countMapClass.get(ServiceUtilConstants.FN) : 0;
+            Integer tpClassOrig = null;
+            Integer tnClassOrig = null;
+            Integer fpClassOrig = null;
+            Integer fnClassOrig = null;
+            if (countMapClass != null) {
+                tpClassOrig = countMapClass.containsKey(ServiceUtilConstants.TP) ? countMapClass.get(ServiceUtilConstants.TP) : 0;
+                tnClassOrig = countMapClass.containsKey(ServiceUtilConstants.TN) ? countMapClass.get(ServiceUtilConstants.TN) : 0;
+                fpClassOrig = countMapClass.containsKey(ServiceUtilConstants.FP) ? countMapClass.get(ServiceUtilConstants.FP) : 0;
+                fnClassOrig = countMapClass.containsKey(ServiceUtilConstants.FN) ? countMapClass.get(ServiceUtilConstants.FN) : 0;
+            }
             Integer tpSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.TP) ? countMapLearn.get(ServiceUtilConstants.TP) : 0;
             Integer tnSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.TN) ? countMapLearn.get(ServiceUtilConstants.TN) : 0;
             Integer fpSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.FP) ? countMapLearn.get(ServiceUtilConstants.FP) : 0;
@@ -305,15 +311,20 @@ public class ComponentMLMACD extends Component {
             if (doFN) {
                 keys++;
             }
-            Integer totalClass = tpClassOrig + tnClassOrig + fpClassOrig + fnClassOrig;
+            Integer totalClass = null;
+            if (countMapClass != null) {
+                totalClass = tpClassOrig + tnClassOrig + fpClassOrig + fnClassOrig;
+            }
             Integer totalSize = tpSizeOrig + tnSizeOrig + fpSizeOrig + fnSizeOrig;
-            Double learnConfidence = 0.0;
-            learnConfidence = keys != 0 && totalClass != 0 && totalSize != 0 ? (double) (
-                    ( doTP ? Math.abs((double) tpClassOrig / totalClass - (double) tpSizeOrig / totalSize) : 0) +
-                    ( doFP ? Math.abs((double) fpClassOrig / totalClass - (double) fpSizeOrig / totalSize) : 0) +
-                    ( doTN ? Math.abs((double) tnClassOrig / totalClass - (double) tnSizeOrig / totalSize) : 0) +
-                    ( doFN ? Math.abs((double) fnClassOrig / totalClass - (double) fnSizeOrig / totalSize) : 0)
-                    ) / keys : null;
+            Double learnConfidence = null;
+            if (countMapClass != null) {
+                learnConfidence = keys != 0 && totalClass != 0 && totalSize != 0 ? (double) (
+                        ( doTP ? Math.abs((double) tpClassOrig / totalClass - (double) tpSizeOrig / totalSize) : 0) +
+                        ( doFP ? Math.abs((double) fpClassOrig / totalClass - (double) fpSizeOrig / totalSize) : 0) +
+                        ( doTN ? Math.abs((double) tnClassOrig / totalClass - (double) tnSizeOrig / totalSize) : 0) +
+                        ( doFN ? Math.abs((double) fnClassOrig / totalClass - (double) fnSizeOrig / totalSize) : 0)
+                        ) / keys : null;
+            }
             String info = null; 
             if (tpSizeOrig != null) {
                 info = "Classified / learned: ";

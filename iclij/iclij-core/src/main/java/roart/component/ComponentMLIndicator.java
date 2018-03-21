@@ -261,8 +261,12 @@ public class ComponentMLIndicator extends Component {
                 memory.setTnProbConf(goodTNprobConf);
                 memory.setFnProbConf(goodFNprobConf);                
             }
-            Integer tpClassOrig = countMapClass.containsKey(ServiceUtilConstants.INC) ? countMapClass.get(ServiceUtilConstants.INC) : 0;
-            Integer tnClassOrig = countMapClass.containsKey(ServiceUtilConstants.DEC) ? countMapClass.get(ServiceUtilConstants.DEC) : 0;
+            Integer tpClassOrig = null;
+            Integer tnClassOrig = null;
+            if (countMapClass != null) {
+                tpClassOrig = countMapClass.containsKey(ServiceUtilConstants.INC) ? countMapClass.get(ServiceUtilConstants.INC) : 0;
+                tnClassOrig = countMapClass.containsKey(ServiceUtilConstants.DEC) ? countMapClass.get(ServiceUtilConstants.DEC) : 0;
+            }
             //Integer fpClassOrig = goodTP - ;
             //Integer fnClassOrig = countMapClass.containsKey(FN) ? countMapClass.get(FN) : 0;
             Integer tpSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.INC) ? countMapLearn.get(ServiceUtilConstants.INC) : 0;
@@ -272,13 +276,15 @@ public class ComponentMLIndicator extends Component {
             int keys = 2;
             Integer totalClass = tpClassOrig + tnClassOrig;
             Integer totalSize = tpSizeOrig + tnSizeOrig;
-            Double learnConfidence = 0.0;
-            learnConfidence = (double) (
-                    ( true ? Math.abs((double) tpClassOrig / totalClass - (double) tpSizeOrig / totalSize) : 0) +
-                    //( true ? Math.abs((double) fpClassOrig / totalClass - (double) fpSizeOrig / totalSize) : 0) +
-                    ( true ? Math.abs((double) tnClassOrig / totalClass - (double) tnSizeOrig / totalSize) : 0)
-                    //( true ? Math.abs((double) fnClassOrig / totalClass - (double) fnSizeOrig / totalSize) : 0)
-                    ) / keys;
+            Double learnConfidence = null;
+            if (countMapClass != null) {
+                learnConfidence = (double) (
+                        ( true ? Math.abs((double) tpClassOrig / totalClass - (double) tpSizeOrig / totalSize) : 0) +
+                        //( true ? Math.abs((double) fpClassOrig / totalClass - (double) fpSizeOrig / totalSize) : 0) +
+                        ( true ? Math.abs((double) tnClassOrig / totalClass - (double) tnSizeOrig / totalSize) : 0)
+                        //( true ? Math.abs((double) fnClassOrig / totalClass - (double) fnSizeOrig / totalSize) : 0)
+                        ) / keys;
+            }
             String info = null; 
             if (tpSizeOrig != null) {
                 info = "Classified / learned: ";
