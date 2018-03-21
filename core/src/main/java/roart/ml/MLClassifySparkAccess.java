@@ -196,7 +196,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
             Dataset<Row> data = SparkUtil.createDFfromMap(spark, map);
             Dataset<Row>[] splits = data.randomSplit(new double[]{0.6, 0.4}, 1234);
             Dataset<Row> train = splits[0];
-            train.show();
+            //train.show();
             Dataset<Row> test = splits[1];
             log.info("data size {} {}", map.size(), train.count());
             if (train.count() == 0) {
