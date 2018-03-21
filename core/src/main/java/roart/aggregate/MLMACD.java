@@ -553,7 +553,7 @@ public class MLMACD extends Aggregator {
             }
             //System.out.println("ri" + retindex);
             if (retindex != fieldSize) {
-                int jj = 0;
+                log.error("Field size too small {} < {}", retindex, fieldSize);
             }
         }
     }
