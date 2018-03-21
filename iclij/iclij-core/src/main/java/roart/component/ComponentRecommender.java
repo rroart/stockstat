@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,6 +22,7 @@ import roart.config.MyMyConfig;
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
 import roart.pipeline.PipelineConstants;
+import roart.queue.MyExecutors;
 import roart.service.ControlService;
 import roart.util.Constants;
 import roart.util.ServiceUtil;
@@ -193,14 +196,28 @@ public class ComponentRecommender extends Component {
         srv.getConfig();            
         // plus testrecommendfactor
         int factor = 100;
-        log.info("market ", market);
-        log.info("factor ", factor);
+        log.info("market {}", market);
+        log.info("factor {}", factor);
         srv.conf.configValueMap.put(ConfigConstants.TESTRECOMMENDFACTOR, factor);
         int index = 0;
+        Map<Future<List<MemoryItem>>, List<String>> futureMap = new HashMap<>();
+        List<Future<List<MemoryItem>>> futureList = new ArrayList<>();
         for (List<String> aList : listPerm) {
             log.info("For disable {}", Integer.toHexString(index++));
             try {
-                List<MemoryItem> memories = ServiceUtil.doRecommender(srv, market, 0, null, false, aList, false);
+                //List<MemoryItem> memories = ServiceUtil.doRecommender(srv, market, 0, null, false, aList, false);
+                Callable callable = new RecommenderCallable(srv, market, 0, null, false, aList, false);  
+                Future<List<MemoryItem>> future = MyExecutors.run(callable);
+                futureList.add(future);
+                futureMap.put(future, aList);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        for (Future<List<MemoryItem>> future : futureList) {
+            try {
+                List<String> aList = futureMap.get(future);
+                List<MemoryItem> memories = future.get();
                 if (memories == null) {
                     log.info("No memories in {}", market);
                     continue;
@@ -416,6 +433,96 @@ public class ComponentRecommender extends Component {
         public Double getValue() {
             return value;
         }
+    }
+    
+    class RecommenderCallable implements Callable {
+        private ControlService srv;
+       
+        private String market;
+        
+        private Integer offset; 
+        
+        private String aDate;
+        
+        private boolean doSave;
+        
+        private List<String> disableList;
+        
+        private boolean doPrint;
+
+        public RecommenderCallable(ControlService srv, String market, Integer offset, String aDate, boolean doSave,
+                List<String> disableList, boolean doPrint) {
+            super();
+            this.srv = srv;
+            this.market = market;
+            this.offset = offset;
+            this.aDate = aDate;
+            this.doSave = doSave;
+            this.disableList = disableList;
+            this.doPrint = doPrint;
+        }
+
+        public ControlService getSrv() {
+            return srv;
+        }
+
+        public void setSrv(ControlService srv) {
+            this.srv = srv;
+        }
+
+        public String getMarket() {
+            return market;
+        }
+
+        public void setMarket(String market) {
+            this.market = market;
+        }
+
+        public Integer getOffset() {
+            return offset;
+        }
+
+        public void setOffset(Integer offset) {
+            this.offset = offset;
+        }
+
+        public String getaDate() {
+            return aDate;
+        }
+
+        public void setaDate(String aDate) {
+            this.aDate = aDate;
+        }
+
+        public boolean isDoSave() {
+            return doSave;
+        }
+
+        public void setDoSave(boolean doSave) {
+            this.doSave = doSave;
+        }
+
+        public List<String> getDisableList() {
+            return disableList;
+        }
+
+        public void setDisableList(List<String> disableList) {
+            this.disableList = disableList;
+        }
+
+        public boolean isDoPrint() {
+            return doPrint;
+        }
+
+        public void setDoPrint(boolean doPrint) {
+            this.doPrint = doPrint;
+        }
+
+        @Override
+        public List<MemoryItem> call() throws Exception {
+             return ServiceUtil.doRecommender(srv, market, 0, null, false, disableList, false);
+        }
+
     }
 }
 

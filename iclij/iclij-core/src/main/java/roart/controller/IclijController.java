@@ -16,6 +16,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import roart.action.Action;
 import roart.action.MainAction;
 import roart.config.IclijXMLConfig;
+import roart.queue.MyExecutors;
 import roart.service.ControlService;
 import roart.util.EurekaUtil;
 
@@ -35,6 +36,7 @@ public class IclijController implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {	    
 	    EurekaUtil.initEurekaClient();
+            MyExecutors.init();
             if (IclijXMLConfig.getConfigInstance().wantsAutorun()) {        
                 Action action = new MainAction();
                 action.goal(null);
