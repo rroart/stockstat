@@ -317,7 +317,7 @@ public class MLMACD extends Aggregator {
                             meta[6] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
                             getResultMetas().add(resultMeta);
-                            
+
                             Map<String, Long> countMap2 = null;
                             if (classifyResult != null) {
                                 countMap2 = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
@@ -349,9 +349,19 @@ public class MLMACD extends Aggregator {
         Map<Future<LearnTestClassifyResult>, FutureMap> futureMap = new HashMap<>();
         try {
             for (MacdSubType subType : subTypes) {
+                Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
+                if (mapResult1 == null) {
+                    mapResult1 = new HashMap<>();
+                    mapResult.put(subType, mapResult1);
+                }
                 for (MLClassifyDao mldao : mldaos) {
                     // map from posnegcom to map<id, result>
-                     for (MLClassifyModel model : mldao.getModels()) {
+                    for (MLClassifyModel model : mldao.getModels()) {
+                        Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
+                        if (mapResult2 == null) {
+                            mapResult2 = new HashMap<>();
+                            mapResult1.put(model, mapResult2);
+                        }
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
@@ -381,7 +391,7 @@ public class MLMACD extends Aggregator {
 
                             Map<String, double[]> map2 = mapIdMap.get(mapName);
                             log.info("map name {}", mapName);
-                            if (map == null || mapMap.get(mapName) == null) {
+                            if (map == null || map2 == null || map2.isEmpty()|| mapMap.get(mapName) == null) {
                                 log.error("map null and continue? {}", mapName);
                                 continue;
                             }
@@ -402,15 +412,7 @@ public class MLMACD extends Aggregator {
                 LearnTestClassifyResult result = future.get();
                 Map<String, Double[]> classifyResult = result.getCatMap();
                 Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
-                if (mapResult1 == null) {
-                    mapResult1 = new HashMap<>();
-                    mapResult.put(subType, mapResult1);
-                }
                 Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
-                if (mapResult2 == null) {
-                    mapResult2 = new HashMap<>();
-                    mapResult1.put(model, mapResult2);
-                }
                 mapResult2.put(mapType, classifyResult);
                 probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
                 handleResultMetaAccuracy(testCount, result);
