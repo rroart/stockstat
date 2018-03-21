@@ -586,13 +586,13 @@ public class ServiceUtil {
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
         List<IclijServiceList> subLists = getServiceList(market, listInc, listDec, listIncDec);
         retLists.addAll(subLists);
-        if (false) {
-        Map<String, String> map = improveProfitAction.getImprovements(market, save, date, allMemoryItems);        
-        List<MapList> mapList = improveProfitAction.getList(map);
-        IclijServiceList resultMap = new IclijServiceList();
-        resultMap.setTitle("Improve Profit Info");
-        resultMap.setList(mapList);
-        retLists.add(resultMap);
+        if (config.wantsImproveProfit()) {
+            Map<String, String> map = improveProfitAction.getImprovements(market, save, date, allMemoryItems);        
+            List<MapList> mapList = improveProfitAction.getList(map);
+            IclijServiceList resultMap = new IclijServiceList();
+            resultMap.setTitle("Improve Profit Info");
+            resultMap.setList(mapList);
+            retLists.add(resultMap);
         }
 
         LocalDate futureDate = date;
