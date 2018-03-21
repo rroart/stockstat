@@ -554,7 +554,7 @@ public class MyIclijUI extends UI {
             log.error("List null or empty");
             return;
         }
-        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("position")) {
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("usedsec")) {
             List<MemoryItem> mylist = objectMapper.convertValue(list, new TypeReference<List<MemoryItem>>() { });
             Grid<MemoryItem> table = new Grid<>();
             table.setCaption(item.getTitle());
