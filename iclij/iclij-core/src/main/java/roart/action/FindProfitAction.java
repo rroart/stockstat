@@ -107,12 +107,14 @@ public class FindProfitAction extends Action {
         Map<String, String> nameMap = getNameMap(maps);
         handleComponent(okListMap, okConfMap, listComponent, srv, componentMap, buys, sells, maps, nameMap, config);
         String category = market.getInccategory();
-        Double threshold = market.getIncthreshold();
-        Map<String, Object> categoryMap = maps.get(category);
-        Map<String, List<List>> listMap3 = getCategoryList(maps, category);
-        Map<String, IncDecItem> buysFilter = buyFilterOnIncreaseValue(market, buys, maps, threshold, categoryMap,
-                listMap3);
-        buys = buysFilter;
+        if (category != null) {
+            Double threshold = market.getIncthreshold();
+            Map<String, Object> categoryMap = maps.get(category);
+            Map<String, List<List>> listMap3 = getCategoryList(maps, category);
+            Map<String, IncDecItem> buysFilter = buyFilterOnIncreaseValue(market, buys, maps, threshold, categoryMap,
+                    listMap3);
+            buys = buysFilter;
+        }
         if (save) {
         try {
             for (IncDecItem item : buys.values()) {
