@@ -203,7 +203,10 @@ public class ControlService {
             Pipeline[] datareaders = getDataReaders(conf, stocks,
                     periodText, marketdatamap, periodDataMap, periodmap);
 
-            Category[] categories = getCategories(conf, stocks,
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            String mydate = dt.format(conf.getdate());
+            List<StockItem> dayStocks = stockdatemap.get(mydate);
+            Category[] categories = getCategories(conf, dayStocks,
                     periodText, marketdatamap, periodDataMap, periodmap, datareaders);
 
             Aggregator[] aggregates = getAggregates(conf, stocks,
