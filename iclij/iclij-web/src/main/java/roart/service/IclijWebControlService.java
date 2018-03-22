@@ -23,7 +23,12 @@ import roart.util.EurekaUtil;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -34,10 +39,13 @@ public class IclijWebControlService {
  
     private IclijConfig iclijConf;
     
+    private ObjectMapper objectMapper;
+    
     public IclijWebControlService() {
         //conf = MyXMLConfig.configInstance();
         //getConfig();
         //verifyConfig = new VerifyConfig();
+        objectMapper = jsonObjectMapper();
         startThreads();
         UI ui = com.vaadin.ui.UI.getCurrent();
         // temp hack :(
@@ -272,7 +280,7 @@ public class IclijWebControlService {
         
         @Override
         public void run() {
-            IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), param.getWebpath());
+            IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), param.getWebpath(), objectMapper);
             ui.access(() -> {
                 VerticalLayout layout = new VerticalLayout();
                 layout.setCaption("Results");
@@ -280,5 +288,13 @@ public class IclijWebControlService {
                 ui.notify("New results");
             });
         }
+    }
+
+    private ObjectMapper jsonObjectMapper() {
+        return Jackson2ObjectMapperBuilder.json()
+                .serializationInclusion(JsonInclude.Include.NON_NULL)
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .modules(new JavaTimeModule())
+                .build();
     }
 }
