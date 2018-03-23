@@ -49,6 +49,7 @@ import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
+import roart.predictor.Predictor;
 import roart.util.Constants;
 import roart.util.MarketData;
 import roart.util.Math3Util;
@@ -219,6 +220,10 @@ public class ControlService {
             log.info("retlist2 {}",table.size());
             addOtherTables(categories);
             addOtherTables(aggregates);
+            for (Category category : categories) {
+                List<Predictor> predictors = category.getPredictors();
+                addOtherTables(predictors);
+            }
             if (maps != null) {
                 for (int i = 0; i < datareaders.length; i++) {
                     Map map = datareaders[i].getLocalResultMap();
@@ -250,6 +255,22 @@ public class ControlService {
     private void addOtherTables(Aggregator[] aggregates) {
         for (int i = 0; i < aggregates.length; i++) {
             Map<Integer, List<ResultItemTableRow>> tableMap = aggregates[i].otherTables();
+            if (tableMap == null) {
+                continue;
+            }
+            for (Entry<Integer, List<ResultItemTableRow>> entry : tableMap.entrySet()) {
+                List<ResultItemTableRow> resultItems = entry.getValue();
+                ResultItemTable otherTable = otherTableMap.get(entry.getKey());
+                for (ResultItemTableRow row : resultItems) {
+                    otherTable.add(row);
+                }
+            }
+        }
+    }
+
+    private void addOtherTables(List<Predictor> predictors) {
+        for (Predictor predictor : predictors) {
+            Map<Integer, List<ResultItemTableRow>> tableMap = predictor.otherTables();
             if (tableMap == null) {
                 continue;
             }
