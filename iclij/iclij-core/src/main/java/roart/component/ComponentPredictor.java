@@ -53,6 +53,8 @@ public class ComponentPredictor extends Component {
         long total = 0;
         long goodInc = 0;
         long goodDec = 0;
+        long totalInc = 0;
+        long totalDec = 0;
         for (String key : categoryValueMap.keySet()) {
             List<List<Double>> resultList = categoryValueMap.get(key);
             List<Double> mainList = resultList.get(0);
@@ -66,11 +68,17 @@ public class ComponentPredictor extends Component {
                 Double predFuture = predFutureList.get(0);
                 if (valFuture != null && valNow != null && predFuture != null) {
                     total++;
-                    if (valFuture > valNow && predFuture > valNow) {
-                        goodInc++;
+                    if (predFuture > valNow) {
+                        totalInc++;
+                        if (valFuture > valNow) {
+                            goodInc++;
+                        }
                     }
-                    if (valFuture < valNow && predFuture < valNow) {
-                        goodDec++;
+                    if (predFuture < valNow) {
+                        totalDec++;
+                        if (valFuture < valNow) {
+                            goodDec++;
+                        }
                     }
                 }
             }
@@ -88,7 +96,7 @@ public class ComponentPredictor extends Component {
         incMemory.setCategory(categoryTitle);
         incMemory.setPositives(goodInc);
         incMemory.setSize(total);
-        incMemory.setConfidence((double) goodInc / total);
+        incMemory.setConfidence((double) goodInc / totalInc);
         if (doSave) {
             incMemory.save();
         }
@@ -104,7 +112,7 @@ public class ComponentPredictor extends Component {
         decMemory.setCategory(categoryTitle);
         decMemory.setPositives(goodDec);
         decMemory.setSize(total);
-        decMemory.setConfidence((double) goodDec / total);
+        decMemory.setConfidence((double) goodDec / totalDec);
         if (doSave) {
             decMemory.save();
         }
