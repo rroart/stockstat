@@ -76,6 +76,15 @@
       <includes>
 	<include>tfmain.py</include>
 	<include>kemain.py</include>
+	<include>flaskmain.py</include>
+	<include>namekomain.py</include>
+	<include>classify.py</include>
+	<include>predict.py</include>
+	<include>learntest.py</include>
+	<include>learntestpredict.py</include>
+	<include>device.py</include>
+	<include>flask.sh</include>
+	<include>nameko.sh</include>
 	<include>run-tf.sh</include>
 	<include>run-ke.sh</include>
 	<include>config2.yaml</include>

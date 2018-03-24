@@ -39,6 +39,9 @@ public class DbHibernate {
 
     public static MetaItem getMarket(String market) throws Exception {
 		Meta meta = Meta.getById(market);
+		if (meta == null) {
+		    return null;
+		}
 		return new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9());
     }
     

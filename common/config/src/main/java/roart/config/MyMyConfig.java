@@ -323,7 +323,15 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNING);
     }
 
-    public  boolean wantMLSpark() {
+    public  boolean wantMLMP() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGMP);
+    }
+
+    public int getMLMPCpuFraction() {
+        return (Integer) getValueOrDefault(ConfigConstants.MACHINELEARNINGMPCPUFRACTION);
+    }
+
+   public  boolean wantMLSpark() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKML)
         && wantML();
     }
@@ -620,6 +628,10 @@ public class MyMyConfig extends MyConfig {
    
    public double getAggregatorsIndicatorThreshold() {
        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
+   }
+   
+   public String getTensorflowServer() {
+       return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER);              
    }
    
    private Object getValueOrDefault(String key) {

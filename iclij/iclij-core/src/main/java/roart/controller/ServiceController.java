@@ -29,8 +29,11 @@ import roart.action.UpdateDBAction;
 import roart.config.ConfigConstants;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
+import roart.service.IclijServiceParam;
 import roart.service.IclijServiceResult;
+import roart.service.ServiceParam;
 import roart.util.Constants;
+import roart.util.EurekaConstants;
 import roart.util.ServiceUtil;
 
 @RestController
@@ -49,11 +52,25 @@ public class ServiceController {
         return instance;
     }
 
-    @RequestMapping(value = "/getcontent",
+    @RequestMapping(value = "/" + EurekaConstants.GETCONFIG,
+            method = RequestMethod.POST)
+    public IclijServiceResult getConfig(/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getConfig();
+    }
+
+    @RequestMapping(value = "/" + EurekaConstants.GETCONTENT,
             method = RequestMethod.POST)
     public IclijServiceResult getContent(/*@PathVariable String market*/)
             throws Exception {
         return ServiceUtil.getContent();
+    }
+
+    @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,
+            method = RequestMethod.POST)
+    public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)
+            throws Exception {
+        return ServiceUtil.getVerify(param.getIclijConfig());
     }
 
     @RequestMapping(value = "/recommender/{market}",
@@ -89,7 +106,7 @@ public class ServiceController {
     public void getFindProfit()
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        new FindProfitAction().goal();
+        new FindProfitAction().goal(null);
     }
 
     @RequestMapping(value = "/improveprofit",
@@ -97,7 +114,7 @@ public class ServiceController {
     public void getImproveProfit()
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
-        new ImproveProfitAction().goal();
+        new ImproveProfitAction().goal(null);
     }
 
 
@@ -106,7 +123,7 @@ public class ServiceController {
     public void getUpdateDb()
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
-        new UpdateDBAction().goal();
+        new UpdateDBAction().goal(null);
     }
 
 }

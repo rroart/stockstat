@@ -5,6 +5,8 @@ public class TradeMarket {
 
     private String inccategory;
     
+    private Integer incdays;
+    
     private Double incthreshold;
 
     private String deccategory;
@@ -33,6 +35,14 @@ public class TradeMarket {
 
     public void setInccategory(String inccategory) {
         this.inccategory = inccategory;
+    }
+
+    public Integer getIncdays() {
+        return incdays;
+    }
+
+    public void setIncdays(Integer incdays) {
+        this.incdays = incdays;
     }
 
     public Double getIncthreshold() {

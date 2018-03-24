@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
-import roart.model.LearnTestPredict;
 import roart.predictor.Predictor;
 import roart.util.Constants;
 
@@ -24,15 +23,12 @@ public abstract class MLPredictModel {
         return retindex;
     }
 
-    public int addResults(Object[] fields, int retindex, String id, MLPredictModel model, Predictor indicator, Map<String, LearnTestPredict> mapResult, Map<Double, String> labelMapShort) {
-        LearnTestPredict predict = mapResult.get(id);
+    public int addResults(Object[] fields, int retindex, String id, MLPredictModel model, Predictor indicator, Map<String, Double[]> mapResult, Map<Double, String> labelMapShort) {
+        Double[] predictions = mapResult.get(id);
         Double val = null;
-        if (predict != null) {
-            Double[] predictions = predict.predicted;
-            if (predictions != null) {
-                int size = predictions.length;
-                val = predictions[size - 1];
-            }
+        if (predictions != null) {
+            int size = predictions.length;
+            val = predictions[size - 1];
         }
         fields[retindex++] = val;
         return retindex;

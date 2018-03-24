@@ -1,6 +1,7 @@
 package roart.ml;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import roart.indicator.IndicatorMACD;
 import roart.ml.MLClassifyModel;
 import roart.ml.MLClassifySparkLRModel;
 import roart.ml.MLClassifySparkMCPModel;
+import roart.model.LearnTestClassifyResult;
 import roart.util.Constants;
 import roart.util.SparkUtil;
 
@@ -172,6 +174,88 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     @Override
     public String getName() {
         return ConfigConstants.SPARK;
+    }
+
+
+    @Override
+    public LearnTestClassifyResult learntestclassify(Aggregator indicator, Map<double[], Double> map,
+            MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes, Map<String, double[]> map2,
+            Map<Double, String> shortMap) {
+        Double accuracy = null;
+        long time0 = System.currentTimeMillis();
+        if (spark == null) {
+            return null;
+        }
+        if (map.isEmpty()) {
+            return null;
+        }
+        Map<Double, Long> counts =
+                map.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));       
+        log.info("learning distribution {}", counts);
+        try {
+            Dataset<Row> data = SparkUtil.createDFfromMap(spark, map);
+            Dataset<Row>[] splits = data.randomSplit(new double[]{0.6, 0.4}, 1234);
+            Dataset<Row> train = splits[0];
+            //train.show();
+            Dataset<Row> test = splits[1];
+            log.info("data size {} {}", map.size(), train.count());
+            if (train.count() == 0) {
+                train = data;
+                test = data;
+            }
+            for (double[] e : map.keySet()) {
+                log.info(" e " + Arrays.asList(e));
+            }
+            for (double[] e : map.keySet()) {
+                List<Double> l = Arrays.stream(e).boxed().collect(Collectors.toList());
+                log.info(" e " + l.size() + " " + l);
+            }
+            MLClassifySparkModel sparkModel = (MLClassifySparkModel) mlmodel;
+            Model model = sparkModel.getModel(train, size, outcomes);
+
+            // compute accuracy on the test set                                         
+            Dataset<Row> result = model.transform(test);
+            Dataset<Row> predictionAndLabels = result.select("prediction", "label");
+            MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
+                    .setMetricName("accuracy");
+            double eval = evaluator.evaluate(predictionAndLabels);
+            log.info("Test set accuracy for {} {} {} = {}", mapname, mlmodel.getId(), period, eval);
+            accuracyMap.put(mlmodel.getId()+period+mapname, eval);
+            accuracy = eval;
+            Map<String, Double[]> retMap = new HashMap<>();
+            Dataset<Row> data2 = SparkUtil.createDFfromMap2(spark, map2);
+            int modelInt = Integer.valueOf(mlmodel.getId());
+            Dataset<Row> resultDF = model.transform(data2);
+
+            for (Row row : resultDF.collectAsList()) {
+                String id = row.getAs("id");
+                Double predict = row.getAs("prediction");
+                Double prob = null;
+                if (IndicatorMACD.LOGISTICREGRESSION == modelInt) {
+                    try {
+                        DenseVector probvector = row.getAs("probability");
+                        double[] probarray = probvector.values();
+                        prob = probarray[predict.intValue()];
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                    }
+                }
+                Double[] retVal = new Double[2];
+                retVal[0] = predict;
+                retVal[1] = prob;
+                retMap.put(id, retVal);
+            }
+            log.info("classify done");
+            LearnTestClassifyResult result2 = new LearnTestClassifyResult();
+            result2.setAccuracy(accuracy);
+            result2.setCatMap(retMap);
+            return result2;
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        } finally {
+            log.info("time learn test classify model {} {} {} {}", Integer.valueOf(mlmodel.getId()), period, map.size(), (System.currentTimeMillis() - time0));            
+        }
+        return null;
     }
 
 }
