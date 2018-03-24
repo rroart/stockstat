@@ -17,6 +17,8 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.DATABASESPARKSPARKMASTER, String.class);
         map.put(ConfigConstants.DATABASEHIBERNATE, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNING, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGMP, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGMPCPUFRACTION, Integer.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER, String.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.class);
@@ -24,6 +26,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, String.class);
         map.put(ConfigConstants.INDICATORS, Boolean.class);
         map.put(ConfigConstants.INDICATORSMOVE, Boolean.class);
         map.put(ConfigConstants.INDICATORSMACD, Boolean.class);
@@ -167,6 +170,8 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.DATABASESPARKSPARKMASTER, "spark://127.0.0.1:7077");
         deflt.put(ConfigConstants.DATABASEHIBERNATE, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGMP, Boolean.FALSE);
+        deflt.put(ConfigConstants.MACHINELEARNINGMPCPUFRACTION, 4);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER, "spark://127.0.0.1:7077");
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.TRUE);
@@ -174,6 +179,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, "http://localhost:8000");
         deflt.put(ConfigConstants.INDICATORS, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMOVE, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);
@@ -321,6 +327,8 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.DATABASESPARKSPARKMASTER, "Database Spark Master");
         text.put(ConfigConstants.DATABASEHIBERNATE, "Enable Hibernate Database backend");
         text.put(ConfigConstants.MACHINELEARNING, "Enable machine learning");
+        text.put(ConfigConstants.MACHINELEARNINGMP, "Enable machine learning multiprocessing");
+        text.put(ConfigConstants.MACHINELEARNINGMPCPUFRACTION, "Machine learning multiprocessing total cpu fraction");
         text.put(ConfigConstants.MACHINELEARNINGSPARKML, "Enable Spark ML");
         text.put(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER, "Machine Learning Spark Master");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, "Enable Spark ML MCP");
@@ -328,6 +336,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, "Enable Tensorflow");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, "Enable Tensorflow DNN");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, "Enable Tensorflow L");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, "Tensorflow Server");
         text.put(ConfigConstants.INDICATORS, "Enable indicators");
         text.put(ConfigConstants.INDICATORSMOVE, "Enable move indicator");
         text.put(ConfigConstants.INDICATORSMACD, "Enable MACD indicator");

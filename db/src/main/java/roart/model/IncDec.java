@@ -2,11 +2,6 @@ package roart.model;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-//import org.hibernate.annotations.Index;
-
-
-
-
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,10 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "IncDec")

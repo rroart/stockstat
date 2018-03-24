@@ -16,7 +16,6 @@ import org.apache.commons.math3.util.Pair;
 import roart.config.MyMyConfig;
 import roart.ml.MLPredictDao;
 import roart.ml.MLPredictModel;
-import roart.model.LearnTestPredict;
 import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.PipelineConstants;
@@ -69,7 +68,7 @@ public class PredictorLSTM extends Predictor {
         makeWantedSubTypes();
         makeMapTypes();
         if (conf.wantML()) {
-            if (conf.wantMLSpark()) {
+            if (false && conf.wantMLSpark()) {
                 mldaos.add(new MLPredictDao("spark", conf));
             }
             if (conf.wantMLTensorflow()) {
@@ -177,7 +176,7 @@ public class PredictorLSTM extends Predictor {
             double[] list = list0[0];
             log.info("list {} {}", list.length, Arrays.asList(list));
         }
-        Map<String, LearnTestPredict> mapResult = new HashMap<>();
+        Map<String, Double[]> mapResult = new HashMap<>();
         if (conf.wantML()) {
             doPredictions(conf, mapResult);
         }
@@ -187,28 +186,17 @@ public class PredictorLSTM extends Predictor {
 
     }
 
-    private void doPredictions(MyMyConfig conf, Map<String, LearnTestPredict> mapResult) {
+    private void doPredictions(MyMyConfig conf, Map<String, Double[]> mapResult) {
+        int horizon = conf.getPredictorLSTMHorizon();
+        int windowsize = conf.getPredictorLSTMWindowsize();
+        int epochs = conf.getPredictorLSTMEpochs();
         try {
             List<PredSubType> subTypes = wantedSubTypes();
             for (PredSubType subType : subTypes) {
                 for (MLPredictDao mldao : mldaos) {
-                    for (String id : listMap.keySet()) {
-                        // TODO configure file
-                        int horizon = conf.getPredictorLSTMHorizon();
-                        int windowsize = conf.getPredictorLSTMWindowsize();
-                        int epochs = conf.getPredictorLSTMEpochs();
-                        double[][] list0 = truncListMap.get(id);
-                        double[] list = list0[0];
-                        // TODO check reverse. move up before if?
-                        log.info("list {} {}", list.length, windowsize);
-                        if (list != null && list.length > 2 * windowsize ) {
-                            Map map = null;
-                            String mapName = null;
-                            List next = null;
-                            Double[] list3 = ArrayUtils.toObject(list);
-                            LearnTestPredict result = mldao.learntestpredict(this, list3, next, map, null, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime, windowsize, horizon, epochs);  
-                            mapResult.put(id, result);
-                        }
+                    for (MLPredictModel model : mldao.getModels()) {
+                        Map<String, Double[]> localMapResult = getMapResultList(conf, mldao, horizon, windowsize, epochs, model);
+                        mapResult.putAll(localMapResult);
                     }
                 }
             }
@@ -217,7 +205,40 @@ public class PredictorLSTM extends Predictor {
         }
     }
 
-    private void createResultMap(MyMyConfig conf, Map<String, LearnTestPredict> mapResult) {
+    private Map<String, Double[]> getMapResult(MyMyConfig conf, MLPredictDao mldao, int horizon, int windowsize,
+            int epochs, MLPredictModel model) {
+        Map<String, Double[]> localMapResult = new HashMap<>();
+        for (String id : listMap.keySet()) {
+            double[][] list0 = truncListMap.get(id);
+            double[] list = list0[0];
+            // TODO check reverse. move up before if?
+            log.info("list {} {}", list.length, windowsize);
+            if (list != null && list.length > 2 * windowsize ) {
+                Double[] list3 = ArrayUtils.toObject(list);
+                Double[] result = mldao.predictone(this, list3, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime, windowsize, horizon, epochs);  
+                localMapResult.put(id, result);
+            }
+        }
+        return localMapResult;
+    }
+
+    private Map<String, Double[]> getMapResultList(MyMyConfig conf, MLPredictDao mldao, int horizon, int windowsize,
+            int epochs, MLPredictModel model) {
+        Map<String, Double[]> map = new HashMap<>();
+        for (String id : listMap.keySet()) {
+            double[][] list0 = truncListMap.get(id);
+            double[] list = list0[0];
+            // TODO check reverse. move up before if?
+            log.info("list {} {}", list.length, windowsize);
+            if (list != null && list.length > 2 * windowsize ) {
+                Double[] list3 = ArrayUtils.toObject(list);
+                map.put(id, list3);
+            }
+        }
+        return mldao.predict(this, map, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime, windowsize, horizon, epochs);  
+    }
+
+    private void createResultMap(MyMyConfig conf, Map<String, Double[]> mapResult) {
         for (String id : listMap.keySet()) {
             Object[] fields = new Object[1];
             resultMap.put(id, fields);

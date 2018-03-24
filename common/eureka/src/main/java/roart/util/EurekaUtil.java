@@ -25,36 +25,36 @@ import com.netflix.discovery.EurekaClient;
 import com.netflix.discovery.shared.Application;
 
 public class EurekaUtil {
-    
-	private static Logger log = LoggerFactory.getLogger(EurekaUtil.class);
+
+    private static Logger log = LoggerFactory.getLogger(EurekaUtil.class);
 
     public static EurekaClient eurekaClient = null;
-	public static DiscoveryClient discoveryClient = null;
-	
-	public static EurekaClient initEurekaClient() {
-		DiscoveryManager.getInstance().initComponent(
-				new MyDataCenterInstanceConfig(),
-				new DefaultEurekaClientConfig());
-		eurekaClient = DiscoveryManager.getInstance()
-				.getEurekaClient();
+    public static DiscoveryClient discoveryClient = null;
 
-		if (eurekaClient != null) {
-			System.out.println("euClient " + eurekaClient.getAllKnownRegions());
-			List<Application> apps = eurekaClient.getApplications().getRegisteredApplications();
-			for (Application app : apps) {
-				System.out.println("currently available app " + app.getName()); 
-			}
-		}
-		discoveryClient = DiscoveryManager.getInstance().getDiscoveryClient();		
-		if (discoveryClient != null) {
-			List<Application> apps = discoveryClient.getApplications().getRegisteredApplications();
-			for (Application app : apps) {
-				System.out.println("currently available app2 " + app.getName()); 
-			}
-		}
-		try {
-			// more example code:
-			/*
+    public static EurekaClient initEurekaClient() {
+        DiscoveryManager.getInstance().initComponent(
+                new MyDataCenterInstanceConfig(),
+                new DefaultEurekaClientConfig());
+        eurekaClient = DiscoveryManager.getInstance()
+                .getEurekaClient();
+
+        if (eurekaClient != null) {
+            System.out.println("euClient " + eurekaClient.getAllKnownRegions());
+            List<Application> apps = eurekaClient.getApplications().getRegisteredApplications();
+            for (Application app : apps) {
+                System.out.println("currently available app " + app.getName()); 
+            }
+        }
+        discoveryClient = DiscoveryManager.getInstance().getDiscoveryClient();		
+        if (discoveryClient != null) {
+            List<Application> apps = discoveryClient.getApplications().getRegisteredApplications();
+            for (Application app : apps) {
+                System.out.println("currently available app2 " + app.getName()); 
+            }
+        }
+        try {
+            // more example code:
+            /*
 			String vipAddress = "LUCENE";
 			InstanceInfo nextServerInfo = DiscoveryManager.getInstance()
 					.getEurekaClient()
@@ -68,56 +68,61 @@ public class EurekaUtil {
 			System.out.println("Server Host Name "+ nextServerInfo.getHostName() + " at port " + nextServerInfo.getPort() );		
 
 			System.out.println("conf " + discoveryClient.getEurekaClientConfig().getEurekaServerPort());
-			*/
-	} catch (Exception e) {
-			log.error("Cannot get an instance of example service to talk to from eureka");
-		}
-		return eurekaClient;
-	}
+             */
+        } catch (Exception e) {
+            log.error("Cannot get an instance of example service to talk to from eureka");
+        }
+        return eurekaClient;
+    }
 
-	public static <T> T sendMe(Class<T> myclass, Object param, String appName, String path) {
+    public static <T> T sendMe(Class<T> myclass, Object param, String appName, String path) {
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return sendMe(myclass, param, appName, path, objectMapper);
+    }
+    
+    public static <T> T sendMe(Class<T> myclass, Object param, String appName, String path, ObjectMapper objectMapper) {
 
-		String homePageUrl = null;
-		log.info("homePagePre " + appName + " " + path);
-		if (discoveryClient != null) {
-			List<InstanceInfo> li = discoveryClient.getApplication(appName).getInstances();
-			for (InstanceInfo ii : li) {
-				log.info("homePage " + ii.getHomePageUrl());
-			}
-			List<InstanceInfo> li2 = eurekaClient.getApplication(appName).getInstances();
-			for (InstanceInfo ii : li2) {
-				log.info("homePage2 " + ii.getHomePageUrl());
-			}
-			if (!li.isEmpty()) {
-				homePageUrl = li.get(0).getHomePageUrl();
-			}
-		} else {
-			log.error("discoveryclient is null");
-		}
-		MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-		Map map = new HashMap<String, String>();
-		map.put("Content-Type", "application/json");
+        String homePageUrl = null;
+        log.info("homePagePre " + appName + " " + path);
+        if (discoveryClient != null) {
+            List<InstanceInfo> li = discoveryClient.getApplication(appName).getInstances();
+            for (InstanceInfo ii : li) {
+                log.info("homePage " + ii.getHomePageUrl());
+            }
+            List<InstanceInfo> li2 = eurekaClient.getApplication(appName).getInstances();
+            for (InstanceInfo ii : li2) {
+                log.info("homePage2 " + ii.getHomePageUrl());
+            }
+            if (!li.isEmpty()) {
+                homePageUrl = li.get(0).getHomePageUrl();
+            }
+        } else {
+            log.error("discoveryclient is null");
+        }
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+        Map map = new HashMap<String, String>();
+        map.put("Content-Type", "application/json");
 
-		headers.setAll(map);
+        headers.setAll(map);
 
-		HttpEntity<?> request = new HttpEntity<>(param, headers);
-		String url = homePageUrl;
-		RestTemplate rt = new RestTemplate();
-		for (HttpMessageConverter<?> converter : rt.getMessageConverters()) {
-			//System.out.println(converter.getClass().getName());
-			if (converter instanceof MappingJackson2HttpMessageConverter) {
-					//log.info("setting object ignore");
-				// TODO temp fix for extra duplicated arr in json
-				MappingJackson2HttpMessageConverter jsonConverter = (MappingJackson2HttpMessageConverter) converter;
-                jsonConverter.setObjectMapper(new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false));
+        HttpEntity<?> request = new HttpEntity<>(param, headers);
+        String url = homePageUrl;
+        RestTemplate rt = new RestTemplate();
+        for (HttpMessageConverter<?> converter : rt.getMessageConverters()) {
+            //System.out.println(converter.getClass().getName());
+            if (converter instanceof MappingJackson2HttpMessageConverter) {
+                //log.info("setting object ignore");
+                // TODO temp fix for extra duplicated arr in json
+                MappingJackson2HttpMessageConverter jsonConverter = (MappingJackson2HttpMessageConverter) converter;
+                jsonConverter.setObjectMapper(objectMapper);
             }		
-			}
-		//System.out.println(rt.getMessageConverters().size());
-		ResponseEntity<T> regr = rt.postForEntity(url + path, request, myclass);
-		T result = regr.getBody();
-		log.info("resultme " + regr.getHeaders().size() + " " + regr.toString());
-		return result;
-	}
+        }
+        //System.out.println(rt.getMessageConverters().size());
+        ResponseEntity<T> regr = rt.postForEntity(url + path, request, myclass);
+        T result = regr.getBody();
+        log.info("resultme " + regr.getHeaders().size() + " " + regr.toString());
+        return result;
+    }
 
     public static <T> T sendMe(Class<T> myclass, Object param, String url) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();

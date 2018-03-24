@@ -76,6 +76,14 @@ public abstract class Category {
         this.title = title;
     }
 
+    public List<Predictor> getPredictors() {
+        return predictors;
+    }
+
+    public void setPredictors(List<Predictor> predictors) {
+        this.predictors = predictors;
+    }
+
     public Map<String, Object> getResultMap() {
         Map<String, Object> map = new HashMap<>();
         for (Predictor predictor : predictors) {

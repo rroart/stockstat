@@ -10,6 +10,7 @@ import roart.aggregate.Aggregator;
 import roart.aggregate.MLMACD;
 import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
+import roart.model.LearnTestClassifyResult;
 
 public class MLClassifyDao {
     private static Logger log = LoggerFactory.getLogger(MLClassifyDao.class);
@@ -34,6 +35,15 @@ public class MLClassifyDao {
                 access = new MLClassifyTensorflowAccess(conf);
             }
         }
+    }
+
+    public LearnTestClassifyResult learntestclassify(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, double[]> map2, Map<Double, String> shortMap) {
+        long time1 = System.currentTimeMillis();
+        LearnTestClassifyResult result = access.learntestclassify(indicator, map, model, size, period, mapname, outcomes, map2, shortMap);
+        long time = (System.currentTimeMillis() - time1);
+        log.info("time {} {} {} {}", model, period, mapname, time);
+        MLMACD.mapAdder(mapTime, model, time);
+        return result;
     }
 
     public Double learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {

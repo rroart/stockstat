@@ -37,10 +37,39 @@ Use testaccuracy in iclij
 Use 4 macd with ml
 Mlindicator scale down/improveaction?
 Recommender combine keys/improveaction?
-Pipeline iclij
+Pipeline iclij, and add date support and no storing, more validating
 Remove findprofit both inc dec, go to improve
 RSI and usemax
 StockUtil update periods number
 Parametrize jdbc setting
 Configure limit for empty hole limit
 calcnodecomplex usemax min/max
+ComponentMLMACD Double instead of String (not reproduced with dbg).
+Put TODO in code here
+MLPredictModel in MLPredictDAO put loop out of class
+New market for findMarketComponentsToCheck(markets)?
+Add info about nltk.download() large_grammar
+Caused by: java.lang.ClassCastException: java.lang.Double cannot be cast to java.lang.String
+        at roart.component.ComponentMLMACD.handle(ComponentMLMACD.java:75)
+2018-01-28 21:28:50,162 ERROR [qtp1915579460-24] r.s.ControlService [ControlService.java:234] Exception
+java.lang.IndexOutOfBoundsException: Index: 20, Size: 20
+        at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+        at java.util.ArrayList.get(ArrayList.java:433)
+        at roart.aggregate.MLMACD.handleResultMeta(MLMACD.java:446)
+morncat (w cy no price) and aggregator price, npe
+java.lang.NullPointerException: null
+        at roart.aggregate.AggregatorRecommenderIndicator.<init>(AggregatorRecommenderIndicator.java:92)
+        at roart.service.ControlService.getAggregates(ControlService.java:332)
+MACD two dim input w (macd, %)
+Dataimport zero/content check
+Microservice sendme exception handling
+GUI choice for do improveprofitaction
+Implement clientqueue
+Iclji gui ui temp hack remove
+Iclij w/ ml time stats
+Subclass incdecitem instead of having non-saved
+Spark truncates getAll?
+Thread/multitask change
+Vaadin threads
+Cleanup recommender buy/sell duality
+For ose etc, new cy/1m calc

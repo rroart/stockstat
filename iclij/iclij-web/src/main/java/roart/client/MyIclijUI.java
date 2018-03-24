@@ -1,9 +1,10 @@
 package roart.client;
 
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -14,17 +15,24 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.data.HasValue;
+import com.vaadin.data.HasValue.ValueChangeEvent;
+import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.InlineDateField;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.ListSelect;
@@ -34,13 +42,17 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import roart.config.ConfigTreeMap;
 import roart.model.IncDecItem;
+import roart.model.MapList;
+import roart.model.MemoryItem;
 import roart.model.ResultItem;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.ResultItemText;
 import roart.model.ResultMeta;
+import roart.service.IclijServiceList;
 import roart.service.IclijWebControlService;
 import roart.util.Constants;
 import roart.util.EurekaUtil;
@@ -69,7 +81,7 @@ public class MyIclijUI extends UI {
         EurekaUtil.initEurekaClient();
 
         controlService = new IclijWebControlService();
-        //controlService.getConfig();
+        controlService.getConfig();
         final VerticalLayout layout = new VerticalLayout();
 
         VerticalLayout searchTab;
@@ -125,6 +137,47 @@ public class MyIclijUI extends UI {
     public static class MyUIServlet extends VaadinServlet {
     }
     
+    /*
+    private TextField getDays() {
+        TextField tf = new TextField("Verify days");
+        tf.setValue("" + controlService.getVerifyConfig().getDays());
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new ValueChangeListener() {
+            public void valueChange(HasValue.ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getValue();
+                // Do something with the value
+                try {
+                    controlService.getVerifyConfig().setDays(new Integer(value));
+                    Notification.show("Request sent");
+                    displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //tf.setImmediate(true);
+        return tf;
+    }
+*/
+    
+    private Button getVerify() {
+        Button button = new Button("Get verification data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayVerify();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
     private Button getMarket() {
         Button button = new Button("Get market data");
         button.addClickListener(new Button.ClickListener() {
@@ -138,6 +191,44 @@ public class MyIclijUI extends UI {
             }
         });
         return button;
+    }
+
+    private ListSelect getMarkets() {
+        ListSelect ls = new ListSelect("Get market");
+        Set<String> marketSet = null;
+        try {
+            List<String> markets = controlService.getMarkets();
+            markets.remove(null);
+            marketSet = new TreeSet<>(markets);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return ls;
+        }
+        log.info("languages " + marketSet);
+        if (marketSet == null ) {
+            return ls;
+        }
+        ls.setItems(marketSet);
+        //ls.setNullSelectionAllowed(false);
+        // Show 5 items and a scrollbar if there are more                       
+        ls.setRows(5);
+        ls.addValueChangeListener(new ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String                 
+                Set<String> values = (Set<String>) event.getValue();
+                // TODO multi-valued?
+                String value = values.iterator().next();
+                // Do something with the value                              
+                try {
+                    controlService.getIclijConf().setMarket(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //ls.setImmediate(true);
+        return ls;
     }
 
     private VerticalLayout getControlPanelTab() {
@@ -170,9 +261,9 @@ public class MyIclijUI extends UI {
         horDb.setHeight("20%");
         horDb.setWidth("60%");
         HorizontalLayout horTree = new HorizontalLayout();
-        //ConfigTreeMap map2 = controlService.conf.configTreeMap;
-        //componentMap = new HashMap<>();
-        //print(map2, horTree);
+        ConfigTreeMap map2 = controlService.getIclijConf().getConfigTreeMap();
+        componentMap = new HashMap<>();
+        print(map2, horTree);
 
         tab.addComponent(horMisc);
         //tab.addComponent(horMACD);
@@ -182,15 +273,15 @@ public class MyIclijUI extends UI {
         tab.addComponent(horTree);
         return tab;
     }
-/*
+
     Map<String, Component> componentMap ;
     private void print(ConfigTreeMap map2, HorizontalLayout tab) {
-        Map<String, Object> map = controlService.conf.configValueMap;
-        String name = map2.name;
+        Map<String, Object> map = controlService.getIclijConf().getConfigValueMap();
+        String name = map2.getName();
         System.out.println("name " + name);
         Object object = map.get(name);
         Component o = null;
-        String text = controlService.conf.text.get(name);
+        String text = controlService.getIclijConf().getText().get(name);
         if (object == null) {
             //System.out.println("null for " + name);
             String labelname = name;
@@ -225,7 +316,7 @@ public class MyIclijUI extends UI {
         }
         //System.out.print(space.substring(0, indent));
         //System.out.println("map2 " + map2.name + " " + map2.enabled);
-        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         if (!map3.keySet().isEmpty()) {
             VerticalLayout h = new VerticalLayout();
             tab.addComponent(h);
@@ -247,7 +338,7 @@ public class MyIclijUI extends UI {
             }
         }
     }
-*/
+
     private VerticalLayout getConfigTab() {
         boolean isProductionMode = VaadinService.getCurrent()
                 .getDeploymentConfiguration().isProductionMode();
@@ -277,9 +368,12 @@ public class MyIclijUI extends UI {
         HorizontalLayout horStat = new HorizontalLayout();
         horStat.setHeight("20%");
         horStat.setWidth("90%");
-        //horStat.addComponent(getDate());
-        //horStat.addComponent(getResetDate());
+        horStat.addComponent(getDate());
+        horStat.addComponent(getResetDate());
+        //horStat.addComponent(getDays());
+        horStat.addComponent(getVerify());
         horStat.addComponent(getMarket());
+        horStat.addComponent(getMarkets());
         //horStat.addComponent(getStat());
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
@@ -363,9 +457,10 @@ public class MyIclijUI extends UI {
         return tab;
     }
     private void displayResults() {
-        System.out.println("h0");
-        List<List> list = controlService.getContent();
-        System.out.println("h1");
+        //System.out.println("h0");
+        controlService.getContent(this);
+        //System.out.println("h1");
+        /*
         log.info("listsize " + list.size());
         VerticalLayout layout = new VerticalLayout();
         layout.setCaption("Results");
@@ -375,9 +470,23 @@ public class MyIclijUI extends UI {
         tabsheet.addComponent(layout);
         tabsheet.getTab(layout).setClosable(true);
         Notification.show("New result available");
+        */
     }
 
-    public void displayResultListsTab(Layout tab, List<List> list) {
+    private void displayVerify() {
+        controlService.getVerify(this);
+        /*
+        log.info("listsize {}", list.size());
+        VerticalLayout layout = new VerticalLayout();
+        layout.setCaption("Test");
+        displayResultListsTab(layout, list);
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
+        Notification.show("New result available");
+        */
+    }
+
+    public void displayResultListsTab(Layout tab, List<IclijServiceList> list) {
 
         final String table = (new ResultItemTable()).getClass().getName();
         final String text = (new ResultItemText()).getClass().getName();
@@ -385,13 +494,15 @@ public class MyIclijUI extends UI {
 
         VerticalLayout result = getResultTemplate();
         //addListTable(result, list);
-            for (List item : list) {
+            for (IclijServiceList item : list) {
                 System.out.println("here");
                 System.out.println("here1");
                 addListTable(result, item);
+                /*
                 if (text.equals(item.getClass().getName())) {
                     addListText(result, (ResultItemText) item);
                 }
+                */
                 /*
                 if (stream.equals(item.getClass().getName())) {
                     addListStream(result, (ResultItemBytes) item);
@@ -400,6 +511,9 @@ public class MyIclijUI extends UI {
             //}
         }
         tab.addComponent(result);
+        tabsheet.addComponent(tab);
+        tabsheet.getTab(tab).setClosable(true);
+        Notification.show("New result available");
     }
 
     public void notify(String text) {
@@ -433,21 +547,141 @@ public class MyIclijUI extends UI {
         ts.addComponent(new Label(str.text));
     }
 
-    void addListTable(VerticalLayout ts, List list) {
-        List<IncDecItem> mylist = new ObjectMapper().convertValue(list, new TypeReference<List<IncDecItem>>() { });
-        Grid<IncDecItem> table = new Grid<>();
-        table.addColumn(IncDecItem::getRecord).setCaption("Record");
-        table.addColumn(IncDecItem::getMarket).setCaption("Market");
-        table.addColumn(IncDecItem::isIncrease).setCaption("Inc");
-        table.addColumn(IncDecItem::getId).setCaption("Id");
-        table.addColumn(IncDecItem::getName).setCaption("Name");
-        table.addColumn(IncDecItem::getScore).setCaption("Score");
-        table.addColumn(IncDecItem::getDescription).setCaption("Description");
-        table.setWidth("90%");
-        table.setItems(mylist);
-        System.out.println("added");
-        ts.addComponent(table);
+    void addListTable(VerticalLayout ts, IclijServiceList item) {
+        List list = item.getList();
+        ObjectMapper objectMapper = getObjectMapper();
+        if (list == null || list.isEmpty()) {
+            log.error("List null or empty");
+            return;
+        }
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("usedsec")) {
+            List<MemoryItem> mylist = objectMapper.convertValue(list, new TypeReference<List<MemoryItem>>() { });
+            Grid<MemoryItem> table = new Grid<>();
+            table.setCaption(item.getTitle());
+            table.addColumn(MemoryItem::getRecord).setCaption("Record");
+            table.addColumn(MemoryItem::getDate).setCaption("Date");
+            table.addColumn(MemoryItem::getUsedsec).setCaption("Usedsec");
+            table.addColumn(MemoryItem::getMarket).setCaption("Market");
+            table.addColumn(MemoryItem::getTestaccuracy).setCaption("Testaccuracy");
+            table.addColumn(MemoryItem::getConfidence).setCaption("Confidence");
+            table.addColumn(MemoryItem::getLearnConfidence).setCaption("LearnConfidence");
+            table.addColumn(MemoryItem::getCategory).setCaption("Category");
+            table.addColumn(MemoryItem::getComponent).setCaption("Component");
+            table.addColumn(MemoryItem::getSubcomponent).setCaption("Subcomponent");
+            table.addColumn(MemoryItem::getInfo).setCaption("Info");
+            table.addColumn(MemoryItem::getFuturedays).setCaption("Futuredays");
+            table.addColumn(MemoryItem::getFuturedate).setCaption("Futuredate");
+            table.addColumn(MemoryItem::getPositives).setCaption("Positives");
+            table.addColumn(MemoryItem::getSize).setCaption("Size");
+            table.addColumn(MemoryItem::getThreshold).setCaption("Threshold");
+            table.addColumn(MemoryItem::getTp).setCaption("Tp");
+            table.addColumn(MemoryItem::getTpSize).setCaption("TpSize");
+            table.addColumn(MemoryItem::getTpConf).setCaption("TpConf");
+            table.addColumn(MemoryItem::getTpProb).setCaption("TpProb");
+            table.addColumn(MemoryItem::getTpProbConf).setCaption("TpProbConf");
+            table.addColumn(MemoryItem::getTn).setCaption("Tn");
+            table.addColumn(MemoryItem::getTnSize).setCaption("TnSize");
+            table.addColumn(MemoryItem::getTnConf).setCaption("TnConf");
+            table.addColumn(MemoryItem::getTnProb).setCaption("TnProb");
+            table.addColumn(MemoryItem::getTnProbConf).setCaption("TnProbConf");
+            table.addColumn(MemoryItem::getFp).setCaption("Fp");
+            table.addColumn(MemoryItem::getFpSize).setCaption("FpSize");
+            table.addColumn(MemoryItem::getFpConf).setCaption("FpConf");
+            table.addColumn(MemoryItem::getFpProb).setCaption("FpProb");
+            table.addColumn(MemoryItem::getFpProbConf).setCaption("FpProbConf");
+            table.addColumn(MemoryItem::getFn).setCaption("Fn");
+            table.addColumn(MemoryItem::getFnSize).setCaption("FnSize");
+            table.addColumn(MemoryItem::getFnConf).setCaption("FnConf");
+            table.addColumn(MemoryItem::getFnProb).setCaption("FnProb");
+            table.addColumn(MemoryItem::getFnProbConf).setCaption("FnProbConf");
+            table.addColumn(MemoryItem::getPosition).setCaption("Position");
+            table.setWidth("90%");
+            table.setItems(mylist);
+            System.out.println("added");
+            ts.addComponent(table);
+            return;
+        }
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("score")) {
+            List<IncDecItem> mylist = objectMapper.convertValue(list, new TypeReference<List<IncDecItem>>() { });
+            Grid<IncDecItem> table = new Grid<>();
+            table.setCaption(item.getTitle());
+            table.addColumn(IncDecItem::getRecord).setCaption("Record");
+            table.addColumn(IncDecItem::getMarket).setCaption("Market");
+            table.addColumn(IncDecItem::isIncrease).setCaption("Inc");
+            table.addColumn(IncDecItem::getId).setCaption("Id");
+            table.addColumn(IncDecItem::getName).setCaption("Name");
+            table.addColumn(IncDecItem::getScore).setCaption("Score");
+            table.addColumn(IncDecItem::getDescription).setCaption("Description");
+            table.addColumn(IncDecItem::getVerified).setCaption("Verified");
+            table.addColumn(IncDecItem::getVerificationComment).setCaption("Comment");
+            table.setWidth("90%");
+            table.setItems(mylist);
+            System.out.println("added");
+            ts.addComponent(table);
+        } else {
+            List<MapList> mylist = objectMapper.convertValue(list, new TypeReference<List<MapList>>() { });
+            Grid<MapList> table = new Grid<>();
+            table.setCaption(item.getTitle());
+            table.addColumn(MapList::getKey).setCaption("Key");
+            table.addColumn(MapList::getValue).setCaption("Value");
+            table.setWidth("90%");
+            table.setItems(mylist);
+            System.out.println("added");
+            ts.addComponent(table);
+        }
     }
+    
+    private ObjectMapper getObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        //objectMapper.registerModule(new JSR310Module());
+        objectMapper.findAndRegisterModules();
+        return objectMapper;
+    }
+
+    private InlineDateField getDate() {
+        InlineDateField tf = new InlineDateField("Set comparison date");
+        // Create a DateField with the default style                            
+        // Set the date and time to present                                     
+        LocalDate date = LocalDate.now();
+        tf.setValue(date);
+
+        // Handle changes in the value                                          
+        tf.addValueChangeListener(new ValueChangeListener() {
+            public void valueChange(HasValue.ValueChangeEvent event) {
+                // Assuming that the value type is a String                 
+                LocalDate date = (LocalDate) event.getValue();
+                try {
+                    controlService.getIclijConf().setDate(date);
+                    Notification.show("Request sent");
+                    //displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus            
+        //tf.setImmediate(true);
+        return tf;
+    }
+
+    private Button getResetDate() {
+        Button button = new Button("Reset date");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    controlService.getIclijConf().setDate(null);
+                    Notification.show("Request sent");
+                    //displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+
 /*
     private ListSelect getMarkets() {
         ListSelect ls = new ListSelect("Get market");
@@ -474,7 +708,7 @@ public class MyIclijUI extends UI {
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value                              
                 try {
-                    controlService.conf.setMarket(value);
+                    controlService.getConf().setMarket(value);
                     Notification.show("Request sent");
                     //displayResults();
                 } catch (Exception e) {
@@ -488,5 +722,100 @@ public class MyIclijUI extends UI {
     }
 
 */
+    private CheckBox getCheckbox(String text, String configKey) {
+        CheckBox cb = new CheckBox(text);
+        Boolean origValue = (Boolean) controlService.getIclijConf().getConfigValueMap().get(configKey);
+        cb.setValue(origValue);
+
+        // Handle changes in the value
+        cb.addValueChangeListener(new HasValue.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                boolean value = (Boolean) event.getValue();
+                // Do something with the value
+                try {
+                    controlService.getIclijConf().getConfigValueMap().put(configKey, value );
+                    // TODO handle hiding
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //cb.setImmediate(true);
+        return cb;
+    }
+
+    private TextField getStringField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        tf.setSizeFull();
+        String origValue = (String) controlService.getIclijConf().getConfigValueMap().get(configKey);
+
+        tf.setValue(origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new HasValue.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getValue();
+                // Do something with the value
+                try {
+                    controlService.getIclijConf().getConfigValueMap().put(configKey, value );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //tf.setImmediate(true);
+        return tf;
+    }
+
+    private TextField getIntegerField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        Integer origValue = (Integer) controlService.getIclijConf().getConfigValueMap().get(configKey);
+
+        tf.setValue("" + origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new HasValue.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getValue();
+                // Do something with the value
+                try {
+                    controlService.getIclijConf().getConfigValueMap().put(configKey, new Integer(value) );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //tf.setImmediate(true);
+        return tf;
+    }
+    private TextField getDoubleField(String text, String configKey) {
+        TextField tf = new TextField(text);
+        Double origValue = (Double) controlService.getIclijConf().getConfigValueMap().get(configKey);
+
+        tf.setValue("" + origValue);
+
+        // Handle changes in the value
+        tf.addValueChangeListener(new HasValue.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String
+                String value = (String) event.getValue();
+                // Do something with the value
+                try {
+                    controlService.getIclijConf().getConfigValueMap().put(configKey, new Double(value) );
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //tf.setImmediate(true);
+        return tf;
+    }
 
 }

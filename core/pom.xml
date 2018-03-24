@@ -243,6 +243,11 @@
       <artifactId>stockstat-common-eureka</artifactId>
       <version>0.5-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-util</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
     </dependencies>
   <properties>
     <jetty.version>9.3.14.v20161028</jetty.version>
