@@ -210,7 +210,7 @@ public class ServiceUtil {
         if (aDate != null) {
             int index = stocks.indexOf(aDate);
             if (index >= 0) {
-                offset = stocks.size() - index;
+                offset = stocks.size() - 1 - index;
             }
         }
         int futuredays = (int) srv.conf.getPredictorLSTMHorizon();
@@ -553,7 +553,7 @@ public class ServiceUtil {
             String aDate = TimeUtil.convertDate2(date);
             int index = stocks.indexOf(aDate);
             if (index >= 0) {
-                offset = stocks.size() - index;
+                offset = stocks.size() - 1 - index;
             }
         } else {
             String aDate = stocks.get(stocks.size() - 1);
@@ -604,11 +604,11 @@ public class ServiceUtil {
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
 
         VerifyProfitAction verify = new VerifyProfitAction();
-        List<MapList> inc = verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
+        List<MapList> inc = verify.doVerify(listInc, days, true, categoryValueMap, date);
         IclijServiceList incMap = new IclijServiceList();
         incMap.setTitle("Increase verify");
         incMap.setList(inc);
-        List<MapList> dec = verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
+        List<MapList> dec = verify.doVerify(listDec, days, false, categoryValueMap, date);
         IclijServiceList decMap = new IclijServiceList();
         incMap.setTitle("Decrease verify");
         incMap.setList(dec);

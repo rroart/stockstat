@@ -3,6 +3,7 @@ package roart.action;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 //import java.util.Collections;
 //import java.util.Date;
 import java.util.HashMap;
@@ -102,18 +103,41 @@ public class FindProfitAction extends Action {
         Map<String, IncDecItem> buys = new HashMap<>();
         Map<String, IncDecItem> sells = new HashMap<>();
         Component.disabler(srv.conf);
+        List<String> dates = srv.getDates(srv.conf.getMarket());
         Map<String, Map<String, Object>> result0 = srv.getContent();
         Map<String, Map<String, Object>> maps = result0;
         Map<String, String> nameMap = getNameMap(maps);
         handleComponent(okListMap, okConfMap, listComponent, srv, componentMap, buys, sells, maps, nameMap, config);
         String category = market.getInccategory();
         if (category != null) {
-            Double threshold = market.getIncthreshold();
             Map<String, Object> categoryMap = maps.get(category);
-            Map<String, List<List>> listMap3 = getCategoryList(maps, category);
-            Map<String, IncDecItem> buysFilter = buyFilterOnIncreaseValue(market, buys, maps, threshold, categoryMap,
-                    listMap3);
-            buys = buysFilter;
+            if (categoryMap != null) {
+                Integer offsetDays = null;
+                Integer incdays = market.getIncdays();
+                if (incdays != null) {
+                    if (incdays == 0) {
+                        int year = olddate.getYear();
+                        List<String> yearDates = new ArrayList<>();
+                        for (String date : dates) {
+                            int aYear = Integer.valueOf(date.substring(0, 4));
+                            if (year == aYear) {
+                                yearDates.add(date);
+                            }
+                        }
+                        Collections.sort(yearDates);
+                        String oldestDate = yearDates.get(0);
+                        int index = dates.indexOf(oldestDate);
+                        offsetDays = dates.size() - 1 - index;
+                    } else {
+                       offsetDays = incdays;
+                    }
+                }
+                Double threshold = market.getIncthreshold();
+                Map<String, List<List>> listMap3 = getCategoryList(maps, category);
+                Map<String, IncDecItem> buysFilter = buyFilterOnIncreaseValue(market, buys, maps, threshold, categoryMap,
+                        listMap3, offsetDays);
+                buys = buysFilter;
+            }
         }
         if (save) {
         try {
@@ -136,13 +160,22 @@ public class FindProfitAction extends Action {
     }
 
     private Map<String, List<List>> getCategoryList(Map<String, Map<String, Object>> maps, String category) {
+        String newCategory = null;
+        if (Constants.PRICE.equals(category)) {
+            newCategory = "" + Constants.PRICECOLUMN;
+        }
+        if (Constants.INDEX.equals(category)) {
+            newCategory = "" + Constants.INDEXVALUECOLUMN;
+        }
+        if (newCategory != null) {
+            Map<String, Object> map = maps.get(newCategory);
+            return (Map<String, List<List>>) map.get(PipelineConstants.LIST);
+        }
         Map<String, List<List>> listMap3 = null;
         for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
             Map<String, Object> map = entry.getValue();
-            for (String key : map.keySet()) {
-                if (category.equals(map.get(PipelineConstants.CATEGORYTITLE))) {
-                    listMap3 = (Map<String, List<List>>) map.get(PipelineConstants.LIST);
-                }
+            if (category.equals(map.get(PipelineConstants.CATEGORYTITLE))) {
+                listMap3 = (Map<String, List<List>>) map.get(PipelineConstants.LIST);
             }
         }
         return listMap3;
@@ -150,7 +183,7 @@ public class FindProfitAction extends Action {
 
     private Map<String, IncDecItem> buyFilterOnIncreaseValue(TradeMarket market, Map<String, IncDecItem> buys,
             Map<String, Map<String, Object>> maps, Double threshold, Map<String, Object> categoryMap,
-            Map<String, List<List>> listMap3) {
+            Map<String, List<List>> listMap3, Integer offsetDays) {
         Map<String, IncDecItem> buysFilter = new HashMap<>();
         for(IncDecItem item : buys.values()) {
             String key = item.getId();
@@ -166,7 +199,16 @@ public class FindProfitAction extends Action {
             }
             List<List> list = listMap3.get(key);
             List<Double> list0 = list.get(0);
-            Double value = list0.get(list0.size() - 1);
+            Double value = null;
+            if (offsetDays == null) {
+                value = list0.get(list0.size() - 1);
+            } else {
+                Double curValue = list0.get(list0.size() - 1);
+                Double oldValue = list0.get(list0.size() - 1 - offsetDays);
+                if (curValue != null && oldValue != null) {
+                    value = curValue / oldValue;
+                }
+            }
             if (value == null) {
                 continue;
             }
