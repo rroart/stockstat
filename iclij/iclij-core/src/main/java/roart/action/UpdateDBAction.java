@@ -72,6 +72,7 @@ public class UpdateDBAction extends Action {
             String component = memoryItem.getComponent();
             Action serviceAction = new ComponentFactory().factory(market, component);
             if (serviceAction != null) {
+                ((ServiceAction) serviceAction).setDays(0);
                 goals.add(serviceAction);
             }
         }
@@ -95,10 +96,17 @@ public class UpdateDBAction extends Action {
             for (String component : getComponents(instance)) {
                 List<MemoryItem> marketComponents = marketMemory.stream().filter(m -> component.equals(m.getComponent())).collect(Collectors.toList());
                 Collections.sort(marketComponents, (o1, o2) -> (o2.getRecord().compareTo(o1.getRecord())));
-                MemoryItem last = marketComponents.get(0);
-                long time = TimeUtil.daysSince(last.getRecord());
-                if (time > market.getTime()) {
-                    toCheck.add(last);
+                if (marketComponents == null || marketComponents.isEmpty()) {
+                    MemoryItem memoryItem = new MemoryItem();
+                    memoryItem.setComponent(component);
+                    memoryItem.setMarket(market.getMarket());
+                    toCheck.add(memoryItem);
+                } else {
+                    MemoryItem last = marketComponents.get(0);
+                    long time = TimeUtil.daysSince(last.getRecord());
+                    if (time > market.getTime()) {
+                        toCheck.add(last);
+                    }
                 }
             }
         }
