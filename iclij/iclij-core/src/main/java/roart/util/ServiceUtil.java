@@ -534,7 +534,7 @@ public class ServiceUtil {
         return listIncDec;
     }
 
-    public static IclijServiceResult getVerify(IclijConfig config) throws InterruptedException, ParseException {
+    public static IclijServiceResult getVerify(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
         List<IclijServiceList> retLists = result.getLists();
@@ -548,6 +548,23 @@ public class ServiceUtil {
         srv.getConfig();
         srv.conf.setMarket(market);
         List<String> stocks = srv.getDates(market);
+        if (loopOffset != null) {
+            int index;
+            if (date == null) {
+                index = stocks.size() - 1;
+            } else {
+                String aDate = TimeUtil.convertDate2(date);
+                index = stocks.indexOf(aDate);
+            }
+            index = index - loopOffset;
+            // TODO calculate backward limit for all components
+            if (index <= 0) {
+                return result;
+            }
+            String newDate = stocks.get(index);
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            date = TimeUtil.convertDate(dt.parse(newDate));
+        }
         int offset = 0;
         if (date != null) {
             String aDate = TimeUtil.convertDate2(date);
@@ -566,7 +583,7 @@ public class ServiceUtil {
         LocalDate oldDate = TimeUtil.convertDate(dt.parse(aDate));
         log.info("Old date {} ", oldDate);
         UpdateDBAction updateDbAction = new UpdateDBAction();
-        boolean save = false;
+        boolean save = config.wantVerificationSave();
         Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(market, date, days + offset, save, config);
         FindProfitAction findProfitAction = new FindProfitAction();
         ImproveProfitAction improveProfitAction = new ImproveProfitAction();  

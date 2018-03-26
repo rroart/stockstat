@@ -70,7 +70,7 @@ public class ServiceController {
             method = RequestMethod.POST)
     public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)
             throws Exception {
-        return ServiceUtil.getVerify(param.getIclijConfig());
+        return ServiceUtil.getVerify(param.getIclijConfig(), param.getOffset());
     }
 
     @RequestMapping(value = "/recommender/{market}",

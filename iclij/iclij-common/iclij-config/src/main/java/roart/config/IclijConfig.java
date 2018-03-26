@@ -90,6 +90,14 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.AUTORUN);
     }
 
+    public int mpServerCpuFraction() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.MPSERVERCPUFRACTION);
+    }
+
+    public int mpClientCpuFraction() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.MPCLIENTCPUFRACTION);
+    }
+
     public boolean wantsMLMACD() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.RECOMMENDERMLMACD);
     }
@@ -110,8 +118,20 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT);
     }
 
+    public boolean wantVerificationSave() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONSAVE);
+    }
+
     public int verificationDays() {
         return (Integer) getValueOrDefault(IclijConfigConstants.VERIFICATIONDAYS);
+    }
+
+    public int verificationLoops() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.VERIFICATIONLOOPS);
+    }
+
+    public int verificationLoopInterval() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.VERIFICATIONLOOPINTERVAL);
     }
 
     public int recommendTopBottom() {

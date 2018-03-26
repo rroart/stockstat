@@ -18,6 +18,8 @@ public class IclijServiceParam {
 
     private String webpath;
     
+    private Integer offset;
+    
     public Set<String> getIds() {
         return ids;
     }
@@ -66,6 +68,14 @@ public class IclijServiceParam {
 
     public void setWebpath(String webpath) {
         this.webpath = webpath;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
     }
     
 }

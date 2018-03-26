@@ -4,6 +4,7 @@ import roart.model.GUISize;
 import roart.model.IncDecItem;
 import roart.model.ResultItem;
 import roart.queue.IclijQueues;
+import roart.queue.MyExecutors;
 import roart.thread.ClientRunner;
 import roart.client.MyIclijUI;
 import roart.config.ConfigTreeMap;
@@ -13,6 +14,8 @@ import roart.config.VerifyConfig;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -97,7 +100,7 @@ public class IclijWebControlService {
         }
         ConfigTreeMap map2 = iclijConf.getConfigTreeMap();
         print(map2, 0);
-       
+        MyExecutors.init(iclijConf.mpClientCpuFraction());      
     }
     
     private void print(ConfigTreeMap map2, int indent) {
@@ -179,6 +182,17 @@ public class IclijWebControlService {
                         }
                 }
                 */
+    }
+
+    public void getVerifyLoop(MyIclijUI ui) {
+        for (int i = 0; i < iclijConf.verificationLoops(); i++) {
+            IclijServiceParam param = new IclijServiceParam();
+            param.setIclijConfig(getIclijConf());
+            param.setWebpath(EurekaConstants.GETVERIFY);
+            param.setOffset(i * getIclijConf().verificationLoopInterval());
+            IclijThread thread = new IclijThread(ui, param);
+            MyExecutors.run(thread);
+        }
     }
 
     /**

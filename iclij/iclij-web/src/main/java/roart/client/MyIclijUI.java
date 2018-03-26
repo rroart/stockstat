@@ -52,6 +52,7 @@ import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.ResultItemText;
 import roart.model.ResultMeta;
+import roart.queue.MyExecutors;
 import roart.service.IclijServiceList;
 import roart.service.IclijWebControlService;
 import roart.util.Constants;
@@ -170,6 +171,21 @@ public class MyIclijUI extends UI {
                 try {
                     Notification.show("Request sent");
                     displayVerify();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getVerifyLoop() {
+        Button button = new Button("Get verification data loop");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayVerifyLoop();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -372,6 +388,7 @@ public class MyIclijUI extends UI {
         horStat.addComponent(getResetDate());
         //horStat.addComponent(getDays());
         horStat.addComponent(getVerify());
+        horStat.addComponent(getVerifyLoop());
         horStat.addComponent(getMarket());
         horStat.addComponent(getMarkets());
         //horStat.addComponent(getStat());
@@ -475,6 +492,19 @@ public class MyIclijUI extends UI {
 
     private void displayVerify() {
         controlService.getVerify(this);
+        /*
+        log.info("listsize {}", list.size());
+        VerticalLayout layout = new VerticalLayout();
+        layout.setCaption("Test");
+        displayResultListsTab(layout, list);
+        tabsheet.addComponent(layout);
+        tabsheet.getTab(layout).setClosable(true);
+        Notification.show("New result available");
+        */
+    }
+
+    private void displayVerifyLoop() {
+        controlService.getVerifyLoop(this);
         /*
         log.info("listsize {}", list.size());
         VerticalLayout layout = new VerticalLayout();
