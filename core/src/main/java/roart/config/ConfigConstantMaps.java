@@ -13,6 +13,7 @@ public class ConfigConstantMaps {
         if (!map.isEmpty()) {
             return;
         }
+        map.put(ConfigConstants.DATABASEMAXHOLES, Integer.class);
         map.put(ConfigConstants.DATABASESPARK, Boolean.class);
         map.put(ConfigConstants.DATABASESPARKSPARKMASTER, String.class);
         map.put(ConfigConstants.DATABASEHIBERNATE, Boolean.class);
@@ -166,6 +167,7 @@ public class ConfigConstantMaps {
         if (!deflt.isEmpty()) {
             return;
         }
+        deflt.put(ConfigConstants.DATABASEMAXHOLES, 5);
         deflt.put(ConfigConstants.DATABASESPARK, Boolean.TRUE);
         deflt.put(ConfigConstants.DATABASESPARKSPARKMASTER, "spark://127.0.0.1:7077");
         deflt.put(ConfigConstants.DATABASEHIBERNATE, Boolean.TRUE);
@@ -323,6 +325,7 @@ public class ConfigConstantMaps {
         if (!text.isEmpty()) {
             return;
         }
+        text.put(ConfigConstants.DATABASEMAXHOLES, "Max number of holes/NaN to be filled");
         text.put(ConfigConstants.DATABASESPARK, "Enable Spark Database backend");
         text.put(ConfigConstants.DATABASESPARKSPARKMASTER, "Database Spark Master");
         text.put(ConfigConstants.DATABASEHIBERNATE, "Enable Hibernate Database backend");

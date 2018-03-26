@@ -8,6 +8,7 @@ public class ConfigConstants {
     public static final String SPARKMASTER = "sparkmaster";
     public static final String[] dbvalues = { HIBERNATE, SPARK };
     public static final String TENSORFLOW = "tensorflow";
+    public static final String DATABASEMAXHOLES = "database.maxholes";
     public static final String DATABASESPARK = "database.spark[@enable]";
     public static final String DATABASESPARKSPARKMASTER = "database.spark.sparkmaster";
     public static final String DATABASEHIBERNATE = "database.hibernate[@enable]";

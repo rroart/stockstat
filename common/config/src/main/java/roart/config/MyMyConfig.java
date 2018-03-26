@@ -447,6 +447,10 @@ public class MyMyConfig extends MyConfig {
         return (String) configValueMap.get(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER);
     }
 
+    public int getMaxHoles() {
+        return (Integer) getValueOrDefault(ConfigConstants.DATABASEMAXHOLES);
+    }
+
     public boolean wantDbSpark() {
         System.out.println("sp " + (Boolean) configValueMap.get(ConfigConstants.DATABASESPARK));
         return (Boolean) getValueOrDefault(ConfigConstants.DATABASESPARK);
