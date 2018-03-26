@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import roart.util.Constants;
 import roart.util.EurekaConstants;
 import roart.util.EurekaUtil;
 
@@ -39,11 +40,11 @@ public class IclijWebControlService {
     private static Logger log = LoggerFactory.getLogger(IclijWebControlService.class);
 
     private MyConfig conf;
- 
+
     private IclijConfig iclijConf;
-    
+
     private ObjectMapper objectMapper;
-    
+
     public IclijWebControlService() {
         //conf = MyXMLConfig.configInstance();
         //getConfig();
@@ -55,10 +56,10 @@ public class IclijWebControlService {
         ClientRunner.uiset.clear();
         ClientRunner.uiset.put(ui, "");
     }
-  
+
     /*
     private VerifyConfig verifyConfig;
-    
+
     public VerifyConfig getVerifyConfig() {
         return verifyConfig;
     }
@@ -66,8 +67,8 @@ public class IclijWebControlService {
     public void setVerifyConfig(VerifyConfig verifyConfig) {
         this.verifyConfig = verifyConfig;
     }
-*/
-    
+     */
+
     public MyConfig getConf() {
         return conf;
     }
@@ -102,18 +103,18 @@ public class IclijWebControlService {
         print(map2, 0);
         MyExecutors.init(iclijConf.mpClientCpuFraction());      
     }
-    
+
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
         System.out.print(space.substring(0, indent));
         System.out.println("map2 " + map2.getName() + " " + map2.getEnabled());
         Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         for (String key : map3.keySet()) {
-        print(map3.get(key), indent + 1);
+            print(map3.get(key), indent + 1);
             //Object value = map.get(key);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
         }
-       
+
     }
 
     public List<String> getMarkets() {
@@ -122,7 +123,7 @@ public class IclijWebControlService {
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, EurekaConstants.STOCKSTAT, EurekaConstants.GETMARKETS);
         return result.markets;    	
     }
-    
+
     public Map<String, String> getStocks(String market) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
@@ -130,7 +131,7 @@ public class IclijWebControlService {
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETSTOCKS);
         return result.stocks;   	
     }
-    
+
     /**
      * Create result lists
      * 
@@ -144,7 +145,7 @@ public class IclijWebControlService {
         new IclijThread(ui, param).start();
         //IclijQueues.clientQueue.add(param);
         //IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
-	/*
+        /*
         for (Object o : (List)((List)result.list2)) {
 			//for (Object o : (List)((List)result.list).get(0)) {
 		 	log.info("obj type " + o.getClass().getName());
@@ -154,7 +155,7 @@ public class IclijWebControlService {
 		 		log.info("keyset " + l.keySet());
 		 	}
 		}
-		*/
+         */
     }
 
     /**
@@ -181,7 +182,7 @@ public class IclijWebControlService {
                                 log.info("keyset " + l.keySet());
                         }
                 }
-                */
+         */
     }
 
     public void getVerifyLoop(MyIclijUI ui) {
@@ -192,6 +193,11 @@ public class IclijWebControlService {
             param.setOffset(i * getIclijConf().verificationLoopInterval());
             IclijThread thread = new IclijThread(ui, param);
             MyExecutors.run(thread);
+            try {
+                Thread.sleep(10 * 1000);
+            } catch (InterruptedException e) {
+                log.info(Constants.EXCEPTION, "Sleep interrupted");
+            }
         }
     }
 
@@ -219,12 +225,12 @@ public class IclijWebControlService {
      */
 
     public List getContentGraph(Set<Pair<String, String>> ids, GUISize guiSize) {
-		// TODO fix quick workaround for serialization
-    	Set<String> idset = new HashSet<>();
-    	for (Pair pair : ids) {
-    		idset.add(pair.getFirst() + "," + pair.getSecond());
-    	}
-    	ServiceParam param = new ServiceParam();
+        // TODO fix quick workaround for serialization
+        Set<String> idset = new HashSet<>();
+        for (Pair pair : ids) {
+            idset.add(pair.getFirst() + "," + pair.getSecond());
+        }
+        ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setIds(idset);
         param.setGuiSize(guiSize);
@@ -233,7 +239,7 @@ public class IclijWebControlService {
     }
 
     public String getAppName() {
-    	return EurekaConstants.ICLIJ;
+        return EurekaConstants.ICLIJ;
     }
 
     /**
@@ -265,7 +271,7 @@ public class IclijWebControlService {
         }
         return result.list;
     }
-    
+
     private static ClientRunner clientRunnable = null;
     public static Thread clientWorker = null;
 
@@ -286,12 +292,12 @@ public class IclijWebControlService {
     class IclijThread extends Thread {
         private IclijServiceParam param;
         private MyIclijUI ui;
-        
+
         public IclijThread(MyIclijUI ui, IclijServiceParam param) {
             this.ui = ui;
             this.param = param;
         }
-        
+
         @Override
         public void run() {
             IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), param.getWebpath(), objectMapper);
