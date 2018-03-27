@@ -106,6 +106,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             Map<String, Double[]> indicatorResultMap;
             indicatorResultMap = new HashMap<>();
             for (String id : ids) {
+                if (id.equals("KZKAK:IND")) {
+                    int jj=0;
+                }
                 Double[] aResult = new Double[2]; 
                 System.out.println("ttt " + result.get(id));
                 Double[] mergedResult = result.get(id);

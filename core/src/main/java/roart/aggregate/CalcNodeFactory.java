@@ -23,9 +23,15 @@ public class CalcNodeFactory {
             ObjectMapper mapper = new ObjectMapper();
             anode = mapper.readValue(jsonValue, CalcComplexNode.class);
         }
+        if (macdrsiMinMax == null) {
+            int jj = 0;
+        }
         List<Double> minmax = macdrsiMinMax[index];
         double minMutateThresholdRange =  minmax.get(0);
         double maxMutateThresholdRange = minmax.get(1);
+        if (minMutateThresholdRange == maxMutateThresholdRange) {
+            int jj = 0;
+        }
         anode.setMinMutateThresholdRange(minMutateThresholdRange);
         anode.setMaxMutateThresholdRange(maxMutateThresholdRange);
         anode.setUseMax(useMax);

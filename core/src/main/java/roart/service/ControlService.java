@@ -809,6 +809,10 @@ public class ControlService {
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
             Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null);
+            List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
+            if (macdrsiMinMax.length == 1) {
+                int jj = 0;
+            }
 
             List<String> buyList = recommendList[0];
             List<String> sellList = recommendList[1];
