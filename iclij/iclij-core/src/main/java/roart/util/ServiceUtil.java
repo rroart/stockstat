@@ -96,7 +96,11 @@ public class ServiceUtil {
         Set<Double> sellset = new HashSet<>();
         for (String key : recommendBuySell.keySet()) {
             List<Double> vals = recommendBuySell.get(key);
+            List v = recommendBuySell.get(key);
             if (vals.get(0) != null) {
+                if (v.get(0).getClass().getSimpleName().contains("String")) {
+                    int jj = 0;
+                }
                 buyset.add(vals.get(0));
             }
             if (vals.get(1) != null) {
@@ -592,7 +596,11 @@ public class ServiceUtil {
             serviceAction.goal(null);
             Map<String, Object> resultMap = serviceAction.getLocalResultMap();
             List<MemoryItem> memoryItems = (List<MemoryItem>) resultMap.get(IclijPipelineConstants.MEMORY);
-            allMemoryItems.addAll(memoryItems);            
+            if (memoryItems != null) {
+                allMemoryItems.addAll(memoryItems);
+            } else {
+                log.error("Memory null");
+            }
         }
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
