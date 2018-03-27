@@ -140,22 +140,8 @@ public class IclijWebControlService {
 
     public void getContent(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        //param.setConfig(conf);
         param.setWebpath(EurekaConstants.GETCONTENT);
         new IclijThread(ui, param).start();
-        //IclijQueues.clientQueue.add(param);
-        //IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
-        /*
-        for (Object o : (List)((List)result.list2)) {
-			//for (Object o : (List)((List)result.list).get(0)) {
-		 	log.info("obj type " + o.getClass().getName());
-		 	if ("java.util.LinkedHashMap".equals(o.getClass().getName())) {
-		 		java.util.LinkedHashMap l = (java.util.LinkedHashMap) o;
-		 		log.info("size0 " + l.size());
-		 		log.info("keyset " + l.keySet());
-		 	}
-		}
-         */
     }
 
     /**
@@ -166,23 +152,10 @@ public class IclijWebControlService {
 
     public void getVerify(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
-        //param.setVerifyConfig(verifyConfig);
         param.setIclijConfig(getIclijConf());
         param.setWebpath(EurekaConstants.GETVERIFY);
-        new IclijThread(ui, param).start();
-        //IclijQueues.clientQueue.add(param);
-        //IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), EurekaConstants.GETVERIFY);
-        /*
-        for (Object o : (List)((List)result.list2)) {
-                        //for (Object o : (List)((List)result.list).get(0)) {
-                        log.info("obj type " + o.getClass().getName());
-                        if ("java.util.LinkedHashMap".equals(o.getClass().getName())) {
-                                java.util.LinkedHashMap l = (java.util.LinkedHashMap) o;
-                                log.info("size0 " + l.size());
-                                log.info("keyset " + l.keySet());
-                        }
-                }
-         */
+        IclijThread thread = new IclijThread(ui, param);
+        MyExecutors.run(thread);
     }
 
     public void getVerifyLoop(MyIclijUI ui) {
