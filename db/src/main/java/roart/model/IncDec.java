@@ -1,5 +1,6 @@
 package roart.model;
 
+import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -123,8 +124,10 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
 
     @Transient
     public void save() throws Exception {
-        HibernateUtil.currentSession().save(this);
-        HibernateUtil.commit();
+        Session session = HibernateUtil.getMyHibernateSession();
+        session.getTransaction().begin();
+        session.save(this);
+        session.getTransaction().commit();
     }
 
 

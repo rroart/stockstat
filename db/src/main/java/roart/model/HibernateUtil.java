@@ -62,6 +62,35 @@ public class HibernateUtil {
 	return session;
     }
 
+    public static Session getMyHibernateSession() throws /*MappingException,*/ HibernateException, Exception {
+        if (factory == null) {
+                /*
+            AnnotationConfiguration configuration = new AnnotationConfiguration();
+            factory = configuration.configure().buildSessionFactory();*/
+                /*
+                Configuration configuration = new Configuration().configure();
+                StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
+                                applySettings(configuration.getProperties());
+                factory = configuration.buildSessionFactory(builder.build());
+                */
+                factory = new Configuration().configure().buildSessionFactory();
+            //Object o = new net.sf.ehcache.hibernate.EhCacheRegionFactory();
+        }
+
+        if (session == null) {
+            //Session sess = factory.openSession();
+            session = factory.getCurrentSession();
+        }
+
+        if (session != null) {
+            if (!session.isOpen()) {
+                session = factory.openSession();
+            }
+        }
+
+        return session;
+    }
+
     public static void commit() throws /*MappingException,*/ HibernateException, Exception {
 	log.info("Doing hibernate commit");
 	if (transaction != null) {
