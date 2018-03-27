@@ -520,7 +520,7 @@ public class ComponentRecommender extends Component {
 
         @Override
         public List<MemoryItem> call() throws Exception {
-             return ServiceUtil.doRecommender(srv, market, 0, null, false, disableList, false);
+             return ServiceUtil.doRecommender(srv, market, 0, null, doSave, disableList, false);
         }
 
     }

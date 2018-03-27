@@ -73,6 +73,7 @@ public class UpdateDBAction extends Action {
             Action serviceAction = new ComponentFactory().factory(market, component);
             if (serviceAction != null) {
                 ((ServiceAction) serviceAction).setDays(0);
+                ((ServiceAction) serviceAction).setSave(true);
                 goals.add(serviceAction);
             }
         }

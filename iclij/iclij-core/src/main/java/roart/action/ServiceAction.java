@@ -76,16 +76,16 @@ public class ServiceAction extends Action {
         try {
             switch (task) {
             case RECOMMENDER:
-                setMemory(ServiceUtil.doRecommender(market, days, null, true, new ArrayList<>(), true));
+                setMemory(ServiceUtil.doRecommender(market, days, null, save, new ArrayList<>(), true));
                 break;
             case PREDICTOR:
-                setMemory(ServiceUtil.doPredict(market, days, null, true, true));
+                setMemory(ServiceUtil.doPredict(market, days, null, save, true));
                 break;
             case MLMACD:
-                setMemory(ServiceUtil.doMLMACD(market, days, null, true, true));
+                setMemory(ServiceUtil.doMLMACD(market, days, null, save, true));
                 break;
             case MLINDICATOR:
-                setMemory(ServiceUtil.doMLIndicator(market, days, null, true, true));
+                setMemory(ServiceUtil.doMLIndicator(market, days, null, save, true));
                 break;
             }
         } catch (Exception e) {
