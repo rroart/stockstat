@@ -1,54 +1,62 @@
-Use R quantmod
-Use Java quantlib
-Fixed left
-Eureka wait for notify
-Indicator/predictor save created/generated data
-Drop classifier eval and get percentage when doing model learntest
-Save tensorflow config to xml file
+Multiple datasources, pandas-datareader
+Parametrize jdbc setting
+Vaadin threads
 Use swarm algorithm
+Thread/multitask change
+Stanford
 Use fuzzy logic or uncertainty
-Stockstat metadata for imports
-Dockerize tensorflow etc
-Use defaults for config
-Use volume
-Add interest
-Fix problem when extras use same market
-Make stock value to return a new class instead of double[]
 Use genetic algorithms for finding neural net config
-Move move
-Check all use of configs
-Metadata on title row
-Rearrange buy/sell
-Change result map keys, due to overlap
-Stockst komb 1m 1w m macd etc
-Jenkins / owasp
-Aggregator recommender gets problem with old tradcurr data
-Mlind? use pure gold oil price
-Memory with time spent.
-Start with no recent data, then most time spenders.
-Cboe lacked index
-Nordfund tab date
-Tradcomm p1 empty
-Tradcurr p2 empty
-Mornind - date
 Evolutionary neural net
+Configure limit for empty hole limit
+Check all use of configs
+Verifier loop
+Nvidia
+Demo
+Rearrange buy/sell, and failed categories?
+Cleanup recommender buy/sell duality
+Put TODO in code here
+Dataimport zero/content check
+The noSave for getVerify is not used
+Doc iclij configs
+?: Change result map keys, due to overlap
 ReName calc
+
+Stockst komb 1m 1w m macd etc
+Mlind? use pure gold oil price
 Use testaccuracy in iclij
 Use 4 macd with ml
 Mlindicator scale down/improveaction?
 Recommender combine keys/improveaction?
-Pipeline iclij, and add date support and no storing, more validating
 Remove findprofit both inc dec, go to improve
 RSI and usemax
-StockUtil update periods number
-Parametrize jdbc setting
-Configure limit for empty hole limit
 calcnodecomplex usemax min/max
-ComponentMLMACD Double instead of String (not reproduced with dbg).
-Put TODO in code here
-MLPredictModel in MLPredictDAO put loop out of class
-New market for findMarketComponentsToCheck(markets)?
+
+Stockstat metadata for imports
+Metadata on title row
+Make stock value to return a new class instead of double[]
+Fix problem when extras use same market
+Eureka wait for notify
+Dockerize tensorflow etc
+MACD two dim input w (macd, %)
+Spark truncates getAll?
+Synch XML reader config code
+Start with no recent data, then most time spenders.
+
+Use volume
+Add interest
+Subclass incdecitem instead of having non-saved
 Add info about nltk.download() large_grammar
+Indicator/predictor save created/generated data
+Save tensorflow config to xml file
+Use R quantmod
+Use Java quantlib
+
+?: Fixed left
+?: Move move
+
+KZKAK:IND...
+Aggregator recommender gets problem with old tradcurr data
+ComponentMLMACD Double instead of String (not reproduced with dbg).
 Caused by: java.lang.ClassCastException: java.lang.Double cannot be cast to java.lang.String
         at roart.component.ComponentMLMACD.handle(ComponentMLMACD.java:75)
 2018-01-28 21:28:50,162 ERROR [qtp1915579460-24] r.s.ControlService [ControlService.java:234] Exception
@@ -60,16 +68,25 @@ morncat (w cy no price) and aggregator price, npe
 java.lang.NullPointerException: null
         at roart.aggregate.AggregatorRecommenderIndicator.<init>(AggregatorRecommenderIndicator.java:92)
         at roart.service.ControlService.getAggregates(ControlService.java:332)
-MACD two dim input w (macd, %)
-Dataimport zero/content check
-Microservice sendme exception handling
-GUI choice for do improveprofitaction
-Implement clientqueue
-Iclji gui ui temp hack remove
-Iclij w/ ml time stats
-Subclass incdecitem instead of having non-saved
-Spark truncates getAll?
-Thread/multitask change
-Vaadin threads
-Cleanup recommender buy/sell duality
-For ose etc, new cy/1m calc
+
+Owasp
+F: StockUtil update periods number
+F: Pipeline iclij, and add date support and no storing, more validating
+F?: MLPredictModel in MLPredictDAO put loop out of class
+F: For ose etc, new cy/1m calc
+F?: Cboe lacked index
+F?: Nordfund tab date
+F?: Mornind - date
+F: Handle first time market run
+F: New market for findMarketComponentsToCheck(markets)?
+F: Memory with time spent.
+F: Use defaults for config
+F: Iclji gui ui temp hack remove
+F: Iclij w/ ml time stats
+F: Jenkins
+F: Tradcomm p1 empty
+F: Tradcurr p2 empty
+F: Implement clientqueue
+F: Microservice sendme exception handling
+F: GUI choice for do improveprofitaction
+F: Drop classifier eval and get percentage when doing model learntest

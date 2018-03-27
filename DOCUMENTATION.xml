@@ -168,6 +168,28 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	<tbody>
 	  <row>
 	    <entry>
+	      database...
+	    </entry>
+	    <entry>
+	      lots missing
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      database.maxholes
+	    </entry>
+	    <entry>
+	      Max holes/NaN to be filled, or the previous data will be nulled out.
+	    </entry>
+	    <entry>
+	      5
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
 	      machinelearning
 	    </entry>
 	    <entry>
