@@ -120,7 +120,11 @@ public class CalcComplexNode extends CalcNode {
             myvalue = myvalue / minmaxthreshold;
         }
         */
+        if (maxMutateThresholdRange != minMutateThresholdRange) {
         myvalue = myvalue / (maxMutateThresholdRange - minMutateThresholdRange);
+        } else {
+            int jj = 0;
+        }
         
         /*
         if (changeSignWhole) {
