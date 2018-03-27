@@ -9,5 +9,7 @@ xterm -e "java -jar jetty-runner-9.4.2.v20170220.jar --port 8181 stockstat-iclij
 xterm -e "java -jar jetty-runner-9.4.2.v20170220.jar --port 8180 stockstat-web-0.5-SNAPSHOT.war" &
 
 cd ../tensorflow
-xterm -e ./flask.sh &
+xterm -e ./flasktf.sh &
 
+cd ../python/pd
+xterm -e ./flaskpd.sh &
