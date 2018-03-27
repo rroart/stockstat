@@ -392,7 +392,7 @@ public class MLMACD extends Aggregator {
                             Map<String, double[]> map2 = mapIdMap.get(mapName);
                             log.info("map name {}", mapName);
                             if (map == null || map2 == null || map2.isEmpty()|| mapMap.get(mapName) == null) {
-                                log.error("map null and continue? {}", mapName);
+                                log.warn("Map null and continue? {}", mapName);
                                 continue;
                             }
                             Callable callable = new MLClassifyLearnTestPredictCallable(mldao, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime, map2, labelMapShort);  
