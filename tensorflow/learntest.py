@@ -1,4 +1,8 @@
 class LearnTest:
+    def __init__(self, tensorflowDNNconfig):
+        vars(self).update(tensorflowDNNConfig)
+    def __init__(self, tensorflowLConfig):
+        vars(self).update(tensorflowLConfig)
     def __init__(self, trainingarray):
         vars(self).update(trainingarray)
     def __init__(self, catarray):

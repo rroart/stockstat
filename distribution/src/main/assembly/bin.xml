@@ -83,6 +83,8 @@
 	<include>learntest.py</include>
 	<include>learntestpredict.py</include>
 	<include>device.py</include>
+	<include>dnnconfig.py</include>
+	<include>lconfig.py</include>
 	<include>flasktf.sh</include>
 	<include>nameko.sh</include>
 	<include>run-tf.sh</include>

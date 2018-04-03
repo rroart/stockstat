@@ -9,6 +9,7 @@ import json
 from nameko.web.handlers import http
 from datetime import datetime
 from werkzeug.wrappers import Response
+import shutil
 
 global dicteval
 dicteval = {}
@@ -50,6 +51,8 @@ class Classify:
             return x
             
         predictions = list(classifier.predict_classes(input_fn=get_classifier_inputs))
+        shutil.rmtree("/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+
         intlist = []
         for prediction in predictions:
             # NOTE changing prediction back again. see other NOTE
@@ -74,6 +77,8 @@ class Classify:
         return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def do_learntestinner(self, myobj):
+        tensorflowDNNConfig = myobj.tensorflowDNNConfig
+        tensorflowLConfig = myobj.tensorflowLConfig
         array = np.array(myobj.trainingarray, dtype='f')
         cat = np.array(myobj.trainingcatarray, dtype='i')
         # NOTE class range 1 - 4 will be changed to 0 - 3
@@ -95,19 +100,22 @@ class Classify:
         feature_columns = [tf.contrib.layers.real_valued_column("", dimension=25)]
         global count
         count = count + 1
+        steps = 0
         if myobj.modelInt == 1:
             #print("mod1")
             with tf.device(pu):
                 classifier = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns,
-                                                            hidden_units=[10, 20, 10],
+                                                            hidden_units=tensorflowDNNConfig.hiddenunits,
                                                             n_classes=myobj.outcomes,
                                                             model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+                steps = tensorflowDNNConfig.steps
         if myobj.modelInt == 2:
             #print("mod2")
             with tf.device(pu):
                 classifier = tf.contrib.learn.LinearClassifier(
                     feature_columns=feature_columns,
                     model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+                steps = tensorflowLConfig.steps
         def get_train_inputs():
             x = tf.constant(train)
             y = tf.constant(traincat)
