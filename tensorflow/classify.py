@@ -60,13 +60,16 @@ class Classify:
             
         #predictions = list(classifier.predict(input_fn=get_classifier_inputs)["classes"])
         predictions = classifier.predict(input_fn=get_classifier_inputs)
+        #for prediction in predictions:
+        #    print(prediction)
+        predictions = classifier.predict(input_fn=get_classifier_inputs)
         intlist = []
         problist = []
         for prediction in predictions:
             class_id = prediction['class_ids'][0]
             # NOTE changing prediction back again. see other NOTE
-            class_id = int(class_id + 1)
             probability = float(prediction['probabilities'][class_id])
+            class_id = int(class_id + 1)
             intlist.append(class_id)
             problist.append(probability)
         #shutil.rmtree("/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
@@ -166,7 +169,8 @@ class Classify:
             print("hidden")
             print(tensorflowDNNConfig.hiddenunits)
             print(type(tensorflowDNNConfig.hiddenunits))
-            hidden_units = json.loads(tensorflowDNNConfig.hiddenunits)
+            #hidden_units = json.loads(tensorflowDNNConfig.hiddenunits)
+            hidden_units = tensorflowDNNConfig.hiddenunits
             print(hidden_units)
             print(type(hidden_units))
             with tf.device(pu):
