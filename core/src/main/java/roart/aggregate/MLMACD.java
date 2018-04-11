@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tictactec.ta.lib.MInteger;
 
 import roart.category.Category;
@@ -27,6 +28,7 @@ import roart.indicator.IndicatorUtils;
 import roart.ml.MLClassifyDao;
 import roart.ml.MLClassifyLearnTestPredictCallable;
 import roart.ml.MLClassifyModel;
+import roart.ml.NNConfigs;
 import roart.model.LearnTestClassifyResult;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
@@ -108,6 +110,9 @@ public class MLMACD extends Aggregator {
             mlTimesTableRows = new ArrayList<>();
             Object[] objs = new Object[fieldSize];
             int retindex = 0;
+            if (fieldSize == 0) {
+                int jj = 0;
+            }
             objs[retindex++] = "";
         }
         if (conf.wantOtherStats()) {
@@ -248,12 +253,18 @@ public class MLMACD extends Aggregator {
         // map from h/m to model to posnegcom map<model, results>
         Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
         log.info("Period {} {}", title, mapMap.keySet());
+        String nnconfigString = conf.getMLMACDMLConfig();
+        NNConfigs nnConfigs = null;
+        if (nnconfigString != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            nnConfigs = mapper.readValue(nnconfigString, NNConfigs.class);
+        }
         if (conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();
             if (conf.wantMLMP()) {
-                doLearnTestClassifyFuture(conf, mapMap, mapResult, labelMapShort);
+                doLearnTestClassifyFuture(nnConfigs, conf, mapMap, mapResult, labelMapShort);
             } else {
-                doLearnTestClassify(conf, mapMap, mapResult, labelMapShort);
+                doLearnTestClassify(nnConfigs, conf, mapMap, mapResult, labelMapShort);
             }
         }
         createResultMap(conf, mapResult);
@@ -263,7 +274,7 @@ public class MLMACD extends Aggregator {
 
     }
 
-    private void doLearnTestClassify(MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
+    private void doLearnTestClassify(NNConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
             Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort) {
         List<MacdSubType> subTypes = wantedSubTypes();
@@ -310,7 +321,10 @@ public class MLMACD extends Aggregator {
                                 log.error("map null and continue? {}", mapName);
                                 continue;
                             }
-                            LearnTestClassifyResult result = mldao.learntestclassify(this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime, map2, labelMapShort);  
+                            int outcomes = (int) map.values().stream().distinct().count();
+                            outcomes = 4;
+                            log.info("Outcomes {}", outcomes);
+                            LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime, map2, labelMapShort);  
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
                             probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
@@ -339,7 +353,7 @@ public class MLMACD extends Aggregator {
         }
     }
 
-    private void doLearnTestClassifyFuture(MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
+    private void doLearnTestClassifyFuture(NNConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
             Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort) {
         List<MacdSubType> subTypes = wantedSubTypes();
@@ -395,8 +409,11 @@ public class MLMACD extends Aggregator {
                                 log.warn("Map null and continue? {}", mapName);
                                 continue;
                             }
-                            Callable callable = new MLClassifyLearnTestPredictCallable(mldao, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime, map2, labelMapShort);  
-                            Future<LearnTestClassifyResult> future = MyExecutors.run(callable);
+                            int outcomes = (int) map.values().stream().distinct().count();
+                            outcomes = 4;
+                            log.info("Outcomes {}", outcomes);
+                            Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime, map2, labelMapShort);  
+                            Future<LearnTestClassifyResult> future = MyExecutors.mlrun(callable);
                             futureList.add(future);
                             futureMap.put(future, new FutureMap(subType, model, mapType, resultMetaArray.size() - 1));
                         }
@@ -439,11 +456,11 @@ public class MLMACD extends Aggregator {
         resultMeta.setTestAccuracy(result.getAccuracy());
     }
 
-    private void doLearnTestClassifyOld(MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
+    private void doLearnTestClassifyOld(NNConfigs nnconfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
             Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort) {
         try {
-            doLearningAndTests(conf, mapMap, labelMapShort);
+            doLearningAndTests(nnconfigs, conf, mapMap, labelMapShort);
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -628,7 +645,10 @@ public class MLMACD extends Aggregator {
             log.error("map null and continue? {}", mapName);
             return null;
         }
-        Map<String, Double[]> classifyResult = mldao.classify(this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, labelMapShort, mapTime);
+        int outcomes = (int) map.values().stream().distinct().count();
+        outcomes = 4;
+        log.info("Outcomes {}", outcomes);
+        Map<String, Double[]> classifyResult = mldao.classify(this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, labelMapShort, mapTime);
         mapResult2.put(mapType, classifyResult);
         return classifyResult;
     }
@@ -650,7 +670,7 @@ public class MLMACD extends Aggregator {
         addEventRow(counts.toString(), subType.getName(), "");
     }
 
-    private void doLearningAndTests(MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
+    private void doLearningAndTests(NNConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
             Map<Double, String> labelMapShort) {
         List<MacdSubType> subTypes = wantedSubTypes();
         for (MacdSubType subType : subTypes) {
@@ -664,7 +684,10 @@ public class MLMACD extends Aggregator {
                             log.error("map null {}", mapName);
                             continue;
                         }
-                        Double testaccuracy = mldao.learntest(this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, 4, mapTime);  
+                        int outcomes = (int) map.values().stream().distinct().count();
+                        outcomes = 4;
+                        log.info("Outcomes {}", outcomes);
+                        Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime);  
                         probabilityMap.put("" + model . getId() + key + subType + mapType, testaccuracy);
                         Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                         // make OO of this, create object
