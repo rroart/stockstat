@@ -148,6 +148,10 @@ public abstract class Indicator {
         DbAccess dbDao = DbDao.instance(conf);
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         Pipeline datareader = pipelineMap.get("" + category);
+        if (datareader == null) {
+            log.info("empty {}", category);
+            return;
+        }
         this.listMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
         this.truncListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
         if (!anythingHere(listMap)) {
