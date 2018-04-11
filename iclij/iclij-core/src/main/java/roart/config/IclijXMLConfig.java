@@ -91,9 +91,11 @@ public class IclijXMLConfig {
         IclijConfigConstantMaps.makeDefaultMap();
         IclijConfigConstantMaps.makeTextMap();
         IclijConfigConstantMaps.makeTypeMap();
+        IclijConfigConstantMaps.makeConvertMap();
         configInstance.setDeflt(IclijConfigConstantMaps.deflt);
         configInstance.setType(IclijConfigConstantMaps.map);
         configInstance.setText(IclijConfigConstantMaps.text);
+        configInstance.setConv(IclijConfigConstantMaps.conv);
         if (configxml != null) {
             printout();
             doc = configxml.getDocument();
