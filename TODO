@@ -1,3 +1,5 @@
+Pipe, Categ constructor, split off calculate
+iPredictor implement, and not running
 Multiple datasources, pandas-datareader
 Parametrize jdbc setting
 Vaadin threads
@@ -5,21 +7,19 @@ Use swarm algorithm
 Thread/multitask change
 Stanford
 Use fuzzy logic or uncertainty
-Use genetic algorithms for finding neural net config
-Evolutionary neural net
-Configure limit for empty hole limit
 Check all use of configs
-Verifier loop
 Nvidia
 Demo
 Rearrange buy/sell, and failed categories?
 Cleanup recommender buy/sell duality
 Put TODO in code here
 Dataimport zero/content check
-The noSave for getVerify is not used
 Doc iclij configs
 ?: Change result map keys, due to overlap
 ReName calc
+tf open file limi
+Ignore bad performing nn after evolve, set limit
+DNNL
 
 Stockst komb 1m 1w m macd etc
 Mlind? use pure gold oil price
@@ -30,6 +30,8 @@ Recommender combine keys/improveaction?
 Remove findprofit both inc dec, go to improve
 RSI and usemax
 calcnodecomplex usemax min/max
+ConfigMaps use class
+MyExecutors and cpu config
 
 Stockstat metadata for imports
 Metadata on title row
@@ -70,6 +72,11 @@ java.lang.NullPointerException: null
         at roart.service.ControlService.getAggregates(ControlService.java:332)
 
 Owasp
+F: Use genetic algorithms for finding neural net config
+F: Evolutionary neural net
+F: Verifier loop
+F: Configure limit for empty hole limit
+F: The noSave for getVerify is not used
 F: StockUtil update periods number
 F: Pipeline iclij, and add date support and no storing, more validating
 F?: MLPredictModel in MLPredictDAO put loop out of class
