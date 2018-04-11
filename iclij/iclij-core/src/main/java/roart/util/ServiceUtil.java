@@ -74,9 +74,12 @@ public class ServiceUtil {
         LocalDate futureDate = TimeUtil.convertDate(dt.parse(futureDateStr));
 
         srv.conf.setdate(TimeUtil.convertDate(baseDate));
-        srv.getTestRecommender(true, disableList);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        if (instance.wantEvolveRecommender()) {
+            srv.getEvolveRecommender(true, disableList);
+        }
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> maps = srv.getContent(disableList);
         Map recommendMaps = maps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         //System.out.println("m3 " + recommendMaps.keySet());
@@ -226,12 +229,12 @@ public class ServiceUtil {
         LocalDate baseDate = TimeUtil.convertDate(dt.parse(baseDateStr));
         LocalDate futureDate = TimeUtil.convertDate(dt.parse(futureDateStr));
         srv.conf.setdate(TimeUtil.convertDate(baseDate));
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.TRUE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
-        srv.conf.configValueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);
         Map<String, Map<String, Object>> result0 = srv.getContent();
 
         Map<String, Map<String, Object>> maps = result0;
@@ -253,8 +256,8 @@ public class ServiceUtil {
         String categoryTitle = (String) map.get(PipelineConstants.CATEGORYTITLE);
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) map.get(PipelineConstants.RESULT);
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> result = srv.getContent();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
@@ -286,12 +289,12 @@ public class ServiceUtil {
         LocalDate futureDate = TimeUtil.convertDate(dt.parse(futureDateStr));
 
         srv.conf.setdate(TimeUtil.convertDate(baseDate));
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);
         Map<String, Map<String, Object>> result0 = srv.getContent();
 
         Map<String, Map<String, Object>> maps = result0;
@@ -316,8 +319,8 @@ public class ServiceUtil {
         //System.out.println("m4 " + resultMap.keySet());
         //System.out.println("m4 " + probabilityMap.keySet());
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> result = srv.getContent();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
@@ -360,11 +363,11 @@ public class ServiceUtil {
         LocalDate futureDate = TimeUtil.convertDate(dt.parse(futureDateStr));
         srv.conf.setdate(TimeUtil.convertDate(baseDate));
         //srv.getTestRecommender(true);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
         Map<String, Map<String, Object>> result0 = srv.getContent();
 
         Map<String, Map<String, Object>> maps = result0;
@@ -400,8 +403,8 @@ public class ServiceUtil {
             }
         }
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> result = srv.getContent();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
