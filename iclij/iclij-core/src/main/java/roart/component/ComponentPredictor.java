@@ -23,12 +23,12 @@ public class ComponentPredictor extends Component {
     
     @Override
     public void enable(MyMyConfig conf) {
-        conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.TRUE);                
+        conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.TRUE);                
     }
 
     @Override
     public void disable(MyMyConfig conf) {
-        conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);        
+        conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);        
     }
 
     @Override

@@ -19,31 +19,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.action.FindProfitAction;
 import roart.config.ConfigConstants;
 import roart.config.IclijConfig;
+import roart.config.IclijConfigConstants;
 import roart.config.MyMyConfig;
 import roart.model.ResultMeta;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
 import roart.util.ServiceUtil;
 import roart.util.ServiceUtilConstants;
+import roart.util.TimeUtil;
 
 public class ComponentMLMACD extends Component {
     private Logger log = LoggerFactory.getLogger(ComponentMLMACD.class);
     @Override
     public void enable(MyMyConfig conf) {
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);        
-        conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);        
+        conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
     }
 
     @Override
     public void disable(MyMyConfig conf) {
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.FALSE);        
-        conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACD, Boolean.FALSE);        
+        conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
     }
 
     @Override
     public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config) {
         //if (true) return;
         //System.out.println(resultMaps.keySet());
+        List<String> nns = getnns();
+        setnns(conf, config, nns);
         resultMaps = srv.getContent();
         Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLMACD);
         //System.out.println("mlm " + mlMACDMaps.keySet());
@@ -91,12 +95,12 @@ public class ComponentMLMACD extends Component {
                     //System.out.println(okListMap.keySet());
                     if (tfpn.equals(FindProfitAction.TP) || tfpn.equals(FindProfitAction.FN)) {
                         increase = true;
-                        IncDecItem incdec = mapAdder(buys, key, okConfMap.get(keys), okListMap.get(keys), nameMap);
+                        IncDecItem incdec = mapAdder(buys, key, okConfMap.get(keys), okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                     if (tfpn.equals(FindProfitAction.TN) || tfpn.equals(FindProfitAction.FP)) {
                         increase = false;
-                        IncDecItem incdec = mapAdder(sells, key, okConfMap.get(keys), okListMap.get(keys), nameMap);
+                        IncDecItem incdec = mapAdder(sells, key, okConfMap.get(keys), okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                 }                        
@@ -106,6 +110,26 @@ public class ComponentMLMACD extends Component {
             count++;
         }
 
+    }
+
+    static void setnns(MyMyConfig conf, IclijConfig config, List<String> nns) {
+        Map<String, String> map = config.getConv();
+        for (String key : nns) {
+            boolean enable = (boolean) conf.getValueOrDefault(key);
+            String otherKey = map.get(key);
+            conf.getConfigValueMap().put(otherKey, enable);
+        }
+    }
+
+    static List<String> getnns() {
+        List<String> nns = new ArrayList<>();
+        nns.add(IclijConfigConstants.EVOLVEMLDNN);
+        nns.add(IclijConfigConstants.EVOLVEMLDNNL);
+        nns.add(IclijConfigConstants.EVOLVEMLL);
+        nns.add(IclijConfigConstants.EVOLVEMLLR);
+        nns.add(IclijConfigConstants.EVOLVEMLMCP);
+        nns.add(IclijConfigConstants.EVOLVEMLOVR);
+        return nns;
     }
 
     static Object[] getRealKeys(Object[] keys, Set<Object[]> keyset) {
@@ -123,12 +147,13 @@ public class ComponentMLMACD extends Component {
         }
         return keys;
     }
-    static IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, List<MemoryItem> memoryList, Map<String, String> nameMap) {
+    static IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, List<MemoryItem> memoryList, Map<String, String> nameMap, LocalDate date) {
         MemoryItem memory = memoryList.get(0);
         IncDecItem val = map.get(key);
         if (val == null) {
             val = new IncDecItem();
             val.setRecord(LocalDate.now());
+            val.setDate(date);
             val.setId(key);
             val.setMarket(memory.getMarket());
             val.setDescription("");

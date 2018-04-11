@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.config.ConfigConstants;
 import roart.config.IclijConfig;
+import roart.config.IclijXMLConfig;
 import roart.config.MyMyConfig;
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
@@ -26,36 +27,39 @@ import roart.queue.MyExecutors;
 import roart.service.ControlService;
 import roart.util.Constants;
 import roart.util.ServiceUtil;
+import roart.util.TimeUtil;
 
 public class ComponentRecommender extends Component {
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Override
     public void enable(MyMyConfig conf) {
-        conf.configValueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.TRUE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.TRUE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.TRUE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.TRUE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORS, Boolean.TRUE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.TRUE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.TRUE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.TRUE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.TRUE);                
     }
 
     @Override
     public void disable(MyMyConfig conf) {
-        conf.configValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.FALSE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.FALSE);                
-        conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.FALSE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORS, Boolean.FALSE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.FALSE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.FALSE);                
+        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.FALSE);                
     }
 
     @Override
     public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
             Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config) {
-        // TODO Auto-generated method stub
-        srv.getTestRecommender(true, new ArrayList<>());
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        if (instance.wantEvolveRecommender()) {
+            srv.getEvolveRecommender(true, new ArrayList<>());
+        }
         resultMaps = srv.getContent();
         String market = okListMap.values().iterator().next().get(0).getMarket();
         findBuySellRecommendations(resultMaps, nameMap, market, buys, sells, okConfMap, okListMap, srv, config);
@@ -113,7 +117,7 @@ public class ComponentRecommender extends Component {
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(buys, element.getKey(), confidence, okListMap.get(keys), nameMap);
+            IncDecItem incdec = ComponentMLMACD.mapAdder(buys, element.getKey(), confidence, okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
             incdec.setIncrease(true);
         }
         for (MyElement element : bottomList) {
@@ -121,7 +125,7 @@ public class ComponentRecommender extends Component {
             String recommendation = "recommend sell";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(sells, element.getKey(), confidence, okListMap.get(keys), nameMap);
+            IncDecItem incdec = ComponentMLMACD.mapAdder(sells, element.getKey(), confidence, okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
             incdec.setIncrease(false);
         }
     }
@@ -197,8 +201,8 @@ public class ComponentRecommender extends Component {
         // plus testrecommendfactor
         int factor = 100;
         log.info("market {}", market);
-        log.info("factor {}", factor);
-        srv.conf.configValueMap.put(ConfigConstants.TESTRECOMMENDFACTOR, factor);
+        //log.info("factor {}", factor);
+        //srv.conf.getConfigValueMap().put(ConfigConstants.TESTRECOMMENDFACTOR, factor);
         int index = 0;
         Map<Future<List<MemoryItem>>, List<String>> futureMap = new HashMap<>();
         List<Future<List<MemoryItem>>> futureList = new ArrayList<>();

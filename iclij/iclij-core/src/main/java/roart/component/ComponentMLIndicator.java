@@ -24,6 +24,7 @@ import roart.service.ControlService;
 import roart.util.Constants;
 import roart.util.ServiceUtil;
 import roart.util.ServiceUtilConstants;
+import roart.util.TimeUtil;
 
 public class ComponentMLIndicator extends Component {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -33,18 +34,20 @@ public class ComponentMLIndicator extends Component {
     
     @Override
     public void enable(MyMyConfig conf) {
-        conf.configValueMap.put(PipelineConstants.MLINDICATOR, Boolean.TRUE);                
+        conf.getConfigValueMap().put(PipelineConstants.MLINDICATOR, Boolean.TRUE);                
     }
 
     @Override
     public void disable(MyMyConfig conf) {
-        conf.configValueMap.put(PipelineConstants.MLINDICATOR, Boolean.FALSE);        
+        conf.getConfigValueMap().put(PipelineConstants.MLINDICATOR, Boolean.FALSE);        
     }
 
     @Override
     public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
             Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config) {
+        List<String> nns = ComponentMLMACD.getnns();
+        ComponentMLMACD.setnns(conf, config, nns);
         resultMaps = srv.getContent();
         Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLINDICATOR);
         //System.out.println("mlm " + mlMACDMaps.keySet());
@@ -92,12 +95,12 @@ public class ComponentMLIndicator extends Component {
                     //System.out.println(okListMap.keySet());
                     if (tfpn.equals(INC)) {
                         increase = true;
-                        IncDecItem incdec = ComponentMLMACD.mapAdder(buys, key, okConfMap.get(keys), okListMap.get(keys), nameMap);
+                        IncDecItem incdec = ComponentMLMACD.mapAdder(buys, key, okConfMap.get(keys), okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                     if (tfpn.equals(DEC)) {
                         increase = false;
-                        IncDecItem incdec = ComponentMLMACD.mapAdder(sells, key, okConfMap.get(keys), okListMap.get(keys), nameMap);
+                        IncDecItem incdec = ComponentMLMACD.mapAdder(sells, key, okConfMap.get(keys), okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                 }                        
@@ -126,10 +129,10 @@ public class ComponentMLIndicator extends Component {
             for (int j = 0; j < size; j++) {
                 log.info("Doing {} {}", i, j);
                 if ((i & (1 << j)) != 0) {
-                    srv.conf.configValueMap.put(permList.get(j), Boolean.TRUE);
+                    srv.conf.getConfigValueMap().put(permList.get(j), Boolean.TRUE);
                     key = key + permList.get(j);
                 } else {
-                    srv.conf.configValueMap.put(permList.get(j), Boolean.FALSE);
+                    srv.conf.getConfigValueMap().put(permList.get(j), Boolean.FALSE);
                 }
             }
             try {

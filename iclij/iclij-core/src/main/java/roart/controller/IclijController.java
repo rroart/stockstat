@@ -36,7 +36,7 @@ public class IclijController implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {	    
 	    EurekaUtil.initEurekaClient();
-            MyExecutors.init();
+            MyExecutors.init(IclijXMLConfig.getConfigInstance().mpServerCpu());
             if (IclijXMLConfig.getConfigInstance().wantsAutorun()) {        
                 Action action = new MainAction();
                 action.goal(null);
