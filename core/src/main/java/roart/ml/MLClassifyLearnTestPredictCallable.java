@@ -9,6 +9,8 @@ import roart.aggregate.Aggregator;
 import roart.model.LearnTestClassifyResult;
 
 public class MLClassifyLearnTestPredictCallable implements Callable {
+    private NNConfigs nnconfigs;
+    
     private Aggregator indicator;
     
     private Map<double[], Double> map;
@@ -31,10 +33,11 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
 
     private MLClassifyDao mldao;
     
-    public MLClassifyLearnTestPredictCallable(MLClassifyDao mldao, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model,
+    public MLClassifyLearnTestPredictCallable(NNConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model,
             int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime,
             Map<String, double[]> map2, Map<Double, String> shortMap) {
         super();
+        this.nnconfigs = nnconfigs;
         this.mldao = mldao;
         this.indicator = indicator;
         this.map = map;
@@ -51,7 +54,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     @Override
     public LearnTestClassifyResult call() throws Exception {
         Log.info("call1");
-        return mldao.learntestclassify(indicator, map, model, size, period, mapname, 4, mapTime, map2, shortMap);  
+        return mldao.learntestclassify(nnconfigs, indicator, map, model, size, period, mapname, 4, mapTime, map2, shortMap);  
     }
     
 }

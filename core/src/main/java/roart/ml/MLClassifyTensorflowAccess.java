@@ -37,6 +37,10 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             MLClassifyModel model = new MLClassifyTensorflowDNNModel();
             models.add(model);
         }
+        if (conf.wantDNNL()) {
+            MLClassifyModel model = new MLClassifyTensorflowDNNLModel();
+            models.add(model);
+        }
         if (conf.wantL()) {
             MLClassifyModel model = new MLClassifyTensorflowLModel();
             models.add(model);
@@ -44,9 +48,9 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
+    public Double learntest(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
             int outcomes) {
-        return learntestInner(map, size, period, mapname, outcomes, model);
+        return learntestInner(nnconfigs, map, size, period, mapname, outcomes, model);
     }
 
     @Override
@@ -54,7 +58,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return models;
     }
 
-    private Double learntestInner(Map<double[], Double> map, int size, String period, String mapname, int outcomes,
+    private Double learntestInner(NNConfigs nnconfigs, Map<double[], Double> map, int size, String period, String mapname, int outcomes,
             MLClassifyModel model) {
         // not used?
         List<List<Object>> listlist = getListList(map);
@@ -62,6 +66,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         Object[] cat = new Object[map.size()];
         getTrainingSet(map, objobj, cat);
         LearnTestClassify param = new LearnTestClassify();
+        param.setTensorflowDNNConfig(nnconfigs.getTensorflowDNNConfig());
+        param.setTensorflowLConfig(nnconfigs.getTensorflowLConfig());
         param.setTrainingarray(objobj);
         param.setTrainingcatarray(cat);
         param.setModelInt(model.getId());
@@ -147,10 +153,12 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     private Map<String, Double[]> getCatMap(List<String> retList, LearnTestClassify ret) {
         Object[] cat = ret.getClassifycatarray();
+        Object[] prob = ret.getClassifyprobarray();
         Map<String, Double[]> retMap = new HashMap<>();
         for (int j = 0; j < retList.size(); j ++) {
             Double acat = Double.valueOf((Integer) cat[j]);
-            retMap.put(retList.get(j), new Double[]{acat});
+            Double aprob = (Double) prob[j];
+            retMap.put(retList.get(j), new Double[]{ acat, aprob });
         }
         return retMap;
     }
@@ -174,7 +182,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(Aggregator indicator, Map<double[], Double> map,
+    public LearnTestClassifyResult learntestclassify(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map,
             MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<String, double[]> map2,
             Map<Double, String> shortMap) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
@@ -186,6 +194,21 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         Object[] trainingCatArray = new Object[map.size()];
         getTrainingSet(map, trainingArray, trainingCatArray);
         LearnTestClassify param = new LearnTestClassify();
+        TensorflowDNNConfig dnnConfig = null;
+        TensorflowLConfig lconfig = null;
+        if (nnconfigs != null) {
+            dnnConfig = nnconfigs.getTensorflowDNNConfig();
+            lconfig = nnconfigs.getTensorflowLConfig();
+        }
+        if (dnnConfig == null) {
+            dnnConfig = new TensorflowDNNConfig(2000, 3);
+            dnnConfig.setHiddenunits(new Integer[] { 10, 20, 10});
+        }
+        if (lconfig == null) {
+            lconfig = new TensorflowLConfig(2000);
+        }
+        param.setTensorflowDNNConfig(dnnConfig);
+        param.setTensorflowLConfig(lconfig);
         param.setTrainingarray(trainingArray);
         param.setTrainingcatarray(trainingCatArray);
         param.setModelInt(model.getId());
@@ -201,6 +224,11 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             log.info("inner {}", Arrays.asList(obj));
         }
         LearnTestClassify ret = null;
+        if (model.getId() == 1) {
+            log.info("Used ML config {}", dnnConfig);
+        } else {
+            log.info("Used ML config {}", lconfig);
+        }
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
         } catch (Exception e) {

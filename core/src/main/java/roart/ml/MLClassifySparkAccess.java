@@ -52,19 +52,23 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
     private void findModels() {
         models = new ArrayList<>();
-        if (conf.wantDNN()) {
+        if (conf.wantMCP()) {
             MLClassifyModel model = new MLClassifySparkMCPModel();
             models.add(model);
         }
-        if (conf.wantL()) {
+        if (conf.wantLR()) {
             MLClassifyModel model = new MLClassifySparkLRModel();
+            models.add(model);
+        }
+        if (conf.wantOVR()) {
+            MLClassifyModel model = new MLClassifySparkOVRModel();
             models.add(model);
         }
     }
     @Override
-    public Double learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period,
+    public Double learntest(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period,
             String mapname, int outcomes) {
-        return learntestInner(map, model, size, period, mapname, outcomes);       
+        return learntestInner(nnconfigs, map, model, size, period, mapname, outcomes);       
     }
 
     @Override
@@ -123,7 +127,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return null;
     }
 
-    public Double learntestInner(Map<double[], Double> map, MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes) {
+    public Double learntestInner(NNConfigs nnconfigs, Map<double[], Double> map, MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes) {
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {
@@ -146,7 +150,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 test = data;
             }
             MLClassifySparkModel sparkModel = (MLClassifySparkModel) mlmodel;
-            Model model = sparkModel.getModel(train, size, outcomes);
+            Model model = sparkModel.getModel(nnconfigs, train, size, outcomes);
 
             modelMap.put(mlmodel.getId()+period+mapname, model);
             // compute accuracy on the test set                                         
@@ -178,7 +182,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
 
     @Override
-    public LearnTestClassifyResult learntestclassify(Aggregator indicator, Map<double[], Double> map,
+    public LearnTestClassifyResult learntestclassify(NNConfigs nnconfig, Aggregator indicator, Map<double[], Double> map,
             MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes, Map<String, double[]> map2,
             Map<Double, String> shortMap) {
         Double accuracy = null;
@@ -211,7 +215,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 log.info(" e " + l.size() + " " + l);
             }
             MLClassifySparkModel sparkModel = (MLClassifySparkModel) mlmodel;
-            Model model = sparkModel.getModel(train, size, outcomes);
+            Model model = sparkModel.getModel(nnconfig, train, size, outcomes);
 
             // compute accuracy on the test set                                         
             Dataset<Row> result = model.transform(test);
@@ -230,6 +234,10 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
             for (Row row : resultDF.collectAsList()) {
                 String id = row.getAs("id");
                 Double predict = row.getAs("prediction");
+                if (!counts.keySet().contains(predict)) {
+                    log.error("Prediction does not exist {}", predict);
+                    continue;
+                }
                 Double prob = null;
                 if (IndicatorMACD.LOGISTICREGRESSION == modelInt) {
                     try {

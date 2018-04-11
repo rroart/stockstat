@@ -1,5 +1,7 @@
 package roart.ml;
 
+import roart.config.MLConstants;
+
 public class MLClassifyTensorflowLModel  extends MLClassifyTensorflowModel {
     @Override
     public int getId() {
@@ -7,6 +9,6 @@ public class MLClassifyTensorflowLModel  extends MLClassifyTensorflowModel {
     }
     @Override
     public String getName() {
-        return "L";
+        return MLConstants.L;
     }
 }

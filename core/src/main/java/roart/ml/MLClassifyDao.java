@@ -37,18 +37,18 @@ public class MLClassifyDao {
         }
     }
 
-    public LearnTestClassifyResult learntestclassify(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, double[]> map2, Map<Double, String> shortMap) {
+    public LearnTestClassifyResult learntestclassify(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, double[]> map2, Map<Double, String> shortMap) {
         long time1 = System.currentTimeMillis();
-        LearnTestClassifyResult result = access.learntestclassify(indicator, map, model, size, period, mapname, outcomes, map2, shortMap);
+        LearnTestClassifyResult result = access.learntestclassify(nnconfigs, indicator, map, model, size, period, mapname, outcomes, map2, shortMap);
         long time = (System.currentTimeMillis() - time1);
         log.info("time {} {} {} {}", model, period, mapname, time);
         MLMACD.mapAdder(mapTime, model, time);
         return result;
     }
 
-    public Double learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
+    public Double learntest(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
         long time1 = System.currentTimeMillis();
-        Double prob = access.learntest(indicator, map, model, size, period, mapname, outcomes);
+        Double prob = access.learntest(nnconfigs, indicator, map, model, size, period, mapname, outcomes);
         long time = (System.currentTimeMillis() - time1);
         log.info("time {} {} {} {}", model, period, mapname, time);
         MLMACD.mapAdder(mapTime, model, time);

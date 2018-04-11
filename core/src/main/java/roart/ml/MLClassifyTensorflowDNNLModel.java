@@ -2,13 +2,13 @@ package roart.ml;
 
 import roart.config.MLConstants;
 
-public class MLClassifyTensorflowDNNModel  extends MLClassifyTensorflowModel {
+public class MLClassifyTensorflowDNNLModel  extends MLClassifyTensorflowModel {
     @Override
    public int getId() {
-        return 1;
+        return 3;
     }
     @Override
    public String getName() {
-        return MLConstants.DNN;
+        return MLConstants.DNNL;
     }
 }
