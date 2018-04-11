@@ -636,6 +636,7 @@ public class MyIclijUI extends UI {
             Grid<IncDecItem> table = new Grid<>();
             table.setCaption(item.getTitle());
             table.addColumn(IncDecItem::getRecord).setCaption("Record");
+            table.addColumn(IncDecItem::getDate).setCaption("Date");
             table.addColumn(IncDecItem::getMarket).setCaption("Market");
             table.addColumn(IncDecItem::isIncrease).setCaption("Inc");
             table.addColumn(IncDecItem::getId).setCaption("Id");
