@@ -14,5 +14,6 @@ public class EurekaConstants {
     public static final String GETSTOCKS = "getstocks";
     public static final String GETDATES = "getdates";
     public static final String SETCONFIG = "setconfig";
-    public static final String GETTESTRECOMMENDER = "gettestrecommender";
+    public static final String GETEVOLVERECOMMENDER = "getevolverecommender";
+    public static final String GETEVOLVENN = "getevolvenn";
 }
