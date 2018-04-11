@@ -1,6 +1,16 @@
 package roart.model;
 
+import roart.ml.TensorflowDNNConfig;
+import roart.ml.TensorflowDNNLConfig;
+import roart.ml.TensorflowLConfig;
+
 public class LearnTestClassify {
+    private TensorflowDNNConfig tensorflowDNNConfig;
+    
+    private TensorflowDNNLConfig tensorflowDNNLConfig;
+    
+    private TensorflowLConfig tensorflowLConfig;
+    
     private Object[][] trainingarray;
 
     private Object[] trainingcatarray;
@@ -8,6 +18,8 @@ public class LearnTestClassify {
     private Object[][] classifyarray;
 
     private Object[] classifycatarray;
+
+    private Object[] classifyprobarray;
 
     private int modelInt;
     
@@ -20,6 +32,30 @@ public class LearnTestClassify {
     private int outcomes;
     
     private Double accuracy;
+
+    public TensorflowDNNConfig getTensorflowDNNConfig() {
+        return tensorflowDNNConfig;
+    }
+
+    public void setTensorflowDNNConfig(TensorflowDNNConfig tensorflowDNNConfig) {
+        this.tensorflowDNNConfig = tensorflowDNNConfig;
+    }
+
+    public TensorflowDNNLConfig getTensorflowDNNLConfig() {
+        return tensorflowDNNLConfig;
+    }
+
+    public void setTensorflowDNNLConfig(TensorflowDNNLConfig tensorflowDNNLConfig) {
+        this.tensorflowDNNLConfig = tensorflowDNNLConfig;
+    }
+
+    public TensorflowLConfig getTensorflowLConfig() {
+        return tensorflowLConfig;
+    }
+
+    public void setTensorflowLConfig(TensorflowLConfig tensorflowLConfig) {
+        this.tensorflowLConfig = tensorflowLConfig;
+    }
 
     public LearnTestClassify() {
         super();
@@ -55,6 +91,14 @@ public class LearnTestClassify {
 
     public void setClassifycatarray(Object[] classifycatarray) {
         this.classifycatarray = classifycatarray;
+    }
+
+    public Object[] getClassifyprobarray() {
+        return classifyprobarray;
+    }
+
+    public void setClassifyprobarray(Object[] classifyprobarray) {
+        this.classifyprobarray = classifyprobarray;
     }
 
     public int getModelInt() {
