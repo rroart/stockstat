@@ -101,7 +101,7 @@ public class IclijWebControlService {
         }
         ConfigTreeMap map2 = iclijConf.getConfigTreeMap();
         print(map2, 0);
-        MyExecutors.init(iclijConf.mpClientCpuFraction());      
+        MyExecutors.init(iclijConf.mpClientCpu());      
     }
 
     private void print(ConfigTreeMap map2, int indent) {
@@ -121,7 +121,7 @@ public class IclijWebControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, EurekaConstants.STOCKSTAT, EurekaConstants.GETMARKETS);
-        return result.markets;    	
+        return result.getMarkets();    	
     }
 
     public Map<String, String> getStocks(String market) {
@@ -129,7 +129,7 @@ public class IclijWebControlService {
         param.setConfig(conf);
         param.setMarket(market);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETSTOCKS);
-        return result.stocks;   	
+        return result.getStocks();   	
     }
 
     /**
@@ -186,7 +186,7 @@ public class IclijWebControlService {
         param.setConfig(conf);
         param.setGuiSize(guiSize);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH);
-        return result.list;
+        return result.getList();
     }
 
     /**
@@ -208,7 +208,7 @@ public class IclijWebControlService {
         param.setIds(idset);
         param.setGuiSize(guiSize);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH2);
-        return result.list;
+        return result.getList();
     }
 
     public String getAppName() {
@@ -225,7 +225,7 @@ public class IclijWebControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTSTAT);
-        return result.list;
+        return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
@@ -238,11 +238,11 @@ public class IclijWebControlService {
     public List<ResultItem> getTestRecommender(boolean doSet) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETTESTRECOMMENDER);
+        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
-            conf = result.config;
+            conf = result.getConfig();
         }
-        return result.list;
+        return result.getList();
     }
 
     private static ClientRunner clientRunnable = null;
