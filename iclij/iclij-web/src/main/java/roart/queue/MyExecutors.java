@@ -14,16 +14,13 @@ public class MyExecutors {
 
     private static ThreadPoolExecutor /*ExecutorService*/ pool = null;
     
-    public static void init(int fraction) {
+    public static void init(double cpu) {
         if (pool != null) {
             return;
         }
-        if (fraction < 1) {
-            fraction = 1;
-        }
-        int nThreads = Runtime.getRuntime().availableProcessors() / fraction;
-        if (nThreads == 0) {
-            nThreads = 1;
+        int nThreads = (int) (Runtime.getRuntime().availableProcessors() * cpu);
+        if (nThreads <= 10) {
+            nThreads = 10;
         }
         log.info("nthreads {}", nThreads);
         pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
