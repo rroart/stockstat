@@ -42,6 +42,7 @@ class Classify:
         (intlist, problist) = self.do_classifyinner(myobj, classifier)
         print(len(intlist))
         print(intlist)
+        print(problist)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         
@@ -101,9 +102,9 @@ class Classify:
         # NOTE class range 1 - 4 will be changed to 0 - 3
         # to avoid risk of being classified as 0 later
         cat = cat - 1
-        print(len(cat))
-        print(array)
-        print(cat)
+        #print(len(cat))
+        #print(array)
+        #print(cat)
         (lenrow, lencol) = array.shape
         half = round(lenrow / 2)
         train = array[:half, :]
@@ -121,7 +122,7 @@ class Classify:
         feature_columns = [ tf.feature_column.numeric_column("features", shape=[myobj.size] ) ]
         print(feature_columns)
         #feature_columns = tf.feature_column.numeric_column("", shape=(myobj.size,))
-        print("d0")
+        #print("d0")
         #datasettrain0 = tf.constant(train)
         #print(datasettrain0)
         #datasettrain0 = tf.data.Dataset.from_tensor_slices(train)
@@ -150,7 +151,7 @@ class Classify:
         #datasettrain = tf.data.Dataset.from_tensor_slices((dict(zip(feature_columns, datasettrain0)), traincat))
         #datasettrain = tf.data.Dataset.from_tensor_slices((myobj.trainingarray, myobj.trainingcatarray))
         #datasettest = tf.data.Dataset.from_tensor_slices((test, testcat))
-        print("shpaes")
+        #print("shpaes")
         #print(dataset)
         #(train,test) = tf.split(dataset, num_or_size_splits=2, axis=1)
         #print(datasettrain)
@@ -162,17 +163,17 @@ class Classify:
         steps = 0
         print("outcomes")
         print(myobj.outcomes)
-        print("cwd")
-        print(os.getcwd())
+        #print("cwd")
+        #print(os.getcwd())
         if myobj.modelInt == 1:
             #print("mod1")
-            print("hidden")
-            print(tensorflowDNNConfig.hiddenunits)
-            print(type(tensorflowDNNConfig.hiddenunits))
+            #print("hidden")
+            #print(tensorflowDNNConfig.hiddenunits)
+            #print(type(tensorflowDNNConfig.hiddenunits))
             #hidden_units = json.loads(tensorflowDNNConfig.hiddenunits)
             hidden_units = tensorflowDNNConfig.hiddenunits
-            print(hidden_units)
-            print(type(hidden_units))
+            #print(hidden_units)
+            #print(type(hidden_units))
             with tf.device(pu):
                 classifier = tf.estimator.DNNClassifier(feature_columns=feature_columns,
                                                             hidden_units=hidden_units,
@@ -184,22 +185,23 @@ class Classify:
             with tf.device(pu):
                 classifier = tf.estimator.LinearClassifier(
                     feature_columns=feature_columns,
+                    n_classes=myobj.outcomes,
                     model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
                 steps = tensorflowLConfig.steps
-        print("steps")
-        print(steps)
-        print(type(array))
-        print(type(cat))
-        print(np.array(array))
-        print(np.array(cat))
-        print(myobj.size)
+        #print("steps")
+        #print(steps)
+        #print(type(array))
+        #print(type(cat))
+        #print(np.array(array))
+        #print(np.array(cat))
+        #print(myobj.size)
         get_train_inputs = tf.estimator.inputs.numpy_input_fn(
                 x = { "features": train },
                 y = traincat,
                 num_epochs=None,
                 shuffle=True
                 )
-        print(get_train_inputs())        
+        #print(get_train_inputs())        
         get_test_inputs = tf.estimator.inputs.numpy_input_fn(
                 x = { "features": test },
                 y = testcat,
@@ -222,7 +224,21 @@ class Classify:
             print(labels)
             return features, labels
             
+        #try:
+        #    print("cat")
+        #    print(traincat)
+        #    print(myobj.outcomes)
         classifier.train(input_fn = get_train_inputs, steps=steps)
+        #except tensorflow.python.framework.errors_impl.InvalidArgumentError:
+        #    print("exception")
+        #    print(myobj.outcomes)
+        #    print(traincat)
+        #    print("endexc")
+        #except:
+        #    print("exception2")
+        #    print(myobj.outcomes)
+        #    print(traincat)
+        #    print("endexc")
         # Evaluate accuracy.
         def get_test_inputs_2():
             x = tf.constant(test)
@@ -246,6 +262,7 @@ class Classify:
         (intlist, problist) = self.do_classifyinner(myobj, classifier)
         print(len(intlist))
         print(intlist)
+        print(problist)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         #tf.Session().close()
