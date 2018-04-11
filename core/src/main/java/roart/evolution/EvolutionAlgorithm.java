@@ -5,21 +5,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.config.MyMyConfig;
+import roart.config.EvolutionConfig;
 import roart.evaluation.Evaluation;
+import roart.queue.MyExecutors;
 
 public abstract class EvolutionAlgorithm {
 
-    public abstract Individual getFittest(MyMyConfig conf,Evaluation recommender) throws Exception;
+    private EvolutionConfig evolutionConfig;
+    
+    public EvolutionAlgorithm(EvolutionConfig evolutionConfig) {
+        super();
+        this.evolutionConfig = evolutionConfig;
+    }
 
-    protected void printmap(Map<String, Object> map, List<String> keys) throws JsonProcessingException {
-        for (String key : keys) {
+    public EvolutionConfig getEvolutionConfig() {
+        return evolutionConfig;
+    }
+
+    public void setEvolutionConfig(EvolutionConfig evolutionConfig) {
+        this.evolutionConfig = evolutionConfig;
+    }
+
+    public abstract Individual getFittest(EvolutionConfig evolutionConfig, Evaluation recommender) throws Exception;
+
+    protected void printmap(Map<String, Object> map) throws JsonProcessingException {
+        for (String key : new ArrayList<String>()) {
             Object obj = map.get(key);
             if (obj.getClass().getName().contains("Integer")) {
                 int tmpNum = (int) map.get(key);
@@ -34,7 +53,7 @@ public abstract class EvolutionAlgorithm {
     }   
 
     protected void mutateList(List<Individual> population, int start, int size,
-            int testRecommendMutate, boolean scoreAll, List<String> keys, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
+            int testRecommendMutate, boolean scoreAll, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
         Random rand = new Random();
         List<Individual> populationCopies = new ArrayList<>(population);
         int populationSize = Math.min(size, population.size());
@@ -43,17 +62,17 @@ public abstract class EvolutionAlgorithm {
             int idx = start + rand.nextInt(randMax - start);
             Individual pop = populationCopies.get(idx);
             populationCopies.remove(idx);
-            pop.mutate(keys);
+            pop.mutate();
         }
         if (!scoreAll) {
             return;
         }
         for (Individual pop : populationCopies) {
-            pop.recalculateScore(keys);
+            pop.recalculateScore();
         }
     }
 
-    protected List<Individual> crossover(int childrenNum, List<Individual> population, List<String> keys, MyMyConfig conf, boolean doScore, boolean doBuy2, Evaluation recommend) throws JsonParseException, JsonMappingException, IOException {
+    protected List<Individual> crossover(int childrenNum, List<Individual> population, boolean doBuy2, Evaluation recommend) throws JsonParseException, JsonMappingException, IOException {
         List<Individual> children = new ArrayList<>();
         Random rand = new Random();
         List<Individual> populationCopies = new ArrayList<>(population);
@@ -66,20 +85,57 @@ public abstract class EvolutionAlgorithm {
             int idx2 = rand.nextInt(randMax--);
             Individual pop2= populationCopies.get(idx2);
             populationCopies.remove(idx2);
-            Individual pop = new Individual(conf, 0, recommend).crossover(pop1, pop2, keys, doScore);
+            Individual pop = pop2.crossover(pop1);
             children.add(pop);
         }
         return children;
     }
 
-    protected List<Individual> created(Integer evolutionGenerationCreate, MyMyConfig conf, Evaluation evaluation, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
-        Population population = new Population(evolutionGenerationCreate, conf, evaluation, keys, false);
+    protected List<Individual> created(Integer evolutionGenerationCreate, Evaluation evaluation) throws JsonParseException, JsonMappingException, IOException {
+        Population population = new Population(evolutionGenerationCreate, evolutionConfig, evaluation, false);
         return population.getIndividuals();
     }
 
-    protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, MyMyConfig conf, Evaluation evaluation, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
-        Population population = new Population(evolutionEliteCloneAndMutate, conf, evaluation, keys, false);
+    protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, Evaluation evaluation) throws JsonParseException, JsonMappingException, IOException {
+        Population population = new Population(evolutionEliteCloneAndMutate, evolutionConfig, evaluation, false);
         return population.getIndividuals();
+    }
+
+    protected void calculate(List<Individual> pop) throws InterruptedException, ExecutionException {
+        List<Future<Individual>> futureList = new ArrayList<>();
+        for (Individual individual : pop) {
+            if (individual.getFitness() == null) {
+                Callable callable = new EvolutionCallable(individual);
+                Future<Individual> future = MyExecutors.run(callable);
+                futureList.add(future);
+            }
+        }
+        for (Future<Individual> future : futureList) {
+            Individual individual = future.get();
+        }
+    }
+    
+    class EvolutionCallable implements Callable {
+        private Individual individual;
+        
+        public EvolutionCallable(Individual individual) {
+            super();
+            this.individual = individual;
+         }
+
+        public Individual getIndividual() {
+            return individual;
+        }
+
+        public void setIndividual(Individual individual) {
+            this.individual = individual;
+        }
+
+        @Override
+        public Object call() throws Exception {
+            individual.recalculateScore();
+            return null;
+        }
     }
 
 }

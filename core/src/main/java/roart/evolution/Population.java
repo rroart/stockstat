@@ -9,26 +9,31 @@ import java.util.Random;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import roart.config.EvolutionConfig;
 import roart.config.MyMyConfig;
 import roart.evaluation.Evaluation;
 
 public class Population {
-    private MyMyConfig conf;
+    private EvolutionConfig evolutionConfig;
+    
     private List<Individual> population;
+    
+    @Deprecated
     public Population(int populationSize) {
         this.population = new ArrayList<>();
     }
-    public Population(int populationSize, MyMyConfig conf, Evaluation evaluation, List<String> keyList, boolean doClone) throws JsonParseException, JsonMappingException, IOException {
-        this.conf = conf;
+    
+    public Population(int populationSize, EvolutionConfig evolutionConfig, Evaluation evaluation, boolean doClone) throws JsonParseException, JsonMappingException, IOException {
+        this.evolutionConfig = evolutionConfig;
         this.population = new ArrayList<>();
 
         for (int individualCount = 0; individualCount < populationSize; individualCount++) {
 
             Individual individual;
             if (doClone) {
-                individual = new Individual(conf, 0, evaluation).getNewWithValueCopyFactory(conf, keyList, true);
+                individual = new Individual(evaluation).getNewWithValueCopyFactory();
             } else {
-                individual = new Individual(conf, 0, evaluation).getNewWithValueCopyAndRandomFactory(conf, keyList);
+                individual = new Individual(evaluation).getNewWithValueCopyAndRandomFactory();
             }
             this.population.add(individual);
         }
@@ -58,7 +63,7 @@ public class Population {
     }
     
     public void truncate(int min) {
-        population = population.subList(0, Math.min(population.size(), conf.getEvolutionSelect()));
+        population = population.subList(0, Math.min(population.size(), evolutionConfig.getSelect()));
     }
 
 }
