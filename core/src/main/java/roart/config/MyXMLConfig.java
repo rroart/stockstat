@@ -70,19 +70,19 @@ public class MyXMLConfig {
             configxml = null;
         }
         Document doc = null;
-        configInstance.configTreeMap = new ConfigTreeMap();
-        configInstance.configValueMap = new HashMap<String, Object>();
+        configInstance.setConfigTreeMap(new ConfigTreeMap());
+        configInstance.setConfigValueMap(new HashMap<String, Object>());
         ConfigConstantMaps.makeDefaultMap();
         ConfigConstantMaps.makeTextMap();
         ConfigConstantMaps.makeTypeMap();
-        configInstance.deflt = ConfigConstantMaps.deflt;
-        configInstance.type = ConfigConstantMaps.map;
-        configInstance.text = ConfigConstantMaps.text;
+        configInstance.setDeflt(ConfigConstantMaps.deflt);
+        configInstance.setType(ConfigConstantMaps.map);
+        configInstance.setText(ConfigConstantMaps.text);
         if (configxml != null) {
             printout();
             doc = configxml.getDocument();
             if (doc != null) {
-                handleDoc(doc.getDocumentElement(), configInstance.configTreeMap, "");
+                handleDoc(doc.getDocumentElement(), configInstance.getConfigTreeMap(), "");
             }
             Iterator<String> iter = configxml.getKeys();
             while(iter.hasNext()) {
@@ -111,7 +111,7 @@ public class MyXMLConfig {
                 default:
                     log.info("unknown {}", myclass.getName());
                 }
-                configInstance.configValueMap.put(s, o);
+                configInstance.getConfigValueMap().put(s, o);
             }
         }
     }
