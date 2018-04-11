@@ -44,4 +44,16 @@ public class CalcDoubleNode extends CalcNode {
         this.weight = weight;
     }
 
+    @Override
+    public CalcNode crossover(CalcNode other) {
+        CalcDoubleNode node = new CalcDoubleNode();
+        Random rand = new Random();
+        if (rand.nextBoolean()) {
+            node.setWeight(weight);
+        } else {
+            node.setWeight(((CalcDoubleNode) other).getWeight());
+        }
+        return node;
+    }
+
 }
