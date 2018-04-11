@@ -34,8 +34,8 @@ public class ControlService {
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
         //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
-        conf = new MyMyConfig(result.config);
-        Map<String, Object> map = conf.configValueMap;
+        conf = new MyMyConfig(result.getConfig());
+        Map<String, Object> map = conf.getConfigValueMap();
         for (String key : map.keySet()) {
             Object value = map.get(key);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
@@ -44,7 +44,7 @@ public class ControlService {
                 //System.out.println("cls " + value.getClass().getName());
             }
         }
-        ConfigTreeMap map2 = conf.configTreeMap;
+        ConfigTreeMap map2 = conf.getConfigTreeMap();
         print(map2, 0);
        
     }
@@ -66,7 +66,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETMARKETS);
-        return result.markets;    	
+        return result.getMarkets();    	
     }
     
     public Map<String, String> getStocks(String market) {
@@ -74,7 +74,7 @@ public class ControlService {
         param.setConfig(conf);
         param.setMarket(market);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETSTOCKS);
-        return result.stocks;   	
+        return result.getStocks();   	
     }
     
     public List<String> getDates(String market) {
@@ -83,7 +83,7 @@ public class ControlService {
         param.setWantMaps(true);
         param.setMarket(market);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETDATES);
-        return (List<String>) result.maps.get(PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
+        return (List<String>) result.getMaps().get(PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
     }
    /**
      * Create result lists
@@ -100,7 +100,7 @@ public class ControlService {
         param.setWantMaps(true);
         param.setConfList(disableList);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
-        return result.maps;
+        return result.getMaps();
         //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
 	/*
         for (Object o : (List)((List)result.list2)) {
@@ -126,7 +126,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH);
-        return result.list;
+        return result.getList();
     }
 
     /**
@@ -147,7 +147,7 @@ public class ControlService {
         param.setConfig(conf);
         param.setIds(idset);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH2);
-        return result.list;
+        return result.getList();
     }
 
     public String getAppName() {
@@ -164,7 +164,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTSTAT);
-        return result.list;
+        return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
@@ -174,14 +174,25 @@ public class ControlService {
         getConfig();
     }
 
-    public List<ResultItem> getTestRecommender(boolean doSet, List<String> disableList) {
+    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setConfList(disableList);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETTESTRECOMMENDER);
+        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
-            conf = new MyMyConfig(result.config);
+            conf = new MyMyConfig(result.getConfig());
         }
-        return result.list;
+        return result.getList();
+    }
+
+    public List<ResultItem> getEvolveML(boolean doSet, List<String> disableList) {
+        ServiceParam param = new ServiceParam();
+        param.setConfig(conf);
+        param.setConfList(disableList);
+        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVENN);
+        if (doSet) {
+            conf = new MyMyConfig(result.getConfig());
+        }
+        return result.getList();
     }
 }
