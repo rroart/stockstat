@@ -14,13 +14,15 @@ public class ConfigConstants {
     public static final String DATABASEHIBERNATE = "database.hibernate[@enable]";
     public static final String MACHINELEARNING = "machinelearning[@enable]";
     public static final String MACHINELEARNINGMP = "machinelearning.mp[@enable]";
-    public static final String MACHINELEARNINGMPCPUFRACTION = "machinelearning.mp.cpufraction";
+    public static final String MACHINELEARNINGMPCPU = "machinelearning.mp.cpu";
     public static final String MACHINELEARNINGSPARKML = "machinelearning.sparkml[@enable]";
     public static final String MACHINELEARNINGSPARMMLSPARKMASTER = "machinelearning.sparkml.sparkmaster";
     public static final String MACHINELEARNINGSPARKMLMCP = "machinelearning.sparkml.mcp[@enable]";
     public static final String MACHINELEARNINGSPARKMLLR = "machinelearning.sparkml.lr[@enable]";
+    public static final String MACHINELEARNINGSPARKMLOVR = "machinelearning.sparkml.ovr[@enable]";
     public static final String MACHINELEARNINGTENSORFLOW = "machinelearning.tensorflow[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWDNN = "machinelearning.tensorflow.dnn[@enable]";
+    public static final String MACHINELEARNINGTENSORFLOWDNNL = "machinelearning.tensorflow.dnnl[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWL = "machinelearning.tensorflow.l[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWSERVER = "machinelearning.tensorflow.server";
     public static final String INDICATORS = "indicators[@enable]";
@@ -85,27 +87,12 @@ public class ConfigConstants {
     public static final String MISCMYEQUALIZE = "misc.myequalize[@enable]";
     public static final String MISCMYGRAPHEQUALIZE = "misc.mygraphequalize[@enable]";
     public static final String MISCMYGRAPHEQUALIZEUNIFY = "misc.mygraphequalizeunify[@enable]";
-    public static final String TESTINDICATORRECOMMENDERCOMPLEXFUTUREDAYS = "test.indicatorrecommender.complex.futuredays";
-    public static final String TESTINDICATORRECOMMENDERCOMPLEXINTERVALDAYS = "test.indicatorrecommender.complex.intervaldays";
-    public static final String TESTINDICATORRECOMMENDERSIMPLEFUTUREDAYS = "test.indicatorrecommender.simple.futuredays";
-    public static final String TESTINDICATORRECOMMENDERSIMPLEINTERVALDAYS = "test.indicatorrecommender.simple.intervaldays";
-    @Deprecated
-    public static final String TESTRECOMMENDINTERVALTIMES = "test.recommend.intervaltimes";
-    @Deprecated
-    public static final String TESTRECOMMENDITERATIONS = "test.recommend.iterations";
-    @Deprecated
-    public static final String TESTRECOMMENDPERIOD = "test.recommend.period";
-    public static final String TESTRECOMMENDFACTOR = "test.recommend.factor";
-    public static final String EVOLUTION = "evolution";
-    public static final String EVOLUTIONGENERATIONS = "evolution.generations";
-    @Deprecated
-    public static final String EVOLUTIONCHILDREN = "evolution.children";
-    public static final String EVOLUTIONSELECT = "evolution.select";
-    public static final String EVOLUTIONELITE = "evolution.elite";
-    public static final String EVOLUTIONELITECLONEANDMUTATE = "evolution.elitecloneandmutate";
-    public static final String EVOLUTIONMUTATE = "evolution.mutate";
-    public static final String EVOLUTIONCROSSOVER = "evolution.crossover";
-    public static final String EVOLUTIONGENERATIONCREATE = "evolution.generationcreate";
+    public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
+    public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS = "evolve.indicatorrecommender.complex.futuredays";
+    public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXINTERVALDAYS = "evolve.indicatorrecommender.complex.intervaldays";
+    public static final String EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS = "evolve.indicatorrecommender.simple.futuredays";
+    public static final String EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS = "evolve.indicatorrecommender.simple.intervaldays";
+    public static final String EVOLVEMLEVOLUTIONCONFIG = "evolve.ml.evolutionconfig";
     public static final String AGGREGATORS = "aggregators[@enable]";
     public static final String AGGREGATORSINDICATORRECOMMENDER = "aggregators.indicatorrecommender[@enable]";
     public static final String AGGREGATORSINDICATORRECOMMENDERSIMPLE = "aggregators.indicatorrecommender.simple[@enable]";
@@ -147,6 +134,7 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSISELLWEIGHTRSINODE = "aggregators.indicatorrecommender.complex.rsi.sell.weightrsinode";
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSISELLWEIGHTRSIDELTANODE = "aggregators.indicatorrecommender.complex.rsi.sell.weightrsideltanode";
     public static final String AGGREGATORSINDICATOR = "aggregators.indicator[@enable]";
+    public static final String AGGREGATORSINDICATORMLCONFIG = "aggregators.indicator.mlconfig";
     public static final String AGGREGATORSINDICATORMACD = "aggregators.indicator.macd[@enable]";
     public static final String AGGREGATORSINDICATORRSI = "aggregators.indicator.rsi[@enable]";
     public static final String AGGREGATORSINDICATOREXTRAS = "aggregators.indicator.extras";
@@ -157,4 +145,5 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATORINTERVALDAYS = "aggregators.indicator.intervaldays";
     public static final String AGGREGATORSINDICATORTHRESHOLD = "aggregators.indicator.threshold";
     public static final String AGGREGATORSMLMACD = "aggregators.mlmacd[@enable]";
+    public static final String AGGREGATORSMLMACDMLCONFIG = "aggregators.mlmacd.mlconfig";
 }
