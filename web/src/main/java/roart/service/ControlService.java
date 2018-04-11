@@ -2,11 +2,15 @@ package roart.service;
 
 import roart.model.GUISize;
 import roart.model.ResultItem;
+import roart.pipeline.PipelineConstants;
+import roart.queue.MyExecutors;
 import roart.queue.Queues;
 import roart.thread.ClientRunner;
 import roart.client.MyVaadinUI;
+import roart.config.ConfigConstants;
 import roart.config.ConfigTreeMap;
 import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 
 import java.util.List;
 import java.util.Set;
@@ -26,19 +30,19 @@ public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
     public MyConfig conf;
-    
+
     public ControlService() {
-    	//conf = MyXMLConfig.configInstance();
-    	getConfig();
-    	startThreads();
+        //conf = MyXMLConfig.configInstance();
+        getConfig();
+        startThreads();
     }
-  
+
     public void getConfig() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
-        conf = result.config;
-        Map<String, Object> map = conf.configValueMap;
+        conf = result.getConfig();
+        Map<String, Object> map = conf.getConfigValueMap();
         for (String key : map.keySet()) {
             Object value = map.get(key);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
@@ -47,39 +51,40 @@ public class ControlService {
                 System.out.println("cls " + value.getClass().getName());
             }
         }
-        ConfigTreeMap map2 = conf.configTreeMap;
+        ConfigTreeMap map2 = conf.getConfigTreeMap();
         print(map2, 0);
-       
+        MyMyConfig aConf = new MyMyConfig(conf);
+        MyExecutors.init((aConf).getMLMPCpu());
     }
-    
+
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
         System.out.print(space.substring(0, indent));
         System.out.println("map2 " + map2.getName() + " " + map2.getEnabled());
         Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         for (String key : map3.keySet()) {
-        print(map3.get(key), indent + 1);
+            print(map3.get(key), indent + 1);
             //Object value = map.get(key);
             //System.out.println("k " + key + " " + value + " " + value.getClass().getName());
         }
-       
+
     }
 
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETMARKETS);
-        return result.markets;    	
+        return result.getMarkets();    	
     }
-    
+
     public Map<String, String> getStocks(String market) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setMarket(market);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETSTOCKS);
-        return result.stocks;   	
+        return result.getStocks();   	
     }
-    
+
     /**
      * Create result lists
      * 
@@ -93,7 +98,7 @@ public class ControlService {
         new CoreThread(ui, param).start();
         //Queues.clientQueue.add(param);
         //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
-	/*
+        /*
         for (Object o : (List)((List)result.list2)) {
 			//for (Object o : (List)((List)result.list).get(0)) {
 		 	log.info("obj type " + o.getClass().getName());
@@ -103,8 +108,8 @@ public class ControlService {
 		 		log.info("keyset " + l.keySet());
 		 	}
 		}
-		*/
-       //return result.list;
+         */
+        //return result.list;
     }
 
     /**
@@ -119,7 +124,7 @@ public class ControlService {
         param.setConfig(conf);
         param.setGuiSize(guiSize);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH);
-        return result.list;
+        return result.getList();
     }
 
     /**
@@ -131,21 +136,21 @@ public class ControlService {
      */
 
     public List getContentGraph(Set<Pair<String, String>> ids, GUISize guiSize) {
-		// TODO fix quick workaround for serialization
-    	Set<String> idset = new HashSet<>();
-    	for (Pair pair : ids) {
-    		idset.add(pair.getFirst() + "," + pair.getSecond());
-    	}
-    	ServiceParam param = new ServiceParam();
+        // TODO fix quick workaround for serialization
+        Set<String> idset = new HashSet<>();
+        for (Pair pair : ids) {
+            idset.add(pair.getFirst() + "," + pair.getSecond());
+        }
+        ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setIds(idset);
         param.setGuiSize(guiSize);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH2);
-        return result.list;
+        return result.getList();
     }
 
     public String getAppName() {
-    	return EurekaConstants.STOCKSTAT;
+        return EurekaConstants.STOCKSTAT;
     }
 
     /**
@@ -158,7 +163,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTSTAT);
-        return result.list;
+        return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
@@ -168,14 +173,30 @@ public class ControlService {
         getConfig();
     }
 
-    public List<ResultItem> getTestRecommender(boolean doSet) {
+    public void getEvolveRecommender(MyVaadinUI ui, boolean doSet) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETTESTRECOMMENDER);
-        if (doSet) {
-            conf = result.config;
+        param.setWebpath(EurekaConstants.GETEVOLVERECOMMENDER);
+        new EvolveCoreThread(ui, param, doSet).start();
+    }
+
+    public void getEvolveML(MyVaadinUI ui, boolean doSet, String ml) {
+        ServiceParam param = new ServiceParam();
+        param.setConfig(conf);
+        Set<String> ids = new HashSet<>();
+        ids.add(ml);
+        param.setIds(ids);
+        param.setWebpath(EurekaConstants.GETEVOLVENN);
+        new EvolveCoreThread(ui, param, doSet).start();
+    }
+
+    public void resetML(String ml) {
+        if (ml.equals(PipelineConstants.MLINDICATOR)) {
+            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, null);
         }
-        return result.list;
+        if (ml.equals(PipelineConstants.MLMACD)) {
+            conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, null);
+        }
     }
     
     private static ClientRunner clientRunnable = null;
@@ -197,22 +218,66 @@ public class ControlService {
 
     class CoreThread extends Thread {
         private ServiceParam param;
+
         private MyVaadinUI ui;
-        
+
+        private ServiceResult result;
+
         public CoreThread(MyVaadinUI ui, ServiceParam param) {
             this.ui = ui;
             this.param = param;
         }
-        
+
+        public MyVaadinUI getUi() {
+            return ui;
+        }
+
+        public void setUi(MyVaadinUI ui) {
+            this.ui = ui;
+        }
+
+        public ServiceResult getResult() {
+            return result;
+        }
+
+        public void setResult(ServiceResult result) {
+            this.result = result;
+        }
+
         @Override
         public void run() {
-            ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), param.getWebpath());
+            result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), param.getWebpath());
             ui.access(() -> {
                 VerticalLayout layout = new VerticalLayout();
                 layout.setCaption("Results");
-                ui.displayResultListsTab(layout, result.list);
+                ui.displayResultListsTab(layout, result.getList());
                 ui.notify("New results");
             });
         }
     }
+
+    class EvolveCoreThread extends CoreThread {
+
+        boolean doSet;
+
+        public EvolveCoreThread(MyVaadinUI ui, ServiceParam param, boolean doSet) {
+            super(ui, param);
+            this.doSet = doSet;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            if (doSet) {
+                Map<String, Object> updateMap = getResult().getMaps().get("update");
+                conf.getConfigValueMap().putAll(updateMap);
+            }
+            if (doSet) {
+                getUi().access(() -> 
+                    getUi().replaceControlPanelTab()
+                );
+            }
+        }
+    }
+
 }
