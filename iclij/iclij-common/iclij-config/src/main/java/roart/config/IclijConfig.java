@@ -25,6 +25,7 @@ public class IclijConfig {
     private Map<String, String> text = new HashMap<>();
     private Map<String, Object> deflt = new HashMap<>();
     private Map<String, Class> type = new HashMap<>();
+    private Map<String, String> conv = new HashMap<>();
 
     private LocalDate date;
 
@@ -86,16 +87,24 @@ public class IclijConfig {
         this.type = type;
     }
 
+    public Map<String, String> getConv() {
+        return conv;
+    }
+
+    public void setConv(Map<String, String> conv) {
+        this.conv = conv;
+    }
+
     public boolean wantsAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.AUTORUN);
     }
 
-    public int mpServerCpuFraction() {
-        return (Integer) getValueOrDefault(IclijConfigConstants.MPSERVERCPUFRACTION);
+    public double mpServerCpu() {
+        return (Double) getValueOrDefault(IclijConfigConstants.MPSERVERCPU);
     }
 
-    public int mpClientCpuFraction() {
-        return (Integer) getValueOrDefault(IclijConfigConstants.MPCLIENTCPUFRACTION);
+    public double mpClientCpu() {
+        return (Double) getValueOrDefault(IclijConfigConstants.MPCLIENTCPU);
     }
 
     public boolean wantsMLMACD() {
@@ -138,6 +147,14 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.VERIFICATIONRECOMMENDERTOPBOTTOM);
     }
 
+    public boolean wantEvolveRecommender() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER);
+    }
+    
+    public boolean wantEvolveML() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEML);
+    }
+    
     private Object getValueOrDefault(String key) {
         // jackson messes around here...
         if (configValueMap == null) {
