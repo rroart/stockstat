@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.spark.ContextCleaner;
 import org.apache.spark.ml.Model;
 import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.ml.classification.MultilayerPerceptronClassifier;
@@ -30,6 +31,7 @@ import roart.ml.MLClassifySparkMCPModel;
 import roart.model.LearnTestClassifyResult;
 import roart.util.Constants;
 import roart.util.SparkUtil;
+import scala.Option;
 
 public class MLClassifySparkAccess extends MLClassifyAccess {
 
@@ -266,5 +268,17 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return null;
     }
 
+    @Override
+    public void clean() {
+        /*
+        Option<ContextCleaner> i = spark.sparkContext().cleaner();
+        if (i.isDefined()) {
+            i.get().start();
+        }
+        */
+        spark.sparkContext().clean$default$2();
+        log.info("nam " + spark.sparkContext().appName() + " " + spark.sparkContext().applicationId() + " " + spark.sparkContext().applicationId());
+        //spark.close();
+    }
 }
 

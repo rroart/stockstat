@@ -200,6 +200,9 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             dnnConfig = nnconfigs.getTensorflowDNNConfig();
             lconfig = nnconfigs.getTensorflowLConfig();
         }
+        if (dnnConfig == null && lconfig == null) {
+            int jj = 0;
+        }
         if (dnnConfig == null) {
             dnnConfig = new TensorflowDNNConfig(2000, 3);
             dnnConfig.setHiddenunits(new Integer[] { 10, 20, 10});
@@ -240,5 +243,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return result;
     }
 
+    @Override
+    public void clean() {        
+    }
 }
 

@@ -28,5 +28,7 @@ public abstract class MLClassifyAccess {
     public abstract List<MLClassifyModel> getModels();
 
     public abstract String getName();
+    
+    public abstract void clean();
 }
 

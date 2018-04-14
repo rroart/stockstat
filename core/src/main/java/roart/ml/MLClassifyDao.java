@@ -99,4 +99,8 @@ public class MLClassifyDao {
     public String getName() {
         return access.getName();
     }
+    
+    public void clean() {
+        access.clean();
+    }
 }

@@ -106,16 +106,20 @@ public class MLIndicator extends Aggregator {
         fieldSize = fieldSize();
         if (conf.wantMLTimes()) {
             mlTimesTableRows = new ArrayList<>();
-            Object[] objs = new Object[fieldSize];
-            int retindex = 0;
-            objs[retindex++] = "";
         }
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
         if (isEnabled()) {
             calculateMomentums(conf, marketdatamap, categories, datareaders);        
+            cleanMLDaos();
         }
+    }
+
+    private void cleanMLDaos() {
+        for (MLClassifyDao mldao : mldaos) {
+            mldao.clean();
+        }        
     }
 
     @Override
@@ -234,7 +238,7 @@ public class MLIndicator extends Aggregator {
         // map from h/m to model to posnegcom map<model, results>
         Map<MLClassifyModel, Map<String, Double[]>> mapResult = new HashMap<>();
         log.info("Period {} {}", title, mapMap.keySet());
-        String nnconfigString = conf.getMLMACDMLConfig();
+        String nnconfigString = conf.getAggregatorsMLIndicatorMLConfig();
         NNConfigs nnConfigs = null;
         if (nnconfigString != null) {
             ObjectMapper mapper = new ObjectMapper();

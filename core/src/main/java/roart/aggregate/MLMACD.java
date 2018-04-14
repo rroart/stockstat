@@ -108,19 +108,20 @@ public class MLMACD extends Aggregator {
         fieldSize = fieldSize();
         if (conf.wantMLTimes()) {
             mlTimesTableRows = new ArrayList<>();
-            Object[] objs = new Object[fieldSize];
-            int retindex = 0;
-            if (fieldSize == 0) {
-                int jj = 0;
-            }
-            objs[retindex++] = "";
         }
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
         if (isEnabled()) {
             calculateMomentums(conf, periodDataMap, category, categories);    
+            cleanMLDaos();
         }
+    }
+
+    private void cleanMLDaos() {
+        for (MLClassifyDao mldao : mldaos) {
+            mldao.clean();
+        }        
     }
 
     private interface MacdSubType {
