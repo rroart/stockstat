@@ -74,10 +74,13 @@ public class TensorflowDNNConfig extends TensorflowConfig {
     }
 
     private void mutateHiddenUnits(Random rand) {
-        if (hiddenlayers == null) {
+        if (hiddenlayers == null || hiddenunits == null) {
                 int jj = 0;
             }
         int hiddenlayer = rand.nextInt(hiddenlayers);
+        if (hiddenlayer >= hiddenunits.length) {
+            int jj = 0;
+        }
         hiddenunits[hiddenlayer] = ThreadLocalRandom.current().nextInt(2, 50);
     }
 
@@ -100,8 +103,10 @@ public class TensorflowDNNConfig extends TensorflowConfig {
             prevhiddenunits = hiddenunits;
             hiddenunits = new Integer[hiddenlayers];
             int min = Math.min(prevhiddenlayers, hiddenlayers);
-            for (int i = 0; i < min; i++) {
-                hiddenunits[i] = prevhiddenunits[i];
+            if (prevhiddenunits != null) {
+                for (int i = 0; i < min; i++) {
+                    hiddenunits[i] = prevhiddenunits[i];
+                }
             }
             for (int i = min; i < hiddenlayers; i++) {
                 hiddenunits[i] = ThreadLocalRandom.current().nextInt(2, 50);
@@ -112,6 +117,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
     @Override
     public NNConfig crossover(NNConfig otherNN) {
         TensorflowDNNConfig offspring = new TensorflowDNNConfig(steps, hiddenlayers);
+        offspring.setHiddenunits(Arrays.copyOf(hiddenunits, hiddenunits.length));
         TensorflowDNNConfig other = (TensorflowDNNConfig) otherNN;
         Random rand = new Random();
         if (rand.nextBoolean()) {

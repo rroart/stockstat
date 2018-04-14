@@ -91,11 +91,15 @@ public class SparkMCPConfig extends SparkConfig {
     }
 
     private void mutateNN(Random rand) {
-        if (layers == null) {
+        if (layers == null || nn == null) {
             int jj = 0;
         }
         int layer = rand.nextInt(layers);
+        try {
         nn[layer] = ThreadLocalRandom.current().nextInt(3, 50);
+        } catch (Exception e) {
+            int jj = 0;
+        }
     }
 
     private void generateLayers(Random rand) {
@@ -107,7 +111,11 @@ public class SparkMCPConfig extends SparkConfig {
             int min = Math.min(prevlayers, layers);
             if (prevnn != null) {
                 for (int i = 0; i < min; i++) {
+                    try {
                     nn[i] = prevnn[i];
+                    } catch (Exception e) {
+                        int jj = 1;
+                    }
                 }
             }
             for (int i = min; i < layers; i++) {
@@ -119,6 +127,7 @@ public class SparkMCPConfig extends SparkConfig {
     @Override
     public NNConfig crossover(NNConfig otherNN) {
         SparkMCPConfig offspring = new SparkMCPConfig(maxiter, layers);
+        offspring.setNn(Arrays.copyOf(nn, nn.length));
         SparkMCPConfig other = (SparkMCPConfig) otherNN;
         Random rand = new Random();
         if (rand.nextBoolean()) {

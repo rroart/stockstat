@@ -112,6 +112,7 @@ public class TensorflowDNNLConfig extends TensorflowConfig {
     @Override
     public NNConfig crossover(NNConfig otherNN) {
         TensorflowDNNLConfig offspring = new TensorflowDNNLConfig(steps, dnnhiddenlayers);
+        offspring.setDnnhiddenunits(Arrays.copyOf(dnnhiddenunits, dnnhiddenunits.length));
         TensorflowDNNLConfig other = (TensorflowDNNLConfig) otherNN;
         Random rand = new Random();
         if (rand.nextBoolean()) {
