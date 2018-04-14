@@ -75,8 +75,14 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-all</artifactId>
+    <version>4.1.17.Final</version>
+</dependency>
+    <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-eureka</artifactId>
+      <!--version>1.4.4.RELEASE</version-->
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
@@ -290,7 +296,7 @@
     <guava.version>16.0.1</guava.version>
     <xmlapis.version>1.4.01</xmlapis.version>
     <commons.version>2.1.1</commons.version>
-    <spark.version>2.1.0</spark.version>
+    <spark.version>2.3.0</spark.version>
   </properties>
 	<repositories>
 		<repository>
