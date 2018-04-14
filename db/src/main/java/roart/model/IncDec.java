@@ -48,6 +48,9 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     @Column
     private Date record;
     
+    @Column
+    private Date date;
+    
     public Long getDbid() {
         return dbid;
     }
@@ -110,6 +113,14 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
 
     public void setRecord(Date record) {
         this.record = record;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Transient
