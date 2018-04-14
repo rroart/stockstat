@@ -9,6 +9,8 @@ import roart.util.TimeUtil;
 public class IncDecItem {
     private LocalDate record;
     
+    private LocalDate date;
+    
     private String market;
 
     private boolean increase;
@@ -33,6 +35,14 @@ public class IncDecItem {
 
     public void setRecord(LocalDate record) {
         this.record = record;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public String getMarket() {
@@ -101,11 +111,12 @@ public class IncDecItem {
 
     @Override
     public String toString() {
-        return market + " " + record + " " + increase + " " + id + " " + name + " " + score + " " + description + " " + verified + " " + verificationComment; 
+        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + description + " " + verified + " " + verificationComment; 
     }
     
     public void save() throws Exception {
         IncDec incdec = new IncDec();
+        incdec.setDate(TimeUtil.convertDate(getDate()));
         incdec.setDescription(getDescription());
         incdec.setId(getId());
         incdec.setIncrease(isIncrease());
@@ -138,6 +149,7 @@ public class IncDecItem {
 
     private static IncDecItem getIncdecItem(IncDec incdec) {
         IncDecItem incdecItem = new IncDecItem();
+        incdecItem.setDate(TimeUtil.convertDate(incdec.getDate()));
         incdecItem.setDescription(incdec.getDescription());
         incdecItem.setId(incdec.getId());
         incdecItem.setIncrease(incdec.isIncrease());
