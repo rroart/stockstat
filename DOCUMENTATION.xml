@@ -1973,7 +1973,7 @@ Table days (R days): how many days to use for the graph or statistics
     <para>
       Spark need driver libraries, download from for instance
       central.maven.org/maven2/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar
-      and place in spark-2.1.0-bin-hadoop2.7/lib
+      and place in spark-2.3.0-bin-hadoop2.7/jars
     </para>
     <para>
       My current has no configuration. The only configuration lies in my current startup scripts, which goes:
