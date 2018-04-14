@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregate.Aggregator;
 import roart.aggregate.MLIndicator;
@@ -21,10 +22,12 @@ import roart.aggregate.MLMACD;
 import roart.calculate.CalcNodeUtils;
 import roart.category.Category;
 import roart.category.CategoryConstants;
+import roart.config.ConfigConstants;
 import roart.config.MyConfig;
 import roart.config.MyMyConfig;
 import roart.evolution.Individual;
 import roart.ml.NNConfig;
+import roart.ml.NNConfigs;
 import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
 import roart.queue.MyExecutors;
@@ -118,11 +121,17 @@ public class NeuralNetEvaluation extends Evaluation {
 
     class MyFactory {
         public Aggregator myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, Category[] categories) throws Exception {
+            NNConfigs nnConfigs = new NNConfigs();
+            nnConfigs.set(key, nnConfig);
+            ObjectMapper mapper = new ObjectMapper();
+            String value = mapper.writeValueAsString(nnConfigs);
             Aggregator aggregate = null;
             if (ml.equals(PipelineConstants.MLMACD)) {
+                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
                 aggregate = new MLMACD(conf, Constants.PRICE, null, null, CategoryConstants.PRICE, 0, categories);
             } 
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
+                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
                 aggregate = new MLIndicator(conf, Constants.PRICE, null, null, CategoryConstants.PRICE, 0, categories, dataReaders);
             }
             return aggregate;

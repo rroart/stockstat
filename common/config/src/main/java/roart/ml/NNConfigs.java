@@ -67,6 +67,26 @@ public class NNConfigs {
         this.tensorflowLConfig = tensorflowLConfig;
     }
     
+    public void set(String key, NNConfig conf) {
+        switch (key) {
+        case ConfigConstants.MACHINELEARNINGSPARKMLLR:
+                sparkLRConfig = (SparkLRConfig) conf;
+            break;
+        case ConfigConstants.MACHINELEARNINGSPARKMLMCP:
+                sparkMCPConfig = (SparkMCPConfig) conf;
+                break;
+        case ConfigConstants.MACHINELEARNINGSPARKMLOVR:
+                sparkOVRConfig = (SparkOVRConfig) conf;
+                break;
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWDNN:
+                 tensorflowDNNConfig = (TensorflowDNNConfig) conf;
+                 break;
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWL:
+                tensorflowLConfig = (TensorflowLConfig) conf;
+        break; 
+        }
+    }
+
     public NNConfig get(String key) {
         switch (key) {
         case ConfigConstants.MACHINELEARNINGSPARKMLLR:
