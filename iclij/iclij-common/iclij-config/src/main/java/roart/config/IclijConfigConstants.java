@@ -2,8 +2,18 @@ package roart.config;
 
 public class IclijConfigConstants {
     public static final String AUTORUN = "autorun[@enable]";
-    public static final String MPSERVERCPUFRACTION = "mp.server.cpufraction";
-    public static final String MPCLIENTCPUFRACTION = "mp.client.cpufraction";
+    public static final String EVOLVE = "evolve";
+    public static final String EVOLVEINDICATORRECOMMENDER = "evolve.indicatorrecommender[@enable]";
+    public static final String EVOLVEML = "evolve.ml[@enable]";
+    public static final String EVOLVEMLDNN = "evolve.ml.dnn[@enable]";
+    public static final String EVOLVEMLDNNL = "evolve.ml.dnnl[@enable]";
+    public static final String EVOLVEMLL = "evolve.ml.l[@enable]";
+    public static final String EVOLVEMLLR = "evolve.ml.lr[@enable]";
+    public static final String EVOLVEMLMCP = "evolve.ml.mcp[@enable]";
+    public static final String EVOLVEMLOVR = "evolve.ml.ovr[@enable]";
+    public static final String EVOLVEMLTENSORFLOWSERVER = "evolve.ml.tensorflowserver";
+    public static final String MPSERVERCPU = "mp.server.cpu";
+    public static final String MPCLIENTCPU = "mp.client.cpu";
     public static final String RECOMMENDERRECOMMENDER = "recommender.recommender[@enable]";
     public static final String RECOMMENDERMLMACD = "recommender.mlmacd[@enable]";
     public static final String RECOMMENDERMLINDICATOR = "recommender.mlindicator[@enable]";
