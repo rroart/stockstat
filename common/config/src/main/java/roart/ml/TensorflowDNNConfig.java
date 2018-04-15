@@ -55,6 +55,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
     @Override
     public void randomize() {
         Random rand = new Random();
+        generateSteps(rand);
         generateHiddenlayers(rand);
         generateHiddenUnits(rand);
     }
@@ -62,13 +63,16 @@ public class TensorflowDNNConfig extends TensorflowConfig {
     @Override
     public void mutate() {
         Random rand = new Random();
-        int task = rand.nextInt(2);
+        int task = rand.nextInt(3);
         switch (task) {
         case 0:
             generateHiddenlayers(rand);
             break;
         case 1:
             mutateHiddenUnits(rand);
+            break;
+        case 2:
+            generateSteps(rand);
             break;
         }
     }
@@ -82,6 +86,10 @@ public class TensorflowDNNConfig extends TensorflowConfig {
             int jj = 0;
         }
         hiddenunits[hiddenlayer] = ThreadLocalRandom.current().nextInt(2, 50);
+    }
+
+    private void generateSteps(Random rand) {
+        steps = rand.nextInt(200);
     }
 
     private void generateHiddenUnits(Random rand) {

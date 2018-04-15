@@ -79,13 +79,16 @@ public class SparkMCPConfig extends SparkConfig {
     @Override
     public void mutate() {
         Random rand = new Random();
-        int task = rand.nextInt(2);
+        int task = rand.nextInt(3);
         switch (task) {
         case 0:
             generateLayers(rand);
             break;
         case 1:
             mutateNN(rand);
+            break;
+        case 2:
+            generateMaxiter(rand);
             break;
         }
     }
