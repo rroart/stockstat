@@ -43,7 +43,7 @@ public class IndicatorEvaluation extends Evaluation {
     private List<String> disableList;
     
     public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList) {
-        this.conf = conf;
+        this.conf = conf.copy();
         setKeys(keys);
         this.retObj = retObj;
         this.useMax = b;

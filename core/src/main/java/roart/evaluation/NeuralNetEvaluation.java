@@ -50,7 +50,7 @@ public class NeuralNetEvaluation extends Evaluation {
     private NNConfig nnConfig;
     
     public NeuralNetEvaluation(MyMyConfig conf, String ml, Pipeline[] dataReaders, Category[] categories, String key, NNConfig nnConfig) {
-        this.conf = conf;
+        this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
         this.categories = categories;
@@ -64,6 +64,14 @@ public class NeuralNetEvaluation extends Evaluation {
 
     public void setConf(MyMyConfig conf) {
         this.conf = conf;
+    }
+
+    public NNConfig getNnConfig() {
+        return nnConfig;
+    }
+
+    public void setNnConfig(NNConfig nnConfig) {
+        this.nnConfig = nnConfig;
     }
 
     @Override
