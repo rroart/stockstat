@@ -13,7 +13,9 @@ public class Individual  implements Comparable<Individual>{
     private Double fitness;
     
     private Evaluation evaluation;
-    
+
+    private long calculatetime;
+
     public Individual(Evaluation evaluation) {
         this.evaluation = evaluation;
     }
@@ -30,6 +32,14 @@ public class Individual  implements Comparable<Individual>{
         this.fitness = fitness;
     }
 
+    public void setCalculateTime(long time) {
+        this.calculatetime = time;
+    }
+    
+    public long getCalculateTime() {
+        return calculatetime;
+    }
+    
     public Individual getNewWithValueCopyFactory() throws JsonParseException, JsonMappingException, IOException {
         Evaluation newEval = evaluation.copy();
         return new Individual(newEval);
@@ -68,7 +78,7 @@ public class Individual  implements Comparable<Individual>{
     public Double getFitness() {
         return fitness;
     }
-    
+
     /*
     public  static MyMyConfig getNewWithValueCopy(MyMyConfig conf) {
         MyMyConfig newConf = new MyMyConfig(conf);
