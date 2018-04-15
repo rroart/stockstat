@@ -21,10 +21,8 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     public Individual getFittest(EvolutionConfig evolutionConfig, Evaluation evaluation) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
         Population population = new Population(selectionSize, evolutionConfig, evaluation, false);
-
-        // TODO clone config
-
-        
+        calculate(population.getIndividuals());
+        Collections.sort(population.getIndividuals());
         Individual parent = getBest(selectionSize, population, true, evaluation);
         evaluation.transformFromNode();
         return parent;
@@ -41,7 +39,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             List<Individual> children = crossover(getEvolutionConfig().getCrossover(), population.getIndividuals(), useMax, evaluation);
             
             mutateList(population.getIndividuals(), getEvolutionConfig().getElite(), population.size(), getEvolutionConfig().getMutate(), false, useMax);
-            List<Individual> clonedmutated = clonedmutated(getEvolutionConfig().getElitecloneandmutate(), evaluation);
+            List<Individual> clonedmutated = clonedmutated(getEvolutionConfig().getElitecloneandmutate(), population.getIndividuals().get(0).getEvaluation());
             mutateList(children, 0, population.size(), getEvolutionConfig().getMutate(), true, useMax);
             
             population.getIndividuals().addAll(children);
