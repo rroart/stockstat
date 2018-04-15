@@ -1163,15 +1163,16 @@ public class ControlService {
             Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, Category[] categories) throws Exception {
         TaUtil tu = new TaUtil();
         NNConfigs nnConfigs = null;
+        String nnconfigString = null;
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
-            String nnconfigString = conf.getAggregatorsMLIndicatorMLConfig();
+            nnconfigString = conf.getAggregatorsMLIndicatorMLConfig();
             if (nnconfigString != null) {
                 ObjectMapper mapper = new ObjectMapper();
                 nnConfigs = mapper.readValue(nnconfigString, NNConfigs.class);            
             }
         }
         if (ml.equals(PipelineConstants.MLMACD)) {
-            String nnconfigString = conf.getMLMACDMLConfig();
+            nnconfigString = conf.getMLMACDMLConfig();
             if (nnconfigString != null) {
                 ObjectMapper mapper = new ObjectMapper();
                 nnConfigs = mapper.readValue(nnconfigString, NNConfigs.class);            
@@ -1180,6 +1181,7 @@ public class ControlService {
         if (nnConfigs == null) {
             nnConfigs = new NNConfigs();            
         }
+        NNConfigs newNNConfigs = new NNConfigs();
         List<String> keys = new ArrayList<>();
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLR);
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLMCP);
@@ -1202,22 +1204,25 @@ public class ControlService {
 
             Individual best = evolution.getFittest(evolutionConfig, recommendBuy);
 
-            for (String id : keys) {
-                ResultItemTableRow row = new ResultItemTableRow();
-                row.add(id);
-                row.add("" + conf.getConfigValueMap().get(id));
-                NeuralNetEvaluation bestEval = (NeuralNetEvaluation) best.getEvaluation();
-                log.info("Buy {} {}", id, bestEval.getConf().getConfigValueMap().get(id));
-                log.info("Buy {}", bestEval.getConf().getConfigValueMap().get(id).getClass().getName());
-                row.add("" + bestEval.getConf().getConfigValueMap().get(id));
-                table.add(row); 
-            }
-            // TODO have a boolean here
-            for (String id : keys) {
-                NeuralNetEvaluation bestEval = (NeuralNetEvaluation) best.getEvaluation();
-               updateMap.put(id, bestEval.getConf().getConfigValueMap().get(id));
-            }
-    }
+            NeuralNetEvaluation bestEval2 = (NeuralNetEvaluation) best.getEvaluation();
+            NNConfig newnnconf = bestEval2.getNnConfig();
+            newNNConfigs.set(key, newnnconf);
+        }
+        String myKey = null;
+        if (ml.equals(PipelineConstants.MLINDICATOR)) {
+            myKey = ConfigConstants.AGGREGATORSINDICATORMLCONFIG;
+        }
+        if (ml.equals(PipelineConstants.MLMACD)) {
+            myKey = ConfigConstants.AGGREGATORSMLMACDMLCONFIG;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        String newNNConfigstring = mapper.writeValueAsString(newNNConfigs);
+        updateMap.put(myKey, newNNConfigstring);
+        ResultItemTableRow row = new ResultItemTableRow();
+        row.add(myKey);
+        row.add(nnconfigString);
+        row.add(newNNConfigstring);
+        table.add(row);
     }
     /*
     private <T> T getObject(String json) {
