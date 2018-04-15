@@ -64,12 +64,6 @@ public abstract class EvolutionAlgorithm {
             populationCopies.remove(idx);
             pop.mutate();
         }
-        if (!scoreAll) {
-            return;
-        }
-        for (Individual pop : populationCopies) {
-            pop.recalculateScore();
-        }
     }
 
     protected List<Individual> crossover(int childrenNum, List<Individual> population, boolean doBuy2, Evaluation recommend) throws JsonParseException, JsonMappingException, IOException {
@@ -97,8 +91,12 @@ public abstract class EvolutionAlgorithm {
     }
 
     protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, Evaluation evaluation) throws JsonParseException, JsonMappingException, IOException {
-        Population population = new Population(evolutionEliteCloneAndMutate, evolutionConfig, evaluation, false);
-        return population.getIndividuals();
+        Population population = new Population(evolutionEliteCloneAndMutate, evolutionConfig, evaluation, true);
+        List<Individual> list = population.getIndividuals();
+        for (Individual individual : list) {
+            individual.mutate();
+        }
+        return list;
     }
 
     protected void calculate(List<Individual> pop) throws InterruptedException, ExecutionException {
@@ -133,7 +131,9 @@ public abstract class EvolutionAlgorithm {
 
         @Override
         public Object call() throws Exception {
+            long start = System.currentTimeMillis();
             individual.recalculateScore();
+            individual.setCalculateTime(System.currentTimeMillis() - start);
             return null;
         }
     }
