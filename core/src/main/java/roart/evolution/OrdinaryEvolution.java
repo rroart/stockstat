@@ -21,10 +21,13 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     public Individual getFittest(EvolutionConfig evolutionConfig, Evaluation evaluation) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
         Population population = new Population(selectionSize, evolutionConfig, evaluation, false);
+        if (getEvolutionConfig().getUseoldelite() && !evaluation.isEmpty()) {
+            population.getIndividuals().add(new Individual(evaluation).getNewWithValueCopyFactory());
+        }
         calculate(population.getIndividuals());
         Collections.sort(population.getIndividuals());
         Individual parent = getBest(selectionSize, population, true, evaluation);
-        evaluation.transformFromNode();
+        parent.getEvaluation().transformFromNode();
         return parent;
     }
 
@@ -50,9 +53,9 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             calculate(population.getIndividuals());
             Collections.sort(population.getIndividuals());
         }
+        printmap(population.getIndividuals());
         //printmap(population.getIndividuals().get(0).getConf().getConfigValueMap());
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         return population.getFittest();
     }
-
  }
