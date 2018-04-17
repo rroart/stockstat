@@ -89,7 +89,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
     }
 
     private void generateSteps(Random rand) {
-        steps = rand.nextInt(200);
+        steps = 1 + rand.nextInt(200);
     }
 
     private void generateHiddenUnits(Random rand) {

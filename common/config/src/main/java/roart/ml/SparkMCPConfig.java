@@ -61,7 +61,7 @@ public class SparkMCPConfig extends SparkConfig {
     }
 
     private void generateMaxiter(Random rand) {
-        maxiter = rand.nextInt(200);
+        maxiter = 1 + rand.nextInt(200);
     }
 
     private void generateNN(Random rand) {
