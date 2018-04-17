@@ -178,5 +178,9 @@ public class IndicatorEvaluationNew extends Evaluation {
         Evaluation newEval = new IndicatorEvaluationNew(new MyMyConfig(conf), key, retObj, useMax, index);
         return newEval;
     }
-
+   
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 }

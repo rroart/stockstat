@@ -265,8 +265,8 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.TESTRECOMMENDPERIOD, CategoryConstants.PRICE);
         deflt.put(ConfigConstants.TESTRECOMMENDFACTOR, 10);
          */
-        deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "{ 'generations' : 100, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 16, 'mutate' : 2, 'generationcreate' : 1 }");
-        deflt.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "{ 'generations' : 10, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 4, 'mutate' : 2, 'generationcreate' : 1 }");
+        deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "{ 'generations' : 100, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 16, 'mutate' : 2, 'generationcreate' : 1, 'useoldelite' : true }");
+        deflt.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "{ 'generations' : 10, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 4, 'mutate' : 2, 'generationcreate' : 1, 'useoldelite' : true }");
         /*
         deflt.put(ConfigConstants.EVOLUTIONGENERATIONS, 2);
         deflt.put(ConfigConstants.EVOLUTIONCHILDREN, 4);

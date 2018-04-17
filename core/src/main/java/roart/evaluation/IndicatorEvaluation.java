@@ -23,7 +23,7 @@ import roart.util.MarketData;
 
 public class IndicatorEvaluation extends Evaluation {
     private List<String> keys;
-    
+
     public List<String> getKeys() {
         return keys;
     }
@@ -31,17 +31,17 @@ public class IndicatorEvaluation extends Evaluation {
     public void setKeys(List<String> keys) {
         this.keys = keys;
     }
-        
+
     // TODO add deltadays?
-    
+
     private MyMyConfig conf;
 
     private Object[] retObj;
-    
+
     private boolean useMax;
-    
+
     private List<String> disableList;
-    
+
     public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList) {
         this.conf = conf.copy();
         setKeys(keys);
@@ -92,12 +92,12 @@ public class IndicatorEvaluation extends Evaluation {
 
     public static void addToLists(Map<String, MarketData> marketdatamap, int category, List<Double> macdLists[] /*List<Double> macdList,
             List<Double> histList, List<Double> macdDList, List<Double> histDList*/, String market, Double[] momentum) throws Exception {
-            for (int i = 0; i < macdLists.length; i ++) {
-                List<Double> macdList = macdLists[i];
-                if (momentum[i] != null) {
-                    macdList.add(momentum[i]);
-                }
+        for (int i = 0; i < macdLists.length; i ++) {
+            List<Double> macdList = macdLists[i];
+            if (momentum[i] != null) {
+                macdList.add(momentum[i]);
             }
+        }
     }
 
     @Override
@@ -119,7 +119,7 @@ public class IndicatorEvaluation extends Evaluation {
             if (list[newlistidx] == null || list[curlistidx] == null) {
                 continue;
             }
-	    // TODO change filtering?
+            // TODO change filtering?
             double change = (list[newlistidx]/list[curlistidx] - 1);
             Double[] momrsi = entry.getValue();
             for (int i = 0; i < getKeys().size(); i++) {
@@ -128,6 +128,10 @@ public class IndicatorEvaluation extends Evaluation {
                     continue;
                 }
                 // TODO temp fix
+                Object o = conf.getConfigValueMap().get(key);
+                if (conf.getConfigValueMap().get(key) instanceof Integer) {
+                    int jj = 0;
+                }
                 CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
                 double value = momrsi[i];
                 recommend += node.calc(value, 0) * change;
@@ -135,7 +139,7 @@ public class IndicatorEvaluation extends Evaluation {
         }
         return recommend;
     }
- 
+
     @Override
     public void mutate() {        
         for (String key : keys) {
@@ -250,4 +254,37 @@ public class IndicatorEvaluation extends Evaluation {
         return newEval;
     }
 
+    @Override
+    public boolean isEmpty() {
+        for (String key : keys) {
+            Object object = conf.getConfigValueMap().get(key);
+            if (object == null) {
+                return true;
+            }
+            boolean found = false;
+            if (object instanceof String) {
+                String value = (String) object;
+                if (value.isEmpty()) {
+                    return true;
+                }
+                found = true;
+            }
+            if (object instanceof Integer) {
+                return false;
+            }
+            if (!found) {
+                int jj = 0;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        String ret = "";
+        for (String key : keys) {
+            ret = ret + conf.getConfigValueMap().get(key) + " ";
+        }
+        return ret;
+    }
 }

@@ -30,4 +30,6 @@ public abstract class Evaluation {
     public abstract Individual crossover(Evaluation evaluation);
 
     public abstract Evaluation copy();
+
+    public abstract boolean isEmpty();
 }

@@ -15,12 +15,14 @@ public class EvolutionConfig {
     
     private Integer generationcreate;
 
+    private Boolean useoldelite;
+    
     public EvolutionConfig() {
         super();
     }
     
     public EvolutionConfig(Integer generations, Integer crossover, Integer elite,
-            Integer elitecloneandmutate, Integer select, Integer mutate, Integer generationcreate) {
+            Integer elitecloneandmutate, Integer select, Integer mutate, Integer generationcreate, Boolean useoldelite) {
         super();
         this.generations = generations;
         this.crossover = crossover;
@@ -29,6 +31,7 @@ public class EvolutionConfig {
         this.select = select;
         this.mutate = mutate;
         this.generationcreate = generationcreate;
+        this.useoldelite = useoldelite;
     }
 
     public Integer getGenerations() {
@@ -85,6 +88,14 @@ public class EvolutionConfig {
 
     public void setGenerationcreate(Integer generationcreate) {
         this.generationcreate = generationcreate;
+    }
+
+    public Boolean getUseoldelite() {
+        return useoldelite;
+    }
+
+    public void setUseoldelite(Boolean useoldelite) {
+        this.useoldelite = useoldelite;
     }
 
 }

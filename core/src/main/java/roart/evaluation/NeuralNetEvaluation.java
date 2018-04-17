@@ -181,4 +181,14 @@ public class NeuralNetEvaluation extends Evaluation {
         }
         return new NeuralNetEvaluation(conf, ml, dataReaders, categories, key, newNNConfig);
     }
+    
+    @Override
+    public boolean isEmpty() {
+        return nnConfig != null;
+    }
+    
+    @Override
+    public String toString() {
+        return key + " " + nnConfig;
+    }
 }
