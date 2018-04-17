@@ -34,7 +34,7 @@ public class CalcNodeUtils {
             if (value instanceof Integer) {
                 CalcNode anode = new CalcDoubleNode();
                 conf.getConfigValueMap().put(key, anode);
-                return;
+                continue;
             }
             String jsonValue = (String) conf.getConfigValueMap().get(key);
             if (jsonValue == null || jsonValue.isEmpty()) {
