@@ -41,12 +41,17 @@ public class Individual  implements Comparable<Individual>{
     }
     
     public Individual getNewWithValueCopyFactory() throws JsonParseException, JsonMappingException, IOException {
+        if (evaluation == null) {
+            int j = 0;
+        }
         Evaluation newEval = evaluation.copy();
+        newEval.transformToNode();
         return new Individual(newEval);
     }
 
     public Individual getNewWithValueCopyAndRandomFactory() throws JsonParseException, JsonMappingException, IOException {
         Evaluation newEval = evaluation.copy();
+        newEval.transformToNode();
         newEval.getRandom();
         return new Individual(newEval);
     }
@@ -72,7 +77,7 @@ public class Individual  implements Comparable<Individual>{
 
     @Override
     public String toString() {
-        return "" + fitness;
+        return "" + fitness + " " + calculatetime + " " + evaluation;
     }
 
     public Double getFitness() {
