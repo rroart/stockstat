@@ -9,6 +9,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.jfree.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -19,6 +23,7 @@ import roart.evaluation.Evaluation;
 import roart.queue.MyExecutors;
 
 public abstract class EvolutionAlgorithm {
+    protected static Logger log = LoggerFactory.getLogger(EvolutionAlgorithm.class);
 
     private EvolutionConfig evolutionConfig;
     
@@ -135,6 +140,12 @@ public abstract class EvolutionAlgorithm {
             individual.recalculateScore();
             individual.setCalculateTime(System.currentTimeMillis() - start);
             return null;
+        }
+    }
+
+    protected void printmap(List<Individual> individuals) {
+        for (Individual individual : individuals) {
+            log.info("Individual {}", individual);
         }
     }
 
