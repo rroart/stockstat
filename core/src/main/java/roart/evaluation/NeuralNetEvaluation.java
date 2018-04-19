@@ -184,7 +184,7 @@ public class NeuralNetEvaluation extends Evaluation {
     
     @Override
     public boolean isEmpty() {
-        return nnConfig == null;
+        return nnConfig == null || nnConfig.empty();
     }
     
     @Override
