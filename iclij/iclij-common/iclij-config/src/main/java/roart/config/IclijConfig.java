@@ -155,7 +155,7 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEML);
     }
     
-    private Object getValueOrDefault(String key) {
+    public Object getValueOrDefault(String key) {
         // jackson messes around here...
         if (configValueMap == null) {
             return null;
