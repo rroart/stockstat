@@ -20,6 +20,7 @@ import roart.action.FindProfitAction;
 import roart.config.ConfigConstants;
 import roart.config.IclijConfig;
 import roart.config.IclijConfigConstants;
+import roart.config.IclijXMLConfig;
 import roart.config.MyMyConfig;
 import roart.model.ResultMeta;
 import roart.pipeline.PipelineConstants;
@@ -48,6 +49,9 @@ public class ComponentMLMACD extends Component {
         //System.out.println(resultMaps.keySet());
         List<String> nns = getnns();
         setnns(conf, config, nns);
+        if (config.wantEvolveML()) {
+            srv.getEvolveML(true, new ArrayList<>(), PipelineConstants.MLMACD, conf);
+        }
         resultMaps = srv.getContent();
         Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLMACD);
         //System.out.println("mlm " + mlMACDMaps.keySet());
@@ -115,7 +119,9 @@ public class ComponentMLMACD extends Component {
     static void setnns(MyMyConfig conf, IclijConfig config, List<String> nns) {
         Map<String, String> map = config.getConv();
         for (String key : nns) {
-            boolean enable = (boolean) conf.getValueOrDefault(key);
+            System.out.println(conf.getConfigValueMap().keySet());
+            Object o = config.getValueOrDefault(key);
+            boolean enable = (boolean) config.getValueOrDefault(key);
             String otherKey = map.get(key);
             conf.getConfigValueMap().put(otherKey, enable);
         }

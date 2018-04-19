@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.config.ConfigConstants;
 import roart.config.IclijConfig;
+import roart.config.IclijXMLConfig;
 import roart.config.MyMyConfig;
 import roart.model.IncDecItem;
 import roart.model.MemoryItem;
@@ -48,6 +49,9 @@ public class ComponentMLIndicator extends Component {
             Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config) {
         List<String> nns = ComponentMLMACD.getnns();
         ComponentMLMACD.setnns(conf, config, nns);
+        if (config.wantEvolveML()) {
+            srv.getEvolveML(true, new ArrayList<>(), PipelineConstants.MLINDICATOR, conf);
+        }
         resultMaps = srv.getContent();
         Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLINDICATOR);
         //System.out.println("mlm " + mlMACDMaps.keySet());
