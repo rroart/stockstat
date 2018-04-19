@@ -21,6 +21,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.EVOLVEMLMCP, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEMLOVR, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, String.class);
+        map.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, String.class);
+        map.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.MPSERVERCPU, Double.class);
         map.put(IclijConfigConstants.MPCLIENTCPU, Double.class);
         map.put(IclijConfigConstants.RECOMMENDERMLINDICATOR, Boolean.class);
@@ -56,6 +58,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.EVOLVEMLLR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.EVOLVEMLMCP, Boolean.TRUE);
         deflt.put(IclijConfigConstants.EVOLVEMLOVR, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "{ 'generations' : 100, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 16, 'mutate' : 2, 'generationcreate' : 1, 'useoldelite' : true }");
+        deflt.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "{ 'generations' : 10, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 4, 'mutate' : 2, 'generationcreate' : 1, 'useoldelite' : true }");
         deflt.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, "http://localhost:8000");
         deflt.put(IclijConfigConstants.MPSERVERCPU, 0.5);
         deflt.put(IclijConfigConstants.MPCLIENTCPU, 0.5);
@@ -88,6 +92,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.EVOLVEMLMCP, "Enable evolution generated ml MCP configs");
         text.put(IclijConfigConstants.EVOLVEMLOVR, "Enable evolution generated ml OVR configs");
         text.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, "Enable evolution generated ml server");
+        text.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "ML GP config");
+        text.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "Indicator recommender GP config");
         text.put(IclijConfigConstants.MPSERVERCPU, "Server cpu usage");
         text.put(IclijConfigConstants.MPCLIENTCPU, "Client cpu usage");
         text.put(IclijConfigConstants.RECOMMENDERMLINDICATOR, "Enable recommender mlindicator");
@@ -115,6 +121,8 @@ public class IclijConfigConstantMaps {
         conv.put(IclijConfigConstants.EVOLVEMLMCP, ConfigConstants.MACHINELEARNINGSPARKMLMCP);
         conv.put(IclijConfigConstants.EVOLVEMLOVR, ConfigConstants.MACHINELEARNINGSPARKMLOVR);
         conv.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER);
+        conv.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG);
+        conv.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, ConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
     }
     
     public static Map<String, IclijXMLType> mymap = new HashMap<>();
@@ -130,6 +138,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.EVOLVEMLMCP, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolution generated ml MCP configs", ConfigConstants.MACHINELEARNINGSPARKMLMCP));
         mymap.put(IclijConfigConstants.EVOLVEMLOVR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolution generated ml OVR configs", ConfigConstants.MACHINELEARNINGSPARKMLOVR));
         mymap.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, new IclijXMLType(String.class, "http://localhost:8000", "Enable evolution generated ml server", ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER));
+        mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ 'generations' : 100, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 16, 'mutate' : 2, 'generationcreate' : 1 }", "ML GP config", ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG));
+        mymap.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ 'generations' : 10, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 4, 'mutate' : 2, 'generationcreate' : 1 }", "Indicator recommender GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
         mymap.put(IclijConfigConstants.MPSERVERCPU, new IclijXMLType(Double.class, 0.5, "Server cpu usage"));
         mymap.put(IclijConfigConstants.MPCLIENTCPU, new IclijXMLType(Double.class, 0.5, "Client cpu usage"));
         mymap.put(IclijConfigConstants.RECOMMENDERMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable recommender mlindicator"));
