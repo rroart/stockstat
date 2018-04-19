@@ -1137,14 +1137,17 @@ public class ControlService {
             if (cat == null) {
                 return new ArrayList<>();
             }
+            String[] periodText = getPeriodText(conf.getMarket(), conf);
             DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, null, cat);
-            Pipeline[] datareaders = new Pipeline[1];
-            datareaders[0] = dataReader;
+            //Pipeline[] datareaders = new Pipeline[1];
+            Pipeline[] datareaders = getDataReaders(conf, stocks,
+                    periodText, marketdatamap, periodDataMap, null);
+
+            //datareaders[0] = dataReader;
 
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String mydate = dt.format(conf.getdate());
             List<StockItem> dayStocks = stockdatemap.get(mydate);
-            String[] periodText = getPeriodText(conf.getMarket(), conf);
             Category[] categories = getCategories(conf, dayStocks,
                     periodText, marketdatamap, periodDataMap, null, datareaders);
 
@@ -1162,11 +1165,13 @@ public class ControlService {
     private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, Category[] categories) throws Exception {
         TaUtil tu = new TaUtil();
+        log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NNConfigs nnConfigs = null;
         String nnconfigString = null;
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
             nnconfigString = conf.getAggregatorsMLIndicatorMLConfig();
             if (nnconfigString != null) {
+                log.info("NNConfig {}", nnconfigString);
                 ObjectMapper mapper = new ObjectMapper();
                 nnConfigs = mapper.readValue(nnconfigString, NNConfigs.class);            
             }
@@ -1174,6 +1179,7 @@ public class ControlService {
         if (ml.equals(PipelineConstants.MLMACD)) {
             nnconfigString = conf.getMLMACDMLConfig();
             if (nnconfigString != null) {
+                log.info("NNConfig {}", nnconfigString);
                 ObjectMapper mapper = new ObjectMapper();
                 nnConfigs = mapper.readValue(nnconfigString, NNConfigs.class);            
             }
