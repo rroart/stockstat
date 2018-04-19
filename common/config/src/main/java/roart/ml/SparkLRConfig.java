@@ -108,6 +108,10 @@ public class SparkLRConfig extends SparkConfig {
     }
     
     @Override
+    public boolean empty() {
+        return maxiter == null;
+    }
+    @Override
     public String toString() {
         return getName() + " " + maxiter + " " + reg + " " + elasticnet;
     }

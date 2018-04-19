@@ -23,4 +23,6 @@ public abstract class NNConfig {
     public abstract NNConfig crossover(NNConfig other);
 
     public abstract NNConfig copy();
+
+    public abstract boolean empty();
 }

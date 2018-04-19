@@ -54,14 +54,17 @@ public class TensorflowDNNConfig extends TensorflowConfig {
 
     @Override
     public void randomize() {
+        //validate();
         Random rand = new Random();
         generateSteps(rand);
         generateHiddenlayers(rand);
-        generateHiddenUnits(rand);
+        //generateHiddenUnits(rand);
+        validate();
     }
 
     @Override
     public void mutate() {
+        validate();
         Random rand = new Random();
         int task = rand.nextInt(3);
         switch (task) {
@@ -75,6 +78,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
             generateSteps(rand);
             break;
         }
+        validate();
     }
 
     private void mutateHiddenUnits(Random rand) {
@@ -119,11 +123,21 @@ public class TensorflowDNNConfig extends TensorflowConfig {
             for (int i = min; i < hiddenlayers; i++) {
                 hiddenunits[i] = ThreadLocalRandom.current().nextInt(2, 50);
             }
+        } else {
+            if (hiddenunits == null) {
+                hiddenunits = new Integer[hiddenlayers];
+            } else {
+                int jj = 0;
+            }
+            for(int i = 0; i < hiddenlayers; i++) {
+                hiddenunits[i] = ThreadLocalRandom.current().nextInt(2, 50);
+            }
         }
     }
 
     @Override
     public NNConfig crossover(NNConfig otherNN) {
+        validate();
         TensorflowDNNConfig offspring = new TensorflowDNNConfig(steps, hiddenlayers);
         offspring.setHiddenunits(Arrays.copyOf(hiddenunits, hiddenunits.length));
         TensorflowDNNConfig other = (TensorflowDNNConfig) otherNN;
@@ -137,6 +151,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
         if (rand.nextBoolean()) {
             offspring.hiddenunits = other.getHiddenunits();
         }
+        validate();
         return offspring;
     }
 
@@ -150,11 +165,39 @@ public class TensorflowDNNConfig extends TensorflowConfig {
     }
     
     @Override
+    public boolean empty() {
+        return steps == null;
+    }
+    
+   @Override
     public String toString() {
         String array = "";
         if (hiddenunits != null) {
             array = Arrays.toString(hiddenunits);
         }
         return getName() + " " + hiddenlayers + " " + array + " " + steps;
+    }
+    
+    private void validate() {
+        if (steps == null || steps == 0) {
+            int jj = 0;
+        }
+        if (hiddenlayers == null || hiddenlayers == 0) {
+            int jj = 0;
+        }
+        if (hiddenunits != null && hiddenlayers != null) {
+            if (hiddenlayers != hiddenunits.length) {
+                int jj = 0;
+            }
+        }
+        if (hiddenunits == null) {
+            int jj = 0;
+        } else {
+            for (int i = 0; i < hiddenlayers; i++) {
+                if (hiddenunits[i] == null || hiddenunits[i] == 0) {
+                    int jj = 0;
+                }
+            }
+        }
     }
 }

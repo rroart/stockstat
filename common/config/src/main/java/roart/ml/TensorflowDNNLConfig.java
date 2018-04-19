@@ -137,6 +137,11 @@ public class TensorflowDNNLConfig extends TensorflowConfig {
     }
     
     @Override
+    public boolean empty() {
+        return steps == null;
+    }
+    
+    @Override
     public String toString() {
         String array = "";
         if (dnnhiddenunits != null) {

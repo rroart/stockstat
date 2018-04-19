@@ -9,15 +9,15 @@ import roart.config.MLConstants;
 
 public class SparkMCPConfig extends SparkConfig {
     private Integer maxiter;
-    
+
     private Integer layers;
-    
+
     private int[] nn;
 
     private Integer prevlayers;
-    
+
     private int[] prevnn;
-    
+
     public SparkMCPConfig(Integer maxiter, Integer layers) {
         super(MLConstants.MCP);
         this.maxiter = maxiter;
@@ -54,10 +54,12 @@ public class SparkMCPConfig extends SparkConfig {
 
     @Override
     public void randomize() {
+        //validate();
         Random rand = new Random();
         generateMaxiter(rand);
         generateLayers(rand);
-        generateNN(rand);
+        //generateNN(rand);
+        validate();
     }
 
     private void generateMaxiter(Random rand) {
@@ -72,12 +74,13 @@ public class SparkMCPConfig extends SparkConfig {
                 nn[i] = ThreadLocalRandom.current().nextInt(3, 50);
             }
         } else {
-            
+
         }
     }
 
     @Override
     public void mutate() {
+        validate();
         Random rand = new Random();
         int task = rand.nextInt(3);
         switch (task) {
@@ -91,6 +94,7 @@ public class SparkMCPConfig extends SparkConfig {
             generateMaxiter(rand);
             break;
         }
+        validate();
     }
 
     private void mutateNN(Random rand) {
@@ -99,7 +103,7 @@ public class SparkMCPConfig extends SparkConfig {
         }
         int layer = rand.nextInt(layers);
         try {
-        nn[layer] = ThreadLocalRandom.current().nextInt(3, 50);
+            nn[layer] = ThreadLocalRandom.current().nextInt(3, 50);
         } catch (Exception e) {
             int jj = 0;
         }
@@ -115,7 +119,7 @@ public class SparkMCPConfig extends SparkConfig {
             if (prevnn != null) {
                 for (int i = 0; i < min; i++) {
                     try {
-                    nn[i] = prevnn[i];
+                        nn[i] = prevnn[i];
                     } catch (Exception e) {
                         int jj = 1;
                     }
@@ -123,12 +127,22 @@ public class SparkMCPConfig extends SparkConfig {
             }
             for (int i = min; i < layers; i++) {
                 nn[i] = ThreadLocalRandom.current().nextInt(3, 50);
+            } 
+        } else {
+            if (nn == null) {
+                nn = new int[layers];
+            } else {
+                int jj = 0;
+            }
+            for(int i = 0; i < layers; i++) {
+                nn[i] = ThreadLocalRandom.current().nextInt(3, 50);
             }
         }
     }
 
     @Override
     public NNConfig crossover(NNConfig otherNN) {
+        validate();
         SparkMCPConfig offspring = new SparkMCPConfig(maxiter, layers);
         offspring.setNn(Arrays.copyOf(nn, nn.length));
         SparkMCPConfig other = (SparkMCPConfig) otherNN;
@@ -136,11 +150,11 @@ public class SparkMCPConfig extends SparkConfig {
         if (rand.nextBoolean()) {
             offspring.maxiter = other.getMaxiter();
         }
-       if (rand.nextBoolean()) {
+        if (rand.nextBoolean()) {
             offspring.layers = other.getLayers();
         }
+        validate();
         return offspring;
-
     }
 
     @Override
@@ -151,6 +165,11 @@ public class SparkMCPConfig extends SparkConfig {
         }
         return newMCP;
     }
+
+    @Override
+    public boolean empty() {
+        return maxiter == null;
+    }
     
     @Override
     public String toString() {
@@ -159,5 +178,28 @@ public class SparkMCPConfig extends SparkConfig {
             array = Arrays.toString(nn);
         }
         return getName() + " " + layers + " " + array + " " + maxiter;
+    }
+
+    private void validate() {
+        if (maxiter == null || maxiter == 0) {
+            int jj = 0;
+        }
+        if (layers == null || layers == 0) {
+            int jj = 0;
+        }
+        if (layers != null && nn != null) {
+            if (layers != nn.length) {
+                int jj = 0;
+            }
+        }
+        if (nn == null) {
+            int jj = 0;
+        } else {
+            for (int i = 0; i < layers; i++) {
+                if (nn[i] == 0) {
+                    int jj = 0;
+                }
+            }
+        }
     }
 }
