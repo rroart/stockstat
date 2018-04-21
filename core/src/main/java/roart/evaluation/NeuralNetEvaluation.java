@@ -124,6 +124,9 @@ public class NeuralNetEvaluation extends Evaluation {
             Double value = (Double) entry.getValue();
             fitness += value;
         }
+        if (!map.isEmpty()) {
+            fitness = fitness / map.size();
+        }
         return fitness;
     }
 
