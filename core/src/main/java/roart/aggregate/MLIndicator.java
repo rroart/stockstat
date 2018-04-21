@@ -310,7 +310,7 @@ public class MLIndicator extends Aggregator {
                     log.info("len {}", arrayLength);
                     LearnTestClassifyResult result = mldao1.learntestclassify(nnconfigs, this, map1, model1, arrayLength, key, MYTITLE, 2, mapTime, map, labelMapShort);  
                     Map<String, Double[]> classifyResult = result.getCatMap();
-                    probabilityMap.put(mldao1.getName(), result.getAccuracy());
+                    probabilityMap.put(mldao1.getName() + model1.getId(), result.getAccuracy());
                     meta1[4] = result.getAccuracy();
                     resultMeta1.setTestAccuracy(result.getAccuracy());
                     getResultMetas().add(resultMeta1);
@@ -391,7 +391,7 @@ public class MLIndicator extends Aggregator {
                 int testCount = futMap.getTestCount();
                 LearnTestClassifyResult result = future.get();
                 Map<String, Double[]> classifyResult = result.getCatMap();
-                probabilityMap.put(mldao.getName(), result.getAccuracy());
+                probabilityMap.put(mldao.getName() + model.getId(), result.getAccuracy());
                 Object[] meta = resultMetaArray.get(testCount);
                 ResultMeta resultMeta = getResultMetas().get(testCount);
                 meta[4] = result.getAccuracy();
@@ -562,7 +562,7 @@ public class MLIndicator extends Aggregator {
                 Map<double[], Double> map = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
                     Double testAccuracy = mldao.learntest(nnconfigs, this, map, model, arrayLength, key, MYTITLE, 2, mapTime);  
-                    probabilityMap.put(mldao.getName(), testAccuracy);
+                    probabilityMap.put(mldao.getName() + model.getId(), testAccuracy);
                     Map<Object, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta = new Object[6];
@@ -713,7 +713,7 @@ public class MLIndicator extends Aggregator {
                     String val = "";
                     // TODO workaround
                     try {
-                        val = "" + MLClassifyModel.roundme((Double) probabilityMap.get(mldao.getName()));
+                        val = "" + MLClassifyModel.roundme((Double) probabilityMap.get(mldao.getName() + model.getId()));
                     } catch (Exception e) {
                         log.error("Exception fix later, refactor", e);
                     }
