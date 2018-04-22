@@ -28,7 +28,7 @@ public  class MLClassifySparkMCPModel  extends MLClassifySparkModel {
         if (modelConf == null) {
             int[] layers = new int[]{outcomes + 1, outcomes + 1};
             // 2 hidden layers
-            modelConf = new SparkMCPConfig(100, 2);
+            modelConf = new SparkMCPConfig(100, 2, 1E-6);
             modelConf.setNn(layers);
         }
         int layer = modelConf.getLayers();
@@ -42,9 +42,11 @@ public  class MLClassifySparkMCPModel  extends MLClassifySparkModel {
         log.info("Used ML config {} {}", modelConf, Arrays.toString(layers));
         MultilayerPerceptronClassifier trainer = new MultilayerPerceptronClassifier()
                 .setLayers(layers)
-                .setBlockSize(128)
-                .setSeed(1234L)
+                .setTol(modelConf.getTol())
+                //.setSeed(1234L)
                 .setMaxIter(modelConf.getMaxiter());
+        MultilayerPerceptronClassifier dummy = new MultilayerPerceptronClassifier();
+        log.info("dymmy " + dummy.getBlockSize() + " " + dummy.getMaxIter() + " " + dummy.getSeed() + " " + dummy.getStepSize() + " " + dummy.getTol());
         return trainer.fit(train);
     }
 }

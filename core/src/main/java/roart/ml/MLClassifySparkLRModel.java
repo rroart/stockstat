@@ -78,15 +78,18 @@ public class MLClassifySparkLRModel  extends MLClassifySparkModel {
             modelConf = conf.getSparkLRConfig();
         }    
         if (modelConf == null) {
-            modelConf = new SparkLRConfig(5, 0.01, null);
+            modelConf = new SparkLRConfig(5, 1E-6);
         }
         LogisticRegression reg = new LogisticRegression();
         reg.setMaxIter(modelConf.getMaxiter());
-        reg.setRegParam(modelConf.getReg());
-        if (modelConf.getElasticnet() != null) {
-            reg.setElasticNetParam(modelConf.getElasticnet());
-        }
+        reg.setTol(modelConf.getTol());
+        //reg.setRegParam(modelConf.getReg());
+        //if (modelConf.getElasticnet() != null) {
+        //    reg.setElasticNetParam(modelConf.getElasticnet());
+        //}
         log.info("Used ML config {}", modelConf);
+        LogisticRegression dummy = new LogisticRegression();
+        log.info("dymmy " + dummy.getElasticNetParam() + " " + dummy.getMaxIter() + " " + dummy.getRegParam() + " " + dummy.getThreshold() + " " + dummy.getTol() + " " + dummy.getStandardization() + " " + dummy.getFitIntercept());
         return reg.fit(train);
     }
 
