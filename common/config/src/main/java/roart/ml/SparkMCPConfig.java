@@ -18,10 +18,13 @@ public class SparkMCPConfig extends SparkConfig {
 
     private int[] prevnn;
 
-    public SparkMCPConfig(Integer maxiter, Integer layers) {
+    private Double tol;
+    
+    public SparkMCPConfig(Integer maxiter, Integer layers, Double tol) {
         super(MLConstants.MCP);
         this.maxiter = maxiter;
         this.layers = layers;
+	this.tol = tol;
     }
 
     public SparkMCPConfig() {
@@ -52,18 +55,27 @@ public class SparkMCPConfig extends SparkConfig {
         this.nn = nn;
     }
 
+    public Double getTol() {
+        return tol;
+    }
+
+    public void setTol(Double tol) {
+        this.tol = tol;
+    }
+
     @Override
     public void randomize() {
         //validate();
         Random rand = new Random();
         generateMaxiter(rand);
         generateLayers(rand);
+	tol = generateTol();
         //generateNN(rand);
         validate();
     }
 
     private void generateMaxiter(Random rand) {
-        maxiter = 1 + rand.nextInt(200);
+        maxiter = 1 + rand.nextInt(MAX_ITER);
     }
 
     private void generateNN(Random rand) {
@@ -71,7 +83,7 @@ public class SparkMCPConfig extends SparkConfig {
         nn = new int[layers];
         if (prevnn == null) {
             for(int i = 0; i < layers; i++) {
-                nn[i] = ThreadLocalRandom.current().nextInt(3, 50);
+                nn[i] = ThreadLocalRandom.current().nextInt(MIN_NODE, MAX_NODE + 1);
             }
         } else {
 
@@ -82,7 +94,7 @@ public class SparkMCPConfig extends SparkConfig {
     public void mutate() {
         validate();
         Random rand = new Random();
-        int task = rand.nextInt(3);
+        int task = rand.nextInt(4);
         switch (task) {
         case 0:
             generateLayers(rand);
@@ -93,6 +105,8 @@ public class SparkMCPConfig extends SparkConfig {
         case 2:
             generateMaxiter(rand);
             break;
+	case 3:
+	    tol = generateTol();
         }
         validate();
     }
@@ -103,7 +117,7 @@ public class SparkMCPConfig extends SparkConfig {
         }
         int layer = rand.nextInt(layers);
         try {
-            nn[layer] = ThreadLocalRandom.current().nextInt(3, 50);
+            nn[layer] = ThreadLocalRandom.current().nextInt(MIN_NODE, MAX_NODE + 1);
         } catch (Exception e) {
             int jj = 0;
         }
@@ -111,7 +125,7 @@ public class SparkMCPConfig extends SparkConfig {
 
     private void generateLayers(Random rand) {
         prevlayers = layers;
-        layers = ThreadLocalRandom.current().nextInt(1, 5);
+        layers = ThreadLocalRandom.current().nextInt(1, MAX_LAYERS + 1);
         if (prevlayers != null && prevlayers.intValue() != layers.intValue()) {
             prevnn = nn;
             nn = new int[layers];
@@ -126,7 +140,7 @@ public class SparkMCPConfig extends SparkConfig {
                 }
             }
             for (int i = min; i < layers; i++) {
-                nn[i] = ThreadLocalRandom.current().nextInt(3, 50);
+                nn[i] = ThreadLocalRandom.current().nextInt(MIN_NODE, MAX_NODE + 1);
             } 
         } else {
             if (nn == null) {
@@ -135,7 +149,7 @@ public class SparkMCPConfig extends SparkConfig {
                 int jj = 0;
             }
             for(int i = 0; i < layers; i++) {
-                nn[i] = ThreadLocalRandom.current().nextInt(3, 50);
+                nn[i] = ThreadLocalRandom.current().nextInt(MIN_NODE, MAX_NODE + 1);
             }
         }
     }
@@ -143,7 +157,7 @@ public class SparkMCPConfig extends SparkConfig {
     @Override
     public NNConfig crossover(NNConfig otherNN) {
         validate();
-        SparkMCPConfig offspring = new SparkMCPConfig(maxiter, layers);
+        SparkMCPConfig offspring = new SparkMCPConfig(maxiter, layers, tol);
         offspring.setNn(Arrays.copyOf(nn, nn.length));
         SparkMCPConfig other = (SparkMCPConfig) otherNN;
         Random rand = new Random();
@@ -152,14 +166,15 @@ public class SparkMCPConfig extends SparkConfig {
         }
         if (rand.nextBoolean()) {
             offspring.layers = other.getLayers();
+            offspring.nn = Arrays.copyOf(other.nn, other.nn.length);
         }
-        validate();
+        offspring.validate();
         return offspring;
     }
 
     @Override
     public NNConfig copy() {
-        SparkMCPConfig newMCP = new SparkMCPConfig(maxiter, layers);
+        SparkMCPConfig newMCP = new SparkMCPConfig(maxiter, layers, tol);
         if (nn != null) {
             newMCP.setNn(Arrays.copyOf(nn, nn.length));
         }
@@ -177,7 +192,7 @@ public class SparkMCPConfig extends SparkConfig {
         if (nn != null) {
             array = Arrays.toString(nn);
         }
-        return getName() + " " + layers + " " + array + " " + maxiter;
+        return getName() + " " + layers + " " + array + " " + maxiter + " " + tol;
     }
 
     private void validate() {

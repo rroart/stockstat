@@ -36,7 +36,7 @@ public class SparkOVRConfig extends SparkConfig {
     public void setFitintercept(Boolean fitintercept) {
         this.fitintercept = fitintercept;
     }
-
+    
     public SparkOVRConfig(Integer maxiter, Double tol, Boolean fitintercept) {
         super(MLConstants.OVR);
         this.maxiter = maxiter;
@@ -52,8 +52,8 @@ public class SparkOVRConfig extends SparkConfig {
     public void randomize() {
         Random rand = new Random();
             generateMaxiter(rand);
-            generateTol(rand);
-            generateFitintercept(rand);        
+            tol = generateTol();
+            generateFitintercept(rand);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SparkOVRConfig extends SparkConfig {
             generateMaxiter(rand);
             break;
         case 1:
-            generateTol(rand);
+            tol = generateTol();
             break;
         case 2:
             generateFitintercept(rand);
@@ -74,13 +74,13 @@ public class SparkOVRConfig extends SparkConfig {
     }
 
     private void generateMaxiter(Random rand) {
-        maxiter = 1 + rand.nextInt(200);
+        maxiter = 1 + rand.nextInt(MAX_ITER);
     }
 
     private void generateFitintercept(Random rand) {
         fitintercept = rand.nextBoolean();
     }
-
+    
     private void generateTol(Random rand) {
         tol = ThreadLocalRandom.current().nextDouble(0, 1);
     }
@@ -116,4 +116,11 @@ public class SparkOVRConfig extends SparkConfig {
     public String toString() {
         return getName() + " " + maxiter + " " + tol + " " + fitintercept;
     }
+
+    @Override
+    public Double generateTol() {
+        return super.generateTol();
+        //return Math.pow(0.1, ThreadLocalRandom.current().nextInt(MIN_TOL - 1, MAX_TOL + 1));
+    }
+    
 }

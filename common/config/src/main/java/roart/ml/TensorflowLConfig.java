@@ -28,13 +28,13 @@ public class TensorflowLConfig extends TensorflowConfig {
     @Override
     public void randomize() {
         Random rand = new Random();
-        steps = 1 + rand.nextInt(2000);
+        steps = 1 + rand.nextInt(MAX_STEPS);
     }
 
     @Override
     public void mutate() {
         Random rand = new Random();
-        steps = 1 + rand.nextInt(2000);
+        steps = 1 + rand.nextInt(MAX_STEPS);
     }
 
     @Override

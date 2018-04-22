@@ -89,11 +89,11 @@ public class TensorflowDNNConfig extends TensorflowConfig {
         if (hiddenlayer >= hiddenunits.length) {
             int jj = 0;
         }
-        hiddenunits[hiddenlayer] = ThreadLocalRandom.current().nextInt(2, 50);
+        hiddenunits[hiddenlayer] = ThreadLocalRandom.current().nextInt(MIN_NODE, MAX_NODE + 1);
     }
 
     private void generateSteps(Random rand) {
-        steps = 1 + rand.nextInt(200);
+        steps = 1 + rand.nextInt(MAX_STEPS);
     }
 
     private void generateHiddenUnits(Random rand) {
@@ -101,7 +101,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
         hiddenunits = new Integer[hiddenlayers];
         if (prevhiddenunits == null) {
             for(int i = 0; i < hiddenlayers; i++) {
-                hiddenunits[i] = ThreadLocalRandom.current().nextInt(2, 50);
+                hiddenunits[i] = ThreadLocalRandom.current().nextInt(MIN_NODE, MAX_NODE + 1);
             }
         } else {
             
@@ -110,7 +110,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
 
     private void generateHiddenlayers(Random rand) {
         prevhiddenlayers = hiddenlayers;
-        hiddenlayers = ThreadLocalRandom.current().nextInt(1, 5);
+        hiddenlayers = ThreadLocalRandom.current().nextInt(1, MAX_HIDDENLAYERS + 1);
         if (prevhiddenlayers != null && prevhiddenlayers.intValue() != hiddenlayers.intValue()) {
             prevhiddenunits = hiddenunits;
             hiddenunits = new Integer[hiddenlayers];
@@ -121,7 +121,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
                 }
             }
             for (int i = min; i < hiddenlayers; i++) {
-                hiddenunits[i] = ThreadLocalRandom.current().nextInt(2, 50);
+                hiddenunits[i] = ThreadLocalRandom.current().nextInt(MIN_NODE, MAX_NODE + 1);
             }
         } else {
             if (hiddenunits == null) {
@@ -130,7 +130,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
                 int jj = 0;
             }
             for(int i = 0; i < hiddenlayers; i++) {
-                hiddenunits[i] = ThreadLocalRandom.current().nextInt(2, 50);
+                hiddenunits[i] = ThreadLocalRandom.current().nextInt(MIN_NODE, MAX_NODE + 1);
             }
         }
     }
@@ -145,13 +145,11 @@ public class TensorflowDNNConfig extends TensorflowConfig {
         if (rand.nextBoolean()) {
             offspring.steps = other.getSteps();
         }
-       if (rand.nextBoolean()) {
-            offspring.hiddenlayers = other.getHiddenlayers();
-        }
         if (rand.nextBoolean()) {
-            offspring.hiddenunits = other.getHiddenunits();
+            offspring.hiddenlayers = other.getHiddenlayers();
+            offspring.hiddenunits = Arrays.copyOf(other.hiddenunits, other.hiddenunits.length);
         }
-        validate();
+        offspring.validate();
         return offspring;
     }
 

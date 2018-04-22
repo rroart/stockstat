@@ -9,15 +9,18 @@ import roart.config.MLConstants;
 public class SparkLRConfig extends SparkConfig {
     private Integer maxiter;
     
-    private Double reg;
+    //private Double reg;
     
-    private Double elasticnet;
+    //private Double elasticnet;
 
-    public SparkLRConfig(Integer maxiter, Double reg, Double elasticnet) {
+    private Double tol;
+    
+    public SparkLRConfig(Integer maxiter, Double tol) {
         super(MLConstants.LR);
         this.maxiter = maxiter;
-        this.reg = reg;
-        this.elasticnet = elasticnet;
+	this.tol = tol;
+        //this.reg = reg;
+        //this.elasticnet = elasticnet;
     }
 
     public SparkLRConfig() {
@@ -32,6 +35,7 @@ public class SparkLRConfig extends SparkConfig {
         this.maxiter = maxiter;
     }
 
+    /*
     public Double getReg() {
         return reg;
     }
@@ -47,32 +51,48 @@ public class SparkLRConfig extends SparkConfig {
     public void setElasticnet(Double elasticnet) {
         this.elasticnet = elasticnet;
     }
+*/
+    
+    public Double getTol() {
+        return tol;
+    }
+
+    public void setTol(Double tol) {
+        this.tol = tol;
+    }
 
     @Override
     public void randomize() {
         Random rand = new Random();
         generateMaxiter(rand);
-        generateReg(rand);
-        generateElasticnet(rand);
+        //generateReg(rand);
+        //generateElasticnet(rand);
+	tol = generateTol();
     }
 
     @Override
     public void mutate() {
         Random rand = new Random();
-        int task = rand.nextInt(3);
+        int task = rand.nextInt(2);
         switch (task) {
         case 0:
             generateMaxiter(rand);
             break;
+	    /*
         case 1:
             generateReg(rand);
             break;
         case 2:
             generateElasticnet(rand);
             break;
+	    */
+	case 1:
+	    tol = generateTol();
+	    break;
         }
     }
 
+    /*
     private void generateElasticnet(Random rand) {
         elasticnet = ThreadLocalRandom.current().nextDouble(0, 1);
     }
@@ -80,31 +100,39 @@ public class SparkLRConfig extends SparkConfig {
     private void generateReg(Random rand) {
         reg = ThreadLocalRandom.current().nextDouble(0, 1);
     }
-
+*/
+    
     private void generateMaxiter(Random rand) {
-        maxiter = 1 + rand.nextInt(200);
+        maxiter = 1 + rand.nextInt(MAX_ITER);
     }
 
     @Override
     public NNConfig crossover(NNConfig otherNN) {
-        SparkLRConfig baby = new SparkLRConfig(maxiter, reg, elasticnet);
+        //SparkLRConfig offspring = new SparkLRConfig(maxiter, reg, elasticnet);
+        SparkLRConfig offspring = new SparkLRConfig(maxiter, tol);
         SparkLRConfig other = (SparkLRConfig) otherNN;
         Random rand = new Random();
         if (rand.nextBoolean()) {
-            baby.maxiter = other.getMaxiter();
+            offspring.maxiter = other.getMaxiter();
         }
         if (rand.nextBoolean()) {
-            baby.reg = other.getReg();
+            offspring.tol = other.tol;
+        }
+        /*
+        if (rand.nextBoolean()) {
+            offspring.reg = other.getReg();
         }
         if (rand.nextBoolean()) {
-            baby.elasticnet = other.getElasticnet();
+            offspring.elasticnet = other.getElasticnet();
         }
-        return baby;
+        */
+        return offspring;
     }
 
     @Override
     public NNConfig copy() {
-        return new SparkLRConfig(maxiter, reg, elasticnet);
+        return new SparkLRConfig(maxiter, tol);
+        //return new SparkLRConfig(maxiter, reg, elasticnet);
     }
     
     @Override
@@ -113,6 +141,8 @@ public class SparkLRConfig extends SparkConfig {
     }
     @Override
     public String toString() {
-        return getName() + " " + maxiter + " " + reg + " " + elasticnet;
+        return getName() + " " + maxiter + " " + tol;
+        //return getName() + " " + maxiter + " " + reg + " " + elasticnet;
     }
+
 }
