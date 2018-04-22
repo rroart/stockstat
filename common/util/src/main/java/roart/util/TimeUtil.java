@@ -25,7 +25,7 @@ public class TimeUtil {
     }
 
     public static long daysSince(LocalDate date) {
-        return ChronoUnit.DAYS.between(LocalDate.now(), date);
+        return ChronoUnit.DAYS.between(date, LocalDate.now());
     }
     
     public static Date convertDate(LocalDateTime date) {
