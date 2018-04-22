@@ -287,6 +287,11 @@ public class FindProfitAction extends Action {
     }
 
     private List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate olddate) {
+        for (MemoryItem item : marketMemory) {
+            if (item.getRecord() == null) {
+                item.setRecord(LocalDate.now());
+            }
+        }
         List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
         return currentList;
     }
