@@ -18,6 +18,7 @@ public class IndicatorMACD extends Indicator {
     
     public static final int MULTILAYERPERCEPTRONCLASSIFIER = 1;
     public static final int LOGISTICREGRESSION = 2;
+    public static final int ONEVSREST = 3;
 
     public IndicatorMACD(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
