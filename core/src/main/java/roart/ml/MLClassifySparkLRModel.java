@@ -18,7 +18,7 @@ import roart.util.Constants;
 public class MLClassifySparkLRModel  extends MLClassifySparkModel {
     @Override
     public int getId() {
-        return 2;
+        return IndicatorMACD.LOGISTICREGRESSION;
     }
     @Override
     public String getName() {

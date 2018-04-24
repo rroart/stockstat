@@ -12,11 +12,12 @@ import org.apache.spark.sql.Row;
 
 import roart.aggregate.Aggregator;
 import roart.config.MLConstants;
+import roart.indicator.IndicatorMACD;
 
 public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
     @Override
     public int getId() {
-        return 3;
+        return IndicatorMACD.ONEVSREST;
     }
     @Override
     public String getName() {
@@ -37,12 +38,12 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
 
     @Override
     public int getSizes(Aggregator indicator) { 
-        return 2 * super.getSizes(indicator);
+        return super.getSizes(indicator);
     }
 
     @Override
     public int getReturnSize() {
-        return 2;
+        return 1;
     }
 
     @Override

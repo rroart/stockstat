@@ -8,11 +8,12 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
 import roart.config.MLConstants;
+import roart.indicator.IndicatorMACD;
 
 public  class MLClassifySparkMCPModel  extends MLClassifySparkModel {
     @Override
     public int getId() {
-        return 1;
+        return IndicatorMACD.MULTILAYERPERCEPTRONCLASSIFIER;
     }
     @Override
     public String getName() {
