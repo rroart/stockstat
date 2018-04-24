@@ -21,6 +21,8 @@ tf open file limi
 Ignore bad performing nn after evolve, set limit
 DNNL
 More evolution refactor
+Update OneFour evolution
+mlmacd improve, full pattern
 
 Stockst komb 1m 1w m macd etc
 Mlind? use pure gold oil price
@@ -73,6 +75,7 @@ java.lang.NullPointerException: null
         at roart.service.ControlService.getAggregates(ControlService.java:332)
 
 Owasp
+F: Evolution config with old fittest
 F: Use genetic algorithms for finding neural net config
 F: Evolutionary neural net
 F: Verifier loop

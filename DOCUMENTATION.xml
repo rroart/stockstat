@@ -2139,6 +2139,20 @@ Table days (R days): how many days to use for the graph or statistics
 	      1
 	    </entry>
 	  </row>
+	  <row>
+	    <entry>
+	      useoldelite
+	    </entry>
+	    <entry>
+	      Use old elite if exists (unofficial)
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
 	</tbody>
 	    </tgroup>
     </table>
