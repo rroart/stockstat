@@ -10,6 +10,7 @@ import roart.pipeline.PipelineConstants;
 import roart.model.ResultItem;
 import roart.util.Constants;
 import roart.service.ControlService;
+import roart.util.EurekaUtil;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -147,7 +148,7 @@ public class MyVaadinUI extends UI
 
     @Override
     protected void init(VaadinRequest request) {
-
+        EurekaUtil.initEurekaClient();
         controlService = new ControlService();
         controlService.getConfig();
         final VerticalLayout layout = new VerticalLayout();

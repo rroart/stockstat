@@ -5,13 +5,20 @@ import org.springframework.boot.autoconfigure.*;
 
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+import roart.util.EurekaUtil;
+
 @SpringBootApplication
 @EnableDiscoveryClient
-public class WebApplication {
+public class WebApplication implements CommandLineRunner {
 
-        public static void main(String[] args) throws Exception {
-                SpringApplication.run(WebApplication.class, args);
-        }
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(WebApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws InterruptedException {
+        EurekaUtil.initEurekaClient();
+    }
 
 }
 
