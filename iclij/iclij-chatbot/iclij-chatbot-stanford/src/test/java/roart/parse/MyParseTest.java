@@ -29,6 +29,10 @@ public class MyParseTest {
         ParseData mydata = parse.parseme(q4);
         System.out.println(mydata);
         assertEquals("P1M", mydata.getTime().getPeriod());
+        q4 = "Which is the ten best performing swedish stocks one month duration after June 1 2017?";
+        mydata = parse.parseme(q4);
+        System.out.println(mydata);
+        assertEquals("P1M", mydata.getTime().getPeriod());
     }
 
 }
