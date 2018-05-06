@@ -462,7 +462,11 @@ public class MyMyConfig extends MyConfig {
     }
 
     public String getMLSparkMaster() {
-        return (String) getConfigValueMap().get(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER);
+        return (String) getConfigValueMap().get(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER);
+    }
+
+    public Integer getMLSparkTimeout() {
+        return (Integer) getConfigValueMap().get(ConfigConstants.MACHINELEARNINGSPARKMMLSPARKNETWORKTIMEOUT);
     }
 
     public int getMaxHoles() {

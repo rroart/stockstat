@@ -26,13 +26,16 @@ public class SparkUtil {
 
     private static Logger log = LoggerFactory.getLogger(SparkUtil.class);
 
-    public static SparkSession createSparkSession(String sparkmaster, String appName) {
+    public static SparkSession createSparkSession(String sparkmaster, String appName, Integer timeout) {
         String myAppName = "stockstat";
         SparkConf sparkconf = new SparkConf();
         String master = sparkmaster;
         sparkconf.setMaster(master);
         sparkconf.setAppName(myAppName);
         // it does not work well with default snappy
+        if (timeout != null) {
+            sparkconf.set("spark.network.timeout", "" + timeout);
+        }
         sparkconf.set("spark.io.compression.codec", "lzf");
         sparkconf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
         String userDir = System.getProperty("user.dir");

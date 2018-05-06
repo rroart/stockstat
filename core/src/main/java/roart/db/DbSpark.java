@@ -69,7 +69,8 @@ public class DbSpark {
 		try {
 			String sparkmaster = conf.getDbSparkMaster();
 			//sparkmaster = MyPropertyConfig.instance().sparkMaster;
-			spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat DB");
+			Integer timeout = conf.getMLSparkTimeout();
+			spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat DB", timeout);
 			prop = new java.util.Properties();
 			prop.setProperty("driver", "org.postgresql.Driver");
 			System.out.println("spark conf fin");

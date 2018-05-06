@@ -16,7 +16,8 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGMP = "machinelearning.mp[@enable]";
     public static final String MACHINELEARNINGMPCPU = "machinelearning.mp.cpu";
     public static final String MACHINELEARNINGSPARKML = "machinelearning.sparkml[@enable]";
-    public static final String MACHINELEARNINGSPARMMLSPARKMASTER = "machinelearning.sparkml.sparkmaster";
+    public static final String MACHINELEARNINGSPARKMLSPARKMASTER = "machinelearning.sparkml.sparkmaster";
+    public static final String MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT = "machinelearning.sparkml.sparknetworktimeout";
     public static final String MACHINELEARNINGSPARKMLMCP = "machinelearning.sparkml.mcp[@enable]";
     public static final String MACHINELEARNINGSPARKMLLR = "machinelearning.sparkml.lr[@enable]";
     public static final String MACHINELEARNINGSPARKMLOVR = "machinelearning.sparkml.ovr[@enable]";

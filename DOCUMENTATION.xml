@@ -244,6 +244,17 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  </row>
 	  <row>
 	    <entry>
+	      machinelearning.sparkml.sparknetworktimeout
+	    </entry>
+	    <entry>
+	      The spark network timeout
+	    </entry>
+	    <entry>
+	      null (to be decided by the spark default)
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
 	      machinelearning.sparkml.mcp
 	    </entry>
 	    <entry>

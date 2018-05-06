@@ -48,7 +48,8 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         this.conf = conf;
         findModels();	
         String sparkmaster = conf.getMLSparkMaster();
-        spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat ML");
+        Integer timeout = conf.getMLSparkTimeout();
+        spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat ML", timeout);
     }
 
 

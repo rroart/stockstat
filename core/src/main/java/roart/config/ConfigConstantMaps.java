@@ -21,7 +21,8 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGMP, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGMPCPU, Double.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.class);
-        map.put(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER, String.class);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, String.class);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT, Integer.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.class);
@@ -183,7 +184,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGMP, Boolean.FALSE);
         deflt.put(ConfigConstants.MACHINELEARNINGMPCPU, 0.5);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER, "spark://127.0.0.1:7077");
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, "spark://127.0.0.1:7077");
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.TRUE);
@@ -349,7 +350,8 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MACHINELEARNINGMP, "Enable machine learning multiprocessing");
         text.put(ConfigConstants.MACHINELEARNINGMPCPU, "Machine learning multiprocessing total cpu");
         text.put(ConfigConstants.MACHINELEARNINGSPARKML, "Enable Spark ML");
-        text.put(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER, "Machine Learning Spark Master");
+        text.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, "Machine Learning Spark Master");
+        text.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT, "Machine Learning Spark Network Timeout");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, "Enable Spark ML MCP");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, "Enable Spark ML LR");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, "Enable Spark ML OVR");
@@ -511,7 +513,8 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGMP, new XMLType( Boolean.class, Boolean.FALSE, "Enable machine learning multiprocessing"));
         mymap.put(ConfigConstants.MACHINELEARNINGMPCPU, new XMLType( Double.class, 0.5, "Machine learning multiprocessing total cpu"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKML, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML"));
-        mymap.put(ConfigConstants.MACHINELEARNINGSPARMMLSPARKMASTER, new XMLType( String.class, "spark://127.0.0.1:7077", "Machine Learning Spark Master"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, new XMLType( String.class, "spark://127.0.0.1:7077", "Machine Learning Spark Master"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT, new XMLType( Integer.class, null, "Machine Learning Spark Network Timeout"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML MCP"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML LR"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML OVR"));
