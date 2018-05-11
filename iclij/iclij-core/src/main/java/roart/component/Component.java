@@ -18,7 +18,7 @@ public abstract class Component {
         conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
     }
-    public abstract void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config);
+    public abstract void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config, Map<String, Object> updateMap);
     public abstract Map<String, String> improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap);
 }
 
