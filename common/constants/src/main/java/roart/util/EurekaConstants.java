@@ -7,6 +7,8 @@ public class EurekaConstants {
     public static final String GETCONFIG = "getconfig";
     public static final String GETCONTENTSTAT = "getcontentstat";
     public static final String GETCONTENT = "getcontent";
+    public static final String GETSINGLEMARKET = "findprofit";
+    public static final String GETIMPROVEPROFIT = "improveprofit";
     public static final String GETVERIFY = "getverify";
     public static final String GETCONTENTGRAPH = "getcontentgraph";
     public static final String GETCONTENTGRAPH2 = "getcontentgraph2";

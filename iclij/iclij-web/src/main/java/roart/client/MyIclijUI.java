@@ -209,6 +209,36 @@ public class MyIclijUI extends UI {
         return button;
     }
 
+    private Button getSingleMarket() {
+        Button button = new Button("Run and get single market data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displaySingleMarket();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getImproveProfit() {
+        Button button = new Button("Run and get single market improve data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayImproveProfit();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
     private ListSelect getMarkets() {
         ListSelect ls = new ListSelect("Get market");
         Set<String> marketSet = null;
@@ -390,6 +420,8 @@ public class MyIclijUI extends UI {
         horStat.addComponent(getVerify());
         horStat.addComponent(getVerifyLoop());
         horStat.addComponent(getMarket());
+        horStat.addComponent(getSingleMarket());
+        horStat.addComponent(getImproveProfit());
         horStat.addComponent(getMarkets());
         //horStat.addComponent(getStat());
         //horStat.addComponent(getOverlapping());
@@ -490,6 +522,16 @@ public class MyIclijUI extends UI {
         */
     }
 
+    private void displaySingleMarket() {
+        //System.out.println("h0");
+        controlService.getSingleMarket(this);
+    }
+    
+    private void displayImproveProfit() {
+        //System.out.println("h0");
+        controlService.getImproveProfit(this);
+    }
+    
     private void displayVerify() {
         controlService.getVerify(this);
         /*
