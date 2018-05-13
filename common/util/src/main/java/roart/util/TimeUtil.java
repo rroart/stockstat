@@ -7,13 +7,24 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class TimeUtil {
+	
+    private static Logger log = LoggerFactory.getLogger(TimeUtil.class);
+    
     public static Date convertDate(LocalDate date) {
+        if (date == null) {
+            log.error("Date null (break point)");
+            return null;
+        }
         return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     public static LocalDate convertDate(Date date) {
         if (date == null) {
+            log.error("Date null (break point)");
             return null;
         }
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();        
