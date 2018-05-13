@@ -23,8 +23,16 @@ DNNL
 More evolution refactor
 Update OneFour evolution
 mlmacd improve, full pattern
-Spark timeout
 Eureka setup/config
+iclij table with %-t/f
+Save icli result
+Iclij rerun manually recommendation
+Iclij verif show new ml config
+Test ml conf gen for each loop?
+Getdates null
+Mlind (w/ lr) with same data as evolve recommender
+Each mldao with threadpool
+Timeutil null date breakpoint
 
 Stockst komb 1m 1w m macd etc
 Mlind? use pure gold oil price
@@ -77,6 +85,7 @@ java.lang.NullPointerException: null
         at roart.service.ControlService.getAggregates(ControlService.java:332)
 
 Owasp
+F: Spark timeout
 F: Evolution config with old fittest
 F: Use genetic algorithms for finding neural net config
 F: Evolutionary neural net
