@@ -1,5 +1,7 @@
 package roart.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -14,6 +16,8 @@ public class TimeUtil {
 	
     private static Logger log = LoggerFactory.getLogger(TimeUtil.class);
     
+    public static final String MYDATEFORMAT = "yyyy.MM.dd";
+
     public static Date convertDate(LocalDate date) {
         if (date == null) {
             log.error("Date null (break point)");
@@ -22,6 +26,11 @@ public class TimeUtil {
         return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
+    public static LocalDate convertDate(String aDate) throws ParseException {
+        SimpleDateFormat dt = new SimpleDateFormat(MYDATEFORMAT);
+        return convertDate(dt.parse(aDate));
+    }
+    
     public static LocalDate convertDate(Date date) {
         if (date == null) {
             log.error("Date null (break point)");
