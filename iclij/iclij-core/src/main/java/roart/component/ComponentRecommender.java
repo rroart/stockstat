@@ -55,7 +55,7 @@ public class ComponentRecommender extends Component {
     @Override
     public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
-            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config) {
+            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config, Map<String, Object> updateMap) {
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         if (instance.wantEvolveRecommender()) {
             srv.getEvolveRecommender(true, new ArrayList<>());

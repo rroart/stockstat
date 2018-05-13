@@ -54,11 +54,11 @@ public class FindProfitAction extends Action {
             LocalDate olddate = LocalDate.now();        
             olddate = olddate.minusDays(market.getRecordage());
             List<MemoryItem> marketMemory = getMarketMemory(market.getMarket());
-            getPicks(market, save, olddate, marketMemory, config);
+            getPicks(market, save, olddate, marketMemory, config, null);
         }
     }
 
-    public Map<String, IncDecItem>[] getPicks(String market, boolean save, LocalDate date, List<MemoryItem> memoryItems, IclijConfig config) {
+    public Map<String, IncDecItem>[] getPicks(String market, boolean save, LocalDate date, List<MemoryItem> memoryItems, IclijConfig config, Map<String, Object> updateMap) {
         List<TradeMarket> markets = getMarkets();
         TradeMarket foundTradeMarket = null;
         // TODO check if two markets
@@ -76,10 +76,10 @@ public class FindProfitAction extends Action {
             buysell[1] = sells;
             return buysell;
         }
-        return getPicks(foundTradeMarket, save, date, memoryItems, config);
+        return getPicks(foundTradeMarket, save, date, memoryItems, config, updateMap);
     }
     
-    private Map<String, IncDecItem>[] getPicks(TradeMarket market, boolean save, LocalDate olddate, List<MemoryItem> marketMemory, IclijConfig config) {
+    private Map<String, IncDecItem>[] getPicks(TradeMarket market, boolean save, LocalDate olddate, List<MemoryItem> marketMemory, IclijConfig config, Map<String, Object> updateMap) {
         Map<String, IncDecItem>[] buysell = new Map[2];
         if (marketMemory == null) {
             return buysell;
@@ -107,7 +107,7 @@ public class FindProfitAction extends Action {
         Map<String, Map<String, Object>> result0 = srv.getContent();
         Map<String, Map<String, Object>> maps = result0;
         Map<String, String> nameMap = getNameMap(maps);
-        handleComponent(okListMap, okConfMap, listComponent, srv, componentMap, buys, sells, maps, nameMap, config);
+        handleComponent(okListMap, okConfMap, listComponent, srv, componentMap, buys, sells, maps, nameMap, config, updateMap);
         String category = market.getInccategory();
         if (category != null) {
             Map<String, Object> categoryMap = maps.get(category);
@@ -235,14 +235,14 @@ public class FindProfitAction extends Action {
     private void handleComponent(Map<Object[], List<MemoryItem>> okListMap, Map<Object[], Double> okConfMap,
             Map<String, List<Integer>> listComponent, ControlService srv, Map<String, Component> componentMap,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<String, Map<String, Object>> maps,
-            Map<String, String> nameMap, IclijConfig config) {
+            Map<String, String> nameMap, IclijConfig config, Map<String, Object> updateMap) {
         for (Entry<String, List<Integer>> entry : listComponent.entrySet()) {
             List<Integer> positions = entry.getValue();
             String componentName = entry.getKey();
             Component component = componentMap.get(componentName);
             Component.disabler(srv.conf);
             component.enable(srv.conf);
-            component.handle(srv, srv.conf, maps, positions, buys, sells, okConfMap, okListMap, nameMap, config);
+            component.handle(srv, srv.conf, maps, positions, buys, sells, okConfMap, okListMap, nameMap, config, updateMap);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           
         }

@@ -508,14 +508,16 @@ public class ServiceUtil {
             List<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
         if (!listInc.isEmpty()) {
+            long count = listInc.stream().filter(i -> i.getVerified() != null && i.getVerified()).count();                            
             IclijServiceList inc = new IclijServiceList();
-            inc.setTitle(market + " " + "Increase");
+            inc.setTitle(market + " " + "Increase ( verified " + count + " / " + listInc.size() + " )");
             inc.setList(listInc);
             subLists.add(inc);
         }
         if (!listDec.isEmpty()) {
+            long count = listInc.stream().filter(i -> i.getVerified() != null && i.getVerified()).count();                            
             IclijServiceList dec = new IclijServiceList();
-            dec.setTitle(market + " " + "Decrease");
+            dec.setTitle(market + " " + "Decrease ( verified " + count + " / " + listInc.size() + " )");
             dec.setList(listDec);
             subLists.add(dec);
         }
@@ -608,7 +610,8 @@ public class ServiceUtil {
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
         memories.setList(allMemoryItems);
-        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, date, allMemoryItems, config);
+        Map<String, Object> updateMap = new HashMap<>();
+        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, date, allMemoryItems, config, updateMap);
         List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
         List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
@@ -638,11 +641,182 @@ public class ServiceUtil {
         incMap.setList(inc);
         List<MapList> dec = verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
         IclijServiceList decMap = new IclijServiceList();
-        incMap.setTitle("Decrease verify");
-        incMap.setList(dec);
+        decMap.setTitle("Decrease verify");
+        decMap.setList(dec);
         retLists.add(incMap);
         retLists.add(decMap);
         retLists.add(memories);
+        
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        return result;
+    }
+
+    public static IclijServiceResult getFindProfit(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
+        loopOffset = 0;
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(new ArrayList<>());
+        List<IclijServiceList> retLists = result.getLists();
+        String market = config.getMarket();
+        if (market == null) {
+            return result;
+        }
+        int days = 0;  // config.verificationDays();
+        LocalDate date = config.getDate();
+        ControlService srv = new ControlService();
+        srv.getConfig();
+        srv.conf.setMarket(market);
+        List<String> stocks = srv.getDates(market);
+        if (loopOffset != null) {
+            int index;
+            if (date == null) {
+                index = stocks.size() - 1;
+            } else {
+                String aDate = TimeUtil.convertDate2(date);
+                index = stocks.indexOf(aDate);
+            }
+            index = index - loopOffset;
+            // TODO calculate backward limit for all components
+            if (index <= 0) {
+                return result;
+            }
+            String newDate = stocks.get(index);
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            date = TimeUtil.convertDate(dt.parse(newDate));
+        }
+        int offset = 0;
+        if (date != null) {
+            String aDate = TimeUtil.convertDate2(date);
+            int index = stocks.indexOf(aDate);
+            if (index >= 0) {
+                offset = stocks.size() - 1 - index;
+            }
+        } else {
+            String aDate = stocks.get(stocks.size() - 1);
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            date = TimeUtil.convertDate(dt.parse(aDate));
+        }
+        log.info("Main date {} ", date);
+        String aDate = stocks.get(stocks.size() - 1 - offset - days);
+        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+        LocalDate oldDate = TimeUtil.convertDate(dt.parse(aDate));
+        log.info("Old date {} ", oldDate);
+        UpdateDBAction updateDbAction = new UpdateDBAction();
+        boolean save = config.wantVerificationSave();
+        Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(market, date, days + offset, save, config);
+        FindProfitAction findProfitAction = new FindProfitAction();
+        List<MemoryItem> allMemoryItems = new ArrayList<>();
+        for (Action serviceAction : serviceActions) {
+            serviceAction.goal(null);
+            Map<String, Object> resultMap = serviceAction.getLocalResultMap();
+            List<MemoryItem> memoryItems = (List<MemoryItem>) resultMap.get(IclijPipelineConstants.MEMORY);
+            if (memoryItems != null) {
+                allMemoryItems.addAll(memoryItems);
+            } else {
+                log.error("Memory null");
+            }
+        }
+        IclijServiceList memories = new IclijServiceList();
+        memories.setTitle("Memories");
+        memories.setList(allMemoryItems);
+        Map<String, Object> updateMap = new HashMap<>();
+        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, date, allMemoryItems, config, updateMap);
+        List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
+        List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
+        List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+        List<IclijServiceList> subLists = getServiceList(market, listInc, listDec, listIncDec);
+        retLists.addAll(subLists);
+
+        retLists.add(memories);
+        
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        return result;
+    }
+
+    public static IclijServiceResult getImproveProfit(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
+        loopOffset = 0;
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(new ArrayList<>());
+        List<IclijServiceList> retLists = result.getLists();
+        String market = config.getMarket();
+        if (market == null) {
+            return result;
+        }
+        int days = 0; // config.verificationDays();
+        LocalDate date = config.getDate();
+        ControlService srv = new ControlService();
+        srv.getConfig();
+        srv.conf.setMarket(market);
+        List<String> stocks = srv.getDates(market);
+        if (loopOffset != null) {
+            int index;
+            if (date == null) {
+                index = stocks.size() - 1;
+            } else {
+                String aDate = TimeUtil.convertDate2(date);
+                index = stocks.indexOf(aDate);
+            }
+            index = index - loopOffset;
+            // TODO calculate backward limit for all components
+            if (index <= 0) {
+                return result;
+            }
+            String newDate = stocks.get(index);
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            date = TimeUtil.convertDate(dt.parse(newDate));
+        }
+        int offset = 0;
+        if (date != null) {
+            String aDate = TimeUtil.convertDate2(date);
+            int index = stocks.indexOf(aDate);
+            if (index >= 0) {
+                offset = stocks.size() - 1 - index;
+            }
+        } else {
+            String aDate = stocks.get(stocks.size() - 1);
+            SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            date = TimeUtil.convertDate(dt.parse(aDate));
+        }
+        log.info("Main date {} ", date);
+        String aDate = stocks.get(stocks.size() - 1 - offset - days);
+        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+        LocalDate oldDate = TimeUtil.convertDate(dt.parse(aDate));
+        log.info("Old date {} ", oldDate);
+        UpdateDBAction updateDbAction = new UpdateDBAction();
+        boolean save = false;
+        Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(market, date, days + offset, save, config);
+        //FindProfitAction findProfitAction = new FindProfitAction();
+        ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
+        List<MemoryItem> allMemoryItems = new ArrayList<>();
+        for (Action serviceAction : serviceActions) {
+            serviceAction.goal(null);
+            Map<String, Object> resultMap = serviceAction.getLocalResultMap();
+            List<MemoryItem> memoryItems = (List<MemoryItem>) resultMap.get(IclijPipelineConstants.MEMORY);
+            if (memoryItems != null) {
+                allMemoryItems.addAll(memoryItems);
+            } else {
+                log.error("Memory null");
+            }
+        }
+        IclijServiceList memories = new IclijServiceList();
+        memories.setTitle("Memories");
+        memories.setList(allMemoryItems);
+        Map<String, Object> updateMap = new HashMap<>();
+        Map<String, String> map = improveProfitAction.getImprovements(market, save, date, allMemoryItems);        
+        List<MapList> mapList = improveProfitAction.getList(map);
+        IclijServiceList resultMap = new IclijServiceList();
+        resultMap.setTitle("Improve Profit Info");
+        resultMap.setList(mapList);
+        retLists.add(resultMap);
+
+        retLists.add(memories);
+        
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
         return result;
     }
 

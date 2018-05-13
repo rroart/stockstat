@@ -144,6 +144,20 @@ public class IclijWebControlService {
         new IclijThread(ui, param).start();
     }
 
+    public void getSingleMarket(MyIclijUI ui) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setIclijConfig(getIclijConf());
+        param.setWebpath(EurekaConstants.GETSINGLEMARKET);
+        new IclijThread(ui, param).start();
+    }
+
+    public void getImproveProfit(MyIclijUI ui) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setIclijConfig(getIclijConf());
+        param.setWebpath(EurekaConstants.GETIMPROVEPROFIT);
+        new IclijThread(ui, param).start();
+    }
+
     /**
      * Create test result lists
      * 

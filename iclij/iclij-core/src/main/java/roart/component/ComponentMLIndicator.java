@@ -46,11 +46,14 @@ public class ComponentMLIndicator extends Component {
     @Override
     public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
-            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config) {
+            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config, Map<String, Object> updateMap) {
         List<String> nns = ComponentMLMACD.getnns();
         ComponentMLMACD.setnns(conf, config, nns);
         if (config.wantEvolveML()) {
-            srv.getEvolveML(true, new ArrayList<>(), PipelineConstants.MLINDICATOR, conf);
+            Map<String, Object> anUpdateMap = srv.getEvolveML(true, new ArrayList<>(), PipelineConstants.MLINDICATOR, conf);
+            if (updateMap != null) {
+                updateMap.putAll(anUpdateMap); 
+            }
         }
         resultMaps = srv.getContent();
         Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLINDICATOR);

@@ -185,7 +185,7 @@ public class ControlService {
         return result.getList();
     }
 
-    public List<ResultItem> getEvolveML(boolean doSet, List<String> disableList, String ml, MyMyConfig conf) {
+    public Map<String, Object> getEvolveML(boolean doSet, List<String> disableList, String ml, MyMyConfig conf) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         Set<String> ids = new HashSet<>();
@@ -196,6 +196,7 @@ public class ControlService {
         if (doSet) {
             Map<String, Object> updateMap = result.getMaps().get("update");
             conf.getConfigValueMap().putAll(updateMap);
+            return updateMap;
         }
         return null;
     }
