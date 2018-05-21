@@ -271,8 +271,8 @@ public class ComponentMLIndicator extends Component {
                 memory.setTnProbConf(goodTNprobConf);
                 memory.setFnProbConf(goodFNprobConf);                
             }
-            Integer tpClassOrig = null;
-            Integer tnClassOrig = null;
+            Integer tpClassOrig = 0;
+            Integer tnClassOrig = 0;
             if (countMapClass != null) {
                 tpClassOrig = countMapClass.containsKey(ServiceUtilConstants.INC) ? countMapClass.get(ServiceUtilConstants.INC) : 0;
                 tnClassOrig = countMapClass.containsKey(ServiceUtilConstants.DEC) ? countMapClass.get(ServiceUtilConstants.DEC) : 0;
