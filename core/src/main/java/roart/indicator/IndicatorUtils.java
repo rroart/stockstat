@@ -481,4 +481,37 @@ public class IndicatorUtils {
         return null;
     }
 
+    public static void filterNonExistingClassifications(Map<Double, String> labelMapShort,
+            Map<String, Double[]> classifyResult) {
+        log.info("Values " + classifyResult.values());
+        // due to tensorflow l classifying to 3drd (not inc dec)
+        List<String> filterNonExistingClassifications = new ArrayList<>();
+        for (Entry<String, Double[]> entry : classifyResult.entrySet()) {
+            Double[] value = entry.getValue();
+            if (labelMapShort.get(value[0]) == null) {
+                filterNonExistingClassifications.add(entry.getKey());
+            }
+        }
+        for (String key : filterNonExistingClassifications) {
+            classifyResult.remove(key);
+            log.error("Removing key {}", key);
+        }
+    }
+
+    public static void filterNonExistingClassifications2(Map labelMapShort, Map map) {
+        log.info("Values " + map.values());
+        // due to tensorflow l classifying to 3rd (not inc dec)
+        List<Object> filterNonExistingClassifications = new ArrayList<>();
+        for (Object key : map.keySet()) {
+            Object value = map.get(key);
+            if (labelMapShort.get(value) == null) {
+                filterNonExistingClassifications.add(key);
+            }
+        }
+        for (Object key : filterNonExistingClassifications) {
+            map.remove(key);
+            log.error("Removing key {}", key);
+        }
+    }
+
 }

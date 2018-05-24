@@ -298,6 +298,7 @@ public class MLMACD extends Aggregator {
                                 log.error("map null {}", mapName);
                                 continue;
                             }
+                            IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                             Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                             // make OO of this, create object
                             Object[] meta = new Object[9];
@@ -385,6 +386,7 @@ public class MLMACD extends Aggregator {
                                 log.error("map null {}", mapName);
                                 continue;
                             }
+                            IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                             Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                             // make OO of this, create object
                             Object[] meta = new Object[9];
@@ -619,6 +621,7 @@ public class MLMACD extends Aggregator {
                                 subType, mldao, mapResult2, model, mapTypeInt);                        
                         Map<String, Long> countMap = null;
                         if (classifyResult != null) {
+                            IndicatorUtils.filterNonExistingClassifications(labelMapShort, classifyResult);
                             countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
                         }
                         if (countMap == null) {
@@ -690,6 +693,7 @@ public class MLMACD extends Aggregator {
                         log.info("Outcomes {}", outcomes);
                         Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime);  
                         probabilityMap.put("" + model . getId() + key + subType + mapType, testaccuracy);
+                        IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                         Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                         // make OO of this, create object
                         Object[] meta = new Object[9];
