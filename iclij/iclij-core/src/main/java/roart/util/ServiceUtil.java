@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -501,16 +503,18 @@ public class ServiceUtil {
             List<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
         if (!listInc.isEmpty()) {
-            long count = listInc.stream().filter(i -> i.getVerified() != null && i.getVerified()).count();                            
+            List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+            long count = listIncBoolean.stream().filter(i -> i).count();                            
             IclijServiceList inc = new IclijServiceList();
-            inc.setTitle(market + " " + "Increase ( verified " + count + " / " + listInc.size() + " )");
+            inc.setTitle(market + " " + "Increase ( verified " + count + " / " + listIncBoolean.size() + " )");
             inc.setList(listInc);
             subLists.add(inc);
         }
         if (!listDec.isEmpty()) {
-            long count = listInc.stream().filter(i -> i.getVerified() != null && i.getVerified()).count();                            
+            List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+            long count = listDecBoolean.stream().filter(i -> i).count();                            
             IclijServiceList dec = new IclijServiceList();
-            dec.setTitle(market + " " + "Decrease ( verified " + count + " / " + listInc.size() + " )");
+            dec.setTitle(market + " " + "Decrease ( verified " + count + " / " + listDecBoolean.size() + " )");
             dec.setList(listDec);
             subLists.add(dec);
         }
@@ -563,6 +567,7 @@ public class ServiceUtil {
         if (date == null) {
             date = getLastDate(stocks);
         }
+        log.info("Stock size {} ", stocks.size());
         log.info("Main date {} ", date);
         String aDate = stocks.get(stocks.size() - 1 - offset - days);
         LocalDate oldDate = TimeUtil.convertDate(aDate);
@@ -579,19 +584,35 @@ public class ServiceUtil {
         List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
         List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+        getVerifyProfit(retLists, days, date, srv, oldDate, listInc, listDec);
         List<IclijServiceList> subLists = getServiceList(market, listInc, listDec, listIncDec);
         retLists.addAll(subLists);
         if (config.wantsImproveProfit()) {
             getImprovements(retLists, market, date, save, improveProfitAction, allMemoryItems);
         }
 
-        getVerifyProfit(retLists, days, date, srv, oldDate, listInc, listDec);
         retLists.add(memories);
         
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
+        IclijServiceList updates = convert(updateMap);
+        retLists.add(updates);
         return result;
+    }
+
+    private static IclijServiceList convert(Map<String, Object> updateMap) {
+        IclijServiceList list = new IclijServiceList();
+        list.setTitle("Updates");
+        List<MapList> aList = new ArrayList<>();
+        for (Entry<String, Object> map : updateMap.entrySet()) {
+            MapList m = new MapList();
+            m.setKey(map.getKey());
+            m.setValue((String) map.getValue()); 
+            aList.add(m);
+        }
+        list.setList(aList);
+        return list;
     }
 
     private static LocalDate getDateIndex(List<String> stocks, int index) throws ParseException {
@@ -683,6 +704,8 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
+        IclijServiceList updates = convert(updateMap);
+        retLists.add(updates);
         return result;
     }
 
@@ -733,6 +756,8 @@ public class ServiceUtil {
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
+        IclijServiceList updates = convert(updateMap);
+        retLists.add(updates);
         return result;
     }
 
