@@ -111,7 +111,7 @@ public class IncDecItem {
 
     @Override
     public String toString() {
-        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + description + " " + verified + " " + verificationComment; 
+        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + description + " " + verified + " " + verificationComment + "\n"; 
     }
     
     public void save() throws Exception {
