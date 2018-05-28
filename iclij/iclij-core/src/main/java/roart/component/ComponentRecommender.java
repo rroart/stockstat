@@ -68,7 +68,7 @@ public class ComponentRecommender extends Component {
     private void findBuySellRecommendations(Map<String, Map<String, Object>> resultMaps, Map<String, String> nameMap, String market, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, ControlService srv, IclijConfig config) {
         Object[] keys = new Object[2];
         keys[0] = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
-        keys[1] = null;
+        keys[1] = 0;
         keys = ComponentMLMACD.getRealKeys(keys, okConfMap.keySet());
         //System.out.println(okListMap.get(keys));
         Double confidenceFactor = okConfMap.get(keys);
@@ -101,15 +101,22 @@ public class ComponentRecommender extends Component {
         }
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
-        int listSize = list0.size();
+        handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list0);
+        //handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list1);
+    }
+
+    private void handleBuySell(Map<String, String> nameMap, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells,
+            Map<Object[], List<MemoryItem>> okListMap, ControlService srv, IclijConfig config, Object[] keys,
+            Double confidenceFactor, List<MyElement> list) {
+        int listSize = list.size();
         int recommend = config.recommendTopBottom();
         if (listSize < recommend * 3) {
             return;
         }
-        List<MyElement> topList = list0.subList(0, recommend);
-        List<MyElement> bottomList = list0.subList(listSize - recommend, listSize);
-        Double max = list0.get(0).getValue();
-        Double min = list0.get(listSize - 1).getValue();
+        List<MyElement> topList = list.subList(0, recommend);
+        List<MyElement> bottomList = list.subList(listSize - recommend, listSize);
+        Double max = list.get(0).getValue();
+        Double min = list.get(listSize - 1).getValue();
         Double diff = max - min;
         for (MyElement element : topList) {
             double confidence = confidenceFactor * (element.getValue() - min) / diff;
@@ -391,6 +398,7 @@ public class ComponentRecommender extends Component {
         buyMemory.setPositives((long) goodBuy);
         buyMemory.setSize(totalBuy);
         buyMemory.setConfidence((double) goodBuy / totalBuy);
+        buyMemory.setPosition(0);
         if (doSave) {
             buyMemory.save();
         }
@@ -407,6 +415,7 @@ public class ComponentRecommender extends Component {
         sellMemory.setPositives((long) goodSell);
         sellMemory.setSize(totalSell);
         sellMemory.setConfidence((double) goodSell / totalSell);
+        sellMemory.setPosition(1);
         if (doSave) {
             sellMemory.save();
         }
