@@ -1,5 +1,10 @@
 package roart.client;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
@@ -564,12 +569,19 @@ public class MyIclijUI extends UI {
         final String text = (new ResultItemText()).getClass().getName();
         final String stream = (new ResultItemBytes()).getClass().getName();
 
+        Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
+        BufferedWriter writer = null;
+        try {
+            writer = Files.newBufferedWriter(path);
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        } 
         VerticalLayout result = getResultTemplate();
         //addListTable(result, list);
             for (IclijServiceList item : list) {
                 System.out.println("here");
                 System.out.println("here1");
-                addListTable(result, item);
+                addListTable(result, item, writer);
                 /*
                 if (text.equals(item.getClass().getName())) {
                     addListText(result, (ResultItemText) item);
@@ -582,6 +594,12 @@ public class MyIclijUI extends UI {
                 */
             //}
         }
+            try {
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
         tab.addComponent(result);
         tabsheet.addComponent(tab);
         tabsheet.getTab(tab).setClosable(true);
@@ -619,7 +637,7 @@ public class MyIclijUI extends UI {
         ts.addComponent(new Label(str.text));
     }
 
-    void addListTable(VerticalLayout ts, IclijServiceList item) {
+    void addListTable(VerticalLayout ts, IclijServiceList item, BufferedWriter writer) {
         List list = item.getList();
         ObjectMapper objectMapper = getObjectMapper();
         if (list == null || list.isEmpty()) {
@@ -628,80 +646,110 @@ public class MyIclijUI extends UI {
         }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("usedsec")) {
             List<MemoryItem> mylist = objectMapper.convertValue(list, new TypeReference<List<MemoryItem>>() { });
-            Grid<MemoryItem> table = new Grid<>();
-            table.setCaption(item.getTitle());
-            table.addColumn(MemoryItem::getRecord).setCaption("Record");
-            table.addColumn(MemoryItem::getDate).setCaption("Date");
-            table.addColumn(MemoryItem::getUsedsec).setCaption("Usedsec");
-            table.addColumn(MemoryItem::getMarket).setCaption("Market");
-            table.addColumn(MemoryItem::getTestaccuracy).setCaption("Testaccuracy");
-            table.addColumn(MemoryItem::getConfidence).setCaption("Confidence");
-            table.addColumn(MemoryItem::getLearnConfidence).setCaption("LearnConfidence");
-            table.addColumn(MemoryItem::getCategory).setCaption("Category");
-            table.addColumn(MemoryItem::getComponent).setCaption("Component");
-            table.addColumn(MemoryItem::getSubcomponent).setCaption("Subcomponent");
-            table.addColumn(MemoryItem::getInfo).setCaption("Info");
-            table.addColumn(MemoryItem::getFuturedays).setCaption("Futuredays");
-            table.addColumn(MemoryItem::getFuturedate).setCaption("Futuredate");
-            table.addColumn(MemoryItem::getPositives).setCaption("Positives");
-            table.addColumn(MemoryItem::getSize).setCaption("Size");
-            table.addColumn(MemoryItem::getThreshold).setCaption("Threshold");
-            table.addColumn(MemoryItem::getTp).setCaption("Tp");
-            table.addColumn(MemoryItem::getTpSize).setCaption("TpSize");
-            table.addColumn(MemoryItem::getTpConf).setCaption("TpConf");
-            table.addColumn(MemoryItem::getTpProb).setCaption("TpProb");
-            table.addColumn(MemoryItem::getTpProbConf).setCaption("TpProbConf");
-            table.addColumn(MemoryItem::getTn).setCaption("Tn");
-            table.addColumn(MemoryItem::getTnSize).setCaption("TnSize");
-            table.addColumn(MemoryItem::getTnConf).setCaption("TnConf");
-            table.addColumn(MemoryItem::getTnProb).setCaption("TnProb");
-            table.addColumn(MemoryItem::getTnProbConf).setCaption("TnProbConf");
-            table.addColumn(MemoryItem::getFp).setCaption("Fp");
-            table.addColumn(MemoryItem::getFpSize).setCaption("FpSize");
-            table.addColumn(MemoryItem::getFpConf).setCaption("FpConf");
-            table.addColumn(MemoryItem::getFpProb).setCaption("FpProb");
-            table.addColumn(MemoryItem::getFpProbConf).setCaption("FpProbConf");
-            table.addColumn(MemoryItem::getFn).setCaption("Fn");
-            table.addColumn(MemoryItem::getFnSize).setCaption("FnSize");
-            table.addColumn(MemoryItem::getFnConf).setCaption("FnConf");
-            table.addColumn(MemoryItem::getFnProb).setCaption("FnProb");
-            table.addColumn(MemoryItem::getFnProbConf).setCaption("FnProbConf");
-            table.addColumn(MemoryItem::getPosition).setCaption("Position");
-            table.setWidth("90%");
-            table.setItems(mylist);
-            System.out.println("added");
+            Grid<MemoryItem> table = getGridFromList(item, mylist);
             ts.addComponent(table);
+            listWriter(writer, item, mylist);
             return;
         }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("score")) {
             List<IncDecItem> mylist = objectMapper.convertValue(list, new TypeReference<List<IncDecItem>>() { });
-            Grid<IncDecItem> table = new Grid<>();
-            table.setCaption(item.getTitle());
-            table.addColumn(IncDecItem::getRecord).setCaption("Record");
-            table.addColumn(IncDecItem::getDate).setCaption("Date");
-            table.addColumn(IncDecItem::getMarket).setCaption("Market");
-            table.addColumn(IncDecItem::isIncrease).setCaption("Inc");
-            table.addColumn(IncDecItem::getId).setCaption("Id");
-            table.addColumn(IncDecItem::getName).setCaption("Name");
-            table.addColumn(IncDecItem::getScore).setCaption("Score");
-            table.addColumn(IncDecItem::getDescription).setCaption("Description");
-            table.addColumn(IncDecItem::getVerified).setCaption("Verified");
-            table.addColumn(IncDecItem::getVerificationComment).setCaption("Comment");
-            table.setWidth("90%");
-            table.setItems(mylist);
-            System.out.println("added");
+            Grid<IncDecItem> table = getGridFromList2(item, mylist);
+            listWriter(writer, item, mylist);
             ts.addComponent(table);
         } else {
             List<MapList> mylist = objectMapper.convertValue(list, new TypeReference<List<MapList>>() { });
-            Grid<MapList> table = new Grid<>();
-            table.setCaption(item.getTitle());
-            table.addColumn(MapList::getKey).setCaption("Key");
-            table.addColumn(MapList::getValue).setCaption("Value");
-            table.setWidth("90%");
-            table.setItems(mylist);
-            System.out.println("added");
+            Grid<MapList> table = getGridFromList3(item, mylist);
             ts.addComponent(table);
+            listWriter(writer, item, mylist);
         }
+    }
+
+    private void listWriter(BufferedWriter writer, IclijServiceList item, List mylist) {
+        try {
+            writer.write(item.getTitle());
+            for (Object object : mylist) {
+                writer.write(object.toString());
+            }
+            writer.write("\n");
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    private Grid<MapList> getGridFromList3(IclijServiceList item, List<MapList> mylist) {
+        Grid<MapList> table = new Grid<>();
+        table.setCaption(item.getTitle());
+        table.addColumn(MapList::getKey).setCaption("Key");
+        table.addColumn(MapList::getValue).setCaption("Value");
+        table.setWidth("90%");
+        table.setItems(mylist);
+        System.out.println("added");
+        return table;
+    }
+
+    private Grid<IncDecItem> getGridFromList2(IclijServiceList item, List<IncDecItem> mylist) {
+        Grid<IncDecItem> table = new Grid<>();
+        table.setCaption(item.getTitle());
+        table.addColumn(IncDecItem::getRecord).setCaption("Record");
+        table.addColumn(IncDecItem::getDate).setCaption("Date");
+        table.addColumn(IncDecItem::getMarket).setCaption("Market");
+        table.addColumn(IncDecItem::isIncrease).setCaption("Inc");
+        table.addColumn(IncDecItem::getId).setCaption("Id");
+        table.addColumn(IncDecItem::getName).setCaption("Name");
+        table.addColumn(IncDecItem::getScore).setCaption("Score");
+        table.addColumn(IncDecItem::getDescription).setCaption("Description");
+        table.addColumn(IncDecItem::getVerified).setCaption("Verified");
+        table.addColumn(IncDecItem::getVerificationComment).setCaption("Comment");
+        table.setWidth("90%");
+        table.setItems(mylist);
+        System.out.println("added");
+        return table;
+    }
+
+    private Grid<MemoryItem> getGridFromList(IclijServiceList item, List<MemoryItem> mylist) {
+        Grid<MemoryItem> table = new Grid<>();
+        table.setCaption(item.getTitle());
+        table.addColumn(MemoryItem::getRecord).setCaption("Record");
+        table.addColumn(MemoryItem::getDate).setCaption("Date");
+        table.addColumn(MemoryItem::getUsedsec).setCaption("Usedsec");
+        table.addColumn(MemoryItem::getMarket).setCaption("Market");
+        table.addColumn(MemoryItem::getTestaccuracy).setCaption("Testaccuracy");
+        table.addColumn(MemoryItem::getConfidence).setCaption("Confidence");
+        table.addColumn(MemoryItem::getLearnConfidence).setCaption("LearnConfidence");
+        table.addColumn(MemoryItem::getCategory).setCaption("Category");
+        table.addColumn(MemoryItem::getComponent).setCaption("Component");
+        table.addColumn(MemoryItem::getSubcomponent).setCaption("Subcomponent");
+        table.addColumn(MemoryItem::getInfo).setCaption("Info");
+        table.addColumn(MemoryItem::getFuturedays).setCaption("Futuredays");
+        table.addColumn(MemoryItem::getFuturedate).setCaption("Futuredate");
+        table.addColumn(MemoryItem::getPositives).setCaption("Positives");
+        table.addColumn(MemoryItem::getSize).setCaption("Size");
+        table.addColumn(MemoryItem::getThreshold).setCaption("Threshold");
+        table.addColumn(MemoryItem::getTp).setCaption("Tp");
+        table.addColumn(MemoryItem::getTpSize).setCaption("TpSize");
+        table.addColumn(MemoryItem::getTpConf).setCaption("TpConf");
+        table.addColumn(MemoryItem::getTpProb).setCaption("TpProb");
+        table.addColumn(MemoryItem::getTpProbConf).setCaption("TpProbConf");
+        table.addColumn(MemoryItem::getTn).setCaption("Tn");
+        table.addColumn(MemoryItem::getTnSize).setCaption("TnSize");
+        table.addColumn(MemoryItem::getTnConf).setCaption("TnConf");
+        table.addColumn(MemoryItem::getTnProb).setCaption("TnProb");
+        table.addColumn(MemoryItem::getTnProbConf).setCaption("TnProbConf");
+        table.addColumn(MemoryItem::getFp).setCaption("Fp");
+        table.addColumn(MemoryItem::getFpSize).setCaption("FpSize");
+        table.addColumn(MemoryItem::getFpConf).setCaption("FpConf");
+        table.addColumn(MemoryItem::getFpProb).setCaption("FpProb");
+        table.addColumn(MemoryItem::getFpProbConf).setCaption("FpProbConf");
+        table.addColumn(MemoryItem::getFn).setCaption("Fn");
+        table.addColumn(MemoryItem::getFnSize).setCaption("FnSize");
+        table.addColumn(MemoryItem::getFnConf).setCaption("FnConf");
+        table.addColumn(MemoryItem::getFnProb).setCaption("FnProb");
+        table.addColumn(MemoryItem::getFnProbConf).setCaption("FnProbConf");
+        table.addColumn(MemoryItem::getPosition).setCaption("Position");
+        table.setWidth("90%");
+        table.setItems(mylist);
+        System.out.println("added");
+        return table;
     }
     
     private ObjectMapper getObjectMapper() {
