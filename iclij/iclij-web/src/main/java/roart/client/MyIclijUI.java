@@ -667,6 +667,7 @@ public class MyIclijUI extends UI {
     private void listWriter(BufferedWriter writer, IclijServiceList item, List mylist) {
         try {
             writer.write(item.getTitle());
+            writer.write("\n");
             for (Object object : mylist) {
                 writer.write(object.toString());
             }
