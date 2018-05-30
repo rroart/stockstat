@@ -85,6 +85,7 @@
 	<include>device.py</include>
 	<include>dnnconfig.py</include>
 	<include>lconfig.py</include>
+	<include>fd.py</include>
 	<include>flasktf.sh</include>
 	<include>nameko.sh</include>
 	<include>run-tf.sh</include>

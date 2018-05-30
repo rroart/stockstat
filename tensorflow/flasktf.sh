@@ -6,8 +6,6 @@ fi
 
 rm -rf /tmp/tf*
 
-ulimit -n 16384
-
 python3 flasktfmain.py
 
 

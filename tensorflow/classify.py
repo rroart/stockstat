@@ -12,6 +12,8 @@ from datetime import datetime
 from werkzeug.wrappers import Response
 import shutil
 
+import fd
+
 global dicteval
 dicteval = {}
 global dictclass
@@ -37,7 +39,7 @@ class Classify:
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         global dictclass
-        #classifier = dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname]
+        classifier = dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname]
         del dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname]
         (intlist, problist) = self.do_classifyinner(myobj, classifier)
         print(len(intlist))
@@ -45,6 +47,7 @@ class Classify:
         print(problist)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
+        fd.close_fds(classifier.model_dir)
         
         return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist }), mimetype='application/json')
         
@@ -178,7 +181,7 @@ class Classify:
                 classifier = tf.estimator.DNNClassifier(feature_columns=feature_columns,
                                                             hidden_units=hidden_units,
                                                             n_classes=myobj.outcomes,
-                                                            model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+                                                            model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count) + "/")
                 steps = tensorflowDNNConfig.steps
         if myobj.modelInt == 2:
             #print("mod2")
@@ -186,7 +189,7 @@ class Classify:
                 classifier = tf.estimator.LinearClassifier(
                     feature_columns=feature_columns,
                     n_classes=myobj.outcomes,
-                    model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+                    model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count) + "/")
                 steps = tensorflowLConfig.steps
         #print("steps")
         #print(steps)
@@ -265,5 +268,6 @@ class Classify:
         print(problist)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
+        fd.close_fds(classifier.model_dir)
         #tf.Session().close()
         return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": float(accuracy_score)}), mimetype='application/json')
