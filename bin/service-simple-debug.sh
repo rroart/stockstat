@@ -11,5 +11,5 @@ xterm -e "java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=18003,susp
 cd ../tensorflow
 xterm -e ./flasktf.sh &
 
-cd ../python/pd
-xterm -e ./flaskpd.sh &
+#cd ../python/pd
+#xterm -e ./flaskpd.sh &

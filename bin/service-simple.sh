@@ -11,5 +11,5 @@ xterm -e "java -jar jetty-runner-9.4.10.RC1.jar --port 8180 stockstat-web-0.5-SN
 cd ../tensorflow
 xterm -e ./flasktf.sh &
 
-cd ../python/pd
-xterm -e ./flaskpd.sh &
+#cd ../python/pd
+#xterm -e ./flaskpd.sh &
