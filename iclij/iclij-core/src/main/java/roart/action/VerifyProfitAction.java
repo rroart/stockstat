@@ -22,6 +22,9 @@ public class VerifyProfitAction extends Action {
         for (IncDecItem item : list) {
             String id = item.getId();
             List<List<Double>> resultList = categoryValueMap.get(id);
+            if (resultList == null || resultList.isEmpty()) {
+                continue;
+            }
             List<Double> mainList = resultList.get(0);
             if (mainList != null) {
                 Double valFuture = mainList.get(mainList.size() - 1);
