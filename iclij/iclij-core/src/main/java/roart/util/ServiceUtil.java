@@ -487,6 +487,7 @@ public class ServiceUtil {
 
         List<IncDecItem> listAll = IncDecItem.getAll();
         List<IclijServiceList> lists = new ArrayList<>();
+        lists.add(getHeader("Content"));
         List<TradeMarket> markets = conf.getTradeMarkets(instance);
         for (TradeMarket market : markets) {
             LocalDate olddate = LocalDate.now().minusDays(market.getRecordage());
@@ -503,6 +504,12 @@ public class ServiceUtil {
         result.setLists(lists);
         print(result);
         return result;
+    }
+
+    private static IclijServiceList getHeader(String title) {
+        IclijServiceList header = new IclijServiceList();
+        header.setTitle(title);
+        return header;
     }
 
     private static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
@@ -549,6 +556,7 @@ public class ServiceUtil {
     public static IclijServiceResult getVerify(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
+        result.getLists().add(getHeader("Verify " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset));
         List<IclijServiceList> retLists = result.getLists();
         String market = config.getMarket();
         if (market == null) {
@@ -631,6 +639,9 @@ public class ServiceUtil {
         try {
             writer.write(item.getTitle());
             writer.write("\n");
+            if (mylist == null) {
+                return;
+            }
             for (Object object : mylist) {
                 writer.write(object.toString());
             }
@@ -696,6 +707,7 @@ public class ServiceUtil {
         loopOffset = 0;
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
+        result.getLists().add(getHeader("FindProfit " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset));
         List<IclijServiceList> retLists = result.getLists();
         String market = config.getMarket();
         if (market == null) {
