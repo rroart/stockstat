@@ -1,12 +1,9 @@
 package roart.client;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.HasValue;
@@ -32,8 +28,8 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
@@ -51,13 +47,9 @@ import roart.config.ConfigTreeMap;
 import roart.model.IncDecItem;
 import roart.model.MapList;
 import roart.model.MemoryItem;
-import roart.model.ResultItem;
 import roart.model.ResultItemBytes;
 import roart.model.ResultItemTable;
-import roart.model.ResultItemTableRow;
 import roart.model.ResultItemText;
-import roart.model.ResultMeta;
-import roart.queue.MyExecutors;
 import roart.service.IclijServiceList;
 import roart.service.IclijWebControlService;
 import roart.util.Constants;
@@ -571,17 +563,12 @@ public class MyIclijUI extends UI {
 
         Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
         BufferedWriter writer = null;
-        try {
-            writer = Files.newBufferedWriter(path);
-        } catch (IOException e) {
-            log.error(Constants.EXCEPTION, e);
-        } 
         VerticalLayout result = getResultTemplate();
         //addListTable(result, list);
             for (IclijServiceList item : list) {
                 System.out.println("here");
                 System.out.println("here1");
-                addListTable(result, item, writer);
+                addListTable(result, item);
                 /*
                 if (text.equals(item.getClass().getName())) {
                     addListText(result, (ResultItemText) item);
@@ -594,12 +581,6 @@ public class MyIclijUI extends UI {
                 */
             //}
         }
-            try {
-                writer.flush();
-                writer.close();
-            } catch (IOException e) {
-                log.error(Constants.EXCEPTION, e);
-            }
         tab.addComponent(result);
         tabsheet.addComponent(tab);
         tabsheet.getTab(tab).setClosable(true);
@@ -637,7 +618,7 @@ public class MyIclijUI extends UI {
         ts.addComponent(new Label(str.text));
     }
 
-    void addListTable(VerticalLayout ts, IclijServiceList item, BufferedWriter writer) {
+    void addListTable(VerticalLayout ts, IclijServiceList item) {
         List list = item.getList();
         ObjectMapper objectMapper = getObjectMapper();
         if (list == null || list.isEmpty()) {
@@ -648,32 +629,16 @@ public class MyIclijUI extends UI {
             List<MemoryItem> mylist = objectMapper.convertValue(list, new TypeReference<List<MemoryItem>>() { });
             Grid<MemoryItem> table = getGridFromList(item, mylist);
             ts.addComponent(table);
-            listWriter(writer, item, mylist);
             return;
         }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("score")) {
             List<IncDecItem> mylist = objectMapper.convertValue(list, new TypeReference<List<IncDecItem>>() { });
             Grid<IncDecItem> table = getGridFromList2(item, mylist);
-            listWriter(writer, item, mylist);
             ts.addComponent(table);
         } else {
             List<MapList> mylist = objectMapper.convertValue(list, new TypeReference<List<MapList>>() { });
             Grid<MapList> table = getGridFromList3(item, mylist);
             ts.addComponent(table);
-            listWriter(writer, item, mylist);
-        }
-    }
-
-    private void listWriter(BufferedWriter writer, IclijServiceList item, List mylist) {
-        try {
-            writer.write(item.getTitle());
-            writer.write("\n");
-            for (Object object : mylist) {
-                writer.write(object.toString());
-            }
-            writer.write("\n");
-        } catch (IOException e) {
-            log.error(Constants.EXCEPTION, e);
         }
     }
 
