@@ -1,5 +1,10 @@
 package roart.util;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -496,6 +501,7 @@ public class ServiceUtil {
         }
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
+        print(result);
         return result;
     }
 
@@ -598,7 +604,40 @@ public class ServiceUtil {
         result.setMaps(mapmaps);
         IclijServiceList updates = convert(updateMap);
         retLists.add(updates);
+        print(result);
         return result;
+    }
+
+    private static void print(IclijServiceResult result) {
+        Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
+        BufferedWriter writer = null;
+        try {
+            writer = Files.newBufferedWriter(path);
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        } 
+        for (IclijServiceList item : result.getLists()) {
+            listWriter(writer, item, item.getList());            
+        }
+        try {
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    private static void listWriter(BufferedWriter writer, IclijServiceList item, List mylist) {
+        try {
+            writer.write(item.getTitle());
+            writer.write("\n");
+            for (Object object : mylist) {
+                writer.write(object.toString());
+            }
+            writer.write("\n");
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
     }
 
     private static IclijServiceList convert(Map<String, Object> updateMap) {
@@ -706,6 +745,7 @@ public class ServiceUtil {
         result.setMaps(mapmaps);
         IclijServiceList updates = convert(updateMap);
         retLists.add(updates);
+        print(result);
         return result;
     }
 
