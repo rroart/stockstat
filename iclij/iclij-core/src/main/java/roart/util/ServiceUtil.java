@@ -556,7 +556,6 @@ public class ServiceUtil {
     public static IclijServiceResult getVerify(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
-        result.getLists().add(getHeader("Verify " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset));
         List<IclijServiceList> retLists = result.getLists();
         String market = config.getMarket();
         if (market == null) {
@@ -586,6 +585,15 @@ public class ServiceUtil {
         String aDate = stocks.get(stocks.size() - 1 - offset - days);
         LocalDate oldDate = TimeUtil.convertDate(aDate);
         log.info("Old date {} ", oldDate);
+        IclijServiceList header = new IclijServiceList();
+        result.getLists().add(header);
+        header.setTitle("Verify " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset);
+        List<MapList> aList = new ArrayList<>();
+        header.setList(aList);
+        MapList mapList = new MapList();
+        mapList.setKey("Dates");
+        mapList.setValue("Base " + oldDate + " Future " + date);
+        aList.add(mapList);
         boolean save = config.wantVerificationSave();
         ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
         FindProfitAction findProfitAction = new FindProfitAction();
@@ -672,6 +680,7 @@ public class ServiceUtil {
 
     private static void getVerifyProfit(List<IclijServiceList> retLists, int days, LocalDate date, ControlService srv,
             LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec) {
+        log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
         Component.disabler(srv.conf);
