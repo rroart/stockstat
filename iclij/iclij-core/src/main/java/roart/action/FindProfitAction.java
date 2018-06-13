@@ -80,6 +80,7 @@ public class FindProfitAction extends Action {
     }
     
     private Map<String, IncDecItem>[] getPicks(TradeMarket market, boolean save, LocalDate olddate, List<MemoryItem> marketMemory, IclijConfig config, Map<String, Object> updateMap) {
+        log.info("Getting picks for date {}", olddate);
         Map<String, IncDecItem>[] buysell = new Map[2];
         if (marketMemory == null) {
             return buysell;
@@ -206,7 +207,7 @@ public class FindProfitAction extends Action {
                 Double curValue = list0.get(list0.size() - 1);
                 Double oldValue = list0.get(list0.size() - 1 - offsetDays);
                 if (curValue != null && oldValue != null) {
-                    value = curValue / oldValue;
+                    value = (curValue / oldValue - 1) * 100;
                 }
             }
             if (value == null) {
