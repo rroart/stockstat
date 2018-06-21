@@ -12,7 +12,7 @@ from datetime import datetime
 from werkzeug.wrappers import Response
 import shutil
 
-import fd
+from multiprocessing import Queue
 
 global dicteval
 dicteval = {}
@@ -47,7 +47,6 @@ class Classify:
         print(problist)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        fd.close_fds(classifier.model_dir)
         
         return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist }), mimetype='application/json')
         
@@ -77,6 +76,7 @@ class Classify:
             intlist.append(class_id)
             problist.append(probability)
         #shutil.rmtree("/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+        shutil.rmtree(classifier.model_dir)
         del predictions
         del classifier
         return intlist, problist
@@ -180,16 +180,14 @@ class Classify:
             with tf.device(pu):
                 classifier = tf.estimator.DNNClassifier(feature_columns=feature_columns,
                                                             hidden_units=hidden_units,
-                                                            n_classes=myobj.outcomes,
-                                                            model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count) + "/")
+                                                            n_classes=myobj.outcomes)
                 steps = tensorflowDNNConfig.steps
         if myobj.modelInt == 2:
             #print("mod2")
             with tf.device(pu):
                 classifier = tf.estimator.LinearClassifier(
                     feature_columns=feature_columns,
-                    n_classes=myobj.outcomes,
-                    model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count) + "/")
+                    n_classes=myobj.outcomes)
                 steps = tensorflowLConfig.steps
         #print("steps")
         #print(steps)
@@ -204,7 +202,7 @@ class Classify:
                 num_epochs=None,
                 shuffle=True
                 )
-        #print(get_train_inputs())        
+        #print(get_train_inputs())
         get_test_inputs = tf.estimator.inputs.numpy_input_fn(
                 x = { "features": test },
                 y = testcat,
@@ -247,14 +245,14 @@ class Classify:
             x = tf.constant(test)
             y = tf.constant(testcat)
             return x, y
-            
+
         accuracy_score = classifier.evaluate(input_fn = get_test_inputs, steps=1)["accuracy"]
         print(accuracy_score)
         print(type(accuracy_score))
         print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
         return classifier, accuracy_score
     
-    def do_learntestclassify(self, request):
+    def do_learntestclassify(self, queue, request):
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
         timestamp = dt.timestamp()
@@ -268,6 +266,4 @@ class Classify:
         print(problist)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        fd.close_fds(classifier.model_dir)
-        #tf.Session().close()
-        return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": float(accuracy_score)}), mimetype='application/json')
+        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": float(accuracy_score)}), mimetype='application/json'))

@@ -2,13 +2,19 @@
 
 from flask import Flask, request
 
+from multiprocessing import Process, Queue
+
+def classifyrunner(queue, request):
+    import classify
+    cl = classify.Classify()
+    cl.do_learntestclassify(queue, request)
+
+def predictrunner(queue, request):
+    import predict
+    pr = predict.Predict()
+    pr.do_learntestlist(queue, request)
+
 app = Flask(__name__)
-
-import classify
-import predict
-
-cl = classify.Classify()
-pr = predict.Predict()
 
 @app.route('/eval', methods=['POST'])
 def do_eval():
@@ -24,15 +30,30 @@ def do_learntest():
 
 @app.route('/learntestclassify', methods=['POST'])
 def do_learntestclassify():
-    return cl.do_learntestclassify(request)
+    queue = Queue()
+    process = Process(target=classifyrunner, args=(queue, request))
+    process.start()
+    process.join()
+    result = queue.get()
+    return result
 
 @app.route('/predictone', methods=['POST'])
-def do_learntestpredict():
-    return pr.do_learntest(request)
+def do_learntestpredictone():
+    queue = Queue()
+    process = Process(target=predictrunner, args=(queue, request))
+    process.start()
+    process.join()
+    result = queue.get()
+    return result
 
 @app.route('/predict', methods=['POST'])
-def do_learntestpredict2():
-    return pr.do_learntestlist(request)
+def do_learntestpredict():
+    queue = Queue()
+    process = Process(target=predictrunner, args=(queue, request))
+    process.start()
+    process.join()
+    result = queue.get()
+    return result
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000, threaded=True)

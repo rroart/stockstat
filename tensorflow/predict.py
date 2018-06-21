@@ -18,6 +18,8 @@ from nameko.web.handlers import http
 from datetime import datetime
 from werkzeug.wrappers import Response
 
+from multiprocessing import Queue
+
 def create_dataset2(dataset, xsize, look_back=1):
     dataX, dataY = [], []
     for j in range(xsize):
@@ -261,7 +263,7 @@ class Predict:
         print(predicted)
         return predicted
 
-    def do_learntest(self, request):
+    def do_learntest(self, queue, request):
         dt = datetime.now()
         timestamp = dt.timestamp()
         print("entering")
@@ -277,9 +279,9 @@ class Predict:
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         print("leaving")
-        return Response(json.dumps({"predicted": predicted}), mimetype='application/json')
+        queue.put(Response(json.dumps({"predicted": predicted}), mimetype='application/json'))
 
-    def do_learntestlist(self, request):
+    def do_learntestlist(self, queue, request):
         dt = datetime.now()
         timestamp = dt.timestamp()
         print("entering")
@@ -299,7 +301,7 @@ class Predict:
         print(predictedlist)
 #        print(predicted2)
         print("leaving")
-        return Response(json.dumps({"predictedlist": predictedlist}), mimetype='application/json')
+        queue.put(Response(json.dumps({"predictedlist": predictedlist}), mimetype='application/json'))
 
     def do_learntest2(self, request):
         dt = datetime.now()
