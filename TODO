@@ -42,8 +42,24 @@ Why buy xor sell?
 Updatemap only one?
 Iclij mltimes
 Download output
+Recommender NAN
+Element.getvalue null?
+Move output save.
+Getverify date 1 offset
+Use i.e. ose in january, when not having 180 days back.
+Put config LSTM under ml
+Flasktf crash?
+Getverify not old date recorded when chosen
+Save file result enable t/f
+Use MLevolve also for getmemoryitems?
+Fix thresholds, common standard
+Fix getRealkeys, both inside an in findBuySell...
+Tf crash, tf keras queue "leakage".
+Look at tf serving?
+Tf python cleanup
 
 MLMACD/MLindicator null key, tf giving nonexisting class.
+Spark giving nonexisting prediction also.
 Stockst komb 1m 1w m macd etc
 Mlind? use pure gold oil price
 Use testaccuracy in iclij
