@@ -14,6 +14,10 @@ def predictrunner(queue, request):
     pr = predict.Predict()
     pr.do_learntestlist(queue, request)
 
+def hasgpurunner(queue, dummy):
+    import device
+    device.hasgpu(queue)
+    
 app = Flask(__name__)
 
 @app.route('/eval', methods=['POST'])
@@ -56,4 +60,10 @@ def do_learntestpredict():
     return result
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, threaded=True)
+    queue = Queue()
+    process = Process(target=hasgpurunner, args=(queue, None))
+    process.start()
+    process.join()
+    hasgpu = queue.get()
+    print("If have GPU (" + str(hasgpu) + ") then run singlethreaded")
+    app.run(host='0.0.0.0', port=8000, threaded=(not hasgpu))
