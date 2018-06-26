@@ -6,7 +6,4 @@ fi
 
 rm -rf /tmp/tf*
 
-python3 flasktfmain.py
-
-
-
+python3 flasktfmain.py $@

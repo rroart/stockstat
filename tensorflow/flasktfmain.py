@@ -2,9 +2,10 @@
 
 from flask import Flask, request
 
+import sys
 from multiprocessing import Process, Queue
 
-def classifyrunner(queue, request):
+def classifyrunner2(queue, request):
     import classify
     cl = classify.Classify()
     cl.do_learntestclassify(queue, request)
@@ -34,6 +35,10 @@ def do_learntest():
 
 @app.route('/learntestclassify', methods=['POST'])
 def do_learntestclassify():
+    def classifyrunner(queue, request):
+        import classify
+        cl = classify.Classify()
+        cl.do_learntestclassify(queue, request)
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
     process.start()
@@ -65,5 +70,8 @@ if __name__ == '__main__':
     process.start()
     process.join()
     hasgpu = queue.get()
-    print("If have GPU (" + str(hasgpu) + ") then run singlethreaded")
-    app.run(host='0.0.0.0', port=8000, threaded=(not hasgpu))
+    threaded = False
+    if len(sys.argv) > 1 and (not hasgpu) and sys.argv[1] == 'multi':
+        threaded = True
+        print("Run threaded")
+    app.run(host='0.0.0.0', port=8000, threaded=threaded)
