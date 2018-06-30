@@ -626,7 +626,7 @@ def getmyperiodtext(market, period):
 
 
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
-conn = psycopg2.connect("dbname=stockstat user=stockread password=password")
+conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 
 allstocks = getstocks(conn)
 allmetas = getmetas(conn)
