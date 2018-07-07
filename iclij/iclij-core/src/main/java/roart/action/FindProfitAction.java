@@ -141,17 +141,21 @@ public class FindProfitAction extends Action {
             }
         }
         if (save) {
+            IncDecItem myitem = null;
         try {
             for (IncDecItem item : buys.values()) {
+                myitem = item;
                 System.out.println(item);
                 item.save();
             }
             for (IncDecItem item : sells.values()) {
+                myitem = item;
                 System.out.println(item);
                 item.save();
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
+            log.error("Could not save {}", myitem);
         }
         }
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
