@@ -18,6 +18,8 @@ MACD <- 2
 RSI <- 3
 
 nafix <- 0
+
+filterweekend <= TRUE
                                         # out of use
 splitdate <- function(stocks) {
     list <- list()
@@ -318,8 +320,8 @@ mytopperiod <- function(datedstocklists, stocklistperiod, periodmaps, period, ma
 mytopperiod2 <- function(dflist, period, max, days, wantrise=FALSE, wantmacd=FALSE, wantrsi=FALSE) {
     for (j in 1:days) {
         df <- dflist[[j]]
-        if (max < nrow(df)) {
-            #max <- nrow(df)
+        if (max > nrow(df)) {
+            max <- nrow(df)
         }
         for (i in 1:max) {
             rsi <- NA
@@ -477,7 +479,7 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
                     myc <- head(myc, n=(myclen-headskipmacd))
                     myc <- tail(myc, n=macddays)
                                         #str(myc)
-                    if (mydf$id == "0P0000RVOF") {
+                    if (mydf$id == "VXAZN") {
                         str(" gr3 ")
                         str(length(myc))
                         cat(myc)
@@ -488,7 +490,7 @@ gettopgraph <- function(market, mydate, days, tablemoveintervaldays, topbottom, 
                             myc <- myc * (100 / first)
                         }
                     }
-                    if (mydf$id == "0P0000RVOF") {
+                    if (mydf$id == "VXAZN") {
                         str(" gr4 ")
                         str(length(myc))
                         cat(myc)
@@ -741,11 +743,14 @@ getperiodtext <- function(meta, period) {
 }
 
 displaychart <- function(ls, mynames, topbottom, periodtext, maindate, olddate, days) {
+    topbottom <- length(ls)
+    print(topbottom)
     dev.new()
     colours <- rainbow(topbottom)
     g_range = range(0, ls, na.rm=TRUE)
     print("g_range")
     str(g_range)
+    print(length(ls))
     for (i in 1:topbottom) {
         if (i == 1) {
                                         #str(l$id[[1]])
@@ -763,7 +768,7 @@ displaychart <- function(ls, mynames, topbottom, periodtext, maindate, olddate, 
         } else {
                                         #cat("count", i)
             c = c(unlist(ls[i]))
-                                        #str(c)
+                                        str(c)
             lines(c, type="o", lty = i, col = colours[i], pch = i)
         }
 
@@ -849,7 +854,7 @@ getmyperiodtext <- function(market, period) {
     if (period >= 0) {
         mymeta <- getmarketmeta(allmetas, market)
         newtext <- getperiodtext(mymeta, period)
-        if (!is.na(newtext)) {
+        if (!is.null(newtext)) {
             periodtext <- newtext
         }
     }
@@ -1235,6 +1240,15 @@ getcontentgraph <- function(mydate, days, tableintervaldays, ids, periodtext, wa
                                         #    str(tail(myma, n=10L))
                                         #    cat("\nsize ", length(myma), "\n")
                                         #                cat(myma)
+   percentize <- TRUE      
+   if (percentize) {
+     if (periodtext == "Price" || periodtext == "Index") {
+       first = myma[1]
+       myma <- myma * (100 / first)
+       print("myma")
+       print(myma)
+      }
+    }
     lses <- getmylses(myma)
     days2 <- length(lses[[1]])
     olddate2 <- daynames[days - days2]
@@ -1527,6 +1541,11 @@ dbExistsTable(con, "stock")
                                         # TRUE
 
 allstocks <- getstocks()
+
+if (filterweekend) {
+    allstocks <- allstocks[which(as.POSIXlt(allstocks$date, format="%Y-%m-%d")$wday <5),]
+}
+
 allmetas <- getmetas()
 
                                         # close the connection
