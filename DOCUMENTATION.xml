@@ -1055,6 +1055,28 @@ misc.mygraphequalizeunify
 	  </row>
 	  <row>
 	    <entry>
+misc.weekend
+	    </entry>
+	    <entry>
+	      Use collected result on weekend days
+	    </entry>
+	    <entry>
+	      false
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+misc.holiday
+	    </entry>
+	    <entry>
+	      Use collected result on holidays
+	    </entry>
+	    <entry>
+	      false (always, not yet implemented)
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
 evolve.indicatorrecommender.complex.futuredays
 	    </entry>
 	    <entry>

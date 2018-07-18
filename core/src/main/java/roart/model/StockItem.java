@@ -5,6 +5,7 @@ import java.util.List;
 
 import roart.config.MyMyConfig;
 import roart.db.DbDao;
+import roart.util.StockUtil;
 
 public class StockItem {
 
@@ -173,7 +174,7 @@ public class StockItem {
     }
 
     public static List<StockItem> getAll(String market, MyMyConfig conf) throws Exception {
-        return DbDao.instance(conf).getAll(market);
+        return StockUtil.filterWeekend(conf, DbDao.instance(conf).getAll(market));
     }
 
     public static List<String> getMarkets() throws Exception {

@@ -88,6 +88,8 @@ public class ConfigConstants {
     public static final String MISCMYEQUALIZE = "misc.myequalize[@enable]";
     public static final String MISCMYGRAPHEQUALIZE = "misc.mygraphequalize[@enable]";
     public static final String MISCMYGRAPHEQUALIZEUNIFY = "misc.mygraphequalizeunify[@enable]";
+    public static final String MISCWEEKEND = "misc.weekend";
+    public static final String MISCHOLIDAY = "misc.holiday";
     public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS = "evolve.indicatorrecommender.complex.futuredays";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXINTERVALDAYS = "evolve.indicatorrecommender.complex.intervaldays";

@@ -24,8 +24,13 @@ val RSI = 3
 
 val mydateformat = "yyyy.MM.dd"
 
+val weekendfilter = true
+
 val allmetas = spark.read.jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "meta", prop)
-val allstocks = spark.read.jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "stock", prop)
+var allstocks = spark.read.jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "stock", prop)
+if (weekendfilter) {
+  allstocks = allstocks.filter("dayofweek(date) > 1 and dayofweek(date) < 7")
+}
 
 def getstockdate(stocklist: List[String], mydate : String) : Int = {
 if (mydate == null) {

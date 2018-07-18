@@ -94,6 +94,8 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCMYEQUALIZE, Boolean.class);
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZE, Boolean.class);
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, Boolean.class);
+        map.put(ConfigConstants.MISCWEEKEND, Boolean.class);
+        map.put(ConfigConstants.MISCHOLIDAY, Boolean.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, Integer.class);
@@ -256,6 +258,8 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCMYEQUALIZE, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCMYGRAPHEQUALIZE, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCWEEKEND, Boolean.FALSE);
+        deflt.put(ConfigConstants.MISCHOLIDAY, Boolean.FALSE);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, 10);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXINTERVALDAYS, 5);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, 10);
@@ -423,6 +427,8 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCMYEQUALIZE, "Enable equalizing");
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZE, "Enable graph equalizing");
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, "Enable unified graph equalizing");
+        text.put(ConfigConstants.MISCWEEKEND, "Enable weekend usage");
+        text.put(ConfigConstants.MISCHOLIDAY, "Enable holiday usage");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, "Test simple recommender future days");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, "Test simple recommender interval days");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, "Test complex recommender future days");
@@ -585,6 +591,8 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCMYEQUALIZE, new XMLType( Boolean.class, Boolean.TRUE, "Enable equalizing"));
         mymap.put(ConfigConstants.MISCMYGRAPHEQUALIZE, new XMLType( Boolean.class, Boolean.TRUE, "Enable graph equalizing"));
         mymap.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, new XMLType( Boolean.class, Boolean.TRUE, "Enable unified graph equalizing"));
+        mymap.put(ConfigConstants.MISCWEEKEND, new XMLType( Boolean.class, Boolean.FALSE, "Enable weekend usage"));
+        mymap.put(ConfigConstants.MISCHOLIDAY, new XMLType( Boolean.class, Boolean.FALSE, "Enable holiday usage"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new XMLType( String.class, "{ 'generations' : 100, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 16, 'mutate' : 2, 'generationcreate' : 1 }", "ML GP config"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, new XMLType( Integer.class, 10, "Test complex recommender future days"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXINTERVALDAYS, new XMLType( Integer.class, 5, "Test complex recommender interval days"));

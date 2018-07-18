@@ -457,6 +457,10 @@ public class MyMyConfig extends MyConfig {
 
     }
 
+    public boolean wantWeekend() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MISCWEEKEND);
+    }
+
     public String getDbSparkMaster() {
         return (String) getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER);
     }

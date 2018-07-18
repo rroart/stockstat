@@ -2,6 +2,7 @@ package roart.util;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -17,6 +18,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.config.MyMyConfig;
 import roart.model.StockItem;
 
 public class StockUtil {
@@ -246,6 +248,7 @@ public class StockUtil {
         Map<String, List<StockItem>> mymap = new HashMap<String, List<StockItem>>();
         for (StockItem stock : stocks) {
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
+            try {
             String date = dt.format(stock.getDate());
             List<StockItem> stocklist = mymap.get(date);
             if (stocklist == null) {
@@ -253,6 +256,9 @@ public class StockUtil {
                 mymap.put(date, stocklist);
             }
             stocklist.add(stock);
+            } catch (Exception e) {
+                int jj = 0;
+            }
         }
         return mymap;
     }
@@ -1066,5 +1072,40 @@ public class StockUtil {
             }
         }
         return min;
+    }
+    
+    public static List<StockItem> filterWeekend(MyMyConfig conf, List<StockItem> stocks) {
+        if (conf.wantWeekend()) {
+            return stocks;
+        }
+        Calendar calendar = Calendar.getInstance();
+        List<StockItem> retList = new ArrayList<>();
+        for (StockItem stock : stocks) {
+            Date date = stock.getDate();
+            calendar.setTime(date);
+            if (!(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
+                    calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
+                retList.add(stock);
+            }
+        }
+        return retList;
+    }
+    
+    public static Map<String, List<StockItem>> filterWeekend(MyMyConfig conf, Map<String, List<StockItem>> stockMap) {
+        if (conf.wantWeekend()) {
+            return stockMap;
+        }
+        Map<String, List<StockItem>> retMap = new HashMap<>();
+        Calendar calendar = Calendar.getInstance();
+        for (Entry<String, List<StockItem>> entry : stockMap.entrySet()) {
+            List<StockItem> stocks = entry.getValue();
+            Date date = stocks.get(0).getDate();
+            calendar.setTime(date);
+            if (!(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
+                    calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
+                retMap.put(entry.getKey(), stocks);
+            }
+        }
+        return retMap;
     }
 }
