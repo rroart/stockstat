@@ -19,7 +19,7 @@ RSI <- 3
 
 nafix <- 0
 
-filterweekend <= TRUE
+filterweekend <- TRUE
                                         # out of use
 splitdate <- function(stocks) {
     list <- list()
