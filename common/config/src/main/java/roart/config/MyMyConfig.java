@@ -457,8 +457,8 @@ public class MyMyConfig extends MyConfig {
 
     }
 
-    public boolean wantWeekend() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MISCWEEKEND);
+    public boolean wantFilterWeekend() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MISCFILTERWEEKEND);
     }
 
     public String getDbSparkMaster() {

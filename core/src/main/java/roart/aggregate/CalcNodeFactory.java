@@ -27,6 +27,9 @@ public class CalcNodeFactory {
             int jj = 0;
         }
         List<Double> minmax = macdrsiMinMax[index];
+        if (minmax == null || minmax.isEmpty()) {
+            int jj = 0;
+        }
         double minMutateThresholdRange =  minmax.get(0);
         double maxMutateThresholdRange = minmax.get(1);
         if (minMutateThresholdRange == maxMutateThresholdRange) {

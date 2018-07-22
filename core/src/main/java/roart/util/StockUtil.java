@@ -1075,7 +1075,7 @@ public class StockUtil {
     }
     
     public static List<StockItem> filterWeekend(MyMyConfig conf, List<StockItem> stocks) {
-        if (conf.wantWeekend()) {
+        if (!conf.wantFilterWeekend()) {
             return stocks;
         }
         Calendar calendar = Calendar.getInstance();
@@ -1092,7 +1092,7 @@ public class StockUtil {
     }
     
     public static Map<String, List<StockItem>> filterWeekend(MyMyConfig conf, Map<String, List<StockItem>> stockMap) {
-        if (conf.wantWeekend()) {
+        if (!conf.wantFilterWeekend()) {
             return stockMap;
         }
         Map<String, List<StockItem>> retMap = new HashMap<>();

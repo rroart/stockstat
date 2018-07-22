@@ -1055,24 +1055,24 @@ misc.mygraphequalizeunify
 	  </row>
 	  <row>
 	    <entry>
-misc.weekend
+misc.filterweekend
 	    </entry>
 	    <entry>
-	      Use collected result on weekend days
+	      Filter out collected result on weekend
 	    </entry>
 	    <entry>
-	      false
+	      true
 	    </entry>
 	  </row>
 	  <row>
 	    <entry>
-misc.holiday
+misc.filterholiday
 	    </entry>
 	    <entry>
-	      Use collected result on holidays
+	      Filter out collected result on holidays
 	    </entry>
 	    <entry>
-	      false (always, not yet implemented)
+	      true (always, not yet implemented)
 	    </entry>
 	  </row>
 	  <row>
