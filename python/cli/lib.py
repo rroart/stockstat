@@ -343,9 +343,14 @@ def getvalues(market, id, mydate, days, myperiodtexts):
 
 def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, wantrsi=False):
     #print(type(dflist))
+    print("days ", days, " ", len(dflist))
     for j in range(0, days):
+        print("j ", j)
         df = dflist[j]
+        #if df is None:
+        #    continue
         #print(df.index)
+        print(type(df))
         if max > len(df):
             max = len(df)
         
@@ -378,6 +383,7 @@ def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, want
             if np.isnan(rise):
                 rise = 0
             #print(name[:33], df.date.iloc[i], l, rise, hist, histd, macd, macdd, rsi, df.id.iloc[i])
+            #print("rsi " , rsi, type(rsi))
             print("%3d %-35s %12s % 6.2f %3d % 3.2f % 3.2f % 3.2f % 3.2f %3.2f %s" %(i, name[:33], df.date.iloc[i], listperiod(df, period, i), rise, hist, histd, macd, macdd, rsi, df.id.iloc[i]))
         
                                         #        print(df$id[[1]])
@@ -409,7 +415,7 @@ def gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiod
     print("0", market)
     periodtexts = getperiodtexts(market)
     myperiodtexts = myperiodtextslist(myperiodtexts, periodtexts)
-    print ("00 " , len(myperiodtexts))
+    print ("00 " , len(myperiodtexts), " ", days)
     for i in range(0, len(myperiodtexts)):
         periodtext = myperiodtexts[i]
         print("1", myperiodtexts)
@@ -431,7 +437,7 @@ def gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiod
         if wantrise:
             periodmaps = getlistmove(datedstocklists, listid, listdate, days, tablemoveintervaldays, stocklistperiod)
         
-        dflist = [ None for x in range(days) ]
+        dflist = []
         headskiprsi = 0
         if mydate is None:
             headskiprsi = mydate
@@ -543,30 +549,35 @@ def gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiod
                 rsilist = []
                 headskip = 0
                 for mydf in df.itertuples():
-                    el = listid[mydf.id]
-                    el = el[order(el.date),]
-                    myc = c(getonedfvalue(el, period))
-                    if mydf.id == "F00000IRBFF":
-                        print(" gr2 ")
-                        print(myc)
+                    el = next(x for x in listid if x.id.iloc[0] == mydf.id)
+                    #print(type(el))
+                    el = el.sort_values(by='date', ascending = 0)
+                    #el = listid[mydf.id]
+                    #el = el[order(el.date),]
+                    myc = getonedfvalue(el, period)
                     myclen = len(myc)
-                    myc = head(myc, n=(myclen-headskiprsi))
-                    myc = tail(myc, n=macddays)
+                    myc = myc.head(n=(myclen-headskiprsi))
+                    myc = myc.tail(n=macddays)
                     if percentize:
                         if periodtext == "Price" or periodtext == "Index":
-                            first = myc[1]
+                            first = myc.values[0]
                             myc = myc * (100 / first)
                     rsi = getrsi(myc)
-                    rsilist[i] = rsi
+                    rsilist.append(rsi)
+                    #if rsi is None:
+                    #    print("App rsi none")
+                        
                 headskiprsi = headskiprsi + tablemoveintervaldays
-                rsic = c(unlist(rsilist))
-                df = cbind(df, rsic)
+                rsic = rsilist
+                df['rsic'] = pd.Series(data = rsic, name = 'rsic', index = df.index)
                 if sort == RSI:
                     if reverse:
-                        df = df[order(df.rsic),]
+                        df = df.sort_values(by='rsic', ascending = 0)
                     else:
-                        df = df[order(-df.rsic),]
-            dflist[j] = df
+                        df = df.sort_values(by='rsic', ascending = 1)
+            print("typedf ", type(df))
+            dflist.append(df)
+        #print("dflist",dflist)
         mytopperiod2(dflist, period, topbottom, days, wantrise=wantrise, wantmacd=wantmacd, wantrsi=wantrsi)
         if reverse:
             getbottomchart(market, days, topbottom, stocklistperiod, period)
@@ -588,10 +599,12 @@ def gettopchart(market, days, topbottom, stocklistperiod, period):
     for i in range(0, topbottom):
         l = getelem(mainlist.id[keys[i]], days, stocklistperiod, period, topbottom)
         c = c + 1
+        #print("grrl ", type(l), len(l), " ", l[0], " ", l[1], " ", type(l[0]))
         ls.append(l)
         names.append(mainlist.name[keys[i]])
     
     periodtext = getmyperiodtext(market, period)
+    print("displ", names, " ", ls, " ", maindate, " ", olddate)
     displaychart(ls, names, topbottom, periodtext, maindate, olddate, days)
 
 
@@ -740,10 +753,12 @@ def getmylses(myma):
 def getrsi(myma):
     lses = getmyrsi(myma)
     if lses is None:
-        return(0)
-    
-    ls = lses[1]
-    return(ls[len(ls)])
+        return(None)
+        #return pd.Series()
+    #print(type(lses), len(lses))
+    ls = lses
+    keys = ls.keys()
+    return ls[keys[len(keys) - 1]]
 
 
 def getmyrsi(myma):
@@ -786,16 +801,18 @@ def getmyperiodtext(market, period):
 def getelem(id, days, stocklistperiod, period, size):
     retl = [ None for x in range(days) ]
     c = 0
-    for i in reversed(range(days, 0)):
-        c = c + 1
-        retl[c] <- NA
+    for i in reversed(range(0, days)):
+        #print("d ", i)
+        retl[c] = np.NaN
         l = stocklistperiod[period][i]
         df = l
         el = df.loc[(df.id == id)]
         if len(el) == 1:
-            retl[c] = getonedfperiod(el, period)
+            retl[c] = getonedfperiod(el, period).values[0]
         else:
             print("err")
+        c = c + 1
+    #print("retl", retl)
     return(retl)
 
 def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False):
@@ -852,6 +869,7 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
     olddate = "old"
     newdate = "new"
     dayset = []
+    dayset2 = []
     ls = []
     mynames = []
     for text in perioddatamap:
@@ -896,20 +914,26 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
                             print(l)
                         
                         dayset.extend(bigretl[1])
+                        dayset2.extend(bigretl[2])
                         ls.append(l)
                         listdf = getelem3tup(id, days, datedstocklists, period, topbottom)
                         df = listdf
                         mynames.append(df.name)
                         c = c + 1
     daynames = dayset
-    #print("type(daynames)")
-    #print((daynames[0]))
+    daynames2 = dayset2
+    print("type(daynames)")
+    print((daynames[0]))
+    print((daynames2[0]))
     #print(daynames[0])
-    #print(type(daynames[0]))
+    print(type(daynames[0]))
+    print(type(daynames2[0]))
     #print(type(daynames))
     #print(len(daynames))
     olddate = min(daynames)
     newdate = max(daynames)
+    olddate = min(daynames2)
+    newdate = max(daynames2)
     #print(type(olddate))
     #print(len(olddate))
     #print("")
@@ -924,17 +948,19 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
     rect2 = [left, 0.3, width, 0.2]
     rect3 = [left, 0.1, width, 0.2]
     plt.ion()
+    title = mynames[0].values + " " + str(olddate) + " - " + str(newdate)
     fig = plt.figure(facecolor='white')
     axescolor = '#f6f6f6'  # the axes background color
 
     ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
     ax2 = fig.add_axes(rect2, facecolor=axescolor, sharex=ax1)
-    ax2t = ax2.twinx()
+    #ax2t = ax2.twinx()
     ax3 = fig.add_axes(rect3, facecolor=axescolor, sharex=ax1)
 
     print("ll ", len(ls))
     #print("mynames", type(mynames), len(mynames), mynames, " ", type(mynames[0]), len(mynames[0]))
-    displayax(ax1, ls, mynames[0].values, 5, periodtext, newdate, olddate, days, mynames[0].values[0], periodtext)
+    print("daes", olddate, newdate)
+    displayax(ax1, ls, daynames2, mynames[0].values, 5, periodtext, newdate, olddate, days, title, periodtext)
     if wantmacd:
         for i in range(len(ls)):
             myma = ls[i]
@@ -964,7 +990,7 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
         print("ll ", len(lses))
         mynames2 = ["macd", "signal", "diff"]
         text = ''.join(mynames2)
-        displayax(ax2, lses, mynames2, 3, text, newdate, olddate2, days2, "MACD")
+        displayax(ax2, lses, daynames2, mynames2, 3, text, newdate, olddate2, days2, "MACD")
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
     if wantrsi:
         rsis = []
@@ -992,7 +1018,7 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
 #    print("\ndays ", days2, " lastpos ", posneg[1]], " lastneg ", posneg[2]], " macd ", ls1[days2]], " signal ", ls2[days2]], "\n")
 #    mynames2 = list("macd", "signal", "diff")
         mynames = [ "rsi" ]
-        displayax(ax3, rsis, mynames, 5, periodtext, newdate, olddate, days, "RSI")
+        displayax(ax3, rsis, daynames2, mynames, 5, periodtext, newdate, olddate, days, "RSI")
 #    displaychart(lses, mynames2, 3, periodtext, newdate, olddate2, days2)
     plt.show()
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
@@ -1005,18 +1031,22 @@ def displaychart(ls, mynames, topbottom, periodtext, maindate, olddate, days):
     print(g_range)
     plt.ion()
     f, ax = plt.subplots(figsize = (8,4))
-    ax.legend(loc='upper right')
+    #ax.legend(loc='upper right')
 
     for i in range(topbottom):
         if i == 0:
                                         #print(l$id[[1]])
                                         #print(l$name[[2]])
-            c = ls
-            print("c ", type(c[0][0]))
-            print("c ", type(c[0]))
-            print(c[0])
-            ax.plot(range(len(c[0])), c[0])
-            plt.show()
+            c = ls[0]
+            #print("c ", type(c[0][0]))
+            #print("c ", type(c[0]))
+            #print(c[0])
+            #print(c[0][0].values)
+            #print(c[0][0])
+            #print(len(c[0]))
+            #print(len(c[0][0]))
+            print("plot0 ", range(len(c)), " : ", c)
+            ax.plot(range(len(c)), c, label = mynames[0])
             ####axis(1, at=1:days, lab=c(-(days-1):0))
             #axis(2, las=2)
             #grid(NULL,NULL)
@@ -1027,16 +1057,21 @@ def displaychart(ls, mynames, topbottom, periodtext, maindate, olddate, days):
         else:
                                         #print("count", i)
             c = ls[i]
+            #print("ploti ", range(len(c)), " : ", c)
+            print("ploti ", range(len(c)), " : ", c)
+            ax.plot(range(len(c)), c, label = mynames[i])
                                         #print(c)
             #lines(c, type="o", lty = i, col = colours[i], pch = i)
 
         #title(main=sprintf("Period %s", periodtext))
         #title(xlab=sprintf("Time %s - %s", olddate, maindate))
         #title(ylab="Value")
-        n = mynames[1]
+        #n = mynames[1]
+    ax.legend()
+    plt.show()
         ####legend(1, g_range[2], mynames, cex=0.8, lty=1:6, pch=1:25, col=colours)
 
-def displayax(ax, ls, mynames, topbottom, periodtext, maindate, olddate, days, title, ylabel="Value"):
+def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddate, days, title, ylabel="Value"):
     ####dev.new()
     ####colours = rainbow(topbottom)
     topbottom = len(ls)
@@ -1048,7 +1083,7 @@ def displayax(ax, ls, mynames, topbottom, periodtext, maindate, olddate, days, t
     #print(olddate)
     #print(type(olddate))
     #print(type(maindate))
-    mytitle = "mynames[0]" + " " + olddate + " - " + maindate
+    mytitle = "mynames[0]" + " " + str(olddate) + " - " + str(maindate)
     ax.set(title = title, ylabel = ylabel)
     #ax2.legend(loc = 'upper right')
     #ax2.grid(False)
@@ -1058,7 +1093,8 @@ def displayax(ax, ls, mynames, topbottom, periodtext, maindate, olddate, days, t
                                         #print(l$id[[1]])
                                         #print(l$name[[2]])
             c = ls
-            ax.plot(range(len(c[i])), c[i], label = mynames[i])
+            #ax.plot(range(len(c[i])), c[i], label = mynames[i])
+            ax.plot(daynames, c[i], label = mynames[i])
             #print("c ", type(c[0][0]))
             #print("c ", type(c[0]))
             #print(c[0])
@@ -1073,7 +1109,8 @@ def displayax(ax, ls, mynames, topbottom, periodtext, maindate, olddate, days, t
                                         #print("count", i)
             c = ls
             #print(c)
-            ax.plot(range(len(c[i])), c[i], label = mynames[i])
+            ax.plot(daynames, c[i], label = mynames[i])
+            #ax.plot(range(len(c[i])), c[i], label = mynames[i])
             #lines(c, type="o", lty = i, col = colours[i], pch = i)
 
         #title(main=sprintf("Period %s", periodtext))
@@ -1085,6 +1122,7 @@ def displayax(ax, ls, mynames, topbottom, periodtext, maindate, olddate, days, t
 
 def getelem3(id, days, datedstocklist, period, size):
     dayset = []
+    dayset2 = []
     retl = [ None for x in range(days) ]
     c = 0
     for i in reversed(range(days)):
@@ -1104,15 +1142,17 @@ def getelem3(id, days, datedstocklist, period, size):
             retl[c] = getonedfvalue(el, period).values[0]
             #print(type(retl[c].values[0]))
             str2 = str(el.date.values[0])
+            print(type(el.date.values[0]))
             #print("lenel", len(el.date), type(el.date), el.date.values[0])
             #print("str2", type(str2))
             dayset.append(str2)
+            dayset2.append(el.date.values[0])
         else:
             print("err")
         c = c + 1
         retls = pd.Series(data = retl)
         print("dayset ", type(dayset), type(dayset[0]))
-    return([retls, dayset])
+    return([retls, dayset,dayset2])
 
 def getelem3tup(id, days, datedstocklist, period, size):
     retl = []
