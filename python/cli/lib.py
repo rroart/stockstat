@@ -61,17 +61,17 @@ def getperiodtext(meta, period):
     #m=meta.period1
     #print(m.index)
     #print(m[0])
-    if period == 1:
+    if period == 0:
         return meta.period1.iloc[0]
-    if period == 2:
+    if period == 1:
         return meta.period2.iloc[0]
-    if period == 3:
+    if period == 2:
         return meta.period3.iloc[0]
-    if period == 4:
+    if period == 3:
         return meta.period4.iloc[0]
-    if period == 5:
+    if period == 4:
         return meta.period5.iloc[0]
-    if period == 6:
+    if period == 5:
         return meta.period6.iloc[0]
     return None
 
