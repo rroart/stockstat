@@ -728,8 +728,12 @@ def getmylses(myma):
     slow = 26
     sig = 9
     #m = ta.MACD(myma, nFast=fast, nSlow=slow, nSig=sig, maType = maType, percent = False )
-    #print(myma)
-    m = ta.MACD(myma)
+    #print((myma)
+    if not myma.isnull().all():
+        m = ta.MACD(myma)
+    else:
+        return None
+        #m = (pd.Series([np.NaN]), pd.Series([np.NaN]), pd.Series([np.NaN]))
     #print(type(m))
     #print(m.values)
     #m = ta.MACD(myma, fast, slow, sig)
@@ -775,7 +779,10 @@ def getmyrsi(myma):
     
                                         #    print(myma)
     num = 14
-    m = ta.RSI(myma)
+    if not myma.isnull().all():
+        m = ta.RSI(myma)
+    else:
+        return None
                                         #    print(m)
                                         #    print(m)
                                         #    print("\ngrr\n")
