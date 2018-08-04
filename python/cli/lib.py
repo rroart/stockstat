@@ -817,12 +817,12 @@ def getelem(id, days, stocklistperiod, period, size):
         if len(el) == 1:
             retl[c] = getonedfperiod(el, period).values[0]
         else:
-            print("err")
+            print("err1")
         c = c + 1
     #print("retl", retl)
     return(retl)
 
-def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False):
+def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, interpolate = True):
     scalebeginning100 = 0
     if len(ids) > 1:
         if periodtext == "price":
@@ -922,6 +922,9 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
                         
                         dayset.extend(bigretl[1])
                         dayset2.extend(bigretl[2])
+                        if interpolate:
+                            print(type(l))
+                            l = l.interpolate(method='linear')
                         ls.append(l)
                         listdf = getelem3tup(id, days, datedstocklists, period, topbottom)
                         df = listdf
@@ -1101,6 +1104,7 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
                                         #print(l$name[[2]])
             c = ls
             #ax.plot(range(len(c[i])), c[i], label = mynames[i])
+            print(c[0])
             ax.plot(daynames, c[i], label = mynames[i])
             #print("c ", type(c[0][0]))
             #print("c ", type(c[0]))
@@ -1149,13 +1153,17 @@ def getelem3(id, days, datedstocklist, period, size):
             retl[c] = getonedfvalue(el, period).values[0]
             #print(type(retl[c].values[0]))
             str2 = str(el.date.values[0])
-            print(type(el.date.values[0]))
+            #print(type(el.date.values[0]))
             #print("lenel", len(el.date), type(el.date), el.date.values[0])
             #print("str2", type(str2))
             dayset.append(str2)
             dayset2.append(el.date.values[0])
         else:
-            print("err")
+            prev = dayset[len(dayset) - 1]
+            prev2 = dayset2[len(dayset2) - 1]
+            dayset.append(prev)
+            dayset2.append(prev2)
+            print("err2")
         c = c + 1
         retls = pd.Series(data = retl)
         print("dayset ", type(dayset), type(dayset[0]))
@@ -1172,7 +1180,7 @@ def getelem3tup(id, days, datedstocklist, period, size):
         if len(el) == 1:
             return(el)
         else:
-            print("err")
+            print("err3")
         c = c + 1
     return(retl)
 
