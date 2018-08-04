@@ -984,20 +984,20 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
         myma = np.asarray(myma) * (100 / first)
         myma = pd.Series(data = myma)
         print("t2 ", type(myma))
-    print("tmyma3 ", type(myma))
-    print(myma)
+    #print("tmyma3 ", type(myma))
+    #print(myma)
     if wantmacd:
         lses = getmylses(myma)
         days2 = len(lses[1])
         olddate2 = daynames[days - days2]
-        print("")
-        print(lses[0])
-        print("")
-        print(lses[1])
-        print("")
-        print(lses[2]) 
-        print("")
-        print("ll ", len(lses))
+        #print("")
+        #print(lses[0])
+        #print("")
+        #print(lses[1])
+        #print("")
+        #print(lses[2]) 
+        #print("")
+        #print("ll ", len(lses))
         mynames2 = ["macd", "signal", "diff"]
         text = ''.join(mynames2)
         displayax(ax2, lses, daynames2, mynames2, 3, text, newdate, olddate2, days2, "MACD")
@@ -1104,7 +1104,7 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
                                         #print(l$name[[2]])
             c = ls
             #ax.plot(range(len(c[i])), c[i], label = mynames[i])
-            print(c[0])
+            #print(c[0])
             ax.plot(daynames, c[i], label = mynames[i])
             #print("c ", type(c[0][0]))
             #print("c ", type(c[0]))
@@ -1166,7 +1166,7 @@ def getelem3(id, days, datedstocklist, period, size):
             print("err2")
         c = c + 1
         retls = pd.Series(data = retl)
-        print("dayset ", type(dayset), type(dayset[0]))
+        #print("dayset ", type(dayset), type(dayset[0]))
     return([retls, dayset,dayset2])
 
 def getelem3tup(id, days, datedstocklist, period, size):
