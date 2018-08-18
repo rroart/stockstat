@@ -40,7 +40,15 @@ public class HibernateUtil {
 				applySettings(configuration.getProperties());
 		factory = configuration.buildSessionFactory(builder.build());
 		*/
-		factory = new Configuration().configure().buildSessionFactory();
+		Configuration configuration = new Configuration().configure();
+		String connectionUrl = System.getProperty("connection.url");
+		//System.out.println("olds" + configuration.getProperties());
+		//System.out.println("curl " + connectionUrl);
+		if (connectionUrl != null) {
+		    configuration.setProperty("connection.url", connectionUrl);
+                    configuration.setProperty("hibernate.connection.url", connectionUrl);
+		}
+		//System.out.println("news" + configuration.getProperties());                factory = configuration.buildSessionFactory();
 	    //Object o = new net.sf.ehcache.hibernate.EhCacheRegionFactory();
 	}
 
@@ -73,7 +81,14 @@ public class HibernateUtil {
                                 applySettings(configuration.getProperties());
                 factory = configuration.buildSessionFactory(builder.build());
                 */
-                factory = new Configuration().configure().buildSessionFactory();
+            Configuration configuration = new Configuration().configure();
+            String connectionUrl = System.getProperty("connection.url");
+            if (connectionUrl != null) {
+                configuration.setProperty("connection.url", connectionUrl);
+                configuration.setProperty("hibernate.connection.url", connectionUrl);
+            }
+            factory = configuration.buildSessionFactory();
+                //factory = new Configuration().configure().buildSessionFactory();
             //Object o = new net.sf.ehcache.hibernate.EhCacheRegionFactory();
         }
 
