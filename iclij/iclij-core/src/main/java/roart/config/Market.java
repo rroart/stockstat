@@ -9,6 +9,8 @@ public class Market {
     
     private String id;
 
+    private Short startoffset;
+    
     public Market() {
         
     }
@@ -43,6 +45,14 @@ public class Market {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Short getStartoffset() {
+        return startoffset;
+    }
+
+    public void setStartoffset(Short startoffset) {
+        this.startoffset = startoffset;
     }
 
 }

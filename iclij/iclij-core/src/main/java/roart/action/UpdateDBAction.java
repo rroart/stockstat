@@ -127,6 +127,10 @@ public class UpdateDBAction extends Action {
             if (!market.getMarket().equals(marketName)) {
                 continue;
             }
+            Short startOffset = market.getStartoffset();
+            if (startOffset != null) {
+                days += startOffset;
+            }
             for (String component : getComponents(config)) {
                 ServiceAction serviceAction = new ComponentFactory().factory(market.getMarket(), component);
                 if (serviceAction != null) {
