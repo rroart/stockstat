@@ -48,7 +48,8 @@ public class HibernateUtil {
 		    configuration.setProperty("connection.url", connectionUrl);
                     configuration.setProperty("hibernate.connection.url", connectionUrl);
 		}
-		//System.out.println("news" + configuration.getProperties());                factory = configuration.buildSessionFactory();
+		//System.out.println("news" + configuration.getProperties());
+		factory = configuration.buildSessionFactory();
 	    //Object o = new net.sf.ehcache.hibernate.EhCacheRegionFactory();
 	}
 
