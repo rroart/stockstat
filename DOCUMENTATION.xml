@@ -102,6 +102,7 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	then set database.spark enable=true, but then you will also need
 	to add a Spark service pointed to by the configuration
 	database.spark.sparkmaster
+	Hibernate connection is default localhost jdbc postgres, but is settable with connection.url.
       </para>
     </sect2>
   </sect1>

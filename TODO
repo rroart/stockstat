@@ -5,6 +5,7 @@ D: Done
 W: Work
 C: Change
 
+F: startoffset for auto, due to slow updates
 T: Pipe, Categ constructor, split off calculate
 B: iPredictor implement, and not running
 WF: Multiple datasources, pandas-datareader
@@ -60,11 +61,12 @@ B: Flask threaded tf process lock (Tf server/client hangs)
 B: Iclij web xml tree
 B: Auto iclij missing ai, memory
 B: SQL var 255 overflow
-F: discard sat/sun/hol for all lang
+WF: discard sat/sun/hol for all lang
 T: MyMyConfig getValueOrDefault use more
 B: again confidencefactor null?
 B: stockstatcore terminates/crashes?
-F: service simple with redirect output
+F: get market data icli with date
+T: space/tabs
 
 B: MLMACD/MLindicator null key, tf giving nonexisting class.
 B: Spark giving nonexisting prediction also.
@@ -122,6 +124,7 @@ java.lang.NullPointerException: null
         at roart.service.ControlService.getAggregates(ControlService.java:332)
 Owasp
 
+DF: service simple with redirect output
 DB: ver 0/x
 DF: Tf gpu need singlethread flask
 DF: Move output save.
