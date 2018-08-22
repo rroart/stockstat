@@ -123,6 +123,13 @@
       </includes>
       <outputDirectory>conf</outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../docker</directory>
+      <includes>
+        <include>**</include>
+      </includes>
+      <outputDirectory>docker</outputDirectory>
+    </fileSet>
   </fileSets>
   <!--files>
     <file>
