@@ -1,0 +1,1 @@
+eval $(minishift oc-env)
