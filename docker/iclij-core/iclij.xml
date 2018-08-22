@@ -1,0 +1,49 @@
+<config>
+  <mp>
+    <server>
+      <cpu>0.5</cpu>
+    </server>
+    <client>
+      <cpu>0.5</cpu>
+    </client>
+  </mp>
+  <evolve>
+    <indicatorrecommender enable='true'>
+      <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+    </indicatorrecommender>
+    <ml enable='true'>
+      <mcp enable='true'/>
+      <lr enable='true'/>
+      <ovr enable='true'/>
+      <dnn enable='true'/>
+      <l enable='true'/>
+      <evolutionconfig>{ "generations" : 10, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+    </ml>
+  </evolve>
+  <recommender>
+    <recommender enable='true'/>
+    <mlmacd enable='false'/>
+    <mlindicator enable='false'/>
+    <predictor enable='false'/>
+  </recommender>
+  <verification>
+    <days>10</days>
+    <improveprofit enable='false'/>
+    <recommender>
+      <topbottom>10</topbottom>
+    </recommender>      
+  </verification>
+  <autorun enable="false"/>
+  <markets>
+    <marketlist>
+      <market id="nordfund">
+	{ "market" : "nasdaq", "time" : 5, "improvetime" : 10 }
+      </market>
+    </marketlist>
+    <trademarkets>
+      <trademarket id="nasdaq">
+	{ "market" : "nasdaq", "inccategory" : "Price", "incthreshold" : 5, "confidence" : 0.66, "recordage" : 5 }
+      </trademarket>
+    </trademarkets>
+  </markets>
+</config>

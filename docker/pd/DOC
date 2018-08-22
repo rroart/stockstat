@@ -1,0 +1,27 @@
+. ../../bin/ocenv.sh 
+. ../../bin/dockerenv.sh
+oc new-app centos/postgresql-10-centos7 -e POSTGRESQL_USER=stockstat -e POSTGRESQL_PASSWORD=password -e POSTGRESQL_DATABASE=stockstat
+export DOCKER_REPO=172.30.1.1:5000
+#export DOCKER_CERT_PATH
+make
+docker login -u `oc whoami` -p `oc whoami -t` $DOCKER_REPO
+docker tag pd $DOCKER_REPO/myproject/pd:latest
+docker push $DOCKER_REPO/myproject/pd:latest
+oc login https://api.starter-ca-central-1.openshift.com --token=DPUfrEOq7HbTL2mdo63YabotyGoAROmancJi4kT51Qo
+
+kubectl run --image=centos/postgresql-10-centos7 --env="POSTGRESQL_USER=stockstat" --env="POSTGRESQL_PASSWORD=password" --env="POSTGRESQL_DATABASE=stockstat" --port=5432 --expose=true postgresql-10-centos7
+kubectl run --image=pd --image-pull-policy=Never pd
+
+#oc new-build --name=stockstat2 --docker-image=pd2 --source-image=stockstat-build --source-image-path=... --dockerfile=Dockerfile2 --strategy=docker
+docker pull 172.30.1.1:5000/myproject/stockstat
+oc new-build --name=stockstat2 --docker-image=172.30.1.1:5000/myproject/stockstat:latest --source-image=stockstat --source-image-path=/:. --dockerfile=Dockerfile2 --strategy=docker
+
+oc new-build --name=stockstat2 --docker-image=172.30.1.1:5000/myproject/stockstat:latest --source-image=stockstat --source-image-path=/opt/app-root/src/python/pd/generatexml.py:. --source-image=stockstat --source-image-path=/opt/app-root/src/python/pd/datareader.py:.
+oc new-build --name=stockstat2 --source-image=stockstat-build --source-image-path=/:. --dockerfile=Dockerfile2 --strategy=docker --image-stream=myproject/stockstat-build:latest -o yaml
+
+gcloud config set project rroart-stockstat
+gcloud config set compute/zone europe-north1
+export PROJECT_ID="$(gcloud config get-value project -q)"
+docker tag pd gcr.io/${PROJECT_ID}/pd:latest
+docker push gcr.io/${PROJECT_ID}/pd:latest
+gcloud auth configure-docker

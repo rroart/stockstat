@@ -1,7 +1,7 @@
-SUBDIRS = classify predict
+all: files
+	docker build -t="tensorflow" .
 
-all files: $(SUBDIRS)
-$(SUBDIRS):
-	$(MAKE) -C $@ $(MAKECMDGOALS)
-
-.PHONY: all $(SUBDIRS)
+files:
+	mkdir -p files
+	install ../../tensorflow/*.py files/
+	install ../../tensorflow/flasktf.sh files/

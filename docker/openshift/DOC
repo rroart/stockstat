@@ -1,0 +1,37 @@
+oc new-build https://github.com/rroart/stockstat#icli --name=stockstat-build --image-stream=openshift/wildfly:latest
+oc start-build stockstat-build
+#oc create -f createis.yaml
+oc create is pd
+oc create is stockstat-eureka
+oc create is stockstat-core
+oc create is stockstat-web
+oc create is stockstat-iclij-core
+oc create is stockstat-iclij-web
+oc create is tensorflow
+oc create is spark
+oc create -f pd.yaml
+oc create -f stockstat-eureka.yaml
+oc create -f stockstat-core.yaml
+oc create -f stockstat-web.yaml
+oc create -f stockstat-iclij-core.yaml
+oc create -f stockstat-iclij-web.yaml
+oc create -f tensorflow.yaml
+oc create -f spark.yaml
+oc start-build pd
+oc start-build stockstat-eureka
+oc start-build stockstat-core
+oc start-build stockstat-web
+oc start-build stockstat-iclij-core
+oc start-build stockstat-iclij-web
+oc start-build tensorflow
+oc start-build spark
+oc new-app --name pd pd
+oc new-app --name stockstat-eureka stockstat-eureka
+oc new-app --name stockstat-core stockstat-core
+oc new-app --name stockstat-web stockstat-web
+oc new-app --name stockstat-iclij-core stockstat-iclij-core
+oc new-app --name stockstat-iclij-web stockstat-iclij-web
+oc new-app --name tensorflow tensorflow
+oc new-app --name spark spark
+
+oc new-build --name=stockstat-eureka --source-image=stockstat-build --source-image-path=/opt/app-root/src/distribution/target/stockstat-distribution-0.5-SNAPSHOT-bin/stockstat-distribution-0.5-SNAPSHOT/lib/stockstat-eureka-0.5-SNAPSHOT.jar:. --dockerfile="FROM openjdk" --strategy=docker -o yaml

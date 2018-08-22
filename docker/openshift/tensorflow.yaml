@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: tensorflow
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: tensorflow:latest
+  source:
+    #contextDir : ./../../..//opt/app-root/src/docker/pd
+    #dockerfilepath: docker/pd
+    dockerfile : |-
+      FROM debian:stretch
+      MAINTAINER <roart@nvg.ntnu.no>
+      RUN apt-get update && apt-get upgrade -y
+      RUN apt-get install -y python3-pip
+      RUN pip3 install pandas tensorflow numpy Werkzeug Keras sklearn flask
+      ADD files/*.py /usr/local/bin/
+      ADD files/*.sh /usr/local/bin/
+      EXPOSE 8000
+      WORKDIR /usr/local/bin
+      CMD flasktf.sh
+    images:
+    - from: 
+        kind: ImageStreamTag
+        name: stockstat-build:latest
+      paths: 
+      - sourcePath: /opt/app-root/src/tensorflow/*.py
+        destinationDir: "files"
+    - from: 
+        kind: ImageStreamTag
+        name: stockstat-build:latest
+      paths: 
+      - sourcePath: /opt/app-root/src/tensorflow/*.sh
+        destinationDir: "files"
+    - from: 
+        kind: ImageStreamTag
+        name: stockstat-build:latest
+      paths: 
+      - sourcePath: /opt/app-root/src/python/pd/nasdaqsymbols.py
+        destinationDir: "files"
+  strategy:
+    dockerStrategy:
+      from: 
+        kind: DockerImage
+        name: openjdk:8-jdk
+  triggers:
+  - imageChange: {}
+    type: ImageChange
+
+

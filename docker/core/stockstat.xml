@@ -1,0 +1,190 @@
+<config>
+  <database>
+    <spark enable='true'>
+      <sparkmaster>spark://spark:7077</sparkmaster>
+    </spark>
+    <hibernate enable='false'/>
+  </database>
+  <machinelearning enable='false'>
+    <mp enable='true'>
+      <cpu>0.5</cpu>
+    </mp>
+    <sparkml enable='true'>
+      <sparkmaster>spark://spark:7077</sparkmaster>
+      <sparknetworktimeout>600</sparknetworktimeout>
+      <mcp enable='true'/>
+      <lr enable='true'/>
+      <ovr enable='true'/>
+    </sparkml>
+    <tensorflow enable='true'>
+      <dnn enable='true'/>
+      <l enable='true'/>
+      <server>http://tensorflow:8000</server>
+    </tensorflow>
+  </machinelearning>
+  <indicators enable='true'>
+    <move enable='true'/>
+    <macd enable='true'>
+      <macdhistogramdelta enable='true'/>
+      <macdhistogramdeltadays>3</macdhistogramdeltadays>
+      <macdmomentumdelta enable='true'/>
+      <macdmomentumdeltadays>3</macdmomentumdeltadays>
+      <recommend enable='true'>
+	<buy>
+	<weighthistogram>55</weighthistogram>
+	<weighthistogramdelta>15</weighthistogramdelta>
+	<weightmomemtum>15</weightmomemtum>
+	<weightmomemtumdelta>15</weightmomemtumdelta>
+	</buy>
+	<sell>
+	<weighthistogram>15</weighthistogram>
+	<weighthistogramdelta>25</weighthistogramdelta>
+	<weightmomemtum>15</weightmomemtum>
+	<weightmomemtumdelta>45</weightmomemtumdelta>
+	</sell>
+      </recommend>
+      <machinelearning enable='true'>
+	<momemtumml enable='true'/>
+	<histogramml enable='true'/>
+      </machinelearning>
+      <daysbeforezero>25</daysbeforezero>
+      <daysafterzero>10</daysafterzero>
+    </macd>
+    <rsi enable='true'>
+      <rsidelta enable='true'/>
+      <rsideltadays>3</rsideltadays>
+      <recommend enable='true'>
+	<buy>
+	<weight>55</weight>
+	<weightdelta>55</weightdelta>
+	</buy>
+	<sell>
+	<weight>55</weight>
+	<weightdelta>55</weightdelta>
+	</sell>
+      </recommend>
+    </rsi>
+    <stochrsi enable='false'>
+      <stochrsidelta enable='true'/>
+      <stochrsideltadays>3</stochrsideltadays>
+    </stochrsi>
+    <cci enable='false'>
+      <ccidelta enable='true'/>
+      <ccideltadays>3</ccideltadays>
+    </cci>
+    <atr enable='false'>
+      <atrdelta enable='true'/>
+      <atrdeltadays>3</atrdeltadays>
+    </atr>
+    <stoch enable='false'>
+      <stochdelta enable='true'/>
+      <stochdeltadays>3</stochdeltadays>
+    </stoch>
+  </indicators>
+  <predictors enable='false'>
+    <lstm enable='true'>
+      <windowsize>3</windowsize>
+      <epochs>5</epochs>
+      <horizon>5</horizon>
+    </lstm>
+  </predictors>
+  <misc>
+    <percentizepriceindex enable='true'/>
+    <mlstats enable='true'/>
+    <otherstats enable='true'/>
+    <mydays>180</mydays>
+    <mytopbottom>10</mytopbottom>
+    <mytabledays>180</mytabledays>
+    <mytablemoveintervaldays>5</mytablemoveintervaldays>
+    <mytableintervaldays>1</mytableintervaldays>
+    <myequalize enable='true'/>
+    <mygraphequalize enable='true'/>
+    <mygraphequalizeunify enable='true'/>
+  </misc>
+  <evolve>
+    <indicatorrecommender>
+      <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+      <simple>
+	<futuredays>10</futuredays>
+	<intervaldays>5</intervaldays>
+      </simple>
+      <complex>
+	<futuredays>10</futuredays>
+	<intervaldays>5</intervaldays>
+      </complex>
+      <!--intervaltimes>10</intervaltimes>
+      <iterations>100</iterations>
+      <period>Price</period-->
+    </indicatorrecommender>
+    <ml>
+      <evolutionconfig>{ "generations" : 10, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+    </ml>
+  </evolve>
+  <aggregators enable='true'>
+    <indicatorrecommender enable='true'>
+      <simple enable='true'>
+	<macd enable='true'>
+	  <buy>
+	  <weighthistogram>55</weighthistogram>
+	  <weighthistogramdelta>15</weighthistogramdelta>
+	  <weightmomemtum>15</weightmomemtum>
+	  <weightmomemtumdelta>15</weightmomemtumdelta>
+	  </buy>
+	  <sell>
+	  <weighthistogram>15</weighthistogram>
+	  <weighthistogramdelta>25</weighthistogramdelta>
+	  <weightmomemtum>15</weightmomemtum>
+	  <weightmomemtumdelta>45</weightmomemtumdelta>
+	  </sell>
+	</macd>
+	<rsi enable='true'>
+	  <buy>
+	  <weightrsi>20</weightrsi>
+	  <weightrsidelta>20</weightrsidelta>
+	  </buy>
+	  <sell>
+	  <weightrsi>20</weightrsi>
+	  <weightrsidelta>20</weightrsidelta>
+	  </sell>
+	</rsi>
+      </simple>
+      <complex enable='true'>
+	<macd enable='true'>
+	  <buy>
+	  <weighthistogramnode></weighthistogramnode>
+	  <weighthistogramdeltanode></weighthistogramdeltanode>
+	  <weightmomemtumnode></weightmomemtumnode>
+	  <weightmomemtumdeltanode></weightmomemtumdeltanode>
+	  </buy>
+	  <sell>
+	  <weighthistogramnode></weighthistogramnode>
+	  <weighthistogramdeltanode></weighthistogramdeltanode>
+	  <weightmomemtumnode></weightmomemtumnode>
+	  <weightmomemtumdeltanode></weightmomemtumdeltanode>
+	  </sell>
+	</macd>
+	<rsi enable='true'>
+	  <buy>
+	  <weightrsinode></weightrsinode>
+	  <weightrsideltanode></weightrsideltanode>
+	  </buy>
+	  <sell>
+	  <weightrsinode></weightrsinode>
+	  <weightrsideltanode></weightrsideltanode>
+	  </sell>
+	</rsi>
+      </complex>
+    </indicatorrecommender>
+    <indicator enable='true'>
+      <macd enable='true'/>
+      <rsi enable='true'/>
+      <extrasdeltas>3</extrasdeltas>
+      <extrasmacd enable='true'/>
+      <extrasrsi enable='true'/>
+      <intervaldays>20</intervaldays>
+      <futuredays>10</futuredays>
+      <threshold>0</threshold>
+    </indicator>
+    <mlmacd enable='true'/>
+  </aggregators>
+</config>

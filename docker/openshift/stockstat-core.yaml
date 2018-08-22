@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: stockstat-core
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: stockstat-core:latest
+  source:
+    dockerfile : |-
+      FROM openjdk:8-jdk
+      MAINTAINER <roart@nvg.ntnu.no>
+      ADD files/stockstat-core-0.5-SNAPSHOT.jar /usr/local/bin
+      ADD files/stockstat.xml /usr/local/config
+      WORKDIR /usr/local/bin
+      RUN ln -s /tmp /usr/local/logs
+      CMD java -jar /usr/local/bin/stockstat-core-0.5-SNAPSHOT.jar
+    images:
+    - from: 
+        kind: ImageStreamTag
+        name: stockstat-build:latest
+      paths: 
+      - sourcePath: /opt/app-root/src/distribution/target/stockstat-distribution-0.5-SNAPSHOT-bin/stockstat-distribution-0.5-SNAPSHOT/lib/stockstat-core-0.5-SNAPSHOT.jar
+        destinationDir: "files"
+    - from: 
+        kind: ImageStreamTag
+        name: stockstat-build:latest
+      paths: 
+      - sourcePath: /opt/app-root/src/docker/core/stockstat.xml
+        destinationDir: "files"
+  strategy:
+    dockerStrategy:
+      from: 
+        kind: DockerImage
+        name: openjdk:8-jdk
+  triggers:
+  - imageChange: {}
+    type: ImageChange
+
+
