@@ -1,12 +1,6 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://127.0.0.1:8761/eureka/
-
----
-spring:
-  profiles: cloud
-eureka:
+      defaultZone: ${EUREKA_SERVER_URI:http://localhost:8761/eureka}
   instance:
-    hostname: localhost
-#    nonSecurePort: 80
+    preferIpAddress: ${EUREKA_PREFER_IPADDRESS:false}
