@@ -38,6 +38,10 @@ public class SparkUtil {
         }
         sparkconf.set("spark.io.compression.codec", "lzf");
         sparkconf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        String sparkDriverHost = System.getProperty("SPARK_DRIVER_HOST");
+        if (sparkDriverHost != null) {
+            sparkconf.set("spark.driver.host", sparkDriverHost);
+        }
         String userDir = System.getProperty("user.dir");
         log.info("user.dir " + userDir);
         //SparkSession i = new SparkSession();
