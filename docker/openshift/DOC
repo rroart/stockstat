@@ -1,5 +1,9 @@
+#oadm policy add-scc-to-user anyuid system:serviceaccount:myproject:mysvcacct
+#oc --as system:admin adm policy add-scc-to-user privileged -n myproject -z default
+oc --as system:admin adm policy add-scc-to-user anyuid -z default
+oc new-app centos/postgresql-10-centos7 -e POSTGRESQL_USER=stockstat -e POSTGRESQL_PASSWORD=password -e POSTGRESQL_DATABASE=stockstat
 oc new-build https://github.com/rroart/stockstat#icli --name=stockstat-build --image-stream=openshift/wildfly:latest
-oc start-build stockstat-build
+#oc start-build stockstat-build
 #oc create -f createis.yaml
 oc create is pd
 oc create is stockstat-eureka
@@ -33,5 +37,5 @@ oc new-app --name stockstat-iclij-core stockstat-iclij-core
 oc new-app --name stockstat-iclij-web stockstat-iclij-web
 oc new-app --name tensorflow tensorflow
 oc new-app --name spark spark
-
-oc new-build --name=stockstat-eureka --source-image=stockstat-build --source-image-path=/opt/app-root/src/distribution/target/stockstat-distribution-0.5-SNAPSHOT-bin/stockstat-distribution-0.5-SNAPSHOT/lib/stockstat-eureka-0.5-SNAPSHOT.jar:. --dockerfile="FROM openjdk" --strategy=docker -o yaml
+oc expose svc/stockstat-web
+oc expose svc/stockstat-iclij-web

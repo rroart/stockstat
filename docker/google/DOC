@@ -1,0 +1,6 @@
+gcloud config set project rroart-stockstat
+gcloud config set compute/zone europe-north1
+export PROJECT_ID="$(gcloud config get-value project -q)"
+docker tag pd gcr.io/${PROJECT_ID}/pd:latest
+docker push gcr.io/${PROJECT_ID}/pd:latest
+gcloud auth configure-docker

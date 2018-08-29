@@ -15,31 +15,25 @@ spec:
       MAINTAINER <roart@nvg.ntnu.no>
       RUN apt-get update && apt-get upgrade -y
       RUN apt-get install -y python3-pip
-      RUN pip3 install pandas tensorflow numpy Werkzeug Keras sklearn flask
-      ADD files/*.py /usr/local/bin/
-      ADD files/*.sh /usr/local/bin/
+      RUN pip3 install tensorflow==1.5 pandas numpy Werkzeug Keras sklearn flask nameko
+      ADD files/tensorflow/*.py /tmp/
+      ADD files/tensorflow/*.sh /tmp/
       EXPOSE 8000
-      WORKDIR /usr/local/bin
-      CMD flasktf.sh
+      WORKDIR /tmp
+      CMD ./flasktf.sh
     images:
     - from: 
         kind: ImageStreamTag
         name: stockstat-build:latest
       paths: 
-      - sourcePath: /opt/app-root/src/tensorflow/*.py
+      - sourcePath: /opt/app-root/src/tensorflow
         destinationDir: "files"
-    - from: 
-        kind: ImageStreamTag
-        name: stockstat-build:latest
-      paths: 
-      - sourcePath: /opt/app-root/src/tensorflow/*.sh
-        destinationDir: "files"
-    - from: 
-        kind: ImageStreamTag
-        name: stockstat-build:latest
-      paths: 
-      - sourcePath: /opt/app-root/src/python/pd/nasdaqsymbols.py
-        destinationDir: "files"
+#    - from: 
+#        kind: ImageStreamTag
+#        name: stockstat-build:latest
+#      paths: 
+#      - sourcePath: /opt/app-root/src/tensorflow/*.sh
+#        destinationDir: "files"
   strategy:
     dockerStrategy:
       from: 
