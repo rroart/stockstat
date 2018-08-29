@@ -806,7 +806,11 @@ public class MLMACD extends Aggregator {
     private boolean anythingHere(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
             for (int i = 0; i < array.length; i++) {
-                if (array[0][i] != null) {
+                int len = array[i].length;
+                if (array[i][len - 1] != null) {
+                    return true;
+                }
+                if (array[i][0] != null) {
                     return true;
                 }
             }
