@@ -103,6 +103,7 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	to add a Spark service pointed to by the configuration
 	database.spark.sparkmaster
 	Hibernate connection is default localhost jdbc postgres, but is settable with connection.url.
+	With eventual environment variable SPARK_DRIVER_HOST ( = `hostname -i`), set the ip of the spark client (for Kubernetes based).
       </para>
     </sect2>
   </sect1>

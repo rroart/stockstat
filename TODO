@@ -5,6 +5,13 @@ D: Done
 W: Work
 C: Change
 
+F: no env SPARK_DRIVER_HOST, use config file?
+T: MLindicator Map<String, Double[][]> list0 = (Map<String, Double[][]>) localResultMap.get next usage
+T: mlmacd mlindicator anythinghere better heuristics?
+B: getExtraData Date date = dateList.get(size - j); negative
+T: EurekaUtil deprecation
+T: EurekaUtil wait loop
+F: compare 2+ stocks, base 100
 F: startoffset for auto, due to slow updates
 T: Pipe, Categ constructor, split off calculate
 B: iPredictor implement, and not running
