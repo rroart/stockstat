@@ -1033,6 +1033,192 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
     plt.show()
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
 
+def getcomparegraph(mydate, days, tableintervaldays, ids, interpolate = True):
+    scalebeginning100 = 1
+    
+    markets = set()
+    for id in ids:
+        markets.add(id[0])
+    marketdatamap = {}
+    for market in markets:
+        stocks = getstockmarket(allstocks, market)
+        listdate = split(stocks, stocks.date)
+        listdates = stocks.date.unique()
+        listdates.sort()
+        periodtexts = getperiodtexts(market)
+        print("days ", days, " " , tableintervaldays)
+        datedstocklists = getdatedstocklists(listdate, listdates, mydate, days, tableintervaldays)
+        marketdatamap[market] = [ stocks, periodtexts, datedstocklists, listdates ]
+    perioddatamap = {}
+    for market in markets:
+        marketdata = marketdatamap[market]
+        periodtexts = marketdata[1]
+        listdates = marketdata[3]
+        for i in range(periods):
+            text = periodtexts[i]
+            tuple = [market, i, listdates]
+            tuplekey = str(1) + market
+                                        #            print(text)
+            if perioddatamap.get(text) is None:
+                                        #                print("new")
+                perioddata = {}
+                perioddata["text"] = {}
+                perioddatamap[text] = perioddata
+            perioddata = perioddatamap[text]
+            tuples = perioddata["text"]
+            tuples[tuplekey] = tuple
+            perioddata["text"] = tuples
+            perioddatamap[text] = perioddata
+        if False:
+            perioddata = []
+            tuples[paste(1, market)] = [market, pricetype, listdates]
+            perioddata["text"] = tuples
+            perioddatamap["price"] = perioddata
+        if False:
+            perioddata = []
+            tuples[paste(1, market)] = [market, indextype, listdates]
+            perioddata["text"] = tuples
+            perioddatamap["index"] = perioddata
+    retl = []
+    olddate = "old"
+    newdate = "new"
+    dayset = []
+    dayset2 = []
+    ls = []
+    dayls = []
+    mynames = []
+    if True:
+        for intuple in ids:
+        #for text in perioddatamap:
+            print("intuple", intuple)
+            #if text == periodtext:
+            #        print(text)
+            c = 0
+            market = intuple[0]
+            id = intuple[1]
+            periodtext = intuple[2]
+            perioddata = perioddatamap[periodtext]
+            periodtuples = perioddata["text"]
+            if True:
+                periodtuple = periodtuples[tuplekey]
+                market = periodtuple[0]
+                indexid = periodtuple[1]
+                marketdata = marketdatamap[market]
+                #print(type(marketdata))
+                #print(len(marketdata))
+                #print(marketdata)
+                datedstocklists = marketdata[2]
+                #for i in range(len(ids)):
+                if True:
+                                        #           print("for")
+                    #print(market, idmarket, id)
+                    print("")
+                    if True:
+                        #print("per", text, " ", id, " ", period, " ")
+                        print("Id", id)
+                        bigretl = getelem3(id, days, datedstocklists, indexid, topbottom)
+                        l = bigretl[0]
+                        print("gaga")
+                        #print(l)
+                        print(type(l))
+                        if scalebeginning100 == 1:
+                            #print("minmax")
+                            print(l)
+                            first = l[0]
+                            l = l * 100 / first;
+                            #print(l)
+                        
+                        dayset.extend(bigretl[1])
+                        dayset2.extend(bigretl[2])
+                        #print(str(bigretl[2]))
+                        dayls.append(bigretl[2])
+                        if interpolate:
+                            print(type(l))
+                            l = l.interpolate(method='linear')
+                        ls.append(l)
+                        listdf = getelem3tup(id, days, datedstocklists, indexid, topbottom)
+                        df = listdf
+                        #print("Id " + id + " " + str((df.name.values[0])))
+                        #print(df)
+                        mynames.append(df.name.values[0])
+                        c = c + 1
+    commondays = dayls[0]
+    for i in range(1, len(dayls)):
+        commondays = intersection(commondays, dayls[i])
+    #print(type(commondays), commondays)
+    commondays.sort()
+    commonls = []
+    for i in range(len(dayls)):
+        tmpdayls = dayls[i]
+        tmpls = ls[i]
+        #print("tmpls", tmpls)
+        newtmpls = []
+        for j in range(len(tmpls)):
+            if commondays.index(tmpdayls[j]) >= 0:
+                newtmpls.append(tmpls[j])
+                #print("has"+str(j) + str(tmpdayls[j]) + " " + str(commondays.index(tmpdayls[j])))
+            else:
+                print("hasnot")
+        commonls.append(newtmpls)    
+    daynames = dayset
+    daynames2 = dayset2
+    print("type(daynames)")
+    print((daynames[0]))
+    print((daynames2[0]))
+    #print(daynames[0])
+    print(type(daynames[0]))
+    print(type(daynames2[0]))
+    #print(type(daynames))
+    #print(len(daynames))
+    olddate = min(daynames)
+    newdate = max(daynames)
+    olddate = min(daynames2)
+    newdate = max(daynames2)
+    #print(type(olddate))
+    #print(len(olddate))
+    #print("")
+    #print("ls ", ls)
+    #print("")
+    plt.rc('axes', grid=True)
+    plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
+
+    textsize = 9
+    left, width = 0.1, 0.8
+    rect1 = [left, 0.5, width, 0.4]
+    rect2 = [left, 0.3, width, 0.2]
+    rect3 = [left, 0.1, width, 0.2]
+    plt.ion()
+    #print("TT" + str(type(mynames[0])))
+    title = str(mynames) + " " + str(olddate) + " - " + str(newdate)
+    fig = plt.figure(facecolor='white')
+    axescolor = '#f6f6f6'  # the axes background color
+
+    ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
+    print("ll ", len(ls), len(ls[0]))
+    print("ll ", len(ls), len(ls[1]))
+    print("ll ", len(dayls), len(dayls[0]))
+    print("ll ", len(dayls), len(dayls[1]))
+    print("ll ", len(commonls), len(commonls[0]))
+    print("ll ", len(commonls), len(commonls[1]))
+    print("ll ", len(dayset2))
+    print("ll ", len(commondays))
+    print("ll ", mynames)
+    #print("mynames", type(mynames), len(mynames), mynames, " ", type(mynames[0]), len(mynames[0]))
+    print("daes", olddate, newdate)
+    displayax(ax1, commonls, commondays, mynames, 5, periodtext, newdate, olddate, days, title, periodtext)
+    percentize = True      
+    if percentize:
+      if periodtext == "Price" or periodtext == "Index":
+          first = []
+        #first = myma[0]
+        #print("t1 ", type(myma))
+        #myma = np.asarray(myma) * (100 / first)
+        #myma = pd.Series(data = myma)
+        #print("t2 ", type(myma))
+    #print("tmyma3 ", type(myma))
+    #print(myma)
+    plt.show()
+
 def displaychart(ls, mynames, topbottom, periodtext, maindate, olddate, days):
     ####dev.new()
     ####colours = rainbow(topbottom)
@@ -1093,18 +1279,20 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
     #print(olddate)
     #print(type(olddate))
     #print(type(maindate))
-    mytitle = "mynames[0]" + " " + str(olddate) + " - " + str(maindate)
+    mytitle = "Compare " + str(mynames) + " " + str(olddate) + " - " + str(maindate)
     ax.set(title = title, ylabel = ylabel)
     #ax2.legend(loc = 'upper right')
     #ax2.grid(False)
-    for i in range(topbottom):
-        print("intc ", i, mynames[i])
+    for i in range(len(mynames)):
+        #print("intc ", i, mynames[i])
         if i == 0:
                                         #print(l$id[[1]])
                                         #print(l$name[[2]])
             c = ls
             #ax.plot(range(len(c[i])), c[i], label = mynames[i])
             #print(c[0])
+            #print("lens"+str(len(daynames))+" " +str(len(c[i]))+ " " + str(len(mynames[i])))
+            #print(mynames[i], c[i])
             ax.plot(daynames, c[i], label = mynames[i])
             #print("c ", type(c[0][0]))
             #print("c ", type(c[0]))
@@ -1118,8 +1306,9 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
                                         #print(l2)
         else:
                                         #print("count", i)
+            #print("lens3"+str(len(daynames))+" " +str(len(c[i]))+ " " + str(len(mynames[i])))
             c = ls
-            #print(c)
+            #print(mynames[i], c[i])
             ax.plot(daynames, c[i], label = mynames[i])
             #ax.plot(range(len(c[i])), c[i], label = mynames[i])
             #lines(c, type="o", lty = i, col = colours[i], pch = i)
@@ -1131,6 +1320,9 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
         ####legend(1, g_range[2], mynames, cex=0.8, lty=1:6, pch=1:25, col=colours)
     ax.legend()
 
+def intersection(a, b):
+    return list(set(a) & set(b))
+    
 def getelem3(id, days, datedstocklist, period, size):
     dayset = []
     dayset2 = []
@@ -1159,14 +1351,18 @@ def getelem3(id, days, datedstocklist, period, size):
             dayset.append(str2)
             dayset2.append(el.date.values[0])
         else:
-            prev = dayset[len(dayset) - 1]
-            prev2 = dayset2[len(dayset2) - 1]
-            dayset.append(prev)
-            dayset2.append(prev2)
-            print("err2")
+            #prev = dayset[len(dayset) - 1]
+            #prev2 = dayset2[len(dayset2) - 1]
+            str2 = str(df.date.values[0])
+            dayset.append(str2)
+            dayset2.append(df.date.values[0])
+            print("err2", len(el), c)
         c = c + 1
         retls = pd.Series(data = retl)
         #print("dayset ", type(dayset), type(dayset[0]))
+    #print("d1", str(dayset))
+    #print("d2", str(dayset2))
+    print("l ", len(retls), len(dayset), len(dayset2))
     return([retls, dayset,dayset2])
 
 def getelem3tup(id, days, datedstocklist, period, size):
