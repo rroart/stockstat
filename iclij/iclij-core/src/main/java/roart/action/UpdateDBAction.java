@@ -129,6 +129,8 @@ public class UpdateDBAction extends Action {
             }
             Short startOffset = market.getStartoffset();
             if (startOffset != null) {
+                System.out.println("Using offset " + startOffset);
+                log.info("Using offset {}", startOffset);
                 days += startOffset;
             }
             for (String component : getComponents(config)) {
