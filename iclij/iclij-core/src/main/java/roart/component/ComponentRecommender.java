@@ -119,6 +119,10 @@ public class ComponentRecommender extends Component {
         Double min = list.get(listSize - 1).getValue();
         Double diff = max - min;
         for (MyElement element : topList) {
+            if (confidenceFactor == null || element.getValue() == null) {
+                int jj = 0;
+                continue;
+            }
             double confidence = confidenceFactor * (element.getValue() - min) / diff;
             String recommendation = "recommend buy";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
