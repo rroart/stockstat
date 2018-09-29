@@ -5,6 +5,10 @@ D: Done
 W: Work
 C: Change
 
+B: Using offset for manual use
+F: for loop for recommend
+B: icli web sendme null
+T/F: vaadin 10, or go for angular/reactredux?
 F: no env SPARK_DRIVER_HOST, use config file?
 T: MLindicator Map<String, Double[][]> list0 = (Map<String, Double[][]>) localResultMap.get next usage
 T: mlmacd mlindicator anythinghere better heuristics?
@@ -12,7 +16,7 @@ B: getExtraData Date date = dateList.get(size - j); negative
 T: EurekaUtil deprecation
 T: EurekaUtil wait loop
 F: compare 2+ stocks, base 100
-F: startoffset for auto, due to slow updates
+F/B: startoffset for auto, due to slow updates
 T: Pipe, Categ constructor, split off calculate
 B: iPredictor implement, and not running
 WF: Multiple datasources, pandas-datareader

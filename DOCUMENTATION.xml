@@ -2686,4 +2686,12 @@ indicators.macd.daysafterzero
     The Db Spark backend has been temporarily disabled due to truncation bug?
   </para>
 </chapter>
+<chapter id="demo">
+  <title>
+    Demo
+  </title>
+  <para>
+    It is possible to run a demo on Google Cloud, AWS, Azure (but there are some slight problems with the dataset).
+  </para>
+</chapter>
 </book>
