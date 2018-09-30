@@ -78,40 +78,80 @@ def getperiodtext(meta, period):
 def split(df, group):
     gb = df.groupby(group)
     return [gb.get_group(x) for x in gb.groups]
-          
-def getdatedstocklists(listdate, listdates, mydate, days, tableintervaldays):
-    print("mydate ", mydate)
-    offset = 0
-    if isinstance(mydate, float):
-        offset = round(mydate)
-        mydate = None
-    if isinstance(mydate, int):
-        offset = mydate
-        mydate = None
-    datedstocklists = []
-    if mydate is not None:
-        #print("listdates ", type(listdates), listdates)
-        #dateindex = listdates.index(mydate)
-        dateindex = np.where(listdates == mydate)
-        print("h0")
-    else:
-        dateindex = len(listdate) - 1
-        print("h1")
-    index = dateindex - offset
-    # -1 ok?
-    print("Index %d" %(index))
+
+class MyDates:
+    def __init__(self, start, end, startindex, endindex):
+        self.start = start
+        self.end = end
+        self.startindex = startindex
+        self.endindex = endindex
+        
+    def getdates(listdates, start, end):
+        print(len(listdates), listdates[0])
+        print("start ", start, " end ", end)
+        startoffset = None
+        endoffset = None
+        startdateindex = None
+        enddateindex = None
+        if start is None:
+            startdateindex = 0
+        if isinstance(start, float):
+            startoffset = round(start)
+            start = None
+        if isinstance(start, int):
+            startoffset = start
+            start = None
+        if isinstance(start, str):
+            pdstart = np.datetime64(start)
+            startdateindex = np.where(listdates == pdstart)
+            startdateindex = startdateindex[0][0]
+        if end is None:
+            enddateindex = len(listdates) - 1
+        if isinstance(end, float):
+            endoffset = round(end)
+            end = None
+        if isinstance(end, int):
+            endoffset = end
+            end = None
+        if isinstance(end, str):
+            pdend = np.datetime64(end)
+            enddateindex = np.where(listdates == pdend)
+            enddateindex = enddateindex[0][0]
+        print(start)
+        print(end)
+        print(startoffset)
+        print(endoffset)
+        print(startdateindex)
+        print(enddateindex)
+        if startdateindex is None:
+            #if enddateindex is None:
+            #    enddateindex = len(listdates) - 1
+            if startoffset is not None:    
+                startdateindex = enddateindex - startoffset
+        if enddateindex is None:
+            #if startdateindex is None:
+            #    startdateindex = 0
+            if endoffset is not None:    
+                enddateindex = startdateindex + endoffset
+        # -1 ok?
                                         #index = len(listdate)
-    c = 0
-    c = c + 1
+        print(startdateindex)
+        print(enddateindex)
+        return MyDates(start, end, startdateindex, enddateindex)
+        
+def getdatedstocklists(listdate, listdates, dates, tableintervaldays):
+    datedstocklists = []
     #print(len(listdate))
     #print(len(datedstocklists))
-    datedstocklists.append(listdate[index])
+    #datedstocklists.append(listdate[index])
     #print(type(listdate[index]))
-    print("days0 ", days)
-    for j in range(0, days):
+    #print("days0 ", days)
+    index = dates.endindex
+    print("Index %d" %(dates.startindex), dates.endindex, index)
+    for j in range(dates.startindex, dates.endindex):
         index = index - tableintervaldays
-        c = c + 1
         datedstocklists.append(listdate[index])
+    print(len(datedstocklists))
     return datedstocklists
 
 def getdforderperiod(df, period):
@@ -308,7 +348,7 @@ def myperiodtextslist(myperiodtexts, periodtexts):
 #    
     return retlist
 
-def getvalues(market, id, mydate, days, myperiodtexts):
+def getvalues(market, id, start, end, myperiodtexts):
     tablemoveintervaldays = 1
     periodtexts = getperiodtexts(market)
     myperiodtexts = myperiodtextslist(myperiodtexts, periodtexts)
@@ -321,6 +361,7 @@ def getvalues(market, id, mydate, days, myperiodtexts):
         print(periodtexts.index(periodtext))
         period = periodtexts.index(periodtext)
         stocks = getstockmarket(allstocks, market)
+        stocks = stocks.loc[(stocks.id == id)]
 
         stocks = stocks.sort_values('date', ascending=[0])
         listdate = split(stocks, stocks.date)
@@ -328,19 +369,22 @@ def getvalues(market, id, mydate, days, myperiodtexts):
         listdates = stocks.date.unique()
         listdates.sort()
         listid = split(stocks, stocks.id)
-        datedstocklists = getdatedstocklists(listdate, listdates, mydate, days, tablemoveintervaldays)
+        dates = MyDates.getdates(listdates, start, end)
+        datedstocklists = getdatedstocklists(listdate, listdates, dates, tablemoveintervaldays)
+        days = dates.endindex - dates.startindex
         stocklistperiod = getlistsorted(datedstocklists, listid, listdate, days, tablemoveintervaldays, reverse=False)
         dflist = []
-        print("here")
+        print("here", days)
         for j in range(0, days):
             df = stocklistperiod[period][j]
-            df = df.loc[(df.id == id)]
             if len(df) == 1:
                 name = df.name.iloc[0]
                 list11 = df
                 #print(df.name.iloc[0])
                 print("%3d %-35s %12s % 6.2f %s" % (i, name[:33], df.date.iloc[0], listperiod(df, period, i), df.id.iloc[0]))
-
+            else:
+                print("err" ,len(df))
+                
 def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, wantrsi=False):
     #print(type(dflist))
     print("days ", days, " ", len(dflist))
@@ -401,8 +445,8 @@ def myperiodtextslist(myperiodtexts, periodtexts):
     return(retlist)
 
 
-def getbottomgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=VALUE, macddays=180, deltadays=3, percentize=True):
-    return(gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=True, deltadays=deltadays, percentize=percentize))
+def getbottomgraph(market, start, end, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=VALUE, macddays=180, deltadays=3, percentize=True):
+    return(gettopgraph(market, start, end, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=True, deltadays=deltadays, percentize=percentize))
 
 def getonedfvalue(df, atype):
     if atype > 0:
@@ -411,11 +455,11 @@ def getonedfvalue(df, atype):
         return(getonedfspecial(df, atype))
     print("should not be here")
 
-def gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, percentize=True):
+def gettopgraph(market, start, end, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, percentize=True):
     print("0", market)
     periodtexts = getperiodtexts(market)
     myperiodtexts = myperiodtextslist(myperiodtexts, periodtexts)
-    print ("00 " , len(myperiodtexts), " ", days)
+    print ("00 " , len(myperiodtexts))
     for i in range(0, len(myperiodtexts)):
         periodtext = myperiodtexts[i]
         print("1", myperiodtexts)
@@ -431,7 +475,9 @@ def gettopgraph(market, mydate, days, tablemoveintervaldays, topbottom, myperiod
         listdates = stocks.date.unique()
         listdates.sort()
         listid = split(stocks, stocks.id)
-        datedstocklists = getdatedstocklists(listdate, listdates, mydate, days, tablemoveintervaldays)
+        dates = MyDates.getdates(listdates, start, end)
+        datedstocklists = getdatedstocklists(listdate, listdates, dates, tablemoveintervaldays)
+        days = dates.endindex - dates.startindex
         stocklistperiod = getlistsorted(datedstocklists, listid, listdate, days, tablemoveintervaldays, reverse=reverse)
         periodmaps = None
         if wantrise:
@@ -822,7 +868,7 @@ def getelem(id, days, stocklistperiod, period, size):
     #print("retl", retl)
     return(retl)
 
-def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, interpolate = True):
+def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, interpolate = True):
     scalebeginning100 = 0
     if len(ids) > 1:
         if periodtext == "price":
@@ -840,8 +886,10 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
         listdates = stocks.date.unique()
         listdates.sort()
         periodtexts = getperiodtexts(market)
-        print("days ", days, " " , tableintervaldays)
-        datedstocklists = getdatedstocklists(listdate, listdates, mydate, days, tableintervaldays)
+        #print("days ", days, " " , tableintervaldays)
+        dates = MyDates.getdates(listdates, start, end)
+        datedstocklists = getdatedstocklists(listdate, listdates, dates, tableintervaldays)
+        days = dates.endindex - dates.startindex
         marketdatamap[market] = [ stocks, periodtexts, datedstocklists ]
     perioddatamap = {}
     for market in markets:
@@ -1033,7 +1081,7 @@ def getcontentgraph(mydate, days, tableintervaldays, ids, periodtext, wantmacd=F
     plt.show()
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
 
-def getcomparegraph(mydate, days, tableintervaldays, ids, interpolate = True):
+def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
     scalebeginning100 = 1
     
     markets = set()
@@ -1046,8 +1094,10 @@ def getcomparegraph(mydate, days, tableintervaldays, ids, interpolate = True):
         listdates = stocks.date.unique()
         listdates.sort()
         periodtexts = getperiodtexts(market)
-        print("days ", days, " " , tableintervaldays)
-        datedstocklists = getdatedstocklists(listdate, listdates, mydate, days, tableintervaldays)
+        print("days ", tableintervaldays)
+        dates = MyDates.getdates(listdates, start, end)
+        datedstocklists = getdatedstocklists(listdate, listdates, dates, tableintervaldays)
+        days = dates.endindex - dates.startindex
         marketdatamap[market] = [ stocks, periodtexts, datedstocklists, listdates ]
     perioddatamap = {}
     for market in markets:
@@ -1123,7 +1173,7 @@ def getcomparegraph(mydate, days, tableintervaldays, ids, interpolate = True):
                         print(type(l))
                         if scalebeginning100 == 1:
                             #print("minmax")
-                            print(l)
+                            #print(l)
                             first = l[0]
                             l = l * 100 / first;
                             #print(l)
