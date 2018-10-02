@@ -5,9 +5,14 @@ D: Done
 W: Work
 C: Change
 
+B: improvement lack srv. setdate
+B: look at findprofit, getimprovement two layers of new ControlService
+WF: change date system to from to
+T: unify verify and singlemark
+WB: new ControlService w/o date transfer
 B: Using offset for manual use
-F: for loop for recommend
-B: icli web sendme null
+WF: for loop for recommend
+WB: icli web sendme null
 T/F: vaadin 10, or go for angular/reactredux?
 F: no env SPARK_DRIVER_HOST, use config file?
 T: MLindicator Map<String, Double[][]> list0 = (Map<String, Double[][]>) localResultMap.get next usage
@@ -15,7 +20,7 @@ T: mlmacd mlindicator anythinghere better heuristics?
 B: getExtraData Date date = dateList.get(size - j); negative
 T: EurekaUtil deprecation
 T: EurekaUtil wait loop
-F: compare 2+ stocks, base 100
+WF: compare 2+ stocks, base 100
 F/B: startoffset for auto, due to slow updates
 T: Pipe, Categ constructor, split off calculate
 B: iPredictor implement, and not running
@@ -76,7 +81,7 @@ WF: discard sat/sun/hol for all lang
 T: MyMyConfig getValueOrDefault use more
 B: again confidencefactor null?
 B: stockstatcore terminates/crashes?
-F: get market data icli with date
+WF: get market data icli with date
 T: space/tabs
 
 B: MLMACD/MLindicator null key, tf giving nonexisting class.
