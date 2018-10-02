@@ -29,6 +29,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.RECOMMENDERMLMACD, Boolean.class);
         map.put(IclijConfigConstants.RECOMMENDERRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.RECOMMENDERPREDICTOR, Boolean.class);
+        map.put(IclijConfigConstants.SINGLEMARKETLOOPS, Integer.class);
+        map.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, Integer.class);
         map.put(IclijConfigConstants.VERIFICATION, Boolean.class);
         map.put(IclijConfigConstants.VERIFICATIONSAVE, Boolean.class);
         map.put(IclijConfigConstants.VERIFICATIONRECOMMENDERTOPBOTTOM, Integer.class);
@@ -67,6 +69,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.RECOMMENDERMLMACD, Boolean.TRUE);
         deflt.put(IclijConfigConstants.RECOMMENDERRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.RECOMMENDERPREDICTOR, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.SINGLEMARKETLOOPS, 5);
+        deflt.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, 20);
         deflt.put(IclijConfigConstants.VERIFICATION, Boolean.TRUE);
         deflt.put(IclijConfigConstants.VERIFICATIONSAVE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.VERIFICATIONRECOMMENDERTOPBOTTOM, 10);
@@ -100,6 +104,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.RECOMMENDERMLMACD, "Enable recommender mlmacd");
         text.put(IclijConfigConstants.RECOMMENDERRECOMMENDER, "Enable recommender evolution based");
         text.put(IclijConfigConstants.RECOMMENDERPREDICTOR, "Enable recommender predictor");
+        text.put(IclijConfigConstants.SINGLEMARKETLOOPS, "Single market loops");
+        text.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, "Single market loop interval");
         text.put(IclijConfigConstants.VERIFICATION, "Enable verification");
         text.put(IclijConfigConstants.VERIFICATIONSAVE, "Enable verification save");
         text.put(IclijConfigConstants.VERIFICATIONDAYS, "Verification days");
@@ -146,6 +152,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.RECOMMENDERMLMACD, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable recommender mlmacd"));
         mymap.put(IclijConfigConstants.RECOMMENDERRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable recommender evolution based"));
         mymap.put(IclijConfigConstants.RECOMMENDERPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable recommender predictor"));
+        mymap.put(IclijConfigConstants.SINGLEMARKETLOOPS, new IclijXMLType(Integer.class, 5, "Single market loops"));
+        mymap.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, new IclijXMLType(Integer.class, 20, "Single market loop interval"));
         mymap.put(IclijConfigConstants.VERIFICATION, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable verification"));
         mymap.put(IclijConfigConstants.VERIFICATIONSAVE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable verification save"));
         mymap.put(IclijConfigConstants.VERIFICATIONDAYS, new IclijXMLType(Integer.class, 20, "Verification days"));

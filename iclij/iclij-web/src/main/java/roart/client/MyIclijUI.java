@@ -221,6 +221,21 @@ public class MyIclijUI extends UI {
         return button;
     }
 
+    private Button getSingleMarketLoop() {
+        Button button = new Button("Run and get single market data loop");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displaySingleMarketLoop();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
     private Button getImproveProfit() {
         Button button = new Button("Run and get single market improve data");
         button.addClickListener(new Button.ClickListener() {
@@ -423,7 +438,9 @@ public class MyIclijUI extends UI {
         horVerify.addComponent(getVerifyLoop());
         HorizontalLayout horOther = new HorizontalLayout();
         horOther.addComponent(getSingleMarket());
-        horOther.addComponent(getImproveProfit());
+        horOther.addComponent(getSingleMarketLoop());
+        HorizontalLayout horOther2 = new HorizontalLayout();
+        horOther2.addComponent(getImproveProfit());
         //horStat.addComponent(getStat());
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
@@ -499,6 +516,7 @@ public class MyIclijUI extends UI {
         tab.addComponent(horGetAuto);
         tab.addComponent(horVerify);
         tab.addComponent(horOther);
+        tab.addComponent(horOther2);
         tab.addComponent(horDb); 
         tab.addComponent(horDb2);
         //tab.addComponent(horDb3);
@@ -530,6 +548,11 @@ public class MyIclijUI extends UI {
     private void displaySingleMarket() {
         //System.out.println("h0");
         controlService.getSingleMarket(this);
+    }
+    
+    private void displaySingleMarketLoop() {
+        //System.out.println("h0");
+        controlService.getSingleMarketLoop(this);
     }
     
     private void displayImproveProfit() {

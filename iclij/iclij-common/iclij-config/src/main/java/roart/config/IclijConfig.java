@@ -119,8 +119,16 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.RECOMMENDERRECOMMENDER);
     }
 
-     public boolean wantsPredictor() {
+    public boolean wantsPredictor() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.RECOMMENDERPREDICTOR);
+    }
+
+    public int singlemarketLoops() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SINGLEMARKETLOOPS);
+    }
+
+    public int singlemarketLoopInterval() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL);
     }
 
     public boolean wantsImproveProfit() {
@@ -150,11 +158,11 @@ public class IclijConfig {
     public boolean wantEvolveRecommender() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER);
     }
-    
+
     public boolean wantEvolveML() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEML);
     }
-    
+
     public Object getValueOrDefault(String key) {
         // jackson messes around here...
         if (configValueMap == null) {

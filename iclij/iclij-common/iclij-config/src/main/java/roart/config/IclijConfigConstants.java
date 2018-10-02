@@ -20,6 +20,8 @@ public class IclijConfigConstants {
     public static final String RECOMMENDERMLMACD = "recommender.mlmacd[@enable]";
     public static final String RECOMMENDERMLINDICATOR = "recommender.mlindicator[@enable]";
     public static final String RECOMMENDERPREDICTOR = "recommender.predictor[@enable]";
+    public static final String SINGLEMARKETLOOPS = "singlemarket.loops";
+    public static final String SINGLEMARKETLOOPINTERVAL = "singlemarket.loopinterval";
     public static final String VERIFICATION = "verification[@enable]";
     public static final String VERIFICATIONSAVE = "verification.save";
     public static final String VERIFICATIONDAYS = "verification.days";

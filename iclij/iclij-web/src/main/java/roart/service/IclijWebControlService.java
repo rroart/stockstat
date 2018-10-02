@@ -140,6 +140,7 @@ public class IclijWebControlService {
 
     public void getContent(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
+        param.setIclijConfig(getIclijConf());
         param.setWebpath(EurekaConstants.GETCONTENT);
         new IclijThread(ui, param).start();
     }
@@ -149,6 +150,22 @@ public class IclijWebControlService {
         param.setIclijConfig(getIclijConf());
         param.setWebpath(EurekaConstants.GETSINGLEMARKET);
         new IclijThread(ui, param).start();
+    }
+
+    public void getSingleMarketLoop(MyIclijUI ui) {
+        for (int i = 0; i < iclijConf.singlemarketLoops(); i++) {
+            IclijServiceParam param = new IclijServiceParam();
+            param.setIclijConfig(getIclijConf());
+            param.setWebpath(EurekaConstants.GETSINGLEMARKET);
+            param.setOffset(i * getIclijConf().singlemarketLoopInterval());
+            IclijThread thread = new IclijThread(ui, param);
+            MyExecutors.run(thread);
+            try {
+                Thread.sleep(10 * 1000);
+            } catch (InterruptedException e) {
+                log.info(Constants.EXCEPTION, "Sleep interrupted");
+            }
+        }
     }
 
     public void getImproveProfit(MyIclijUI ui) {

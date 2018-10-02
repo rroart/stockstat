@@ -62,9 +62,9 @@ public class ServiceController {
 
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENT,
             method = RequestMethod.POST)
-    public IclijServiceResult getContent(/*@PathVariable String market*/)
+    public IclijServiceResult getContent(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
             throws Exception {
-        return ServiceUtil.getContent();
+        return ServiceUtil.getContent(param.getIclijConfig());
     }
 
     @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,

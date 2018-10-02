@@ -480,7 +480,8 @@ public class ServiceUtil {
         return result;
     }
     
-    public static IclijServiceResult getContent() throws Exception {
+    public static IclijServiceResult getContent(IclijConfig iclijConfig) throws Exception {
+        LocalDate date = iclijConfig.getDate();
         IclijXMLConfig i = new IclijXMLConfig();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
@@ -490,9 +491,14 @@ public class ServiceUtil {
         lists.add(getHeader("Content"));
         List<TradeMarket> markets = conf.getTradeMarkets(instance);
         for (TradeMarket market : markets) {
-            LocalDate olddate = LocalDate.now().minusDays(market.getRecordage());
+            if (date == null) {
+                date = LocalDate.now();
+            }
+            LocalDate newdate = date;
+            LocalDate olddate = date.minusDays(market.getRecordage());
             listAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
             List<IncDecItem> currentIncDecs = listAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
+            currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
             currentIncDecs = currentIncDecs.stream().filter(m -> market.getMarket().equals(m.getMarket())).collect(Collectors.toList());
             List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
@@ -713,7 +719,7 @@ public class ServiceUtil {
     }
 
     public static IclijServiceResult getFindProfit(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
-        loopOffset = 0;
+        //loopOffset = 0;
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
         result.getLists().add(getHeader("FindProfit " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset));
