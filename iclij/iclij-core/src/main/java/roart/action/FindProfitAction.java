@@ -32,6 +32,7 @@ import roart.model.ResultMeta;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
 import roart.util.Constants;
+import roart.util.TimeUtil;
 
 public class FindProfitAction extends Action {
 
@@ -99,6 +100,7 @@ public class FindProfitAction extends Action {
         ControlService srv = new ControlService();
         srv.getConfig();
         srv.conf.setMarket(market.getMarket());
+        srv.conf.setdate(TimeUtil.convertDate(olddate));
         Map<String, Component> componentMap = getComponentMap(listComponent);
 
         Map<String, IncDecItem> buys = new HashMap<>();
