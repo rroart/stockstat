@@ -560,6 +560,7 @@ public class ServiceUtil {
     }
 
     public static IclijServiceResult getVerify(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
+	String type = "Verify";
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
         List<IclijServiceList> retLists = result.getLists();
@@ -567,7 +568,6 @@ public class ServiceUtil {
         if (market == null) {
             return result;
         }
-        int days = config.verificationDays();
         LocalDate date = config.getDate();
         ControlService srv = new ControlService();
         srv.getConfig();
@@ -582,6 +582,15 @@ public class ServiceUtil {
             }
             date = getDateIndex(stocks, index);
         }
+        int days = config.verificationDays();
+        getFindProfitVerify(result, retLists, config, type, market, loopOffset, date, srv, stocks, days);
+        print(result);
+        return result;
+    }
+
+    private static void getFindProfitVerify(IclijServiceResult result, List<IclijServiceList> retLists,
+            IclijConfig config, String type, String market, Integer loopOffset, LocalDate date, ControlService srv,
+            List<String> stocks, int days) throws ParseException, InterruptedException {
         int offset = getDateOffset(date, stocks);
         if (date == null) {
             date = getLastDate(stocks);
@@ -593,7 +602,7 @@ public class ServiceUtil {
         log.info("Old date {} ", oldDate);
         IclijServiceList header = new IclijServiceList();
         result.getLists().add(header);
-        header.setTitle("Verify " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset);
+        header.setTitle(type + " " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset);
         List<MapList> aList = new ArrayList<>();
         header.setList(aList);
         MapList mapList = new MapList();
@@ -601,7 +610,6 @@ public class ServiceUtil {
         mapList.setValue("Base " + oldDate + " Future " + date);
         aList.add(mapList);
         boolean save = config.wantVerificationSave();
-        ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
         FindProfitAction findProfitAction = new FindProfitAction();
         List<MemoryItem> allMemoryItems = getMemoryItems(config, market, days, date, offset, save);
         IclijServiceList memories = new IclijServiceList();
@@ -612,13 +620,12 @@ public class ServiceUtil {
         List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
         List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
-        getVerifyProfit(retLists, days, date, srv, oldDate, listInc, listDec);
+	if (days > 0) {
+	    getVerifyProfit(retLists, days, date, srv, oldDate, listInc, listDec);
+	}
         List<IclijServiceList> subLists = getServiceList(market, listInc, listDec, listIncDec);
         retLists.addAll(subLists);
-        if (config.wantsImproveProfit()) {
-            getImprovements(retLists, market, date, save, improveProfitAction, allMemoryItems);
-        }
-
+        
         retLists.add(memories);
         
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
@@ -626,9 +633,14 @@ public class ServiceUtil {
         result.setMaps(mapmaps);
         IclijServiceList updates = convert(updateMap);
         retLists.add(updates);
-        print(result);
-        return result;
     }
+
+    /*
+    if (config.wantsImproveProfit()) {
+        ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
+        getImprovements(retLists, market, date, save, improveProfitAction, allMemoryItems);
+    }
+     */
 
     private static void print(IclijServiceResult result) {
         Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
@@ -719,10 +731,9 @@ public class ServiceUtil {
     }
 
     public static IclijServiceResult getFindProfit(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
-        //loopOffset = 0;
+	String type = "FindProfit";
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
-        result.getLists().add(getHeader("FindProfit " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset));
         List<IclijServiceList> retLists = result.getLists();
         String market = config.getMarket();
         if (market == null) {
@@ -743,35 +754,7 @@ public class ServiceUtil {
             }
             date = getDateIndex(stocks, index);
         }
-        int offset = getDateOffset(date, stocks);
-        if (date == null) {
-            date = getLastDate(stocks);
-        }
-        log.info("Main date {} ", date);
-        String aDate = stocks.get(stocks.size() - 1 - offset - days);
-        LocalDate oldDate = TimeUtil.convertDate(aDate);
-        log.info("Old date {} ", oldDate);
-        boolean save = config.wantVerificationSave();
-        FindProfitAction findProfitAction = new FindProfitAction();
-        List<MemoryItem> allMemoryItems = getMemoryItems(config, market, days, date, offset, save);
-        IclijServiceList memories = new IclijServiceList();
-        memories.setTitle("Memories");
-        memories.setList(allMemoryItems);
-        Map<String, Object> updateMap = new HashMap<>();
-        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, date, allMemoryItems, config, updateMap);
-        List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
-        List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
-        List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
-        List<IclijServiceList> subLists = getServiceList(market, listInc, listDec, listIncDec);
-        retLists.addAll(subLists);
-
-        retLists.add(memories);
-        
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
-        IclijServiceList updates = convert(updateMap);
-        retLists.add(updates);
+        getFindProfitVerify(result, retLists, config, type, market, loopOffset, date, srv, stocks, days);
         print(result);
         return result;
     }
@@ -785,7 +768,6 @@ public class ServiceUtil {
         if (market == null) {
             return result;
         }
-        int days = 0; // config.verificationDays();
         LocalDate date = config.getDate();
         ControlService srv = new ControlService();
         srv.getConfig();
@@ -800,6 +782,7 @@ public class ServiceUtil {
             }
             date = getDateIndex(stocks, index);
         }
+        int days = 0; // config.verificationDays();
         int offset = getDateOffset(date, stocks);
         if (date == null) {
             date = getLastDate(stocks);
