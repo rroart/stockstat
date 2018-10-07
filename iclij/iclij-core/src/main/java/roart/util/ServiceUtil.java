@@ -616,7 +616,7 @@ public class ServiceUtil {
         memories.setTitle("Memories");
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
-        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, date, allMemoryItems, config, updateMap);
+        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, oldDate, allMemoryItems, config, updateMap);
         List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
         List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
