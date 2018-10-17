@@ -264,6 +264,7 @@ public class ServiceController {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/" + EurekaConstants.GETMARKETS).allowedOrigins("http://localhost:19000");
+                registry.addMapping("/" + EurekaConstants.GETMARKETS).allowedOrigins("http://localhost:3082");
             }
         };
     }
@@ -274,6 +275,7 @@ public class ServiceController {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/" + EurekaConstants.GETCONFIG).allowedOrigins("http://localhost:19000");
+                registry.addMapping("/" + EurekaConstants.GETCONFIG).allowedOrigins("http://localhost:3082");
             }
         };
     }
@@ -283,6 +285,7 @@ public class ServiceController {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/" + EurekaConstants.SETCONFIG).allowedOrigins("http://localhost:19000");
+                registry.addMapping("/" + EurekaConstants.SETCONFIG).allowedOrigins("http://localhost:3082");
             }
         };
     }
