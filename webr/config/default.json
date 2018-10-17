@@ -1,0 +1,36 @@
+{
+  "env": "default",
+  "host": "0.0.0.0",
+  "port": "3082",
+  "publicPath": "/",
+  "assetPath": "assets",
+  "jsSourcePath": "src/js",
+  "s3": {
+    "s3Deploy": false,
+    "bucket": "if-any",
+    "defaultCDNBase": "if-any"
+  },
+  "optimization": {
+    "commonMinCount": 3,
+    "cssExclusion": true,
+    "analyzeMode": false,
+    "analyze": {
+      "port": 8888
+    }
+  },
+  "browserSync": {
+    "active": true,
+    "port": 3004
+  },
+  "html": [
+    {
+			"name": "homepage",
+      "title": "Stockstat by Roar Thronæs",
+      "template": "_default.html",
+      "filename": "index.html"
+    }
+  ],
+  "app": {
+    "description": "config inside 'app' will be injected to your frontend code automatically"
+  }
+}
