@@ -82,12 +82,15 @@
     "webpack-s3-plugin": "^1.0.0-rc.0"
   },
   "dependencies": {
+    "create-react-class": "^15.6.3",
     "history": "^4.7.2",
     "immutable": "^3.8.2",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-bootstrap": "^0.32.4",
+    "react-16-bootstrap-date-picker": "^5.1.2",
+    "react-bootstrap-table-next": "^1.3.0",
     "react-helmet": "^5.2.0",
     "react-loadable": "^5.3.1",
     "react-redux": "^5.0.6",
