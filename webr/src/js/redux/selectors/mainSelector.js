@@ -27,10 +27,34 @@ const resultTabs = createSelector(
   payload => payload.get('tabs')
 );
 
+const resultStartDate = createSelector(
+  mainDataSelector,
+  payload => payload.get('startdate')
+);
+
+const resultEndDate = createSelector(
+  mainDataSelector,
+  payload => payload.get('enddate')
+);
+
+const resultMarket = createSelector(
+  mainDataSelector,
+  payload => payload.get('market')
+);
+
+const resultMarkets = createSelector(
+  mainDataSelector,
+  payload => payload.get('markets')
+);
+
 export const mainSelector = state => ({
     result2: resultSelector(state),
     result3: resultSelector3(state),
     result4: resultSelector4(state),
     count: resultCount(state),
     tabs: resultTabs(state),
+    startdate: resultStartDate(state),
+    enddate: resultEndDate(state),
+    market: resultMarket(state),
+    markets: resultMarkets(state),
 });
