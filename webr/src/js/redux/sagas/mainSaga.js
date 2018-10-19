@@ -8,7 +8,7 @@ import type { mainType } from '../../common/types/main'
 export function* fetchMainData() {
   // pretend there is an api call
   const result: mainType = {
-    title: 'Myweb',
+    title: 'Stockstat',
     description: __CONFIG__.description,
     source: 'This message is coming from Redux',
   };
