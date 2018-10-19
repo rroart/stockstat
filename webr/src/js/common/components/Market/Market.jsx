@@ -7,9 +7,6 @@ import { DropdownButton, MenuItem, ButtonToolbar, Nav, Navbar, NavItem, FormCont
 import MarketBar from './MarketBar';
 
 class Market extends PureComponent {
-  state = {
-    markets: ServiceResult,
-  }
   constructor() {
     super();
   }
