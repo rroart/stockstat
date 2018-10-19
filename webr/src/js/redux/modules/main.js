@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 
 import type { mainType } from '../../common/types/main'
 import { Tabs, Tab } from 'react-bootstrap';
+import Immutable from 'immutable'
 
 const GET_MAIN = 'app/main/GET_MAIN';
 const GET_R3 = 'app/main/GET_R3';
@@ -16,6 +17,10 @@ const INCREMENT = 'app/main/INCREMENT';
 const INCREMENT_ASYNC = 'app/main/INCREMENT_ASYNC';
 const INCREMENT2 = 'app/main/INCREMENT2';
 const GET_COUNT = 'app/main/GET_COUNT';
+const SETMARKET = 'app/main/SETMARKET';
+const SETMARKETS = 'app/main/SETMARKETS';
+const SETSTARTDATE = 'app/main/SETSTARTDATE';
+const SETENDDATE = 'app/main/SETENDDATE';
 
 export const constants = {
   INCREMENT2,
@@ -30,6 +35,10 @@ export const constants = {
     NEWTAB_MAIN,
     NEWTAB_MAIN3,
     GET_COUNT,
+    SETMARKET,
+    SETMARKETS,
+    SETSTARTDATE,
+    SETENDDATE,
 };
 
 // ------------------------------------
@@ -48,6 +57,10 @@ export const increment = createAction(INCREMENT, ( num = 1) => ({ num }));
 export const increment2 = createAction(INCREMENT2, ( count ) => ({ count }));
 export const incrementasync = createAction(INCREMENT_ASYNC, () => ({  }));
 export const getCount = createAction(GET_COUNT, () => ({ }));
+export const setmarket = createAction(SETMARKET, (market) => ({ market } ) );
+export const setmarkets = createAction(SETMARKETS, (markets) => ( { markets } ) );
+export const setstartdate = createAction(SETSTARTDATE, (startdate) => ( { startdate } ) );
+export const setenddate = createAction(SETENDDATE, (enddate) => ( { enddate } ) );
 				      
 export const actions = {
   getAwesomeCode,
@@ -62,6 +75,10 @@ export const actions = {
     increment2,
     incrementasync,
     getCount,
+    setmarket,
+    setmarkets,
+    setstartdate,
+    setenddate,
 };
 
 export const reducers = {
@@ -82,9 +99,9 @@ export const reducers = {
       ...payload,
     }),
     [NEWTAB_MAIN]: (state, { payload }) =>
-    state.set({
-	tabs: gettabs4(state, payload)
-	})
+    state.set(
+	'tabs', gettabs6(state, payload)
+	)
 	//console.log('ppp')
 	//console.log(payload)
 	//const newArr = state.get('tabs').concat([payload])  
@@ -111,6 +128,22 @@ export const reducers = {
     state.merge({
       ...payload,
     }),
+    [SETMARKET]: (state, { payload }) =>
+	state.merge({
+	    ...payload
+	}),
+    [SETMARKETS]: (state, { payload }) =>
+	state.merge({
+	    ...payload
+	}),
+    [SETSTARTDATE]: (state, { payload }) =>
+	state.merge({
+	    ...payload
+	}),
+    [SETENDDATE]: (state, { payload }) =>
+	state.merge({
+	    ...payload
+	}),
 }
 
 function gettabs(state) {
@@ -127,6 +160,55 @@ function gettabs(state) {
 function gettabs4(state, payload) {
     console.log("state0");
     console.log(state);
+    var st2 = ([ ...state, payload]);
+    console.log(st2);
+    var st3 = {
+		...state,
+		markets: payload
+    };
+    console.log(st3);
+    var arr = (state.get('tabs'));
+    console.log(arr);
+    var arrayLength = arr.length;
+    var newpay = payload + arrayLength;
+    arr.push(newpay);
+    console.log("state1");
+    console.log(state);
+    console.log(arr);
+    return arr;
+}
+
+function gettabs5(state, payload) {
+    console.log("state0");
+    console.log(state);
+    var st2 = ([ ...state, payload]);
+    console.log(st2);
+    var st3 = {
+		...state,
+		markets: payload
+    };
+    console.log(st3);
+    var arr = (state.get('tabs'));
+    console.log(arr);
+    var arrayLength = arr.length;
+    var newpay = payload + arrayLength;
+    arr.push(newpay);
+    console.log("state1");
+    console.log(state);
+    console.log(arr);
+    return new Immutable.Map(state);
+}
+
+function gettabs6(state, payload) {
+    console.log("state0");
+    console.log(state);
+    var st2 = ([ ...state, payload]);
+    console.log(st2);
+    var st3 = {
+		...state,
+		markets: payload
+    };
+    console.log(st3);
     var arr = (state.get('tabs'));
     console.log(arr);
     var arrayLength = arr.length;
@@ -172,6 +254,10 @@ export const initialState = () =>
     result4: '',
       tabs: [],
       count: 0,
+      startdate: '',
+      enddate: '',
+      market: '',
+      markets: [],
   })
 
 export default handleActions(reducers, initialState());
