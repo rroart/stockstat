@@ -99,9 +99,13 @@ export const reducers = {
       ...payload,
     }),
     [NEWTAB_MAIN]: (state, { payload }) =>
-    state.set(
-	'tabs', gettabs6(state, payload)
-	)
+	//state.merge({tabs: state.get('tabs').push(payload)})
+	state.merge({tabs: [].concat(state.get('tabs'), [payload ])})
+	/*
+	state.set({
+	    'tabs': gettabs4(state, payload)
+	})
+*/
 	//console.log('ppp')
 	//console.log(payload)
 	//const newArr = state.get('tabs').concat([payload])  
