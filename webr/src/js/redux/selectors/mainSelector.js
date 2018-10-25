@@ -47,6 +47,11 @@ const resultMarkets = createSelector(
   payload => payload.get('markets')
 );
 
+const resultConfig = createSelector(
+  mainDataSelector,
+  payload => payload.get('config')
+);
+
 export const mainSelector = state => ({
     result2: resultSelector(state),
     result3: resultSelector3(state),
@@ -57,4 +62,5 @@ export const mainSelector = state => ({
     enddate: resultEndDate(state),
     market: resultMarket(state),
     markets: resultMarkets(state),
+    config: resultConfig(state),
 });

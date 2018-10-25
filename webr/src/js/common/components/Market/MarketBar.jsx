@@ -13,20 +13,16 @@ class MarketBar extends PureComponent {
     console.log("here");
     console.log(props);
     console.log(this.props);
-    var serviceparam = new ServiceParam();
-    serviceparam.market = '0';
-    Client.search("/getmarkets", serviceparam, (markets) => {
-    console.log("here");
-      console.log(markets);
-      console.log(this.props);
-      this.props.setmarkets(markets.markets);
-    });
       var value = new Date().toISOString();
       console.log(this.props);
       this.props.setenddate(value);
     console.log("here");
     //console.log(this.state.markets);
 }
+
+  componentDidMount() {
+    this.props.getMarkets();
+  }
 
 handleYearChange = (e) => {
   console.log(e);

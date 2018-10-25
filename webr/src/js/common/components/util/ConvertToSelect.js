@@ -1,10 +1,11 @@
 /* eslint-disable no-undef */
 
 function convert(array) {
-    console.log(array);
-  console.log(typeof array);
+    console.log("here");
+    //console.log(array);
+  //console.log(typeof array);
     var myArray = [];
-    console.log(array.length)
+    //console.log(array.length)
   for(var i in array) {
     var item = {
       label: array[i],
@@ -12,14 +13,15 @@ function convert(array) {
     }
     myArray.push(item);
   }
-  console.log(typeof myArray);
+  //console.log(typeof myArray);
   //console.log(myArray);
   return myArray;
 }
 
 function convert2(list) {
-    console.log(list);
-  console.log(typeof list);
+    console.log("here");
+    //console.log(list);
+  //console.log(typeof list);
     var myArray = [];
     //console.log(list.size)
     for(var i = 0; i < list.size; i++) {
@@ -30,7 +32,7 @@ function convert2(list) {
     }
     myArray.push(item);
   }
-  console.log(typeof myArray);
+  //console.log(typeof myArray);
   //console.log(myArray);
   return myArray;
 }

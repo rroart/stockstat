@@ -1,9 +1,12 @@
-import { put, fork, takeLatest, takeEvery } from 'redux-saga/effects';
+import { put, fork, takeLatest, takeEvery, call } from 'redux-saga/effects';
 import { delay } from 'redux-saga';
 import { constants as mainConstants, actions as mainActions } from '../modules/main';
 import { Tabs, Tab } from 'react-bootstrap';
 
 import type { mainType } from '../../common/types/main'
+
+import { Client, ConvertToSelect } from '../../common/components/util'
+import { ServiceParam, ServiceResult } from '../../common/types/main'
 
 export function* fetchMainData() {
   // pretend there is an api call
@@ -15,6 +18,38 @@ export function* fetchMainData() {
   //const result3 = 3;
   console.log("blblfirst");
   yield put(mainActions.updateMain(result));
+}
+
+export function* fetchConfig() {
+    var serviceparam = new ServiceParam();
+    serviceparam.market = '0';
+    console.log("hereconfig");
+    let config = yield call(Client.fetchApi.search, "/getconfig", serviceparam);
+    console.log("hereconfig2");
+    console.log(config);
+    const config2 = config;
+    console.log(config2);
+    yield put(mainActions.setconfig(config2.config));
+}
+
+export function* fetchMarkets() {
+    var serviceparam = new ServiceParam();
+    serviceparam.market = '0';
+    console.log("heremarkets");
+    let markets = yield call(Client.fetchApi.search, "/getmarkets", serviceparam);
+    console.log("heremarkets2");
+    //const markets = Client.searchsynch("/getmarkets", serviceparam, () => {});
+    console.log(markets);
+	yield put(mainActions.setmarkets(markets.markets));
+    /*
+    Client.search("/getmarkets", serviceparam, (markets) => {
+    console.log("here");
+      console.log(markets);
+      console.log(this.props);
+      //this.props.setmarkets(markets.markets);
+	yield put(mainActions.setmarkets(markets.markets));
+    });
+    */
 }
 
 export function* fetchR3() {
@@ -68,6 +103,16 @@ function* watchGetMain() {
   yield takeLatest(mainConstants.GET_MAIN, fetchMainData);
 }
 
+function* watchGetMarkets() {
+    console.log("watchgetmarkets");
+  yield takeLatest(mainConstants.GETMARKETS, fetchMarkets);
+}
+
+function* watchGetConfig() {
+    console.log("watchgetconfig");
+  yield takeLatest(mainConstants.GETCONFIG, fetchConfig);
+}
+
 function* watchGetR3() {
   yield takeLatest(mainConstants.GET_R3, fetchR3);
 }
@@ -87,5 +132,7 @@ export const mainSaga = [
   fork(watchGetR3),
   fork(watchGetR4),
   fork(watchIncrementAsync),
-  fork(watchCount),
+    fork(watchCount),
+    fork(watchGetMarkets),
+    fork(watchGetConfig),
 ];

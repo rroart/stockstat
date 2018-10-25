@@ -19,8 +19,12 @@ const INCREMENT2 = 'app/main/INCREMENT2';
 const GET_COUNT = 'app/main/GET_COUNT';
 const SETMARKET = 'app/main/SETMARKET';
 const SETMARKETS = 'app/main/SETMARKETS';
+const GETMARKETS = 'app/main/GETMARKETS';
 const SETSTARTDATE = 'app/main/SETSTARTDATE';
 const SETENDDATE = 'app/main/SETENDDATE';
+const SETCONFIG = 'app/main/SETCONFIG';
+const SETCONFIGVALUE = 'app/main/SETCONFIGVALUE';
+const GETCONFIG = 'app/main/GETCONFIG';
 
 export const constants = {
   INCREMENT2,
@@ -37,8 +41,12 @@ export const constants = {
     GET_COUNT,
     SETMARKET,
     SETMARKETS,
+    GETMARKETS,
     SETSTARTDATE,
     SETENDDATE,
+    SETCONFIG,
+    SETCONFIGVALUE,
+    GETCONFIG,
 };
 
 // ------------------------------------
@@ -58,9 +66,13 @@ export const increment2 = createAction(INCREMENT2, ( count ) => ({ count }));
 export const incrementasync = createAction(INCREMENT_ASYNC, () => ({  }));
 export const getCount = createAction(GET_COUNT, () => ({ }));
 export const setmarket = createAction(SETMARKET, (market) => ({ market } ) );
+export const getMarkets = createAction(GETMARKETS, () => ( {} ) );
 export const setmarkets = createAction(SETMARKETS, (markets) => ( { markets } ) );
 export const setstartdate = createAction(SETSTARTDATE, (startdate) => ( { startdate } ) );
 export const setenddate = createAction(SETENDDATE, (enddate) => ( { enddate } ) );
+export const setconfig = createAction(SETCONFIG, (config) => ( { config } ) );
+export const setconfigvalue = createAction(SETCONFIGVALUE, ( array ) => ( array ) );
+export const getConfig = createAction(GETCONFIG, () => ( {} ) );
 				      
 export const actions = {
   getAwesomeCode,
@@ -79,6 +91,10 @@ export const actions = {
     setmarkets,
     setstartdate,
     setenddate,
+    setconfig,
+    setconfigvalue,
+    getConfig,
+    getMarkets,
 };
 
 export const reducers = {
@@ -148,6 +164,14 @@ export const reducers = {
 	state.merge({
 	    ...payload
 	}),
+    [SETCONFIG]: (state, { payload }) =>
+	state.merge({
+	    ...payload
+	}),
+    [SETCONFIGVALUE]: (state, { payload }) =>
+	state.merge({
+	    config: getConfigAfterSet(state, payload)
+    }),
 }
 
 function gettabs(state) {
@@ -251,6 +275,30 @@ function gettabs3(state) {
     //return arr;
 }
 
+function getConfigAfterSet(state, payload) {
+    //state.get('config').set(payload)
+    var config = state.get('config');
+    //console.log(config);
+    //console.log(payload);
+    //var valueMap = config.get('configValueMap');
+    //console.log(valueMap);
+    //var valueMap2 = valueMap; //.set(payload);
+    //var k = Object.keys(payload)[0];
+    //var v = Object.values(payload)[0];
+    //valueMap2 = valueMap2.set(k, v);
+    //valueMap2 = valueMap2.set({k: v});
+    //console.log(k);
+    //console.log(v);
+    //console.log(valueMap2.get(payload));
+    //console.log(valueMap2.get(k));
+    //console.log(valueMap2.get("predictors[@enable]"));
+    //console.log(valueMap2.get("predictors.lstm.horizon"));
+    //console.log(valueMap);
+    //console.log(valueMap2);
+    const valueMap = config.get('configValueMap');
+    return config.set('configValueMap', valueMap.set(payload[0], payload[1]));
+}
+
 export const initialState = () =>
   Map({
     result2: '',
@@ -262,6 +310,7 @@ export const initialState = () =>
       enddate: '',
       market: '',
       markets: [],
+      config: '',
   })
 
 export default handleActions(reducers, initialState());
