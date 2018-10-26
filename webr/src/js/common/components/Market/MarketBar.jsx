@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 
 import { Client, ConvertToSelect } from '../util'
 import Select from 'react-select';
-import { DropdownButton, MenuItem, ButtonToolbar, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
+import { DropdownButton, MenuItem, ButtonToolbar, Button, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
 import { ServiceParam, ServiceResult } from '../../types/main'
 import DatePicker from 'react-16-bootstrap-date-picker';
 
@@ -39,6 +39,30 @@ handleYearChange = (e) => {
     props.setmarket(event.value);
   }
   
+    handleStartDateChange(event, props) {
+    console.log(event);
+    console.log(props);
+    props.setstartdate(event);
+  }
+  
+    handleEndDateChange(event, props) {
+    console.log(event);
+    console.log(props);
+    props.setenddate(event);
+  }
+  
+    resetStartDate(event, props) {
+    console.log(event);
+    console.log(props);
+    props.setstartdate(null);
+  }
+  
+    resetEndDate(event, props) {
+    console.log(event);
+    console.log(props);
+    props.setenddate(null);
+  }
+  
   render() {
     const { main } = this.props;
     console.log(main);
@@ -46,6 +70,8 @@ handleYearChange = (e) => {
     const startdate = main && main.startdate ? main.startdate : null;
     const enddate = main && main.enddate ? main.enddate : null;
   console.log(markets);
+  console.log(startdate);
+  console.log(enddate);
   var markets2 = ConvertToSelect.convert2(markets);
   console.log(markets2);
     return (
@@ -66,13 +92,33 @@ handleYearChange = (e) => {
     </NavItem>
           <NavItem eventKey={2} href="#">
             Start date
-	    <DatePicker id="startdatepicker" value={startdate} onChange={this.handleStartDateChange}/>
+	    <DatePicker id="startdatepicker" value={startdate} onChange={e => this.handleStartDateChange(e, this.props)}/>
 	    </NavItem>
           <NavItem eventKey={3} href="#">
             End date
-	    <DatePicker id="enddatepicker" value={enddate} onChange={this.handleEndDateChange}/>
+	    <DatePicker id="enddatepicker" value={enddate} onChange={e => this.handleEndDateChange(e, this.props)}/>
 	    </NavItem>
-            </Nav>
+          <NavItem eventKey={4} href="#">
+        <Button
+       bsStyle="primary"
+       onClick={
+         () => { e => this.resetStartDate(e, this.props) }
+       }
+     >
+     Reset start date
+     </Button>
+     </NavItem>
+          <NavItem eventKey={5} href="#">
+        <Button
+       bsStyle="primary"
+       onClick={
+         () => { e => this.resetEndDate(e, this.props) }
+       }
+     >
+     Reset end date
+     </Button>
+     </NavItem>
+     </Nav>
           </Navbar>
       </div>
     );
