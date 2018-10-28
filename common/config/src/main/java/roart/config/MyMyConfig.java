@@ -1,6 +1,7 @@
 package roart.config;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 public class MyMyConfig extends MyConfig {
@@ -11,8 +12,21 @@ public class MyMyConfig extends MyConfig {
         setDeflt(config.getDeflt());
         setText(config.getText());
         setType(config.getType());
+        fixIntegerDouble();
         this.mydate = config.mydate;
         this.mymarket = config.mymarket;
+    }
+
+    private void fixIntegerDouble() {
+        for(Entry<String, Object> entry : getConfigValueMap().entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            Class classType = getType().get(key);
+                    
+            if (value.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
+                getConfigValueMap().put(key, Double.valueOf(((Integer)value).intValue()));
+            }
+        }
     }
 
     public MyMyConfig copy() {
