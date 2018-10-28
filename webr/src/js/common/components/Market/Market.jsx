@@ -5,6 +5,7 @@ import { Client, ConvertToSelect } from '../util'
 import Select from 'react-select';
 import { DropdownButton, MenuItem, ButtonToolbar, Nav, Navbar, NavItem, FormControl } from 'react-bootstrap';
 import MarketBar from './MarketBar';
+import EvolveBar from './EvolveBar';
 
 class Market extends PureComponent {
   constructor() {
@@ -15,6 +16,7 @@ class Market extends PureComponent {
     return (
       <div>
     <MarketBar {...this.props}/>
+    <EvolveBar {...this.props}/>
       </div>
     );
   }

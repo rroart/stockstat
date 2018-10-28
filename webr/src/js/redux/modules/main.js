@@ -24,7 +24,12 @@ const SETSTARTDATE = 'app/main/SETSTARTDATE';
 const SETENDDATE = 'app/main/SETENDDATE';
 const SETCONFIG = 'app/main/SETCONFIG';
 const SETCONFIGVALUE = 'app/main/SETCONFIGVALUE';
+const SETCONFIGVALUEMAP = 'app/main/SETCONFIGVALUEMAP';
 const GETCONFIG = 'app/main/GETCONFIG';
+const GETCONTENT = 'app/main/GETCONTENT';
+const GETEVOLVERECOMMENDER = 'app/main/GETEVOLVERECOMMENDER';
+const GETEVOLVENN = 'app/main/GETEVOLVENN';
+const GETEVOLVE = 'app/main/GETEVOLVE';
 
 export const constants = {
   INCREMENT2,
@@ -46,7 +51,12 @@ export const constants = {
     SETENDDATE,
     SETCONFIG,
     SETCONFIGVALUE,
+    SETCONFIGVALUEMAP,
     GETCONFIG,
+    GETCONTENT,
+    GETEVOLVERECOMMENDER,
+    GETEVOLVENN,
+    GETEVOLVE,
 };
 
 // ------------------------------------
@@ -72,7 +82,12 @@ export const setstartdate = createAction(SETSTARTDATE, (startdate) => ( { startd
 export const setenddate = createAction(SETENDDATE, (enddate) => ( { enddate } ) );
 export const setconfig = createAction(SETCONFIG, (config) => ( { config } ) );
 export const setconfigvalue = createAction(SETCONFIGVALUE, ( array ) => ( array ) );
+export const setconfigvaluemap = createAction(SETCONFIGVALUEMAP, ( array ) => ( array ) );
 export const getConfig = createAction(GETCONFIG, () => ( {} ) );
+export const getcontent = createAction(GETCONTENT, (config) => ( { config } ) );
+export const getevolverecommender = createAction(GETEVOLVERECOMMENDER, () => ( {} ) );
+export const getevolvenn = createAction(GETEVOLVENN, () => ( {} ) );
+export const getevolve = createAction(GETEVOLVE, (array) => ( { array } ) );
 				      
 export const actions = {
   getAwesomeCode,
@@ -93,8 +108,13 @@ export const actions = {
     setenddate,
     setconfig,
     setconfigvalue,
+    setconfigvaluemap,
     getConfig,
     getMarkets,
+    getcontent,
+    getevolverecommender,
+    getevolvenn,
+    getevolve,
 };
 
 export const reducers = {
@@ -116,12 +136,11 @@ export const reducers = {
     }),
     [NEWTAB_MAIN]: (state, { payload }) =>
 	//state.merge({tabs: state.get('tabs').push(payload)})
-	state.merge({tabs: [].concat(state.get('tabs'), [payload ])})
-	/*
+	//state.merge({tabs: [].concat(state.get('tabs'), [ payload ])})
 	state.set({
 	    'tabs': gettabs4(state, payload)
 	})
-*/
+	
 	//console.log('ppp')
 	//console.log(payload)
 	//const newArr = state.get('tabs').concat([payload])  
@@ -172,6 +191,10 @@ export const reducers = {
 	state.merge({
 	    config: getConfigAfterSet(state, payload)
     }),
+    [SETCONFIGVALUEMAP]: (state, { payload }) =>
+	state.merge({
+	    config: getConfigValueMapAfterSet(state, payload)
+    }),
 }
 
 function gettabs(state) {
@@ -186,6 +209,20 @@ function gettabs(state) {
 }
 
 function gettabs4(state, payload) {
+    console.log("state0");
+    console.log(state);
+    var arr = (state.get('tabs'));
+    console.log(arr);
+    var arrayLength = arr.length;
+    var newpay = payload + arrayLength;
+    arr.push(payload);
+    console.log("state1");
+    console.log(state);
+    console.log(arr);
+    return arr;
+}
+
+function gettabs4not(state, payload) {
     console.log("state0");
     console.log(state);
     var st2 = ([ ...state, payload]);
@@ -276,6 +313,29 @@ function gettabs3(state) {
 }
 
 function getConfigAfterSet(state, payload) {
+    //state.get('config').set(payload)
+    var config = state.get('config');
+    //console.log(config);
+    //console.log(payload);
+    //var valueMap = config.get('configValueMap');
+    //console.log(valueMap);
+    //var valueMap2 = valueMap; //.set(payload);
+    //var k = Object.keys(payload)[0];
+    //var v = Object.values(payload)[0];
+    //valueMap2 = valueMap2.set(k, v);
+    //valueMap2 = valueMap2.set({k: v});
+    //console.log(k);
+    //console.log(v);
+    //console.log(valueMap2.get(payload));
+    //console.log(valueMap2.get(k));
+    //console.log(valueMap2.get("predictors[@enable]"));
+    //console.log(valueMap2.get("predictors.lstm.horizon"));
+    //console.log(valueMap);
+    //console.log(valueMap2);
+    return config.set(payload[0], payload[1]);
+}
+
+function getConfigValueMapAfterSet(state, payload) {
     //state.get('config').set(payload)
     var config = state.get('config');
     //console.log(config);

@@ -21,3 +21,13 @@ export type ServiceResult = {
     maps: object,
     error: string,
 }
+
+export type MyConfig = {
+    configTreeMap: object,
+    configValueMap: Map,
+    text: Map,
+    deflt: Map,
+    type: Map,
+    date: object,
+    market: string,
+}

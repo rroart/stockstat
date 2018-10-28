@@ -37,6 +37,8 @@ handleYearChange = (e) => {
     console.log(props);
     //this.props.setmarket({market: event.value});
     props.setmarket(event.value);
+    //props.setconfigvalue([ 'market', event.value ]);
+    props.setconfigvalue([ 'market', event.value ]);
   }
   
     handleStartDateChange(event, props) {
@@ -63,12 +65,22 @@ handleYearChange = (e) => {
     props.setenddate(null);
   }
   
+    getMarketData(event, props) {
+    console.log(event);
+    console.log(props);
+    console.log(props.main.market);
+    props.getcontent(props.main.config, props.main.market);
+  }
+  
   render() {
     const { main } = this.props;
     console.log(main);
     const markets = main && main.markets ? main.markets : null;
     const startdate = main && main.startdate ? main.startdate : null;
     const enddate = main && main.enddate ? main.enddate : null;
+    console.log(main.market);
+    console.log(main.config);
+    //console.log(main.config.get('market'));
   console.log(markets);
   console.log(startdate);
   console.log(enddate);
@@ -101,9 +113,7 @@ handleYearChange = (e) => {
           <NavItem eventKey={4} href="#">
         <Button
        bsStyle="primary"
-       onClick={
-         () => { e => this.resetStartDate(e, this.props) }
-       }
+       onClick={ (e) => this.resetStartDate(e, this.props) }
      >
      Reset start date
      </Button>
@@ -111,11 +121,19 @@ handleYearChange = (e) => {
           <NavItem eventKey={5} href="#">
         <Button
        bsStyle="primary"
-       onClick={
-         () => { e => this.resetEndDate(e, this.props) }
-       }
+       onClick={ (e) => this.resetEndDate(e, this.props) }
      >
      Reset end date
+     </Button>
+     </NavItem>
+          <NavItem eventKey={6} href="#">
+        <Button
+       bsStyle="primary"
+       onClick={
+         (e) => this.getMarketData(e, this.props)
+       }
+     >
+     Get market data
      </Button>
      </NavItem>
      </Nav>

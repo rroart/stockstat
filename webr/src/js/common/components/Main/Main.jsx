@@ -11,6 +11,7 @@ import { Configuration } from '../Configuration'
 import { Test } from '../test'
 //import Misc from '../util'
 //import Client from '../util/Client'
+import { MyTable } from '../Table'
 
 const tablist = [];
 
@@ -41,10 +42,10 @@ class Main extends React.Component {
   onIncrement() { this.props.increment() }
   onIncrement2() { this.props.increment2() }
 
-  getanewtab(title) {
+  getanewtab(data, num) {
   return(
-          <Tab title={title}>
-            <h2>Any content 3</h2>
+          <Tab key={num} eventKey={num} title="Result">
+	    { data }
           </Tab>
 	  )
 }
@@ -70,7 +71,9 @@ var newtab = new Tab(map);
     	  //alert(myStringArray[i]);
     //Do something
 }
-
+var nums = [ [ 1 , 2], [3 , 4], [5, 6]];
+    const res =  MyTable.convert2(nums);
+    console.log(res);
     if (result && result.size && result.size > 0) {
       return (
         <Fragment>
@@ -88,8 +91,7 @@ var newtab = new Tab(map);
           <Tab eventKey={3} title="Control Panel">
             <h2>Control Panel</h2>
           </Tab>
-	  <Tab title="t"/>
-	  { mytabs.map(item => this.getanewtab(item)) }
+	  { mytabs.map((item, index) => this.getanewtab(item, index)) }
         </Tabs>
         <Button
        bsStyle="primary"
@@ -129,6 +131,8 @@ var newtab = new Tab(map);
           <pre>
             {JSON.stringify(result.toJS(), undefined, 2)}
           </pre>
+	  { res }
+	  <h4>Affero GPL</h4>
 </div>
         </Fragment>
       );

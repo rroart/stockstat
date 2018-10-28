@@ -3,10 +3,11 @@ import { delay } from 'redux-saga';
 import { constants as mainConstants, actions as mainActions } from '../modules/main';
 import { Tabs, Tab } from 'react-bootstrap';
 
-import type { mainType } from '../../common/types/main'
+import type { mainType, MyConfig } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
 import { ServiceParam, ServiceResult } from '../../common/types/main'
+import { MyTable } from '../../common/components/Table'
 
 export function* fetchMainData() {
   // pretend there is an api call
@@ -22,7 +23,7 @@ export function* fetchMainData() {
 
 export function* fetchConfig() {
     var serviceparam = new ServiceParam();
-    serviceparam.market = '0';
+    //serviceparam.market = '0';
     console.log("hereconfig");
     let config = yield call(Client.fetchApi.search, "/getconfig", serviceparam);
     console.log("hereconfig2");
@@ -32,9 +33,99 @@ export function* fetchConfig() {
     yield put(mainActions.setconfig(config2.config));
 }
 
+function getMyConfig(config, market, date) {
+    const myconfig = new MyConfig();
+    myconfig.configTreeMap = config.get('configTreeMap');
+    myconfig.configValueMap = config.get('configValueMap');
+    myconfig.text = config.get('text');
+    myconfig.deflt = config.get('deflt');
+    myconfig.type = config.get('type');
+    myconfig.date = date;
+    myconfig.market = market;
+    return myconfig;
+}
+
+export function* fetchContent(action) {
+    var serviceparam = new ServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search, "/getcontent", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    const config2 = result;
+    console.log(config2);
+    const list = result.list;
+    const tab = MyTable.getTab(result.list);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchEvolveRecommender() {
+    var serviceparam = new ServiceParam();
+    //serviceparam.market = '0';
+    console.log("here");
+    let config = yield call(Client.fetchApi.search, "/getevolverecommender", serviceparam);
+    console.log("hereconfig2");
+    console.log(config);
+    const config2 = config;
+    console.log(config2);
+    yield put(mainActions.setconfig(config2.config));
+}
+
+export function* fetchEvolveNN() {
+    var serviceparam = new ServiceParam();
+    //serviceparam.market = '0';
+    console.log("hereconfig");
+    let config = yield call(Client.fetchApi.search, "/getevolvenn", serviceparam);
+    console.log("hereconfig2");
+    console.log(config);
+    const config2 = config;
+    console.log(config2);
+    yield put(mainActions.setconfig(config2.config));
+}
+
+export function* fetchEvolve(action) {
+    console.log(action);
+    const array = action.payload.array;
+    const webpath = array[0];
+    const set = array[1];
+    const config = array[2];
+    const id = array[3];
+    const serviceparam = new ServiceParam();
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    console.log(date);
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
+    if (id != null) {
+	const ids = new Set([id]);
+	serviceparam.ids = ids;
+    }
+    //serviceparam.market = '0';
+    console.log("hereevolve");
+    console.log(webpath);
+    let result = yield call(Client.fetchApi.search, "/" + webpath, serviceparam);
+    console.log("hereevolve2");
+    console.log(result);
+    if (set) {
+	const update = result.get("maps").get("update");
+	for (const [key, value] of Object.entries(update)) {
+	    mainActions.setconfigvaluemap([ key, value ]);
+	}
+    }
+    const list = result.list;
+    const tab = MyTable.getTab(result.list);
+    yield put(mainActions.newtabMain(tab));
+}
+
 export function* fetchMarkets() {
     var serviceparam = new ServiceParam();
-    serviceparam.market = '0';
+    //serviceparam.market = '0';
     console.log("heremarkets");
     let markets = yield call(Client.fetchApi.search, "/getmarkets", serviceparam);
     console.log("heremarkets2");
@@ -113,6 +204,29 @@ function* watchGetConfig() {
   yield takeLatest(mainConstants.GETCONFIG, fetchConfig);
 }
 
+function* watchGetContent() {
+    console.log("watchgetcontent");
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
+    yield takeEvery(mainConstants.GETCONTENT, fetchContent);
+}
+
+function* watchGetEvolveRecommender() {
+    console.log("watchgetrecommender");
+  yield takeEvery(mainConstants.GETEVOLVERECOMMENDER, fetchEvolveRecommender);
+}
+
+function* watchGetEvolveNN() {
+    console.log("watchgetevolvenn");
+  yield takeEvery(mainConstants.GETEVOLVENN, fetchEvolveNN);
+}
+
+function* watchGetEvolve() {
+    console.log("watchgetevolve");
+  yield takeEvery(mainConstants.GETEVOLVE, fetchEvolve);
+}
+
 function* watchGetR3() {
   yield takeLatest(mainConstants.GET_R3, fetchR3);
 }
@@ -135,4 +249,8 @@ export const mainSaga = [
     fork(watchCount),
     fork(watchGetMarkets),
     fork(watchGetConfig),
+    fork(watchGetContent),
+    fork(watchGetEvolveRecommender),
+    fork(watchGetEvolveNN),
+    fork(watchGetEvolve),
 ];
