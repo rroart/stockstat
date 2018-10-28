@@ -25,7 +25,7 @@ class TreeView extends PureComponent {
     console.log(event.target.checked);
     console.log(props);
     //this.props.setmarket({market: event.value});
-    props.setconfigvalue([ key, event.target.checked ]);
+    props.setconfigvaluemap([ key, event.target.checked ]);
   }
   
     handleChange(event, key, props) {
@@ -34,8 +34,8 @@ class TreeView extends PureComponent {
     console.log(event.value);
     console.log(props);
     //this.props.setmarket({market: event.value});
-    props.setconfigvalue([ key, event.target.value ]);
-    //props.setconfigvalue({ key: event.target.value });
+    props.setconfigvaluemap([ key, event.target.value ]);
+    //props.setconfigvaluemap({ key: event.target.value });
   }
   
   getview(value, key) {
