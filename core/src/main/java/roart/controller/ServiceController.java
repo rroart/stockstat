@@ -279,6 +279,7 @@ public class ServiceController {
             }
         };
     }
+
     @Bean
     public WebMvcConfigurer corsConfigurer3() {
         return new WebMvcConfigurerAdapter() {
@@ -290,4 +291,52 @@ public class ServiceController {
         };
     }
 
+    @Bean
+    public WebMvcConfigurer corsConfigurer4() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/" + EurekaConstants.GETCONTENT).allowedOrigins("http://localhost:19000");
+                registry.addMapping("/" + EurekaConstants.GETCONTENT).allowedOrigins("http://localhost:3082");
+            }
+        };
+    }
+    
+    @Bean
+    public WebMvcConfigurer corsConfigurer5() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/" + EurekaConstants.GETEVOLVERECOMMENDER).allowedOrigins("http://localhost:19000");
+                registry.addMapping("/" + EurekaConstants.GETEVOLVERECOMMENDER).allowedOrigins("http://localhost:3082");
+            }
+        };
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer6() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/" + EurekaConstants.GETEVOLVENN).allowedOrigins("http://localhost:19000");
+                registry.addMapping("/" + EurekaConstants.GETEVOLVENN).allowedOrigins("http://localhost:3082");
+            }
+        };
+    }
+
+    //Enable Global CORS support for the application
+    @Bean
+    public WebMvcConfigurer corsConfigurer0() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3082", "http://localhost:19000")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
+                        .allowedHeaders("header1", "header2") //What is this for?
+                        .allowCredentials(true);
+            }
+        };
+    }
+    
 }
