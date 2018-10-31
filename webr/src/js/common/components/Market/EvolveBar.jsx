@@ -105,7 +105,7 @@ class EvolveBar extends PureComponent {
 	    <Button bsStyle="primary" onClick={ (e) => this.evolveMLMACD(e, this.props) } >Evolve MLMACD</Button>
           </NavItem>
           <NavItem eventKey={3} href="#">
-            <Button bsStyle="primary" OnClick={ (e) => this.evolveAndSetMLMACD(e, this.props) } >Evolve MLMACD and set</Button>
+            <Button bsStyle="primary" onClick={ (e) => this.evolveAndSetMLMACD(e, this.props) } >Evolve MLMACD and set</Button>
           </NavItem>
         </Nav>
        </Navbar>
@@ -123,7 +123,7 @@ class EvolveBar extends PureComponent {
 	    <Button bsStyle="primary" onClick={ (e) => this.evolveMlindicator(e, this.props) } >Evolve mlindicator</Button>
           </NavItem>
           <NavItem eventKey={3} href="#">
-            <Button bsStyle="primary" OnClick={ (e) => this.evolveAndSetMlindicator(e, this.props) } >Evolve mlindicator and set</Button>
+            <Button bsStyle="primary" onClick={ (e) => this.evolveAndSetMlindicator(e, this.props) } >Evolve mlindicator and set</Button>
           </NavItem>
         </Nav>
        </Navbar>
