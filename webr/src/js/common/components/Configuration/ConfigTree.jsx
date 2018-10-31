@@ -24,13 +24,14 @@ class ConfigTree extends PureComponent {
   console.log(key);
   }
 
-  getview(value, key) {
+  getview(value, key, date) {
   //console.log(this.props);
   //console.log(value);
   //console.log(key);
+  const mykey = date + key;
   return(
-  <li>
-  <TreeView {...this.props} map={value}/>	
+  <li key={mykey}>
+  <TreeView {...this.props} map={value}/>
   </li>
   )
   }
@@ -57,7 +58,8 @@ class ConfigTree extends PureComponent {
     const confMap = configTreeMap.has('configTreeMap') ? configTreeMap.get('configTreeMap') : [];
     //console.log(confMap);
     //console.log(confMap.values());
-    const map2 = confMap.map((i, j) => this.getview(i, j));
+    const now = Date.now();
+    const map2 = confMap.map((i, j) => this.getview(i, j, now));
     const map3 = Array.from(map2.values());
     //console.log(map3);
     //confMap.forEach(this.bla2);

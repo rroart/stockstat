@@ -61,7 +61,7 @@ export function* fetchContent(action) {
     const config2 = result;
     console.log(config2);
     const list = result.list;
-    const tab = MyTable.getTab(result.list);
+    const tab = MyTable.getTab(result.list, Date.now());
     yield put(mainActions.newtabMain(tab));
 }
 

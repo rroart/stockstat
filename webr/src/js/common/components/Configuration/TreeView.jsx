@@ -38,13 +38,14 @@ class TreeView extends PureComponent {
     //props.setconfigvaluemap({ key: event.target.value });
   }
   
-  getview(value, key) {
+  getview(value, key, date) {
   //console.log(this.props);
   //console.log(value);
   //console.log(key);
+  const mykey = date + key;
   return(
-  <li>
-  <TreeView {...this.props} map={value}/>	
+  <li key={mykey}>
+  <TreeView {...this.props} map={value}/>
   </li>
   )
   }
@@ -72,7 +73,8 @@ class TreeView extends PureComponent {
   const myinput = this.getinput(type, name, value);
   //console.log(myinput);
     const confMap = map.get('configTreeMap');
-    const map2 = confMap.map((i, j) => this.getview(i, j));
+    const now = Date.now();
+    const map2 = confMap.map((i, j) => this.getview(i, j, now));
     const map3 = Array.from(map2.values());
     if (name == "predictors[@enable]") {
     console.log(valueMap.get("predictors[@enable]"));

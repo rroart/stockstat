@@ -5,7 +5,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 
-function convert(resultitemtable) {
+function convert(resultitemtable, date) {
     console.log("here");
     const array = resultitemtable.rows;
     console.log(array);
@@ -33,7 +33,7 @@ function convert(resultitemtable) {
     console.log(result);
     console.log(columns);
     return (
-    <ReactTable data={ result } columns={ columns } />
+    <ReactTable key={date} data={ result } columns={ columns } />
   );
 }
 
@@ -127,14 +127,14 @@ function convert2bs(array) {
   );
 }
 
-function getTable(resultitemtable) {
-  return convert(resultitemtable);
+function getTable(resultitemtable, date) {
+  return convert(resultitemtable, date);
 }
-function getTab(list) {
+function getTab(list, date) {
     const tables = [];
     for(var i = 0; i < list.length; i++) {
 	const resultitemtable = list[i];
-	const table = getTable(resultitemtable);
+	const table = getTable(resultitemtable, date + i);
 	tables.push(table)
     }
     return(
