@@ -71,7 +71,7 @@ var newtab = new Tab(map);
     	  //alert(myStringArray[i]);
     //Do something
 }
-var nums = [ [ 1 , 2], [3 , 4], [5, 6]];
+var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
     const res =  MyTable.convert2(nums);
     console.log(res);
     if (result && result.size && result.size > 0) {
@@ -131,7 +131,6 @@ var nums = [ [ 1 , 2], [3 , 4], [5, 6]];
           <pre>
             {JSON.stringify(result.toJS(), undefined, 2)}
           </pre>
-	  { res }
 	  <h4>Affero GPL</h4>
 </div>
         </Fragment>
