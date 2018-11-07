@@ -56,9 +56,11 @@ class EvolveBar extends PureComponent {
     props.getevolve(['getevolvenn', true, props.main.config, 'mlindicator']);
   }
 
+/*
   componentDidMount() {
     this.props.getMarkets();
   }
+  */
 
   render() {
     const { main } = this.props;

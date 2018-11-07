@@ -20,9 +20,11 @@ class MarketBar extends PureComponent {
     //console.log(this.state.markets);
 }
 
+/*
   componentDidMount() {
     this.props.getMarkets();
   }
+  */
 
 handleYearChange = (e) => {
   console.log(e);

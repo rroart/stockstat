@@ -11,9 +11,11 @@ class ConfigTree extends PureComponent {
     super(props);
   }
 
+/*
   componentDidMount() {
     this.props.getConfig();
   }
+  */
 
   bla(i) {
   console.log(i);
