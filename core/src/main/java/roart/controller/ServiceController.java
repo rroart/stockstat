@@ -265,6 +265,7 @@ public class ServiceController {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/" + EurekaConstants.GETMARKETS).allowedOrigins("http://localhost:19000");
                 registry.addMapping("/" + EurekaConstants.GETMARKETS).allowedOrigins("http://localhost:3082");
+                registry.addMapping("/" + EurekaConstants.GETMARKETS).allowedOrigins("http://localhost:4242");
             }
         };
     }
@@ -276,6 +277,7 @@ public class ServiceController {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/" + EurekaConstants.GETCONFIG).allowedOrigins("http://localhost:19000");
                 registry.addMapping("/" + EurekaConstants.GETCONFIG).allowedOrigins("http://localhost:3082");
+                registry.addMapping("/" + EurekaConstants.GETCONFIG).allowedOrigins("http://localhost:4242");
             }
         };
     }
@@ -287,6 +289,7 @@ public class ServiceController {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/" + EurekaConstants.SETCONFIG).allowedOrigins("http://localhost:19000");
                 registry.addMapping("/" + EurekaConstants.SETCONFIG).allowedOrigins("http://localhost:3082");
+                registry.addMapping("/" + EurekaConstants.SETCONFIG).allowedOrigins("http://localhost:4242");
             }
         };
     }
@@ -298,6 +301,7 @@ public class ServiceController {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/" + EurekaConstants.GETCONTENT).allowedOrigins("http://localhost:19000");
                 registry.addMapping("/" + EurekaConstants.GETCONTENT).allowedOrigins("http://localhost:3082");
+                registry.addMapping("/" + EurekaConstants.GETCONTENT).allowedOrigins("http://localhost:4242");
             }
         };
     }
@@ -309,6 +313,7 @@ public class ServiceController {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/" + EurekaConstants.GETEVOLVERECOMMENDER).allowedOrigins("http://localhost:19000");
                 registry.addMapping("/" + EurekaConstants.GETEVOLVERECOMMENDER).allowedOrigins("http://localhost:3082");
+                registry.addMapping("/" + EurekaConstants.GETEVOLVERECOMMENDER).allowedOrigins("http://localhost:4242");
             }
         };
     }
@@ -320,6 +325,7 @@ public class ServiceController {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/" + EurekaConstants.GETEVOLVENN).allowedOrigins("http://localhost:19000");
                 registry.addMapping("/" + EurekaConstants.GETEVOLVENN).allowedOrigins("http://localhost:3082");
+                registry.addMapping("/" + EurekaConstants.GETEVOLVENN).allowedOrigins("http://localhost:4242");
             }
         };
     }
@@ -331,7 +337,7 @@ public class ServiceController {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3082", "http://localhost:19000")
+                        .allowedOrigins("http://localhost:3082", "http://localhost:4242", "http://localhost:19000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
                         .allowedHeaders("header1", "header2") //What is this for?
                         .allowCredentials(true);
