@@ -5,10 +5,18 @@ D: Done
 W: Work
 C: Change
 
+B: findprofit not for rec 1?
+C: include defaults in map, for constructing gui tree
+B: 0.0 as ose value, filter
+B: conf. factor still null in comp.rec., and further down
+B: nasdaq verify loop
+B: ose get nan on run single new date
+T: lib.py headskip update
+F: icli result with config data
 B: improvement lack srv. setdate
 B: look at findprofit, getimprovement two layers of new ControlService
 WF: change date system to from to
-T: unify verify and singlemark
+WT: unify verify and singlemark
 WB: new ControlService w/o date transfer
 B: Using offset for manual use
 WF: for loop for recommend
@@ -17,7 +25,7 @@ T/F: vaadin 10, or go for angular/reactredux?
 F: no env SPARK_DRIVER_HOST, use config file?
 T: MLindicator Map<String, Double[][]> list0 = (Map<String, Double[][]>) localResultMap.get next usage
 T: mlmacd mlindicator anythinghere better heuristics?
-B: getExtraData Date date = dateList.get(size - j); negative
+B: getExtraData Date date = dateList.get(size - j); negative, tabledays > datelist
 T: EurekaUtil deprecation
 T: EurekaUtil wait loop
 WF: compare 2+ stocks, base 100
