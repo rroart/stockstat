@@ -47,6 +47,7 @@
     </xsl:template>
 
     <xsl:template match="td">
+      <xsl:if test="not(string(number(../td[2]/text())) = 'NaN')">
       <row>
 	<id>
 	  <xsl:copy-of select="a/text()"/>
@@ -62,6 +63,7 @@
 	  <xsl:copy-of select="translate(../td[2]/text(), '&#x20;', '')"/>
 	</indexvalue>
       </row>
+      </xsl:if>
     </xsl:template>
 
     <xsl:template match="script"/>
