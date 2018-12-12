@@ -11,24 +11,28 @@ import org.slf4j.LoggerFactory;
 public class MyConfig {
 
     public MyConfig() {
+        super();
     }
+
+    private ConfigTreeMap configTreeMap;
+
+    private Map<String, Object> configValueMap;
     
-    public ConfigTreeMap configTreeMap;
+    private Map<String, String> text = new HashMap<>();
     
-    public Map<String, Object> configValueMap;
-    public Map<String, String> text = new HashMap();
-    public Map<String, Object> deflt = new HashMap();
-    public Map<String, Class> type = new HashMap();
+    private Map<String, Object> deflt = new HashMap<>();
     
+    private Map<String, Class> type = new HashMap<>();
+
     //public boolean useSpark = false;
-    
+
     //public String sparkMaster = null;
 
-	protected Date mydate = null;
+    protected Date mydate = null;
 
-	protected String mymarket = "0";
+    protected String mymarket = "0";
 
-	/*
+    /*
 	private Integer mydays = 180;
 
 	private Integer mytopbottom = 10;
@@ -54,26 +58,26 @@ public class MyConfig {
 	private boolean moveEnabled = true;
 
 	private boolean rsiEnabled = true;
-    
+
 	private boolean rsiDeltaEnabled = true;
-    
+
 	// TODO warning this looks weird, avoid for now?
 	private boolean stochrsiEnabled = false;
-    
+
 	private boolean stochrsiDeltaEnabled = false;
-    
+
 	private boolean cciEnabled = true;
-    
+
 	private boolean cciDeltaEnabled = true;
-    
+
 	private boolean atrEnabled = true;
-    
+
 	private boolean atrDeltaEnabled = true;
-    
+
 	private boolean stochEnabled = true;
-    
+
 	private boolean stochDeltaEnabled = true;
-    
+
 	private int macdDeltaDays = 3;
 
 	private int macdHistogramDeltaDays = 3;
@@ -87,36 +91,76 @@ public class MyConfig {
 	private int atrDeltaDays = 3;
 
 	private int stochDeltaDays = 3;
-*/
+     */
     //public void config() throws Exception;
 
-	/**
-	 * Set current date
-	 * 
-	 * @param date
-	 */
-	
-	public void setdate(Date date) {
-	    mydate = date;
-	}
+    public ConfigTreeMap getConfigTreeMap() {
+        return configTreeMap;
+    }
 
-	/**
-	 * Get current date
-	 * 
-	 * @return date
-	 */
-	
-	public Date getdate() {
-	    return mydate;
-	}
+    public void setConfigTreeMap(ConfigTreeMap configTreeMap) {
+        this.configTreeMap = configTreeMap;
+    }
 
-	public void setMarket(String value) {
-	    mymarket = value;
-	}
+    public Map<String, Object> getConfigValueMap() {
+        return configValueMap;
+    }
 
-	public String getMarket() {
-	    return mymarket;
-	}
-    
+    public void setConfigValueMap(Map<String, Object> configValueMap) {
+        this.configValueMap = configValueMap;
+    }
+
+    public Map<String, String> getText() {
+        return text;
+    }
+
+    public void setText(Map<String, String> text) {
+        this.text = text;
+    }
+
+    public Map<String, Object> getDeflt() {
+        return deflt;
+    }
+
+    public void setDeflt(Map<String, Object> deflt) {
+        this.deflt = deflt;
+    }
+
+    public Map<String, Class> getType() {
+        return type;
+    }
+
+    public void setType(Map<String, Class> type) {
+        this.type = type;
+    }
+
+    /**
+     * Set current date
+     * 
+     * @param date
+     */
+
+    public void setdate(Date date) {
+        mydate = date;
+    }
+
+    /**
+     * Get current date
+     * 
+     * @return date
+     */
+
+    public Date getdate() {
+        return mydate;
+    }
+
+    public void setMarket(String value) {
+        mymarket = value;
+    }
+
+    public String getMarket() {
+        return mymarket;
+    }
+
 
 }

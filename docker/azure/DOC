@@ -1,0 +1,60 @@
+az group create --name stockstat-cluster --location westeurope
+
+az acr create --resource-group stockstat-cluster --name stockstatacr --sku Basic
+az acr show --name stockstatacr
+
+OUTPUT=`az ad sp create-for-rbac --skip-assignment`
+APPID=`echo $OUTPUT|grep appId|cut -f4 -d\ `
+PASSWORD=`echo $OUTPUT|grep password|cut -f4 -d\ `
+
+ACRID=`az acr show --resource-group stockstat-cluster --name stockstatacr --query "id" --output tsv`
+
+az role assignment create --assignee 21c185ae-21b6-4ebb-b33d-49d7dd11f004 --scope $ACRID --role Reader
+
+az aks create --resource-group stockstat-cluster -n stockstat-cluster --node-count 1 --service-principal 21c185ae-21b6-4ebb-b33d-49d7dd11f004 --client-secret 808212de-8570-4a8a-810d-ead0797b063f --generate-ssh-keys --enable-addons monitoring 
+az aks list
+az aks delete --resource-group stockstat-cluster -n stockstat-cluster
+
+az aks get-credentials --resource-group stockstat-cluster --name stockstat-cluster
+
+az acr login --name stockstatacr
+
+ACRSERVER=`az acr list --resource-group stockstat-cluster --query "[].{acrLoginServer:loginServer}" --output table|grep stockstatacr`/stockstat
+
+docker tag pd $ACRSERVER/pd:latest
+docker push $ACRSERVER/pd:latest
+docker tag stockstat-eureka $ACRSERVER/stockstat-eureka:latest
+docker push $ACRSERVER/stockstat-eureka:latest
+docker tag stockstat-core $ACRSERVER/stockstat-core:latest
+docker push $ACRSERVER/stockstat-core:latest
+docker tag stockstat-web $ACRSERVER/stockstat-web:latest
+docker push $ACRSERVER/stockstat-web:latest
+docker tag stockstat-iclij-core $ACRSERVER/stockstat-iclij-core:latest
+docker push $ACRSERVER/stockstat-iclij-core:latest
+docker tag stockstat-iclij-web $ACRSERVER/stockstat-iclij-web:latest
+docker push $ACRSERVER/stockstat-iclij-web:latest
+docker tag tensorflow $ACRSERVER/tensorflow:latest
+docker push $ACRSERVER/tensorflow:latest
+docker tag spark $ACRSERVER/spark:latest
+docker push $ACRSERVER/spark:latest
+
+az acr repository list --name stockstatacr --output table
+
+kubectl run --image=centos/postgresql-10-centos7 --env="POSTGRESQL_USER=stockstat" --env="POSTGRESQL_PASSWORD=password" --env="POSTGRESQL_DATABASE=stockstat" --port=5432 --expose=true postgresql-10-centos7
+kubectl run --image=$ACRSERVER/pd pd
+kubectl run --image=$ACRSERVER/stockstat-eureka stockstat-eureka
+kubectl run --image=$ACRSERVER/stockstat-core stockstat-core
+kubectl run --image=$ACRSERVER/stockstat-web stockstat-web
+kubectl run --image=$ACRSERVER/stockstat-iclij-core stockstat-iclij-core
+kubectl run --image=$ACRSERVER/stockstat-iclij-web stockstat-iclij-web
+kubectl run --image=$ACRSERVER/tensorflow tensorflow
+kubectl run --image=$ACRSERVER/spark spark
+
+kubectl expose deployment stockstat-eureka --port 8761 --type=LoadBalancer
+kubectl expose deployment stockstat-web --port 8180 --type=LoadBalancer
+kubectl expose deployment stockstat-iclij-web --port 8181 --type=LoadBalancer
+kubectl expose deployment spark --port 7077 --type=LoadBalancer
+#kubectl expose deployment sparkui --port 8080 --type=LoadBalancer
+kubectl expose deployment tensorflow --port 8000 --type=LoadBalancer
+
+az acr delete --name stockstatacr

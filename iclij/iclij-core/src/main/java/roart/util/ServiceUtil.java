@@ -1,16 +1,22 @@
 package roart.util;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,35 +26,41 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import roart.action.Action;
+import roart.action.FindProfitAction;
+import roart.action.ImproveProfitAction;
+import roart.action.UpdateDBAction;
+import roart.action.VerifyProfitAction;
+import roart.component.Component;
+import roart.component.ComponentMLIndicator;
+import roart.component.ComponentMLMACD;
+import roart.component.ComponentPredictor;
 import roart.component.ComponentRecommender;
 import roart.config.ConfigConstants;
 import roart.config.IclijConfig;
 import roart.config.IclijXMLConfig;
+import roart.config.MyConfig;
 import roart.config.TradeMarket;
+import roart.config.VerifyConfig;
+import roart.constants.IclijPipelineConstants;
 import roart.model.IncDecItem;
+import roart.model.MapList;
 import roart.model.MemoryItem;
 import roart.model.ResultMeta;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
+import roart.service.IclijServiceList;
 import roart.service.IclijServiceResult;
 
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
 
-    private final static String TP = "TP";
-    private final static String TN = "TN";
-    private final static String FP = "FP";
-    private final static String FN = "FN";
-
-    private static String INC = "Inc";
-    private static String DEC = "Dec";
-    
     public static List<MemoryItem> doRecommender(String market, Integer offset, String aDate, boolean doSave, List<String> disableList, boolean doPrint) throws Exception {
         ControlService srv = new ControlService();
         srv.getConfig();
         return doRecommender(srv, market, offset, aDate, doSave, disableList, doPrint);
     }
-    
+
     public static List<MemoryItem> doRecommender(ControlService srv, String market, Integer offset, String aDate, boolean doSave, List<String> disableList, boolean doPrint) throws Exception {
         long time0 = System.currentTimeMillis();
         srv.conf.setMarket(market);
@@ -62,15 +74,17 @@ public class ServiceUtil {
         int futuredays = (int) srv.conf.getTestIndicatorRecommenderComplexFutureDays();
         String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
         String futureDateStr = stocks.get(stocks.size() - 1 - offset);
-        //System.out.println("da " + + futuredays + " " + baseDateStr);
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        Date baseDate = dt.parse(baseDateStr);
-        Date futureDate = dt.parse(futureDateStr);
+        log.info("Base future date {} {}", baseDateStr, futureDateStr);
+        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
+        LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
 
-        srv.conf.setdate(baseDate);
-        srv.getTestRecommender(true, disableList);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        srv.conf.setdate(TimeUtil.convertDate(baseDate));
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        if (instance.wantEvolveRecommender()) {
+            srv.getEvolveRecommender(true, disableList);
+        }
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> maps = srv.getContent(disableList);
         Map recommendMaps = maps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         //System.out.println("m3 " + recommendMaps.keySet());
@@ -90,7 +104,11 @@ public class ServiceUtil {
         Set<Double> sellset = new HashSet<>();
         for (String key : recommendBuySell.keySet()) {
             List<Double> vals = recommendBuySell.get(key);
+            List v = recommendBuySell.get(key);
             if (vals.get(0) != null) {
+                if (v.get(0).getClass().getSimpleName().contains("String")) {
+                    int jj = 0;
+                }
                 buyset.add(vals.get(0));
             }
             if (vals.get(1) != null) {
@@ -100,7 +118,7 @@ public class ServiceUtil {
         double buyMedian = median(buyset);
         double sellMedian = median(sellset);
 
-        srv.conf.setdate(futureDate);
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
         Map<String, Map<String, Object>> result = srv.getContent();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
@@ -108,7 +126,7 @@ public class ServiceUtil {
         return new ComponentRecommender().calculateRecommender(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell, buyMedian,
                 sellMedian, result, categoryValueMap, usedsec, doSave, doPrint);
     }
-    private static void getMemoriesOld(String market, int futuredays, Date baseDate, Date futureDate,
+    private static void getMemoriesOld(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
             String categoryTitle, Map<String, List<Double>> recommendBuySell, double buyMedian, double sellMedian,
             Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave,
             List<MemoryItem> memoryList, Double medianChange, boolean doPrint) throws Exception {
@@ -151,7 +169,7 @@ public class ServiceUtil {
         }      
         MemoryItem buyMemory = new MemoryItem();
         buyMemory.setMarket(market);
-        buyMemory.setRecord(new Date());
+        buyMemory.setRecord(LocalDate.now());
         buyMemory.setDate(baseDate);
         buyMemory.setUsedsec(usedsec);
         buyMemory.setFuturedays(futuredays);
@@ -167,7 +185,7 @@ public class ServiceUtil {
         }
         MemoryItem sellMemory = new MemoryItem();
         sellMemory.setMarket(market);
-        sellMemory.setRecord(new Date());
+        sellMemory.setRecord(LocalDate.now());
         sellMemory.setDate(baseDate);
         sellMemory.setUsedsec(usedsec);
         sellMemory.setFuturedays(futuredays);
@@ -185,8 +203,8 @@ public class ServiceUtil {
         //System.out.println("k3 " + categoryValueMap.get("VIX"));
         //System.out.println(result.get("Index").keySet());
         if (doPrint) {
-        System.out.println(buyMemory);
-        System.out.println(sellMemory);
+            System.out.println(buyMemory);
+            System.out.println(sellMemory);
         }
         memoryList.add(buyMemory);
         memoryList.add(sellMemory);
@@ -204,24 +222,22 @@ public class ServiceUtil {
         if (aDate != null) {
             int index = stocks.indexOf(aDate);
             if (index >= 0) {
-                offset = stocks.size() - index;
+                offset = stocks.size() - 1 - index;
             }
         }
         int futuredays = (int) srv.conf.getPredictorLSTMHorizon();
         String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
         String futureDateStr = stocks.get(stocks.size() - 1 - offset);
-        //System.out.println("da " + + futuredays + " " + baseDateStr);
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-
-        Date baseDate = dt.parse(baseDateStr);
-        Date futureDate = dt.parse(futureDateStr);
-        srv.conf.setdate(baseDate);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.TRUE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
-        srv.conf.configValueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);
+        log.info("Base future date {} {}", baseDateStr, futureDateStr);
+        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
+        LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
+        srv.conf.setdate(TimeUtil.convertDate(baseDate));
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);
         Map<String, Map<String, Object>> result0 = srv.getContent();
 
         Map<String, Map<String, Object>> maps = result0;
@@ -237,91 +253,20 @@ public class ServiceUtil {
             return null;
         }
         Map map = (Map) maps.get(wantedCat).get(PipelineConstants.LSTM);
-        
+
         //System.out.println("lstm " + map.keySet());
         Integer category = (Integer) map.get(PipelineConstants.CATEGORY);
         String categoryTitle = (String) map.get(PipelineConstants.CATEGORYTITLE);
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) map.get(PipelineConstants.RESULT);
-        srv.conf.setdate(futureDate);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> result = srv.getContent();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
         int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-        return calculatePredictor(market, futuredays, baseDate, futureDate, categoryTitle, resultMap, categoryValueMap, usedsec, doSave, doPrint);
+        return new ComponentPredictor().calculatePredictor(market, futuredays, baseDate, futureDate, categoryTitle, resultMap, categoryValueMap, usedsec, doSave, doPrint);
     }
-    private static List<MemoryItem> calculatePredictor(String market, int futuredays, Date baseDate, Date futureDate,
-            String categoryTitle, Map<String, List<Double>> resultMap,
-            Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
-        List<MemoryItem> memoryList = new ArrayList<>();
-        long total = 0;
-        long goodInc = 0;
-        long goodDec = 0;
-        for (String key : categoryValueMap.keySet()) {
-            List<List<Double>> resultList = categoryValueMap.get(key);
-            List<Double> mainList = resultList.get(0);
-            if (mainList != null) {
-                Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() -1 - futuredays);
-                List<Double> predFutureList = resultMap.get(key);
-                if (predFutureList == null) {
-                    continue;
-                }
-                Double predFuture = predFutureList.get(0);
-                if (valFuture != null && valNow != null && predFuture != null) {
-                    total++;
-                    if (valFuture > valNow && predFuture > valNow) {
-                        goodInc++;
-                    }
-                    if (valFuture < valNow && predFuture < valNow) {
-                        goodDec++;
-                    }
-                }
-            }
-        }
-        //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
-        MemoryItem incMemory = new MemoryItem();
-        incMemory.setMarket(market);
-        incMemory.setRecord(new Date());
-        incMemory.setDate(baseDate);
-        incMemory.setUsedsec(usedsec);
-        incMemory.setFuturedays(futuredays);
-        incMemory.setFuturedate(futureDate);
-        incMemory.setComponent(PipelineConstants.PREDICTORSLSTM);
-        incMemory.setSubcomponent("inc");
-        incMemory.setCategory(categoryTitle);
-        incMemory.setPositives(goodInc);
-        incMemory.setSize(total);
-        incMemory.setConfidence((double) goodInc / total);
-        if (doSave) {
-            incMemory.save();
-        }
-        MemoryItem decMemory = new MemoryItem();
-        decMemory.setMarket(market);
-        decMemory.setRecord(new Date());
-        decMemory.setDate(baseDate);
-        decMemory.setUsedsec(usedsec);
-        decMemory.setFuturedays(futuredays);
-        decMemory.setFuturedate(futureDate);
-        decMemory.setComponent(PipelineConstants.PREDICTORSLSTM);
-        decMemory.setSubcomponent("dec");
-        decMemory.setCategory(categoryTitle);
-        decMemory.setPositives(goodDec);
-        decMemory.setSize(total);
-        decMemory.setConfidence((double) goodDec / total);
-        if (doSave) {
-            decMemory.save();
-        }
-        if (doPrint) {
-        System.out.println(incMemory);
-        System.out.println(decMemory);
-        }
-        memoryList.add(incMemory);
-        memoryList.add(decMemory);
-        return memoryList;
-    }
-
     public static List<MemoryItem> doMLMACD(String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws ParseException {
         ControlService srv = new ControlService();
         srv.getConfig();
@@ -341,18 +286,17 @@ public class ServiceUtil {
         int daysafterzero = (int) srv.conf.getMACDDaysAfterZero();
         String baseDateStr = stocks.get(stocks.size() - 1 - 1 * daysafterzero - offset);
         String futureDateStr = stocks.get(stocks.size() - 1 - 0 * daysafterzero - offset);
-        //System.out.println("da " + + daysafterzero + " " + baseDateStr);
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        Date baseDate = dt.parse(baseDateStr);
-        Date futureDate = dt.parse(futureDateStr);
+        log.info("Base future date {} {}", baseDateStr, futureDateStr);
+        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
+        LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
 
-        srv.conf.setdate(baseDate);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);
+        srv.conf.setdate(TimeUtil.convertDate(baseDate));
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);
         Map<String, Map<String, Object>> result0 = srv.getContent();
 
         Map<String, Map<String, Object>> maps = result0;
@@ -376,9 +320,9 @@ public class ServiceUtil {
         //System.out.println("m4 " + resultMetaArray);
         //System.out.println("m4 " + resultMap.keySet());
         //System.out.println("m4 " + probabilityMap.keySet());
-        srv.conf.setdate(futureDate);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> result = srv.getContent();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
@@ -386,7 +330,7 @@ public class ServiceUtil {
             // TODO add more offset
             // TODO verify dates and offsets
             int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-            return calculateMLMACD(market, daysafterzero, baseDate, futureDate, categoryTitle, resultMap, resultMetaArray,
+            return new ComponentMLMACD().calculateMLMACD(market, daysafterzero, baseDate, futureDate, categoryTitle, resultMap, resultMetaArray,
                     categoryValueMap, resultMeta, offset, usedsec, doSave, doPrint);
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
@@ -394,217 +338,12 @@ public class ServiceUtil {
         }
         return null;
     }
-    private static List<MemoryItem> calculateMLMACD(String market, int daysafterzero, Date baseDate, Date futureDate,
-            String categoryTitle, Map<String, List<Object>> resultMap, List<List> resultMetaArray,
-            Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, int offset, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
-        List<MemoryItem> memoryList = new ArrayList<>();
-        int resultIndex = 0;
-        int count = 0;
-        for (List meta : resultMetaArray) {
-            MemoryItem memory = new MemoryItem();
-            int returnSize = (int) meta.get(2);
-            Double testaccuracy = (Double) meta.get(6);
-            Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.get(8);
-            /*
-            Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
-            Map<String, Integer> countMapClass = (Map<String, Integer>) meta.get(7);
-            */
-            Map<String, Integer> countMapLearn = (Map<String, Integer>) resultMeta.get(count).getLearnMap();
-            Map<String, Integer> countMapClass = (Map<String, Integer>) resultMeta.get(count).getClassifyMap();
-            long total = 0;
-            long goodTP = 0;
-            long goodFP = 0;
-            long goodTN = 0;
-            long goodFN = 0;
-            long tpSize = 0;
-            long fpSize = 0;
-            long tnSize = 0;
-            long fnSize = 0;
-            double goodTPprob = 0;
-            double goodFPprob = 0;
-            double goodTNprob = 0;
-            double goodFNprob = 0;
-            int size = resultMap.values().iterator().next().size();
-            for (String key : categoryValueMap.keySet()) {
-                if (key.equals("VIX")) {
-                    int jj = 0;
-                }
-                List<List<Double>> resultList = categoryValueMap.get(key);
-                List<Double> mainList = resultList.get(0);
-                if (mainList == null) {
-                    continue;
-                }
-                List<Object> list = resultMap.get(key);
-                if (list == null) {
-                    continue;
-                }
-                String tfpn = (String) list.get(resultIndex);
-                if (tfpn == null) {
-                    continue;
-                }
-                List<Double> off = offsetMap.get(key);
-                if (off == null) {
-                    log.error("The offset should not be null for " + key);
-                    continue;
-                }
-                int offsetZero = (int) Math.round(off.get(0));
-                Double valFuture = mainList.get(mainList.size() - 1 - offset - offsetZero);
-                Double valNow = mainList.get(mainList.size() - 1 - daysafterzero - offset - offsetZero);
-                Double tfpnProb = null;
-                if (returnSize > 1) {
-                    tfpnProb = (Double) list.get(resultIndex + 1);
-                }
-                if (valFuture != null && valNow != null) {
-                    //System.out.println("vals " + key + " " + valNow + " " + valFuture);
-                    total++;
-                    if (tfpn.equals(TP)) {
-                        tpSize++;
-                        if (valFuture > valNow ) {
-                            goodTP++;
-                            if (returnSize > 1) {
-                                goodTPprob += tfpnProb;
-                            }
-                        }
-                    }
-                    if (tfpn.equals(FP)) {
-                        fpSize++;
-                        if (valFuture < valNow) {
-                            goodFP++;
-                            if (returnSize > 1) {
-                                goodFPprob += tfpnProb;
-                            }
-                        }
-                    }
-                    if (tfpn.equals(TN)) {
-                        tnSize++;
-                        if (valFuture < valNow) {
-                            goodTN++;
-                            if (returnSize > 1) {
-                                goodTNprob += tfpnProb;
-                            }
-                        }
-                    }
-                    if (tfpn.equals(FN)) {
-                        fnSize++;
-                        if (valFuture > valNow) {
-                            goodFN++;
-                            if (returnSize > 1) {
-                                goodFNprob += tfpnProb;
-                            }
-                        }
-                    }
-                }
-            }
-            //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
-            memory.setMarket(market);
-            memory.setRecord(new Date());
-            memory.setDate(baseDate);
-            memory.setUsedsec(usedsec);
-            memory.setFuturedays(daysafterzero);
-            memory.setFuturedate(futureDate);
-            memory.setComponent(PipelineConstants.MLMACD);
-            memory.setCategory(categoryTitle);
-            memory.setSubcomponent(meta.get(0) + ", " + meta.get(1) + ", " + meta.get(3) + ", " + meta.get(4));
-            memory.setTestaccuracy(testaccuracy);
-            //memory.setPositives(goodInc);
-            memory.setTp(goodTP);
-            memory.setFp(goodFP);
-            memory.setTn(goodTN);
-            memory.setFn(goodFN);
-            if (returnSize > 1) {
-                memory.setTpProb(goodTPprob);
-                memory.setFpProb(goodFPprob);
-                memory.setTnProb(goodTNprob);
-                memory.setFnProb(goodFNprob);      
-                Double goodTPprobConf = goodTP != 0 ? goodTPprob / goodTP : null;
-                Double goodFPprobConf = goodFP != 0 ? goodFPprob / goodFP : null;
-                Double goodTNprobConf = goodTN != 0 ? goodTNprob / goodTN : null;
-                Double goodFNprobConf = goodFN != 0 ? goodFNprob / goodFN : null;
-                memory.setTpProbConf(goodTPprobConf);
-                memory.setFpProbConf(goodFPprobConf);
-                memory.setTnProbConf(goodTNprobConf);
-                memory.setFnProbConf(goodFNprobConf);                
-            }
-            Integer tpClassOrig = countMapClass.containsKey(TP) ? countMapClass.get(TP) : 0;
-            Integer tnClassOrig = countMapClass.containsKey(TN) ? countMapClass.get(TN) : 0;
-            Integer fpClassOrig = countMapClass.containsKey(FP) ? countMapClass.get(FP) : 0;
-            Integer fnClassOrig = countMapClass.containsKey(FN) ? countMapClass.get(FN) : 0;
-            Integer tpSizeOrig = countMapLearn.containsKey(TP) ? countMapLearn.get(TP) : 0;
-            Integer tnSizeOrig = countMapLearn.containsKey(TN) ? countMapLearn.get(TN) : 0;
-            Integer fpSizeOrig = countMapLearn.containsKey(FP) ? countMapLearn.get(FP) : 0;
-            Integer fnSizeOrig = countMapLearn.containsKey(FN) ? countMapLearn.get(FN) : 0;
-            boolean doTP = countMapLearn.containsKey(TP);
-            boolean doFP = countMapLearn.containsKey(FP);
-            boolean doTN = countMapLearn.containsKey(TN);
-            boolean doFN = countMapLearn.containsKey(FN);
-            int keys = 0;
-            if (doTP) {
-                keys++;
-            }
-            if (doFP) {
-                keys++;
-            }
-            if (doTN) {
-                keys++;
-            }
-            if (doFN) {
-                keys++;
-            }
-            Integer totalClass = tpClassOrig + tnClassOrig + fpClassOrig + fnClassOrig;
-            Integer totalSize = tpSizeOrig + tnSizeOrig + fpSizeOrig + fnSizeOrig;
-            Double learnConfidence = 0.0;
-            learnConfidence = keys != 0 && totalClass != 0 && totalSize != 0 ? (double) (
-                    ( doTP ? Math.abs((double) tpClassOrig / totalClass - (double) tpSizeOrig / totalSize) : 0) +
-                    ( doFP ? Math.abs((double) fpClassOrig / totalClass - (double) fpSizeOrig / totalSize) : 0) +
-                    ( doTN ? Math.abs((double) tnClassOrig / totalClass - (double) tnSizeOrig / totalSize) : 0) +
-                    ( doFN ? Math.abs((double) fnClassOrig / totalClass - (double) fnSizeOrig / totalSize) : 0)
-                    ) / keys : null;
-            String info = null; 
-            if (tpSizeOrig != null) {
-                info = "Classified / learned: ";
-                info += "TP " + tpClassOrig + " / " + tpSizeOrig + ", ";
-                info += "TN " + tnClassOrig + " / " + tnSizeOrig + ", ";
-                info += "FP " + fpClassOrig + " / " + fpSizeOrig + ", ";
-                info += "FN " + fnClassOrig + " / " + fnSizeOrig + " ";
-            }
-            memory.setInfo(info);
-            memory.setTpSize(tpSize);
-            memory.setTnSize(tnSize);
-            memory.setFpSize(fpSize);
-            memory.setFnSize(fnSize);
-            Double tpConf = (tpSize != 0 ? ((double) goodTP / tpSize) : null);
-            Double tnConf = (tnSize != 0 ? ((double) goodTN / tnSize) : null);
-            Double fpConf = (fpSize != 0 ? ((double) goodFP / fpSize) : null);
-            Double fnConf = (fnSize != 0 ? ((double) goodFN / fnSize) : null);
-            memory.setTpConf(tpConf);
-            memory.setTnConf(tnConf);
-            memory.setFpConf(fpConf);
-            memory.setFnConf(fnConf);
-            memory.setSize(total);
-            Double conf = total != 0 ? ((double) goodTP + goodTN + goodFP + goodFN) / total : null;
-            memory.setPositives(goodTP + goodTN + goodFP + goodFN);
-            memory.setConfidence(conf);
-            memory.setLearnConfidence(learnConfidence);
-            memory.setPosition(count);
-            if (doSave) {
-                memory.save();
-            }
-            memoryList.add(memory);
-            if (doPrint) {
-            System.out.println(memory);
-            }
-            resultIndex += returnSize;
-            count++;
-        }
-        return memoryList;
-    }
-
     public static List<MemoryItem> doMLIndicator(String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws ParseException {
         ControlService srv = new ControlService();
         srv.getConfig();
         return doMLIndicator(srv, market, offset, aDate, doSave, doPrint);
     }
-    
+
     public static List<MemoryItem> doMLIndicator(ControlService srv, String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws ParseException {
         long time0 = System.currentTimeMillis();
         srv.conf.setMarket(market);
@@ -619,18 +358,16 @@ public class ServiceUtil {
         double threshold = srv.conf.getAggregatorsIndicatorThreshold();
         String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
         String futureDateStr = stocks.get(stocks.size() - 1 - offset);
-        //System.out.println("da " + + futuredays + " " + baseDateStr);
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-
-        Date baseDate = dt.parse(baseDateStr);
-        Date futureDate = dt.parse(futureDateStr);
-        srv.conf.setdate(baseDate);
+        log.info("Base future date {} {}", baseDateStr, futureDateStr);
+        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
+        LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
+        srv.conf.setdate(TimeUtil.convertDate(baseDate));
         //srv.getTestRecommender(true);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
-        srv.conf.configValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
+        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
         Map<String, Map<String, Object>> result0 = srv.getContent();
 
         Map<String, Map<String, Object>> maps = result0;
@@ -665,227 +402,21 @@ public class ServiceUtil {
                 }
             }
         }
-        srv.conf.setdate(futureDate);
-        srv.conf.configValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.configValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
+        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         Map<String, Map<String, Object>> result = srv.getContent();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
         try {
             int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-            return calculateMLindicator(market, futuredays, baseDate, futureDate, threshold, resultMap, size, categoryValueMap, resultMeta, categoryTitle, usedsec, doSave, doPrint);
+            return new ComponentMLIndicator().calculateMLindicator(market, futuredays, baseDate, futureDate, threshold, resultMap, size, categoryValueMap, resultMeta, categoryTitle, usedsec, doSave, doPrint);
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
             log.error(roart.util.Constants.EXCEPTION, e);
         }
         return null;
     }
-    private static List<MemoryItem> calculateMLindicator(String market, int futuredays, Date baseDate, Date futureDate, double threshold,
-            Map<String, List<Object>> resultMap, int size0, Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, String categoryTitle, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
-        List<MemoryItem> memoryList = new ArrayList<>();
-        int resultIndex = 0;
-        int count = 0;
-        for (ResultMeta meta : resultMeta) {
-            MemoryItem memory = new MemoryItem();
-            int returnSize = (int) meta.getReturnSize();
-            Double testaccuracy = (Double) meta.getTestAccuracy();
-            //Map<String, double[]> offsetMap = (Map<String, double[]>) meta.get(8);
-            /*
-            Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
-            Map<String, Integer> countMapClass = (Map<String, Integer>) meta.get(7);
-             */
-            Map<String, Integer> countMapLearn = (Map<String, Integer>) resultMeta.get(count).getLearnMap();
-            Map<String, Integer> countMapClass = (Map<String, Integer>) resultMeta.get(count).getClassifyMap();
-            long total = 0;
-            long goodTP = 0;
-            long goodFP = 0;
-            long goodTN = 0;
-            long goodFN = 0;
-            long incSize = 0;
-            //long fpSize = 0;
-            long decSize = 0;
-            //long fnSize = 0;
-            double goodTPprob = 0;
-            double goodFPprob = 0;
-            double goodTNprob = 0;
-            double goodFNprob = 0;
-            int size = resultMap.values().iterator().next().size();
-            for (String key : categoryValueMap.keySet()) {
-                List<List<Double>> resultList = categoryValueMap.get(key);
-                List<Double> mainList = resultList.get(0);
-                if (mainList == null) {
-                    continue;
-                }
-                //int offset = (int) offsetMap.get(key)[0];
-                Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() - 1 - futuredays);
-                if (valFuture == null || valNow == null) {
-                    continue;
-                }
-                boolean incThreshold = (valFuture / valNow - 1) >= threshold;
-                List<Object> list = resultMap.get(key);
-                if (list == null) {
-                    continue;
-                }
-                String incdec = (String) list.get(resultIndex);
-                if (incdec == null) {
-                    continue;
-                }
-                Double incdecProb = null;
-                if (returnSize > 1) {
-                    incdecProb = (Double) list.get(resultIndex + 1);
-                }
-                total++;
-                if (incdec.equals(INC)) {
-                    incSize++;
-                    if (incThreshold) {
-                        goodTP++;
-                        if (returnSize > 1) {
-                            goodTPprob += incdecProb;
-                        }
-                    } else {
-                        goodFP++;
-                        if (returnSize > 1) {
-                            goodFPprob += (1 - incdecProb);                                    }
-                    }
-                }
-                if (incdec.equals(DEC)) {
-                    decSize++;
-                    if (!incThreshold) {
-                        goodTN++;
-                        if (returnSize > 1) {
-                            goodTNprob += incdecProb;
-                        }
-                    } else {
-                        goodFN++;
-                        if (returnSize > 1) {
-                            goodFNprob += (1 - incdecProb);
-                        }
-                    }
-                }
-            }
-            //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
-            memory.setMarket(market);
-            memory.setRecord(new Date());
-            memory.setDate(baseDate);
-            memory.setUsedsec(usedsec);
-            memory.setFuturedays(futuredays);
-            memory.setFuturedate(futureDate);
-            memory.setComponent(PipelineConstants.MLINDICATOR);
-            memory.setCategory(categoryTitle);
-            memory.setSubcomponent(meta.getMlName() + ", " + meta.getModelName() + ", " + meta.getSubType() + ", " + meta.getSubSubType());
-            memory.setTestaccuracy(testaccuracy);
-            //memory.setPositives(goodInc);
-            memory.setTp(goodTP);
-            memory.setFp(goodFP);
-            memory.setTn(goodTN);
-            memory.setFn(goodFN);
-            if (returnSize > 1) {
-                memory.setTpProb(goodTPprob);
-                memory.setFpProb(goodFPprob);
-                memory.setTnProb(goodTNprob);
-                memory.setFnProb(goodFNprob);      
-                Double goodTPprobConf = goodTPprob / goodTP;
-                Double goodFPprobConf = goodFPprob / goodFP;
-                Double goodTNprobConf = goodTNprob / goodTN;
-                Double goodFNprobConf = goodFNprob / goodFN;
-                memory.setTpProbConf(goodTPprobConf);
-                memory.setFpProbConf(goodFPprobConf);
-                memory.setTnProbConf(goodTNprobConf);
-                memory.setFnProbConf(goodFNprobConf);                
-            }
-            Integer tpClassOrig = countMapClass.containsKey(INC) ? countMapClass.get(INC) : 0;
-            Integer tnClassOrig = countMapClass.containsKey(DEC) ? countMapClass.get(DEC) : 0;
-            //Integer fpClassOrig = goodTP - ;
-            //Integer fnClassOrig = countMapClass.containsKey(FN) ? countMapClass.get(FN) : 0;
-            Integer tpSizeOrig = countMapLearn.containsKey(INC) ? countMapLearn.get(INC) : 0;
-            Integer tnSizeOrig = countMapLearn.containsKey(DEC) ? countMapLearn.get(DEC) : 0;
-            //Integer fpSizeOrig = countMapLearn.containsKey(FP) ? countMapLearn.get(FP) : 0;
-            //Integer fnSizeOrig = countMapLearn.containsKey(FN) ? countMapLearn.get(FN) : 0;
-            int keys = 2;
-            Integer totalClass = tpClassOrig + tnClassOrig;
-            Integer totalSize = tpSizeOrig + tnSizeOrig;
-            Double learnConfidence = 0.0;
-            learnConfidence = (double) (
-                    ( true ? Math.abs((double) tpClassOrig / totalClass - (double) tpSizeOrig / totalSize) : 0) +
-                    //( true ? Math.abs((double) fpClassOrig / totalClass - (double) fpSizeOrig / totalSize) : 0) +
-                    ( true ? Math.abs((double) tnClassOrig / totalClass - (double) tnSizeOrig / totalSize) : 0)
-                    //( true ? Math.abs((double) fnClassOrig / totalClass - (double) fnSizeOrig / totalSize) : 0)
-                    ) / keys;
-            String info = null; 
-            if (tpSizeOrig != null) {
-                info = "Classified / learned: ";
-                info += "TP " + tpClassOrig + " / " + tpSizeOrig + ", ";
-                info += "TN " + tnClassOrig + " / " + tnSizeOrig + ", ";
-                info += "FP " + (tpSizeOrig - tpClassOrig) + " / " + tpSizeOrig + ", ";
-                info += "FN " + (tnSizeOrig - tnClassOrig) + " / " + tnSizeOrig + " ";
-            }
-            memory.setInfo(info);
-            memory.setTpSize(incSize);
-            memory.setTnSize(decSize);
-            memory.setFpSize(incSize);
-            memory.setFnSize(decSize);
-            Double tpConf = (incSize != 0 ? ((double) goodTP / incSize) : null);
-            Double tnConf = (decSize != 0 ? ((double) goodTN / decSize) : null);
-            Double fpConf = (incSize != 0 ? ((double) goodFP / incSize) : null);
-            Double fnConf = (decSize != 0 ? ((double) goodFN / decSize) : null);
-            memory.setTpConf(tpConf);
-            memory.setTnConf(tnConf);
-            memory.setFpConf(fpConf);
-            memory.setFnConf(fnConf);
-            memory.setSize(total);
-            Double conf = ((double) goodTP + goodTN) / total;
-            memory.setPositives(goodTP + goodTN);
-            memory.setConfidence(conf);
-            memory.setLearnConfidence(learnConfidence);
-            memory.setPosition(count);
-            if (doSave) {
-                memory.save();
-            }
-            if (doPrint) {
-            memoryList.add(memory);
-            }
-            System.out.println(memory);
-            resultIndex += returnSize;
-            count++;
-        }
-        return memoryList;
-        /*
-        int total = 0;
-        int goodInc = 0;
-        int goodDec = 0;
-        for (String key : categoryValueMap.keySet()) {
-            List<List<Double>> resultList = categoryValueMap.get(key);
-            List<Double> mainList = resultList.get(0);
-            if (mainList != null) {
-                Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() -1 - futuredays);
-                List<Object> list = resultMap.get(key);
-                if (list == null) {
-                    continue;
-                }
-                for (int i = 0; i < size; i++) {
-                    String incDec = (String) list.get(i);
-                    if (incDec == null) {
-                        continue;
-                    }
-                    if (valFuture != null && valNow != null) {
-                        double change = valFuture / valNow;
-                        total++;
-                        if (change >= threshold && incDec.equals("Inc")) {
-                            goodInc++;
-                        }
-                        if (change < threshold && incDec.equals("Dec")) {
-                            goodDec++;
-                        }
-                    }
-                }
-            }
-        }
-        */
-        //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
-    }
-
     public static double median(Set<Double> set) {
         Double[] scores = set.toArray(new Double[set.size()]);
         Arrays.sort(scores);
@@ -940,39 +471,390 @@ public class ServiceUtil {
         }
         return cat;
     }
-    public static IclijServiceResult getContent() throws Exception {
+    
+    public static IclijServiceResult getConfig() throws Exception {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        
+        IclijServiceResult result = new IclijServiceResult();
+        result.setIclijConfig(instance);
+        return result;
+    }
+    
+    public static IclijServiceResult getContent(IclijConfig iclijConfig) throws Exception {
+        LocalDate date = iclijConfig.getDate();
+        IclijXMLConfig i = new IclijXMLConfig();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+
         List<IncDecItem> listAll = IncDecItem.getAll();
-        List<List> lists = new ArrayList<>();
-        List<TradeMarket> markets = instance.getTradeMarkets();
+        List<IclijServiceList> lists = new ArrayList<>();
+        lists.add(getHeader("Content"));
+        List<TradeMarket> markets = conf.getTradeMarkets(instance);
         for (TradeMarket market : markets) {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, - market.getRecordage() );
-            Date olddate = cal.getTime();
+            if (date == null) {
+                date = LocalDate.now();
+            }
+            LocalDate newdate = date;
+            LocalDate olddate = date.minusDays(market.getRecordage());
             listAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
             List<IncDecItem> currentIncDecs = listAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
+            currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
             currentIncDecs = currentIncDecs.stream().filter(m -> market.getMarket().equals(m.getMarket())).collect(Collectors.toList());
             List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
-            // and a new list for common items
-            List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
-            List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
-            List<IncDecItem> listIncDec = listInc.stream().filter(m -> decIds.contains(m.getId())).collect(Collectors.toList());
-            List<IncDecItem> listDecInc = listDec.stream().filter(m -> incIds.contains(m.getId())).collect(Collectors.toList());
-            listInc.removeAll(listIncDec);
-            listDec.removeAll(listDecInc);
-            listIncDec.addAll(listDecInc);
-            lists.add(listInc);
-            lists.add(listDec);
-            if (!listIncDec.isEmpty()) {
-                lists.add(listIncDec);
-            }
+            List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+            List<IclijServiceList> subLists = getServiceList(market.getMarket(), listInc, listDec, listIncDec);
+            lists.addAll(subLists);
         }
         IclijServiceResult result = new IclijServiceResult();
-        result.lists = lists;
+        result.setLists(lists);
+        print(result);
         return result;
+    }
+
+    private static IclijServiceList getHeader(String title) {
+        IclijServiceList header = new IclijServiceList();
+        header.setTitle(title);
+        return header;
+    }
+
+    private static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
+            List<IncDecItem> listIncDec) {
+        List<IclijServiceList> subLists = new ArrayList<>();
+        if (!listInc.isEmpty()) {
+            List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+            long count = listIncBoolean.stream().filter(i -> i).count();                            
+            IclijServiceList inc = new IclijServiceList();
+            inc.setTitle(market + " " + "Increase ( verified " + count + " / " + listIncBoolean.size() + " )");
+            inc.setList(listInc);
+            subLists.add(inc);
+        }
+        if (!listDec.isEmpty()) {
+            List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+            long count = listDecBoolean.stream().filter(i -> i).count();                            
+            IclijServiceList dec = new IclijServiceList();
+            dec.setTitle(market + " " + "Decrease ( verified " + count + " / " + listDecBoolean.size() + " )");
+            dec.setList(listDec);
+            subLists.add(dec);
+        }
+        if (!listIncDec.isEmpty()) {
+            IclijServiceList incDec = new IclijServiceList();
+            incDec.setTitle(market + " " + "Increase and decrease");
+            incDec.setList(listIncDec);
+            subLists.add(incDec);
+        }
+        return subLists;
+    }
+
+    private static List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec) {
+        // and a new list for common items
+        List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        List<IncDecItem> listIncDec = listInc.stream().filter(m -> decIds.contains(m.getId())).collect(Collectors.toList());
+        List<IncDecItem> listDecInc = listDec.stream().filter(m -> incIds.contains(m.getId())).collect(Collectors.toList());
+
+        listInc.removeAll(listIncDec);
+        listDec.removeAll(listDecInc);
+        listIncDec.addAll(listDecInc);
+        return listIncDec;
+    }
+
+    public static IclijServiceResult getVerify(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
+	String type = "Verify";
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(new ArrayList<>());
+        List<IclijServiceList> retLists = result.getLists();
+        String market = config.getMarket();
+        if (market == null) {
+            return result;
+        }
+        LocalDate date = config.getDate();
+        ControlService srv = new ControlService();
+        srv.getConfig();
+        srv.conf.setMarket(market);
+        List<String> stocks = srv.getDates(market);
+        if (loopOffset != null) {
+            int index = getDateIndex(date, stocks);
+            index = index - loopOffset;
+            // TODO calculate backward limit for all components
+            if (index <= 0) {
+                return result;
+            }
+            date = getDateIndex(stocks, index);
+        }
+        int days = config.verificationDays();
+        getFindProfitVerify(result, retLists, config, type, market, loopOffset, date, srv, stocks, days);
+        print(result);
+        return result;
+    }
+
+    private static void getFindProfitVerify(IclijServiceResult result, List<IclijServiceList> retLists,
+            IclijConfig config, String type, String market, Integer loopOffset, LocalDate date, ControlService srv,
+            List<String> stocks, int days) throws ParseException, InterruptedException {
+        int offset = getDateOffset(date, stocks);
+        if (date == null) {
+            date = getLastDate(stocks);
+        }
+        log.info("Stock size {} ", stocks.size());
+        log.info("Main date {} ", date);
+        String aDate = stocks.get(stocks.size() - 1 - offset - days);
+        LocalDate oldDate = TimeUtil.convertDate(aDate);
+        log.info("Old date {} ", oldDate);
+        IclijServiceList header = new IclijServiceList();
+        result.getLists().add(header);
+        header.setTitle(type + " " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset);
+        List<MapList> aList = new ArrayList<>();
+        header.setList(aList);
+        MapList mapList = new MapList();
+        mapList.setKey("Dates");
+        mapList.setValue("Base " + oldDate + " Future " + date);
+        aList.add(mapList);
+        boolean save = config.wantVerificationSave();
+        FindProfitAction findProfitAction = new FindProfitAction();
+        List<MemoryItem> allMemoryItems = getMemoryItems(config, market, days, date, offset, save);
+        IclijServiceList memories = new IclijServiceList();
+        memories.setTitle("Memories");
+        memories.setList(allMemoryItems);
+        Map<String, Object> updateMap = new HashMap<>();
+        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, date, allMemoryItems, config, updateMap);
+        List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
+        List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
+        List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+	if (days > 0) {
+	    getVerifyProfit(retLists, days, date, srv, oldDate, listInc, listDec);
+	}
+        List<IclijServiceList> subLists = getServiceList(market, listInc, listDec, listIncDec);
+        retLists.addAll(subLists);
+        
+        retLists.add(memories);
+        
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        IclijServiceList updates = convert(updateMap);
+        retLists.add(updates);
+    }
+
+    /*
+    if (config.wantsImproveProfit()) {
+        ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
+        getImprovements(retLists, market, date, save, improveProfitAction, allMemoryItems);
+    }
+     */
+
+    private static void print(IclijServiceResult result) {
+        Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
+        BufferedWriter writer = null;
+        try {
+            writer = Files.newBufferedWriter(path);
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        } 
+        for (IclijServiceList item : result.getLists()) {
+            listWriter(writer, item, item.getList());            
+        }
+        try {
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    private static void listWriter(BufferedWriter writer, IclijServiceList item, List mylist) {
+        try {
+            writer.write(item.getTitle());
+            writer.write("\n");
+            if (mylist == null) {
+                return;
+            }
+            for (Object object : mylist) {
+                writer.write(object.toString());
+            }
+            writer.write("\n");
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    private static IclijServiceList convert(Map<String, Object> updateMap) {
+        IclijServiceList list = new IclijServiceList();
+        list.setTitle("Updates");
+        List<MapList> aList = new ArrayList<>();
+        for (Entry<String, Object> map : updateMap.entrySet()) {
+            MapList m = new MapList();
+            m.setKey(map.getKey());
+            m.setValue((String) map.getValue()); 
+            aList.add(m);
+        }
+        list.setList(aList);
+        return list;
+    }
+
+    private static LocalDate getDateIndex(List<String> stocks, int index) throws ParseException {
+        String newDate = stocks.get(index);
+        return TimeUtil.convertDate(newDate);
+    }
+
+    private static void getVerifyProfit(List<IclijServiceList> retLists, int days, LocalDate date, ControlService srv,
+            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec) {
+        log.info("Verify compare date {} with {}", oldDate, date);
+        LocalDate futureDate = date;
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
+        Component.disabler(srv.conf);
+        Map<String, Map<String, Object>> resultMaps = srv.getContent();
+        Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
+        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+
+        VerifyProfitAction verify = new VerifyProfitAction();
+        List<MapList> inc = verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
+        IclijServiceList incMap = new IclijServiceList();
+        incMap.setTitle("Increase verify");
+        incMap.setList(inc);
+        List<MapList> dec = verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
+        IclijServiceList decMap = new IclijServiceList();
+        decMap.setTitle("Decrease verify");
+        decMap.setList(dec);
+        retLists.add(incMap);
+        retLists.add(decMap);
+    }
+
+    private static void getImprovements(List<IclijServiceList> retLists, String market, LocalDate date, boolean save,
+            ImproveProfitAction improveProfitAction, List<MemoryItem> allMemoryItems) {
+        Map<String, String> map = improveProfitAction.getImprovements(market, save, date, allMemoryItems);        
+        List<MapList> mapList = improveProfitAction.getList(map);
+        IclijServiceList resultMap = new IclijServiceList();
+        resultMap.setTitle("Improve Profit Info");
+        resultMap.setList(mapList);
+        retLists.add(resultMap);
+    }
+
+    public static IclijServiceResult getFindProfit(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
+	String type = "FindProfit";
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(new ArrayList<>());
+        List<IclijServiceList> retLists = result.getLists();
+        String market = config.getMarket();
+        if (market == null) {
+            return result;
+        }
+        int days = 0;  // config.verificationDays();
+        LocalDate date = config.getDate();
+        ControlService srv = new ControlService();
+        srv.getConfig();
+        srv.conf.setMarket(market);
+        List<String> stocks = srv.getDates(market);
+        if (loopOffset != null) {
+            int index = getDateIndex(date, stocks);
+            index = index - loopOffset;
+            // TODO calculate backward limit for all components
+            if (index <= 0) {
+                return result;
+            }
+            date = getDateIndex(stocks, index);
+        }
+        getFindProfitVerify(result, retLists, config, type, market, loopOffset, date, srv, stocks, days);
+        print(result);
+        return result;
+    }
+
+    public static IclijServiceResult getImproveProfit(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
+        loopOffset = 0;
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(new ArrayList<>());
+        List<IclijServiceList> retLists = result.getLists();
+        String market = config.getMarket();
+        if (market == null) {
+            return result;
+        }
+        LocalDate date = config.getDate();
+        ControlService srv = new ControlService();
+        srv.getConfig();
+        srv.conf.setMarket(market);
+        List<String> stocks = srv.getDates(market);
+        if (loopOffset != null) {
+            int index = getDateIndex(date, stocks);
+            index = index - loopOffset;
+            // TODO calculate backward limit for all components
+            if (index <= 0) {
+                return result;
+            }
+            date = getDateIndex(stocks, index);
+        }
+        int days = 0; // config.verificationDays();
+        int offset = getDateOffset(date, stocks);
+        if (date == null) {
+            date = getLastDate(stocks);
+        }
+        log.info("Main date {} ", date);
+        String aDate = stocks.get(stocks.size() - 1 - offset - days);
+        LocalDate oldDate = TimeUtil.convertDate(aDate);
+        log.info("Old date {} ", oldDate);
+        boolean save = false;
+        //FindProfitAction findProfitAction = new FindProfitAction();
+        ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
+        List<MemoryItem> allMemoryItems = getMemoryItems(config, market, days, date, offset, save);
+        IclijServiceList memories = new IclijServiceList();
+        memories.setTitle("Memories");
+        memories.setList(allMemoryItems);
+        Map<String, Object> updateMap = new HashMap<>();
+        getImprovements(retLists, market, date, save, improveProfitAction, allMemoryItems);
+
+        retLists.add(memories);
+        
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        IclijServiceList updates = convert(updateMap);
+        retLists.add(updates);
+        return result;
+    }
+
+    private static LocalDate getLastDate(List<String> stocks) throws ParseException {
+        String aDate = stocks.get(stocks.size() - 1);
+        return TimeUtil.convertDate(aDate);
+    }
+
+    private static int getDateIndex(LocalDate date, List<String> stocks) {
+        int index;
+        if (date == null) {
+            index = stocks.size() - 1;
+        } else {
+            String aDate = TimeUtil.convertDate2(date);
+            index = stocks.indexOf(aDate);
+        }
+        return index;
+    }
+
+    private static int getDateOffset(LocalDate date, List<String> stocks) {
+        int offset = 0;
+        if (date != null) {
+            String aDate = TimeUtil.convertDate2(date);
+            int index = stocks.indexOf(aDate);
+            if (index >= 0) {
+                offset = stocks.size() - 1 - index;
+            }
+        }
+        return offset;
+    }
+
+    private static List<MemoryItem> getMemoryItems(IclijConfig config, String market, int days, LocalDate date,
+            int offset, boolean save) throws InterruptedException {
+        List<MemoryItem> allMemoryItems = new ArrayList<>();
+        UpdateDBAction updateDbAction = new UpdateDBAction();
+        Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(market, date, days + offset, save, config);
+        for (Action serviceAction : serviceActions) {
+            serviceAction.goal(null);
+            Map<String, Object> resultMap = serviceAction.getLocalResultMap();
+            List<MemoryItem> memoryItems = (List<MemoryItem>) resultMap.get(IclijPipelineConstants.MEMORY);
+            if (memoryItems != null) {
+                allMemoryItems.addAll(memoryItems);
+            } else {
+                log.error("Memory null");
+            }
+        }
+        return allMemoryItems;
     }
 
 }

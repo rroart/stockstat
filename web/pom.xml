@@ -286,13 +286,13 @@
       <artifactId>spring-cloud-commons</artifactId>
       <version>1.1.7.RELEASE</version>
     </dependency>
-    <dependency>
+    <!--dependency>
         <groupId>jdk.tools</groupId>
         <artifactId>jdk.tools</artifactId>
 	<version>1.8</version>
         <scope>system</scope>
         <systemPath>${java.home}/../lib/tools.jar</systemPath>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -418,7 +418,7 @@
     </dependency>
       </dependencies>
   <properties>
-    <jetty.version>9.3.14.v20161028</jetty.version>
+    <jetty.version>9.4.10.RC1</jetty.version>
     <jdk.version>1.8</jdk.version>
     <lucene.version>5.1.0</lucene.version>
     <solr.version>5.1.0</solr.version>

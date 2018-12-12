@@ -9,20 +9,27 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.config.MyConfig;
 import roart.config.MyMyConfig;
+import roart.evolution.Individual;
 
 public abstract class Evaluation {
-    public List<String> keys;
-    public List<String> getKeys() {
-        return keys;
-    }
+    public abstract double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException;
+    
+    public abstract void mutate();
+    
+    public abstract void getRandom() throws JsonParseException, JsonMappingException, IOException;
+    
+    public abstract void transformToNode() throws JsonParseException, JsonMappingException, IOException;
+    
+    public abstract void normalize();
+    
+    public abstract void transformFromNode() throws JsonParseException, JsonMappingException, IOException;
 
-    public abstract double getEvaluations(MyMyConfig conf, int j) throws JsonParseException, JsonMappingException, IOException;
-    public abstract void mutate(Map<String, Object> configValueMap, List<String> keys);
-    public abstract void getRandom(Map<String, Object> configValueMap, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
-    public abstract void transformToNode(MyConfig newConf, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
-    public abstract void normalize(Map<String, Object> configValueMap, List<String> keys);
-    public abstract void transformFromNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException;
-
-    public abstract double getFitness(MyMyConfig testConfig, List<String> keys)
+    public abstract double getFitness()
             throws JsonParseException, JsonMappingException, IOException;
+
+    public abstract Individual crossover(Evaluation evaluation);
+
+    public abstract Evaluation copy();
+
+    public abstract boolean isEmpty();
 }

@@ -70,19 +70,19 @@ public class MyXMLConfig {
             configxml = null;
         }
         Document doc = null;
-        configInstance.configTreeMap = new ConfigTreeMap();
-        configInstance.configValueMap = new HashMap<String, Object>();
+        configInstance.setConfigTreeMap(new ConfigTreeMap());
+        configInstance.setConfigValueMap(new HashMap<String, Object>());
         ConfigConstantMaps.makeDefaultMap();
         ConfigConstantMaps.makeTextMap();
         ConfigConstantMaps.makeTypeMap();
-        configInstance.deflt = ConfigConstantMaps.deflt;
-        configInstance.type = ConfigConstantMaps.map;
-        configInstance.text = ConfigConstantMaps.text;
+        configInstance.setDeflt(ConfigConstantMaps.deflt);
+        configInstance.setType(ConfigConstantMaps.map);
+        configInstance.setText(ConfigConstantMaps.text);
         if (configxml != null) {
             printout();
             doc = configxml.getDocument();
             if (doc != null) {
-                handleDoc(doc.getDocumentElement(), configInstance.configTreeMap, "");
+                handleDoc(doc.getDocumentElement(), configInstance.getConfigTreeMap(), "");
             }
             Iterator<String> iter = configxml.getKeys();
             while(iter.hasNext()) {
@@ -111,7 +111,7 @@ public class MyXMLConfig {
                 default:
                     log.info("unknown {}", myclass.getName());
                 }
-                configInstance.configValueMap.put(s, o);
+                configInstance.getConfigValueMap().put(s, o);
             }
         }
     }
@@ -153,8 +153,8 @@ public class MyXMLConfig {
 
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
-        log.info("map2 {} {} {}", space.substring(0, indent), map2.name, map2.enabled);
-        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        log.info("map2 {} {} {}", space.substring(0, indent), map2.getName(), map2.getEnabled());
+        Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         for (Entry<String, ConfigTreeMap> entry : map3.entrySet()) {
             print(entry.getValue(), indent + 1);
         }
@@ -174,10 +174,10 @@ public class MyXMLConfig {
                 name = name + "[@enable]";
             }
         }
-        configMap.name = baseString + "." + name;
-        configMap.name = configMap.name.replaceFirst(".config.", "");
-        configMap.enabled = enabled;
-        configMap.configTreeMap = new HashMap<String, ConfigTreeMap>();
+        configMap.setName(baseString + "." + name);
+        configMap.setName(configMap.getName().replaceFirst(".config.", ""));
+        configMap.setEnabled(enabled);
+        configMap.setConfigTreeMap(new HashMap<String, ConfigTreeMap>());
         for (int i = 0; i < elements.getLength(); i++) {
             Node node = elements.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -187,7 +187,7 @@ public class MyXMLConfig {
                 newBaseString = newBaseString.replaceFirst(".config.", "");
                 handleDoc(element, newMap, newBaseString);
                 String text = element.getNodeName();
-                configMap.configTreeMap.put(text, newMap);
+                configMap.getConfigTreeMap().put(text, newMap);
             }
         }
 

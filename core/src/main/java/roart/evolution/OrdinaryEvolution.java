@@ -1,54 +1,62 @@
 package roart.evolution;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.config.MyMyConfig;
+import roart.config.EvolutionConfig;
 import roart.evaluation.Evaluation;
-import roart.util.TaUtil;
 
 public class OrdinaryEvolution extends EvolutionAlgorithm {
 
+    public OrdinaryEvolution(EvolutionConfig evolutionConfig) {
+        super(evolutionConfig);
+    }
+    
     @Override
-    public Individual getFittest(MyMyConfig conf,Evaluation evaluation) throws Exception {
-        int selectionSize = conf.getEvolutionSelect();
-        List<String> keys = evaluation.getKeys();
-        Population population = new Population(selectionSize, conf, evaluation, keys, false);
-
-        // TODO clone config
-
-        
-        Individual parent = getBest(conf, selectionSize, keys, population, true, evaluation);
-        evaluation.transformFromNode(parent.conf, keys);
+    public Individual getFittest(EvolutionConfig evolutionConfig, Evaluation evaluation) throws Exception {
+        int selectionSize = getEvolutionConfig().getSelect();
+        Population population = new Population(selectionSize, evolutionConfig, evaluation, false);
+        if (getEvolutionConfig().getUseoldelite() && !evaluation.isEmpty()) {
+            population.getIndividuals().add(new Individual(evaluation).getNewWithValueCopyFactory());
+        }
+        calculate(population.getIndividuals());
+        Collections.sort(population.getIndividuals());
+        Individual parent = getBest(selectionSize, population, true, evaluation);
+        parent.getEvaluation().transformFromNode();
         return parent;
     }
 
-    private Individual getBest(MyMyConfig conf, int selectionSize, List<String> keyList, Population population,
-            boolean useMax, Evaluation evaluation) throws JsonParseException, JsonMappingException, IOException {
-        printmap(population.getFittest().conf.configValueMap, keyList);
-        printmap(population.getIndividuals().get(population.size() - 1).conf.configValueMap, keyList);
+    private Individual getBest(int selectionSize, Population population,
+            boolean useMax, Evaluation evaluation) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
+        //printmap(population.getFittest().getConf().getConfigValueMap());
+        //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         
-        for (int i = 0; i < conf.getEvolutionGenerations(); i++){
-            population.truncate(Math.min(population.size(), conf.getEvolutionSelect()));
+        for (int i = 0; i < getEvolutionConfig().getGenerations(); i++){
+            log.info("Iteration {} of {}", i, getEvolutionConfig().getGenerations());
+            population.truncate(Math.min(population.size(), getEvolutionConfig().getSelect()));
            
-            List<Individual> children = crossover(conf.getEvolutionCrossover(), population.getIndividuals(), keyList, conf, false, useMax, evaluation);
+            List<Individual> children = crossover(getEvolutionConfig().getCrossover(), population.getIndividuals(), useMax, evaluation);
             
-            mutateList(population.getIndividuals(), conf.getEvolutionElite(), population.size(), conf.getEvolutionMutate(), false, keyList, useMax);
-            List<Individual> clonedmutated = clonedmutated(conf.getEvolutionEliteCloneAndMutate(), conf, evaluation, keyList);
-            mutateList(children, 0, population.size(), conf.getEvolutionMutate(), true, keyList, useMax);
+            mutateList(population.getIndividuals(), getEvolutionConfig().getElite(), population.size(), getEvolutionConfig().getMutate(), false, useMax);
+            List<Individual> clonedmutated = clonedmutated(getEvolutionConfig().getElitecloneandmutate(), population.getIndividuals().get(0).getEvaluation());
+            mutateList(children, 0, population.size(), getEvolutionConfig().getMutate(), true, useMax);
             
             population.getIndividuals().addAll(children);
-
-            List<Individual> created = created(conf.getEvolutionGenerationCreate(), conf, evaluation, keyList);
-            population.getIndividuals().addAll(created);
+            population.getIndividuals().addAll(clonedmutated);
             
+            List<Individual> created = created(getEvolutionConfig().getGenerationcreate(), evaluation);
+            population.getIndividuals().addAll(created);
+            calculate(population.getIndividuals());
+            Collections.sort(population.getIndividuals());
         }
-        printmap(population.getIndividuals().get(0).conf.configValueMap, keyList);
-        printmap(population.getIndividuals().get(population.size() - 1).conf.configValueMap, keyList);
+        printmap(population.getIndividuals());
+        //printmap(population.getIndividuals().get(0).getConf().getConfigValueMap());
+        //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         return population.getFittest();
     }
-
  }

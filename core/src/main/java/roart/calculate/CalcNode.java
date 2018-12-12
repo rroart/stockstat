@@ -20,4 +20,6 @@ public abstract class CalcNode {
     public abstract void randomize();
 
     public abstract void mutate();
+
+    public abstract CalcNode crossover(CalcNode other);
 }

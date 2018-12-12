@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import roart.config.MyMyConfig;
 import roart.indicator.IndicatorMACD;
-import roart.model.LearnTestPredict;
 import roart.predictor.Predictor;
 import roart.util.Constants;
 import roart.util.SparkUtil;
@@ -37,7 +36,8 @@ public class MLPredictSparkAccess extends MLPredictAccess {
         this.conf = conf;
         findModels();	
         String sparkmaster = conf.getMLSparkMaster();
-        spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat ML");
+        Integer timeout = conf.getMLSparkTimeout();
+        spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat ML", timeout);
     }
 
 
@@ -46,9 +46,9 @@ public class MLPredictSparkAccess extends MLPredictAccess {
     }
     
     @Override
-    public LearnTestPredict learntestpredict(Predictor predictor, Double[] array, List<Double> next, Map<double[], Double> map, MLPredictModel model, int size, String period,
-            String mapname, int outcomes, int windowsize, int horizon, int epochs) {
-        return learntestInner(array, map, model, size, period, mapname, outcomes, horizon);       
+    public Double[] predictone(Predictor predictor, Double[] array, MLPredictModel model, int size, String period,
+            int outcomes, int windowsize, int horizon, int epochs) {
+        return learntestInner(array, null, model, size, period, null, outcomes, horizon);       
     }
 
     @Override
@@ -57,9 +57,9 @@ public class MLPredictSparkAccess extends MLPredictAccess {
     }
 
     @Override
-    public Map<String, Double[]> predict(Predictor indicator, Map<String, double[]> map, MLPredictModel model, int size,
-            String period, String mapname, int outcomes, Map<Double, String> shortMap) {
-         return classifyInner(map, Integer.valueOf(model.getId()), size, period, mapname, outcomes, shortMap);
+    public Map<String, Double[]> predict(Predictor indicator, Map<String, Double[]> map, MLPredictModel model, int size,
+            String period, int outcomes, int windowsize, int horizon, int epochs) {
+         return null;
     }
 
     @Override
@@ -67,46 +67,11 @@ public class MLPredictSparkAccess extends MLPredictAccess {
         return models;
     }
 
-    public Map<String, Double[]> classifyInner(Map<String, double[]> map, int modelInt, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap) {
-        long time0 = System.currentTimeMillis();
-        Map<String, Double[]> retMap = new HashMap<>();
-        Dataset<Row> data = SparkUtil.createDFfromMap2(spark, map);
-        try {
-            Model model = modelMap.get(modelInt+period+mapname);
-            if (model == null) {
-                return retMap;
-            }
-            Dataset<Row> resultDF = model.transform(data);
-
-            for (Row row : resultDF.collectAsList()) {
-                String id = row.getAs("id");
-                Double predict = row.getAs("prediction");
-                Double prob = null;
-                if (IndicatorMACD.LOGISTICREGRESSION == modelInt) {
-                    try {
-                        DenseVector probvector = row.getAs("probability");
-                        double[] probarray = probvector.values();
-                        prob = probarray[predict.intValue()];
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION, e);
-                    }
-                }
-                Double[] retVal = new Double[2];
-                retVal[0] = predict;
-                retVal[1] = prob;
-                retMap.put(id, retVal);
-            }
-            log.info("classify done");
-            return retMap;
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        } finally {
-            log.info("time classify model {} {} {} {}", modelInt, period, map.size(), (System.currentTimeMillis() - time0));            
-        }
+    public Map<String, Double[]> classifyInner(Map<String, double[]> map, int modelInt, int size, String period, int outcomes) {
         return null;
     }
 
-    public LearnTestPredict learntestInner(Double[] array, Map<double[], Double> map, MLPredictModel mlmodel, int size, String period, String mapname, int outcomes, int horizon) {
+    public Double[] learntestInner(Double[] array, Map<double[], Double> map, MLPredictModel mlmodel, int size, String period, String mapname, int outcomes, int horizon) {
         long time0 = System.currentTimeMillis();
         if (spark == null) {
             return null;
@@ -150,5 +115,6 @@ public class MLPredictSparkAccess extends MLPredictAccess {
     public Double evalInner(int modelInt, String period, String mapname) {
         return accuracyMap.get(modelInt+period+mapname);
     }
+
 }
 

@@ -69,7 +69,8 @@ public class DbSpark {
 		try {
 			String sparkmaster = conf.getDbSparkMaster();
 			//sparkmaster = MyPropertyConfig.instance().sparkMaster;
-			spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat DB");
+			Integer timeout = conf.getMLSparkTimeout();
+			spark = SparkUtil.createSparkSession(sparkmaster, "Stockstat DB", timeout);
 			prop = new java.util.Properties();
 			prop.setProperty("driver", "org.postgresql.Driver");
 			System.out.println("spark conf fin");
@@ -83,7 +84,9 @@ public class DbSpark {
 		long time0 = System.currentTimeMillis();
 		List<StockItem> retList = new ArrayList<>();
 		Dataset<Row> allstocks = spark.read().jdbc("jdbc:postgresql://localhost:5432/stockstat?user=stockstat&password=password", "stock", prop);
-		Dataset<Row> allstocksMarket = allstocks.filter(allstocks.col("marketid").equalTo(market));
+		log.info("spark size {}", allstocks.count());
+                Dataset<Row> allstocksMarket = allstocks.filter(allstocks.col("marketid").equalTo(market));
+                log.info("spark size {}", allstocksMarket.count());
 		for (Row row : allstocksMarket.collectAsList()) {
 			String dbid = row.getAs("dbid");
 			String marketid = row.getAs("marketid");
@@ -109,7 +112,10 @@ public class DbSpark {
             Double period9 = row.getAs("period9");
 			retList.add(new StockItem(dbid, marketid, id, name, date, indexvalue, indexvaluelow, indexvaluehigh, price, pricelow, pricehigh, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9));			
 		}
+                log.info("spark size {}", retList.size());
 		log.info("time0 " + (System.currentTimeMillis() - time0));
+                log.info("spark size {}", allstocks.count());
+                log.info("spark size {}", allstocksMarket.count());
 		{
 		    //allstocks.select("date").distinct().sort("date").show();
 		    //allstocks.where(allstocks.col("marketid").equalTo("nordhist")).where(allstocks.col("id").equalTo("F00000M1AH")).show();
@@ -207,10 +213,6 @@ public class DbSpark {
         for (String id : listMap.keySet()) {
             double[][] values = listMap.get(id);
             //values = ArraysUtil.getArrayNonNullReverse(values);
-            // TODO !!!
-            if ("0P0000RVOF".equals(id)) {              
-                log.info("braz " + Arrays.toString(values));                
-            }
 
             if (wantPercentizedPriceIndex && values.length > 0 && values[0].length > 0) {
                 double first = values[0][0];

@@ -1,9 +1,12 @@
 package roart.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.ml.linalg.VectorUDT;
@@ -23,21 +26,29 @@ public class SparkUtil {
 
     private static Logger log = LoggerFactory.getLogger(SparkUtil.class);
 
-    public static SparkSession createSparkSession(String sparkmaster, String appName) {
+    public static SparkSession createSparkSession(String sparkmaster, String appName, Integer timeout) {
+        String myAppName = "stockstat";
         SparkConf sparkconf = new SparkConf();
         String master = sparkmaster;
         sparkconf.setMaster(master);
-        sparkconf.setAppName("stockstat");
+        sparkconf.setAppName(myAppName);
         // it does not work well with default snappy
+        if (timeout != null) {
+            sparkconf.set("spark.network.timeout", "" + timeout);
+        }
         sparkconf.set("spark.io.compression.codec", "lzf");
         sparkconf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        String sparkDriverHost = System.getProperty("SPARK_DRIVER_HOST");
+        if (sparkDriverHost != null) {
+            sparkconf.set("spark.driver.host", sparkDriverHost);
+        }
         String userDir = System.getProperty("user.dir");
         log.info("user.dir " + userDir);
-
+        //SparkSession i = new SparkSession();
         return SparkSession
                 .builder()
                 .master(sparkmaster)
-                .appName(appName)
+                .appName(myAppName)
                 .config(sparkconf)
                 .getOrCreate();
     }

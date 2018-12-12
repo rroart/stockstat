@@ -27,10 +27,14 @@ import roart.action.ImproveProfitAction;
 import roart.action.MainAction;
 import roart.action.UpdateDBAction;
 import roart.config.ConfigConstants;
+import roart.model.IncDecItem;
 import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
+import roart.service.IclijServiceParam;
 import roart.service.IclijServiceResult;
+import roart.service.ServiceParam;
 import roart.util.Constants;
+import roart.util.EurekaConstants;
 import roart.util.ServiceUtil;
 
 @RestController
@@ -49,11 +53,25 @@ public class ServiceController {
         return instance;
     }
 
-    @RequestMapping(value = "/getcontent",
+    @RequestMapping(value = "/" + EurekaConstants.GETCONFIG,
             method = RequestMethod.POST)
-    public IclijServiceResult getContent(/*@PathVariable String market*/)
+    public IclijServiceResult getConfig(/*@PathVariable String market*/)
             throws Exception {
-        return ServiceUtil.getContent();
+        return ServiceUtil.getConfig();
+    }
+
+    @RequestMapping(value = "/" + EurekaConstants.GETCONTENT,
+            method = RequestMethod.POST)
+    public IclijServiceResult getContent(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getContent(param.getIclijConfig());
+    }
+
+    @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,
+            method = RequestMethod.POST)
+    public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)
+            throws Exception {
+        return ServiceUtil.getVerify(param.getIclijConfig(), param.getOffset());
     }
 
     @RequestMapping(value = "/recommender/{market}",
@@ -89,7 +107,7 @@ public class ServiceController {
     public void getFindProfit()
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        new FindProfitAction().goal();
+        new FindProfitAction().goal(null);
     }
 
     @RequestMapping(value = "/improveprofit",
@@ -97,16 +115,36 @@ public class ServiceController {
     public void getImproveProfit()
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
-        new ImproveProfitAction().goal();
+        new ImproveProfitAction().goal(null);
     }
 
+    @RequestMapping(value = "/findprofit",
+            method = RequestMethod.POST)
+    public IclijServiceResult getFindProfitMarket(@RequestBody IclijServiceParam param)
+            throws Exception {
+        //MainAction.goals.add(new FindProfitAction());
+        return ServiceUtil.getFindProfit(param.getIclijConfig(), param.getOffset());
+        //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
+       //IclijServiceResult ret = new IclijServiceResult();
+       //ret.setError(error);
+       //return ret;
+    }
+
+    @RequestMapping(value = "/improveprofit",
+            method = RequestMethod.POST)
+    public IclijServiceResult getImproveProfitMarket(@RequestBody IclijServiceParam param)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        return ServiceUtil.getImproveProfit(param.getIclijConfig(), param.getOffset());
+    }
 
     @RequestMapping(value = "/updatedb",
             method = RequestMethod.GET)
     public void getUpdateDb()
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
-        new UpdateDBAction().goal();
+        new UpdateDBAction().goal(null);
     }
 
 }

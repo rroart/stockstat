@@ -6,6 +6,7 @@ public class LearnTestPredict {
     public List<Double[]> slides;
     //public List<Double> next;
     public Object[] array;
+    public List<Object[]> arraylist;
     public Object[] cat;
     public List<List<Object>> listlist;
     public int modelInt;
@@ -18,5 +19,6 @@ public class LearnTestPredict {
     public int epochs;
     public int windowsize;
     public Double[] predicted;
+    public List<Double[]> predictedlist;
     public Double accuracy;
 }

@@ -1,12 +1,8 @@
 package roart.model;
 
+import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-//import org.hibernate.annotations.Index;
-
-
-
-
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,10 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "IncDec")
@@ -53,6 +47,9 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
 
     @Column
     private Date record;
+    
+    @Column
+    private Date date;
     
     public Long getDbid() {
         return dbid;
@@ -118,6 +115,14 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
         this.record = record;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
     @Transient
         public static List<IncDec> getAll() throws Exception {
         return HibernateUtil.convert(HibernateUtil.currentSession().createQuery("from IncDec").list(), IncDec.class);
@@ -130,8 +135,10 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
 
     @Transient
     public void save() throws Exception {
-        HibernateUtil.currentSession().save(this);
-        HibernateUtil.commit();
+        Session session = HibernateUtil.getMyHibernateSession();
+        session.getTransaction().begin();
+        session.save(this);
+        session.getTransaction().commit();
     }
 
 

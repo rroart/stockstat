@@ -14,6 +14,7 @@
   <packaging>pom</packaging>
   <name>Stock Statistics Iclij</name>
 <modules>
+  <module>iclij-chatbot</module>
   <module>iclij-common</module>
   <module>iclij-core</module>
   <module>iclij-web</module>

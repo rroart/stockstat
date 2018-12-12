@@ -1,0 +1,43 @@
+gcloud config set project rroart-stockstat
+gcloud config set compute/zone europe-west1
+export PROJECT_ID="$(gcloud config get-value project -q)"
+docker tag pd gcr.io/${PROJECT_ID}/pd:latest
+docker push gcr.io/${PROJECT_ID}/pd:latest
+docker tag stockstat-eureka gcr.io/${PROJECT_ID}/stockstat-eureka:latest
+docker push gcr.io/${PROJECT_ID}/stockstat-eureka:latest
+docker tag stockstat-core gcr.io/${PROJECT_ID}/stockstat-core:latest
+docker push gcr.io/${PROJECT_ID}/stockstat-core:latest
+docker tag stockstat-web gcr.io/${PROJECT_ID}/stockstat-web:latest
+docker push gcr.io/${PROJECT_ID}/stockstat-web:latest
+docker tag stockstat-iclij-core gcr.io/${PROJECT_ID}/stockstat-iclij-core:latest
+docker push gcr.io/${PROJECT_ID}/stockstat-iclij-core:latest
+docker tag stockstat-iclij-web gcr.io/${PROJECT_ID}/stockstat-iclij-web:latest
+docker push gcr.io/${PROJECT_ID}/stockstat-iclij-web:latest
+docker tag tensorflow gcr.io/${PROJECT_ID}/tensorflow:latest
+docker push gcr.io/${PROJECT_ID}/tensorflow:latest
+docker tag spark gcr.io/${PROJECT_ID}/spark:latest
+docker push gcr.io/${PROJECT_ID}/spark:latest
+gcloud auth configure-docker
+
+gcloud container clusters create stockstat-cluster
+# stockstat-cluster  europe-west1  1.9.7-gke.6     35.233.81.167  n1-standard-1  1.9.7-gke.6   9          RUNNING
+gcloud container clusters list
+#kubectl run hello-server --image gcr.io/google-samples/hello-app:1.0 --port 8080
+kubectl run --image=centos/postgresql-10-centos7 --env="POSTGRESQL_USER=stockstat" --env="POSTGRESQL_PASSWORD=password" --env="POSTGRESQL_DATABASE=stockstat" --port=5432 --expose=true postgresql-10-centos7
+kubectl run --image=gcr.io/${PROJECT_ID}/pd pd
+kubectl run --image=gcr.io/${PROJECT_ID}/stockstat-eureka stockstat-eureka
+kubectl run --image=gcr.io/${PROJECT_ID}/stockstat-core stockstat-core
+kubectl run --image=gcr.io/${PROJECT_ID}/stockstat-web stockstat-web
+kubectl run --image=gcr.io/${PROJECT_ID}/stockstat-iclij-core stockstat-iclij-core
+kubectl run --image=gcr.io/${PROJECT_ID}/stockstat-iclij-web stockstat-iclij-web
+kubectl run --image=gcr.io/${PROJECT_ID}/tensorflow tensorflow
+kubectl run --image=gcr.io/${PROJECT_ID}/spark spark
+
+kubectl expose deployment stockstat-eureka --port 8761 --type=LoadBalancer
+kubectl expose deployment stockstat-web --port 8180 --type=LoadBalancer
+kubectl expose deployment stockstat-iclij-web --port 8181 --type=LoadBalancer
+kubectl expose deployment spark --port 7077 --type=LoadBalancer
+#kubectl expose deployment sparkui --port 8080 --type=LoadBalancer
+kubectl expose deployment tensorflow --port 8000 --type=LoadBalancer
+
+gcloud container clusters delete stockstat-cluster

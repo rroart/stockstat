@@ -6,9 +6,11 @@ import roart.model.ResultItemBytes;
 import roart.model.ResultItemTable;
 import roart.model.ResultItemTableRow;
 import roart.model.ResultItemText;
+import roart.pipeline.PipelineConstants;
 import roart.model.ResultItem;
 import roart.util.Constants;
 import roart.service.ControlService;
+import roart.util.EurekaUtil;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -146,7 +148,7 @@ public class MyVaadinUI extends UI
 
     @Override
     protected void init(VaadinRequest request) {
-
+        EurekaUtil.initEurekaClient();
         controlService = new ControlService();
         controlService.getConfig();
         final VerticalLayout layout = new VerticalLayout();
@@ -261,7 +263,7 @@ public class MyVaadinUI extends UI
 	tab.addComponent(getCleanupfs());
          */
         HorizontalLayout horTree = new HorizontalLayout();
-        ConfigTreeMap map2 = controlService.conf.configTreeMap;
+        ConfigTreeMap map2 = controlService.conf.getConfigTreeMap();
         componentMap = new HashMap<>();
         print(map2, horTree);
 
@@ -288,12 +290,12 @@ public class MyVaadinUI extends UI
 
     Map<String, Component> componentMap ;
     private void print(ConfigTreeMap map2, HorizontalLayout tab) {
-        Map<String, Object> map = controlService.conf.configValueMap;
-        String name = map2.name;
+        Map<String, Object> map = controlService.conf.getConfigValueMap();
+        String name = map2.getName();
         System.out.println("name " + name);
         Object object = map.get(name);
         Component o = null;
-        String text = controlService.conf.text.get(name);
+        String text = controlService.conf.getText().get(name);
         if (object == null) {
             //System.out.println("null for " + name);
             String labelname = name;
@@ -328,7 +330,7 @@ public class MyVaadinUI extends UI
         }
         //System.out.print(space.substring(0, indent));
         //System.out.println("map2 " + map2.name + " " + map2.enabled);
-        Map<String, ConfigTreeMap> map3 = map2.configTreeMap;
+        Map<String, ConfigTreeMap> map3 = map2.getConfigTreeMap();
         if (!map3.keySet().isEmpty()) {
             VerticalLayout h = new VerticalLayout();
             tab.addComponent(h);
@@ -439,6 +441,16 @@ public class MyVaadinUI extends UI
         horTester.addComponent(getTestRecommender(false));
         horTester.addComponent(getTestRecommender(true));
 
+        HorizontalLayout horTester2 = new HorizontalLayout();
+        horTester2.setHeight("20%");
+        horTester2.setWidth("60%");
+        horTester2.addComponent(getTestMLReset(PipelineConstants.MLMACD));
+        horTester2.addComponent(getTestML(PipelineConstants.MLMACD, false));
+        horTester2.addComponent(getTestML(PipelineConstants.MLMACD, true));
+        horTester2.addComponent(getTestMLReset(PipelineConstants.MLINDICATOR));
+        horTester2.addComponent(getTestML(PipelineConstants.MLINDICATOR, false));
+        horTester2.addComponent(getTestML(PipelineConstants.MLINDICATOR, true));
+
         HorizontalLayout horManual = new HorizontalLayout();
         horManual.setHeight("20%");
         horManual.setWidth("60%");
@@ -464,6 +476,7 @@ public class MyVaadinUI extends UI
         tab.addComponent(verManualList);
         tab.addComponent(horChooseGraph);
         tab.addComponent(horTester);
+        tab.addComponent(horTester2);
         return tab;
     }
 
@@ -524,32 +537,59 @@ public class MyVaadinUI extends UI
         if (doSet) {
             set = "and set";
         }
-        Button button = new Button("Test recommender" + set);
+        Button button = new Button("Evolve recommender" + set);
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {                    
-                    Notification.show("Request sent");
-
-                    List<ResultItem> list = controlService.getTestRecommender(doSet);
-                    log.info("listsize " + list.size());
-                    VerticalLayout layout = new VerticalLayout();
-                    layout.setCaption("Results");
-                    displayResultListsTab(layout, list); 
-                    tabsheet.addComponent(layout);
-                    tabsheet.getTab(layout).setClosable(true);
-                    if (doSet) {
-                        VerticalLayout newComponent = getControlPanelTab();
-                        tabsheet.replaceComponent(controlPanelTab, newComponent);
-                        controlPanelTab = newComponent;
-                    }
-                    Notification.show("New result available");
-                    //displayResults();
+                    displayRecommender(doSet);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
         });
         return button;
+    }
+
+    protected void displayRecommender(boolean doSet) {
+        Notification.show("Request sent");
+        controlService.getEvolveRecommender(this, doSet);
+    }
+
+    private Button getTestML(String ml, boolean doSet) {
+        String set = "";
+        if (doSet) {
+            set = "and set";
+        }
+        Button button = new Button("Evolve " + ml + " " + set);
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try { 
+                    displayML(doSet, ml);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Component getTestMLReset(String ml) {
+        Button button = new Button("Reset " + ml);
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try { 
+                    controlService.resetML(ml);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    protected void displayML(boolean doSet, String ml) {
+        Notification.show("Request sent");
+        controlService.getEvolveML(this, doSet, ml);
     }
 
     private Button getMarket() {
@@ -1010,7 +1050,8 @@ public class MyVaadinUI extends UI
     }
      */
     private void displayResults() {
-        List<ResultItem> list = controlService.getContent();
+        controlService.getContent(this);
+        /*
         log.info("listsize " + list.size());
         VerticalLayout layout = new VerticalLayout();
         layout.setCaption("Results");
@@ -1020,6 +1061,7 @@ public class MyVaadinUI extends UI
         tabsheet.addComponent(layout);
         tabsheet.getTab(layout).setClosable(true);
         Notification.show("New result available");
+        */
     }
 
 
@@ -1130,7 +1172,7 @@ public class MyVaadinUI extends UI
      */
     private CheckBox getCheckbox(String text, String configKey) {
         CheckBox cb = new CheckBox(text);
-        Boolean origValue = (Boolean) controlService.conf.configValueMap.get(configKey);
+        Boolean origValue = (Boolean) controlService.conf.getConfigValueMap().get(configKey);
         cb.setValue(origValue);
 
         // Handle changes in the value
@@ -1140,7 +1182,7 @@ public class MyVaadinUI extends UI
                 boolean value = (Boolean) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.conf.configValueMap.put(configKey, value );
+                    controlService.conf.getConfigValueMap().put(configKey, value );
                     // TODO handle hiding
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
@@ -1154,7 +1196,7 @@ public class MyVaadinUI extends UI
 
     private TextField getStringField(String text, String configKey) {
         TextField tf = new TextField(text);
-        String origValue = (String) controlService.conf.configValueMap.get(configKey);
+        String origValue = (String) controlService.conf.getConfigValueMap().get(configKey);
 
         tf.setValue(origValue);
 
@@ -1165,7 +1207,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.conf.configValueMap.put(configKey, value );
+                    controlService.conf.getConfigValueMap().put(configKey, value );
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -1178,7 +1220,7 @@ public class MyVaadinUI extends UI
 
     private TextField getIntegerField(String text, String configKey) {
         TextField tf = new TextField(text);
-        Integer origValue = (Integer) controlService.conf.configValueMap.get(configKey);
+        Integer origValue = (Integer) controlService.conf.getConfigValueMap().get(configKey);
 
         tf.setValue("" + origValue);
 
@@ -1189,7 +1231,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.conf.configValueMap.put(configKey, new Integer(value) );
+                    controlService.conf.getConfigValueMap().put(configKey, new Integer(value) );
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -1201,7 +1243,7 @@ public class MyVaadinUI extends UI
     }
     private TextField getDoubleField(String text, String configKey) {
         TextField tf = new TextField(text);
-        Double origValue = (Double) controlService.conf.configValueMap.get(configKey);
+        Double origValue = (Double) controlService.conf.getConfigValueMap().get(configKey);
 
         tf.setValue("" + origValue);
 
@@ -1212,7 +1254,7 @@ public class MyVaadinUI extends UI
                 String value = (String) event.getProperty().getValue();
                 // Do something with the value
                 try {
-                    controlService.conf.configValueMap.put(configKey, new Double(value) );
+                    controlService.conf.getConfigValueMap().put(configKey, new Double(value) );
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -1830,10 +1872,19 @@ public class MyVaadinUI extends UI
             }
         }
         tab.addComponent(result);
+        tabsheet.addComponent(tab);
+        tabsheet.getTab(tab).setClosable(true);
+        Notification.show("New result available");
     }
 
     public void notify(String text) {
         Notification.show(text);
+    }
+
+    public void replaceControlPanelTab() {
+        VerticalLayout newComponent = getControlPanelTab();
+        tabsheet.replaceComponent(controlPanelTab, newComponent);
+        controlPanelTab = newComponent;        
     }
 
 }

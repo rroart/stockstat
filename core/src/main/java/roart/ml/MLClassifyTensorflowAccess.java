@@ -14,6 +14,7 @@ import roart.aggregate.Aggregator;
 import roart.config.ConfigConstants;
 import roart.config.MyMyConfig;
 import roart.model.LearnTestClassify;
+import roart.model.LearnTestClassifyResult;
 import roart.util.EurekaUtil;
 
 public class MLClassifyTensorflowAccess extends MLClassifyAccess {
@@ -22,15 +23,22 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     private MyMyConfig conf;
 
+    private String tensorflowServer;
+
     public MLClassifyTensorflowAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();
+        tensorflowServer = conf.getTensorflowServer();
     }
 
     private void findModels() {
         models = new ArrayList<>();
         if (conf.wantDNN()) {
             MLClassifyModel model = new MLClassifyTensorflowDNNModel();
+            models.add(model);
+        }
+        if (conf.wantDNNL()) {
+            MLClassifyModel model = new MLClassifyTensorflowDNNLModel();
             models.add(model);
         }
         if (conf.wantL()) {
@@ -40,9 +48,9 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
+    public Double learntest(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
             int outcomes) {
-        return learntestInner(map, size, period, mapname, outcomes, model);
+        return learntestInner(nnconfigs, map, size, period, mapname, outcomes, model);
     }
 
     @Override
@@ -50,19 +58,30 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return models;
     }
 
-    private Double learntestInner(Map<double[], Double> map, int size, String period, String mapname, int outcomes,
+    private Double learntestInner(NNConfigs nnconfigs, Map<double[], Double> map, int size, String period, String mapname, int outcomes,
             MLClassifyModel model) {
-        List<List<Object>> listlist = new ArrayList<>();
-        for (Entry<double[], Double> entry : map.entrySet()) {
-            double[] key = entry.getKey();
-            List<Object> list = new ArrayList<>();
-            list.addAll(Arrays.asList(key));
-            list.add(entry.getValue());
-            listlist.add(list);
-        }
-        int i = 0;
+        // not used?
+        List<List<Object>> listlist = getListList(map);
         Object[][] objobj = new Object[map.size()][];
         Object[] cat = new Object[map.size()];
+        getTrainingSet(map, objobj, cat);
+        LearnTestClassify param = new LearnTestClassify();
+        param.setTensorflowDNNConfig(nnconfigs.getTensorflowDNNConfig());
+        param.setTensorflowLConfig(nnconfigs.getTensorflowLConfig());
+        param.setTrainingarray(objobj);
+        param.setTrainingcatarray(cat);
+        param.setModelInt(model.getId());
+        param.setSize(size);
+        param.setPeriod(period);
+        param.setMapname(mapname);
+        param.setOutcomes(outcomes);
+        log.info("evalin {} {} {}", param.getModelInt(), period, mapname);
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntest");
+        return test.getAccuracy();
+    }
+
+    private void getTrainingSet(Map<double[], Double> map, Object[][] objobj, Object[] cat) {
+        int i = 0;
         for (Entry<double[], Double> entry : map.entrySet()) {
             double[] key = entry.getKey();
             Object[] obj = new Object[key.length/* + 1*/];
@@ -72,29 +91,29 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             cat[i] = entry.getValue();
             objobj[i++] = obj;
         }
-        LearnTestClassify param = new LearnTestClassify();
-        param.array = objobj;
-        param.cat = cat;
-        param.listlist = listlist;
-        param.modelInt = model.getId();
-        param.size = size;
-        param.period = period;
-        param.mapname = mapname;
-        param.outcomes = outcomes;
-        log.info("evalin {} {} {}", param.modelInt, period, mapname);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, "http://localhost:8000/learntest");
-        return test.prob;
+    }
+
+    private List<List<Object>> getListList(Map<double[], Double> map) {
+        List<List<Object>> listlist = new ArrayList<>();
+        for (Entry<double[], Double> entry : map.entrySet()) {
+            double[] key = entry.getKey();
+            List<Object> list = new ArrayList<>();
+            list.addAll(Arrays.asList(key));
+            list.add(entry.getValue());
+            listlist.add(list);
+        }
+        return listlist;
     }
 
     @Override
     public Double eval(int modelInt, String period, String mapname) {
         LearnTestClassify param = new LearnTestClassify();
-        param.modelInt = modelInt;
-        param.period = period;
-        param.mapname = mapname;
+        param.setModelInt(modelInt);
+        param.setPeriod(period);
+        param.setMapname(mapname);
         log.info("evalout {} {} {}", modelInt, period, mapname);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, "http://localhost:8000/eval");
-        return test.prob;
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/eval");
+        return test.getAccuracy();
     }
 
     @Override
@@ -109,10 +128,43 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     private Map<String, Double[]> classifyInner(Map<String, double[]> map, MLClassifyModel model, int size, String period,
             String mapname, int outcomes) {
-        List<String> retList = new ArrayList<>();
         LearnTestClassify param = new LearnTestClassify();
-        int i = 0;
+        List<String> retList = new ArrayList<>();
         Object[][] objobj = new Object[map.size()][];
+        getClassifyArray(map, retList, objobj);
+        param.setClassifyarray(objobj);
+        param.setModelInt(model.getId());
+        param.setSize(size);
+        param.setPeriod(period);
+        param.setMapname(mapname);
+        param.setOutcomes(outcomes);
+        for(Object[] obj : objobj) {
+            log.info("inner {}", Arrays.asList(obj));
+        }
+        LearnTestClassify ret = null;
+        try {
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/classify");
+        } catch (Exception e) {
+            log.error("Exception", e);
+        }
+        Map<String, Double[]> retMap = getCatMap(retList, ret);
+        return retMap;
+    }
+
+    private Map<String, Double[]> getCatMap(List<String> retList, LearnTestClassify ret) {
+        Object[] cat = ret.getClassifycatarray();
+        Object[] prob = ret.getClassifyprobarray();
+        Map<String, Double[]> retMap = new HashMap<>();
+        for (int j = 0; j < retList.size(); j ++) {
+            Double acat = Double.valueOf((Integer) cat[j]);
+            Double aprob = (Double) prob[j];
+            retMap.put(retList.get(j), new Double[]{ acat, aprob });
+        }
+        return retMap;
+    }
+
+    private void getClassifyArray(Map<String, double[]> map, List<String> retList, Object[][] objobj) {
+        int i = 0;
         for (Entry<String, double[]> entry : map.entrySet()) {
             double[] value = entry.getValue();
             Object[] obj = new Object[value.length/* + 1*/];
@@ -122,23 +174,6 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             objobj[i++] = obj;
             retList.add(entry.getKey());
         }
-        param.array = objobj;
-        param.modelInt = model.getId();
-        param.size = size;
-        param.period = period;
-        param.mapname = mapname;
-        param.outcomes = outcomes;
-        for(Object[] obj : objobj) {
-            log.info("inner {}", Arrays.asList(obj));
-        }
-        LearnTestClassify ret = EurekaUtil.sendMe(LearnTestClassify.class, param, "http://localhost:8000/classify");
-        Object[] cat = ret.cat;
-        Map<String, Double[]> retMap = new HashMap<>();
-        for (int j = 0; j < retList.size(); j ++) {
-            Double acat = Double.valueOf((Integer) cat[j]);
-            retMap.put(retList.get(j), new Double[]{acat});
-        }
-        return retMap;
     }
 
     @Override
@@ -146,5 +181,70 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return ConfigConstants.TENSORFLOW;
     }
 
+    @Override
+    public LearnTestClassifyResult learntestclassify(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map,
+            MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<String, double[]> map2,
+            Map<Double, String> shortMap) {
+        LearnTestClassifyResult result = new LearnTestClassifyResult();
+        if (map2 == null) {
+            result.setCatMap(new HashMap<>());
+            return result;
+        }
+        Object[][] trainingArray = new Object[map.size()][];
+        Object[] trainingCatArray = new Object[map.size()];
+        getTrainingSet(map, trainingArray, trainingCatArray);
+        LearnTestClassify param = new LearnTestClassify();
+        TensorflowDNNConfig dnnConfig = null;
+        TensorflowLConfig lconfig = null;
+        if (nnconfigs != null) {
+            dnnConfig = nnconfigs.getTensorflowDNNConfig();
+            lconfig = nnconfigs.getTensorflowLConfig();
+        }
+        if (dnnConfig == null && lconfig == null) {
+            int jj = 0;
+        }
+        if (dnnConfig == null) {
+            dnnConfig = new TensorflowDNNConfig(2000, 3);
+            dnnConfig.setHiddenunits(new Integer[] { 10, 20, 10});
+        }
+        if (lconfig == null) {
+            lconfig = new TensorflowLConfig(2000);
+        }
+        param.setTensorflowDNNConfig(dnnConfig);
+        param.setTensorflowLConfig(lconfig);
+        param.setTrainingarray(trainingArray);
+        param.setTrainingcatarray(trainingCatArray);
+        param.setModelInt(model.getId());
+        param.setSize(size);
+        param.setPeriod(period);
+        param.setMapname(mapname);
+        param.setOutcomes(outcomes);
+        List<String> retList = new ArrayList<>();
+        Object[][] classifyArray = new Object[map2.size()][];
+        getClassifyArray(map2, retList, classifyArray);
+        param.setClassifyarray(classifyArray);
+        for(Object[] obj : classifyArray) {
+            log.info("inner {}", Arrays.asList(obj));
+        }
+        LearnTestClassify ret = null;
+        if (model.getId() == 1) {
+            log.info("Used ML config {}", dnnConfig);
+        } else {
+            log.info("Used ML config {}", lconfig);
+        }
+        try {
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
+        } catch (Exception e) {
+            log.error("Exception", e);
+        }
+        result.setAccuracy(ret.getAccuracy());
+        Map<String, Double[]> retMap = getCatMap(retList, ret);
+        result.setCatMap(retMap);
+        return result;
+    }
+
+    @Override
+    public void clean() {        
+    }
 }
 

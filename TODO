@@ -1,46 +1,175 @@
-Use R quantmod
-Use Java quantlib
-Fixed left
-Eureka wait for notify
-Indicator/predictor save created/generated data
-Drop classifier eval and get percentage when doing model learntest
-Save tensorflow config to xml file
-Use swarm algorithm
-Use fuzzy logic or uncertainty
-Stockstat metadata for imports
-Dockerize tensorflow etc
-Use defaults for config
-Use volume
-Add interest
-Fix problem when extras use same market
-Make stock value to return a new class instead of double[]
-Use genetic algorithms for finding neural net config
-Move move
-Check all use of configs
-Metadata on title row
-Rearrange buy/sell
-Change result map keys, due to overlap
-Stockst komb 1m 1w m macd etc
-Jenkins / owasp
-Aggregator recommender gets problem with old tradcurr data
-Mlind? use pure gold oil price
-Memory with time spent.
-Start with no recent data, then most time spenders.
-Cboe lacked index
-Nordfund tab date
-Tradcomm p1 empty
-Tradcurr p2 empty
-Mornind - date
-Evolutionary neural net
-ReName calc
-Use testaccuracy in iclij
-Use 4 macd with ml
-Mlindicator scale down/improveaction?
-Recommender combine keys/improveaction?
-Pipeline iclij
-Remove findprofit both inc dec, go to improve
-RSI and usemax
-StockUtil update periods number
-Parametrize jdbc setting
-Configure limit for empty hole limit
-calcnodecomplex usemax min/max
+B: Bug
+F: Feature
+T: Tech debt
+D: Done
+W: Work
+C: Change
+
+B: improvement lack srv. setdate
+B: look at findprofit, getimprovement two layers of new ControlService
+WF: change date system to from to
+T: unify verify and singlemark
+WB: new ControlService w/o date transfer
+B: Using offset for manual use
+WF: for loop for recommend
+WB: icli web sendme null
+T/F: vaadin 10, or go for angular/reactredux?
+F: no env SPARK_DRIVER_HOST, use config file?
+T: MLindicator Map<String, Double[][]> list0 = (Map<String, Double[][]>) localResultMap.get next usage
+T: mlmacd mlindicator anythinghere better heuristics?
+B: getExtraData Date date = dateList.get(size - j); negative
+T: EurekaUtil deprecation
+T: EurekaUtil wait loop
+WF: compare 2+ stocks, base 100
+F/B: startoffset for auto, due to slow updates
+T: Pipe, Categ constructor, split off calculate
+B: iPredictor implement, and not running
+WF: Multiple datasources, pandas-datareader
+T: Parametrize jdbc setting
+WF: Vaadin threads
+F: Use swarm algorithm
+WF: Thread/multitask change
+WF: Stanford
+F: Use fuzzy logic or uncertainty
+T: Check all use of configs
+T: Nvidia
+WF: Demo
+T: Rearrange buy/sell, and failed categories?
+T: Cleanup recommender buy/sell duality
+T: Put TODO in code here
+T: Dataimport zero/content check
+F: Doc iclij configs
+T: Change result map keys, due to overlap
+T: ReName calc
+WB: tf open file limi
+F: Ignore bad performing nn after evolve, set limit
+F: DNNL
+T: More evolution refactor
+T: Update OneFour evolution
+F: mlmacd improve, full pattern
+T: Eureka setup/config
+WF: iclij table with %-t/f
+WF: Save icli result
+F: Iclij rerun manually recommendation
+F: Iclij verif show new ml config
+F: Test ml conf gen for each loop?
+B: Getdates null
+F: Mlind (w/ lr) with same data as evolve recommender
+WF: Each mldao with threadpool
+B: Timeutil null date breakpoint
+B: no mlstat -> mapmaps
+B: No ml conf
+B: Empty increase verify maplist?
+B: Use ose/nordfund on sunday with date
+WB: Why buy xor sell?
+B: Updatemap only one?
+F: Iclij mltimes
+B: Recommender NAN
+B: Getverify date 1 offset
+B: Use i.e. ose in january, when not having 180 days back.
+C: Put config LSTM under ml
+B: Getverify not old date recorded when chosen
+WF: Save file result enable t/f
+F: Use MLevolve also for getmemoryitems?
+T: Fix thresholds, common standard
+T: Fix getRealkeys, both inside an in findBuySell... (confidencefactor was null)
+B: Flask threaded tf process lock (Tf server/client hangs)
+B: Iclij web xml tree
+B: Auto iclij missing ai, memory
+B: SQL var 255 overflow
+WF: discard sat/sun/hol for all lang
+T: MyMyConfig getValueOrDefault use more
+B: again confidencefactor null?
+B: stockstatcore terminates/crashes?
+WF: get market data icli with date
+T: space/tabs
+
+B: MLMACD/MLindicator null key, tf giving nonexisting class.
+B: Spark giving nonexisting prediction also.
+F: Stockst komb 1m 1w m macd etc
+F: Mlind? use pure gold oil price
+F: Use testaccuracy in iclij
+F: Use 4 macd with ml
+F: Mlindicator scale down/improveaction?
+F: Recommender combine keys/improveaction?
+F: Remove findprofit both inc dec, go to improve
+F: RSI and usemax
+F: calcnodecomplex usemax min/max
+WF: ConfigMaps use class
+WF: MyExecutors and cpu config
+
+F: Download output button
+T: Tf python cleanup
+F: Look at tf serving?
+F: Stockstat metadata for imports
+F: Metadata on title row
+T: Make stock value to return a new class instead of double[]
+B: Fix problem when extras use same market
+T: Eureka wait for notify
+WF: Dockerize tensorflow etc
+F: MACD two dim input w (macd, %)
+B: Spark truncates getAll?
+T: Synch XML reader config code
+WF: Start with no recent data, then most time spenders.
+
+F: Use volume
+F: Add interest
+F: Subclass incdecitem instead of having non-saved
+F: Add info about nltk.download() large_grammar
+F: Indicator/predictor save created/generated data
+F: Save tensorflow config to xml file
+F: Use R quantmod
+F: Use Java quantlib
+
+C: Fixed left
+C: Move move
+
+B: KZKAK:IND...
+B: Aggregator recommender gets problem with old tradcurr data
+B: ComponentMLMACD Double instead of String (not reproduced with dbg).
+Caused by: java.lang.ClassCastException: java.lang.Double cannot be cast to java.lang.String
+        at roart.component.ComponentMLMACD.handle(ComponentMLMACD.java:75)
+2018-01-28 21:28:50,162 ERROR [qtp1915579460-24] r.s.ControlService [ControlService.java:234] Exception
+java.lang.IndexOutOfBoundsException: Index: 20, Size: 20
+        at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+        at java.util.ArrayList.get(ArrayList.java:433)
+        at roart.aggregate.MLMACD.handleResultMeta(MLMACD.java:446)
+B: morncat (w cy no price) and aggregator price, npe
+java.lang.NullPointerException: null
+        at roart.aggregate.AggregatorRecommenderIndicator.<init>(AggregatorRecommenderIndicator.java:92)
+        at roart.service.ControlService.getAggregates(ControlService.java:332)
+Owasp
+
+DF: service simple with redirect output
+DB: ver 0/x
+DF: Tf gpu need singlethread flask
+DF: Move output save.
+DF: Flasktf crash?
+DF: Tf crash, tf keras queue "leakage".
+DF: Spark timeout
+DF: Evolution config with old fittest
+DF: Use genetic algorithms for finding neural net config
+DF: Evolutionary neural net
+DF: Verifier loop
+DF: Configure limit for empty hole limit
+DF: The noSave for getVerify is not used
+DF: StockUtil update periods number
+DF: Pipeline iclij, and add date support and no storing, more validating
+DF?: MLPredictModel in MLPredictDAO put loop out of class
+DF: For ose etc, new cy/1m calc
+DF?: Cboe lacked index
+DF?: Nordfund tab date
+DF?: Mornind - date
+DF: Handle first time market run
+DF: New market for findMarketComponentsToCheck(markets)?
+DF: Memory with time spent.
+DF: Use defaults for config
+DF: Iclji gui ui temp hack remove
+DF: Iclij w/ ml time stats
+DF: Jenkins
+DF: Tradcomm p1 empty
+DF: Tradcurr p2 empty
+DF: Implement clientqueue
+DF: Microservice sendme exception handling
+DF: GUI choice for do improveprofitaction
+DF: Drop classifier eval and get percentage when doing model learntest

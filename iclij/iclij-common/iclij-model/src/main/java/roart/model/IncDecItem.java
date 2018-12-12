@@ -1,11 +1,15 @@
 package roart.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import roart.util.TimeUtil;
+
 public class IncDecItem {
-    private Date record;
+    private LocalDate record;
+    
+    private LocalDate date;
     
     private String market;
 
@@ -18,13 +22,27 @@ public class IncDecItem {
     private String description;
 
     private Double score;
+
+    // not saved
+    private Boolean verified;
     
-    public Date getRecord() {
+    // not saved
+    private String verificationComment;
+    
+    public LocalDate getRecord() {
         return record;
     }
 
-    public void setRecord(Date record) {
+    public void setRecord(LocalDate record) {
         this.record = record;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public String getMarket() {
@@ -75,19 +93,36 @@ public class IncDecItem {
         this.score = score;
     }
 
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
+    public String getVerificationComment() {
+        return verificationComment;
+    }
+
+    public void setVerificationComment(String verificationComment) {
+        this.verificationComment = verificationComment;
+    }
+
     @Override
     public String toString() {
-        return market + " " + record + " " + increase + " " + id + " " + name + " " + score + " " + description; 
+        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + description + " " + verified + " " + verificationComment + "\n"; 
     }
     
     public void save() throws Exception {
         IncDec incdec = new IncDec();
+        incdec.setDate(TimeUtil.convertDate(getDate()));
         incdec.setDescription(getDescription());
         incdec.setId(getId());
         incdec.setIncrease(isIncrease());
         incdec.setMarket(getMarket());
         incdec.setName(getName());
-        incdec.setRecord(getRecord());
+        incdec.setRecord(TimeUtil.convertDate(getRecord()));
         incdec.setScore(getScore());
         incdec.save();
     }
@@ -114,12 +149,13 @@ public class IncDecItem {
 
     private static IncDecItem getIncdecItem(IncDec incdec) {
         IncDecItem incdecItem = new IncDecItem();
+        incdecItem.setDate(TimeUtil.convertDate(incdec.getDate()));
         incdecItem.setDescription(incdec.getDescription());
         incdecItem.setId(incdec.getId());
         incdecItem.setIncrease(incdec.isIncrease());
         incdecItem.setMarket(incdec.getMarket());
         incdecItem.setName(incdec.getName());
-        incdecItem.setRecord(incdec.getRecord());
+        incdecItem.setRecord(TimeUtil.convertDate(incdec.getRecord()));
         incdecItem.setScore(incdec.getScore());
         return incdecItem;
     }

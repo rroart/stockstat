@@ -1,0 +1,2 @@
+eval $(minishift docker-env)
+

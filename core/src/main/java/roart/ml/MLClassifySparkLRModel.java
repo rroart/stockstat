@@ -1,5 +1,6 @@
 package roart.ml;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
 import roart.aggregate.Aggregator;
+import roart.config.MLConstants;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
 import roart.util.Constants;
@@ -16,11 +18,11 @@ import roart.util.Constants;
 public class MLClassifySparkLRModel  extends MLClassifySparkModel {
     @Override
     public int getId() {
-        return 2;
+        return IndicatorMACD.LOGISTICREGRESSION;
     }
     @Override
     public String getName() {
-        return "LR";
+        return MLConstants.LR;
     }
 
     @Deprecated
@@ -70,10 +72,24 @@ public class MLClassifySparkLRModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public Model getModel(Dataset<Row> train, int size, int outcomes) {
+    public Model getModel(NNConfigs conf, Dataset<Row> train, int size, int outcomes) {
+        SparkLRConfig modelConf = null;
+        if (conf != null) {
+            modelConf = conf.getSparkLRConfig();
+        }    
+        if (modelConf == null) {
+            modelConf = new SparkLRConfig(5, 1E-6);
+        }
         LogisticRegression reg = new LogisticRegression();
-        reg.setMaxIter(5);
-        reg.setRegParam(0.01);
+        reg.setMaxIter(modelConf.getMaxiter());
+        reg.setTol(modelConf.getTol());
+        //reg.setRegParam(modelConf.getReg());
+        //if (modelConf.getElasticnet() != null) {
+        //    reg.setElasticNetParam(modelConf.getElasticnet());
+        //}
+        log.info("Used ML config {}", modelConf);
+        LogisticRegression dummy = new LogisticRegression();
+        log.info("dymmy " + dummy.getElasticNetParam() + " " + dummy.getMaxIter() + " " + dummy.getRegParam() + " " + dummy.getThreshold() + " " + dummy.getTol() + " " + dummy.getStandardization() + " " + dummy.getFitIntercept());
         return reg.fit(train);
     }
 

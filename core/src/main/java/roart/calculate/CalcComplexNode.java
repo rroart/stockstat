@@ -120,7 +120,11 @@ public class CalcComplexNode extends CalcNode {
             myvalue = myvalue / minmaxthreshold;
         }
         */
+        if (maxMutateThresholdRange != minMutateThresholdRange) {
         myvalue = myvalue / (maxMutateThresholdRange - minMutateThresholdRange);
+        } else {
+            int jj = 0;
+        }
         
         /*
         if (changeSignWhole) {
@@ -206,5 +210,30 @@ public class CalcComplexNode extends CalcNode {
             break;
         }
 
+    }
+
+    @Override
+    public CalcNode crossover(CalcNode other) {
+        CalcComplexNode node = new CalcComplexNode();
+        node.setMaxMutateThresholdRange(maxMutateThresholdRange);
+        node.setMinMutateThresholdRange(minMutateThresholdRange);
+        node.setUseminmaxthreshold(useminmaxthreshold);
+        Random rand = new Random();
+        if (rand.nextBoolean()) {
+            node.setThreshold(threshold);
+        } else {
+            node.setThreshold(((CalcComplexNode) other).getThreshold());
+        }
+        if (rand.nextBoolean()) {
+            node.setUseminmaxthreshold(useminmaxthreshold);
+        } else {
+            node.setUseminmaxthreshold(((CalcComplexNode) other).isUseminmaxthreshold());            
+        }
+        if (rand.nextBoolean()) {
+            node.setWeight(weight);
+        } else {
+            node.setWeight(((CalcComplexNode) other).getWeight());            
+        }
+        return node;
     }
 }

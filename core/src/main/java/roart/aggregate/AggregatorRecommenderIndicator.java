@@ -106,6 +106,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             Map<String, Double[]> indicatorResultMap;
             indicatorResultMap = new HashMap<>();
             for (String id : ids) {
+                if (id.equals("KZKAK:IND")) {
+                    int jj=0;
+                }
                 Double[] aResult = new Double[2]; 
                 System.out.println("ttt " + result.get(id));
                 Double[] mergedResult = result.get(id);
@@ -120,14 +123,14 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                         continue;
                     }
                     // TODO temp fix
-                    Object o = conf.configValueMap.get(key);
+                    Object o = conf.getConfigValueMap().get(key);
                     if (o instanceof Integer) {
                         Integer oint = (Integer) o;
                         buyRecommendValue += mergedResult[i] * oint;
                         continue;
                     }
-                    Object tmp = conf.configValueMap.get(key);
-                    CalcNode node = (CalcNode) conf.configValueMap.get(key);
+                    Object tmp = conf.getConfigValueMap().get(key);
+                    CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
                     //node.setDoBuy(useMax);
                     if (mergedResult.length < buyKeys.size()) {
                         int jj = 0;
@@ -142,13 +145,13 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                         continue;
                     }
                     // TODO temp fix
-                    Object o = conf.configValueMap.get(key);
+                    Object o = conf.getConfigValueMap().get(key);
                     if (o instanceof Integer) {
                         Integer oint = (Integer) o;
                         sellRecommendValue += mergedResult[i] * oint;
                         continue;
                     }                   
-                    CalcNode node = (CalcNode) conf.configValueMap.get(key);
+                    CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
                     //node.setDoBuy(useMax);
                     double value = mergedResult[i];
                     sellRecommendValue += node.calc(value, 0);

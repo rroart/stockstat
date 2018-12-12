@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.ArrayUtils;
 
 import roart.config.MyConfig;
+import roart.config.MyMyConfig;
 import roart.model.StockItem;
 
 public class StockDao {
@@ -144,7 +145,7 @@ public class StockDao {
         return retMap;
     }
 
-    public static Map<String, Double[][]> getArrSparse(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static Map<String, Double[][]> getArrSparse(MyMyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
         Map<String, Double[][]> retMap = new HashMap<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
@@ -233,8 +234,8 @@ public class StockDao {
         return retList;
     }
 
-    public static int maxHoleNumber() {
-        return 5;
+    public static int maxHoleNumber(MyMyConfig conf) {
+        return conf.getMaxHoles();
     }
 
     public static Map<String, Double[]> getReverse(Map<String, Double[]> listMap) {
@@ -247,23 +248,23 @@ public class StockDao {
         return retMap;
     }
 
-    public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(MyConfig conf, Map<String, Double[][]> listMap) {
+    public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(MyMyConfig conf, Map<String, Double[][]> listMap) {
         Map<String, Double[][]> retMap = /*getReverse*/(listMap);
         for (Entry<String, Double[][]> entry : listMap.entrySet()) {
             Double[][] array = entry.getValue();
             Double[][] newArray = new Double[array.length][];
             for (int i = 0; i < array.length; i ++) {
-                newArray[i] = ArraysUtil.fixMapHoles(array[i], null, maxHoleNumber());
+                newArray[i] = ArraysUtil.fixMapHoles(array[i], null, maxHoleNumber(conf));
             }
             retMap.put(entry.getKey(), newArray);
         }      
         return retMap;
     }
 
-    public static Map<String, Double[]> getReverseArrSparseFillHoles(MyConfig conf, Map<String, Double[]> listMap) {
+    public static Map<String, Double[]> getReverseArrSparseFillHoles(MyMyConfig conf, Map<String, Double[]> listMap) {
         Map<String, Double[]> retMap = /*getReverse*/(listMap);
         for (Entry<String, Double[]> entry : listMap.entrySet()) {
-            retMap.put(entry.getKey(), ArraysUtil.fixMapHoles(entry.getValue(), null, maxHoleNumber()));
+            retMap.put(entry.getKey(), ArraysUtil.fixMapHoles(entry.getValue(), null, maxHoleNumber(conf)));
         }      
         return retMap;
     }
