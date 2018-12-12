@@ -20,7 +20,7 @@
     <xsl:template match="body">
       <market>
       <rows>
-      <xsl:apply-templates select=".//div/tr[@class='alt']"/>
+      <xsl:apply-templates select=".//td[@class='al']"/>
       </rows>
       </market>
     </xsl:template>
@@ -46,20 +46,20 @@
       <xsl:apply-templates select="tr"/>
     </xsl:template>
 
-    <xsl:template match="tr">
+    <xsl:template match="td">
       <row>
 	<id>
-	  <xsl:copy-of select="td[1]/a/text()"/>
+	  <xsl:copy-of select="a/text()"/>
 	</id>
 	<marketid>cboevol</marketid>
 	<date>
 	  <xsl:copy-of select="$current-date"/>
 	</date>
 	<name>
-	  <xsl:copy-of select="td[1]/a/text()"/>
+	  <xsl:copy-of select="a/text()"/>
 	</name>
 	<indexvalue>
-	  <xsl:copy-of select="td[2]/text()"/>
+	  <xsl:copy-of select="translate(../td[2]/text(), '&#x20;', '')"/>
 	</indexvalue>
       </row>
     </xsl:template>
