@@ -5,6 +5,8 @@ D: Done
 W: Work
 C: Change
 
+T: pom auto tidy
+T: pom versioning
 B: findprofit not for rec 1?
 C: include defaults in map, for constructing gui tree
 B: 0.0 as ose value, filter
