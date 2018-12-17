@@ -226,7 +226,8 @@ public class MLIndicator extends Aggregator {
 
         int macdlen = conf.getTableDays();
         ExtraData extraData = new ExtraData(dateList, pairStockMap, pairDateMap, cat.getPeriod(), pairCatMap, categories, datareaders);
-        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), conf.getTableDays(), conf.getAggregatorsIndicatorIntervaldays(), extraData);
+        int tableDays = Math.min(conf.getTableDays(), dateList.size());
+        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), tableDays, conf.getAggregatorsIndicatorIntervaldays(), extraData);
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj2[0];
         Map<double[], Double> mergedCatMap = new HashMap<>();
         for (int j = conf.getAggregatorsIndicatorFuturedays(); j < macdlen; j += conf.getAggregatorsIndicatorIntervaldays()) {
