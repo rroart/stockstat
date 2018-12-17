@@ -1,12 +1,21 @@
 package roart.evaluation;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
+
+import org.jfree.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Random;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -19,9 +28,14 @@ import roart.calculate.CalcNodeUtils;
 import roart.config.MyConfig;
 import roart.config.MyMyConfig;
 import roart.evolution.Individual;
+import roart.indicator.Indicator;
+import roart.pipeline.PipelineConstants;
+import roart.util.EvalSum;
+import roart.util.EvalUtil;
 import roart.util.MarketData;
 
 public class IndicatorEvaluation extends Evaluation {
+    protected static Logger log = LoggerFactory.getLogger(Evaluation.class);
     private List<String> keys;
 
     public List<String> getKeys() {
@@ -42,12 +56,15 @@ public class IndicatorEvaluation extends Evaluation {
 
     private List<String> disableList;
 
-    public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList) {
+    private EvalUtil evalUtil;
+    
+    public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, EvalUtil evalUtil) {
         this.conf = conf.copy();
         setKeys(keys);
         this.retObj = retObj;
         this.useMax = b;
         this.disableList = disableList;
+        this.evalUtil = evalUtil;
     }
 
     public MyMyConfig getConf() {
@@ -102,15 +119,16 @@ public class IndicatorEvaluation extends Evaluation {
 
     @Override
     public double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException {
+        int count = 0;
         int listlen = conf.getTableDays();
         List<Map<String, Double[][]>> listList = (List<Map<String, Double[][]>>) retObj[2];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
         Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
         // find recommendations
-        double recommend = 0;
         if (indicatorMap == null) {
             return 0;
         }
+        Map<String, List<Double>> resultMap = new HashMap<>();
         for (Entry<String, Double[]> entry : indicatorMap.entrySet()) {
             String id = entry.getKey();
             int newlistidx = listlen - 1 - j + conf.getTestIndicatorRecommenderComplexFutureDays();
@@ -120,8 +138,9 @@ public class IndicatorEvaluation extends Evaluation {
                 continue;
             }
             // TODO change filtering?
-            double change = (list[newlistidx]/list[curlistidx] - 1);
+            double change = (list[newlistidx]/list[curlistidx] - 0);
             Double[] momrsi = entry.getValue();
+            double recommend = 0;
             for (int i = 0; i < getKeys().size(); i++) {
                 String key = getKeys().get(i);
                 if (disableList.contains(key)) {
@@ -134,10 +153,30 @@ public class IndicatorEvaluation extends Evaluation {
                 }
                 CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
                 double value = momrsi[i];
-                recommend += node.calc(value, 0) * change;
+                recommend += node.calc(value, 0); // (1 + change); // Math.pow(1 + change, 10);
+                count++;
             }
+            List<Double> resultList = new ArrayList<>();
+            resultList.add(recommend);
+            resultList.add(change);
+            resultMap.put(id, resultList);
         }
-        return recommend;
+        double finalRecommend = evalUtil.calculateResult(resultMap);
+        //finalRecommend *= 0.1;
+        //double reco = count * (1 - Math.abs(finalRecommend-count)/Math.max(Math.abs(finalRecommend), count));
+        log.info("Recommend {}", finalRecommend);
+        return finalRecommend;
+    }
+
+    class BuySellList implements Comparable<Double> {
+        String id;
+        Double change;
+        Double score;
+        
+        @Override
+        public int compareTo(Double score0) {
+            return Double.compare(score0, score);
+        }
     }
 
     @Override
@@ -223,6 +262,7 @@ public class IndicatorEvaluation extends Evaluation {
 
         double testRecommendQualBuySell = 0;
         for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < macdlen; j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
+            // scale down wrt max?
             testRecommendQualBuySell += getEvaluations(j);
         }
         return testRecommendQualBuySell;
@@ -250,7 +290,7 @@ public class IndicatorEvaluation extends Evaluation {
 
     @Override
     public Evaluation copy() {
-        Evaluation newEval = new IndicatorEvaluation(new MyMyConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList);
+        Evaluation newEval = new IndicatorEvaluation(new MyMyConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil);
         return newEval;
     }
 

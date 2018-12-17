@@ -26,6 +26,9 @@ import roart.pipeline.PipelineConstants;
 import roart.queue.MyExecutors;
 import roart.service.ControlService;
 import roart.util.Constants;
+import roart.util.EvalIncDec;
+import roart.util.EvalProportion;
+import roart.util.EvalUtil;
 import roart.util.ServiceUtil;
 import roart.util.TimeUtil;
 
@@ -66,9 +69,10 @@ public class ComponentRecommender extends Component {
     }
 
     private void findBuySellRecommendations(Map<String, Map<String, Object>> resultMaps, Map<String, String> nameMap, String market, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, ControlService srv, IclijConfig config) {
+        for (int i = 0; i < 2; i++) {
         Object[] keys = new Object[2];
         keys[0] = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
-        keys[1] = 0;
+        keys[1] = i;
         keys = ComponentMLMACD.getRealKeys(keys, okConfMap.keySet());
         //System.out.println(okListMap.get(keys));
         Double confidenceFactor = okConfMap.get(keys);
@@ -83,7 +87,7 @@ public class ComponentRecommender extends Component {
             return;
         }
         List<MyElement> list0 = new ArrayList<>();
-        List<MyElement> list1 = new ArrayList<>();
+        //List<MyElement> list1 = new ArrayList<>();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
         for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
             String key = entry.getKey();
@@ -96,13 +100,14 @@ public class ComponentRecommender extends Component {
             if (list == null) {
                 continue;
             }
-            list0.add(new MyElement(key, list.get(0)));
-            list1.add(new MyElement(key, list.get(1)));
+            list0.add(new MyElement(key, list.get(i)));
+            //list1.add(new MyElement(key, list.get(1)));
         }
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
-        Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
+        //Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list0);
         //handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list1);
+        }
     }
 
     private void handleBuySell(Map<String, String> nameMap, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells,
@@ -132,6 +137,10 @@ public class ComponentRecommender extends Component {
             incdec.setIncrease(true);
         }
         for (MyElement element : bottomList) {
+            if (confidenceFactor == null || element.getValue() == null) {
+                int jj = 0;
+                continue;
+            }
             double confidence = confidenceFactor * (element.getValue() - min) / diff;
             String recommendation = "recommend sell";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
@@ -267,17 +276,14 @@ public class ComponentRecommender extends Component {
     }
     
     public List<MemoryItem> calculateRecommender(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
-            String categoryTitle, Map<String, List<Double>> recommendBuySell, double buyMedian, double sellMedian,
+            String categoryTitle, Map<String, List<Double>> recommendBuySell,
             Map<String, Map<String, Object>> result, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
-        Set<Double> changeSet = getChangeSet(futuredays, categoryValueMap);
-        Double medianChange = ServiceUtil.median(changeSet);
-        /*
-        getMemoriesOld(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell, buyMedian, sellMedian,
-                categoryValueMap, usedsec, doSave, memoryList, medianChange);
-        */
-        getMemories(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell, buyMedian, sellMedian,
-                categoryValueMap, usedsec, doSave, memoryList, medianChange, changeSet, doPrint);
+        EvalUtil eval = new EvalProportion();
+        for (int i = 0; i < 2; i++) {
+            getMemories(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell, categoryValueMap, usedsec,
+                doSave, memoryList, doPrint, eval, i);
+        }
         return memoryList;
     }
 
@@ -290,6 +296,10 @@ public class ComponentRecommender extends Component {
                 Double valFuture = mainList.get(mainList.size() - 1);
                 Double valNow = mainList.get(mainList.size() -1 - futuredays);
                 if (valFuture != null && valNow != null) {
+                    if (valNow == 0.0) {
+                        log.error("Value for division is 0.0 for key {}", entry.getKey());
+                        continue;
+                    }
                     Double change = valFuture / valNow;
                     changeSet.add(change);
                 }
@@ -299,9 +309,202 @@ public class ComponentRecommender extends Component {
     }
 
     public void getMemories(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
-            String categoryTitle, Map<String, List<Double>> recommendBuySell, double buyMedian, double sellMedian,
-            Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave,
-            List<MemoryItem> memoryList, Double medianChange, Set<Double> changeSet, boolean doPrint) throws Exception {
+            String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
+            boolean doSave, List<MemoryItem> memoryList,
+            boolean doPrint, EvalUtil eval, int position) throws Exception {
+        Map<String, List<Double>> resultMap = new HashMap<>();
+        for (String key : categoryValueMap.keySet()) {
+            List<Double> vals = recommendBuySell.get(key);
+            if (vals == null) {
+                continue;
+            }
+            Double score = vals.get(position);
+            List<List<Double>> resultList = categoryValueMap.get(key);
+            List<Double> mainList = resultList.get(0);
+            Double change = null;
+            if (mainList != null) {
+                Double valFuture = mainList.get(mainList.size() - 1);
+                Double valNow = mainList.get(mainList.size() - 1 - futuredays);
+                if (valFuture != null && valNow != null) {
+                    if (valNow == 0.0) {
+                        log.error("Value for division is 0.0 for key {}", key);
+                        continue;
+                    }
+                    change = valFuture / valNow;
+                    List<Double> list = new ArrayList<>();
+                    list.add(score);
+                    list.add(change);
+                    resultMap.put(key, list);
+                }
+            }
+        }
+        
+        double[] resultArray = eval.calculate(resultMap);
+        double goodBuy = resultArray[0];
+        long totalBuy = (long) resultArray[1];
+        MemoryItem memory = new MemoryItem();
+        memory.setMarket(market);
+        memory.setRecord(LocalDate.now());
+        memory.setDate(baseDate);
+        memory.setUsedsec(usedsec);
+        memory.setFuturedays(futuredays);
+        memory.setFuturedate(futureDate);
+        memory.setComponent(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        memory.setSubcomponent("rec " + position + " " + eval.name());
+        memory.setCategory(categoryTitle);
+        memory.setPositives((long) goodBuy);
+        memory.setSize(totalBuy);
+        memory.setConfidence((double) goodBuy / totalBuy);
+        memory.setPosition(position);
+        if (doSave) {
+            memory.save();
+        }
+        if (doPrint) {
+            System.out.println(memory);
+        }
+        memoryList.add(memory);
+    }
+
+    public void getMemoriesPrev(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
+            String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
+            boolean doSave, List<MemoryItem> memoryList, Set<Double> changeSet,
+            boolean doPrint) throws Exception {
+        int div = 4;
+        double goodBuy = 0;
+        double goodSell = 0;
+        long totalBuy = 0;
+        long totalSell = 0;
+        List<Double> buyList = new ArrayList<>();
+        List<Double> sellList = new ArrayList<>();
+        for (List<Double> list : recommendBuySell.values()) {
+            buyList.add(list.get(0));
+            sellList.add(list.get(1));
+        }
+        int ups = 0;
+        int downs = 0;
+        List<BuySellList> buys = new ArrayList<>();
+        List<BuySellList> sells = new ArrayList<>();
+        for (String key : categoryValueMap.keySet()) {
+            List<Double> vals = recommendBuySell.get(key);
+            if (vals == null) {
+                continue;
+            }
+            Double buy = vals.get(0);
+            Double sell = vals.get(1);
+            List<List<Double>> resultList = categoryValueMap.get(key);
+            List<Double> mainList = resultList.get(0);
+            Double change = null;
+            if (mainList != null) {
+                Double valFuture = mainList.get(mainList.size() - 1);
+                Double valNow = mainList.get(mainList.size() - 1 - futuredays);
+                if (valFuture != null && valNow != null) {
+                    if (valNow == 0.0) {
+                        log.error("Value for division is 0.0 for key {}", key);
+                        continue;
+                    }
+                    change = valFuture / valNow;
+                    BuySellList aBuy = new BuySellList();
+                    aBuy.id = key;
+                    aBuy.change = change;
+                    aBuy.score = buy;
+                    buys.add(aBuy);
+                    BuySellList aSell = new BuySellList();
+                    aSell.id = key;
+                    aSell.change = change;
+                    aSell.score = sell;
+                    sells.add(aSell);
+                    if (change > 1) {
+                        ups++;
+                    }
+                    if (change < 1) {
+                        downs++;
+                    }
+                }
+            }
+        }
+        //buys.sort(BuySellList.class);
+        Collections.sort(buys, (d1, d2) -> Double.compare(d2.score, d1.score));
+        Collections.sort(sells, (d1, d2) -> Double.compare(d2.score, d1.score));
+        div = 1;
+        int myups = ups / div;
+        int mydowns = downs / div;
+        myups = Math.min(myups, 20);
+        mydowns = Math.min(mydowns, 20);
+        int buyTop = 0;
+        int buyBottom = 0;
+        int sellTop = 0;
+        int sellBottom = 0;
+        for (int i = 0; i < myups; i++) {
+            if (buys.get(i).change > 1) {
+                buyTop++;
+            }
+            if (sells.get(i).change > 1) {
+                sellTop++;
+            }
+        }
+        int size = buys.size();
+        for (int i = 0; i < mydowns; i++) {
+            if (buys.get(size - 1 - i).change < 1) {
+                buyBottom++;
+            }
+            if (sells.get(size - 1 - i).change < 1) {
+                sellBottom++;
+            }
+        }
+        goodBuy = buyTop + buyBottom;
+        goodSell = sellTop + sellBottom;
+        log.info("buyselltopbottom {} {} {} {} {} {}", buyTop, buyBottom, sellTop, sellBottom, myups, mydowns);
+        totalBuy = myups + mydowns;
+        totalSell = totalBuy;
+        MemoryItem buyMemory = new MemoryItem();
+        buyMemory.setMarket(market);
+        buyMemory.setRecord(LocalDate.now());
+        buyMemory.setDate(baseDate);
+        buyMemory.setUsedsec(usedsec);
+        buyMemory.setFuturedays(futuredays);
+        buyMemory.setFuturedate(futureDate);
+        buyMemory.setComponent(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        buyMemory.setSubcomponent("buy");
+        buyMemory.setCategory(categoryTitle);
+        buyMemory.setPositives((long) goodBuy);
+        buyMemory.setSize(totalBuy);
+        buyMemory.setConfidence((double) goodBuy / totalBuy);
+        buyMemory.setPosition(0);
+        if (doSave) {
+            buyMemory.save();
+        }
+        MemoryItem sellMemory = new MemoryItem();
+        sellMemory.setMarket(market);
+        sellMemory.setRecord(LocalDate.now());
+        sellMemory.setDate(baseDate);
+        sellMemory.setUsedsec(usedsec);
+        sellMemory.setFuturedays(futuredays);
+        sellMemory.setFuturedate(futureDate);
+        sellMemory.setComponent(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        sellMemory.setSubcomponent("sell");
+        sellMemory.setCategory(categoryTitle);
+        sellMemory.setPositives((long) goodSell);
+        sellMemory.setSize(totalSell);
+        sellMemory.setConfidence((double) goodSell / totalSell);
+        sellMemory.setPosition(1);
+        if (doSave) {
+            sellMemory.save();
+        }
+        //System.out.println("testing buy " + goodBuy + " " + totalBuy + " sell " + goodSell + " " + totalSell);
+        //System.out.println("k3 " + categoryValueMap.get("VIX"));
+        //System.out.println(result.get("Index").keySet());
+        if (doPrint) {
+        System.out.println(buyMemory);
+        System.out.println(sellMemory);
+        }
+        memoryList.add(buyMemory);
+        memoryList.add(sellMemory);
+    }
+
+    public void getMemoriesOld(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
+            String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
+            boolean doSave, List<MemoryItem> memoryList, Set<Double> changeSet,
+            boolean doPrint) throws Exception {
         double goodBuy = 0;
         double goodSell = 0;
         long totalBuy = 0;
@@ -341,16 +544,24 @@ public class ComponentRecommender extends Component {
         }
         Double sellMin = sellMinOpt.get();
         Double diffSell = sellMax - sellMin;
-        
+        log.info("Myexpect0 " + minChange + " " + diffChange + " " + diffBuy + " " + maxChange + " " + minChange + " " + buyMax + " " + buyMin);
         for (String key : categoryValueMap.keySet()) {
             List<List<Double>> resultList = categoryValueMap.get(key);
             List<Double> mainList = resultList.get(0);
             Double change = null;
+            Double valf = null;
+            Double valn = null;
             if (mainList != null) {
                 Double valFuture = mainList.get(mainList.size() - 1);
                 Double valNow = mainList.get(mainList.size() -1 - futuredays);
                 if (valFuture != null && valNow != null) {
+                    if (valNow == 0.0) {
+                        log.error("Value for division is 0.0 for key {}", key);
+                        continue;
+                    }
                     change = valFuture / valNow;
+                    valf = valFuture;
+                    valn = valNow;
                 }
             }
             if (change == null) {
@@ -366,6 +577,7 @@ public class ComponentRecommender extends Component {
                 totalBuy++;
                 //double delta = change / buy * (buyMax / maxChange);
                 double expectedChange = minChange + diffChange * (buy - buyMin) / diffBuy;
+                log.info("Myexpect " + expectedChange + " " + change + " " + valf + " " + valn + " " + buy + " " + key);
                 //double delta = expectedChange / change;
                 double confidence = 1 - Math.abs(expectedChange - change) / diffChange;
                 /*
@@ -540,6 +752,17 @@ public class ComponentRecommender extends Component {
              return ServiceUtil.doRecommender(srv, market, 0, null, doSave, disableList, false);
         }
 
+    }
+    
+    class BuySellList implements Comparable<Double> {
+        String id;
+        Double change;
+        Double score;
+        
+        @Override
+        public int compareTo(Double score0) {
+            return Double.compare(score0, score);
+        }
     }
 }
 

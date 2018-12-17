@@ -67,6 +67,9 @@ import roart.pipeline.Pipeline;
 import roart.pipeline.PipelineConstants;
 import roart.predictor.Predictor;
 import roart.util.Constants;
+import roart.util.EvalIncDec;
+import roart.util.EvalProportion;
+import roart.util.EvalSum;
 import roart.util.MarketData;
 import roart.util.Math3Util;
 import roart.util.MetaDao;
@@ -833,42 +836,29 @@ public class ControlService {
                 int jj = 0;
             }
 
-            List<String> buyList = recommendList[0];
-            List<String> sellList = recommendList[1];
-            IndicatorEvaluation recommendBuy = new IndicatorEvaluation(conf, buyList, retObj, true, disableList);
-            IndicatorEvaluation recommendSell = new IndicatorEvaluation(conf, sellList, retObj, false, disableList);
+            for (int i = 0; i < 2; i++) {
+                List<String> scoreList = recommendList[i];
+                IndicatorEvaluation indicatorEval0 = new IndicatorEvaluation(conf, scoreList, retObj, true, disableList, new EvalProportion());
 
-            OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
+                OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
 
-            Individual buy = evolution.getFittest(evolutionConfig, recommendBuy);
-            Individual sell = evolution.getFittest(evolutionConfig, recommendSell);
+                Individual fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0);
 
-            for (String id : buyList) {
-                ResultItemTableRow row = new ResultItemTableRow();
-                row.add(id);
-                row.add("" + conf.getConfigValueMap().get(id));
-                //log.info("Buy {} {}", id, buy.getConf().getConfigValueMap().get(id));
-                //log.info("Buy {}", buy.getConf().getConfigValueMap().get(id).getClass().getName());
-                IndicatorEvaluation newEval = (IndicatorEvaluation) buy.getEvaluation();
-                row.add("" + newEval.getConf().getConfigValueMap().get(id));
-                table.add(row);
-            }
-            for (String id : sellList) {
-                ResultItemTableRow row = new ResultItemTableRow();
-                row.add(id);
-                row.add("" +conf.getConfigValueMap().get(id));
-                IndicatorEvaluation newEval = (IndicatorEvaluation) sell.getEvaluation();
-                row.add("" + newEval.getConf().getConfigValueMap().get(id));
-                table.add(row);
-            }
-            // TODO have a boolean here
-            for (String id : buyList) {
-                IndicatorEvaluation newEval = (IndicatorEvaluation) buy.getEvaluation();
-                updateMap.put(id, newEval.getConf().getConfigValueMap().get(id));
-            }
-            for (String id : sellList) {
-                IndicatorEvaluation newEval = (IndicatorEvaluation) sell.getEvaluation();
-                updateMap.put(id, newEval.getConf().getConfigValueMap().get(id));
+                for (String id : scoreList) {
+                    ResultItemTableRow row = new ResultItemTableRow();
+                    row.add(id);
+                    row.add("" + conf.getConfigValueMap().get(id));
+                    //log.info("Buy {} {}", id, buy.getConf().getConfigValueMap().get(id));
+                    //log.info("Buy {}", buy.getConf().getConfigValueMap().get(id).getClass().getName());
+                    IndicatorEvaluation newEval = (IndicatorEvaluation) fittestIndividual.getEvaluation();
+                    row.add("" + newEval.getConf().getConfigValueMap().get(id));
+                    table.add(row);
+                }
+                // TODO have a boolean here
+                for (String id : scoreList) {
+                    IndicatorEvaluation newEval = (IndicatorEvaluation) fittestIndividual.getEvaluation();
+                    updateMap.put(id, newEval.getConf().getConfigValueMap().get(id));
+                }
             }
         }
     }

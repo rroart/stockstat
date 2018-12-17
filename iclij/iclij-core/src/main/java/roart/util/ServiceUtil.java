@@ -115,99 +115,14 @@ public class ServiceUtil {
                 sellset.add(vals.get(1));
             }
         }
-        double buyMedian = median(buyset);
-        double sellMedian = median(sellset);
 
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
         Map<String, Map<String, Object>> result = srv.getContent();
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
         int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-        return new ComponentRecommender().calculateRecommender(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell, buyMedian,
-                sellMedian, result, categoryValueMap, usedsec, doSave, doPrint);
-    }
-    private static void getMemoriesOld(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
-            String categoryTitle, Map<String, List<Double>> recommendBuySell, double buyMedian, double sellMedian,
-            Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave,
-            List<MemoryItem> memoryList, Double medianChange, boolean doPrint) throws Exception {
-        long goodBuy = 0;
-        long goodSell = 0;
-        long totalBuy = 0;
-        long totalSell = 0;
-        for (String key : categoryValueMap.keySet()) {
-            List<List<Double>> resultList = categoryValueMap.get(key);
-            List<Double> mainList = resultList.get(0);
-            Double change = null;
-            if (mainList != null) {
-                Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() -1 - futuredays);
-                if (valFuture != null && valNow != null) {
-                    change = valFuture / valNow;
-                }
-            }
-            if (change == null) {
-                continue;
-            }
-            List<Double> vals = recommendBuySell.get(key);
-            if (vals == null) {
-                continue;
-            }
-            Double buy = vals.get(0);
-            Double sell = vals.get(1);
-            if (buy != null) {
-                totalBuy++;
-                if (buy > buyMedian && change > medianChange) {
-                    goodBuy++;
-                }
-            }
-            if (sell != null) {
-                totalSell++;
-                if (sell > sellMedian && change < medianChange) {
-                    goodSell++;
-                }
-            }
-        }      
-        MemoryItem buyMemory = new MemoryItem();
-        buyMemory.setMarket(market);
-        buyMemory.setRecord(LocalDate.now());
-        buyMemory.setDate(baseDate);
-        buyMemory.setUsedsec(usedsec);
-        buyMemory.setFuturedays(futuredays);
-        buyMemory.setFuturedate(futureDate);
-        buyMemory.setComponent(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        buyMemory.setSubcomponent("buy");
-        buyMemory.setCategory(categoryTitle);
-        buyMemory.setPositives(goodBuy);
-        buyMemory.setSize(totalBuy);
-        buyMemory.setConfidence((double) goodBuy / totalBuy);
-        if (doSave) {
-            buyMemory.save();
-        }
-        MemoryItem sellMemory = new MemoryItem();
-        sellMemory.setMarket(market);
-        sellMemory.setRecord(LocalDate.now());
-        sellMemory.setDate(baseDate);
-        sellMemory.setUsedsec(usedsec);
-        sellMemory.setFuturedays(futuredays);
-        sellMemory.setFuturedate(futureDate);
-        sellMemory.setComponent(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        sellMemory.setSubcomponent("sell");
-        sellMemory.setCategory(categoryTitle);
-        sellMemory.setPositives(goodSell);
-        sellMemory.setSize(totalSell);
-        sellMemory.setConfidence((double) goodSell / totalSell);
-        if (doSave) {
-            sellMemory.save();
-        }
-        //System.out.println("testing buy " + goodBuy + " " + totalBuy + " sell " + goodSell + " " + totalSell);
-        //System.out.println("k3 " + categoryValueMap.get("VIX"));
-        //System.out.println(result.get("Index").keySet());
-        if (doPrint) {
-            System.out.println(buyMemory);
-            System.out.println(sellMemory);
-        }
-        memoryList.add(buyMemory);
-        memoryList.add(sellMemory);
+        return new ComponentRecommender().calculateRecommender(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell,
+                result, categoryValueMap, usedsec, doSave, doPrint);
     }
     public static List<MemoryItem> doPredict(String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws Exception {
         ControlService srv = new ControlService();
