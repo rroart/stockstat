@@ -76,27 +76,27 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-model</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-constants</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-config</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-service</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-eureka</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
       <exclusions>
         <exclusion>  <!-- declare the exclusion here -->
     <groupId>com.fasterxml.jackson.core</groupId>
@@ -143,22 +143,22 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-model</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-constants</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-config</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-service</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
     <groupId>com.fasterxml.jackson.datatype</groupId>

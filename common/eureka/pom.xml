@@ -23,46 +23,43 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
-</plugins>
-</build>
-<dependencies>
+    </plugins>
+  </build>
+  <dependencies>
     <dependency>
       <groupId>com.netflix.eureka</groupId>
       <artifactId>eureka-client</artifactId>
-      <version>1.6.1</version>
-    </dependency>                                                                  <dependency>
+      <version>${eurekaclient.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>3.2.0.RELEASE</version>
-      </dependency><dependency>
+      <version>${springcore.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>3.2.0.RELEASE</version>
+      <version>${springcore.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-netflix-core</artifactId>
-      <version>1.0.0.RELEASE</version>
-    </dependency>
-        <dependency>
-      <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-commons</artifactId>
-      <version>1.1.7.RELEASE</version>
+      <version>${springcloud.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.3</version>
+      <version>${httpclient.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>${slf4j.version}</version>
     </dependency>          
-      <dependency>
-  <groupId>com.fasterxml.jackson.core</groupId>
-  <artifactId>jackson-databind</artifactId>
-  <version>${jackson.version}</version>
-</dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
   </dependencies>
 </project>

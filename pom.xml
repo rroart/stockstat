@@ -16,21 +16,21 @@
     <module>distribution</module>
   </modules>
   <build>
-  <pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-    </plugins>
-  </pluginManagement>
-</build>
+    <pluginManagement>
+      <plugins>
+	<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${mavencompiler.version}</version>
+          <configuration>
+            <source>${jdk.version}</source>
+            <target>${jdk.version}</target>
+            <encoding>UTF-8</encoding>
+          </configuration>
+	</plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -48,21 +48,11 @@
       <artifactId>hibernate-core</artifactId>
       <version>${hibernate.version}</version>
     </dependency>
-  <dependency>
+    <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
       <version>1.1</version>
-  </dependency>
-    <!--dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-commons-annotations</artifactId>
-      <version>${hibernate.version}</version>
-  </dependency-->
-    <!--dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-      <version>3.5.6-Final</version>
-  </dependency-->
+    </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-ehcache</artifactId>
@@ -85,7 +75,17 @@
     </dependency>
   </dependencies>
   <properties>
+    <stockstat.version>0.5-SNAPSHOT</stockstat.version>
     <jdk.version>1.8</jdk.version>
+    <mavencompiler.version>3.8.0</mavencompiler.version>
+    <maveninstall.version>2.5.2</maveninstall.version>
+    <jetty.version>9.4.12.v20180830</jetty.version>
+    <springboot.version>2.1.1.RELEASE</springboot.version>
+    <springcloud.version>2.0.2.RELEASE</springcloud.version>
+    <springcloudstarter.version>Finchley.SR2</springcloudstarter.version>
+    <springcore.version>5.1.3.RELEASE</springcore.version>
+    <eurekaclient.version>1.9.8</eurekaclient.version>
+    <jackson.version>2.9.7</jackson.version>
     <hibernate.version>5.0.5.Final</hibernate.version>
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <hibernate.hbm2ddl.auto>create</hibernate.hbm2ddl.auto>
@@ -94,9 +94,11 @@
     <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
     <junit.version>4.12</junit.version>
     <log4j.version>1.2.17</log4j.version>
-    <jackson.version>2.4.4</jackson.version>
     <commons.version>2.1.1</commons.version>
     <commons.math3.version>3.6.1</commons.math3.version>
+    <httpclient.version>4.5.6</httpclient.version>
+    <jaxb.version>2.3.0</jaxb.version>
+    <stanfordcorenlp.version>3.9.1</stanfordcorenlp.version>
+    <opennlp.version>1.8.4</opennlp.version>
   </properties>
-
 </project>
