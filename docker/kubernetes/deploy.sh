@@ -1,3 +1,5 @@
+#!/bin/bash
+
 RUN=`minikube status|grep host:|grep Run`
 
 [ -z $RUN ] && minikube start
