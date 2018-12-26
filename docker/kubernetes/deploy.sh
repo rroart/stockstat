@@ -2,13 +2,13 @@
 
 RUN=`minikube status|grep host:|grep Run`
 
-[ -z $RUN ] && minikube start
+[ -z "$RUN" ] && minikube start
 
 #kubectl config use-context minikube
 
 NAMESPACE=`kubectl get namespace $1 | grep not.found`
 
-[ -n $NAMESPACE ] && kubectl create namespace $1
+[ -n "$NAMESPACE" ] && kubectl create namespace $1
 
 . bin/kubeenv.sh
 
