@@ -12,6 +12,10 @@ NAMESPACE=`kubectl get namespace $1 | grep not.found`
 
 kubectl config set-context minikube --namespace=$1
 
+cd distribution/target/stockstat-distribution-0.5-SNAPSHOT-bin/stockstat-distribution-0.5-SNAPSHOT/docker
+
+make
+
 kubectl run --image=centos/postgresql-10-centos7 --env="POSTGRESQL_USER=stockstat" --env="POSTGRESQL_PASSWORD=password" --env="POSTGRESQL_DATABASE=stockstat" --port=5432 --expose=true postgresql-10-centos7
 kubectl run --image=pd --image-pull-policy=Never pd
 kubectl run --image=stockstat-eureka --image-pull-policy=Never stockstat-eureka
