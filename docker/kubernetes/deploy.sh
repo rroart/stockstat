@@ -28,6 +28,12 @@ kubectl get deployment stockstat-iclij-web && kubectl delete deployment stocksta
 kubectl get deployment tensorflow && kubectl delete deployment tensorflow
 kubectl get deployment spark && kubectl delete deployment spark
 
+kubectl get service stockstat-eureka && kubectl delete service stockstat-eureka
+kubectl get service stockstat-web && kubectl delete service stockstat-web
+kubectl get service stockstat-iclij-web && kubectl delete service stockstat-iclij-web
+kubectl get service spark && kubectl delete service spark
+kubectl get service tensorflow && kubectl delete service tensorflow
+
 kubectl run --image=centos/postgresql-10-centos7 --env="POSTGRESQL_USER=stockstat" --env="POSTGRESQL_PASSWORD=password" --env="POSTGRESQL_DATABASE=stockstat" --port=5432 --expose=true postgresql-10-centos7
 kubectl run --image=pd --image-pull-policy=Never pd
 kubectl run --image=stockstat-eureka --image-pull-policy=Never stockstat-eureka
