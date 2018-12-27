@@ -18,6 +18,16 @@ cd distribution/target/stockstat-distribution-0.5-SNAPSHOT-bin/stockstat-distrib
 
 make
 
+kubectl get deployment postgresql-10-centos7 && kubectl delete deployment postgresql-10-centos7
+kubectl get deployment pd && kubectl delete deployment pd
+kubectl get deployment stockstat-eureka && kubectl delete deployment stockstat-eureka
+kubectl get deployment stockstat-core && kubectl delete deployment stockstat-core 
+kubectl get deployment stockstat-web && kubectl delete deployment stockstat-web
+kubectl get deployment stockstat-iclij-core && kubectl delete deployment stockstat-iclij-core
+kubectl get deployment stockstat-iclij-web && kubectl delete deployment stockstat-iclij-web
+kubectl get deployment tensorflow && kubectl delete deployment tensorflow
+kubectl get deployment spark && kubectl delete deployment spark
+
 kubectl run --image=centos/postgresql-10-centos7 --env="POSTGRESQL_USER=stockstat" --env="POSTGRESQL_PASSWORD=password" --env="POSTGRESQL_DATABASE=stockstat" --port=5432 --expose=true postgresql-10-centos7
 kubectl run --image=pd --image-pull-policy=Never pd
 kubectl run --image=stockstat-eureka --image-pull-policy=Never stockstat-eureka
@@ -32,5 +42,5 @@ kubectl expose deployment stockstat-eureka --port 8761 --type=LoadBalancer
 kubectl expose deployment stockstat-web --port 8180 --type=LoadBalancer
 kubectl expose deployment stockstat-iclij-web --port 8181 --type=LoadBalancer
 kubectl expose deployment spark --port 7077 --type=LoadBalancer
-kubectl expose deployment sparkui --port 8080 --type=LoadBalancer
+#kubectl expose deployment sparkui --port 8080 --type=LoadBalancer
 kubectl expose deployment tensorflow --port 8000 --type=LoadBalancer
