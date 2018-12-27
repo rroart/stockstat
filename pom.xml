@@ -100,5 +100,12 @@
     <jaxb.version>2.3.0</jaxb.version>
     <stanfordcorenlp.version>3.9.1</stanfordcorenlp.version>
     <opennlp.version>1.8.4</opennlp.version>
+    <batik.version>1.8</batik.version>
+    <jfreesvg.version>3.0</jfreesvg.version>
+    <jfreechart.version>1.0.19</jfreechart.version>
+    <vaadin.version>7.6.0</vaadin.version>
+    <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+    <servlet.version>3.1.0</servlet.version>
+    <xmlapis.version>1.4.01</xmlapis.version>
   </properties>
 </project>
