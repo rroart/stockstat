@@ -51,3 +51,5 @@ kubectl expose deployment stockstat-iclij-web --port 8181 --type=LoadBalancer
 kubectl expose deployment spark --port 7077 --type=LoadBalancer
 #kubectl expose deployment sparkui --port 8080 --type=LoadBalancer
 kubectl expose deployment tensorflow --port 8000 --type=LoadBalancer
+
+docker image prune -f
