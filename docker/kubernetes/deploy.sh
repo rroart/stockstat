@@ -28,6 +28,7 @@ kubectl get deployment stockstat-iclij-web && kubectl delete deployment stocksta
 kubectl get deployment tensorflow && kubectl delete deployment tensorflow
 kubectl get deployment spark && kubectl delete deployment spark
 
+kubectl get service postgresql-10-centos7 && kubectl delete service postgresql-10-centos7
 kubectl get service stockstat-eureka && kubectl delete service stockstat-eureka
 kubectl get service stockstat-web && kubectl delete service stockstat-web
 kubectl get service stockstat-iclij-web && kubectl delete service stockstat-iclij-web
