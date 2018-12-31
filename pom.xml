@@ -76,7 +76,7 @@
   </dependencies>
   <properties>
     <stockstat.version>0.5-SNAPSHOT</stockstat.version>
-    <jdk.version>1.8</jdk.version>
+    <jdk.version>11</jdk.version>
     <mavencompiler.version>3.8.0</mavencompiler.version>
     <maveninstall.version>2.5.2</maveninstall.version>
     <jetty.version>9.4.12.v20180830</jetty.version>
@@ -86,7 +86,7 @@
     <springcore.version>5.1.3.RELEASE</springcore.version>
     <eurekaclient.version>1.9.8</eurekaclient.version>
     <jackson.version>2.9.7</jackson.version>
-    <hibernate.version>5.0.5.Final</hibernate.version>
+    <hibernate.version>5.4.0.Final</hibernate.version>
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <hibernate.hbm2ddl.auto>create</hibernate.hbm2ddl.auto>
     <ehcache.version>2.6.11</ehcache.version>
@@ -107,5 +107,6 @@
     <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
     <servlet.version>3.1.0</servlet.version>
     <xmlapis.version>1.4.01</xmlapis.version>
+    <spark.version>2.4.0</spark.version>
   </properties>
 </project>

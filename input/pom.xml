@@ -105,16 +105,4 @@
       <version>${log4j.version}</version>
     </dependency>
   </dependencies>
-  <properties>
-    <jdk.version>1.8</jdk.version>
-    <hibernate.version>5.0.5.Final</hibernate.version>
-    <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
-    <hibernate.hbm2ddl.auto>create</hibernate.hbm2ddl.auto>
-    <ehcache.version>2.6.11</ehcache.version>
-    <slf4j.version>1.7.13</slf4j.version>
-    <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
-    <junit.version>4.12</junit.version>
-    <log4j.version>1.2.17</log4j.version>
-  </properties>
-
 </project>
