@@ -5,135 +5,173 @@ D: Done
 W: Work
 C: Change
 
-T: pom auto tidy
-T: pom versioning
-B: findprofit not for rec 1?
-C: include defaults in map, for constructing gui tree
-B: 0.0 as ose value, filter
-B: conf. factor still null in comp.rec., and further down
-B: nasdaq verify loop
-B: ose get nan on run single new date
-T: lib.py headskip update
+Iclij
+WF: Start with no recent data, then most time spenders.
 F: icli result with config data
-B: improvement lack srv. setdate
-B: look at findprofit, getimprovement two layers of new ControlService
-WF: change date system to from to
-WT: unify verify and singlemark
-WB: new ControlService w/o date transfer
-B: Using offset for manual use
-WF: for loop for recommend
 WB: icli web sendme null
-T/F: vaadin 10, or go for angular/reactredux?
-F: no env SPARK_DRIVER_HOST, use config file?
-T: MLindicator Map<String, Double[][]> list0 = (Map<String, Double[][]>) localResultMap.get next usage
-T: mlmacd mlindicator anythinghere better heuristics?
-B: getExtraData Date date = dateList.get(size - j); negative, tabledays > datelist
-T: EurekaUtil deprecation
-T: EurekaUtil wait loop
-WF: compare 2+ stocks, base 100
-F/B: startoffset for auto, due to slow updates
-T: Pipe, Categ constructor, split off calculate
-B: iPredictor implement, and not running
-WF: Multiple datasources, pandas-datareader
-T: Parametrize jdbc setting
-WF: Vaadin threads
-F: Use swarm algorithm
-WF: Thread/multitask change
-WF: Stanford
-F: Use fuzzy logic or uncertainty
-T: Check all use of configs
-T: Nvidia
-WF: Demo
-T: Rearrange buy/sell, and failed categories?
-T: Cleanup recommender buy/sell duality
-T: Put TODO in code here
-T: Dataimport zero/content check
 F: Doc iclij configs
-T: Change result map keys, due to overlap
-T: ReName calc
-WB: tf open file limi
-F: Ignore bad performing nn after evolve, set limit
-F: DNNL
-T: More evolution refactor
-T: Update OneFour evolution
-F: mlmacd improve, full pattern
-T: Eureka setup/config
 WF: iclij table with %-t/f
 WF: Save icli result
 F: Iclij rerun manually recommendation
 F: Iclij verif show new ml config
-F: Test ml conf gen for each loop?
-B: Getdates null
-F: Mlind (w/ lr) with same data as evolve recommender
-WF: Each mldao with threadpool
-B: Timeutil null date breakpoint
-B: no mlstat -> mapmaps
-B: No ml conf
-B: Empty increase verify maplist?
-B: Use ose/nordfund on sunday with date
-WB: Why buy xor sell?
-B: Updatemap only one?
+F: Use testaccuracy in iclij
+WF: get market data icli with date
 F: Iclij mltimes
-B: Recommender NAN
-B: Getverify date 1 offset
-B: Use i.e. ose in january, when not having 180 days back.
-C: Put config LSTM under ml
-B: Getverify not old date recorded when chosen
-WF: Save file result enable t/f
-F: Use MLevolve also for getmemoryitems?
-T: Fix thresholds, common standard
-T: Fix getRealkeys, both inside an in findBuySell... (confidencefactor was null)
-B: Flask threaded tf process lock (Tf server/client hangs)
 B: Iclij web xml tree
 B: Auto iclij missing ai, memory
-B: SQL var 255 overflow
-WF: discard sat/sun/hol for all lang
-T: MyMyConfig getValueOrDefault use more
-B: again confidencefactor null?
-B: stockstatcore terminates/crashes?
-WF: get market data icli with date
-T: space/tabs
+WF: for loop for recommend
+WT: unify verify and singlemark
+B: Recommender NAN
+B: SQL var 255 overflow (too long descr)
+F: Subclass incdecitem instead of having non-saved
+B: iPredictor implement, and not running
+F: Test ml conf gen for each loop?
+B: no mlstat -> mapmaps
+B: No ml conf
+B: getExtraData Date date = dateList.get(size - j); negative, tabledays > datelist
+F/B: startoffset for auto, due to slow updates
+B: Using offset for manual use
+B: Empty increase verify maplist?
+B: Updatemap only one?
+B: Getverify date 1 offset
+WB: Use i.e. ose in january, when not having 180 days back.
+B: Getverify not old date recorded when chosen
 
-B: MLMACD/MLindicator null key, tf giving nonexisting class.
-B: Spark giving nonexisting prediction also.
-F: Stockst komb 1m 1w m macd etc
-F: Mlind? use pure gold oil price
-F: Use testaccuracy in iclij
-F: Use 4 macd with ml
+Iclij findprofit
+B: find out what was thought with incdays: 0. commodities 12.17 Caused by: java.lang.IndexOutOfBoundsException: Index -70 out-of-bounds for length 180,         at roart.action.FindProfitAction.buyFilterOnIncreaseValue(FindProfitAction.java:214)
+B: findprofit not for rec 1?
+B: look at findprofit, getimprovement two layers of new ControlService
+F: Remove findprofit both inc dec, go to improve
+
+Iclij evolution recommender
+B: again confidencefactor null?
+B: conf. factor still null in comp.rec., and further down
+T: Fix getRealkeys, both inside an in findBuySell... (confidencefactor was null)
+T: Rearrange buy/sell, and failed categories?
+T: Cleanup recommender buy/sell duality
+WB: Why buy xor sell?
+
+Iclij improveaction
 F: Mlindicator scale down/improveaction?
 F: Recommender combine keys/improveaction?
-F: Remove findprofit both inc dec, go to improve
-F: RSI and usemax
-F: calcnodecomplex usemax min/max
-WF: ConfigMaps use class
-WF: MyExecutors and cpu config
+B: improvement lack srv. setdate
 
-F: Download output button
+Core
+T: mlmacd mlindicator anythinghere better heuristics?
+WF: discard sat/sun/hol for all lang
+B: stockstatcore terminates/crashes?
+WB: new ControlService w/o date transfer
+F: Use Java quantlib
+B: Timeutil null date breakpoint
+B: ose get nan on run single new date
+B: Fix problem when extras use same market
+T: MLindicator Map<String, Double[][]> list0 = (Map<String, Double[][]>) localResultMap.get next usage
+F: Stockst komb 1m 1w m macd etc
+F: Mlind? use pure gold oil price
+F: Use 4 macd with ml
+F: RSI and usemax
+B: Use ose/nordfund on sunday with date
+C: Non-null, trunc data ordering (rel to I0)
+
+Build
+T: pom auto tidy
+T: pom versioning
+T: space/tabs
+
+Design
+T: Pipe, Categ constructor, split off calculate
+T: Make stock value to return a new class instead of double[]
+T: Dataimport zero/content check
+T: Change result map keys, due to overlap
+
+Database
+T: Parametrize jdbc setting
+B: Getdates null
+WF: Each mldao with threadpool
+B: Spark truncates getAll?
+
+ML
+T: Nvidia
+WB: tf open file limi
+B: Flask threaded tf process lock (Tf server/client hangs)
+B: MLMACD/MLindicator null key, tf giving nonexisting class.
 T: Tf python cleanup
 F: Look at tf serving?
-F: Stockstat metadata for imports
-F: Metadata on title row
-T: Make stock value to return a new class instead of double[]
-B: Fix problem when extras use same market
-T: Eureka wait for notify
-WF: Dockerize tensorflow etc
+F: Save tensorflow config to xml file
+F: DNNL
+C: Put config LSTM under ml
+B: Spark giving nonexisting prediction also.
+F: mlmacd improve, full pattern
+F: Mlind (w/ lr) with same data as evolve recommender
 F: MACD two dim input w (macd, %)
-B: Spark truncates getAll?
-T: Synch XML reader config code
-WF: Start with no recent data, then most time spenders.
 
+Evolution
+T: More evolution refactor
+T: Update OneFour evolution
+F: Use swarm algorithm
+T: ReName calc
+F: calcnodecomplex usemax min/max
+F: Use MLevolve also for getmemoryitems?
+F: Ignore bad performing nn after evolve, set limit
+
+CD
+WF: Demo
+WF: Dockerize tensorflow etc
+WF: Multiple datasources, pandas-datareader
+
+MS
+T: EurekaUtil deprecation
+T: EurekaUtil wait loop
+T: Eureka setup/config
+T: Eureka wait for notify
+
+Front
+T/F: vaadin 10, or go for angular/reactredux?
+WF: Vaadin threads
+T: lib.py headskip update
+F: Use R quantmod
+F: Download output button
+F: Owasp
+WF: compare 2+ stocks, base 100
+F: Metadata on title row
+
+AI
+WF: Stanford
+F: Add info about nltk.download() large_grammar
+F: Use fuzzy logic or uncertainty
+
+Config
+T: Synch XML reader config code
+T: making instances
+T: Check all use of configs
+C: include defaults in map, for constructing gui tree
+WF: ConfigMaps use class
+WF: MyExecutors and cpu config
+T: Fix thresholds, common standard
+T: MyMyConfig getValueOrDefault use more
+F: no env SPARK_DRIVER_HOST, use config file?
+
+Data
+B: 0.0 as ose value, filter (I0)
+B: nasdaq verify loop
 F: Use volume
 F: Add interest
-F: Subclass incdecitem instead of having non-saved
-F: Add info about nltk.download() large_grammar
-F: Indicator/predictor save created/generated data
-F: Save tensorflow config to xml file
-F: Use R quantmod
-F: Use Java quantlib
+F: Stockstat metadata for imports
 
+All
+WF: change date system to from to
+T: Put TODO in code here
+
+Unknown
 C: Fixed left
 C: Move move
+WF: Thread/multitask change
 
+Save
+F: Indicator/predictor save created/generated data
+WF: Save file result enable t/f
+
+Outdated/wait for reproduction
 B: KZKAK:IND...
 B: Aggregator recommender gets problem with old tradcurr data
 B: ComponentMLMACD Double instead of String (not reproduced with dbg).
@@ -148,7 +186,6 @@ B: morncat (w cy no price) and aggregator price, npe
 java.lang.NullPointerException: null
         at roart.aggregate.AggregatorRecommenderIndicator.<init>(AggregatorRecommenderIndicator.java:92)
         at roart.service.ControlService.getAggregates(ControlService.java:332)
-Owasp
 
 DF: service simple with redirect output
 DB: ver 0/x
