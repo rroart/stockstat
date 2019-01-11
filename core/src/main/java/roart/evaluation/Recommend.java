@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import roart.aggregate.AggregatorIndicator;
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
 import roart.indicator.Indicator;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 
 public abstract class Recommend extends AggregatorIndicator {
     public Recommend(MyMyConfig conf) {

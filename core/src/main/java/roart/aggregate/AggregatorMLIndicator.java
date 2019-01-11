@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
 
 public abstract class AggregatorMLIndicator extends AggregatorIndicator {
 

@@ -1,8 +1,8 @@
 package roart.servlet.listeners;
 
+import roart.common.constants.Constants;
+import roart.eureka.util.EurekaUtil;
 import roart.service.ControlService;
-import roart.util.Constants;
-import roart.util.EurekaUtil;
 
 import javax.servlet.*;
 

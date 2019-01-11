@@ -5,9 +5,9 @@ import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import roart.model.Stock;
-import roart.model.HibernateUtil;
-import roart.model.Meta;
+import roart.db.model.HibernateUtil;
+import roart.db.model.Meta;
+import roart.db.model.Stock;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+
+import roart.common.util.ArraysUtil;
+
 import static org.junit.Assert.*;
 
 public class ArraysUtilTest {

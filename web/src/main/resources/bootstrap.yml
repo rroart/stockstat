@@ -1,3 +1,5 @@
 spring:
   application:
     name: stockstatvaadin
+server:
+  port: 8180

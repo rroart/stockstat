@@ -2,10 +2,10 @@ package roart.aggregate;
 
 import java.util.Map;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
 import roart.indicator.Indicator;
 import roart.pipeline.Pipeline;
-import roart.util.MarketData;
+import roart.model.data.MarketData;
 
 public abstract class AggregatorIndicator {
     protected MyMyConfig conf;

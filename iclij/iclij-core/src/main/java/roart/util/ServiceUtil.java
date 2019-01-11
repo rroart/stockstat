@@ -31,26 +31,27 @@ import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
 import roart.action.UpdateDBAction;
 import roart.action.VerifyProfitAction;
+import roart.common.config.ConfigConstants;
+import roart.iclij.config.IclijConfig;
+import roart.common.config.MyConfig;
+import roart.common.constants.Constants;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentMLIndicator;
 import roart.component.ComponentMLMACD;
 import roart.component.ComponentPredictor;
 import roart.component.ComponentRecommender;
-import roart.config.ConfigConstants;
-import roart.config.IclijConfig;
 import roart.config.IclijXMLConfig;
-import roart.config.MyConfig;
 import roart.config.TradeMarket;
-import roart.config.VerifyConfig;
 import roart.constants.IclijPipelineConstants;
-import roart.model.IncDecItem;
-import roart.model.MapList;
-import roart.model.MemoryItem;
-import roart.model.ResultMeta;
-import roart.pipeline.PipelineConstants;
+import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MapList;
+import roart.iclij.model.MemoryItem;
+import roart.iclij.service.IclijServiceList;
+import roart.iclij.service.IclijServiceResult;
+import roart.result.model.ResultMeta;
 import roart.service.ControlService;
-import roart.service.IclijServiceList;
-import roart.service.IclijServiceResult;
 
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
@@ -249,7 +250,7 @@ public class ServiceUtil {
                     categoryValueMap, resultMeta, offset, usedsec, doSave, doPrint);
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(roart.common.constants.Constants.EXCEPTION, e);
         }
         return null;
     }
@@ -328,7 +329,7 @@ public class ServiceUtil {
             return new ComponentMLIndicator().calculateMLindicator(market, futuredays, baseDate, futureDate, threshold, resultMap, size, categoryValueMap, resultMeta, categoryTitle, usedsec, doSave, doPrint);
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(roart.common.constants.Constants.EXCEPTION, e);
         }
         return null;
     }

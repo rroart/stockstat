@@ -8,7 +8,7 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
 import roart.evaluation.Evaluation;
 import roart.evaluation.MACDRecommend;
 

@@ -24,12 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.client.MyVaadinUI;
+import roart.common.constants.Constants;
+import roart.common.constants.EurekaConstants;
+import roart.common.service.ServiceParam;
+import roart.common.service.ServiceResult;
+import roart.eureka.util.EurekaUtil;
 import roart.queue.Queues;
-import roart.service.ServiceParam;
-import roart.service.ServiceResult;
-import roart.util.Constants;
-import roart.util.EurekaConstants;
-import roart.util.EurekaUtil;
 
 import com.vaadin.ui.UI;
 import com.vaadin.ui.UIDetachedException;

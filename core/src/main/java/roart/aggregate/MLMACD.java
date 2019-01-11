@@ -21,26 +21,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tictactec.ta.lib.MInteger;
 
 import roart.category.Category;
-import roart.config.MyMyConfig;
-import roart.db.DbAccess;
-import roart.db.DbDao;
+import roart.common.config.MyMyConfig;
+import roart.common.ml.NNConfigs;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.ArraysUtil;
+import roart.db.dao.DbDao;
+import roart.common.constants.Constants;
 import roart.indicator.IndicatorUtils;
-import roart.ml.MLClassifyDao;
-import roart.ml.MLClassifyLearnTestPredictCallable;
-import roart.ml.MLClassifyModel;
-import roart.ml.NNConfigs;
-import roart.model.LearnTestClassifyResult;
-import roart.model.ResultItemTable;
-import roart.model.ResultItemTableRow;
-import roart.model.ResultMeta;
+import roart.ml.dao.MLClassifyDao;
+import roart.ml.dao.MLClassifyLearnTestPredictCallable;
+import roart.ml.model.LearnTestClassifyResult;
+import roart.ml.common.MLClassifyModel;
 import roart.model.StockItem;
-import roart.pipeline.PipelineConstants;
 import roart.queue.MyExecutors;
+import roart.result.model.ResultItemTable;
+import roart.result.model.ResultItemTableRow;
+import roart.result.model.ResultMeta;
 import roart.service.ControlService;
-import roart.util.ArraysUtil;
-import roart.util.Constants;
-import roart.util.PeriodData;
+import roart.model.data.PeriodData;
 import roart.util.TaUtil;
+import roart.pipeline.common.aggregate.Aggregator;
 
 public class MLMACD extends Aggregator {
 
@@ -563,7 +563,7 @@ public class MLMACD extends Aggregator {
                                 } else {
                                     int jj = 0;
                                 }
-                                retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
+                                //retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
                                 //System.out.println("sizej "+retindex);
                             }
                             //}
@@ -1027,7 +1027,7 @@ public class MLMACD extends Aggregator {
                         if (model.getReturnSize() > 1) {
                             objs[retindex++] = title + Constants.WEBBR +  subType.getType() + model.getName() + mapType + " prob ";
                         }
-                        retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
+                        //retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
                     }
                 }
             }

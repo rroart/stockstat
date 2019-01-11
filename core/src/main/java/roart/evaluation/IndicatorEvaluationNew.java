@@ -14,10 +14,10 @@ import roart.calculate.CalcComplexNode;
 import roart.calculate.CalcDoubleNode;
 import roart.calculate.CalcNode;
 import roart.calculate.CalcNodeUtils;
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
 import roart.evolution.Individual;
-import roart.util.MarketData;
+import roart.model.data.MarketData;
 
 public class IndicatorEvaluationNew extends Evaluation {
     

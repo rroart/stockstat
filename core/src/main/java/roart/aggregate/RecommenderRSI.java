@@ -6,19 +6,20 @@ import java.util.List;
 import java.util.Map;
 
 import roart.category.Category;
-import roart.category.CategoryConstants;
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.ArraysUtil;
+import roart.common.constants.CategoryConstants;
+import roart.common.constants.Constants;
 import roart.evaluation.RSIRecommend;
 import roart.indicator.IndicatorUtils;
-import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
-import roart.pipeline.PipelineConstants;
-import roart.util.ArraysUtil;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.result.model.ResultItemTableRow;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.util.StockDao;
+import roart.pipeline.common.aggregate.Aggregator;
 
 public class RecommenderRSI extends Aggregator {
 

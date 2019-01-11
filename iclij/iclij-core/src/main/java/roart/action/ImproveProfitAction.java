@@ -13,19 +13,19 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.iclij.config.IclijConfig;
+import roart.common.constants.Constants;
+import roart.common.pipeline.PipelineConstants;
 import roart.component.Component;
 import roart.component.ComponentFactory;
-import roart.config.IclijConfig;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
 import roart.config.TradeMarket;
 import roart.db.IclijDbDao;
-import roart.model.IncDecItem;
-import roart.model.MapList;
-import roart.model.MemoryItem;
-import roart.pipeline.PipelineConstants;
+import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MapList;
+import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
-import roart.util.Constants;
 
 public class ImproveProfitAction extends Action {
 

@@ -3,8 +3,9 @@ package roart.config;
 import java.util.HashMap;
 import java.util.Map;
 import roart.calculate.CalcComplexNode;
-import roart.category.CategoryConstants;
-import roart.config.ConfigConstants;
+import roart.common.config.ConfigConstants;
+import roart.common.config.XMLType;
+import roart.common.constants.CategoryConstants;
 
 public class ConfigConstantMaps {
     public static Map<String, Class> map = new HashMap();

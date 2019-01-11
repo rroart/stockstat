@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
-import roart.model.GUISize;
+import roart.common.constants.Constants;
+import roart.result.model.GUISize;
 
 public class SvgUtil {
 

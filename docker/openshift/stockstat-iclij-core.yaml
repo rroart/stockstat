@@ -9,7 +9,7 @@ spec:
       name: stockstat-iclij-core:latest
   source:
     dockerfile : |-
-      FROM openjdk:8-jdk
+      FROM openjdk:11-jdk
       MAINTAINER <roart@nvg.ntnu.no>
       ENV EUREKA_SERVER_URI http://stockstat-eureka:8761/eureka
       ENV EUREKA_PREFER_IPADDRESS true
@@ -36,7 +36,7 @@ spec:
     dockerStrategy:
       from: 
         kind: DockerImage
-        name: openjdk:8-jdk
+        name: openjdk:11-jdk
   triggers:
   - imageChange: {}
     type: ImageChange

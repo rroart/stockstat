@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorMACD;
-import roart.util.MarketData;
+import roart.model.data.MarketData;
 
 public abstract class RecommendMACD extends Recommend {
 

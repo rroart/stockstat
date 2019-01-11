@@ -8,11 +8,11 @@ import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
 import roart.graphindicator.GraphIndicator;
-import roart.model.GUISize;
-import roart.model.ResultItem;
-import roart.predictor.Predictor;
+import roart.pipeline.common.predictor.Predictor;
+import roart.result.model.GUISize;
+import roart.result.model.ResultItem;
 import roart.service.ControlService;
 
 public abstract class GraphCategory {

@@ -7,8 +7,8 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
 import roart.evolution.Individual;
 
 public abstract class Evaluation {

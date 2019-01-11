@@ -3,9 +3,10 @@ package roart.controller;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -17,19 +18,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import roart.config.ConfigConstants;
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.ConfigConstants;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
+import roart.common.constants.EurekaConstants;
+import roart.common.service.ServiceParam;
+import roart.common.service.ServiceResult;
 import roart.config.MyXMLConfig;
-import roart.db.DbDao;
-import roart.model.GUISize;
-import roart.model.ResultItem;
+import roart.db.dao.DbDao;
 import roart.queue.MyExecutors;
+import roart.result.model.GUISize;
+import roart.result.model.ResultItem;
 import roart.service.ControlService;
-import roart.service.ServiceParam;
-import roart.service.ServiceResult;
-import roart.util.EurekaConstants;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 
@@ -60,7 +64,7 @@ public class ServiceController {
             System.out.println("new some " + param.getConfig().getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER));
             //getInstance().config(param.config);
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -75,7 +79,7 @@ public class ServiceController {
             result.setConfig(MyXMLConfig.getConfigInstance());
             System.out.println("configs " + result.getConfig());
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -90,7 +94,7 @@ public class ServiceController {
             result.setMarkets(getInstance().getMarkets());
             log.info("Marketsize {}", result.getMarkets().size());
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -109,7 +113,7 @@ public class ServiceController {
             getInstance().getDates( new MyMyConfig(param.getConfig()), maps);
             result.setMaps(maps);
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -123,7 +127,7 @@ public class ServiceController {
         try {
             result.setStocks(getInstance().getStocks(param.getMarket(),  new MyMyConfig(param.getConfig())));
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -146,7 +150,7 @@ public class ServiceController {
             result.setList(getInstance().getContent( new MyMyConfig(param.getConfig()), maps, disableList));
             result.setMaps(maps);
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -160,7 +164,7 @@ public class ServiceController {
         try {
             result.setList(getInstance().getContentStat( new MyMyConfig(param.getConfig())));
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -174,7 +178,7 @@ public class ServiceController {
         try {
             result.setList(getInstance().getContentGraph( new MyMyConfig(param.getConfig()), param.getGuiSize()));
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -195,7 +199,7 @@ public class ServiceController {
             }
             result.setList(getInstance().getContentGraph( new MyMyConfig(param.getConfig()), ids, param.getGuiSize()));
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -219,7 +223,7 @@ public class ServiceController {
             result.setMaps(maps);
             result.setConfig(aConfig);
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;
@@ -245,7 +249,7 @@ public class ServiceController {
             result.setMaps(maps);
             result.setConfig(aConfig);
         } catch (Exception e) {
-            log.error(roart.util.Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
         }
         return result;

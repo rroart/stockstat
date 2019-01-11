@@ -9,13 +9,13 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
 import roart.indicator.Indicator;
-import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
-import roart.predictor.Predictor;
+import roart.pipeline.common.predictor.Predictor;
+import roart.result.model.ResultItemTableRow;
 import roart.util.StockDao;
 import roart.util.StockUtil;
 

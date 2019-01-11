@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.aggregate.Aggregator;
+import roart.pipeline.common.aggregate.Aggregator;
 import roart.aggregate.AggregatorRecommenderIndicator;
 import roart.aggregate.DataReader;
 import roart.aggregate.ExtraReader;
@@ -30,13 +30,26 @@ import roart.aggregate.MLIndicator;
 import roart.aggregate.MLMACD;
 import roart.aggregate.RecommenderRSI;
 import roart.category.Category;
-import roart.category.CategoryConstants;
 import roart.category.CategoryIndex;
 import roart.category.CategoryPeriod;
 import roart.category.CategoryPrice;
-import roart.config.ConfigConstants;
-import roart.config.EvolutionConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.ConfigConstants;
+import roart.common.config.EvolutionConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.ml.NNConfig;
+import roart.common.ml.NNConfigs;
+import roart.common.ml.SparkLRConfig;
+import roart.common.ml.SparkMCPConfig;
+import roart.common.ml.SparkOVRConfig;
+import roart.common.ml.TensorflowDNNConfig;
+import roart.common.ml.TensorflowLConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.constants.CategoryConstants;
+import roart.common.constants.Constants;
+import roart.common.util.EvalIncDec;
+import roart.common.util.EvalProportion;
+import roart.common.util.EvalSum;
+import roart.db.dao.DbDao;
 import roart.evaluation.IndicatorEvaluation;
 import roart.evaluation.IndicatorEvaluationNew;
 import roart.evaluation.NeuralNetEvaluation;
@@ -50,30 +63,18 @@ import roart.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.graphcategory.GraphCategoryPrice;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorUtils;
-import roart.ml.NNConfig;
-import roart.ml.NNConfigs;
-import roart.ml.SparkLRConfig;
-import roart.ml.SparkMCPConfig;
-import roart.ml.SparkOVRConfig;
-import roart.ml.TensorflowDNNConfig;
-import roart.ml.TensorflowLConfig;
-import roart.model.GUISize;
 import roart.model.MetaItem;
-import roart.model.ResultItem;
-import roart.model.ResultItemTable;
-import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
-import roart.predictor.Predictor;
-import roart.util.Constants;
-import roart.util.EvalIncDec;
-import roart.util.EvalProportion;
-import roart.util.EvalSum;
-import roart.util.MarketData;
+import roart.pipeline.common.predictor.Predictor;
+import roart.result.model.GUISize;
+import roart.result.model.ResultItem;
+import roart.result.model.ResultItemTable;
+import roart.result.model.ResultItemTableRow;
+import roart.model.data.MarketData;
 import roart.util.Math3Util;
 import roart.util.MetaDao;
-import roart.util.PeriodData;
+import roart.model.data.PeriodData;
 import roart.util.StockUtil;
 import roart.util.TaUtil;
 
@@ -96,7 +97,7 @@ public class ControlService {
 
     public List<String> getMarkets() {
         try {
-            return StockItem.getMarkets();
+            return DbDao.getMarkets();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -106,7 +107,7 @@ public class ControlService {
     public Map<String, String> getStocks(String market, MyMyConfig conf) {
         try {
             Map<String, String> stockMap = new HashMap<>();
-            List<StockItem> stocks = StockItem.getAll(market, conf);
+            List<StockItem> stocks = DbDao.getAll(market, conf);
             stocks.remove(null);
             for (StockItem stock : stocks) {
                 stockMap.put(stock.getId(), stock.getName());
@@ -160,7 +161,7 @@ public class ControlService {
         createOtherTables();
         List<StockItem> stocks = null;
         try {
-            stocks = StockItem.getAll(conf.getMarket(), conf);
+            stocks = DbDao.getAll(conf.getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -249,7 +250,7 @@ public class ControlService {
                     maps.put(datareaders[i].pipelineName(), map);
                     log.info("pi {}", datareaders[i].pipelineName());
                 }
-                for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
+                for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     Map map = categories[i].getIndicatorLocalResultMap();
                     maps.put(categories[i].getTitle(), map);
                     log.info("ca {}", categories[i].getTitle());
@@ -315,7 +316,7 @@ public class ControlService {
             row.add(stock.getName());
             row.add(dt.format(stock.getDate()));
             try {
-                for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
+                for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     categories[i].addResultItem(row, stock);
                 }
                 for (int i = 0; i < aggregates.length; i++) {
@@ -331,7 +332,7 @@ public class ControlService {
     }
 
     private void addOtherTables(Category[] categories) {
-        for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
+        for (int i = 0; i < Constants.ALLPERIODS; i++) {
             Map<Integer, List<ResultItemTableRow>> tableMap = categories[i].otherTables();
             for (Entry<Integer, List<ResultItemTableRow>> entry : tableMap.entrySet()) {
                 List<ResultItemTableRow> resultItems = entry.getValue();
@@ -348,7 +349,7 @@ public class ControlService {
         headrow.add(Constants.IMG);
         headrow.add("Name");
         headrow.add("Date");
-        for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
+        for (int i = 0; i < Constants.ALLPERIODS; i++) {
             categories[i].addResultItemTitle(headrow);
         }
         for (int i = 0; i < aggregates.length; i++) {
@@ -390,11 +391,11 @@ public class ControlService {
             String[] periodText,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) throws Exception {
-        Pipeline[] datareaders = new Pipeline[StockUtil.PERIODS + 3];
+        Pipeline[] datareaders = new Pipeline[Constants.PERIODS + 3];
         datareaders[0] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.INDEXVALUECOLUMN);
         datareaders[1] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.PRICECOLUMN);
         datareaders[2] = new ExtraReader(conf, 0);
-        for (int i = 0; i < StockUtil.PERIODS; i++) {
+        for (int i = 0; i < Constants.PERIODS; i++) {
             datareaders[i + 3] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, i);
         }
         return datareaders;
@@ -404,10 +405,10 @@ public class ControlService {
             String[] periodText,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Pipeline[] datareaders) throws Exception {
-        Category[] categories = new Category[StockUtil.PERIODS + 2];
+        Category[] categories = new Category[Constants.PERIODS + 2];
         categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap, datareaders);
         categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, datareaders);
-        for (int i = 0; i < StockUtil.PERIODS; i++) {
+        for (int i = 0; i < Constants.PERIODS; i++) {
             categories[i + 2] = new CategoryPeriod(conf, i, periodText[i], stocks, marketdatamap, periodDataMap, periodmap, datareaders);
         }
         return categories;
@@ -416,7 +417,7 @@ public class ControlService {
     private GraphCategory[] getGraphCategories(MyMyConfig conf,
             String[] periodTextNot,
             Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap) {
-        GraphCategory[] categories = new GraphCategory[StockUtil.PERIODS + 2];
+        GraphCategory[] categories = new GraphCategory[Constants.PERIODS + 2];
         categories[0] = new GraphCategoryIndex(conf, Constants.INDEX, marketdatamap, periodDataMap);
         categories[1] = new GraphCategoryPrice(conf, Constants.PRICE, marketdatamap, periodDataMap);
         int i = 2;
@@ -440,13 +441,13 @@ public class ControlService {
         String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6", "Period7", "Period8", "Period9" };
         MetaItem meta = null;
         try {
-            meta = MetaItem.getById(market, conf);
+            meta = DbDao.getById(market, conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         try {
             if (meta != null) {
-                for (int i = 0; i < StockUtil.PERIODS; i++) {
+                for (int i = 0; i < Constants.PERIODS; i++) {
                     if (MetaDao.getPeriod(meta, i) != null) {
                         periodText[i] = MetaDao.getPeriod(meta, i);
                     }
@@ -469,7 +470,7 @@ public class ControlService {
         List<ResultItem> retlist = new ArrayList<>();
         try {
             log.info("mydate {}", conf.getdate());
-            List<StockItem> stocks = StockItem.getAll(conf.getMarket(), conf);
+            List<StockItem> stocks = DbDao.getAll(conf.getMarket(), conf);
             log.info("stocks {}", stocks.size());
             String[] periodText = getPeriodText(conf.getMarket(), conf);
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
@@ -497,8 +498,8 @@ public class ControlService {
 
             List<StockItem>[][] stocklistPeriod = StockUtil.getListSorted(datedstocklistsmove, days);
 
-            GraphCategoryPeriodTopBottom[] categories = new GraphCategoryPeriodTopBottom[StockUtil.PERIODS];
-            for (int i = 0; i < StockUtil.PERIODS; i++) {
+            GraphCategoryPeriodTopBottom[] categories = new GraphCategoryPeriodTopBottom[Constants.PERIODS];
+            for (int i = 0; i < Constants.PERIODS; i++) {
                 categories[i] = new GraphCategoryPeriodTopBottom(conf, i, periodText[i], stocklistPeriod);
             }
 
@@ -528,7 +529,7 @@ public class ControlService {
             int days = conf.getTableDays();
             Set<String> markets = getMarkets(ids);
             List<StockItem> stocks = null;
-            stocks = StockItem.getAll(conf.getMarket(), conf);
+            stocks = DbDao.getAll(conf.getMarket(), conf);
             if (stocks == null) {
                 return new ArrayList<>();
             }
@@ -543,7 +544,7 @@ public class ControlService {
                     marketdatamap);
             GraphCategory[] categories = getGraphCategories(conf, null, marketdatamap, periodDataMap);
 
-            for (int i = 0; i < StockUtil.ALLPERIODS; i++) {
+            for (int i = 0; i < Constants.ALLPERIODS; i++) {
                 categories[i].addResult(retlist, ids, guiSize);
             }
         } catch (Exception e) {
@@ -570,7 +571,7 @@ public class ControlService {
         Map<String, PeriodData> periodDataMap = new HashMap();
         for (String market : markets) {
             String[] periodText = marketdatamap.get(market).periodtext;
-            for (int i = 0; i < StockUtil.PERIODS; i++) {
+            for (int i = 0; i < Constants.PERIODS; i++) {
                 String text = periodText[i];
                 Pair<String, Integer> pair = new Pair<String, Integer>(market, i);
                 addPairToPeriodDataMap(periodDataMap, text, pair);
@@ -629,7 +630,7 @@ public class ControlService {
         Map<String, MarketData> marketdatamap = new HashMap();
         for (String market : markets) {
             log.info("prestocks");
-            List<StockItem> stocks = StockItem.getAll(market, conf);
+            List<StockItem> stocks = DbDao.getAll(market, conf);
             log.info("stocks {}", stocks.size());
             MarketData marketdata = new MarketData();
             marketdata.stocks = stocks;
@@ -685,7 +686,7 @@ public class ControlService {
         row.add("Pearson (e)");
         table.add(row);
         try {
-            List<StockItem> stocks = StockItem.getAll(conf.getMarket(), conf);
+            List<StockItem> stocks = DbDao.getAll(conf.getMarket(), conf);
             log.info("stocks {}", stocks.size());
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
@@ -730,7 +731,7 @@ public class ControlService {
         createOtherTables();
         List<StockItem> stocks = null;
         try {
-            stocks = StockItem.getAll(conf.getMarket(), conf);
+            stocks = DbDao.getAll(conf.getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -884,7 +885,7 @@ public class ControlService {
         createOtherTables();
         List<StockItem> stocks = null;
         try {
-            stocks = StockItem.getAll(conf.getMarket(), conf);
+            stocks = DbDao.getAll(conf.getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -1025,7 +1026,7 @@ public class ControlService {
     public void getDates(MyMyConfig conf, Map<String, Map<String, Object>> maps) {
         List<StockItem> stocks = null;
         try {
-            stocks = StockItem.getAll(conf.getMarket(), conf);
+            stocks = DbDao.getAll(conf.getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -1061,7 +1062,7 @@ public class ControlService {
         createOtherTables();
         List<StockItem> stocks = null;
         try {
-            stocks = StockItem.getAll(conf.getMarket(), conf);
+            stocks = DbDao.getAll(conf.getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

@@ -2,7 +2,10 @@ package roart.config;
 
 import java.util.HashMap;
 import java.util.Map;
-import roart.config.IclijConfigConstants;
+
+import roart.common.config.ConfigConstants;
+import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.IclijXMLType;
 
 public class IclijConfigConstantMaps {
     public static Map<String, Class> map = new HashMap<>();

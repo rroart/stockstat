@@ -21,21 +21,22 @@ import roart.calculate.CalcDoubleNode;
 import roart.calculate.CalcNode;
 import roart.calculate.CalcNodeUtils;
 import roart.category.Category;
-import roart.category.CategoryConstants;
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.constants.CategoryConstants;
+import roart.common.constants.Constants;
 import roart.evaluation.IndicatorEvaluation;
 import roart.evaluation.Recommend;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorUtils;
-import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.result.model.ResultItemTableRow;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.util.TaUtil;
+import roart.pipeline.common.aggregate.Aggregator;
 
 public class AggregatorRecommenderIndicator extends Aggregator {
 

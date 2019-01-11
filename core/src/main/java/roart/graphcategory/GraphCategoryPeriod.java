@@ -11,17 +11,17 @@ import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorMACD;
 import roart.graphindicator.GraphIndicatorRSI;
 import roart.graphindicator.GraphIndicatorSTOCHRSI;
-import roart.model.GUISize;
-import roart.model.ResultItemBytes;
-import roart.model.ResultItem;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.result.model.GUISize;
+import roart.result.model.ResultItem;
+import roart.result.model.ResultItemBytes;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.util.StockUtil;
 import roart.util.SvgUtil;
 

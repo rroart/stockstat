@@ -11,7 +11,7 @@
   <groupId>roart</groupId>
   <artifactId>stockstat-web</artifactId>
   <version>0.5-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <name>Stock Statistics Web</name>
   <!--name>Vaadin Web Application</name-->
   <build>
@@ -102,18 +102,23 @@
 	</executions>
       </plugin>
       <plugin>
-	<groupId>org.eclipse.jetty</groupId>
-	<artifactId>jetty-maven-plugin</artifactId>
-	<version>${jetty.version}</version>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-maven-plugin</artifactId>
+	<version>${springboot.version}</version>
 	<configuration>
-	  <war>${project.basedir}/web/target/stockstat-web-0.5-SNAPSHOT.war</war>
+          <mainClass>roart.client.WebApplication</mainClass>
 	</configuration>
-	<!--version>${jetty.version}</version-->
+	<executions>
+	  <execution>
+	    <goals>
+	      <goal>repackage</goal>
+	    </goals>
+	  </execution>
+	</executions>
       </plugin>
     </plugins>
-    <pluginManagement>
+    <!--pluginManagement>
       <plugins>
-	<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
 	<plugin>
 	  <groupId>org.eclipse.m2e</groupId>
 	  <artifactId>lifecycle-mapping</artifactId>
@@ -173,9 +178,34 @@
 	  </configuration>
 	</plugin>
       </plugins>
-    </pluginManagement>
+    </pluginManagement-->
   </build>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+	<!-- Import dependency management from Spring Boot -->
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-dependencies</artifactId>
+	<version>${springboot.version}</version>
+	<type>pom</type>
+	<scope>import</scope>
+      </dependency>
+      <dependency>
+	<groupId>com.vaadin</groupId>
+	<artifactId>vaadin-bom</artifactId>
+	<version>${vaadin.version}</version>
+	<type>pom</type>
+	<scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${servlet.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-model</artifactId>
@@ -197,34 +227,87 @@
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-eureka</artifactId>
+      <version>${stockstat.version}</version>
+      <exclusions>
+        <exclusion>  <!-- declare the exclusion here -->
+	  <groupId>com.fasterxml.jackson.core</groupId>
+	  <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions> 
+    </dependency>
+    <dependency>
       <groupId>com.netflix.eureka</groupId>
       <artifactId>eureka-client</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>3.2.0.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>3.2.0.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-netflix-core</artifactId>
-      <version>1.0.0.RELEASE</version>
+      <version>${eurekaclient.version}</version>
+      <!--exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+      </exclusions-->
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.3</version>
+      <version>${httpclient.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-commons</artifactId>
-      <version>1.1.7.RELEASE</version>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-spring-boot-starter</artifactId>
+      <!--version>12.0.3</version-->
+      <version>1.2.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+        <!--exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion-->
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>${springboot.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jetty</artifactId>
+      <version>${springboot.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -235,53 +318,6 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.17</version>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-server</artifactId>
-      <version>${vaadin.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-client-compiled</artifactId>
-      <version>${vaadin.version}</version>
-    </dependency>
-    <!--
-	Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory).
-	
-	For widgetset compilation, vaadin-client-compiler is automatically added on the
-	compilation classpath by vaadin-maven-plugin so normally there is no need for an
-	explicit dependency.
-    -->
-    <!--
-	<dependency>
-	<groupId>com.vaadin</groupId>
-	<artifactId>vaadin-client-compiler</artifactId>
-	<version>${vaadin.version}</version>
-	<scope>provided</scope>
-	</dependency>
-    -->
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-client</artifactId>
-      <version>${vaadin.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-push</artifactId>
-      <version>${vaadin.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.vaadin</groupId>
-      <artifactId>vaadin-themes</artifactId>
-      <version>${vaadin.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>${servlet.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
@@ -314,13 +350,8 @@
       <artifactId>ta-lib</artifactId>
       <version>0.4.0</version>
     </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-eureka</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
   </dependencies>
-  <repositories>
+  <!--repositories>
     <repository>
       <id>vaadin-addons</id>
       <url>http://maven.vaadin.com/vaadin-addons</url>
@@ -335,8 +366,8 @@
 	<enabled>true</enabled>
       </snapshots>
     </repository>
-  </repositories>
-  <pluginRepositories>
+  </repositories-->
+  <!--pluginRepositories>
     <pluginRepository>
       <id>vaadin-snapshots</id>
       <url>http://oss.sonatype.org/content/repositories/vaadin-snapshots/</url>
@@ -347,6 +378,10 @@
 	<enabled>true</enabled>
       </snapshots>
     </pluginRepository>
-  </pluginRepositories>
+  </pluginRepositories-->
+  <!--properties>
+    <springboot.version>1.5.18.RELEASE</springboot.version>
+    <springcloud.version>1.3.5.RELEASE</springcloud.version>
+  </properties-->
 </project>
 

@@ -9,7 +9,7 @@ spec:
       name: pd:latest
   source:
     dockerfile : |-
-      FROM openjdk:8-jdk
+      FROM openjdk:11-jdk
       MAINTAINER <roart@nvg.ntnu.no>
       RUN apt-get update && apt-get upgrade -y
       RUN apt-get install -y python3 python3-pip
@@ -59,7 +59,7 @@ spec:
     dockerStrategy:
       from: 
         kind: DockerImage
-        name: openjdk:8-jdk
+        name: openjdk:11-jdk
   triggers:
   - imageChange: {}
     type: ImageChange

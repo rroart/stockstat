@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Queue;
 
 import roart.constants.IclijPipelineConstants;
-import roart.model.MemoryItem;
+import roart.iclij.model.MemoryItem;
 
 public abstract class Action {
     private Queue<Action> goals = new LinkedList<>();

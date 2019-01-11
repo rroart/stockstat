@@ -1,24 +1,25 @@
 package roart.service;
 
-import roart.model.GUISize;
-import roart.model.ResultItem;
-import roart.pipeline.PipelineConstants;
 import roart.queue.MyExecutors;
 import roart.queue.Queues;
+import roart.result.model.GUISize;
+import roart.result.model.ResultItem;
 import roart.thread.ClientRunner;
 import roart.client.MyVaadinUI;
-import roart.config.ConfigConstants;
-import roart.config.ConfigTreeMap;
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.ConfigConstants;
+import roart.common.config.ConfigTreeMap;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.EurekaConstants;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.service.ServiceParam;
+import roart.common.service.ServiceResult;
+import roart.eureka.util.EurekaUtil;
 
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
-
-import roart.util.EurekaConstants;
-import roart.util.EurekaUtil;
 
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;

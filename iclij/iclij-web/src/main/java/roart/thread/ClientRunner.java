@@ -24,14 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.client.MyIclijUI;
+import roart.common.constants.Constants;
+import roart.common.constants.EurekaConstants;
+import roart.eureka.util.EurekaUtil;
+import roart.iclij.service.IclijServiceParam;
+import roart.iclij.service.IclijServiceResult;
 import roart.queue.IclijQueues;
-import roart.service.IclijServiceParam;
-import roart.service.IclijServiceResult;
-import roart.service.ServiceParam;
-import roart.service.ServiceResult;
-import roart.util.Constants;
-import roart.util.EurekaConstants;
-import roart.util.EurekaUtil;
 
 import com.vaadin.ui.UI;
 import com.vaadin.ui.UIDetachedException;

@@ -2,12 +2,12 @@ package roart.aggregate;
 
 import java.util.Map;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorRSI;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
-import roart.util.MarketData;
+import roart.model.data.MarketData;
 
 public class AggregatorMLIndicatorRSI extends AggregatorMLIndicator {
 

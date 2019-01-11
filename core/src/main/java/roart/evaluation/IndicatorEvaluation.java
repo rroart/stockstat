@@ -25,14 +25,14 @@ import roart.calculate.CalcComplexNode;
 import roart.calculate.CalcDoubleNode;
 import roart.calculate.CalcNode;
 import roart.calculate.CalcNodeUtils;
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.EvalSum;
+import roart.common.util.EvalUtil;
 import roart.evolution.Individual;
 import roart.indicator.Indicator;
-import roart.pipeline.PipelineConstants;
-import roart.util.EvalSum;
-import roart.util.EvalUtil;
-import roart.util.MarketData;
+import roart.model.data.MarketData;
 
 public class IndicatorEvaluation extends Evaluation {
     protected static Logger log = LoggerFactory.getLogger(Evaluation.class);

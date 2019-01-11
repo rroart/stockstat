@@ -17,9 +17,10 @@ import org.apache.commons.math3.stat.inference.TTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.model.ResultItemTable;
-import roart.model.ResultItemTableRow;
+import roart.common.constants.Constants;
 import roart.model.StockItem;
+import roart.result.model.ResultItemTable;
+import roart.result.model.ResultItemTableRow;
 
 /**
  * 
@@ -56,7 +57,7 @@ public class Math3Util {
             String id1 = entry1.getKey();
             List<StockItem> stocks1 = entry1.getValue();
             stocks1.sort(StockUtil.StockDateComparator);
-            for (int i = 0; i < StockUtil.PERIODS; i++) {
+            for (int i = 0; i < Constants.PERIODS; i++) {
                 List<StockItem> stockstrunc1 = listtrunc(stocks1, count, i, index);
                 for (Entry<String, List<StockItem>> entry2 : stockidmap.entrySet()) {
                     String id2 = entry2.getKey();
@@ -134,7 +135,7 @@ public class Math3Util {
         }
         int index = list.size() - 1 - StockUtil.getStockDate(list, date);
         log.info("index {}", index);
-        for (int i = 0; i < StockUtil.PERIODS; i++) {
+        for (int i = 0; i < Constants.PERIODS; i++) {
             for (Entry<String, List<StockItem>> entry : stockidmap.entrySet()) {
                 String id = entry.getKey();
                 List<StockItem> stocks = entry.getValue();

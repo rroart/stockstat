@@ -2,10 +2,6 @@ package roart.controller;
 
 import java.io.IOException;
 
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
-import org.springframework.web.bind.annotation.*;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -16,13 +12,17 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import roart.action.Action;
 import roart.action.MainAction;
 import roart.config.IclijXMLConfig;
+import roart.eureka.util.EurekaUtil;
 import roart.queue.MyExecutors;
 import roart.service.ControlService;
-import roart.util.EurekaUtil;
 
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @SpringBootApplication

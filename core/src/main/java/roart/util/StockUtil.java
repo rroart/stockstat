@@ -18,15 +18,15 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.model.StockItem;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 
 public class StockUtil {
 
     private static Logger log = LoggerFactory.getLogger(StockUtil.class);
-
-    public static final int PERIODS = 9;
-    public static final int ALLPERIODS = 11;
 
     /**
      * Create sorted tables for all periods in a time interval
@@ -43,13 +43,13 @@ public class StockUtil {
 
         // make sorted period1, sorted current day
         // make sorted period1, sorted day offset
-        Map<String, Integer>[][] periodmaps = new HashMap[count - 1][PERIODS];
+        Map<String, Integer>[][] periodmaps = new HashMap[count - 1][Constants.PERIODS];
 
         // Do for all wanted days
 
         for (int j = 0; j < count; j++) {
-            Map<String, Integer>[] periodmap = new HashMap[PERIODS];
-            for (int i = 0; i < PERIODS; i++) {
+            Map<String, Integer>[] periodmap = new HashMap[Constants.PERIODS];
+            for (int i = 0; i < Constants.PERIODS; i++) {
                 // Check if the period for the wanted day has any content
 
                 boolean hasPeriod = !stocklistPeriod[i][j].isEmpty();
@@ -91,13 +91,13 @@ public class StockUtil {
 
         // make sorted period1, sorted current day
         // make sorted period1, sorted day offset
-        List<StockItem>[][] stocklistPeriod = new ArrayList[PERIODS][count];
+        List<StockItem>[][] stocklistPeriod = new ArrayList[Constants.PERIODS][count];
 
         // Do for all wanted days
 
         for (int j = 0; j < count; j++) {
-            boolean hasPeriod[] = new boolean[PERIODS];
-            for (int i = 0; i < PERIODS; i++) {
+            boolean hasPeriod[] = new boolean[Constants.PERIODS];
+            for (int i = 0; i < Constants.PERIODS; i++) {
                 hasPeriod[i] = false;
 
                 // Check if the period fot the wanted day has any content

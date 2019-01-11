@@ -7,7 +7,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.util.Constants;
+import roart.common.constants.Constants;
 import roart.util.ServiceUtil;
 
 public class ServiceAction extends Action {

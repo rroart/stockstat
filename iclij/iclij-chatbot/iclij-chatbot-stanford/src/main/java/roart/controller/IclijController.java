@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+import roart.eureka.util.EurekaUtil;
 import roart.parse.SocketUtil;
-import roart.util.EurekaUtil;
 
 @RestController
 @SpringBootApplication

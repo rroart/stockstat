@@ -21,26 +21,27 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import roart.pipeline.common.aggregate.Aggregator;
 import roart.category.Category;
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
+import roart.common.ml.NNConfigs;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.ArraysUtil;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorUtils;
-import roart.ml.MLClassifyDao;
-import roart.ml.MLClassifyLearnTestPredictCallable;
-import roart.ml.MLClassifyModel;
-import roart.ml.NNConfigs;
-import roart.model.LearnTestClassifyResult;
-import roart.model.ResultItemTableRow;
-import roart.model.ResultMeta;
+import roart.ml.dao.MLClassifyDao;
+import roart.ml.dao.MLClassifyLearnTestPredictCallable;
+import roart.ml.model.LearnTestClassifyResult;
+import roart.ml.common.MLClassifyModel;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
 import roart.queue.MyExecutors;
+import roart.result.model.ResultItemTableRow;
+import roart.result.model.ResultMeta;
 import roart.service.ControlService;
-import roart.util.ArraysUtil;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.util.TaUtil;
 
 public class MLIndicator extends Aggregator {
@@ -501,7 +502,7 @@ public class MLIndicator extends Aggregator {
                             if (model.getReturnSize() > 1) {
                                 fields[retindex++] = aType != null ? aType[1] : null;
                             }
-                            retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
+                            //retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
                         }
                     }   
                 }
@@ -707,7 +708,7 @@ public class MLIndicator extends Aggregator {
 
     private int getTitles2(int retindex, Object[] objs) {
         for (MLClassifyDao mldao : mldaos) {
-            retindex = mldao.addTitles(objs, retindex, this, title, key, MYTITLE);
+            //retindex = mldao.addTitles(objs, retindex, this, title, key, MYTITLE);
         }
         return retindex;
     }

@@ -1,16 +1,21 @@
 package roart.service;
 
-import roart.model.GUISize;
-import roart.model.IncDecItem;
-import roart.model.ResultItem;
 import roart.queue.IclijQueues;
 import roart.queue.MyExecutors;
+import roart.result.model.GUISize;
+import roart.result.model.ResultItem;
 import roart.thread.ClientRunner;
 import roart.client.MyIclijUI;
-import roart.config.ConfigTreeMap;
-import roart.config.IclijConfig;
-import roart.config.MyConfig;
-import roart.config.VerifyConfig;
+import roart.common.config.ConfigTreeMap;
+import roart.common.config.MyConfig;
+import roart.common.constants.Constants;
+import roart.common.constants.EurekaConstants;
+import roart.common.service.ServiceParam;
+import roart.common.service.ServiceResult;
+import roart.eureka.util.EurekaUtil;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.service.IclijServiceParam;
+import roart.iclij.service.IclijServiceResult;
 
 import java.util.List;
 import java.util.Set;
@@ -19,10 +24,6 @@ import java.util.concurrent.Executors;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import roart.util.Constants;
-import roart.util.EurekaConstants;
-import roart.util.EurekaUtil;
 
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;

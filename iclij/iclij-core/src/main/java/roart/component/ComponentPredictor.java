@@ -9,12 +9,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.ConfigConstants;
-import roart.config.IclijConfig;
-import roart.config.MyMyConfig;
-import roart.model.IncDecItem;
-import roart.model.MemoryItem;
-import roart.pipeline.PipelineConstants;
+import roart.common.config.ConfigConstants;
+import roart.iclij.config.IclijConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
 
 public class ComponentPredictor extends Component {

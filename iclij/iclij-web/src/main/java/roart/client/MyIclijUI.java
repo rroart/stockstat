@@ -10,23 +10,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.servlet.annotation.WebServlet;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.sun.xml.bind.v2.model.nav.Navigator;
 import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewDisplay;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.annotation.SpringViewDisplay;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.CheckBox;
@@ -38,22 +39,23 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import roart.config.ConfigTreeMap;
-import roart.model.IncDecItem;
-import roart.model.MapList;
-import roart.model.MemoryItem;
-import roart.model.ResultItemBytes;
-import roart.model.ResultItemTable;
-import roart.model.ResultItemText;
-import roart.service.IclijServiceList;
+import roart.common.config.ConfigTreeMap;
+import roart.common.constants.Constants;
+import roart.eureka.util.EurekaUtil;
+import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MapList;
+import roart.iclij.model.MemoryItem;
+import roart.iclij.service.IclijServiceList;
+import roart.result.model.ResultItemBytes;
+import roart.result.model.ResultItemTable;
+import roart.result.model.ResultItemText;
 import roart.service.IclijWebControlService;
-import roart.util.Constants;
-import roart.util.EurekaUtil;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -62,8 +64,10 @@ import roart.util.EurekaUtil;
  * The UI is initialized using {@link #init(VaadinRequest)}. This method is intended to be 
  * overridden to add component to the user interface and initialize non-component functionality.
  */
+@SpringUI
+@SpringViewDisplay
 @Theme("mytheme")
-public class MyIclijUI extends UI {
+public class MyIclijUI extends UI implements ViewDisplay {
 
     private static Logger log = LoggerFactory.getLogger(MyIclijUI.class);
 
@@ -74,10 +78,21 @@ public class MyIclijUI extends UI {
 
     VerticalLayout controlPanelTab;
 
+    Navigator navigator;
+    
+    private Panel springViewDisplay;
+
+    @Override
+    public void showView(View view) {
+        springViewDisplay.setContent((Component) view);
+    }
+    
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        log.info("testme {}", VaadinService.getCurrent().getDeploymentConfiguration().isProductionMode());
+        this.getNavigator().setErrorView(this.getNavigator().getCurrentView());
         EurekaUtil.initEurekaClient();
-
+        
         controlService = new IclijWebControlService();
         controlService.getConfig();
         final VerticalLayout layout = new VerticalLayout();
@@ -128,12 +143,24 @@ public class MyIclijUI extends UI {
         bottomLine.addComponent(licenseLabel);
         
         layout.addComponent(bottomLine);
-    }
 
-    @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-    @VaadinServletConfiguration(ui = MyIclijUI.class, productionMode = false)
+        //navigator = new Navigator(this, this.getContent().getC);
+        //this
+        
+        springViewDisplay = new Panel();
+        springViewDisplay.setSizeFull();
+        layout.addComponent(springViewDisplay);
+        layout.setExpandRatio(springViewDisplay, 1.0f);
+        getNavigator().setErrorView(ErrorView.class);
+    }
+    
+    //@WebServlet(value = {"/UI/*",/VAADIN/*})
+    //@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
+    //@VaadinServletConfiguration(ui = MyIclijUI.class, productionMode = false)
+    /*
     public static class MyUIServlet extends VaadinServlet {
     }
+    */
     
     /*
     private TextField getDays() {

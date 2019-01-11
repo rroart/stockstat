@@ -1,142 +1,85 @@
 package roart.client;
 
-import roart.config.ConfigTreeMap;
-import roart.model.GUISize;
-import roart.model.ResultItemBytes;
-import roart.model.ResultItemTable;
-import roart.model.ResultItemTableRow;
-import roart.model.ResultItemText;
-import roart.pipeline.PipelineConstants;
-import roart.model.ResultItem;
-import roart.util.Constants;
-import roart.service.ControlService;
-import roart.util.EurekaUtil;
-
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Map;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
-
-
-
-import java.io.OutputStream;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import javax.imageio.ImageIO;
-//import roart.beans.session.misc.Unit;
-import javax.servlet.annotation.WebServlet;
-
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
-import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Embedded;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.ColumnGenerator;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.Link;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.ListSelect;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.InlineDateField;
-import com.vaadin.ui.PopupDateField;
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Container;
-import com.vaadin.data.Container.ItemSetChangeListener;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.server.FileResource;
-import com.vaadin.server.StreamResource;
-import com.vaadin.server.StreamResource.StreamSource;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.themes.BaseTheme;
-import com.vaadin.ui.Window;
-import com.vaadin.annotations.Push;
-import com.vaadin.shared.communication.PushMode;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.server.Sizeable;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import org.apache.commons.math3.util.Pair;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.math3.util.Pair;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.ApplicationFrame;
-import org.jfree.ui.RefineryUtilities;
 
+import com.vaadin.annotations.Theme;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewDisplay;
+import com.vaadin.server.Sizeable;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
+import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.spring.annotation.SpringUI;
+import com.vaadin.spring.annotation.SpringViewDisplay;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.InlineDateField;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.ListSelect;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 
-@Push
-//@Theme("mytheme")
+import roart.common.config.ConfigTreeMap;
+import roart.common.constants.Constants;
+import roart.common.pipeline.PipelineConstants;
+import roart.eureka.util.EurekaUtil;
+import roart.result.model.GUISize;
+import roart.result.model.ResultItem;
+import roart.result.model.ResultItemBytes;
+import roart.result.model.ResultItemTable;
+import roart.result.model.ResultItemTableRow;
+import roart.result.model.ResultItemText;
+import roart.service.ControlService;
+
+//@SpringView(name="")
+@SpringUI
+@SpringViewDisplay
+//@Push
 @Theme("valo")
 @SuppressWarnings("serial")
-public class MyVaadinUI extends UI
-{
+public class MyVaadinUI extends UI implements ViewDisplay {
 
     private static Logger log = LoggerFactory.getLogger(MyVaadinUI.class);
     //private static final Logger log = LoggerFactory.getLogger(MyVaadinUI.class);
 
-    @WebServlet(value = "/*", asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = MyVaadinUI.class, widgetset = "roart.client.AppWidgetSet")
+    //@WebServlet(value = "/*", asyncSupported = true)
+    //@VaadinServletConfiguration(productionMode = false, ui = MyVaadinUI.class, widgetset = "roart.client.AppWidgetSet")
+    /*
     public static class Servlet extends VaadinServlet {
     }
-
+*/
+    
     private TabSheet tabsheet = null;
     public Label statLabel = null;
 
@@ -146,8 +89,17 @@ public class MyVaadinUI extends UI
 
     VerticalLayout controlPanelTab;
 
+    private Panel springViewDisplay;
+
+    @Override
+    public void showView(View view) {
+        springViewDisplay.setContent((Component) view);
+    }
+    
     @Override
     protected void init(VaadinRequest request) {
+        log.info("testme {}", VaadinService.getCurrent().getDeploymentConfiguration().isProductionMode());
+        this.getNavigator().setErrorView(this.getNavigator().getCurrentView());
         EurekaUtil.initEurekaClient();
         controlService = new ControlService();
         controlService.getConfig();
@@ -200,6 +152,15 @@ public class MyVaadinUI extends UI
         bottomLine.addComponent(licenseLabel);
         //bottomLine.setComponentAlignment(licenseLabel, Alignment.BOTTOM_RIGHT);
         layout.addComponent(bottomLine);
+        
+        log.info("Here");
+        springViewDisplay = new Panel();
+        springViewDisplay.setSizeFull();
+        log.info("Here");
+        layout.addComponent(springViewDisplay);
+        layout.setExpandRatio(springViewDisplay, 1.0f);
+        log.info("Here");
+        getNavigator().setErrorView(ErrorView.class);
     }
 
     private VerticalLayout getControlPanelTab() {

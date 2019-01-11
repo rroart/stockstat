@@ -9,9 +9,12 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
+import roart.common.util.ArraysUtil;
 import roart.model.StockItem;
+import roart.model.data.MarketData;
 
 public class StockDao {
 
@@ -205,6 +208,10 @@ public class StockDao {
                     mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
                 }
             }
+        }
+        Double[][] i = retMap.get("16545");
+        if (i != null) {
+            Double[][] j = i;
         }
         retMap = getReverseArrSparseFillHolesArr(conf, retMap);
         return retMap;

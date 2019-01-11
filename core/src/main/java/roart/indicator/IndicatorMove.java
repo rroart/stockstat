@@ -2,12 +2,12 @@ package roart.indicator;
 
 import java.util.Map;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.constants.Constants;
 import roart.model.StockItem;
-import roart.pipeline.PipelineConstants;
 //import roart.model.Stock;
 import roart.service.ControlService;
-import roart.util.Constants;
 import roart.util.TaUtil;
 
 public class IndicatorMove extends Indicator {

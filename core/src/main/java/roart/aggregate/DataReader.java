@@ -5,14 +5,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.ArraysUtil;
+import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
-import roart.util.ArraysUtil;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.util.StockDao;
 
 public class DataReader extends Pipeline {
@@ -66,6 +67,19 @@ public class DataReader extends Pipeline {
             currentYear = "cy".equals(categoryTitle);
         }
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+        if (false && category == Constants.PRICECOLUMN) {
+            for (Entry<String, Double[][]> entry : listMap.entrySet()) {
+                Double[][] value = entry.getValue();
+                for(int i = 0; i < value[0].length; i++) {
+                    if (value[0][i] != null && value[0][i] == 0) {
+                        log.info("Value 0 for {}", entry.getKey());
+                        value[0][i] = null;
+                        value[1][i] = null;
+                        value[2][i] = null;
+                    }
+                }
+            }
+        }
         this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.nameMap = StockDao.getNameMap(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);

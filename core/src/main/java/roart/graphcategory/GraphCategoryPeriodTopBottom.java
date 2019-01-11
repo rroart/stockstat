@@ -10,12 +10,12 @@ import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import roart.config.MyMyConfig;
-import roart.model.GUISize;
-import roart.model.ResultItemBytes;
-import roart.model.ResultItem;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.model.StockItem;
-import roart.util.Constants;
+import roart.result.model.GUISize;
+import roart.result.model.ResultItem;
+import roart.result.model.ResultItemBytes;
 import roart.util.StockUtil;
 import roart.util.SvgUtil;
 

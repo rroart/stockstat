@@ -18,7 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.config.EvolutionConfig;
+import roart.common.config.EvolutionConfig;
 import roart.evaluation.Evaluation;
 import roart.queue.MyExecutors;
 

@@ -3,23 +3,19 @@ package roart.indicator;
 import java.util.HashMap;
 import java.util.Map;
 
-import roart.config.MyMyConfig;
-import roart.ml.MLClassifyModel;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.constants.Constants;
+import roart.ml.common.MLClassifyModel;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.util.TaUtil;
 
 public class IndicatorMACD extends Indicator {
 
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
     
-    public static final int MULTILAYERPERCEPTRONCLASSIFIER = 1;
-    public static final int LOGISTICREGRESSION = 2;
-    public static final int ONEVSREST = 3;
-
     public IndicatorMACD(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.marketdatamap = marketdatamap;

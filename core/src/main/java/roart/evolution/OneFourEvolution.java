@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutionException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.config.EvolutionConfig;
+import roart.common.config.EvolutionConfig;
 import roart.evaluation.Evaluation;
 
 public class OneFourEvolution extends EvolutionAlgorithm {

@@ -3,8 +3,8 @@ package roart.evaluation;
 import java.util.ArrayList;
 import java.util.List;
 
-import roart.config.ConfigConstants;
-import roart.config.MyMyConfig;
+import roart.common.config.ConfigConstants;
+import roart.common.config.MyMyConfig;
 
 public class RSIRecommendSimple extends RecommendRSI {
     

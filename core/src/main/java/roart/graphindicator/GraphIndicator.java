@@ -7,9 +7,9 @@ import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyMyConfig;
-import roart.model.GUISize;
-import roart.model.ResultItem;
+import roart.common.config.MyMyConfig;
+import roart.result.model.GUISize;
+import roart.result.model.ResultItem;
 
 public abstract class GraphIndicator {
 

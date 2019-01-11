@@ -1,9 +1,13 @@
 package roart.service;
 
-import roart.model.ResultItem;
-import roart.pipeline.PipelineConstants;
-import roart.config.ConfigTreeMap;
-import roart.config.MyMyConfig;
+import roart.common.config.ConfigTreeMap;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.EurekaConstants;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.service.ServiceParam;
+import roart.common.service.ServiceResult;
+import roart.eureka.util.EurekaUtil;
+import roart.result.model.ResultItem;
 
 import java.util.List;
 import java.util.Set;
@@ -11,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
-
-import roart.util.EurekaConstants;
-import roart.util.EurekaUtil;
 
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;

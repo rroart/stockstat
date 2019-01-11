@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.action.Action;
 import roart.action.ServiceAction;
-import roart.pipeline.PipelineConstants;
+import roart.common.pipeline.PipelineConstants;
 
 public class ComponentFactory {
     private Logger log = LoggerFactory.getLogger(this.getClass());

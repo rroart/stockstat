@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorATR;
 import roart.indicator.IndicatorCCI;
@@ -12,14 +13,13 @@ import roart.indicator.IndicatorMACD;
 import roart.indicator.IndicatorRSI;
 import roart.indicator.IndicatorSTOCH;
 import roart.indicator.IndicatorSTOCHRSI;
-import roart.model.ResultItemTableRow;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
-import roart.predictor.Predictor;
+import roart.pipeline.common.predictor.Predictor;
 import roart.predictor.PredictorLSTM;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.result.model.ResultItemTableRow;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.util.StockDao;
 import roart.util.StockUtil;
 

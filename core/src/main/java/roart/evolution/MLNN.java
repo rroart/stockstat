@@ -5,16 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import roart.aggregate.Aggregator;
+import roart.pipeline.common.aggregate.Aggregator;
 import roart.aggregate.AggregatorRecommenderIndicator;
 import roart.aggregate.MLIndicator;
 import roart.aggregate.MLMACD;
 import roart.aggregate.RecommenderRSI;
-import roart.category.CategoryConstants;
-import roart.config.MyMyConfig;
-import roart.ml.MLClassifyDao;
-import roart.ml.MLClassifyModel;
-import roart.util.Constants;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.CategoryConstants;
+import roart.common.constants.Constants;
+import roart.ml.dao.MLClassifyDao;
+import roart.ml.common.MLClassifyModel;
 
 public class MLNN {
     private MyMyConfig conf;

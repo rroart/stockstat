@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import roart.model.IncDecItem;
-import roart.model.MapList;
+import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MapList;
 
 public class VerifyProfitAction extends Action {
 

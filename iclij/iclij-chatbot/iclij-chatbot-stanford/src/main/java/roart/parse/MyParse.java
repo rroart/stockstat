@@ -33,11 +33,11 @@ import edu.stanford.nlp.time.TimeAnnotations.TimexAnnotation;
 import edu.stanford.nlp.time.Timex;
 import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.stanford.nlp.trees.Tree;
-import roart.model.parse.ParseData;
-import roart.model.parse.ParseLocation;
-import roart.model.parse.ParseObject;
-import roart.model.parse.ParseTime;
-import roart.model.parse.ParseUnit;
+import roart.iclij.model.parse.ParseData;
+import roart.iclij.model.parse.ParseLocation;
+import roart.iclij.model.parse.ParseObject;
+import roart.iclij.model.parse.ParseTime;
+import roart.iclij.model.parse.ParseUnit;
 
 public class MyParse {
     private Logger log = LoggerFactory.getLogger(this.getClass());

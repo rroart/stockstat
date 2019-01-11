@@ -14,16 +14,17 @@ import org.apache.commons.math3.util.Pair;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.ArraysUtil;
+import roart.db.dao.DbDao;
+import roart.common.constants.Constants;
 import roart.indicator.IndicatorUtils;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
 import roart.service.ControlService;
-import roart.util.ArraysUtil;
-import roart.util.Constants;
-import roart.util.MarketData;
+import roart.model.data.MarketData;
 import roart.util.StockDao;
 import roart.util.StockUtil;
 
@@ -68,7 +69,7 @@ public class ExtraReader extends Pipeline {
             String market = pair.getFirst();
             List<StockItem> stocks = null;
             try {
-                stocks = StockItem.getAll(market, conf);
+                stocks = DbDao.getAll(market, conf);
                 log.info("stocks {}", stocks.size());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -175,6 +176,9 @@ public class ExtraReader extends Pipeline {
             Double[] result) throws Exception {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
         int size = dateList.size() - 1;
+        if (size - j < 0) {
+            int jj = 0;
+        }
         Date date = dateList.get(size - j);
         Date prevDate = dateList.get(size - (j + (deltas - 1)));
         for (Entry<Pair<String, String>, Map<Date, StockItem>> entry : pairDateMap.entrySet()) {

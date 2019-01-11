@@ -13,18 +13,19 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
-import roart.config.MyMyConfig;
-import roart.ml.MLPredictDao;
-import roart.ml.MLPredictModel;
-import roart.model.ResultItemTableRow;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.ArraysUtil;
+import roart.ml.dao.MLPredictDao;
+import roart.ml.model.MLPredictModel;
 import roart.model.StockItem;
-import roart.pipeline.PipelineConstants;
+import roart.result.model.ResultItemTableRow;
 import roart.service.ControlService;
-import roart.util.ArraysUtil;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.util.StockDao;
+import roart.pipeline.common.predictor.Predictor;
 
 public class PredictorLSTM extends Predictor {
 

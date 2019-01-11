@@ -8,15 +8,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregate.CalcNodeFactory;
-import roart.config.MLConstants;
-import roart.config.MyConfig;
-import roart.ml.NNConfig;
-import roart.ml.SparkLRConfig;
-import roart.ml.SparkMCPConfig;
-import roart.ml.SparkOVRConfig;
-import roart.ml.TensorflowDNNConfig;
-import roart.ml.TensorflowDNNLConfig;
-import roart.ml.TensorflowLConfig;
+import roart.common.config.MLConstants;
+import roart.common.config.MyConfig;
+import roart.common.ml.NNConfig;
+import roart.common.ml.SparkLRConfig;
+import roart.common.ml.SparkMCPConfig;
+import roart.common.ml.SparkOVRConfig;
+import roart.common.ml.TensorflowDNNConfig;
+import roart.common.ml.TensorflowDNNLConfig;
+import roart.common.ml.TensorflowLConfig;
 
 public class CalcNodeUtils {
     public static void transformToNode(MyConfig conf, List<String> keys, boolean useMax, List<Double>[] minMax, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {

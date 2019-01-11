@@ -2,7 +2,7 @@ FROM debian:stretch
 MAINTAINER <roart@nvg.ntnu.no>
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y openjdk-8-jdk curl procps
+RUN apt-get install -y openjdk-11-jdk curl procps
 RUN curl -s https://archive.apache.org/dist/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz | tar -xz -C /tmp
 RUN ln -s /tmp /tmp/spark-2.3.0-bin-hadoop2.7/logs
 

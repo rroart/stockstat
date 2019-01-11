@@ -1,5 +1,5 @@
 #FROM debian:stretch
-FROM openjdk:8-jdk
+FROM openjdk:11-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 
 RUN apt-get update && apt-get upgrade -y

@@ -18,7 +18,7 @@
       <directory>${project.basedir}/../web/target</directory>
       <includes>
 	<!--include>stockstat*.jar</include-->
-	<include>stockstat*.war</include>
+	<include>stockstat*.jar</include>
       </includes>
       <outputDirectory>lib</outputDirectory>
     </fileSet>
@@ -46,14 +46,7 @@
     <fileSet>
       <directory>${project.basedir}/../iclij/iclij-web/target</directory>
       <includes>
-	<include>*.war</include>
-      </includes>
-      <outputDirectory>lib</outputDirectory>
-    </fileSet>
-    <fileSet>
-      <directory>/tmp/jetty-runner</directory>
-      <includes>
-	<include>jetty-runner-9.4.12.v20180830.jar</include>
+	<include>*.jar</include>
       </includes>
       <outputDirectory>lib</outputDirectory>
     </fileSet>

@@ -34,11 +34,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.util.Constants;
+import roart.common.config.ConfigTreeMap;
+import roart.common.constants.Constants;
+import roart.iclij.config.IclijConfig;
 
 public class IclijXMLConfig {
 
-    protected static Logger log = LoggerFactory.getLogger(IclijConfig.class);
+    protected static Logger log = LoggerFactory.getLogger(IclijXMLConfig.class);
 
     protected static IclijXMLConfig instance = null;
 

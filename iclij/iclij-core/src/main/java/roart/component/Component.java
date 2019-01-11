@@ -3,11 +3,11 @@ package roart.component;
 import java.util.List;
 import java.util.Map;
 
-import roart.config.ConfigConstants;
-import roart.config.IclijConfig;
-import roart.config.MyMyConfig;
-import roart.model.IncDecItem;
-import roart.model.MemoryItem;
+import roart.common.config.ConfigConstants;
+import roart.common.config.MyMyConfig;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
 
 public abstract class Component {

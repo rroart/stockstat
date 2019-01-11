@@ -57,6 +57,7 @@ F: Recommender combine keys/improveaction?
 B: improvement lack srv. setdate
 
 Core
+T: MLPredictModel addtitles deprecate
 T: mlmacd mlindicator anythinghere better heuristics?
 WF: discard sat/sun/hol for all lang
 B: stockstatcore terminates/crashes?
@@ -126,6 +127,7 @@ T: Eureka setup/config
 T: Eureka wait for notify
 
 Front
+B: vaadin with errorview
 T/F: vaadin 10, or go for angular/reactredux?
 WF: Vaadin threads
 T: lib.py headskip update
@@ -152,6 +154,7 @@ T: MyMyConfig getValueOrDefault use more
 F: no env SPARK_DRIVER_HOST, use config file?
 
 Data
+B: my box import does not work
 B: 0.0 as ose value, filter (I0)
 B: nasdaq verify loop
 F: Use volume

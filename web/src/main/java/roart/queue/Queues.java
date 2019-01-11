@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.service.ServiceParam;
+import roart.common.service.ServiceParam;
 
 public class Queues {
 	

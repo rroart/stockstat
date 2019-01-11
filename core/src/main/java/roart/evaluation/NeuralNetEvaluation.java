@@ -16,23 +16,23 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.aggregate.Aggregator;
+import roart.pipeline.common.aggregate.Aggregator;
 import roart.aggregate.MLIndicator;
 import roart.aggregate.MLMACD;
 import roart.calculate.CalcNodeUtils;
 import roart.category.Category;
-import roart.category.CategoryConstants;
-import roart.config.ConfigConstants;
-import roart.config.MyConfig;
-import roart.config.MyMyConfig;
+import roart.common.config.ConfigConstants;
+import roart.common.config.MyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.CategoryConstants;
+import roart.common.constants.Constants;
+import roart.common.ml.NNConfig;
+import roart.common.ml.NNConfigs;
+import roart.common.pipeline.PipelineConstants;
 import roart.evolution.Individual;
-import roart.ml.NNConfig;
-import roart.ml.NNConfigs;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
 import roart.queue.MyExecutors;
 import roart.service.ControlService;
-import roart.util.Constants;
 
 public class NeuralNetEvaluation extends Evaluation {
     private Logger log = LoggerFactory.getLogger(this.getClass());

@@ -2,12 +2,12 @@ package roart.indicator;
 
 import java.util.Map;
 
-import roart.config.MyMyConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
-import roart.util.Constants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.util.TaUtil;
 
 // TODO warning this looks weird, avoid for now?

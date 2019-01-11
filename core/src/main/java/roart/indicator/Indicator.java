@@ -14,24 +14,24 @@ import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.config.MyMyConfig;
-import roart.db.DbAccess;
-import roart.db.DbDao;
-import roart.model.ResultItemTableRow;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.db.common.DbAccess;
+import roart.db.dao.DbDao;
 import roart.model.StockItem;
+import roart.model.data.MarketData;
+import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
-import roart.pipeline.PipelineConstants;
-import roart.util.MarketData;
-import roart.util.PeriodData;
+import roart.pipeline.common.Calculatable;
+import roart.result.model.ResultItemTableRow;
 import roart.util.TaUtil;
 
-public abstract class Indicator {
+public abstract class Indicator extends Calculatable {
 
     protected static Logger log = LoggerFactory.getLogger(Indicator.class);
 
     protected String title;
     protected MyMyConfig conf;
-    protected int category;
     protected String key;
     protected int fieldSize = 0;
     protected Map<String, MarketData> marketdatamap;
@@ -68,10 +68,12 @@ public abstract class Indicator {
         return titleArray;
     }
 
+    @Override
     public Object calculate(double[][] array) {
         return null;
     }
 
+    @Override
     public Object calculate(Double[][] array) {
         double[][] newArray = new double[array.length][];
         for (int i = 0; i < array.length; i ++) {
@@ -80,6 +82,7 @@ public abstract class Indicator {
         return calculate(newArray);
     }
 
+    @Override
     public Object calculate(scala.collection.Seq[] objArray) {
         double[][] newArray = new double[objArray.length][];
         for (int i = 0; i < objArray.length; i++) {
@@ -131,10 +134,6 @@ public abstract class Indicator {
 
     public String indicatorName() {
         return null;
-    }
-
-    public int getCategory() {
-        return category;
     }
 
     public boolean wantForExtras() {
