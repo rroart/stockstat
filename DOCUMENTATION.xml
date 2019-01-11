@@ -45,7 +45,7 @@ For making simple stats and graphs.
     </listitem>
     <listitem>
       <para>
-	Java 8
+	Java 11 (or 10 when noted, as for core).
       </para>
     </listitem>
     <listitem>

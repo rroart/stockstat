@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>roart</groupId>
-    <artifactId>stockstat-parent</artifactId>
+    <artifactId>stockstat-main</artifactId>
     <relativePath>../pom.xml</relativePath>
     <version>0.5-SNAPSHOT</version>
   </parent>
@@ -12,7 +12,7 @@
   <artifactId>stockstat-core</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Stock Statistics Core</name>
+  <name>Stock Statistics Main Core</name>
   <!--name>Vaadin Web Application</name-->
   <build>
     <plugins>
@@ -311,5 +311,8 @@
       <version>${stockstat.version}</version>
     </dependency>
   </dependencies>
+  <properties>
+    <jdk.version>10</jdk.version>
+  </properties>
 </project>
 

@@ -6,18 +6,10 @@
   <version>0.5-SNAPSHOT</version>
   <name>Stock Statistics Parent</name>
   <modules>
-    <module>shadow</module>
     <module>common</module>
-    <module>core</module>
-    <module>coredb</module>
-    <module>db</module>
     <module>eureka</module>
     <module>iclij</module>
     <module>input</module>
-    <module>ml</module>
-    <module>model</module>
-    <module>pipeline</module>
-    <module>spark</module>
     <module>web</module>
     <module>distribution</module>
   </modules>
@@ -82,7 +74,7 @@
   </dependencies>
   <properties>
     <stockstat.version>0.5-SNAPSHOT</stockstat.version>
-    <jdk.version>10</jdk.version>
+    <jdk.version>11</jdk.version>
     <mavencompiler.version>3.8.0</mavencompiler.version>
     <maveninstall.version>2.5.2</maveninstall.version>
     <mavenshade.version>3.2.1</mavenshade.version>

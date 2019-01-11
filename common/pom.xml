@@ -16,6 +16,7 @@
   <modules>
     <module>constants</module>
     <module>config</module>
+    <module>db</module>
     <module>eureka</module>
     <module>model</module>
     <module>service</module>
@@ -35,5 +36,8 @@
       </plugin>
     </plugins>
   </build>
+  <properties>
+    <jdk.version>10</jdk.version>
+  </properties>
 </project>
 

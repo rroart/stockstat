@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>roart</groupId>
-    <artifactId>stockstat-parent</artifactId>
+    <artifactId>stockstat-common</artifactId>
     <relativePath>../pom.xml</relativePath>
     <version>0.5-SNAPSHOT</version>
   </parent>

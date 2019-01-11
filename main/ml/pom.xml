@@ -4,19 +4,19 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>roart</groupId>
-    <artifactId>stockstat-parent</artifactId>
+    <artifactId>stockstat-main</artifactId>
     <relativePath>../pom.xml</relativePath>
     <version>0.5-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
-  <artifactId>stockstat-coredb</artifactId>
+  <artifactId>stockstat-ml</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Stock Statistics CoreDB</name>
+  <name>Stock Statistics ML</name>
   <modules>
     <module>common</module>
-    <module>hibernate</module>
     <module>spark</module>
+    <module>tensorflow</module>
   </modules>
   <build>
     <plugins>

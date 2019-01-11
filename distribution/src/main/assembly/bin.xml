@@ -23,7 +23,7 @@
       <outputDirectory>lib</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${project.basedir}/../core/target</directory>
+      <directory>${project.basedir}/../main/core/target</directory>
       <includes>
 	<include>stockstat*.jar</include>
       </includes>
