@@ -12,7 +12,7 @@
   <artifactId>stockstat-shadow</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Stockstat Main Shadow</name>
+  <name>Stock Statistics Main Shadow</name>
   <modules>
     <module>spark</module>
   </modules>

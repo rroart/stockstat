@@ -12,7 +12,7 @@
   <artifactId>stockstat.shadow.spark</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Stockstat Shadow Spark</name>
+  <name>Stock Statistics Main Shadow Spark</name>
   <build>
     <plugins>
       <plugin>

@@ -10,6 +10,7 @@
     <module>eureka</module>
     <module>iclij</module>
     <module>input</module>
+    <module>main</module>
     <module>web</module>
     <module>distribution</module>
   </modules>
