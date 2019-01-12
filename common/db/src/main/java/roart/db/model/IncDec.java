@@ -1,6 +1,7 @@
 package roart.db.model;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -27,30 +28,30 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     @Column
     private Long dbid;
 
-	@Column
-	private String market;
+    @Column
+    private String market;
 
-	@Column
-	private boolean increase;
-	
-	@Column
-	private String id;
-	
-	@Column
-	private String name;
-	
-	@Column
-	private String description;
+    @Column
+    private boolean increase;
+
+    @Column
+    private String id;
+
+    @Column
+    private String name;
+
+    @Column
+    private String description;
 
     @Column
     private Double score;
 
     @Column
     private Date record;
-    
+
     @Column
     private Date date;
-    
+
     public Long getDbid() {
         return dbid;
     }
@@ -124,22 +125,29 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     }
 
     @Transient
-        public static List<IncDec> getAll() throws Exception {
-        return HibernateUtil.convert(HibernateUtil.currentSession().createQuery("from IncDec").list(), IncDec.class);
+    public static List<IncDec> getAll() throws Exception {
+        Session session = HibernateUtil.getMyHibernateSession();
+        Transaction transaction = session.beginTransaction();
+        List<IncDec> list = session.createQuery("from IncDec").list();
+        transaction.commit();
+        return list;
     }
 
     @Transient
-        public static List<IncDec> getAll(String mymarket) throws Exception {
-        return (List<IncDec>) HibernateUtil.convert(HibernateUtil.currentSession().createQuery("from IncDec where market = :mymarket").setParameter("mymarket",  mymarket).list(), IncDec.class);
+    public static List<IncDec> getAll(String mymarket) throws Exception {
+        Session session = HibernateUtil.getMyHibernateSession();
+        Transaction transaction = session.beginTransaction();
+        List<IncDec> list = session.createQuery("from IncDec where market = :mymarket").setParameter("mymarket",  mymarket).list();
+        transaction.commit();
+        return list;
     }
 
     @Transient
     public void save() throws Exception {
         Session session = HibernateUtil.getMyHibernateSession();
-        session.getTransaction().begin();
+        Transaction transaction = session.beginTransaction();
         session.save(this);
-        session.getTransaction().commit();
+        transaction.commit();
     }
-
 
 }
