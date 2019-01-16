@@ -1,0 +1,21 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>roart</groupId>
+    <artifactId>stockstat-common</artifactId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <groupId>roart</groupId>
+  <artifactId>stockstat-common-myexecutor</artifactId>
+  <packaging>jar</packaging>
+  <version>0.5-SNAPSHOT</version>
+  <name>Stock Statistics Common Myexecutor</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>          
+  </dependencies>
+</project>

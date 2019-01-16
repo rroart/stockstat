@@ -238,6 +238,11 @@
       </exclusions> 
     </dependency>
     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-myexecutor</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.netflix.eureka</groupId>
       <artifactId>eureka-client</artifactId>
       <version>${eurekaclient.version}</version>

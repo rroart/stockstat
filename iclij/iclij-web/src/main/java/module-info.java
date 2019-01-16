@@ -32,4 +32,5 @@ module iclij.web {
     requires com.fasterxml.jackson.annotation;
     requires com.sun.xml.bind;
     requires javax.servlet.api;
+    requires myexecutor;
 }

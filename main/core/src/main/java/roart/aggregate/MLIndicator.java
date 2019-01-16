@@ -28,6 +28,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NNConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
+import roart.executor.MyExecutors;
 import roart.indicator.Indicator;
 import roart.indicator.IndicatorUtils;
 import roart.ml.dao.MLClassifyDao;
@@ -36,7 +37,6 @@ import roart.ml.model.LearnTestClassifyResult;
 import roart.ml.common.MLClassifyModel;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
-import roart.queue.MyExecutors;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
@@ -382,7 +382,7 @@ public class MLIndicator extends Aggregator {
                     log.info("len {}", arrayLength);
                     //LearnTestClassifyResult result = mldao.learntestclassify(this, map1, model, arrayLength, key, MYTITLE, 2, mapTime, map, labelMapShort);  
                     Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, map1, model, arrayLength, key, MYTITLE, 4, mapTime, map, labelMapShort);  
-                    Future<LearnTestClassifyResult> future = MyExecutors.mlrun(callable);
+                    Future<LearnTestClassifyResult> future = MyExecutors.run(callable);
                     futureList.add(future);
                     futureMap.put(future, new FutureMap(mldao, model, resultMetaArray.size() - 1));
                 }

@@ -27,7 +27,7 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.config.MyXMLConfig;
 import roart.db.dao.DbDao;
-import roart.queue.MyExecutors;
+import roart.executor.MyExecutors;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.service.ControlService;

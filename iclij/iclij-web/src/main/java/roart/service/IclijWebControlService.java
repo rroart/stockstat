@@ -1,7 +1,6 @@
 package roart.service;
 
-import roart.queue.IclijQueues;
-import roart.queue.MyExecutors;
+import roart.executor.MyExecutors;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.thread.ClientRunner;

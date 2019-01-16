@@ -26,6 +26,7 @@ import roart.common.ml.NNConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.db.dao.DbDao;
+import roart.executor.MyExecutors;
 import roart.common.constants.Constants;
 import roart.indicator.IndicatorUtils;
 import roart.ml.dao.MLClassifyDao;
@@ -33,7 +34,6 @@ import roart.ml.dao.MLClassifyLearnTestPredictCallable;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.ml.common.MLClassifyModel;
 import roart.model.StockItem;
-import roart.queue.MyExecutors;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
@@ -416,7 +416,7 @@ public class MLMACD extends Aggregator {
                             outcomes = 4;
                             log.info("Outcomes {}", outcomes);
                             Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime, map2, labelMapShort);  
-                            Future<LearnTestClassifyResult> future = MyExecutors.mlrun(callable);
+                            Future<LearnTestClassifyResult> future = MyExecutors.run(callable);
                             futureList.add(future);
                             futureMap.put(future, new FutureMap(subType, model, mapType, resultMetaArray.size() - 1));
                         }
