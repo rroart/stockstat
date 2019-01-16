@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.pipeline.common.aggregate.Aggregator;
+import roart.executor.MyExecutors;
 import roart.aggregate.MLIndicator;
 import roart.aggregate.MLMACD;
 import roart.calculate.CalcNodeUtils;
@@ -29,9 +30,9 @@ import roart.common.constants.Constants;
 import roart.common.ml.NNConfig;
 import roart.common.ml.NNConfigs;
 import roart.common.pipeline.PipelineConstants;
-import roart.evolution.Individual;
+import roart.evolution.model.Evaluation;
+import roart.evolution.species.Individual;
 import roart.pipeline.Pipeline;
-import roart.queue.MyExecutors;
 import roart.service.ControlService;
 
 public class NeuralNetEvaluation extends Evaluation {

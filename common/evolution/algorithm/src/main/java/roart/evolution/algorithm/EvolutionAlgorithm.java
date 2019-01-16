@@ -1,4 +1,4 @@
-package roart.evolution;
+package roart.evolution.algorithm;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +17,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.common.config.EvolutionConfig;
-import roart.evaluation.Evaluation;
-import roart.queue.MyExecutors;
+import roart.executor.MyExecutors;
+import roart.evolution.config.EvolutionConfig;
+import roart.evolution.model.Evaluation;
+import roart.evolution.species.Individual;
+import roart.evolution.species.Population;
 
 public abstract class EvolutionAlgorithm {
     protected static Logger log = LoggerFactory.getLogger(EvolutionAlgorithm.class);

@@ -30,7 +30,8 @@ import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.EvalSum;
 import roart.common.util.EvalUtil;
-import roart.evolution.Individual;
+import roart.evolution.model.Evaluation;
+import roart.evolution.species.Individual;
 import roart.indicator.Indicator;
 import roart.model.data.MarketData;
 

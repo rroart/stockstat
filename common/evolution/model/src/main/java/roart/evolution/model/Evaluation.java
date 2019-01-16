@@ -1,15 +1,11 @@
-package roart.evaluation;
+package roart.evolution.model;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.common.config.MyConfig;
-import roart.common.config.MyMyConfig;
-import roart.evolution.Individual;
+import roart.evolution.species.Individual;
 
 public abstract class Evaluation {
     public abstract double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException;

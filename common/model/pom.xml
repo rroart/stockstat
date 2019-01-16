@@ -19,40 +19,40 @@
       <scope>test</scope>
     </dependency>
     <!--dependency>
-      <groupId>postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>${postgresql.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>${hibernate.version}</version>
-    </dependency>
-  <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
-      <version>1.1</version>
-  </dependency-->
+	<groupId>postgresql</groupId>
+	<artifactId>postgresql</artifactId>
+	<version>${postgresql.version}</version>
+	</dependency>
+	<dependency>
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-core</artifactId>
+	<version>${hibernate.version}</version>
+	</dependency>
+	<dependency>
+	<groupId>javax.transaction</groupId>
+	<artifactId>jta</artifactId>
+	<version>1.1</version>
+	</dependency-->
     <!--dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-commons-annotations</artifactId>
-      <version>${hibernate.version}</version>
-  </dependency-->
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-commons-annotations</artifactId>
+	<version>${hibernate.version}</version>
+	</dependency-->
     <!--dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-      <version>3.5.6-Final</version>
-  </dependency-->
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-annotations</artifactId>
+	<version>3.5.6-Final</version>
+	</dependency-->
     <!--dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-ehcache</artifactId>
-      <version>${hibernate.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache-core</artifactId>
-      <version>${ehcache.version}</version>
-    </dependency-->
+	<groupId>org.hibernate</groupId>
+	<artifactId>hibernate-ehcache</artifactId>
+	<version>${hibernate.version}</version>
+	</dependency>
+	<dependency>
+	<groupId>net.sf.ehcache</groupId>
+	<artifactId>ehcache-core</artifactId>
+	<version>${ehcache.version}</version>
+	</dependency-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -64,10 +64,9 @@
       <version>${log4j.version}</version>
     </dependency>
     <dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-annotations</artifactId>
-	<version>2.5.4</version>
-	</dependency>
-	
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.5.4</version>
+    </dependency>
   </dependencies>
 </project>

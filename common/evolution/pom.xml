@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>roart</groupId>
+    <artifactId>stockstat-common</artifactId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <groupId>roart</groupId>
+  <artifactId>stockstat-common-evolution</artifactId>
+  <version>0.5-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Stock Statistics Common Evolution</name>
+  <modules>
+    <module>algorithm</module>
+    <module>config</module>
+    <!--module>constants</module-->
+    <module>model</module>
+  </modules>
+</project>
+

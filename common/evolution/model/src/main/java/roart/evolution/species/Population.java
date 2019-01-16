@@ -1,4 +1,4 @@
-package roart.evolution;
+package roart.evolution.species;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,9 +9,9 @@ import java.util.Random;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.common.config.EvolutionConfig;
-import roart.common.config.MyMyConfig;
-import roart.evaluation.Evaluation;
+import roart.evolution.config.EvolutionConfig;
+import roart.evolution.model.Evaluation;
+import roart.evolution.species.Individual;
 
 public class Population {
     private EvolutionConfig evolutionConfig;

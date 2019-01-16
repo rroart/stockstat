@@ -1,4 +1,4 @@
-package roart.common.config;
+package roart.evolution.config;
 
 public class EvolutionConfig {
     private Integer generations;

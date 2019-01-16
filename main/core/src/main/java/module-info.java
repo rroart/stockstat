@@ -71,4 +71,8 @@ module core {
     requires coredb;
     requires coredb.spark;
     requires stockstat.coredb.hibernate;
+    requires evolution.model;
+    requires myexecutor;
+    requires evolution.config;
+    requires evolution.algorithm;
 }
