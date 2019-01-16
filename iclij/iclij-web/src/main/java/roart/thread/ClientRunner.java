@@ -13,23 +13,19 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.client.MyIclijUI;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.eureka.util.EurekaUtil;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
-import roart.queue.IclijQueues;
 
 import com.vaadin.ui.UI;
 import com.vaadin.ui.UIDetachedException;
