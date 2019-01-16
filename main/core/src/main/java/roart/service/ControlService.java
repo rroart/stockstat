@@ -34,7 +34,9 @@ import roart.category.CategoryIndex;
 import roart.category.CategoryPeriod;
 import roart.category.CategoryPrice;
 import roart.common.config.ConfigConstants;
+import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.config.EvolutionConfig;
+import roart.evolution.fitness.impl.ProportionScore;
 import roart.evolution.species.Individual;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NNConfig;
@@ -47,15 +49,11 @@ import roart.common.ml.TensorflowLConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
-import roart.common.util.EvalIncDec;
-import roart.common.util.EvalProportion;
-import roart.common.util.EvalSum;
 import roart.db.dao.DbDao;
 import roart.evaluation.IndicatorEvaluation;
 import roart.evaluation.IndicatorEvaluationNew;
 import roart.evaluation.NeuralNetEvaluation;
 import roart.evaluation.Recommend;
-import roart.evolution.OrdinaryEvolution;
 import roart.graphcategory.GraphCategory;
 import roart.graphcategory.GraphCategoryIndex;
 import roart.graphcategory.GraphCategoryPeriod;
@@ -839,7 +837,7 @@ public class ControlService {
 
             for (int i = 0; i < 2; i++) {
                 List<String> scoreList = recommendList[i];
-                IndicatorEvaluation indicatorEval0 = new IndicatorEvaluation(conf, scoreList, retObj, true, disableList, new EvalProportion());
+                IndicatorEvaluation indicatorEval0 = new IndicatorEvaluation(conf, scoreList, retObj, true, disableList, new ProportionScore());
 
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
 

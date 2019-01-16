@@ -28,8 +28,7 @@ import roart.calculate.CalcNodeUtils;
 import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.util.EvalSum;
-import roart.common.util.EvalUtil;
+import roart.evolution.fitness.AbstractScore;
 import roart.evolution.model.Evaluation;
 import roart.evolution.species.Individual;
 import roart.indicator.Indicator;
@@ -57,9 +56,9 @@ public class IndicatorEvaluation extends Evaluation {
 
     private List<String> disableList;
 
-    private EvalUtil evalUtil;
+    private AbstractScore evalUtil;
     
-    public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, EvalUtil evalUtil) {
+    public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil) {
         this.conf = conf.copy();
         setKeys(keys);
         this.retObj = retObj;

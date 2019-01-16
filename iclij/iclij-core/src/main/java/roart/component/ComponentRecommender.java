@@ -20,11 +20,11 @@ import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
-import roart.common.util.EvalProportion;
-import roart.common.util.EvalUtil;
 import roart.common.util.TimeUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.config.IclijXMLConfig;
+import roart.evolution.fitness.AbstractScore;
+import roart.evolution.fitness.impl.ProportionScore;
 import roart.executor.MyExecutors;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
@@ -278,7 +278,7 @@ public class ComponentRecommender extends Component {
             String categoryTitle, Map<String, List<Double>> recommendBuySell,
             Map<String, Map<String, Object>> result, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
-        EvalUtil eval = new EvalProportion();
+        AbstractScore eval = new ProportionScore();
         for (int i = 0; i < 2; i++) {
             getMemories(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell, categoryValueMap, usedsec,
                 doSave, memoryList, doPrint, eval, i);
@@ -310,7 +310,7 @@ public class ComponentRecommender extends Component {
     public void getMemories(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
             String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
             boolean doSave, List<MemoryItem> memoryList,
-            boolean doPrint, EvalUtil eval, int position) throws Exception {
+            boolean doPrint, AbstractScore eval, int position) throws Exception {
         Map<String, List<Double>> resultMap = new HashMap<>();
         for (String key : categoryValueMap.keySet()) {
             List<Double> vals = recommendBuySell.get(key);

@@ -39,6 +39,7 @@ module iclij.core {
     requires spring.plugin.core;
     requires spring.web;
     requires myexecutor;
+    requires evolution.model;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

@@ -73,6 +73,9 @@ public class ServiceUtil {
             }
         }
         int futuredays = (int) srv.conf.getTestIndicatorRecommenderComplexFutureDays();
+        if (stocks.size() - 1 - futuredays - offset < 0) {
+            int jj = 0;
+        }
         String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
         String futureDateStr = stocks.get(stocks.size() - 1 - offset);
         log.info("Base future date {} {}", baseDateStr, futureDateStr);

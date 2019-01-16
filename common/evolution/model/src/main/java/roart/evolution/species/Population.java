@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.model.Evaluation;
-import roart.evolution.species.Individual;
 
 public class Population {
     private EvolutionConfig evolutionConfig;

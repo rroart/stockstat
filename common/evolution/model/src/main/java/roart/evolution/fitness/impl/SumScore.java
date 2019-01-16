@@ -1,10 +1,12 @@
-package roart.common.util;
+package roart.evolution.fitness.impl;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class EvalSum extends EvalUtil {
+import roart.evolution.fitness.AbstractScore;
+
+public class SumScore extends AbstractScore {
     public double calculateResult(Map<String, List<Double>> resultMap) {
         double result = 0;
         double[] array = calculate(resultMap);

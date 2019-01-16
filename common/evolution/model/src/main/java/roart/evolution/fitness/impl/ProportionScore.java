@@ -1,15 +1,14 @@
-package roart.common.util;
+package roart.evolution.fitness.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class EvalProportion extends EvalUtil {
+import roart.evolution.fitness.AbstractScore;
+
+public class ProportionScore extends AbstractScore {
     public double calculateResult(Map<String, List<Double>> resultMap) {
         double result = 0;
         double[] array = calculate(resultMap);

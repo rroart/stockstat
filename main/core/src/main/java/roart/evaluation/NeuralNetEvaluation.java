@@ -1,14 +1,10 @@
 package roart.evaluation;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,14 +12,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.pipeline.common.aggregate.Aggregator;
-import roart.executor.MyExecutors;
 import roart.aggregate.MLIndicator;
 import roart.aggregate.MLMACD;
-import roart.calculate.CalcNodeUtils;
 import roart.category.Category;
 import roart.common.config.ConfigConstants;
-import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
@@ -33,7 +25,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.evolution.model.Evaluation;
 import roart.evolution.species.Individual;
 import roart.pipeline.Pipeline;
-import roart.service.ControlService;
+import roart.pipeline.common.aggregate.Aggregator;
 
 public class NeuralNetEvaluation extends Evaluation {
     private Logger log = LoggerFactory.getLogger(this.getClass());

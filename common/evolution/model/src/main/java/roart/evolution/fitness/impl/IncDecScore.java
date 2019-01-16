@@ -1,4 +1,4 @@
-package roart.common.util;
+package roart.evolution.fitness.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class EvalIncDec extends EvalUtil {
+import roart.evolution.fitness.AbstractScore;
+
+public class IncDecScore extends AbstractScore {
     public double calculateResult(Map<String, List<Double>> resultMap) {
         double result = 0;
         double[] array = calculate(resultMap);
