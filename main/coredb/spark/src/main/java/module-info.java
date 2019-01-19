@@ -14,7 +14,7 @@ module coredb.spark {
     requires commons.lang;
     requires coredb;
     requires model;
-    requires pipeline;
+    requires pipeline.model;
     requires scala.library;
     requires slf4j.api;
     requires spark;

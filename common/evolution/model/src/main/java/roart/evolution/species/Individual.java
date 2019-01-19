@@ -5,24 +5,24 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.evolution.model.Evaluation;
+import roart.evolution.chromosome.AbstractChromosome;
 
 public class Individual  implements Comparable<Individual>{
     private Double fitness;
     
-    private Evaluation evaluation;
+    private AbstractChromosome evaluation;
 
     private long calculatetime;
 
-    public Individual(Evaluation evaluation) {
+    public Individual(AbstractChromosome evaluation) {
         this.evaluation = evaluation;
     }
     
-    public Evaluation getEvaluation() {
+    public AbstractChromosome getEvaluation() {
         return evaluation;
     }
 
-    public void setEvaluation(Evaluation evaluation) {
+    public void setEvaluation(AbstractChromosome evaluation) {
         this.evaluation = evaluation;
     }
 
@@ -42,13 +42,13 @@ public class Individual  implements Comparable<Individual>{
         if (evaluation == null) {
             int j = 0;
         }
-        Evaluation newEval = evaluation.copy();
+        AbstractChromosome newEval = evaluation.copy();
         newEval.transformToNode();
         return new Individual(newEval);
     }
 
     public Individual getNewWithValueCopyAndRandomFactory() throws JsonParseException, JsonMappingException, IOException {
-        Evaluation newEval = evaluation.copy();
+        AbstractChromosome newEval = evaluation.copy();
         newEval.transformToNode();
         newEval.getRandom();
         return new Individual(newEval);

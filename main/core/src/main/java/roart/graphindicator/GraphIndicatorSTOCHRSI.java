@@ -18,7 +18,7 @@ import roart.result.model.ResultItemBytes;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.util.SvgUtil;
-import roart.util.TaUtil;
+import roart.talib.util.TaUtil;
 
 public class GraphIndicatorSTOCHRSI extends GraphIndicator {
 

@@ -10,8 +10,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.evolution.algorithm.EvolutionAlgorithm;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
-import roart.evolution.model.Evaluation;
 import roart.evolution.species.Individual;
 
 public class OneFourEvolution extends EvolutionAlgorithm {
@@ -21,7 +21,7 @@ public class OneFourEvolution extends EvolutionAlgorithm {
     }
     
     @Override
-    public Individual getFittest(EvolutionConfig evolutionConfig, Evaluation recommend) throws Exception {
+    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommend) throws Exception {
         int selectionSize = evolutionConfig.getSelect();
         int four = 4;
         int five = 5;
@@ -38,7 +38,7 @@ public class OneFourEvolution extends EvolutionAlgorithm {
     }
 
     private Individual getBest(int four, int five, List<Individual> population,
-            boolean doBuy, Evaluation recommend) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
+            boolean doBuy, AbstractChromosome recommend) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
         for (int i = 0; i < five; i ++) {
             Individual buy = new Individual(recommend).getNewWithValueCopyAndRandomFactory();
             population.add(buy);

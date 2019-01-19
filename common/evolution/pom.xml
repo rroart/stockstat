@@ -16,6 +16,8 @@
   <modules>
     <module>algorithm</module>
     <module>config</module>
+    <module>fitness</module>
+    <module>gene</module>
     <!--module>constants</module-->
     <module>model</module>
   </modules>

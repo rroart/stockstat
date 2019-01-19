@@ -9,7 +9,7 @@
     <version>0.5-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
-  <artifactId>stockstat.shadow.spark</artifactId>
+  <artifactId>stockstat-shadow-spark</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Stock Statistics Main Shadow Spark</name>

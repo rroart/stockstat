@@ -12,7 +12,7 @@
   <artifactId>stockstat-ml</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Stock Statistics ML</name>
+  <name>Stock Statistics Main ML</name>
   <modules>
     <module>common</module>
     <module>spark</module>

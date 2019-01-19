@@ -13,5 +13,5 @@ module ml.tensorflow {
     requires ehcache;
     requires slf4j.api;
     requires ml.common;
-    requires pipeline;
+    requires pipeline.model;
 }

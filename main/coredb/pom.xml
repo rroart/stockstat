@@ -12,7 +12,7 @@
   <artifactId>stockstat-coredb</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Stock Statistics CoreDB</name>
+  <name>Stock Statistics Main CoreDB</name>
   <modules>
     <module>common</module>
     <module>hibernate</module>

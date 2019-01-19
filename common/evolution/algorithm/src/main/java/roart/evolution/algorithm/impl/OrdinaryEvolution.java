@@ -9,8 +9,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.evolution.algorithm.EvolutionAlgorithm;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
-import roart.evolution.model.Evaluation;
 import roart.evolution.species.Individual;
 import roart.evolution.species.Population;
 
@@ -21,7 +21,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
     
     @Override
-    public Individual getFittest(EvolutionConfig evolutionConfig, Evaluation evaluation) throws Exception {
+    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome evaluation) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
         Population population = new Population(selectionSize, evolutionConfig, evaluation, false);
         if (getEvolutionConfig().getUseoldelite() && !evaluation.isEmpty()) {
@@ -35,7 +35,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
 
     private Individual getBest(int selectionSize, Population population,
-            boolean useMax, Evaluation evaluation) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
+            boolean useMax, AbstractChromosome evaluation) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
         //printmap(population.getFittest().getConf().getConfigValueMap());
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         

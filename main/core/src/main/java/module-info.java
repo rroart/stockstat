@@ -6,26 +6,6 @@
  *
  */
 module core {
-    //exports roart.common.util;
-    //exports roart.graphcategory;
-    //exports roart.indicator;
-    //exports roart.result.model;
-    //exports roart.pipeline;
-    //exports roart.controller;
-    //exports roart.queue;
-    //exports roart.calculate;
-    //exports roart.predictor;
-    //exports roart.aggregate;
-    //exports roart.config;
-    //exports roart.graphindicator;
-    //exports roart.test;
-    //exports roart.category;
-    //exports roart.evolution;
-    //exports roart.mutation;
-    //exports roart.evaluation;
-    //exports roart.service;
-    //exports roart.ml;
-    //exports roart.db;
     requires batik.awt.util;
     requires batik.dom;
     requires batik.svggen;
@@ -65,14 +45,25 @@ module core {
     requires ml.common;
     requires ml.spark;
     requires ml.tensorflow;
-    requires pipeline;
+    requires pipeline.model;
+    requires pipeline.common;
     requires common.util;
     requires spring.boot;
     requires coredb;
     requires coredb.spark;
-    requires stockstat.coredb.hibernate;
+    requires coredb.hibernate;
     requires evolution.model;
     requires myexecutor;
     requires evolution.config;
     requires evolution.algorithm;
+    requires evolution.gene;
+    requires stockutil;
+    requires talib;
+    requires aggregate;
+    requires dbdao;
+    requires evolution.fitness;
+    requires mldao;
+    requires evolution.chromosome;
+    requires pipeline.category;
+    requires pipeline.indicator;
 }

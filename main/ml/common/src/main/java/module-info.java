@@ -11,6 +11,6 @@ module ml.common {
 
     requires common.config;
     requires common.constants;
-    requires pipeline;
+    requires pipeline.model;
     requires slf4j.api;
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+@Deprecated
 public class Mutate {
     
     public static void mutate(Map<String, Double> map) {

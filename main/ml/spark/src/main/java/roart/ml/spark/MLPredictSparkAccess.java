@@ -19,7 +19,7 @@ import roart.common.config.MyMyConfig;
 import roart.ml.model.MLPredictAccess;
 import roart.ml.model.MLPredictModel;
 import roart.ml.spark.util.SparkUtil;
-import roart.pipeline.common.predictor.Predictor;
+import roart.pipeline.common.predictor.AbstractPredictor;
 
 public class MLPredictSparkAccess extends MLPredictAccess {
 
@@ -46,7 +46,7 @@ public class MLPredictSparkAccess extends MLPredictAccess {
     }
     
     @Override
-    public Double[] predictone(Predictor predictor, Double[] array, MLPredictModel model, int size, String period,
+    public Double[] predictone(AbstractPredictor predictor, Double[] array, MLPredictModel model, int size, String period,
             int outcomes, int windowsize, int horizon, int epochs) {
         return learntestInner(array, null, model, size, period, null, outcomes, horizon);       
     }
@@ -57,7 +57,7 @@ public class MLPredictSparkAccess extends MLPredictAccess {
     }
 
     @Override
-    public Map<String, Double[]> predict(Predictor indicator, Map<String, Double[]> map, MLPredictModel model, int size,
+    public Map<String, Double[]> predict(AbstractPredictor indicator, Map<String, Double[]> map, MLPredictModel model, int size,
             String period, int outcomes, int windowsize, int horizon, int epochs) {
          return null;
     }

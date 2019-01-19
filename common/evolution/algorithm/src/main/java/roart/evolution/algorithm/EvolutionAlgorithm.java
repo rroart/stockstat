@@ -18,8 +18,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.executor.MyExecutors;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
-import roart.evolution.model.Evaluation;
 import roart.evolution.species.Individual;
 import roart.evolution.species.Population;
 
@@ -41,7 +41,7 @@ public abstract class EvolutionAlgorithm {
         this.evolutionConfig = evolutionConfig;
     }
 
-    public abstract Individual getFittest(EvolutionConfig evolutionConfig, Evaluation recommender) throws Exception;
+    public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender) throws Exception;
 
     protected void printmap(Map<String, Object> map) throws JsonProcessingException {
         for (String key : new ArrayList<String>()) {
@@ -72,7 +72,7 @@ public abstract class EvolutionAlgorithm {
         }
     }
 
-    protected List<Individual> crossover(int childrenNum, List<Individual> population, boolean doBuy2, Evaluation recommend) throws JsonParseException, JsonMappingException, IOException {
+    protected List<Individual> crossover(int childrenNum, List<Individual> population, boolean doBuy2, AbstractChromosome recommend) throws JsonParseException, JsonMappingException, IOException {
         List<Individual> children = new ArrayList<>();
         Random rand = new Random();
         List<Individual> populationCopies = new ArrayList<>(population);
@@ -91,12 +91,12 @@ public abstract class EvolutionAlgorithm {
         return children;
     }
 
-    protected List<Individual> created(Integer evolutionGenerationCreate, Evaluation evaluation) throws JsonParseException, JsonMappingException, IOException {
+    protected List<Individual> created(Integer evolutionGenerationCreate, AbstractChromosome evaluation) throws JsonParseException, JsonMappingException, IOException {
         Population population = new Population(evolutionGenerationCreate, evolutionConfig, evaluation, false);
         return population.getIndividuals();
     }
 
-    protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, Evaluation evaluation) throws JsonParseException, JsonMappingException, IOException {
+    protected List<Individual> clonedmutated(Integer evolutionEliteCloneAndMutate, AbstractChromosome evaluation) throws JsonParseException, JsonMappingException, IOException {
         Population population = new Population(evolutionEliteCloneAndMutate, evolutionConfig, evaluation, true);
         List<Individual> list = population.getIndividuals();
         for (Individual individual : list) {

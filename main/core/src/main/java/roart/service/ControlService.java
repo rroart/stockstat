@@ -23,16 +23,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.pipeline.common.aggregate.Aggregator;
-import roart.aggregate.AggregatorRecommenderIndicator;
-import roart.aggregate.DataReader;
-import roart.aggregate.ExtraReader;
-import roart.aggregate.MLIndicator;
-import roart.aggregate.MLMACD;
-import roart.aggregate.RecommenderRSI;
-import roart.category.Category;
-import roart.category.CategoryIndex;
-import roart.category.CategoryPeriod;
-import roart.category.CategoryPrice;
+import roart.aggregator.impl.AggregatorRecommenderIndicator;
+import roart.aggregator.impl.MLIndicator;
+import roart.aggregator.impl.MLMACD;
+import roart.aggregator.impl.RecommenderRSI;
+import roart.aggregatorindicator.impl.Recommend;
+import roart.category.AbstractCategory;
+import roart.category.impl.CategoryIndex;
+import roart.category.impl.CategoryPeriod;
+import roart.category.impl.CategoryPrice;
 import roart.common.config.ConfigConstants;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.config.EvolutionConfig;
@@ -50,48 +49,37 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.db.dao.DbDao;
+import roart.db.dao.util.DbDaoUtil;
 import roart.evaluation.IndicatorEvaluation;
 import roart.evaluation.IndicatorEvaluationNew;
 import roart.evaluation.NeuralNetEvaluation;
-import roart.evaluation.Recommend;
 import roart.graphcategory.GraphCategory;
 import roart.graphcategory.GraphCategoryIndex;
 import roart.graphcategory.GraphCategoryPeriod;
 import roart.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.graphcategory.GraphCategoryPrice;
-import roart.indicator.Indicator;
-import roart.indicator.IndicatorUtils;
-import roart.model.MetaItem;
+import roart.indicator.AbstractIndicator;
+import roart.indicator.util.IndicatorUtils;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
-import roart.pipeline.common.predictor.Predictor;
+import roart.pipeline.common.predictor.AbstractPredictor;
+import roart.pipeline.impl.DataReader;
+import roart.pipeline.impl.ExtraReader;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.model.data.MarketData;
 import roart.util.Math3Util;
-import roart.util.MetaDao;
 import roart.model.data.PeriodData;
-import roart.util.StockUtil;
-import roart.util.TaUtil;
+import roart.stockutil.StockUtil;
+import roart.talib.util.TaUtil;
 
 public class ControlService {
     private static Logger log = LoggerFactory.getLogger(ControlService.class);
 
     // TODO temp hack
     private static Map<String, String> idNameMap;
-
-    public static String getName(String id) {
-        if (idNameMap == null) {
-            return id;
-        }
-        String name = idNameMap.get(id);
-        if (name == null) {
-            name = id;
-        }
-        return name;
-    }
 
     public List<String> getMarkets() {
         try {
@@ -122,10 +110,7 @@ public class ControlService {
 
     Map<Integer, ResultItemTable> otherTableMap = new HashMap<>();
 
-    public static final int EVENT = 0;
-    public static final int MLTIMES = 1;
-
-    protected static int[] otherTableNames = { EVENT, MLTIMES }; 
+    protected static int[] otherTableNames = { Constants.EVENT, Constants.MLTIMES }; 
 
     public void createOtherTables() {
         mlTimesTable = new ResultItemTable();
@@ -142,8 +127,8 @@ public class ControlService {
         headrow.add("Name");
         headrow.add("Id");
         eventTable.add(headrow);
-        otherTableMap.put(EVENT, eventTable);
-        otherTableMap.put(MLTIMES, mlTimesTable);
+        otherTableMap.put(Constants.EVENT, eventTable);
+        otherTableMap.put(Constants.MLTIMES, mlTimesTable);
     }
 
     /**
@@ -167,7 +152,7 @@ public class ControlService {
             return null;
         }
         log.info("stocks {}", stocks.size());
-        String[] periodText = getPeriodText(conf.getMarket(), conf);
+        String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
         Set<String> markets = new HashSet();
         markets.add(conf.getMarket());
         Integer days = conf.getDays();
@@ -225,7 +210,7 @@ public class ControlService {
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String mydate = dt.format(conf.getdate());
             List<StockItem> dayStocks = stockdatemap.get(mydate);
-            Category[] categories = getCategories(conf, dayStocks,
+            AbstractCategory[] categories = getCategories(conf, dayStocks,
                     periodText, marketdatamap, periodDataMap, periodmap, datareaders);
 
             Aggregator[] aggregates = getAggregates(conf, stocks,
@@ -238,8 +223,8 @@ public class ControlService {
             log.info("retlist2 {}",table.size());
             addOtherTables(categories);
             addOtherTables(aggregates);
-            for (Category category : categories) {
-                List<Predictor> predictors = category.getPredictors();
+            for (AbstractCategory category : categories) {
+                List<AbstractPredictor> predictors = category.getPredictors();
                 addOtherTables(predictors);
             }
             if (maps != null) {
@@ -286,8 +271,8 @@ public class ControlService {
         }
     }
 
-    private void addOtherTables(List<Predictor> predictors) {
-        for (Predictor predictor : predictors) {
+    private void addOtherTables(List<AbstractPredictor> predictors) {
+        for (AbstractPredictor predictor : predictors) {
             Map<Integer, List<ResultItemTableRow>> tableMap = predictor.otherTables();
             if (tableMap == null) {
                 continue;
@@ -302,7 +287,7 @@ public class ControlService {
         }
     }
 
-    private void createRows(MyMyConfig conf, ResultItemTable table, List<StockItem> datedstocks, Category[] categories,
+    private void createRows(MyMyConfig conf, ResultItemTable table, List<StockItem> datedstocks, AbstractCategory[] categories,
             Aggregator[] aggregates) {
         if (conf.getMarket() == null) {
             return;
@@ -329,7 +314,7 @@ public class ControlService {
         }
     }
 
-    private void addOtherTables(Category[] categories) {
+    private void addOtherTables(AbstractCategory[] categories) {
         for (int i = 0; i < Constants.ALLPERIODS; i++) {
             Map<Integer, List<ResultItemTableRow>> tableMap = categories[i].otherTables();
             for (Entry<Integer, List<ResultItemTableRow>> entry : tableMap.entrySet()) {
@@ -342,7 +327,7 @@ public class ControlService {
         }
     }
 
-    private ResultItemTableRow createHeadRow(Category[] categories, Aggregator[] aggregates) {
+    private ResultItemTableRow createHeadRow(AbstractCategory[] categories, Aggregator[] aggregates) {
         ResultItemTableRow headrow = new ResultItemTableRow();
         headrow.add(Constants.IMG);
         headrow.add("Name");
@@ -372,11 +357,11 @@ public class ControlService {
     private Aggregator[] getAggregates(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Category[] categories, Pipeline[] datareaders, List<String> disableList) throws Exception {
+            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList) throws Exception {
         Aggregator[] aggregates = new Aggregator[4];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories, datareaders, disableList);
         aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
-        aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, periodDataMap, CategoryConstants.PRICE, 0, categories);
+        aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, periodDataMap, CategoryConstants.PRICE, 0, categories, idNameMap);
         aggregates[3] = new MLIndicator(conf, Constants.PRICE, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories, datareaders);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
@@ -399,11 +384,11 @@ public class ControlService {
         return datareaders;
     }
 
-    private Category[] getCategories(MyMyConfig conf, List<StockItem> stocks,
+    private AbstractCategory[] getCategories(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Pipeline[] datareaders) throws Exception {
-        Category[] categories = new Category[Constants.PERIODS + 2];
+        AbstractCategory[] categories = new AbstractCategory[Constants.PERIODS + 2];
         categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap, datareaders);
         categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, datareaders);
         for (int i = 0; i < Constants.PERIODS; i++) {
@@ -429,35 +414,6 @@ public class ControlService {
     }
 
     /**
-     * Get the period field text based on the eventual metadata
-     * 
-     * @return the period text fields
-     * @param market
-     */
-
-    public static String[] getPeriodText(String market, MyMyConfig conf) {
-        String[] periodText = { "Period1", "Period2", "Period3", "Period4", "Period5", "Period6", "Period7", "Period8", "Period9" };
-        MetaItem meta = null;
-        try {
-            meta = DbDao.getById(market, conf);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        try {
-            if (meta != null) {
-                for (int i = 0; i < Constants.PERIODS; i++) {
-                    if (MetaDao.getPeriod(meta, i) != null) {
-                        periodText[i] = MetaDao.getPeriod(meta, i);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return periodText;
-    }
-
-    /**
      * Create result graphs
      * @param guiSize TODO
      * 
@@ -470,7 +426,7 @@ public class ControlService {
             log.info("mydate {}", conf.getdate());
             List<StockItem> stocks = DbDao.getAll(conf.getMarket(), conf);
             log.info("stocks {}", stocks.size());
-            String[] periodText = getPeriodText(conf.getMarket(), conf);
+            String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
             Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
             if (conf.getdate() == null) {
@@ -632,7 +588,7 @@ public class ControlService {
             log.info("stocks {}", stocks.size());
             MarketData marketdata = new MarketData();
             marketdata.stocks = stocks;
-            String[] periodText = getPeriodText(market, conf);
+            String[] periodText = DbDaoUtil.getPeriodText(market, conf);
             marketdata.periodtext = periodText;
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
             System.out.println("grr " + stockdatemap.keySet());
@@ -805,9 +761,9 @@ public class ControlService {
             // map from type (complex/simple) to recommender and keysets
             Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
-            Map<String, Indicator> indicatorMap = new HashMap<>();
+            Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
             int category = cat;
-            Map<String, Indicator> newIndicatorMap = new HashMap<>();
+            Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
             createRecommendIndicatorMap(marketdatamap, datareaders, usedRecommenders, indicatorMap, category,
                     newIndicatorMap);
 
@@ -823,10 +779,10 @@ public class ControlService {
 
     private void findRecommendSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, Indicator> indicatorMap, Map<String, Object> updateMap) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap) throws Exception {
         TaUtil tu = new TaUtil();
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
-            List<Indicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
+            List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
             Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null);
@@ -863,8 +819,8 @@ public class ControlService {
     }
 
     private void createRecommendIndicatorMap(Map<String, MarketData> marketdatamap, Pipeline[] datareaders,
-            Map<String, List<Recommend>> usedRecommenders, Map<String, Indicator> indicatorMap, int category,
-            Map<String, Indicator> newIndicatorMap) throws Exception {
+            Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> indicatorMap, int category,
+            Map<String, AbstractIndicator> newIndicatorMap) throws Exception {
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             List<Recommend> list = entry.getValue();
             for (Recommend recommend : list) {
@@ -959,9 +915,9 @@ public class ControlService {
             // map from type (complex/simple) to recommender and keysets
             Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
-            Map<String, Indicator> indicatorMap = new HashMap<>();
+            Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
             int category = cat;
-            Map<String, Indicator> newIndicatorMap = new HashMap<>();
+            Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
             createRecommendIndicatorMap(marketdatamap, datareaders, usedRecommenders, indicatorMap, category,
                     newIndicatorMap);
 
@@ -977,10 +933,10 @@ public class ControlService {
 
     private void findRecommendSettingsNew(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, Indicator> indicatorMap, Map<String, Object> updateMap) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap) throws Exception {
         TaUtil tu = new TaUtil();
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
-            List<Indicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
+            List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
             Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null);
@@ -1126,7 +1082,7 @@ public class ControlService {
             if (cat == null) {
                 return new ArrayList<>();
             }
-            String[] periodText = getPeriodText(conf.getMarket(), conf);
+            String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
             DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, null, cat);
             //Pipeline[] datareaders = new Pipeline[1];
             Pipeline[] datareaders = getDataReaders(conf, stocks,
@@ -1137,7 +1093,7 @@ public class ControlService {
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String mydate = dt.format(conf.getdate());
             List<StockItem> dayStocks = stockdatemap.get(mydate);
-            Category[] categories = getCategories(conf, dayStocks,
+            AbstractCategory[] categories = getCategories(conf, dayStocks,
                     periodText, marketdatamap, periodDataMap, null, datareaders);
 
             findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories);
@@ -1152,7 +1108,7 @@ public class ControlService {
     }
 
     private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, Category[] categories) throws Exception {
+            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NNConfigs nnConfigs = null;

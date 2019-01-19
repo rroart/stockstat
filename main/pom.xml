@@ -13,12 +13,19 @@
   <name>Stock Statistics Main</name>
   <modules>
     <module>shadow</module>
+    <module>aggregate</module>
+    <!--module>config</module-->
     <module>core</module>
     <module>coredb</module>
+    <module>dbdao</module>
+    <module>evolution</module>
     <module>ml</module>
+    <module>mldao</module>
     <module>model</module>
     <module>pipeline</module>
     <module>spark</module>
+    <module>stockutil</module>
+    <module>talib</module>
   </modules>
   <dependencies>
     <dependency>

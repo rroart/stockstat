@@ -15,7 +15,7 @@ import roart.eureka.util.EurekaUtil;
 import roart.ml.model.LearnTestPredict;
 import roart.ml.model.MLPredictAccess;
 import roart.ml.model.MLPredictModel;
-import roart.pipeline.common.predictor.Predictor;
+import roart.pipeline.common.predictor.AbstractPredictor;
 
 public class MLPredictTensorflowAccess extends MLPredictAccess {
 
@@ -40,7 +40,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
     }
 
     @Override
-    public Double[] predictone(Predictor predictor, Double[] list, MLPredictModel model, int size, String period,
+    public Double[] predictone(AbstractPredictor predictor, Double[] list, MLPredictModel model, int size, String period,
             int outcomes, int windowsize, int horizon, int epochs) {
         return predictInner(list, size, period, outcomes, model, horizon, epochs, epochs);
     }
@@ -79,7 +79,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
     }
 
     @Override
-    public Map<String, Double[]> predict(Predictor predictor, Map<String, Double[]> map, MLPredictModel model, int size,
+    public Map<String, Double[]> predict(AbstractPredictor predictor, Map<String, Double[]> map, MLPredictModel model, int size,
             String period, int outcomes, int windowsize, int horizon, int epochs) {
         if (map.isEmpty()) {
             return new HashMap<>();

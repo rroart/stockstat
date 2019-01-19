@@ -24,7 +24,7 @@ import roart.result.model.ResultItem;
 import roart.result.model.ResultItemBytes;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
-import roart.util.StockUtil;
+import roart.stockutil.StockUtil;
 import roart.util.SvgUtil;
 
 public class GraphCategoryIndex extends GraphCategory {

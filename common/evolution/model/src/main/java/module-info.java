@@ -7,8 +7,7 @@
  */
 module evolution.model {
     exports roart.evolution.fitness;
-    exports roart.evolution.fitness.impl;
-    exports roart.evolution.model;
+    exports roart.evolution.chromosome;
     exports roart.evolution.species;
 
     requires evolution.config;

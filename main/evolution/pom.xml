@@ -1,0 +1,17 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>roart</groupId>
+    <artifactId>stockstat-main</artifactId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <groupId>roart</groupId>
+  <artifactId>stockstat-evolution</artifactId>
+  <packaging>pom</packaging>
+  <version>0.5-SNAPSHOT</version>
+  <name>Stock Statistics Main Evolution</name>
+  <modules>
+    <module>chromosome</module>
+  </modules>
+</project>

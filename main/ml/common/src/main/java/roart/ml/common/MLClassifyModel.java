@@ -38,4 +38,13 @@ public abstract class MLClassifyModel {
 
     public abstract String getEngineName();
 
+    public static void mapAdder(Map<MLClassifyModel, Long> map, MLClassifyModel key, Long add) {
+        Long val = map.get(key);
+        if (val == null) {
+            val = Long.valueOf(0);
+        }
+        val += add;
+        map.put(key, val);
+    }
+
 }

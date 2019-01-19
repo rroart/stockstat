@@ -13,7 +13,6 @@
   <version>0.5-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Stock Statistics Main Core</name>
-  <!--name>Vaadin Web Application</name-->
   <build>
     <plugins>
       <plugin>
@@ -206,7 +205,22 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-evolution-chromosome</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-common-evolution-config</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-evolution-fitness</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-evolution-gene</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
@@ -221,22 +235,22 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-coredb-common</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-coredb-hibernate</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-coredb-spark</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
       <artifactId>stockstat-db</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-dbdao</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-mldao</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-stockutil</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
@@ -274,16 +288,15 @@
       <artifactId>xml-apis</artifactId>
       <version>${xmlapis.version}</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.tictactec/ta-lib -->
-    <dependency>
-      <groupId>com.tictactec</groupId>
-      <artifactId>ta-lib</artifactId>
-      <version>0.4.0</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-configuration2</artifactId>
       <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang3.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-beanutils</groupId>
@@ -317,6 +330,21 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-predictor</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-category</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-indicator</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-ml-common</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
@@ -328,6 +356,11 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-ml-tensorflow</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-aggregate</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
   </dependencies>

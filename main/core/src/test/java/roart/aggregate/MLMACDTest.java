@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import roart.aggregator.impl.MLMACD;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 

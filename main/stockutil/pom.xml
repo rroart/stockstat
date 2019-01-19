@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>roart</groupId>
+    <artifactId>stockstat-main</artifactId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <groupId>roart</groupId>
+  <artifactId>stockstat-stockutil</artifactId>
+  <version>0.5-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>Stock Statistics Main Stockutil</name>
+  <dependencies>
+    <!-- https://mvnrepository.com/artifact/com.tictactec/ta-lib -->
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-constants</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-model</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-util</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tictactec</groupId>
+      <artifactId>ta-lib</artifactId>
+      <version>${talib.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math3</artifactId>
+      <version>${commons.math3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreesvg</artifactId>
+      <version>${jfreesvg.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jfree</groupId>
+      <artifactId>jfreechart</artifactId>
+      <version>${jfreechart.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>	   
+  </dependencies>
+</project>
+

@@ -5,15 +5,21 @@
  * @author roart
  *
  */
-module pipeline {
-    exports roart.pipeline.common.aggregate;
-    exports roart.pipeline.common;
-    exports roart.pipeline.common.predictor;
+module pipeline.common {
+    exports roart.aggregatorindicator;
 
+    requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.databind;
     requires common.config;
     requires common.constants;
-    requires common.model;
+    requires common.util;
+    requires commons.math3;
+    requires dbdao;
     requires model;
-    requires scala.library;
+    requires org.apache.commons.lang3;
+    requires pipeline.model;
     requires slf4j.api;
+    requires stockutil;
+    requires talib;
+    requires pipeline.indicator;
 }

@@ -12,9 +12,14 @@
   <artifactId>stockstat-pipeline</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Stock Statistics Pipeline</name>
+  <name>Stock Statistics Main Pipeline</name>
   <modules>
+    <module>aggregator</module>
+    <module>category</module>
     <module>common</module>
+    <module>indicator</module>
+    <module>model</module>
+    <module>predictor</module>
   </modules>
   <build>
     <plugins>

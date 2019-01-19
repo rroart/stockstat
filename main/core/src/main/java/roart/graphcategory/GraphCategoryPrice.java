@@ -26,10 +26,10 @@ import roart.model.StockItem;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemBytes;
+import roart.stockutil.StockDao;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
-import roart.util.StockDao;
-import roart.util.StockUtil;
+import roart.stockutil.StockUtil;
 import roart.util.SvgUtil;
 
 public class GraphCategoryPrice extends GraphCategory {

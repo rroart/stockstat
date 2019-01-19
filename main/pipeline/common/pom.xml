@@ -19,28 +19,38 @@
     </dependency-->
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-model</artifactId>
+      <artifactId>stockstat-talib</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-model</artifactId>
+      <artifactId>stockstat-stockutil</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-config</artifactId>
+      <artifactId>stockstat-pipeline-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>2.11.12</version>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-pipeline-indicator</artifactId>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-reflect</artifactId>
-      <version>2.11.12</version>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-dbdao</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

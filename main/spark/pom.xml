@@ -10,7 +10,7 @@
   <artifactId>stockstat-spark</artifactId>
   <packaging>jar</packaging>
   <version>0.5-SNAPSHOT</version>
-  <name>Stock Statistics Spark</name>
+  <name>Stock Statistics Main Spark</name>
   <dependencies>
     <dependency>
       <groupId>roart</groupId>
@@ -19,12 +19,12 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-pipeline-common</artifactId>
+      <artifactId>stockstat-pipeline-model</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat.shadow.spark</artifactId>
+      <artifactId>stockstat-shadow-spark</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <!--dependency>

@@ -16,7 +16,7 @@ import roart.model.StockItem;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemBytes;
-import roart.util.StockUtil;
+import roart.stockutil.StockUtil;
 import roart.util.SvgUtil;
 
 public class GraphCategoryPeriodTopBottom extends GraphCategory {

@@ -50,5 +50,7 @@ public static final String FN = "FN";
 
 public static final String INC = "Inc";
 public static final String DEC = "Dec";
+public static final int EVENT = 0;
+public static final int MLTIMES = 1;
 
 }

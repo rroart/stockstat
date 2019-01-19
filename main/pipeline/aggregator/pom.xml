@@ -1,0 +1,16 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>roart</groupId>
+    <artifactId>stockstat-pipeline</artifactId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <groupId>roart</groupId>
+  <artifactId>stockstat-pipeline-aggregator</artifactId>
+  <packaging>jar</packaging>
+  <version>0.5-SNAPSHOT</version>
+  <name>Stock Statistics Pipeline Aggregator</name>
+  <dependencies>
+  </dependencies>
+</project>
