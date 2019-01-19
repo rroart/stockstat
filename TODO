@@ -44,6 +44,7 @@ B: look at findprofit, getimprovement two layers of new ControlService
 F: Remove findprofit both inc dec, go to improve
 
 Iclij evolution recommender
+B: serviceutil 76 nasdaq tradcomm?
 B: again confidencefactor null?
 B: conf. factor still null in comp.rec., and further down
 T: Fix getRealkeys, both inside an in findBuySell... (confidencefactor was null)
@@ -86,6 +87,7 @@ T: Dataimport zero/content check
 T: Change result map keys, due to overlap
 
 Database
+T: better transaction handling
 T: Parametrize jdbc setting
 B: Getdates null
 WF: Each mldao with threadpool
