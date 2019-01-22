@@ -58,6 +58,7 @@ F: Recommender combine keys/improveaction?
 B: improvement lack srv. setdate
 
 Core
+F: ML use test result
 T: MLPredictModel addtitles deprecate
 T: mlmacd mlindicator anythinghere better heuristics?
 WF: discard sat/sun/hol for all lang

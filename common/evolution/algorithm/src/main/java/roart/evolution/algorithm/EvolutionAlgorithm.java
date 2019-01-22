@@ -110,7 +110,7 @@ public abstract class EvolutionAlgorithm {
         for (Individual individual : pop) {
             if (individual.getFitness() == null) {
                 Callable callable = new EvolutionCallable(individual);
-                Future<Individual> future = MyExecutors.run(callable);
+                Future<Individual> future = MyExecutors.run(callable, 0);
                 futureList.add(future);
             }
         }

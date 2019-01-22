@@ -230,7 +230,7 @@ public class ComponentRecommender extends Component {
             try {
                 //List<MemoryItem> memories = ServiceUtil.doRecommender(srv, market, 0, null, false, aList, false);
                 Callable callable = new RecommenderCallable(srv, market, 0, null, false, aList, false);  
-                Future<List<MemoryItem>> future = MyExecutors.run(callable);
+                Future<List<MemoryItem>> future = MyExecutors.run(callable, 0);
                 futureList.add(future);
                 futureMap.put(future, aList);
             } catch (Exception e) {

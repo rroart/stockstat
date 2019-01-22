@@ -258,7 +258,7 @@ public class ServiceController {
     public static void main(String[] args) throws Exception {
         //DbDao.instance("hibernate");
         //DbDao.instance("spark");
-        MyExecutors.init(new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu());
+        MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
         SpringApplication.run(ServiceController.class, args);
     }
 

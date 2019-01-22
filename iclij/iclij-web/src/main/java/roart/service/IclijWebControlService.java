@@ -101,7 +101,7 @@ public class IclijWebControlService {
         }
         ConfigTreeMap map2 = iclijConf.getConfigTreeMap();
         print(map2, 0);
-        MyExecutors.init(iclijConf.mpClientCpu());      
+        MyExecutors.init(new double[] { iclijConf.mpClientCpu() } );      
     }
 
     private void print(ConfigTreeMap map2, int indent) {
@@ -159,7 +159,7 @@ public class IclijWebControlService {
             param.setWebpath(EurekaConstants.GETSINGLEMARKET);
             param.setOffset(i * getIclijConf().singlemarketLoopInterval());
             IclijThread thread = new IclijThread(ui, param);
-            MyExecutors.run(thread);
+            MyExecutors.run(thread, 0);
             try {
                 Thread.sleep(10 * 1000);
             } catch (InterruptedException e) {
@@ -186,7 +186,7 @@ public class IclijWebControlService {
         param.setIclijConfig(getIclijConf());
         param.setWebpath(EurekaConstants.GETVERIFY);
         IclijThread thread = new IclijThread(ui, param);
-        MyExecutors.run(thread);
+        MyExecutors.run(thread, 0);
     }
 
     public void getVerifyLoop(MyIclijUI ui) {
@@ -196,7 +196,7 @@ public class IclijWebControlService {
             param.setWebpath(EurekaConstants.GETVERIFY);
             param.setOffset(i * getIclijConf().verificationLoopInterval());
             IclijThread thread = new IclijThread(ui, param);
-            MyExecutors.run(thread);
+            MyExecutors.run(thread, 0);
             try {
                 Thread.sleep(10 * 1000);
             } catch (InterruptedException e) {

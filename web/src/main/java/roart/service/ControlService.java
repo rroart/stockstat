@@ -55,7 +55,7 @@ public class ControlService {
         ConfigTreeMap map2 = conf.getConfigTreeMap();
         print(map2, 0);
         MyMyConfig aConf = new MyMyConfig(conf);
-        MyExecutors.init((aConf).getMLMPCpu());
+        MyExecutors.init(new double[] { (aConf).getMLMPCpu() } );
     }
 
     private void print(ConfigTreeMap map2, int indent) {

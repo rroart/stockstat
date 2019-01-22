@@ -433,7 +433,7 @@ public class MLMACD extends Aggregator {
                             outcomes = 4;
                             log.info("Outcomes {}", outcomes);
                             Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime, map2, labelMapShort);  
-                            Future<LearnTestClassifyResult> future = MyExecutors.run(callable);
+                            Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                             futureList.add(future);
                             futureMap.put(future, new FutureMap(subType, model, mapType, resultMetaArray.size() - 1));
                         }

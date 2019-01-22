@@ -383,7 +383,7 @@ public class MLIndicator extends Aggregator {
                     log.info("len {}", arrayLength);
                     //LearnTestClassifyResult result = mldao.learntestclassify(this, map1, model, arrayLength, key, MYTITLE, 2, mapTime, map, labelMapShort);  
                     Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, map1, model, arrayLength, key, MYTITLE, 4, mapTime, map, labelMapShort);  
-                    Future<LearnTestClassifyResult> future = MyExecutors.run(callable);
+                    Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                     futureList.add(future);
                     futureMap.put(future, new FutureMap(mldao, model, resultMetaArray.size() - 1));
                 }
