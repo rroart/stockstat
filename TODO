@@ -77,6 +77,7 @@ B: Use ose/nordfund on sunday with date
 C: Non-null, trunc data ordering (rel to I0)
 
 Build
+B: log rotate
 T: pom auto tidy
 T: pom versioning
 T: space/tabs
