@@ -1,9 +1,11 @@
-FROM debian:stretch
+FROM openjdk:11-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y openjdk-11-jdk curl procps
+RUN apt-get install -y curl procps
 RUN curl -s https://archive.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz | tar -xz -C /tmp
+RUN cp -pi /tmp/spark-2.4.0-bin-hadoop2.7/conf/log4j.properties.template /tmp/spark-2.4.0-bin-hadoop2.7/conf/log4j.properties
+RUN sed -e "s/log4j.rootCategory=INFO/log4j.rootCategory=WARN/" -i /tmp/spark-2.4.0-bin-hadoop2.7/conf/log4j.properties
 RUN ln -s /tmp /tmp/spark-2.4.0-bin-hadoop2.7/logs
 
 WORKDIR /tmp/spark-2.4.0-bin-hadoop2.7
