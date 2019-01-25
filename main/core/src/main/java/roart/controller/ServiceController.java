@@ -31,6 +31,7 @@ import roart.executor.MyExecutors;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.service.ControlService;
+import roart.service.evolution.EvolutionService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -219,7 +220,7 @@ public class ServiceController {
             Map<String, Map<String, Object>> maps = new HashMap<>();
             Map<String, Object> updateMap = new HashMap<>();
             maps.put("update", updateMap);
-            result.setList(getInstance().getEvolveRecommender( aConfig, disableList, updateMap));
+            result.setList(new EvolutionService().getEvolveRecommender( aConfig, disableList, updateMap));
             result.setMaps(maps);
             result.setConfig(aConfig);
         } catch (Exception e) {
@@ -245,7 +246,7 @@ public class ServiceController {
             Map<String, Map<String, Object>> maps = new HashMap<>();
             Map<String, Object> updateMap = new HashMap<>();
             maps.put("update", updateMap);
-            result.setList(getInstance().getEvolveML( aConfig, disableList, updateMap, ml));
+            result.setList(new EvolutionService().getEvolveML( aConfig, disableList, updateMap, ml));
             result.setMaps(maps);
             result.setConfig(aConfig);
         } catch (Exception e) {
