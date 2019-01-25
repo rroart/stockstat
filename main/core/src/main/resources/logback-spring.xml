@@ -3,6 +3,7 @@
  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
  <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}stockstatcore.log}"/>
  <property name="LOG_FILE_MAX_SIZE" value="1024MB" />
+ <property name="FILE_LOG_PATTERN" value="%date %level [%thread] %logger{10} [%file:%line] %msg%n" />
  <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
  <root level="INFO">
   <appender-ref ref="FILE" />
