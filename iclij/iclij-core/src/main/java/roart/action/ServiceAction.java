@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
-import roart.util.ServiceUtil;
+import roart.service.MLService;
+import roart.service.PredictionService;
+import roart.service.RecommenderService;
 
 public class ServiceAction extends Action {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -76,16 +78,16 @@ public class ServiceAction extends Action {
         try {
             switch (task) {
             case RECOMMENDER:
-                setMemory(ServiceUtil.doRecommender(market, days, null, save, new ArrayList<>(), true));
+                setMemory(new RecommenderService().doRecommender(market, days, null, save, new ArrayList<>(), true));
                 break;
             case PREDICTOR:
-                setMemory(ServiceUtil.doPredict(market, days, null, save, true));
+                setMemory(new PredictionService().doPredict(market, days, null, save, true));
                 break;
             case MLMACD:
-                setMemory(ServiceUtil.doMLMACD(market, days, null, save, true));
+                setMemory(new MLService().doMLMACD(market, days, null, save, true));
                 break;
             case MLINDICATOR:
-                setMemory(ServiceUtil.doMLIndicator(market, days, null, save, true));
+                setMemory(new MLService().doMLIndicator(market, days, null, save, true));
                 break;
             }
         } catch (Exception e) {

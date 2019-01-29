@@ -24,7 +24,7 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
-import roart.util.ServiceUtil;
+import roart.service.MLService;
 import roart.util.ServiceUtilConstants;
 
 public class ComponentMLIndicator extends Component {
@@ -144,7 +144,7 @@ public class ComponentMLIndicator extends Component {
             }
             try {
                 List<Double> newConfidenceList = new ArrayList<>();
-                List<MemoryItem> memories = ServiceUtil.doMLIndicator(srv, market, 0, null, false, false);
+                List<MemoryItem> memories = new MLService().doMLIndicator(srv, market, 0, null, false, false);
                 for(MemoryItem memory : memories) {
                     newConfidenceList.add(memory.getConfidence());
                 }

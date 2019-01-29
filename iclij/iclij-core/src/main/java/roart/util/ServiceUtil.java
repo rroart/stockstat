@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,25 +22,17 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import roart.action.Action;
 import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
 import roart.action.UpdateDBAction;
 import roart.action.VerifyProfitAction;
-import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.config.MyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
-import roart.component.ComponentMLIndicator;
-import roart.component.ComponentMLMACD;
-import roart.component.ComponentPredictor;
-import roart.component.ComponentRecommender;
 import roart.config.IclijXMLConfig;
 import roart.config.TradeMarket;
 import roart.constants.IclijPipelineConstants;
@@ -50,292 +41,11 @@ import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.IclijServiceResult;
-import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
 
-    public static List<MemoryItem> doRecommender(String market, Integer offset, String aDate, boolean doSave, List<String> disableList, boolean doPrint) throws Exception {
-        ControlService srv = new ControlService();
-        srv.getConfig();
-        return doRecommender(srv, market, offset, aDate, doSave, disableList, doPrint);
-    }
-
-    public static List<MemoryItem> doRecommender(ControlService srv, String market, Integer offset, String aDate, boolean doSave, List<String> disableList, boolean doPrint) throws Exception {
-        long time0 = System.currentTimeMillis();
-        srv.conf.setMarket(market);
-        List<String> stocks = srv.getDates(market);
-        if (aDate != null) {
-            int index = stocks.indexOf(aDate);
-            if (index >= 0) {
-                offset = stocks.size() - index;
-            }
-        }
-        int futuredays = (int) srv.conf.getTestIndicatorRecommenderComplexFutureDays();
-        if (stocks.size() - 1 - futuredays - offset < 0) {
-            int jj = 0;
-        }
-        String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
-        String futureDateStr = stocks.get(stocks.size() - 1 - offset);
-        log.info("Base future date {} {}", baseDateStr, futureDateStr);
-        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
-        LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
-
-        srv.conf.setdate(TimeUtil.convertDate(baseDate));
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        if (instance.wantEvolveRecommender()) {
-            srv.getEvolveRecommender(true, disableList);
-        }
-        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
-        Map<String, Map<String, Object>> maps = srv.getContent(disableList);
-        Map recommendMaps = maps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        //System.out.println("m3 " + recommendMaps.keySet());
-        if (recommendMaps == null) {
-            return null;
-        }
-        Integer category = (Integer) recommendMaps.get(PipelineConstants.CATEGORY);
-        String categoryTitle = (String) recommendMaps.get(PipelineConstants.CATEGORYTITLE);
-        Map<String, Map<String, List<Double>>> resultMap = (Map<String, Map<String, List<Double>>>) recommendMaps.get(PipelineConstants.RESULT);
-        //System.out.println("m4 " + resultMap.keySet());
-        if (resultMap == null) {
-            return null;
-        }
-        Map<String, List<Double>> recommendBuySell = resultMap.get("complex");
-        //System.out.println("m5 " + recommendBuySell.keySet());
-        Set<Double> buyset = new HashSet<>();
-        Set<Double> sellset = new HashSet<>();
-        for (String key : recommendBuySell.keySet()) {
-            List<Double> vals = recommendBuySell.get(key);
-            List v = recommendBuySell.get(key);
-            if (vals.get(0) != null) {
-                if (v.get(0).getClass().getSimpleName().contains("String")) {
-                    int jj = 0;
-                }
-                buyset.add(vals.get(0));
-            }
-            if (vals.get(1) != null) {
-                sellset.add(vals.get(1));
-            }
-        }
-
-        srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        Map<String, Map<String, Object>> result = srv.getContent();
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
-        //System.out.println("k2 " + categoryValueMap.keySet());
-        int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-        return new ComponentRecommender().calculateRecommender(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell,
-                result, categoryValueMap, usedsec, doSave, doPrint);
-    }
-    public static List<MemoryItem> doPredict(String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws Exception {
-        ControlService srv = new ControlService();
-        srv.getConfig();
-        return doPredict(srv, market, offset, aDate, doSave, doPrint);
-    }
-
-    public static List<MemoryItem> doPredict(ControlService srv, String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws Exception {
-        long time0 = System.currentTimeMillis();
-        srv.conf.setMarket(market);
-        List<String> stocks = srv.getDates(market);
-        if (aDate != null) {
-            int index = stocks.indexOf(aDate);
-            if (index >= 0) {
-                offset = stocks.size() - 1 - index;
-            }
-        }
-        int futuredays = (int) srv.conf.getPredictorLSTMHorizon();
-        String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
-        String futureDateStr = stocks.get(stocks.size() - 1 - offset);
-        log.info("Base future date {} {}", baseDateStr, futureDateStr);
-        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
-        LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
-        srv.conf.setdate(TimeUtil.convertDate(baseDate));
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.TRUE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);
-        Map<String, Map<String, Object>> result0 = srv.getContent();
-
-        Map<String, Map<String, Object>> maps = result0;
-        if (maps == null) {
-            return null;
-        }
-        //System.out.println("mapkey " + maps.keySet());
-        //System.out.println(maps.get("-1").keySet());
-        //System.out.println(maps.get("-2").keySet());
-        //System.out.println(maps.get("Index").keySet());
-        String wantedCat = getWantedCategory(maps, PipelineConstants.LSTM);
-        if (wantedCat == null) {
-            return null;
-        }
-        Map map = (Map) maps.get(wantedCat).get(PipelineConstants.LSTM);
-
-        //System.out.println("lstm " + map.keySet());
-        Integer category = (Integer) map.get(PipelineConstants.CATEGORY);
-        String categoryTitle = (String) map.get(PipelineConstants.CATEGORYTITLE);
-        Map<String, List<Double>> resultMap = (Map<String, List<Double>>) map.get(PipelineConstants.RESULT);
-        srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
-        Map<String, Map<String, Object>> result = srv.getContent();
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
-        //System.out.println("k2 " + categoryValueMap.keySet());
-        int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-        return new ComponentPredictor().calculatePredictor(market, futuredays, baseDate, futureDate, categoryTitle, resultMap, categoryValueMap, usedsec, doSave, doPrint);
-    }
-    public static List<MemoryItem> doMLMACD(String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws ParseException {
-        ControlService srv = new ControlService();
-        srv.getConfig();
-        return doMLMACD(srv, market, offset, aDate, doSave, doPrint);
-    }
-
-    public static List<MemoryItem> doMLMACD(ControlService srv, String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws ParseException {
-        long time0 = System.currentTimeMillis();
-        srv.conf.setMarket(market);
-        List<String> stocks = srv.getDates(market);
-        if (aDate != null) {
-            int index = stocks.indexOf(aDate);
-            if (index >= 0) {
-                offset = stocks.size() - index;
-            }
-        }
-        int daysafterzero = (int) srv.conf.getMACDDaysAfterZero();
-        String baseDateStr = stocks.get(stocks.size() - 1 - 1 * daysafterzero - offset);
-        String futureDateStr = stocks.get(stocks.size() - 1 - 0 * daysafterzero - offset);
-        log.info("Base future date {} {}", baseDateStr, futureDateStr);
-        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
-        LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
-
-        srv.conf.setdate(TimeUtil.convertDate(baseDate));
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);
-        Map<String, Map<String, Object>> result0 = srv.getContent();
-
-        Map<String, Map<String, Object>> maps = result0;
-        //System.out.println("mapkey " + maps.keySet());
-        //System.out.println(maps.get("-1").keySet());
-        //System.out.println(maps.get("-2").keySet());
-        //System.out.println(maps.get("Index").keySet());
-        Map mlMACDMaps = (Map) maps.get(PipelineConstants.MLMACD);
-        //System.out.println("mlm " + mlMACDMaps.keySet());
-        Integer category = (Integer) mlMACDMaps.get(PipelineConstants.CATEGORY);
-        String categoryTitle = (String) mlMACDMaps.get(PipelineConstants.CATEGORYTITLE);
-        Map<String, List<Object>> resultMap = (Map<String, List<Object>>) mlMACDMaps.get(PipelineConstants.RESULT);
-        if (resultMap == null) {
-            return null;
-        }
-        Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) mlMACDMaps.get(PipelineConstants.PROBABILITY);
-        List<List> resultMetaArray = (List<List>) mlMACDMaps.get(PipelineConstants.RESULTMETAARRAY);
-        //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
-        List<Object> objectList = (List<Object>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
-        List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
-        //System.out.println("m4 " + resultMetaArray);
-        //System.out.println("m4 " + resultMap.keySet());
-        //System.out.println("m4 " + probabilityMap.keySet());
-        srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
-        Map<String, Map<String, Object>> result = srv.getContent();
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
-        //System.out.println("k2 " + categoryValueMap.keySet());
-        try {
-            // TODO add more offset
-            // TODO verify dates and offsets
-            int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-            return new ComponentMLMACD().calculateMLMACD(market, daysafterzero, baseDate, futureDate, categoryTitle, resultMap, resultMetaArray,
-                    categoryValueMap, resultMeta, offset, usedsec, doSave, doPrint);
-            //result.config = MyPropertyConfig.instance();
-        } catch (Exception e) {
-            log.error(roart.common.constants.Constants.EXCEPTION, e);
-        }
-        return null;
-    }
-    public static List<MemoryItem> doMLIndicator(String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws ParseException {
-        ControlService srv = new ControlService();
-        srv.getConfig();
-        return doMLIndicator(srv, market, offset, aDate, doSave, doPrint);
-    }
-
-    public static List<MemoryItem> doMLIndicator(ControlService srv, String market, Integer offset, String aDate, boolean doSave, boolean doPrint) throws ParseException {
-        long time0 = System.currentTimeMillis();
-        srv.conf.setMarket(market);
-        List<String> stocks = srv.getDates(market);
-        if (aDate != null) {
-            int index = stocks.indexOf(aDate);
-            if (index >= 0) {
-                offset = stocks.size() - index;
-            }
-        }
-        int futuredays = (int) srv.conf.getAggregatorsIndicatorFuturedays();
-        double threshold = srv.conf.getAggregatorsIndicatorThreshold();
-        String baseDateStr = stocks.get(stocks.size() - 1 - futuredays - offset);
-        String futureDateStr = stocks.get(stocks.size() - 1 - offset);
-        log.info("Base future date {} {}", baseDateStr, futureDateStr);
-        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
-        LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
-        srv.conf.setdate(TimeUtil.convertDate(baseDate));
-        //srv.getTestRecommender(true);
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
-        srv.conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);
-        Map<String, Map<String, Object>> result0 = srv.getContent();
-
-        Map<String, Map<String, Object>> maps = result0;
-        //System.out.println("mapkey " + maps.keySet());
-        //System.out.println(maps.get("-1").keySet());
-        //System.out.println(maps.get("-2").keySet());
-        //System.out.println(maps.get("Index").keySet());
-        Map mlIndicatorMaps = (Map) maps.get(PipelineConstants.MLINDICATOR);
-        //System.out.println("mli " + mlIndicatorMaps.keySet());
-        Integer category = (Integer) mlIndicatorMaps.get(PipelineConstants.CATEGORY);
-        String categoryTitle = (String) mlIndicatorMaps.get(PipelineConstants.CATEGORYTITLE);
-        Map<String, List<Object>> resultMap = (Map<String, List<Object>>) mlIndicatorMaps.get(PipelineConstants.RESULT);
-        Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) mlIndicatorMaps.get(PipelineConstants.PROBABILITY);
-        List<Object[]> resultMetaArray = (List<Object[]>) mlIndicatorMaps.get(PipelineConstants.RESULTMETAARRAY);
-        List<Object> objectList = (List<Object>) mlIndicatorMaps.get(PipelineConstants.RESULTMETA);
-        List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
-        //System.out.println("m4 " + resultMap.keySet());
-        //System.out.println("m4 " + probabilityMap.keySet());
-        if (resultMap == null) {
-            return null;
-        }
-        int size = resultMap.values().iterator().next().size();
-        Map<String, Object>[] aMap = new HashMap[size];
-        for (int i = 0; i < size; i++) {
-            aMap[i] = new HashMap<>();
-        }
-        for (String key : resultMap.keySet()) {
-            List<Object> list = resultMap.get(key);
-            for (int i = 0; i < size; i++) {
-                if (list.get(i) != null) {
-                    aMap[i].put(key, list.get(i));    
-                }
-            }
-        }
-        srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        srv.conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        srv.conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
-        Map<String, Map<String, Object>> result = srv.getContent();
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) result.get("" + category).get(PipelineConstants.LIST);
-        //System.out.println("k2 " + categoryValueMap.keySet());
-        try {
-            int usedsec = (int) ((System.currentTimeMillis() - time0) / 1000);
-            return new ComponentMLIndicator().calculateMLindicator(market, futuredays, baseDate, futureDate, threshold, resultMap, size, categoryValueMap, resultMeta, categoryTitle, usedsec, doSave, doPrint);
-            //result.config = MyPropertyConfig.instance();
-        } catch (Exception e) {
-            log.error(roart.common.constants.Constants.EXCEPTION, e);
-        }
-        return null;
-    }
     public static double median(Set<Double> set) {
         Double[] scores = set.toArray(new Double[set.size()]);
         Arrays.sort(scores);

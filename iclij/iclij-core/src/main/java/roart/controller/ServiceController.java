@@ -35,6 +35,9 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.service.ControlService;
+import roart.service.MLService;
+import roart.service.PredictionService;
+import roart.service.RecommenderService;
 import roart.util.ServiceUtil;
 
 @RestController
@@ -78,28 +81,28 @@ public class ServiceController {
             method = RequestMethod.GET)
     public void getRecommender(@PathVariable String market)
             throws Exception {
-        ServiceUtil.doRecommender(market, 0, null, true, new ArrayList<>(), true);
+        new RecommenderService().doRecommender(market, 0, null, true, new ArrayList<>(), true);
     }
 
     @RequestMapping(value = "/predictor/{market}",
             method = RequestMethod.GET)
     public void getPredict(@PathVariable String market)
             throws Exception {
-        ServiceUtil.doPredict(market, 0, null, true, true);
+        new PredictionService().doPredict(market, 0, null, true, true);
     }
 
     @RequestMapping(value = "/mlmacd/{market}",
             method = RequestMethod.GET)
     public void getMLMACD(@PathVariable String market)
             throws Exception {
-        ServiceUtil.doMLMACD(market, 0, null, true, true);
+        new MLService().doMLMACD(market, 0, null, true, true);
     }
 
     @RequestMapping(value = "/mlindicator/{market}",
             method = RequestMethod.GET)
     public void getMLIndicator(@PathVariable String market)
             throws Exception {
-        ServiceUtil.doMLIndicator(market, 0, null, true, true);
+        new MLService().doMLIndicator(market, 0, null, true, true);
     }
 
     @RequestMapping(value = "/findprofit",

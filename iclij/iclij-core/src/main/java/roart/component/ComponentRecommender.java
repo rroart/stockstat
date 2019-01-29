@@ -29,7 +29,7 @@ import roart.executor.MyExecutors;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
-import roart.util.ServiceUtil;
+import roart.service.RecommenderService;
 
 public class ComponentRecommender extends Component {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -748,7 +748,7 @@ public class ComponentRecommender extends Component {
 
         @Override
         public List<MemoryItem> call() throws Exception {
-             return ServiceUtil.doRecommender(srv, market, 0, null, doSave, disableList, false);
+             return new RecommenderService().doRecommender(srv, market, 0, null, doSave, disableList, false);
         }
 
     }
