@@ -1,4 +1,4 @@
-package roart.evaluation;
+package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import roart.evolution.species.Individual;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
 
-public class NeuralNetEvaluation extends AbstractChromosome {
+public class NeuralNetChromosome extends AbstractChromosome {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private MyMyConfig conf;
@@ -43,7 +43,7 @@ public class NeuralNetEvaluation extends AbstractChromosome {
     
     private NNConfig nnConfig;
     
-    public NeuralNetEvaluation(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NNConfig nnConfig) {
+    public NeuralNetChromosome(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NNConfig nnConfig) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
@@ -165,8 +165,8 @@ public class NeuralNetEvaluation extends AbstractChromosome {
 
     @Override
     public Individual crossover(AbstractChromosome evaluation) {
-        NNConfig newNNConfig =  nnConfig.crossover(((NeuralNetEvaluation) evaluation).nnConfig);
-        NeuralNetEvaluation eval = new NeuralNetEvaluation(conf, ml, dataReaders, categories, key, newNNConfig);
+        NNConfig newNNConfig =  nnConfig.crossover(((NeuralNetChromosome) evaluation).nnConfig);
+        NeuralNetChromosome eval = new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig);
         return new Individual(eval);
     }
 
@@ -176,7 +176,7 @@ public class NeuralNetEvaluation extends AbstractChromosome {
         if (nnConfig != null) {
             newNNConfig = (NNConfig) (nnConfig.copy());
         }
-        return new NeuralNetEvaluation(conf, ml, dataReaders, categories, key, newNNConfig);
+        return new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig);
     }
     
     @Override

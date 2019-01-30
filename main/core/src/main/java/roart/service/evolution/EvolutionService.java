@@ -27,10 +27,10 @@ import roart.common.ml.NNConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
-import roart.evaluation.IndicatorEvaluation;
-import roart.evaluation.IndicatorEvaluationNew;
-import roart.evaluation.NeuralNetEvaluation;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
+import roart.evolution.chromosome.impl.IndicatorChromosome;
+import roart.evolution.chromosome.impl.IndicatorEvaluationNew;
+import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.evolution.species.Individual;
@@ -175,7 +175,7 @@ public class EvolutionService {
     
             for (int i = 0; i < 2; i++) {
                 List<String> scoreList = recommendList[i];
-                IndicatorEvaluation indicatorEval0 = new IndicatorEvaluation(conf, scoreList, retObj, true, disableList, new ProportionScore());
+                IndicatorChromosome indicatorEval0 = new IndicatorChromosome(conf, scoreList, retObj, true, disableList, new ProportionScore());
     
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
     
@@ -187,13 +187,13 @@ public class EvolutionService {
                     row.add("" + conf.getConfigValueMap().get(id));
                     //log.info("Buy {} {}", id, buy.getConf().getConfigValueMap().get(id));
                     //log.info("Buy {}", buy.getConf().getConfigValueMap().get(id).getClass().getName());
-                    IndicatorEvaluation newEval = (IndicatorEvaluation) fittestIndividual.getEvaluation();
+                    IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
                     row.add("" + newEval.getConf().getConfigValueMap().get(id));
                     table.add(row);
                 }
                 // TODO have a boolean here
                 for (String id : scoreList) {
-                    IndicatorEvaluation newEval = (IndicatorEvaluation) fittestIndividual.getEvaluation();
+                    IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
                     updateMap.put(id, newEval.getConf().getConfigValueMap().get(id));
                 }
             }
@@ -503,13 +503,13 @@ public class EvolutionService {
                 workingConf.getConfigValueMap().put(tmpkey, sameKey);
             }
             NNConfig nnconfig = nnConfigs.get(key);
-            NeuralNetEvaluation recommendBuy = new NeuralNetEvaluation(workingConf, ml, dataReaders, categories, key, nnconfig);
+            NeuralNetChromosome recommendBuy = new NeuralNetChromosome(workingConf, ml, dataReaders, categories, key, nnconfig);
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
     
             Individual best = evolution.getFittest(evolutionConfig, recommendBuy);
     
-            NeuralNetEvaluation bestEval2 = (NeuralNetEvaluation) best.getEvaluation();
+            NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NNConfig newnnconf = bestEval2.getNnConfig();
             newNNConfigs.set(key, newnnconf);
         }

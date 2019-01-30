@@ -1,4 +1,4 @@
-package roart.evaluation;
+package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -32,7 +32,7 @@ import roart.evolution.fitness.AbstractScore;
 import roart.evolution.species.Individual;
 import roart.model.data.MarketData;
 
-public class IndicatorEvaluation extends AbstractChromosome {
+public class IndicatorChromosome extends AbstractChromosome {
     protected static Logger log = LoggerFactory.getLogger(AbstractChromosome.class);
     private List<String> keys;
 
@@ -56,7 +56,7 @@ public class IndicatorEvaluation extends AbstractChromosome {
 
     private AbstractScore evalUtil;
     
-    public IndicatorEvaluation(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil) {
+    public IndicatorChromosome(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil) {
         this.conf = conf.copy();
         setKeys(keys);
         this.retObj = retObj;
@@ -269,13 +269,13 @@ public class IndicatorEvaluation extends AbstractChromosome {
     @Override
     public Individual crossover(AbstractChromosome evaluation) {
         Random rand = new Random();
-        Map<String, Object> configValueMap = new HashMap<>(((IndicatorEvaluation) evaluation).conf.getConfigValueMap());
+        Map<String, Object> configValueMap = new HashMap<>(((IndicatorChromosome) evaluation).conf.getConfigValueMap());
         for (String key : keys) {
             Object value;
             if (rand.nextBoolean()) {
                 value = conf.getConfigValueMap().get(key);
             } else {
-                value = ((IndicatorEvaluation) evaluation).conf.getConfigValueMap().get(key);
+                value = ((IndicatorChromosome) evaluation).conf.getConfigValueMap().get(key);
             }
             configValueMap.put(key, value);
         }
@@ -288,7 +288,7 @@ public class IndicatorEvaluation extends AbstractChromosome {
 
     @Override
     public AbstractChromosome copy() {
-        AbstractChromosome newEval = new IndicatorEvaluation(new MyMyConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil);
+        AbstractChromosome newEval = new IndicatorChromosome(new MyMyConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil);
         return newEval;
     }
 

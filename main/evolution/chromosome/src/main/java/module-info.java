@@ -6,7 +6,7 @@
  *
  */
 module evolution.chromosome {
-    exports roart.evaluation;
+    exports roart.evolution.chromosome.impl;
 
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
