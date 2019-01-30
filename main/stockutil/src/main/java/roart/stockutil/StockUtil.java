@@ -30,15 +30,14 @@ public class StockUtil {
 
     /**
      * Create sorted tables for all periods in a time interval
-     * 
-     * @param datedstocklists returned lists based on date
      * @param count number of days to measure
      * @param arr also for return sorted tables
+     * 
      * @return sorted tables
      * @throws Exception
      */
 
-    public static Map<String, Integer>[][] getListMove(List<StockItem> datedstocklists[], int count, List<StockItem>[][] stocklistPeriod)
+    public static Map<String, Integer>[][] getListMove(int count, List<StockItem>[][] stocklistPeriod)
             throws Exception {
 
         // make sorted period1, sorted current day
@@ -75,6 +74,41 @@ public class StockUtil {
         return periodmaps;
     }
 
+    public static Map<String, Integer>[] getListMove(int count, List<StockItem>[] stocklistPeriod, int period)
+            throws Exception {
+
+        // make sorted period1, sorted current day
+        // make sorted period1, sorted day offset
+        Map<String, Integer>[] periodmaps = new HashMap[count - 1];
+
+        // Do for all wanted days
+
+        for (int j = 0; j < count; j++) {
+            Map<String, Integer> periodmap = new HashMap<>();
+            // Check if the period for the wanted day has any content
+
+            boolean hasPeriod = !stocklistPeriod[j].isEmpty();
+
+            /*
+             *  If not the first, get a periodmap, which is a list of differences, indicating rise or decline
+             */
+
+            if (hasPeriod) {
+                if (j > 0) {
+                    periodmap = StockUtil.getPeriodmap(stocklistPeriod[j - 1], stocklistPeriod[j]);
+                }
+            } else {
+                if (j > 0) {
+                    periodmap = new HashMap<>();
+                }
+            }
+            if (j > 0) {
+                periodmaps[j - 1] = periodmap;
+            }
+        }
+        return periodmaps;
+    }
+
     /**
      * Create sorted tables for all periods in a time interval
      * 
@@ -96,25 +130,55 @@ public class StockUtil {
         // Do for all wanted days
 
         for (int j = 0; j < count; j++) {
-            boolean hasPeriod[] = new boolean[Constants.PERIODS];
             for (int i = 0; i < Constants.PERIODS; i++) {
-                hasPeriod[i] = false;
+                boolean hasPeriod = false;
 
                 // Check if the period fot the wanted day has any content
 
                 if (datedstocklists[j] != null) {
-                    hasPeriod[i] = hasStockPeriod(datedstocklists[j], i);
+                    hasPeriod = hasStockPeriod(datedstocklists[j], i);
                 }
 
                 // If it has, add it to the table
 
-                if (datedstocklists[j] != null && hasPeriod[i]) {
+                if (datedstocklists[j] != null && hasPeriod) {
                     stocklistPeriod[i][j] = new ArrayList<StockItem>(datedstocklists[j]);
                     stocklistPeriod[i][j].sort(comparators[i]);
                 } else {
                     stocklistPeriod[i][j] = new ArrayList<StockItem>();
                 }
 
+            }
+        }
+        return stocklistPeriod;
+    }
+
+    public static List<StockItem>[] getListSorted(List<StockItem> datedstocklists[], int count, int period)
+            throws Exception {
+        Comparator[] comparators = { StockUtil.StockPeriod1Comparator, StockUtil.StockPeriod2Comparator, StockUtil.StockPeriod3Comparator, StockUtil.StockPeriod4Comparator, StockUtil.StockPeriod5Comparator, StockUtil.StockPeriod6Comparator , StockUtil.StockPeriod7Comparator , StockUtil.StockPeriod8Comparator , StockUtil.StockPeriod9Comparator };
+
+        // make sorted period1, sorted current day
+        // make sorted period1, sorted day offset
+        List<StockItem>[] stocklistPeriod = new ArrayList[count];
+
+        // Do for all wanted days
+
+        for (int j = 0; j < count; j++) {
+            boolean hasPeriod = false;
+
+            // Check if the period fot the wanted day has any content
+
+            if (datedstocklists[j] != null) {
+                hasPeriod = hasStockPeriod(datedstocklists[j], period);
+            }
+
+            // If it has, add it to the table
+
+            if (datedstocklists[j] != null && hasPeriod) {
+                stocklistPeriod[j] = new ArrayList<StockItem>(datedstocklists[j]);
+                stocklistPeriod[j].sort(comparators[period]);
+            } else {
+                stocklistPeriod[j] = new ArrayList<StockItem>();
             }
         }
         return stocklistPeriod;

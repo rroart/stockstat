@@ -30,7 +30,6 @@ public class PredictorLSTM extends AbstractPredictor {
 
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
-    Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[][]> listMap;
     Map<String, double[][]> truncListMap;
@@ -56,13 +55,12 @@ public class PredictorLSTM extends AbstractPredictor {
 
     List<MLPredictDao> mldaos = new ArrayList<>();
 
-    public PredictorLSTM(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, String title, int category) throws Exception {
+    public PredictorLSTM(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title, int category) throws Exception {
         super(conf, string, category);
         if (!isEnabled()) {
             return;
         }
         this.marketdatamap = marketdatamap;
-        this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         this.key = title;
         makeWantedSubTypes();

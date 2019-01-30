@@ -33,7 +33,6 @@ public abstract class AbstractIndicator extends Calculatable {
     protected int fieldSize = 0;
     protected Map<String, MarketData> marketdatamap;
     protected Map<String, PeriodData> periodDataMap;
-    protected Map<String, Integer>[] periodmap;
     protected Object[] emptyField;
 
     protected Map<String, Double[][]> listMap;

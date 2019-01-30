@@ -144,10 +144,6 @@ public class ControlService {
 
             List<StockItem>[] datedstocklists = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), 2, conf.getTableMoveIntervalDays());
 
-            List<StockItem>[][] stocklistPeriod = StockUtil.getListSorted(datedstocklists, 2);
-            Map<String, Integer>[][] periodmaps = StockUtil.getListMove(datedstocklists, 2, stocklistPeriod);
-            Map<String, Integer>[] periodmap = periodmaps[0];
-
             List<StockItem> datedstocks = datedstocklists[0];
             if (datedstocks == null) {
                 return new ArrayList<>();
@@ -155,16 +151,16 @@ public class ControlService {
             log.info("Datestocksize {}", datedstocks.size());
 
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, periodmap);
+                    periodText, marketdatamap, periodDataMap);
 
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String mydate = dt.format(conf.getdate());
             List<StockItem> dayStocks = stockdatemap.get(mydate);
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
-                    periodText, marketdatamap, periodDataMap, periodmap, datareaders);
+                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders);
 
             Aggregator[] aggregates = getAggregates(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, periodmap, categories, datareaders, disableList, idNameMap);
+                    periodText, marketdatamap, periodDataMap, categories, datareaders, disableList, idNameMap);
 
             ResultItemTableRow headrow = createHeadRow(categories, aggregates);
             table.add(headrow);
@@ -307,10 +303,10 @@ public class ControlService {
     private Aggregator[] getAggregates(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap) throws Exception {
+            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap) throws Exception {
         Aggregator[] aggregates = new Aggregator[4];
-        aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories, datareaders, disableList);
-        aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, categories);
+        aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, categories, datareaders, disableList);
+        aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, categories);
         aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, periodDataMap, CategoryConstants.PRICE, 0, categories, idNameMap);
         aggregates[3] = new MLIndicator(conf, Constants.PRICE, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories, datareaders);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));

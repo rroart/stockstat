@@ -29,7 +29,7 @@ public class RecommenderRSI extends Aggregator {
     Map<String, double[][]> truncListMap;
 
     public RecommenderRSI(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, AbstractCategory[] categories) throws Exception {
+            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories) throws Exception {
         super(conf, index, 0);
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());

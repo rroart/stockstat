@@ -48,7 +48,6 @@ import roart.talib.util.TaUtil;
 public class MLIndicator extends Aggregator {
 
     Map<String, PeriodData> periodDataMap;
-    Map<String, Integer>[] periodmap;
     String key;
     Map<String, Double[][]> listMap;
     Object[] emptyField;

@@ -20,7 +20,6 @@ public class DataReader extends Pipeline {
     
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
-    Map<String, Integer>[] periodmap;
     Map<String, Double[][]> listMap;
     Map<String, String> nameMap;
     List<Date> dateList;
@@ -47,10 +46,9 @@ public class DataReader extends Pipeline {
         return map;
     }
     
-    public DataReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, int category) throws Exception {
+    public DataReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, int category) throws Exception {
         super(conf, category);
         this.marketdatamap = marketdatamap;
-        this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         readData(conf, marketdatamap, category);        
     }

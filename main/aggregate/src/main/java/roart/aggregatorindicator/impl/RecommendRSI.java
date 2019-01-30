@@ -25,7 +25,7 @@ public abstract class RecommendRSI extends Recommend {
             return usedIndicatorMap.get(indicator());
         }
 
-        AbstractIndicator indicator = new IndicatorRSI(conf, null, marketdatamap, null, null, null, category, datareaders, false);
+        AbstractIndicator indicator = new IndicatorRSI(conf, null, marketdatamap, null, null, category, datareaders, false);
         
         if (newIndicatorMap != null) {
             newIndicatorMap.put(indicator(), indicator);

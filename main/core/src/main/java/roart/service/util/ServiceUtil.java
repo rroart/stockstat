@@ -182,13 +182,13 @@ public class ServiceUtil {
     public Pipeline[] getDataReaders(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap) throws Exception {
+            Map<String, PeriodData> periodDataMap) throws Exception {
         Pipeline[] datareaders = new Pipeline[Constants.PERIODS + 3];
-        datareaders[0] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.INDEXVALUECOLUMN);
-        datareaders[1] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, Constants.PRICECOLUMN);
+        datareaders[0] = new DataReader(conf, marketdatamap, periodDataMap, Constants.INDEXVALUECOLUMN);
+        datareaders[1] = new DataReader(conf, marketdatamap, periodDataMap, Constants.PRICECOLUMN);
         datareaders[2] = new ExtraReader(conf, 0);
         for (int i = 0; i < Constants.PERIODS; i++) {
-            datareaders[i + 3] = new DataReader(conf, marketdatamap, periodDataMap, periodmap, i);
+            datareaders[i + 3] = new DataReader(conf, marketdatamap, periodDataMap, i);
         }
         return datareaders;
     }
@@ -196,12 +196,12 @@ public class ServiceUtil {
     public AbstractCategory[] getCategories(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, Pipeline[] datareaders) throws Exception {
+            Map<String, PeriodData> periodDataMap, List<StockItem>[] datedstocklists, Pipeline[] datareaders) throws Exception {
         AbstractCategory[] categories = new AbstractCategory[Constants.PERIODS + 2];
-        categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, periodmap, datareaders);
-        categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, periodmap, datareaders);
+        categories[0] = new CategoryIndex(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, datareaders);
+        categories[1] = new CategoryPrice(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, datareaders);
         for (int i = 0; i < Constants.PERIODS; i++) {
-            categories[i + 2] = new CategoryPeriod(conf, i, periodText[i], stocks, marketdatamap, periodDataMap, periodmap, datareaders);
+            categories[i + 2] = new CategoryPeriod(conf, i, periodText[i], stocks, marketdatamap, periodDataMap, datedstocklists, datareaders);
         }
         return categories;
     }

@@ -133,7 +133,7 @@ public class EvolutionService {
             if (cat == null) {
                 return new ArrayList<>();
             }
-            DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, null, cat);
+            DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, cat);
             Pipeline[] datareaders = new Pipeline[1];
             datareaders[0] = dataReader;
     
@@ -288,7 +288,7 @@ public class EvolutionService {
             if (cat == null) {
                 return new ArrayList<>();
             }
-            DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, null, cat);
+            DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, cat);
             Pipeline[] datareaders = new Pipeline[1];
             datareaders[0] = dataReader;
     
@@ -437,10 +437,10 @@ public class EvolutionService {
                 return new ArrayList<>();
             }
             String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
-            DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, null, cat);
+            DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, cat);
             //Pipeline[] datareaders = new Pipeline[1];
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, null);
+                    periodText, marketdatamap, periodDataMap);
     
             //datareaders[0] = dataReader;
     

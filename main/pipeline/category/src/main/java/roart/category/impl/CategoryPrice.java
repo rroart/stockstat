@@ -26,25 +26,23 @@ public class CategoryPrice extends Category {
 
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
-    Map<String, Integer>[] periodmap;
 
     public CategoryPrice(MyMyConfig conf, String string, List<StockItem> stocks,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
-            Map<String, Integer>[] periodmap, Pipeline[] datareaders) throws Exception {
+            Pipeline[] datareaders) throws Exception {
         super(conf, string, stocks, datareaders);
         this.marketdatamap = marketdatamap;
-        this.periodmap = periodmap;
         this.periodDataMap = periodDataMap;
         period = Constants.PRICECOLUMN;
         createResultMap(conf, stocks);
-        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorATR(conf, getTitle() + " ATR", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, periodmap, getTitle(), Constants.PRICECOLUMN));
+        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorATR(conf, getTitle() + " ATR", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN));
         createIndicatorMap(Constants.PRICE);
     }
 

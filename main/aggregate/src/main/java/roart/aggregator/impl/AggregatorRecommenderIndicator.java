@@ -45,7 +45,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     public List<String> disableList;
  
     public AggregatorRecommenderIndicator(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, Map<String, Integer>[] periodmap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList) throws Exception {
+            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList) throws Exception {
         super(conf, index, 0);
         this.disableList = disableList;
        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories);
