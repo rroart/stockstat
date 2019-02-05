@@ -19,6 +19,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.util.TimeUtil;
+import roart.component.model.MLMACDParam;
 import roart.common.pipeline.PipelineConstants;
 import roart.config.IclijXMLConfig;
 import roart.iclij.model.IncDecItem;
@@ -182,13 +183,11 @@ public class ComponentMLMACD extends Component {
         return new HashMap<>();
     }
 
-    public List<MemoryItem> calculateMLMACD(String market, int daysafterzero, LocalDate baseDate, LocalDate futureDate,
-            String categoryTitle, Map<String, List<Object>> resultMap, List<List> resultMetaArray,
-            Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, int offset, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
+    public List<MemoryItem> calculateMLMACD(MLMACDParam param) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;
         int count = 0;
-        for (List meta : resultMetaArray) {
+        for (List meta : param.getResultMetaArray()) {
             MemoryItem memory = new MemoryItem();
             int returnSize = (int) meta.get(2);
             Double testaccuracy = (Double) meta.get(6);
@@ -197,8 +196,8 @@ public class ComponentMLMACD extends Component {
             Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
             Map<String, Integer> countMapClass = (Map<String, Integer>) meta.get(7);
             */
-            Map<String, Integer> countMapLearn = (Map<String, Integer>) resultMeta.get(count).getLearnMap();
-            Map<String, Integer> countMapClass = (Map<String, Integer>) resultMeta.get(count).getClassifyMap();
+            Map<String, Integer> countMapLearn = (Map<String, Integer>) param.getResultMeta().get(count).getLearnMap();
+            Map<String, Integer> countMapClass = (Map<String, Integer>) param.getResultMeta().get(count).getClassifyMap();
             long total = 0;
             long goodTP = 0;
             long goodFP = 0;
@@ -212,17 +211,17 @@ public class ComponentMLMACD extends Component {
             double goodFPprob = 0;
             double goodTNprob = 0;
             double goodFNprob = 0;
-            int size = resultMap.values().iterator().next().size();
-            for (String key : categoryValueMap.keySet()) {
+            int size = param.getResultMap().values().iterator().next().size();
+            for (String key : param.getCategoryValueMap().keySet()) {
                 if (key.equals("VIX")) {
                     int jj = 0;
                 }
-                List<List<Double>> resultList = categoryValueMap.get(key);
+                List<List<Double>> resultList = param.getCategoryValueMap().get(key);
                 List<Double> mainList = resultList.get(0);
                 if (mainList == null) {
                     continue;
                 }
-                List<Object> list = resultMap.get(key);
+                List<Object> list = param.getResultMap().get(key);
                 if (list == null) {
                     continue;
                 }
@@ -236,8 +235,8 @@ public class ComponentMLMACD extends Component {
                     continue;
                 }
                 int offsetZero = (int) Math.round(off.get(0));
-                Double valFuture = mainList.get(mainList.size() - 1 - offset - offsetZero);
-                Double valNow = mainList.get(mainList.size() - 1 - daysafterzero - offset - offsetZero);
+                Double valFuture = mainList.get(mainList.size() - 1 - param.getOffset() - offsetZero);
+                Double valNow = mainList.get(mainList.size() - 1 - param.getDaysafterzero() - param.getOffset() - offsetZero);
                 Double tfpnProb = null;
                 if (returnSize > 1) {
                     tfpnProb = (Double) list.get(resultIndex + 1);
@@ -284,14 +283,14 @@ public class ComponentMLMACD extends Component {
                 }
             }
             //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
-            memory.setMarket(market);
+            memory.setMarket(param.getMarket());
             memory.setRecord(LocalDate.now());
-            memory.setDate(baseDate);
-            memory.setUsedsec(usedsec);
-            memory.setFuturedays(daysafterzero);
-            memory.setFuturedate(futureDate);
+            memory.setDate(param.getBaseDate());
+            memory.setUsedsec(param.getUsedsec());
+            memory.setFuturedays(param.getDaysafterzero());
+            memory.setFuturedate(param.getFutureDate());
             memory.setComponent(PipelineConstants.MLMACD);
-            memory.setCategory(categoryTitle);
+            memory.setCategory(param.getCategoryTitle());
             memory.setSubcomponent(meta.get(0) + ", " + meta.get(1) + ", " + meta.get(3) + ", " + meta.get(4));
             memory.setTestaccuracy(testaccuracy);
             //memory.setPositives(goodInc);
@@ -385,11 +384,11 @@ public class ComponentMLMACD extends Component {
             memory.setConfidence(conf);
             memory.setLearnConfidence(learnConfidence);
             memory.setPosition(count);
-            if (doSave) {
+            if (param.isDoSave()) {
                 memory.save();
             }
             memoryList.add(memory);
-            if (doPrint) {
+            if (param.isDoPrint()) {
             System.out.println(memory);
             }
             resultIndex += returnSize;

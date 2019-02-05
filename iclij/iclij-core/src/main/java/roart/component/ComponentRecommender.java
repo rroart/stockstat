@@ -20,7 +20,9 @@ import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.constants.RecommendConstants;
 import roart.common.util.TimeUtil;
+import roart.component.model.RecommenderParam;
 import roart.common.pipeline.PipelineConstants;
 import roart.config.IclijXMLConfig;
 import roart.evolution.fitness.AbstractScore;
@@ -81,7 +83,7 @@ public class ComponentRecommender extends Component {
         Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
         String categoryTitle = (String) maps.get(PipelineConstants.CATEGORYTITLE);
         Map<String, Map> resultMap0 = (Map<String, Map>) maps.get(PipelineConstants.RESULT);
-        Map<String, List<Double>> resultMap = (Map<String, List<Double>>) resultMap0.get("complex");
+        Map<String, List<Double>> resultMap = (Map<String, List<Double>>) resultMap0.get(RecommendConstants.COMPLEX);
         if (resultMap == null) {
             return;
         }
@@ -274,18 +276,16 @@ public class ComponentRecommender extends Component {
         return listPerm;
     }
     
-    public List<MemoryItem> calculateRecommender(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
-            String categoryTitle, Map<String, List<Double>> recommendBuySell,
-            Map<String, Map<String, Object>> result, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
+    public List<MemoryItem> calculateRecommender(RecommenderParam param) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
         AbstractScore eval = new ProportionScore();
         for (int i = 0; i < 2; i++) {
-            getMemories(market, futuredays, baseDate, futureDate, categoryTitle, recommendBuySell, categoryValueMap, usedsec,
-                doSave, memoryList, doPrint, eval, i);
+            getMemories(param, memoryList, eval, i);
         }
         return memoryList;
     }
 
+    @Deprecated
     private Set<Double> getChangeSet(int futuredays, Map<String, List<List<Double>>> categoryValueMap) {
         Set<Double> changeSet = new HashSet<>();
         for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
@@ -307,23 +307,20 @@ public class ComponentRecommender extends Component {
         return changeSet;
     }
 
-    public void getMemories(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
-            String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
-            boolean doSave, List<MemoryItem> memoryList,
-            boolean doPrint, AbstractScore eval, int position) throws Exception {
+    public void getMemories(RecommenderParam param, List<MemoryItem> memoryList, AbstractScore eval, int position) throws Exception {
         Map<String, List<Double>> resultMap = new HashMap<>();
-        for (String key : categoryValueMap.keySet()) {
-            List<Double> vals = recommendBuySell.get(key);
+        for (String key : param.getCategoryValueMap().keySet()) {
+            List<Double> vals = param.getRecommendBuySell().get(key);
             if (vals == null) {
                 continue;
             }
             Double score = vals.get(position);
-            List<List<Double>> resultList = categoryValueMap.get(key);
+            List<List<Double>> resultList = param.getCategoryValueMap().get(key);
             List<Double> mainList = resultList.get(0);
             Double change = null;
             if (mainList != null) {
                 Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() - 1 - futuredays);
+                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays());
                 if (valFuture != null && valNow != null) {
                     if (valNow == 0.0) {
                         log.error("Value for division is 0.0 for key {}", key);
@@ -342,28 +339,29 @@ public class ComponentRecommender extends Component {
         double goodBuy = resultArray[0];
         long totalBuy = (long) resultArray[1];
         MemoryItem memory = new MemoryItem();
-        memory.setMarket(market);
+        memory.setMarket(param.getMarket());
         memory.setRecord(LocalDate.now());
-        memory.setDate(baseDate);
-        memory.setUsedsec(usedsec);
-        memory.setFuturedays(futuredays);
-        memory.setFuturedate(futureDate);
+        memory.setDate(param.getBaseDate());
+        memory.setUsedsec(param.getUsedsec());
+        memory.setFuturedays(param.getFuturedays());
+        memory.setFuturedate(param.getFutureDate());
         memory.setComponent(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         memory.setSubcomponent("rec " + position + " " + eval.name());
-        memory.setCategory(categoryTitle);
+        memory.setCategory(param.getCategoryTitle());
         memory.setPositives((long) goodBuy);
         memory.setSize(totalBuy);
         memory.setConfidence((double) goodBuy / totalBuy);
         memory.setPosition(position);
-        if (doSave) {
+        if (param.isDoSave()) {
             memory.save();
         }
-        if (doPrint) {
+        if (param.isDoPrint()) {
             System.out.println(memory);
         }
         memoryList.add(memory);
     }
 
+    @Deprecated
     public void getMemoriesPrev(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
             String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
             boolean doSave, List<MemoryItem> memoryList, Set<Double> changeSet,
@@ -500,6 +498,7 @@ public class ComponentRecommender extends Component {
         memoryList.add(sellMemory);
     }
 
+    @Deprecated
     public void getMemoriesOld(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
             String categoryTitle, Map<String, List<Double>> recommendBuySell, Map<String, List<List<Double>>> categoryValueMap, Integer usedsec,
             boolean doSave, List<MemoryItem> memoryList, Set<Double> changeSet,

@@ -19,6 +19,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
+import roart.component.model.MLIndicatorParam;
 import roart.config.IclijXMLConfig;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
@@ -157,12 +158,11 @@ public class ComponentMLIndicator extends Component {
         return retMap;
     }
 
-    public List<MemoryItem> calculateMLindicator(String market, int futuredays, LocalDate baseDate, LocalDate futureDate, double threshold,
-            Map<String, List<Object>> resultMap, int size0, Map<String, List<List<Double>>> categoryValueMap, List<ResultMeta> resultMeta, String categoryTitle, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
+    public List<MemoryItem> calculateMLindicator(MLIndicatorParam param) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;
         int count = 0;
-        for (ResultMeta meta : resultMeta) {
+        for (ResultMeta meta : param.getResultMeta()) {
             MemoryItem memory = new MemoryItem();
             int returnSize = (int) meta.getReturnSize();
             Double testaccuracy = (Double) meta.getTestAccuracy();
@@ -171,8 +171,8 @@ public class ComponentMLIndicator extends Component {
             Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
             Map<String, Integer> countMapClass = (Map<String, Integer>) meta.get(7);
              */
-            Map<String, Integer> countMapLearn = (Map<String, Integer>) resultMeta.get(count).getLearnMap();
-            Map<String, Integer> countMapClass = (Map<String, Integer>) resultMeta.get(count).getClassifyMap();
+            Map<String, Integer> countMapLearn = (Map<String, Integer>) param.getResultMeta().get(count).getLearnMap();
+            Map<String, Integer> countMapClass = (Map<String, Integer>) param.getResultMeta().get(count).getClassifyMap();
             long total = 0;
             long goodTP = 0;
             long goodFP = 0;
@@ -186,21 +186,21 @@ public class ComponentMLIndicator extends Component {
             double goodFPprob = 0;
             double goodTNprob = 0;
             double goodFNprob = 0;
-            int size = resultMap.values().iterator().next().size();
-            for (String key : categoryValueMap.keySet()) {
-                List<List<Double>> resultList = categoryValueMap.get(key);
+            int size = param.getResultMap().values().iterator().next().size();
+            for (String key : param.getCategoryValueMap().keySet()) {
+                List<List<Double>> resultList = param.getCategoryValueMap().get(key);
                 List<Double> mainList = resultList.get(0);
                 if (mainList == null) {
                     continue;
                 }
                 //int offset = (int) offsetMap.get(key)[0];
                 Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() - 1 - futuredays);
+                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays());
                 if (valFuture == null || valNow == null) {
                     continue;
                 }
-                boolean incThreshold = (valFuture / valNow - 1) >= threshold;
-                List<Object> list = resultMap.get(key);
+                boolean incThreshold = (valFuture / valNow - 1) >= param.getThreshold();
+                List<Object> list = param.getResultMap().get(key);
                 if (list == null) {
                     continue;
                 }
@@ -242,14 +242,14 @@ public class ComponentMLIndicator extends Component {
                 }
             }
             //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
-            memory.setMarket(market);
+            memory.setMarket(param.getMarket());
             memory.setRecord(LocalDate.now());
-            memory.setDate(baseDate);
-            memory.setUsedsec(usedsec);
-            memory.setFuturedays(futuredays);
-            memory.setFuturedate(futureDate);
+            memory.setDate(param.getBaseDate());
+            memory.setUsedsec(param.getUsedsec());
+            memory.setFuturedays(param.getFuturedays());
+            memory.setFuturedate(param.getFutureDate());
             memory.setComponent(PipelineConstants.MLINDICATOR);
-            memory.setCategory(categoryTitle);
+            memory.setCategory(param.getCategoryTitle());
             memory.setSubcomponent(meta.getMlName() + ", " + meta.getModelName() + ", " + meta.getSubType() + ", " + meta.getSubSubType());
             memory.setTestaccuracy(testaccuracy);
             //memory.setPositives(goodInc);
@@ -322,10 +322,10 @@ public class ComponentMLIndicator extends Component {
             memory.setConfidence(conf);
             memory.setLearnConfidence(learnConfidence);
             memory.setPosition(count);
-            if (doSave) {
+            if (param.isDoSave()) {
                 memory.save();
             }
-            if (doPrint) {
+            if (param.isDoPrint()) {
             memoryList.add(memory);
             }
             System.out.println(memory);

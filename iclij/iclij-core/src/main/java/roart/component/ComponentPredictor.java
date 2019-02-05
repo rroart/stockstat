@@ -13,6 +13,7 @@ import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.component.model.PredictorParam;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
@@ -46,22 +47,20 @@ public class ComponentPredictor extends Component {
         return new HashMap<>();        
     }
 
-    public List<MemoryItem> calculatePredictor(String market, int futuredays, LocalDate baseDate, LocalDate futureDate,
-            String categoryTitle, Map<String, List<Double>> resultMap,
-            Map<String, List<List<Double>>> categoryValueMap, Integer usedsec, boolean doSave, boolean doPrint) throws Exception {
+    public List<MemoryItem> calculatePredictor(PredictorParam param) throws Exception {
         List<MemoryItem> memoryList = new ArrayList<>();
         long total = 0;
         long goodInc = 0;
         long goodDec = 0;
         long totalInc = 0;
         long totalDec = 0;
-        for (String key : categoryValueMap.keySet()) {
-            List<List<Double>> resultList = categoryValueMap.get(key);
+        for (String key : param.getCategoryValueMap().keySet()) {
+            List<List<Double>> resultList = param.getCategoryValueMap().get(key);
             List<Double> mainList = resultList.get(0);
             if (mainList != null) {
                 Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() -1 - futuredays);
-                List<Double> predFutureList = resultMap.get(key);
+                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays());
+                List<Double> predFutureList = param.getResultMap().get(key);
                 if (predFutureList == null) {
                     continue;
                 }
@@ -85,38 +84,38 @@ public class ComponentPredictor extends Component {
         }
         //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
         MemoryItem incMemory = new MemoryItem();
-        incMemory.setMarket(market);
+        incMemory.setMarket(param.getMarket());
         incMemory.setRecord(LocalDate.now());
-        incMemory.setDate(baseDate);
-        incMemory.setUsedsec(usedsec);
-        incMemory.setFuturedays(futuredays);
-        incMemory.setFuturedate(futureDate);
+        incMemory.setDate(param.getBaseDate());
+        incMemory.setUsedsec(param.getUsedsec());
+        incMemory.setFuturedays(param.getFuturedays());
+        incMemory.setFuturedate(param.getFutureDate());
         incMemory.setComponent(PipelineConstants.PREDICTORSLSTM);
         incMemory.setSubcomponent("inc");
-        incMemory.setCategory(categoryTitle);
+        incMemory.setCategory(param.getCategoryTitle());
         incMemory.setPositives(goodInc);
         incMemory.setSize(total);
         incMemory.setConfidence((double) goodInc / totalInc);
-        if (doSave) {
+        if (param.isDoSave()) {
             incMemory.save();
         }
         MemoryItem decMemory = new MemoryItem();
-        decMemory.setMarket(market);
+        decMemory.setMarket(param.getMarket());
         decMemory.setRecord(LocalDate.now());
-        decMemory.setDate(baseDate);
-        decMemory.setUsedsec(usedsec);
-        decMemory.setFuturedays(futuredays);
-        decMemory.setFuturedate(futureDate);
+        decMemory.setDate(param.getBaseDate());
+        decMemory.setUsedsec(param.getUsedsec());
+        decMemory.setFuturedays(param.getFuturedays());
+        decMemory.setFuturedate(param.getFutureDate());
         decMemory.setComponent(PipelineConstants.PREDICTORSLSTM);
         decMemory.setSubcomponent("dec");
-        decMemory.setCategory(categoryTitle);
+        decMemory.setCategory(param.getCategoryTitle());
         decMemory.setPositives(goodDec);
         decMemory.setSize(total);
         decMemory.setConfidence((double) goodDec / totalDec);
-        if (doSave) {
+        if (param.isDoSave()) {
             decMemory.save();
         }
-        if (doPrint) {
+        if (param.isDoPrint()) {
         System.out.println(incMemory);
         System.out.println(decMemory);
         }
