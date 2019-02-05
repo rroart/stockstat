@@ -23,7 +23,7 @@ public abstract class RecommendMACD extends Recommend {
             return usedIndicatorMap.get(indicator());
         }
 
-        AbstractIndicator indicator = new IndicatorMACD(conf, null, marketdatamap, null, null, category, datareaders, false);
+        AbstractIndicator indicator = new IndicatorMACD(conf, null, null, category, datareaders, false);
         
         if (newIndicatorMap != null) {
             newIndicatorMap.put(indicator(), indicator);

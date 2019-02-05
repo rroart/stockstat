@@ -16,8 +16,6 @@ import roart.db.dao.DbDao;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.model.StockItem;
-import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
 
 public class Indicator extends AbstractIndicator {
@@ -64,7 +62,7 @@ public class Indicator extends AbstractIndicator {
         for (Entry<String, Map<String, double[][]>> entry : marketListMap.entrySet()) {
             String market = entry.getKey();
             Map<String, double[][]> myTruncListMap = entry.getValue();
-            List<Map> resultList = getMarketCalcResults(conf, dbDao, myTruncListMap);
+            List<Map> resultList = getMarketCalcResults(dbDao, myTruncListMap);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
             }
@@ -78,8 +76,7 @@ public class Indicator extends AbstractIndicator {
     }
 
     // TODO make an oo version of this
-    protected void calculateAll(MyMyConfig conf, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, int category, Pipeline[] datareaders) throws Exception {
+    protected void calculateAll(int category, Pipeline[] datareaders) throws Exception {
         DbAccess dbDao = DbDao.instance(conf);
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         Pipeline datareader = pipelineMap.get("" + category);
@@ -93,13 +90,13 @@ public class Indicator extends AbstractIndicator {
             log.info("empty {}", key);
             return;
         }
-        List<Map> resultList = getMarketCalcResults(conf, dbDao, truncListMap);
+        List<Map> resultList = getMarketCalcResults(dbDao, truncListMap);
         objectMap = resultList.get(0);
         calculatedMap = resultList.get(1);
         resultMap = resultList.get(2);
     }
 
-    protected List getMarketCalcResults(MyMyConfig conf, DbAccess dbDao, Map<String, double[][]> truncListMap) {
+    protected List getMarketCalcResults(DbAccess dbDao, Map<String, double[][]> truncListMap) {
         List<Map> resultList = new ArrayList<>();
         if (truncListMap == null || truncListMap.isEmpty()) {
             return resultList;
@@ -113,7 +110,7 @@ public class Indicator extends AbstractIndicator {
         log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
         log.info("listmap {} {}", truncListMap.size(), truncListMap.keySet());
-        Map<String, Double[]> myCalculatedMap = getCalculatedMap(conf, myObjectMap, truncListMap);
+        Map<String, Double[]> myCalculatedMap = getCalculatedMap(myObjectMap, truncListMap);
 
         Map<String, Object[]> myResultMap = getResultMap(conf, myObjectMap, myCalculatedMap);
         log.info("time1 {}", (System.currentTimeMillis() - time1));
@@ -130,12 +127,12 @@ public class Indicator extends AbstractIndicator {
     }
 
     @Override
-    protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
+    protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
         return null;
     }
 
     @Override
-    protected void getFieldResult(MyMyConfig conf, Double[] momentum, Object[] fields) {
+    protected void getFieldResult(Double[] momentum, Object[] fields) {
     }
 
 }

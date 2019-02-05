@@ -5,6 +5,7 @@ import java.util.List;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.RecommendConstants;
 
 public class RSIRecommendSimple extends RecommendRSI {
     

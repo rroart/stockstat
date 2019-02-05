@@ -33,7 +33,7 @@ public class AggregatorMLIndicatorRSI extends AggregatorMLIndicator {
             return usedIndicatorMap.get(indicator());
         }
 
-        AbstractIndicator indicator = new IndicatorRSI(conf, null, marketdatamap, null, null, category, datareaders, false);
+        AbstractIndicator indicator = new IndicatorRSI(conf, null, null, category, datareaders, false);
         
         if (newIndicatorMap != null) {
             newIndicatorMap.put(indicator(), indicator);

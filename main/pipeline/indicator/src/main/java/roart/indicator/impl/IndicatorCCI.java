@@ -6,20 +6,16 @@ import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
-import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.talib.util.TaUtil;
 
 public class IndicatorCCI extends Indicator {
 
-   public IndicatorCCI(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
+   public IndicatorCCI(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
-        this.marketdatamap = marketdatamap;
-        this.periodDataMap = periodDataMap;
         this.key = title;
         fieldSize = fieldSize();
         if (isEnabled() && !onlyExtra) {
-            calculateAll(conf, marketdatamap, periodDataMap, category, datareaders);
+            calculateAll(category, datareaders);
         }
         if (wantForExtras()) {
             calculateForExtras(datareaders);
@@ -52,14 +48,14 @@ public class IndicatorCCI extends Indicator {
     }
 
     @Override
-    protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
+    protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
         return tu.getRsiAndDelta(conf.getCCIDeltaDays(), objs);
     }
 
     @Override
-    protected void getFieldResult(MyMyConfig conf, Double[] result, Object[] fields) {
+    protected void getFieldResult(Double[] result, Object[] fields) {
         TaUtil tu = new TaUtil();
         tu.getRSIAndDelta(conf.isCCIDeltaEnabled(),  result, fields);
     }

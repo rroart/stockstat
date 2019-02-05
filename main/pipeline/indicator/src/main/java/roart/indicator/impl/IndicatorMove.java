@@ -42,7 +42,7 @@ public class IndicatorMove extends Indicator {
     }
 
     @Override
-    protected void getFieldResult(MyMyConfig conf, Double[] result, Object[] fields) {
+    protected void getFieldResult(Double[] result, Object[] fields) {
     }
 
     @Override
@@ -58,7 +58,7 @@ public class IndicatorMove extends Indicator {
     }
 
     @Override
-    protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
+    protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
         return null;
     }
 

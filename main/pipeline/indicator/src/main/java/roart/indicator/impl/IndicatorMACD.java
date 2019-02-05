@@ -8,22 +8,18 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.Constants;
 import roart.ml.common.MLClassifyModel;
 import roart.pipeline.Pipeline;
-import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.talib.util.TaUtil;
 
 public class IndicatorMACD extends Indicator {
 
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
     
-    public IndicatorMACD(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
+    public IndicatorMACD(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
-        this.marketdatamap = marketdatamap;
-        this.periodDataMap = periodDataMap;
-        this.key = title;
+       this.key = title;
         fieldSize = fieldSize();
         if (isEnabled() && !onlyExtra) {
-            calculateAll(conf, marketdatamap, periodDataMap, category, datareaders);
+            calculateAll(category, datareaders);
         }
         if (wantForExtras()) {
             calculateForExtras(datareaders);
@@ -68,14 +64,14 @@ public class IndicatorMACD extends Indicator {
     }
 
     @Override
-    protected Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id) {
+    protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
         return tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs);
     }
 
     @Override
-    protected void getFieldResult(MyMyConfig conf, Double[] momentum, Object[] fields) {
+    protected void getFieldResult(Double[] momentum, Object[] fields) {
         TaUtil tu = new TaUtil();
         tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
     }

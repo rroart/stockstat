@@ -415,10 +415,10 @@ public class IndicatorUtils {
         }
         // TODO make indicator factory
         if (indicatorSet.add(PipelineConstants.INDICATORMACD) && conf.wantAggregatorsIndicatorExtrasMACD()) {
-            allIndicators.add(new IndicatorMACD(conf, null, null, null, null, 42, datareaders, true));       
+            allIndicators.add(new IndicatorMACD(conf, null, null, 42, datareaders, true));       
         }
         if (indicatorSet.add(PipelineConstants.INDICATORRSI) && conf.wantAggregatorsIndicatorExtrasRSI()) {
-            allIndicators.add(new IndicatorRSI(conf, null, null, null, null, 42, datareaders, true));       
+            allIndicators.add(new IndicatorRSI(conf, null, null, 42, datareaders, true));       
         }
     }
 

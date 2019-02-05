@@ -31,8 +31,6 @@ public abstract class AbstractIndicator extends Calculatable {
     protected MyMyConfig conf;
     protected String key;
     protected int fieldSize = 0;
-    protected Map<String, MarketData> marketdatamap;
-    protected Map<String, PeriodData> periodDataMap;
     protected Object[] emptyField;
 
     protected Map<String, Double[][]> listMap;
@@ -55,8 +53,8 @@ public abstract class AbstractIndicator extends Calculatable {
     }
 
     public abstract boolean isEnabled();
-    protected abstract Double[] getCalculated(MyMyConfig conf, Map<String, Object[]> objectMap, String id);
-    protected abstract void getFieldResult(MyMyConfig conf, Double[] momentum, Object[] fields);
+    protected abstract Double[] getCalculated(Map<String, Object[]> objectMap, String id);
+    protected abstract void getFieldResult(Double[] momentum, Object[] fields);
 
     public Object[] getResultItemTitle() {
         Object[] titleArray = new Object[1];
@@ -148,10 +146,10 @@ public abstract class AbstractIndicator extends Calculatable {
         return false;
     }
 
-    protected Map<String, Double[]> getCalculatedMap(MyMyConfig conf, Map<String, Object[]> objectMap, Map<String, double[][]> truncListMap) {
+    protected Map<String, Double[]> getCalculatedMap(Map<String, Object[]> objectMap, Map<String, double[][]> truncListMap) {
         Map<String, Double[]> result = new HashMap<>();
         for (String id : truncListMap.keySet()) {
-            Double[] calculated = getCalculated(conf, objectMap, id);
+            Double[] calculated = getCalculated(objectMap, id);
             if (calculated != null) {
                 result.put(id, calculated);
                 // TODO and continue?
@@ -174,7 +172,7 @@ public abstract class AbstractIndicator extends Calculatable {
             if (momentum == null) {
                 log.info("zero mom for id {}", id);
             }
-            getFieldResult(conf, momentum, fields);
+            getFieldResult(momentum, fields);
         }
         return result;
     }
@@ -185,11 +183,6 @@ public abstract class AbstractIndicator extends Calculatable {
         Pair<String, String> pair = new Pair<>(market, id);
         Set<Pair<String, String>> ids = new HashSet<>();
         ids.add(pair);
-        String periodstr = key;
-        PeriodData perioddata = periodDataMap.get(periodstr);
-        if (perioddata == null) {
-            log.info("key {} {}", key, periodDataMap.keySet());
-        }
         if (resultMap == null) {
             return emptyField;
         }

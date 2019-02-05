@@ -36,12 +36,12 @@ public class CategoryPrice extends Category {
         this.periodDataMap = periodDataMap;
         period = Constants.PRICECOLUMN;
         createResultMap(conf, stocks);
-        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorATR(conf, getTitle() + " ATR", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), Constants.PRICECOLUMN, datareaders, false));
+        indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), Constants.PRICECOLUMN, datareaders, false));
         predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN));
         createIndicatorMap(Constants.PRICE);
     }
