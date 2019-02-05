@@ -1,7 +1,6 @@
 package roart.iclij.config;
 
 public class IclijConfigConstants {
-    public static final String AUTORUN = "autorun[@enable]";
     public static final String EVOLVE = "evolve";
     public static final String EVOLVEINDICATORRECOMMENDER = "evolve.indicatorrecommender[@enable]";
     public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
@@ -16,10 +15,16 @@ public class IclijConfigConstants {
     public static final String EVOLVEMLTENSORFLOWSERVER = "evolve.ml.tensorflowserver";
     public static final String MPSERVERCPU = "mp.server.cpu";
     public static final String MPCLIENTCPU = "mp.client.cpu";
-    public static final String RECOMMENDERRECOMMENDER = "recommender.recommender[@enable]";
-    public static final String RECOMMENDERMLMACD = "recommender.mlmacd[@enable]";
-    public static final String RECOMMENDERMLINDICATOR = "recommender.mlindicator[@enable]";
-    public static final String RECOMMENDERPREDICTOR = "recommender.predictor[@enable]";
+    public static final String FINDPROFITAUTORUN = "findprofit.autorun[@enable]";
+    public static final String FINDPROFITRECOMMENDER = "findprofit.recommender[@enable]";
+    public static final String FINDPROFITMLMACD = "findprofit.mlmacd[@enable]";
+    public static final String FINDPROFITMLINDICATOR = "findprofit.mlindicator[@enable]";
+    public static final String FINDPROFITPREDICTOR = "findprofit.predictor[@enable]";
+    public static final String IMPROVEPROFITAUTORUN = "improveprofit.autorun[@enable]";
+    public static final String IMPROVEPROFITRECOMMENDER = "improveprofit.recommender[@enable]";
+    public static final String IMPROVEPROFITMLMACD = "improveprofit.mlmacd[@enable]";
+    public static final String IMPROVEPROFITMLINDICATOR = "improveprofit.mlindicator[@enable]";
+    public static final String IMPROVEPROFITPREDICTOR = "improveprofit.predictor[@enable]";
     public static final String SINGLEMARKETLOOPS = "singlemarket.loops";
     public static final String SINGLEMARKETLOOPINTERVAL = "singlemarket.loopinterval";
     public static final String VERIFICATION = "verification[@enable]";
@@ -28,6 +33,7 @@ public class IclijConfigConstants {
     public static final String VERIFICATIONLOOPS = "verification.loops";
     public static final String VERIFICATIONLOOPINTERVAL = "verification.loopinterval";
     public static final String VERIFICATIONRECOMMENDERTOPBOTTOM = "verification.recommender.topbottom";
+    @Deprecated
     public static final String VERIFICATIONIMPROVEPROFIT = "verification.improveprofit[@enable]";
     public static final String MARKETSMARKETLISTMARKET = "markets.marketlist.market";
     public static final String MARKETSTRADEMARKETSMARKET = "markets.trademarkets.trademarket";

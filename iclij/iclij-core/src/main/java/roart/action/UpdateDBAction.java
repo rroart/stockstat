@@ -25,18 +25,35 @@ public class UpdateDBAction extends Action {
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    private List<String> getComponents(IclijConfig config) {
+    private List<String> getFindProfitComponents(IclijConfig config) {
         List<String> components = new ArrayList<>();
-        if (config.wantsRecommender()) {
+        if (config.wantsFindProfitRecommender()) {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         }
-        if (config.wantsPredictor()) {
+        if (config.wantsFindProfitPredictor()) {
             components.add(PipelineConstants.PREDICTORSLSTM);
         }
-        if (config.wantsMLIndicator()) {
+        if (config.wantsFindProfitMLIndicator()) {
             components.add(PipelineConstants.MLMACD);
         }
-        if (config.wantsMLIndicator()) {
+        if (config.wantsFindProfitMLIndicator()) {
+            components.add(PipelineConstants.MLINDICATOR);
+        }
+        return components;
+    }
+
+    private List<String> getImproveProfitComponents(IclijConfig config) {
+        List<String> components = new ArrayList<>();
+        if (config.wantsImproveProfitRecommender()) {
+            components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        }
+        if (config.wantsImproveProfitPredictor()) {
+            components.add(PipelineConstants.PREDICTORSLSTM);
+        }
+        if (config.wantsImproveProfitMLIndicator()) {
+            components.add(PipelineConstants.MLMACD);
+        }
+        if (config.wantsImproveProfitMLIndicator()) {
             components.add(PipelineConstants.MLINDICATOR);
         }
         return components;
@@ -94,7 +111,7 @@ public class UpdateDBAction extends Action {
                 log.error("Marketmemory null for {}", market.getMarket());
                 continue;
             }
-            for (String component : getComponents(instance)) {
+            for (String component : getFindProfitComponents(instance)) {
                 List<MemoryItem> marketComponents = marketMemory.stream().filter(m -> component.equals(m.getComponent())).collect(Collectors.toList());
                 Collections.sort(marketComponents, (o1, o2) -> (o2.getRecord().compareTo(o1.getRecord())));
                 if (marketComponents == null || marketComponents.isEmpty()) {
@@ -133,7 +150,7 @@ public class UpdateDBAction extends Action {
                 log.info("Using offset {}", startOffset);
                 days += startOffset;
             }
-            for (String component : getComponents(config)) {
+            for (String component : getImproveProfitComponents(config)) {
                 ServiceAction serviceAction = new ComponentFactory().factory(market.getMarket(), component);
                 if (serviceAction != null) {
                     serviceAction.setDate(date);

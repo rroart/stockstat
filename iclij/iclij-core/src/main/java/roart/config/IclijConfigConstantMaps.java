@@ -14,7 +14,6 @@ public class IclijConfigConstantMaps {
         if (!map.isEmpty()) {
             return;
         }
-        map.put(IclijConfigConstants.AUTORUN, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEML, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEMLDNN, Boolean.class);
@@ -28,10 +27,16 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.MPSERVERCPU, Double.class);
         map.put(IclijConfigConstants.MPCLIENTCPU, Double.class);
-        map.put(IclijConfigConstants.RECOMMENDERMLINDICATOR, Boolean.class);
-        map.put(IclijConfigConstants.RECOMMENDERMLMACD, Boolean.class);
-        map.put(IclijConfigConstants.RECOMMENDERRECOMMENDER, Boolean.class);
-        map.put(IclijConfigConstants.RECOMMENDERPREDICTOR, Boolean.class);
+        map.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.class);
+        map.put(IclijConfigConstants.FINDPROFITMLINDICATOR, Boolean.class);
+        map.put(IclijConfigConstants.FINDPROFITMLMACD, Boolean.class);
+        map.put(IclijConfigConstants.FINDPROFITRECOMMENDER, Boolean.class);
+        map.put(IclijConfigConstants.FINDPROFITPREDICTOR, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITMLMACD, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, Boolean.class);
         map.put(IclijConfigConstants.SINGLEMARKETLOOPS, Integer.class);
         map.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, Integer.class);
         map.put(IclijConfigConstants.VERIFICATION, Boolean.class);
@@ -54,7 +59,6 @@ public class IclijConfigConstantMaps {
         if (!deflt.isEmpty()) {
             return;
         }
-        deflt.put(IclijConfigConstants.AUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.EVOLVEML, Boolean.FALSE);
         deflt.put(IclijConfigConstants.EVOLVEMLDNN, Boolean.TRUE);
@@ -68,10 +72,16 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, "http://localhost:8000");
         deflt.put(IclijConfigConstants.MPSERVERCPU, 0.5);
         deflt.put(IclijConfigConstants.MPCLIENTCPU, 0.5);
-        deflt.put(IclijConfigConstants.RECOMMENDERMLINDICATOR, Boolean.TRUE);
-        deflt.put(IclijConfigConstants.RECOMMENDERMLMACD, Boolean.TRUE);
-        deflt.put(IclijConfigConstants.RECOMMENDERRECOMMENDER, Boolean.TRUE);
-        deflt.put(IclijConfigConstants.RECOMMENDERPREDICTOR, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.FINDPROFITMLINDICATOR, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.FINDPROFITMLMACD, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.FINDPROFITRECOMMENDER, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.FINDPROFITPREDICTOR, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITMLMACD, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPS, 5);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, 20);
         deflt.put(IclijConfigConstants.VERIFICATION, Boolean.TRUE);
@@ -89,7 +99,6 @@ public class IclijConfigConstantMaps {
         if (!text.isEmpty()) {
             return;
         }
-        text.put(IclijConfigConstants.AUTORUN, "Enable autorun");
         text.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, "Enable evolution generated recommender settings");
         text.put(IclijConfigConstants.EVOLVEML, "Enable evolution generated ml configs");
         text.put(IclijConfigConstants.EVOLVEMLDNN, "Enable evolution generated ml DNNconfigs");
@@ -103,10 +112,16 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "Indicator recommender GP config");
         text.put(IclijConfigConstants.MPSERVERCPU, "Server cpu usage");
         text.put(IclijConfigConstants.MPCLIENTCPU, "Client cpu usage");
-        text.put(IclijConfigConstants.RECOMMENDERMLINDICATOR, "Enable recommender mlindicator");
-        text.put(IclijConfigConstants.RECOMMENDERMLMACD, "Enable recommender mlmacd");
-        text.put(IclijConfigConstants.RECOMMENDERRECOMMENDER, "Enable recommender evolution based");
-        text.put(IclijConfigConstants.RECOMMENDERPREDICTOR, "Enable recommender predictor");
+        text.put(IclijConfigConstants.FINDPROFITAUTORUN, "Enable find profit autorun");
+        text.put(IclijConfigConstants.FINDPROFITMLINDICATOR, "Enable find profit mlindicator");
+        text.put(IclijConfigConstants.FINDPROFITMLMACD, "Enable find profift mlmacd");
+        text.put(IclijConfigConstants.FINDPROFITRECOMMENDER, "Enable find profit evolution based");
+        text.put(IclijConfigConstants.FINDPROFITPREDICTOR, "Enable find profit predictor");
+        text.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, "Enable improve profit autorun");
+        text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, "Enable improve profit mlindicator");
+        text.put(IclijConfigConstants.IMPROVEPROFITMLMACD, "Enable improve profit mlmacd");
+        text.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, "Enable improve profit evolution based");
+        text.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, "Enable improve profit predictor");
         text.put(IclijConfigConstants.SINGLEMARKETLOOPS, "Single market loops");
         text.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, "Single market loop interval");
         text.put(IclijConfigConstants.VERIFICATION, "Enable verification");
@@ -136,7 +151,6 @@ public class IclijConfigConstantMaps {
     
     public static Map<String, IclijXMLType> mymap = new HashMap<>();
     public static void makeMap() {
-        mymap.put(IclijConfigConstants.AUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable autorun"));
         mymap.put(IclijConfigConstants.EVOLVE, new IclijXMLType(null, null, null));
         mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolution generated recommender settings"));
         mymap.put(IclijConfigConstants.EVOLVEML, new IclijXMLType(Boolean.class, Boolean.FALSE, "Evolve ML enable"));
@@ -151,10 +165,16 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ 'generations' : 10, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 4, 'mutate' : 2, 'generationcreate' : 1 }", "Indicator recommender GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
         mymap.put(IclijConfigConstants.MPSERVERCPU, new IclijXMLType(Double.class, 0.5, "Server cpu usage"));
         mymap.put(IclijConfigConstants.MPCLIENTCPU, new IclijXMLType(Double.class, 0.5, "Client cpu usage"));
-        mymap.put(IclijConfigConstants.RECOMMENDERMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable recommender mlindicator"));
-        mymap.put(IclijConfigConstants.RECOMMENDERMLMACD, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable recommender mlmacd"));
-        mymap.put(IclijConfigConstants.RECOMMENDERRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable recommender evolution based"));
-        mymap.put(IclijConfigConstants.RECOMMENDERPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable recommender predictor"));
+        mymap.put(IclijConfigConstants.FINDPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit autorun"));
+        mymap.put(IclijConfigConstants.FINDPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable find profit mlindicator"));
+        mymap.put(IclijConfigConstants.FINDPROFITMLMACD, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable find profit mlmacd"));
+        mymap.put(IclijConfigConstants.FINDPROFITRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable find profit evolution based"));
+        mymap.put(IclijConfigConstants.FINDPROFITPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit predictor"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit autorun"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlindicator"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITMLMACD, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlmacd"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit evolution based"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit predictor"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPS, new IclijXMLType(Integer.class, 5, "Single market loops"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, new IclijXMLType(Integer.class, 20, "Single market loop interval"));
         mymap.put(IclijConfigConstants.VERIFICATION, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable verification"));

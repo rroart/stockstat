@@ -97,10 +97,6 @@ public class IclijConfig {
         this.conv = conv;
     }
 
-    public boolean wantsAutorun() {
-        return (Boolean) getValueOrDefault(IclijConfigConstants.AUTORUN);
-    }
-
     public double mpServerCpu() {
         return (Double) getValueOrDefault(IclijConfigConstants.MPSERVERCPU);
     }
@@ -109,20 +105,44 @@ public class IclijConfig {
         return (Double) getValueOrDefault(IclijConfigConstants.MPCLIENTCPU);
     }
 
-    public boolean wantsMLMACD() {
-        return (Boolean) getValueOrDefault(IclijConfigConstants.RECOMMENDERMLMACD);
+    public boolean wantsFindProfitAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITAUTORUN);
     }
 
-    public boolean wantsMLIndicator() {
-        return (Boolean) getValueOrDefault(IclijConfigConstants.RECOMMENDERMLINDICATOR);
+    public boolean wantsFindProfitMLMACD() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLMACD);
     }
 
-    public boolean wantsRecommender() {
-        return (Boolean) getValueOrDefault(IclijConfigConstants.RECOMMENDERRECOMMENDER);
+    public boolean wantsFindProfitMLIndicator() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLINDICATOR);
     }
 
-    public boolean wantsPredictor() {
-        return (Boolean) getValueOrDefault(IclijConfigConstants.RECOMMENDERPREDICTOR);
+    public boolean wantsFindProfitRecommender() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITRECOMMENDER);
+    }
+
+    public boolean wantsFindProfitPredictor() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITPREDICTOR);
+    }
+
+    public boolean wantsImproveProfitAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITAUTORUN);
+    }
+
+    public boolean wantsImproveProfitMLMACD() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLMACD);
+    }
+
+    public boolean wantsImproveProfitMLIndicator() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLINDICATOR);
+    }
+
+    public boolean wantsImproveProfitRecommender() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITRECOMMENDER);
+    }
+
+    public boolean wantsImproveProfitPredictor() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITPREDICTOR);
     }
 
     public int singlemarketLoops() {
@@ -133,6 +153,7 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL);
     }
 
+    @Deprecated
     public boolean wantsImproveProfit() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT);
     }

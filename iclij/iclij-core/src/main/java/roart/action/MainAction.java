@@ -15,8 +15,10 @@ import roart.service.ControlService;
 public class MainAction extends Action {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     public static Action updateDBACtion;
+
+    @SuppressWarnings("squid:S2189")
     @Override
     public void goal(Action parent) throws InterruptedException {
         IclijXMLConfig.getConfigInstance();
@@ -44,8 +46,12 @@ public class MainAction extends Action {
                     addIfNotContaining(updateDBACtion);
                 }
                 if (getGoals().isEmpty()) {
-                    getGoals().add(new FindProfitAction());
-                    getGoals().add(new ImproveProfitAction());  
+                    if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() ) {        
+                        getGoals().add(new FindProfitAction());
+                    }
+                    if (IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
+                        getGoals().add(new ImproveProfitAction());
+                    }
                 }
             }
             if (getGoals().isEmpty()) {
@@ -60,7 +66,7 @@ public class MainAction extends Action {
             }
         }
     }
-    
+
     public void addIfNotContaining(Action action) {
         if (!getGoals().contains(action)) {
             getGoals().add(action);
