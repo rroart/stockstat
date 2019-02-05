@@ -6,6 +6,8 @@ W: Work
 C: Change
 
 Iclij
+F: use other new indicators
+B: restart interrupted find profit
 WF: Start with no recent data, then most time spenders.
 F: icli result with config data
 WB: icli web sendme null
@@ -58,6 +60,8 @@ F: Recommender combine keys/improveaction?
 B: improvement lack srv. setdate
 
 Core
+F: use other new indicators
+C: rename calcnode to gene
 F: ML use test result
 T: MLPredictModel addtitles deprecate
 T: mlmacd mlindicator anythinghere better heuristics?
