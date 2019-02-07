@@ -149,7 +149,7 @@ public class ComponentMLIndicator extends Component {
                 for(MemoryItem memory : memories) {
                     newConfidenceList.add(memory.getConfidence());
                 }
-                log.info("New confidences []", newConfidenceList);
+                log.info("New confidences {}", newConfidenceList);
                 retMap.put(key, newConfidenceList.toString());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -326,9 +326,9 @@ public class ComponentMLIndicator extends Component {
                 memory.save();
             }
             if (param.isDoPrint()) {
-            memoryList.add(memory);
+                System.out.println(memory);
             }
-            System.out.println(memory);
+            memoryList.add(memory);
             resultIndex += returnSize;
             count++;
         }
