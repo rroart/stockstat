@@ -33,7 +33,7 @@ public class UpdateDBAction extends Action {
         if (config.wantsFindProfitPredictor()) {
             components.add(PipelineConstants.PREDICTORSLSTM);
         }
-        if (config.wantsFindProfitMLIndicator()) {
+        if (config.wantsFindProfitMLMACD()) {
             components.add(PipelineConstants.MLMACD);
         }
         if (config.wantsFindProfitMLIndicator()) {
@@ -50,7 +50,7 @@ public class UpdateDBAction extends Action {
         if (config.wantsImproveProfitPredictor()) {
             components.add(PipelineConstants.PREDICTORSLSTM);
         }
-        if (config.wantsImproveProfitMLIndicator()) {
+        if (config.wantsImproveProfitMLMACD()) {
             components.add(PipelineConstants.MLMACD);
         }
         if (config.wantsImproveProfitMLIndicator()) {
