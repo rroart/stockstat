@@ -1,7 +1,11 @@
-package roart.calculate;
+package roart.gene;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import roart.gene.impl.CalcComplexGene;
+import roart.gene.impl.CalcDoubleGene;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(  
@@ -9,17 +13,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         include = JsonTypeInfo.As.PROPERTY,  
         property = "_class")  
 @JsonSubTypes({  
-    @Type(value = CalcComplexNode.class, name = "roart.calculate.CalcMACDNode"),  
-    @Type(value = CalcDoubleNode.class, name = "roart.calculate.CalcDoubleNode") })  
-public abstract class CalcNode {
-
-    public String className;
+    @Type(value = CalcComplexGene.class, name = "roart.gene.impl.CalcMACDNode"),  
+    @Type(value = CalcDoubleGene.class, name = "roart.gene.impl.CalcDoubleNode") })  
+public abstract class CalcGene extends AbstractGene {
 
     public abstract double calc(double value, double minmaxthreshold);
 
-    public abstract void randomize();
-
-    public abstract void mutate();
-
-    public abstract CalcNode crossover(CalcNode other);
 }

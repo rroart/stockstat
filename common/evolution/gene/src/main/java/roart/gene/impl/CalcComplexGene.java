@@ -1,8 +1,11 @@
-package roart.calculate;
+package roart.gene.impl;
 
 import java.util.Random;
 
-public class CalcComplexNode extends CalcNode {
+import roart.gene.AbstractGene;
+import roart.gene.CalcGene;
+
+public class CalcComplexGene extends CalcGene {
 
     double minMutateThresholdRange;
     double maxMutateThresholdRange;
@@ -213,8 +216,8 @@ public class CalcComplexNode extends CalcNode {
     }
 
     @Override
-    public CalcNode crossover(CalcNode other) {
-        CalcComplexNode node = new CalcComplexNode();
+    public AbstractGene crossover(AbstractGene other) {
+        CalcComplexGene node = new CalcComplexGene();
         node.setMaxMutateThresholdRange(maxMutateThresholdRange);
         node.setMinMutateThresholdRange(minMutateThresholdRange);
         node.setUseminmaxthreshold(useminmaxthreshold);
@@ -222,17 +225,17 @@ public class CalcComplexNode extends CalcNode {
         if (rand.nextBoolean()) {
             node.setThreshold(threshold);
         } else {
-            node.setThreshold(((CalcComplexNode) other).getThreshold());
+            node.setThreshold(((CalcComplexGene) other).getThreshold());
         }
         if (rand.nextBoolean()) {
             node.setUseminmaxthreshold(useminmaxthreshold);
         } else {
-            node.setUseminmaxthreshold(((CalcComplexNode) other).isUseminmaxthreshold());            
+            node.setUseminmaxthreshold(((CalcComplexGene) other).isUseminmaxthreshold());            
         }
         if (rand.nextBoolean()) {
             node.setWeight(weight);
         } else {
-            node.setWeight(((CalcComplexNode) other).getWeight());            
+            node.setWeight(((CalcComplexGene) other).getWeight());            
         }
         return node;
     }

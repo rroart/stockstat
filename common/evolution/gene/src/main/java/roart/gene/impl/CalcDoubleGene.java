@@ -1,8 +1,11 @@
-package roart.calculate;
+package roart.gene.impl;
 
 import java.util.Random;
 
-public class CalcDoubleNode extends CalcNode {
+import roart.gene.AbstractGene;
+import roart.gene.CalcGene;
+
+public class CalcDoubleGene extends CalcGene {
 
     private int weight;
 
@@ -45,13 +48,13 @@ public class CalcDoubleNode extends CalcNode {
     }
 
     @Override
-    public CalcNode crossover(CalcNode other) {
-        CalcDoubleNode node = new CalcDoubleNode();
+    public AbstractGene crossover(AbstractGene other) {
+        CalcDoubleGene node = new CalcDoubleGene();
         Random rand = new Random();
         if (rand.nextBoolean()) {
             node.setWeight(weight);
         } else {
-            node.setWeight(((CalcDoubleNode) other).getWeight());
+            node.setWeight(((CalcDoubleGene) other).getWeight());
         }
         return node;
     }

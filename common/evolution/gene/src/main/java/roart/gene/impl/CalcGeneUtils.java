@@ -1,4 +1,4 @@
-package roart.calculate;
+package roart.gene.impl;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,8 +16,9 @@ import roart.common.ml.SparkOVRConfig;
 import roart.common.ml.TensorflowDNNConfig;
 import roart.common.ml.TensorflowDNNLConfig;
 import roart.common.ml.TensorflowLConfig;
+import roart.gene.CalcGene;
 
-public class CalcNodeUtils {
+public class CalcGeneUtils {
     public static void transformToNode(MyConfig conf, List<String> keys, boolean useMax, List<Double>[] minMax, List<String> disableList) throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         for (int i = 0; i < keys.size(); i++) {
@@ -27,11 +28,11 @@ public class CalcNodeUtils {
             }
             Object value = conf.getConfigValueMap().get(key);
             // this if is added to the original
-            if (value instanceof CalcNode) {
+            if (value instanceof CalcGene) {
                 continue;
             }
             if (value instanceof Integer) {
-                CalcNode anode = new CalcDoubleNode();
+                CalcGene anode = new CalcDoubleGene();
                 conf.getConfigValueMap().put(key, anode);
                 continue;
             }
@@ -39,15 +40,15 @@ public class CalcNodeUtils {
             if (jsonValue == null || jsonValue.isEmpty()) {
                 jsonValue = (String) conf.getDeflt().get(key);
             }
-            CalcNode anode;
-            CalcNode node;
+            CalcGene anode;
+            CalcGene node;
             if (jsonValue == null || jsonValue.isEmpty()) {
-                anode = new CalcComplexNode();
-                node = CalcNodeFactory.get(anode.className, jsonValue, minMax, i, useMax);
+                anode = new CalcComplexGene();
+                node = CalcGeneFactory.get(anode.className, jsonValue, minMax, i, useMax);
                 node.randomize();
             } else {
-                anode = mapper.readValue(jsonValue, CalcNode.class);
-                node = CalcNodeFactory.get(anode.className, jsonValue, minMax, i, useMax);
+                anode = mapper.readValue(jsonValue, CalcGene.class);
+                node = CalcGeneFactory.get(anode.className, jsonValue, minMax, i, useMax);
             }
             conf.getConfigValueMap().put(key, node);
         }
@@ -99,12 +100,12 @@ public class CalcNodeUtils {
             if (disableList.contains(key)) {
                 continue;
             }
-            CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
-            if (node instanceof CalcComplexNode) {
+            CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
+            if (node instanceof CalcComplexGene) {
                 String string = mapper.writeValueAsString(node);
                 conf.getConfigValueMap().put(key, string);
             } else {
-                CalcDoubleNode anode = (CalcDoubleNode) node;
+                CalcDoubleGene anode = (CalcDoubleGene) node;
                 conf.getConfigValueMap().put(key, anode.getWeight());
             }
         }

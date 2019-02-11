@@ -1,4 +1,4 @@
-package roart.calculate;
+package roart.gene.impl;
 
 import java.io.IOException;
 import java.util.List;
@@ -7,21 +7,21 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import roart.calculate.CalcComplexNode;
-import roart.calculate.CalcDoubleNode;
-import roart.calculate.CalcNode;
+import roart.gene.CalcGene;
+import roart.gene.impl.CalcComplexGene;
+import roart.gene.impl.CalcDoubleGene;
 
-public class CalcNodeFactory {
-    public static CalcNode get(String name, String jsonValue, List<Double>[] macdrsiMinMax, int index, boolean useMax) throws JsonParseException, JsonMappingException, IOException {
-        CalcComplexNode anode;
+public class CalcGeneFactory {
+    public static CalcGene get(String name, String jsonValue, List<Double>[] macdrsiMinMax, int index, boolean useMax) throws JsonParseException, JsonMappingException, IOException {
+        CalcComplexGene anode;
         if (name != null && name.equals("Double")) {
-            return new CalcDoubleNode();
+            return new CalcDoubleGene();
         }
         if (jsonValue == null) {
-            anode = new CalcComplexNode();
+            anode = new CalcComplexGene();
         } else {
             ObjectMapper mapper = new ObjectMapper();
-            anode = mapper.readValue(jsonValue, CalcComplexNode.class);
+            anode = mapper.readValue(jsonValue, CalcComplexGene.class);
         }
         if (macdrsiMinMax == null) {
             int jj = 0;
