@@ -19,17 +19,17 @@ import java.util.Set;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.calculate.CalcNodeFactory;
-import roart.calculate.CalcComplexNode;
-import roart.calculate.CalcDoubleNode;
-import roart.calculate.CalcNode;
-import roart.calculate.CalcNodeUtils;
 import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.AbstractScore;
 import roart.evolution.species.Individual;
+import roart.gene.CalcGene;
+import roart.gene.impl.CalcComplexGene;
+import roart.gene.impl.CalcDoubleGene;
+import roart.gene.impl.CalcGeneFactory;
+import roart.gene.impl.CalcGeneUtils;
 import roart.model.data.MarketData;
 
 public class IndicatorChromosome extends AbstractChromosome {
@@ -149,7 +149,7 @@ public class IndicatorChromosome extends AbstractChromosome {
                 if (conf.getConfigValueMap().get(key) instanceof Integer) {
                     int jj = 0;
                 }
-                CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
+                CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
                 double value = momrsi[i];
                 recommend += node.calc(value, 0); // (1 + change); // Math.pow(1 + change, 10);
                 count++;
@@ -183,7 +183,7 @@ public class IndicatorChromosome extends AbstractChromosome {
             if (disableList.contains(key)) {
                 continue;
             }
-            CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
+            CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
             node.mutate();
         }
     }
@@ -200,7 +200,7 @@ public class IndicatorChromosome extends AbstractChromosome {
             if (key.contains("simple")) {
                 name = "Double";
             }
-            CalcNode node = CalcNodeFactory.get(name, null, macdrsiMinMax, i, useMax);
+            CalcGene node = CalcGeneFactory.get(name, null, macdrsiMinMax, i, useMax);
             node.randomize();
             conf.getConfigValueMap().put(key, node);
         }
@@ -210,12 +210,12 @@ public class IndicatorChromosome extends AbstractChromosome {
     @Override
     public void transformToNode() throws JsonParseException, JsonMappingException, IOException {
         List<Double>[] minMax = (List<Double>[]) retObj[1];
-        CalcNodeUtils.transformToNode(conf, keys, useMax, minMax, disableList);
+        CalcGeneUtils.transformToNode(conf, keys, useMax, minMax, disableList);
     }
 
     @Override
     public void transformFromNode() throws JsonParseException, JsonMappingException, IOException {
-        CalcNodeUtils.transformFromNode(conf, keys, disableList);
+        CalcGeneUtils.transformFromNode(conf, keys, disableList);
     }
 
     @Override
@@ -225,13 +225,13 @@ public class IndicatorChromosome extends AbstractChromosome {
             if (disableList.contains(key)) {
                 continue;
             }
-            CalcNode anode = (CalcNode) conf.getConfigValueMap().get(key);
+            CalcGene anode = (CalcGene) conf.getConfigValueMap().get(key);
             int tmpNum = 0;
-            if (anode instanceof CalcComplexNode) {
-                CalcComplexNode node = (CalcComplexNode) anode;
+            if (anode instanceof CalcComplexGene) {
+                CalcComplexGene node = (CalcComplexGene) anode;
                 tmpNum = node.getWeight();
             } else {
-                CalcDoubleNode node = (CalcDoubleNode) anode;
+                CalcDoubleGene node = (CalcDoubleGene) anode;
                 tmpNum = node.getWeight();               
             }
             total += tmpNum;
@@ -240,14 +240,14 @@ public class IndicatorChromosome extends AbstractChromosome {
             if (disableList.contains(key) || total == 0) {
                 continue;
             }
-            CalcNode anode = (CalcNode) conf.getConfigValueMap().get(key);
+            CalcGene anode = (CalcGene) conf.getConfigValueMap().get(key);
             int tmpNum = 0;
-            if (anode instanceof CalcComplexNode) {
-                CalcComplexNode node = (CalcComplexNode) anode;
+            if (anode instanceof CalcComplexGene) {
+                CalcComplexGene node = (CalcComplexGene) anode;
                 tmpNum = node.getWeight();
                 node.setWeight(tmpNum * 100 / total);
             } else {
-                CalcDoubleNode node = (CalcDoubleNode) anode;
+                CalcDoubleGene node = (CalcDoubleGene) anode;
                 tmpNum = node.getWeight();               
                 node.setWeight(tmpNum * 100 / total);
             }

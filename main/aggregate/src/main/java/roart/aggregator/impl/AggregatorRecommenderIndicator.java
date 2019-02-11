@@ -17,14 +17,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregatorindicator.impl.Recommend;
-import roart.calculate.CalcComplexNode;
-import roart.calculate.CalcDoubleNode;
-import roart.calculate.CalcNode;
-import roart.calculate.CalcNodeUtils;
 import roart.category.AbstractCategory;
 import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.gene.CalcGene;
+import roart.gene.impl.CalcComplexGene;
+import roart.gene.impl.CalcDoubleGene;
+import roart.gene.impl.CalcGeneUtils;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.indicator.AbstractIndicator;
@@ -99,8 +99,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     buyKeys.addAll(recommend.getBuyList());
                     sellKeys.addAll(recommend.getSellList());
                 }
-                CalcNodeUtils.transformToNode(conf, buyKeys, true, macdrsiMinMax, disableList);
-                CalcNodeUtils.transformToNode(conf, sellKeys, false, macdrsiMinMax, disableList);
+                CalcGeneUtils.transformToNode(conf, buyKeys, true, macdrsiMinMax, disableList);
+                CalcGeneUtils.transformToNode(conf, sellKeys, false, macdrsiMinMax, disableList);
             }
             // find recommendations
             Map<String, Double[]> indicatorResultMap;
@@ -130,7 +130,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                         continue;
                     }
                     Object tmp = conf.getConfigValueMap().get(key);
-                    CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
+                    CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
                     //node.setDoBuy(useMax);
                     if (mergedResult.length < buyKeys.size()) {
                         int jj = 0;
@@ -151,7 +151,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                         sellRecommendValue += mergedResult[i] * oint;
                         continue;
                     }                   
-                    CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
+                    CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
                     //node.setDoBuy(useMax);
                     double value = mergedResult[i];
                     sellRecommendValue += node.calc(value, 0);

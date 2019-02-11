@@ -9,15 +9,15 @@ import java.util.Map.Entry;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.calculate.CalcNodeFactory;
-import roart.calculate.CalcComplexNode;
-import roart.calculate.CalcDoubleNode;
-import roart.calculate.CalcNode;
-import roart.calculate.CalcNodeUtils;
 import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.gene.CalcGene;
+import roart.gene.impl.CalcComplexGene;
+import roart.gene.impl.CalcDoubleGene;
+import roart.gene.impl.CalcGeneFactory;
+import roart.gene.impl.CalcGeneUtils;
 import roart.model.data.MarketData;
 
 @Deprecated
@@ -108,7 +108,7 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
             double change = (list[newlistidx]/list[curlistidx] - 1);
             Double[] momrsi = entry.getValue();
             // TODO temp fix
-            CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
+            CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
             double value = momrsi[index];
             recommend += node.calc(value, 0) * change;
         }
@@ -117,7 +117,7 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
  
     @Override
     public void mutate() {
-        CalcNode node = (CalcNode) conf.getConfigValueMap().get(key);
+        CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
         node.mutate();
     }
 
@@ -128,7 +128,7 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
         if (key.contains("simple")) {
             name = "Double";
         }
-        CalcNode node = CalcNodeFactory.get(name, null, macdrsiMinMax, index, useMax);
+        CalcGene node = CalcGeneFactory.get(name, null, macdrsiMinMax, index, useMax);
         node.randomize();
         conf.getConfigValueMap().put(key, node);
         List<String> keys = new ArrayList<>();
@@ -141,14 +141,14 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
         List<Double>[] minMax = (List<Double>[]) retObj[1];
         List<String> keys = new ArrayList<>();
         keys.add(key);
-        CalcNodeUtils.transformToNode(conf, keys, useMax, minMax, new ArrayList<>());
+        CalcGeneUtils.transformToNode(conf, keys, useMax, minMax, new ArrayList<>());
     }
 
     @Override
     public void transformFromNode() throws JsonParseException, JsonMappingException, IOException {
         List<String> keys = new ArrayList<>();
         keys.add(key);
-        CalcNodeUtils.transformFromNode(conf, keys, new ArrayList<>());
+        CalcGeneUtils.transformFromNode(conf, keys, new ArrayList<>());
     }
 
     @Override
