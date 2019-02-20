@@ -465,6 +465,15 @@ public class IndicatorUtils {
         return cat;
     }
 
+    public static AbstractCategory getWantedCategory(AbstractCategory[] categories, int cat) throws Exception {
+        for (AbstractCategory category : categories) {
+            if (cat == category.getPeriod()) {
+                return category;
+            }
+        }
+        return null;
+    }
+
     public static Integer getWantedCategory(List<StockItem> stocks, PeriodData periodData) throws Exception {
         if (StockUtil.hasStockValue(stocks, Constants.PRICECOLUMN)) {
             return Constants.PRICECOLUMN;
