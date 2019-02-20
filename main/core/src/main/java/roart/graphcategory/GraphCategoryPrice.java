@@ -13,6 +13,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetConfigs;
 import roart.graphindicator.GraphIndicator;
 import roart.graphindicator.GraphIndicatorATR;
 import roart.graphindicator.GraphIndicatorCCI;
@@ -21,6 +22,7 @@ import roart.graphindicator.GraphIndicatorRSI;
 import roart.graphindicator.GraphIndicatorSTOCH;
 import roart.graphindicator.GraphIndicatorSTOCHRSI;
 import roart.ml.dao.MLPredictDao;
+import roart.ml.model.LearnTestPredictResult;
 import roart.ml.model.MLPredictModel;
 import roart.model.StockItem;
 import roart.result.model.GUISize;
@@ -137,16 +139,19 @@ public class GraphCategoryPrice extends GraphCategory {
 
     Double[] predictme(Double[] list) {
         MLPredictDao mldao = new MLPredictDao("tensorflow", conf);
+/*
         int horizon = conf.getPredictorLSTMHorizon();
         int windowsize = conf.getPredictorLSTMWindowsize();
         int epochs = conf.getPredictorLSTMEpochs();
+        */
+        
         // TODO check reverse. move up before if?
-        log.info("list {} {}", list.length, windowsize);
-        if (list != null && list.length > 2 * windowsize ) {
+        if (list != null) {
+            log.info("list {} {}", list.length);
             String key = null;
             Map<MLPredictModel, Long> mapTime = null;
-            Double[] result = mldao.predictone(null, list, null, conf.getMACDDaysBeforeZero(), key, 4, mapTime, windowsize, horizon, epochs);  
-            return result;
+            LearnTestPredictResult result = mldao.predictone(new NeuralNetConfigs(), null, list, null, conf.getMACDDaysBeforeZero(), key, 4, mapTime);  
+            return result.predicted;
         }
         return null;
     }
