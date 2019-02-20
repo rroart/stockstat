@@ -325,4 +325,9 @@ public class IndicatorChromosome extends AbstractChromosome {
         }
         return ret;
     }
+
+    @Override
+    public boolean isAscending() {
+        return true;
+    }
 }
