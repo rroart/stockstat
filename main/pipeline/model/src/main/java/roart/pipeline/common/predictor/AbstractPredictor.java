@@ -9,10 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.model.PipelineResultData;
 import roart.model.StockItem;
 import roart.result.model.ResultItemTableRow;
 
-public abstract class AbstractPredictor {
+public abstract class AbstractPredictor extends PipelineResultData {
 
     protected static Logger log = LoggerFactory.getLogger(AbstractPredictor.class);
 
@@ -20,6 +21,7 @@ public abstract class AbstractPredictor {
     protected MyMyConfig conf;
     protected int category;
     protected Map<String, Object[]> resultMap;
+    protected Map<String, Object> probabilityMap;
    
     public AbstractPredictor(MyMyConfig conf, String string, int category) {
         this.title = string;
@@ -62,6 +64,7 @@ public abstract class AbstractPredictor {
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);
+        map.put(PipelineConstants.PROBABILITY, probabilityMap);
         return map;
     }
 
