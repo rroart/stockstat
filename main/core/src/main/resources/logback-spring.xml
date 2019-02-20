@@ -8,4 +8,5 @@
  <root level="INFO">
   <appender-ref ref="FILE" />
  </root>
+ <logger name="org.apache.spark" level="WARN"/>
 </configuration>
