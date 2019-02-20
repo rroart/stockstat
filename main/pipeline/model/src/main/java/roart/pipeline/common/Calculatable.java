@@ -1,6 +1,8 @@
 package roart.pipeline.common;
 
-public abstract class Calculatable {
+import roart.common.pipeline.model.PipelineResultData;
+
+public abstract class Calculatable extends PipelineResultData {
 
     protected int category;
 
