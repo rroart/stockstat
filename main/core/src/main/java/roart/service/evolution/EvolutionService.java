@@ -22,8 +22,9 @@ import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
-import roart.common.ml.NNConfig;
-import roart.common.ml.NNConfigs;
+import roart.common.ml.NeuralNetConfig;
+import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.TensorflowLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
@@ -437,6 +438,7 @@ public class EvolutionService {
                 return new ArrayList<>();
             }
             String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
+            String catName = getCatName(cat, periodText);
             DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, cat);
             //Pipeline[] datareaders = new Pipeline[1];
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stocks,
@@ -448,9 +450,9 @@ public class EvolutionService {
             String mydate = dt.format(conf.getdate());
             List<StockItem> dayStocks = stockdatemap.get(mydate);
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
-                    periodText, marketdatamap, periodDataMap, null, datareaders);
+                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders);
     
-            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories);
+            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, catName, cat);
     
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
@@ -461,18 +463,32 @@ public class EvolutionService {
         }
     }
 
+    public static String getCatName(Integer cat, String[] periodText) {
+        String catName = null;
+        if (cat >= 0) {
+            catName = periodText[cat];
+        }
+        if (cat == Constants.INDEXVALUECOLUMN) {
+            catName = Constants.INDEX;
+        }
+        if (cat == Constants.PRICECOLUMN) {
+            catName = Constants.PRICE;
+        }
+        return catName;
+    }
+
     private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories) throws Exception {
+            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
-        NNConfigs nnConfigs = null;
+        NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
             nnconfigString = conf.getAggregatorsMLIndicatorMLConfig();
             if (nnconfigString != null) {
                 log.info("NNConfig {}", nnconfigString);
                 ObjectMapper mapper = new ObjectMapper();
-                nnConfigs = mapper.readValue(nnconfigString, NNConfigs.class);            
+                nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
             }
         }
         if (ml.equals(PipelineConstants.MLMACD)) {
@@ -480,20 +496,31 @@ public class EvolutionService {
             if (nnconfigString != null) {
                 log.info("NNConfig {}", nnconfigString);
                 ObjectMapper mapper = new ObjectMapper();
-                nnConfigs = mapper.readValue(nnconfigString, NNConfigs.class);            
+                nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
+            }
+        }
+        if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
+            nnconfigString = conf.getLSTMConfig();
+            if (nnconfigString != null) {
+                nnConfigs = new NeuralNetConfigs();
+                log.info("NNConfig {}", nnconfigString);
+                ObjectMapper mapper = new ObjectMapper();
+                TensorflowLSTMConfig nnConfig = mapper.readValue(nnconfigString, TensorflowLSTMConfig.class);
+                nnConfigs.setTensorflowLSTMConfig(nnConfig);
             }
         }
         if (nnConfigs == null) {
-            nnConfigs = new NNConfigs();            
+            nnConfigs = new NeuralNetConfigs();            
         }
-        NNConfigs newNNConfigs = new NNConfigs();
+        NeuralNetConfigs newNNConfigs = new NeuralNetConfigs();
         List<String> keys = new ArrayList<>();
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLR);
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLMCP);
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLOVR);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWL);
-    
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
+   
         for (String key : keys) {
             MyMyConfig workingConf = conf.copy();
             for (String tmpkey : keys) {
@@ -502,15 +529,18 @@ public class EvolutionService {
                 sameKey &= enabled;
                 workingConf.getConfigValueMap().put(tmpkey, sameKey);
             }
-            NNConfig nnconfig = nnConfigs.get(key);
-            NeuralNetChromosome recommendBuy = new NeuralNetChromosome(workingConf, ml, dataReaders, categories, key, nnconfig);
+            NeuralNetConfig nnconfig = nnConfigs.get(key);
+            NeuralNetChromosome chromosome = new NeuralNetChromosome(workingConf, ml, dataReaders, categories, key, nnconfig, catName, cat);
+            if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
+                chromosome.setAscending(false);
+            }
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
     
-            Individual best = evolution.getFittest(evolutionConfig, recommendBuy);
+            Individual best = evolution.getFittest(evolutionConfig, chromosome);
     
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
-            NNConfig newnnconf = bestEval2.getNnConfig();
+            NeuralNetConfig newnnconf = bestEval2.getNnConfig();
             newNNConfigs.set(key, newnnconf);
         }
         String myKey = null;
@@ -519,6 +549,9 @@ public class EvolutionService {
         }
         if (ml.equals(PipelineConstants.MLMACD)) {
             myKey = ConfigConstants.AGGREGATORSMLMACDMLCONFIG;
+        }
+        if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
+            myKey = ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG;
         }
         ObjectMapper mapper = new ObjectMapper();
         String newNNConfigstring = mapper.writeValueAsString(newNNConfigs);
