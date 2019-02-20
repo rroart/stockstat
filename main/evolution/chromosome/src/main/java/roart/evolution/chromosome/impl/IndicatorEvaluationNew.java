@@ -185,4 +185,9 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
     public boolean isEmpty() {
         return false;
     }
+
+    @Override
+    public boolean isAscending() {
+        return true;
+    }
 }
