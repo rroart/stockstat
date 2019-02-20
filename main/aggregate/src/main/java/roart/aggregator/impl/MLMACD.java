@@ -24,7 +24,7 @@ import com.tictactec.ta.lib.MInteger;
 
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
-import roart.common.ml.NNConfigs;
+import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.db.dao.DbDao;
@@ -226,13 +226,13 @@ public class MLMACD extends Aggregator {
     // TODO make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, PeriodData> periodDataMap,
             int category2, AbstractCategory[] categories) throws Exception {
-        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories);
+        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, category);
         if (cat == null) {
             return;
         }
-        category = cat.getPeriod();
-        title = cat.getTitle();
-        key = title;
+        log.info("checkthis {}", category == cat.getPeriod());
+        log.info("checkthis {}", title.equals(cat.getTitle()));
+        log.info("checkthis {}", key.equals(title));
         Object macd = cat.getResultMap().get(PipelineConstants.INDICATORMACDRESULT);
         Object list0 = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
         Object object = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
@@ -272,10 +272,10 @@ public class MLMACD extends Aggregator {
         Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
         log.info("Period {} {}", title, mapMap.keySet());
         String nnconfigString = conf.getMLMACDMLConfig();
-        NNConfigs nnConfigs = null;
+        NeuralNetConfigs nnConfigs = null;
         if (nnconfigString != null) {
             ObjectMapper mapper = new ObjectMapper();
-            nnConfigs = mapper.readValue(nnconfigString, NNConfigs.class);
+            nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);
         }
         if (conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();
@@ -292,7 +292,7 @@ public class MLMACD extends Aggregator {
 
     }
 
-    private void doLearnTestClassify(NNConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
+    private void doLearnTestClassify(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
             Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort) {
         List<MacdSubType> subTypes = wantedSubTypes();
@@ -372,7 +372,7 @@ public class MLMACD extends Aggregator {
         }
     }
 
-    private void doLearnTestClassifyFuture(NNConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
+    private void doLearnTestClassifyFuture(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
             Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort) {
         List<MacdSubType> subTypes = wantedSubTypes();
@@ -476,7 +476,7 @@ public class MLMACD extends Aggregator {
         resultMeta.setTestAccuracy(result.getAccuracy());
     }
 
-    private void doLearnTestClassifyOld(NNConfigs nnconfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
+    private void doLearnTestClassifyOld(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
             Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort) {
         try {
@@ -691,7 +691,7 @@ public class MLMACD extends Aggregator {
         addEventRow(counts.toString(), subType.getName(), "");
     }
 
-    private void doLearningAndTests(NNConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
+    private void doLearningAndTests(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
             Map<Double, String> labelMapShort) {
         List<MacdSubType> subTypes = wantedSubTypes();
         for (MacdSubType subType : subTypes) {

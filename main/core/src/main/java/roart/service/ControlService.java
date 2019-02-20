@@ -36,6 +36,7 @@ import roart.graphcategory.GraphCategoryIndex;
 import roart.graphcategory.GraphCategoryPeriod;
 import roart.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.graphcategory.GraphCategoryPrice;
+import roart.indicator.util.IndicatorUtils;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -48,6 +49,7 @@ import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
+import roart.service.evolution.EvolutionService;
 import roart.service.util.ServiceUtil;
 import roart.stockutil.StockUtil;
 import roart.util.Math3Util;
@@ -107,7 +109,7 @@ public class ControlService {
             return null;
         }
         log.info("stocks {}", stocks.size());
-        String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
+        
         Set<String> markets = new HashSet();
         markets.add(conf.getMarket());
         Integer days = conf.getDays();
@@ -128,6 +130,10 @@ public class ControlService {
             marketdatamap = new ServiceUtil().getMarketdatamap(days, markets, conf);
             Map<String, PeriodData> periodDataMap = new ServiceUtil().getPerioddatamap(markets,
                     marketdatamap);
+
+            Integer cat = IndicatorUtils.getWantedCategory(stocks, periodDataMap.get("cy"));
+            String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
+            String catName = EvolutionService.getCatName(cat, periodText);
 
             if (stocks.size() != marketdatamap.get(conf.getMarket()).stocks.size()) {
                 log.error("Sizes {} {}", stocks.size(), marketdatamap.get(conf.getMarket()).stocks.size());
@@ -160,7 +166,7 @@ public class ControlService {
                     periodText, marketdatamap, periodDataMap, datedstocklists, datareaders);
 
             Aggregator[] aggregates = getAggregates(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, categories, datareaders, disableList, idNameMap);
+                    periodText, marketdatamap, periodDataMap, categories, datareaders, disableList, idNameMap, catName, cat);
 
             ResultItemTableRow headrow = createHeadRow(categories, aggregates);
             table.add(headrow);
@@ -303,12 +309,12 @@ public class ControlService {
     private Aggregator[] getAggregates(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap) throws Exception {
+            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat) throws Exception {
         Aggregator[] aggregates = new Aggregator[4];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, categories, datareaders, disableList);
         aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, categories);
-        aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, periodDataMap, CategoryConstants.PRICE, 0, categories, idNameMap);
-        aggregates[3] = new MLIndicator(conf, Constants.PRICE, marketdatamap, periodDataMap, CategoryConstants.PRICE, 0, categories, datareaders);
+        aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, periodDataMap, catName, cat, categories, idNameMap);
+        aggregates[3] = new MLIndicator(conf, Constants.PRICE, marketdatamap, periodDataMap, catName, cat, categories, datareaders);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSMACD));

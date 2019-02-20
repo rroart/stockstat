@@ -27,7 +27,7 @@ import roart.aggregatorindicator.impl.AggregatorMLIndicator;
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
-import roart.common.ml.NNConfigs;
+import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.executor.MyExecutors;
@@ -112,7 +112,7 @@ public class MLIndicator extends Aggregator {
             eventTableRows = new ArrayList<>();
         }
         if (isEnabled()) {
-            calculateMomentums(conf, marketdatamap, categories, datareaders);        
+            calculateMomentums(conf, marketdatamap, categories, datareaders);
             cleanMLDaos();
         }
     }
@@ -173,13 +173,13 @@ public class MLIndicator extends Aggregator {
     // TODO make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories, Pipeline[] datareaders) throws Exception {
-        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories);
+        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, category);
         if (cat == null) {
             return;
         }
-        category = cat.getPeriod();
-        title = cat.getTitle();
-        key = title;
+        log.info("checkthis {}", category == cat.getPeriod());
+        log.info("checkthis {}", title.equals(cat.getTitle()));
+        log.info("checkthis {}", key.equals(title));
         Map<String, Pipeline> pipelineMap = new HashMap<>();
         for (Pipeline datareader : datareaders) {
             pipelineMap.put(datareader.pipelineName(), datareader);
@@ -241,10 +241,10 @@ public class MLIndicator extends Aggregator {
         Map<MLClassifyModel, Map<String, Double[]>> mapResult = new HashMap<>();
         log.info("Period {} {}", title, mapMap.keySet());
         String nnconfigString = conf.getAggregatorsMLIndicatorMLConfig();
-        NNConfigs nnConfigs = null;
+        NeuralNetConfigs nnConfigs = null;
         if (nnconfigString != null) {
             ObjectMapper mapper = new ObjectMapper();
-            nnConfigs = mapper.readValue(nnconfigString, NNConfigs.class);
+            nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);
         }
         if (conf.wantML() && !mergedCatMap.keySet().isEmpty()) {
             if (mergedCatMap.keySet().isEmpty()) {
@@ -272,7 +272,7 @@ public class MLIndicator extends Aggregator {
 
     }
 
-    private void doLearnTestClassify(NNConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
+    private void doLearnTestClassify(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
             Map<double[], Double> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
             Map<Double, String> labelMapShort) {
         try {
@@ -340,7 +340,7 @@ public class MLIndicator extends Aggregator {
         }
     }
 
-    private void doLearnTestClassifyFuture(NNConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
+    private void doLearnTestClassifyFuture(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
             Map<double[], Double> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
             Map<Double, String> labelMapShort) {
         try {
@@ -418,7 +418,7 @@ public class MLIndicator extends Aggregator {
         }
     }
 
-    private void doLearnTestClassifyOld(NNConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
+    private void doLearnTestClassifyOld(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
             Map<double[], Double> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
             Map<Double, String> labelMapShort) {
         doLearningAndTests(nnconfigs, mergedCatMap, arrayLength, labelMapShort);
@@ -560,7 +560,7 @@ public class MLIndicator extends Aggregator {
         }
     }
 
-    private void doLearningAndTests(NNConfigs nnconfigs, Map<double[], Double> mergedCatMap, int arrayLength,
+    private void doLearningAndTests(NeuralNetConfigs nnconfigs, Map<double[], Double> mergedCatMap, int arrayLength,
             Map<Double, String> labelMapShort) {
         try {
             for (MLClassifyDao mldao : mldaos) {
