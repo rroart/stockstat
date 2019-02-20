@@ -1,4 +1,6 @@
 class LearnTestPredict:
+    def __init__(self, tensorflowLSTMConfig):
+        vars(self).update(tensorflowLSTMConfig)
     def __init__(self, listarray):
         vars(self).update(listarray)
     def __init__(self, array):
@@ -17,8 +19,6 @@ class LearnTestPredict:
         vars(self).update(mapname)
     def __init__(self, outcomes):
         vars(self).update(outcomes)
-    def __init__(self, horizon):
-        vars(self).update(horizon)
     def __init__(self, slides):
         vars(self).update(slides)
     def __init__(self, slide):
@@ -28,7 +28,4 @@ class LearnTestPredict:
     def __init__(self, listpredicted):
         vars(self).update(listpredicted)
     def __init__(self, accuracy):
-        vars(self).update(windowsize)
-    def __init__(self, windowsize):
-        vars(self).update(windowsize)
-
+        vars(self).update(accuracy)

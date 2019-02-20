@@ -2,12 +2,13 @@ import learntestpredict as ltp
 import device
 
 import os
+import math
 import time
 import warnings
 import numpy as np
 from numpy import newaxis
-from keras.layers.core import Dense, Activation, Dropout
-from keras.layers.recurrent import LSTM
+from keras.layers import Dense, Activation, Dropout
+from keras.layers import LSTM
 from keras.models import Sequential
 from keras import backend
 from sklearn.preprocessing import MinMaxScaler
@@ -64,22 +65,28 @@ def old_build_model(layers):
     model.add(Dense(output_dim = layers[3]))
     model.add(Activation("linear"))
     start = time.time()
-    model.compile(loss="mse", optimizer="rmsprop", metrics=['accuracy'])
+    model.compile(loss="mse", optimizer="rmsprop", metrics=["accuracy"])
     print("> Compilation Time : ", time.time() - start)
     return model
 
 def build_model(look_back):
+    print("before model")
     model = Sequential()
-    model.add(LSTM(4, input_shape=(1, look_back)))
+    batch_size = 1
+    #look_back = 3
+    model.add(LSTM(look_back + 1, batch_input_shape=(batch_size, look_back, 1), stateful=True, return_sequences=True))
+    model.add(LSTM(look_back + 1, batch_input_shape=(batch_size, look_back, 1), stateful=True))
+    #model.add(LSTM(4, input_shape=(1, look_back)))
     model.add(Dense(1))
-    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
+    print("before compile")
+    model.compile(loss='mean_squared_error', optimizer='adam')
     return model
 
 def build_model2(look_back):
     model = Sequential()
     model.add(LSTM(4, input_shape=(1, look_back)))
     model.add(Dense(1))
-    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='mean_squared_error', optimizer='adam')
     return model
 
 def predict_point_by_point(model, data):
@@ -104,72 +111,89 @@ def predict_sequence_full(model, data, window_size, horizon):
         print(type(predme))
         print(predme.shape)
         print(predme)
-        pred = model.predict(predme)[0][0]
+        pred0 = model.predict(predme, batch_size = 1)
+        print(pred0)
+        pred = pred0[0][0]
         print (pred)
         predicted.append(float(pred))
         print("currf")
-        curr_frame=predme[0][0]
+        curr_frame=predme[0]
         print(curr_frame)
         curr_frame = curr_frame[1:]
         print(curr_frame)
         curr_frame = np.insert(curr_frame, [window_size-1], pred, axis=0)
         print(curr_frame)
-        curr_frame=curr_frame[np.newaxis, np.newaxis, :]
+        curr_frame=curr_frame[np.newaxis, :]
         print(curr_frame.shape)
     print( predicted)
     return predicted
 
 class Predict:
     def do_learntestone(self, array, myobj):
+        tensorflowLSTMConfig = myobj.tensorflowLSTMConfig
+        look_back = tensorflowLSTMConfig.windowsize
+        epochs = tensorflowLSTMConfig.epochs
+        horizon = tensorflowLSTMConfig.horizon
+        # -1 is used as NaN
+        if len(array) == 0:
+            return [], -1.0
+        print("array")
+        print(array)
         array = np.array(array)
-        look_back = myobj.windowsize
-        epochs = myobj.epochs
         #look_back = 10
         #slide = myobj.slide
         #print(slide)
         #print(type(slides))
         #array = np.array(predict)
         print("herex",array.shape)
-        predictme = array[-look_back:]
         print("here")
-        #print(predictme)
         #print(array)
         print(array.shape)
-        print(predictme.shape)
         dataset = array
 
         dataset = dataset.astype('float32')
         dataset = dataset[:, np.newaxis]
         print(type(dataset))
         print(dataset.shape)
-        predictme = predictme.astype('float32')
-        predictme = predictme[:, np.newaxis]
         
         # normalize the dataset
-        print("dataset ", dataset)
+        #print("dataset ", dataset)
         scaler = MinMaxScaler(feature_range=(0, 1))
-        dataset = scaler.fit_transform(dataset)
-        print("dataset0 ", dataset)
-        print(dataset.shape)
-        print(predictme.shape)
-        print("preme")
+        train_size = int(len(dataset) * 0.75)
+        print(train_size)
+        predictme = dataset[train_size - look_back - 1:train_size - 1]
+        print("predictme")
         print(predictme)
         predictme = scaler.fit_transform(predictme)
-        print(predictme)
-        
+        dataset = scaler.fit_transform(dataset)
+        #print("dataset0 ", dataset)
+        print(dataset.shape)
         # split into train and test sets
-        #train_size = int(len(dataset) * 0.67)
-        train_size = int(len(dataset) * 1)
+        #train_size = int(len(dataset) * 1)
         #test_size = len(dataset) - train_size
         train, test = dataset[0:train_size,:], dataset[train_size:len(dataset),:]
         # reshape into X=t and Y=t+1
         trainX, trainY = create_dataset(train, look_back)
-        #testX, testY = create_dataset(test, look_back)
+        testX, testY = create_dataset(test, look_back)
         # reshape input to be [samples, time steps, features]
         print(trainX.shape)
+        #print(predictme)
         print(predictme.shape)
-        trainX = np.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
-        predictme = np.reshape(predictme, (predictme.shape[1], 1, predictme.shape[0]))
+        predictme = predictme.astype('float32')
+        predictme = predictme[:, np.newaxis]
+        print(predictme.shape)
+        print("preme")
+        print(predictme)
+        print(predictme)
+        
+        print(predictme.shape)
+        print(trainX.shape)
+        print(trainY.shape)
+        print(testX.shape)
+        print(testY.shape)
+        trainX = np.reshape(trainX, (trainX.shape[0], trainX.shape[1], 1))
+        testX = np.reshape(testX, (testX.shape[0], testX.shape[1], 1))
+        predictme = np.reshape(predictme, (predictme.shape[1], predictme.shape[0], 1))
         #predictme = predictme[np.newaxis, :]
         print("reshaped")
         print(trainX.shape)
@@ -179,17 +203,28 @@ class Predict:
         # create and fit the LSTM network
         model = build_model(look_back)
 
-        print("tx ", trainX)
+        #print("tx ", trainX)
         print("tx ", trainX.shape)
-        model.fit(trainX, trainY, epochs=epochs, batch_size=1, verbose=2)
+        model.fit(trainX, trainY, epochs=epochs, batch_size=1, verbose=0, shuffle=False)
         # make predictions
-        #score = model.evaluate(testX, testY, batch_size=1)
-        #print("Score")
-        #print(score)
-        trainPredict = model.predict(trainX)
+        loss = model.evaluate(testX, testY, batch_size=1)
+        print("Score")
+        print(loss)
+        trainPredict = model.predict(trainX, batch_size = 1)
+        testPredict = model.predict(testX, batch_size = 1)
+        print("tp")
         print(trainPredict)
         print(trainPredict.shape)
-        horizon = myobj.horizon
+        trainPredict = scaler.inverse_transform(trainPredict)
+        trainY = scaler.inverse_transform([trainY])
+        testPredict = scaler.inverse_transform(testPredict)
+        testY = scaler.inverse_transform([testY])
+        # calculate root mean squared error                                             
+        trainScore = math.sqrt(mean_squared_error(trainY[0], trainPredict[:,0]))
+        print('Train Score: %.2f RMSE' % (trainScore))
+        testScore = math.sqrt(mean_squared_error(testY[0], testPredict[:,0]))
+        print('Test Score: %.2f RMSE' % (testScore))
+
         predicted = predict_sequence_full(model, predictme, look_back, horizon)
         predicted = np.array(predicted)
         predicted = predicted.astype('float32')
@@ -261,7 +296,7 @@ class Predict:
 #        model.layers[0].reset_states()
 #        model.reset_states()
         print(predicted)
-        return predicted
+        return predicted, loss
 
     def do_learntest(self, queue, request):
         dt = datetime.now()
@@ -270,16 +305,16 @@ class Predict:
         print(request.get_data(as_text=True))
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=ltp.LearnTestPredict)
-        print(myobj.array)
+        #print(myobj.array)
         print(type(myobj.array))
         array = myobj.array
-        predicted = self.do_learntestone(array, myobj)
+        predicted, loss = self.do_learntestone(array, myobj)
 #        print(predicted2)
         backend.clear_session()
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         print("leaving")
-        queue.put(Response(json.dumps({"predicted": predicted}), mimetype='application/json'))
+        queue.put(Response(json.dumps({ "predicted": predicted, "accuracy": loss }), mimetype='application/json'))
 
     def do_learntestlist(self, queue, request):
         dt = datetime.now()
@@ -288,20 +323,22 @@ class Predict:
         print(request.get_data(as_text=True))
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=ltp.LearnTestPredict)
-        print(myobj.arraylist)
+        #print(myobj.arraylist)
         print(type(myobj.arraylist))
         predictedlist = []
+        accuracylist = []
         for i in range(len(myobj.arraylist)):
             array = myobj.arraylist[i]
-            predicted = self.do_learntestone(array, myobj)
+            predicted, accuracy = self.do_learntestone(array, myobj)
             predictedlist.append(predicted)
+            accuracylist.append(accuracy)
             backend.clear_session()
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         print(predictedlist)
 #        print(predicted2)
         print("leaving")
-        queue.put(Response(json.dumps({"predictedlist": predictedlist}), mimetype='application/json'))
+        queue.put(Response(json.dumps({"predictedlist": predictedlist, "accuracylist": accuracylist}), mimetype='application/json'))
 
     def do_learntest2(self, request):
         dt = datetime.now()
