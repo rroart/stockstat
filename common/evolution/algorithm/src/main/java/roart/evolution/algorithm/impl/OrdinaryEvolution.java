@@ -21,15 +21,18 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
     
     @Override
-    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome evaluation) throws Exception {
+    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
-        Population population = new Population(selectionSize, evolutionConfig, evaluation, false);
-        if (getEvolutionConfig().getUseoldelite() && !evaluation.isEmpty()) {
-            population.getIndividuals().add(new Individual(evaluation).getNewWithValueCopyFactory());
+        Population population = new Population(selectionSize, evolutionConfig, chromosome, false);
+        if (getEvolutionConfig().getUseoldelite() && !chromosome.isEmpty()) {
+            population.getIndividuals().add(new Individual(chromosome).getNewWithValueCopyFactory());
         }
         calculate(population.getIndividuals());
         Collections.sort(population.getIndividuals());
-        Individual parent = getBest(selectionSize, population, true, evaluation);
+        if (!chromosome.isAscending()) {
+            Collections.reverse(population.getIndividuals());
+        }
+        Individual parent = getBest(selectionSize, population, true, chromosome);
         parent.getEvaluation().transformFromNode();
         return parent;
     }

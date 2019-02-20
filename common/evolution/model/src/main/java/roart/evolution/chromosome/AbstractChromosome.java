@@ -23,9 +23,11 @@ public abstract class AbstractChromosome {
     public abstract double getFitness()
             throws JsonParseException, JsonMappingException, IOException;
 
-    public abstract Individual crossover(AbstractChromosome evaluation);
+    public abstract Individual crossover(AbstractChromosome chromosome);
 
     public abstract AbstractChromosome copy();
 
     public abstract boolean isEmpty();
+    
+    public abstract boolean isAscending();
 }

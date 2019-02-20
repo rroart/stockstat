@@ -38,13 +38,16 @@ public class OneFourEvolution extends EvolutionAlgorithm {
     }
 
     private Individual getBest(int four, int five, List<Individual> population,
-            boolean doBuy, AbstractChromosome recommend) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
+            boolean doBuy, AbstractChromosome chromosome) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
         for (int i = 0; i < five; i ++) {
-            Individual buy = new Individual(recommend).getNewWithValueCopyAndRandomFactory();
+            Individual buy = new Individual(chromosome).getNewWithValueCopyAndRandomFactory();
             population.add(buy);
             //printmap(buy.getConf().getConfigValueMap());
         }
         Collections.sort(population);
+        if (!chromosome.isAscending()) {
+            Collections.reverse(population);
+        }
 
         //printmap(population.get(0).getConf().getConfigValueMap());
         //printmap(population.get(population.size() - 1).getConf().getConfigValueMap());
@@ -54,7 +57,7 @@ public class OneFourEvolution extends EvolutionAlgorithm {
             population = new ArrayList<>();
             population.add(parent);
             for (int j = 0; j < four; j++) {
-                Individual pop = new Individual(recommend).getNewWithValueCopyFactory();
+                Individual pop = new Individual(chromosome).getNewWithValueCopyFactory();
                 pop.mutate();
                 population.add(pop);
             }

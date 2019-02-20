@@ -10,20 +10,20 @@ import roart.evolution.chromosome.AbstractChromosome;
 public class Individual  implements Comparable<Individual>{
     private Double fitness;
     
-    private AbstractChromosome evaluation;
+    private AbstractChromosome chromosome;
 
     private long calculatetime;
 
-    public Individual(AbstractChromosome evaluation) {
-        this.evaluation = evaluation;
+    public Individual(AbstractChromosome chromosome) {
+        this.chromosome = chromosome;
     }
     
     public AbstractChromosome getEvaluation() {
-        return evaluation;
+        return chromosome;
     }
 
-    public void setEvaluation(AbstractChromosome evaluation) {
-        this.evaluation = evaluation;
+    public void setEvaluation(AbstractChromosome chromosome) {
+        this.chromosome = chromosome;
     }
 
     public void setFitness(Double fitness) {
@@ -39,23 +39,23 @@ public class Individual  implements Comparable<Individual>{
     }
     
     public Individual getNewWithValueCopyFactory() throws JsonParseException, JsonMappingException, IOException {
-        if (evaluation == null) {
+        if (chromosome == null) {
             int j = 0;
         }
-        AbstractChromosome newEval = evaluation.copy();
-        newEval.transformToNode();
-        return new Individual(newEval);
+        AbstractChromosome newChromosome = chromosome.copy();
+        newChromosome.transformToNode();
+        return new Individual(newChromosome);
     }
 
     public Individual getNewWithValueCopyAndRandomFactory() throws JsonParseException, JsonMappingException, IOException {
-        AbstractChromosome newEval = evaluation.copy();
-        newEval.transformToNode();
-        newEval.getRandom();
-        return new Individual(newEval);
+        AbstractChromosome newChromosome = chromosome.copy();
+        newChromosome.transformToNode();
+        newChromosome.getRandom();
+        return new Individual(newChromosome);
     }
 
     public Individual crossover(Individual pop) throws JsonParseException, JsonMappingException, IOException {
-        return evaluation.crossover(pop.evaluation);
+        return chromosome.crossover(pop.chromosome);
     }
 
     @Override
@@ -64,18 +64,19 @@ public class Individual  implements Comparable<Individual>{
     }
 
     public void mutate() throws JsonParseException, JsonMappingException, IOException {
-        evaluation.mutate();
-        evaluation.normalize();
+        chromosome.mutate();
+        chromosome.normalize();
+        fitness = null;
         //fitness = evaluation.getFitness();
     }
     public void recalculateScore() throws JsonParseException, JsonMappingException, IOException {
-        fitness = evaluation.getFitness();
+        fitness = chromosome.getFitness();
 
     }
 
     @Override
     public String toString() {
-        return "" + fitness + " " + calculatetime + " " + evaluation;
+        return "" + fitness + " " + calculatetime + " " + chromosome;
     }
 
     public Double getFitness() {
