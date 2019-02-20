@@ -23,7 +23,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
-import roart.common.ml.NNConfigs;
+import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.model.LearnTestClassifyResult;
@@ -54,20 +54,20 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     private void findModels() {
         models = new ArrayList<>();
         if (conf.wantMCP()) {
-            MLClassifyModel model = new MLClassifySparkMCPModel();
+            MLClassifyModel model = new MLClassifySparkMCPModel(conf);
             models.add(model);
         }
         if (conf.wantLR()) {
-            MLClassifyModel model = new MLClassifySparkLRModel();
+            MLClassifyModel model = new MLClassifySparkLRModel(conf);
             models.add(model);
         }
         if (conf.wantOVR()) {
-            MLClassifyModel model = new MLClassifySparkOVRModel();
+            MLClassifyModel model = new MLClassifySparkOVRModel(conf);
             models.add(model);
         }
     }
     @Override
-    public Double learntest(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period,
             String mapname, int outcomes) {
         return learntestInner(nnconfigs, map, model, size, period, mapname, outcomes);       
     }
@@ -128,7 +128,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return null;
     }
 
-    public Double learntestInner(NNConfigs nnconfigs, Map<double[], Double> map, MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes) {
+    public Double learntestInner(NeuralNetConfigs nnconfigs, Map<double[], Double> map, MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes) {
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {
@@ -183,7 +183,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NNConfigs nnconfig, Aggregator indicator, Map<double[], Double> map,
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, Map<double[], Double> map,
             MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes, Map<String, double[]> map2,
             Map<Double, String> shortMap) {
         Double accuracy = null;

@@ -6,9 +6,14 @@ import org.apache.spark.sql.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.config.MyMyConfig;
 import roart.ml.model.MLPredictModel;
 
 public abstract class MLPredictSparkModel extends MLPredictModel {
+
+    public MLPredictSparkModel(MyMyConfig conf) {
+        super(conf);
+    }
 
     private static Logger log = LoggerFactory.getLogger(MLClassifySparkModel.class);
     

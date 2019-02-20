@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
+import roart.common.ml.NeuralNetConfigs;
+import roart.ml.model.LearnTestPredictResult;
 import roart.ml.model.MLPredictAccess;
 import roart.ml.model.MLPredictModel;
 import roart.ml.spark.util.SparkUtil;
@@ -46,9 +48,9 @@ public class MLPredictSparkAccess extends MLPredictAccess {
     }
     
     @Override
-    public Double[] predictone(AbstractPredictor predictor, Double[] array, MLPredictModel model, int size, String period,
-            int outcomes, int windowsize, int horizon, int epochs) {
-        return learntestInner(array, null, model, size, period, null, outcomes, horizon);       
+    public LearnTestPredictResult predictone(NeuralNetConfigs nnconfigs, AbstractPredictor predictor, Double[] array, MLPredictModel model, int size,
+            String period, int outcomes) {
+        return learntestInner(array, null, model, size, period, null, outcomes);       
     }
 
     @Override
@@ -57,8 +59,8 @@ public class MLPredictSparkAccess extends MLPredictAccess {
     }
 
     @Override
-    public Map<String, Double[]> predict(AbstractPredictor indicator, Map<String, Double[]> map, MLPredictModel model, int size,
-            String period, int outcomes, int windowsize, int horizon, int epochs) {
+    public LearnTestPredictResult predict(NeuralNetConfigs nnconfigs, AbstractPredictor indicator, Map<String, Double[]> map, MLPredictModel model,
+            int size, String period, int outcomes) {
          return null;
     }
 
@@ -71,7 +73,7 @@ public class MLPredictSparkAccess extends MLPredictAccess {
         return null;
     }
 
-    public Double[] learntestInner(Double[] array, Map<double[], Double> map, MLPredictModel mlmodel, int size, String period, String mapname, int outcomes, int horizon) {
+    public LearnTestPredictResult learntestInner(Double[] array, Map<double[], Double> map, MLPredictModel mlmodel, int size, String period, String mapname, int outcomes) {
         long time0 = System.currentTimeMillis();
         if (spark == null) {
             return null;

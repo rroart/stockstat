@@ -1,5 +1,6 @@
 package roart.ml.spark;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -10,20 +11,39 @@ import org.apache.spark.ml.classification.OneVsRest;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
-import roart.common.ml.NNConfigs;
+import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetConfig;
+import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.SparkLRConfig;
 import roart.common.ml.SparkOVRConfig;
 import roart.ml.common.MLClassifyModel;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
+    public MLClassifySparkOVRModel(MyMyConfig conf) {
+        super(conf);
+    }
+    
     @Override
     public int getId() {
         return MLConstants.ONEVSREST;
     }
+    
     @Override
     public String getName() {
         return MLConstants.OVR;
+    }
+
+    @Override
+    public String getKey() {
+        return ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG;
     }
 
     @Override
@@ -37,14 +57,8 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public Model getModel(NNConfigs conf, Dataset<Row> train, int size, int outcomes) {
-        SparkOVRConfig modelConf = null;
-        if (conf != null) {
-            modelConf = conf.getSparkOVRConfig();
-        }
-        if (modelConf == null) {
-            modelConf = new SparkOVRConfig(10, 1E-6, true);
-        }
+    public Model getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
+        SparkOVRConfig modelConf = (SparkOVRConfig) getModel(conf);
         LogisticRegression lr = new LogisticRegression()
                 .setMaxIter(modelConf.getMaxiter())
                 .setTol(modelConf.getTol())
@@ -54,6 +68,21 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
         log.info("Used ML config {}", modelConf);
         // train the multiclass model.
         return ovr.fit(train);
+    }
+
+    public NeuralNetConfig getModel(NeuralNetConfigs conf) {
+        SparkOVRConfig modelConf = null;
+        if (conf != null) {
+            modelConf = conf.getSparkOVRConfig();
+        }
+        if (modelConf == null) {
+            //modelConf = convert(getKey(), SparkOVRConfig.class);
+            modelConf = convert(SparkOVRConfig.class);
+            if (modelConf == null) {
+                modelConf = getDefault(SparkOVRConfig.class);
+            }
+        }
+        return modelConf;
     }
 
 }
