@@ -20,13 +20,15 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
-import roart.common.ml.NNConfig;
-import roart.common.ml.NNConfigs;
+import roart.common.ml.NeuralNetConfig;
+import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.pipeline.model.PipelineResultData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
+import roart.predictor.impl.PredictorLSTM;
 
 public class NeuralNetChromosome extends AbstractChromosome {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -41,15 +43,23 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
     private String key;
     
-    private NNConfig nnConfig;
+    private NeuralNetConfig nnConfig;
     
-    public NeuralNetChromosome(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NNConfig nnConfig) {
+    private boolean ascending = true;
+    
+    private String catName;
+    
+    private Integer cat;
+    
+    public NeuralNetChromosome(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NeuralNetConfig nnConfig, String catName, Integer cat) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
         this.categories = categories;
         this.key = key;
         this.nnConfig = nnConfig;
+        this.catName = catName;
+        this.cat = cat;
     }
 
     public MyMyConfig getConf() {
@@ -60,12 +70,16 @@ public class NeuralNetChromosome extends AbstractChromosome {
         this.conf = conf;
     }
 
-    public NNConfig getNnConfig() {
+    public NeuralNetConfig getNnConfig() {
         return nnConfig;
     }
 
-    public void setNnConfig(NNConfig nnConfig) {
+    public void setNnConfig(NeuralNetConfig nnConfig) {
         this.nnConfig = nnConfig;
+    }
+
+    public void setAscending(boolean ascending) {
+        this.ascending = ascending;
     }
 
     @Override
@@ -101,18 +115,18 @@ public class NeuralNetChromosome extends AbstractChromosome {
     @Override
     public double getFitness()
             throws JsonParseException, JsonMappingException, IOException {
-        Aggregator aggregate = null;
+        PipelineResultData pipelineData = null;
         /*
         MyCallable callable = new MyCallable(conf, ml, dataReaders, categories);
         Future<Aggregator> future = MyExecutors.run(callable);
         aggregate = future.get();
         */
         try {
-        aggregate = new MyFactory().myfactory(conf, ml, dataReaders, categories);
+        pipelineData = new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat);
         } catch (Exception e) {
             log.info(Constants.EXCEPTION, e);
         }
-        Map<String, Object> map = (Map<String, Object>) aggregate.getLocalResultMap().get(PipelineConstants.PROBABILITY);
+        Map<String, Object> map = (Map<String, Object>) pipelineData.getLocalResultMap().get(PipelineConstants.PROBABILITY);
         double fitness = 0;
         for (Entry<String, Object> entry : map.entrySet()) {
             Double value = (Double) entry.getValue();
@@ -125,21 +139,25 @@ public class NeuralNetChromosome extends AbstractChromosome {
     }
 
     class MyFactory {
-        public Aggregator myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories) throws Exception {
-            NNConfigs nnConfigs = new NNConfigs();
+        public PipelineResultData myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat) throws Exception {
+            NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
             nnConfigs.set(key, nnConfig);
             ObjectMapper mapper = new ObjectMapper();
             String value = mapper.writeValueAsString(nnConfigs);
-            Aggregator aggregate = null;
+            PipelineResultData pipelineData = null;
             if (ml.equals(PipelineConstants.MLMACD)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
-                aggregate = new MLMACD(conf, Constants.PRICE, null, null, CategoryConstants.PRICE, 0, categories, new HashMap<>());
+                pipelineData = new MLMACD(conf, null, null, null, catName, cat, categories, new HashMap<>());
             } 
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
-                aggregate = new MLIndicator(conf, Constants.PRICE, null, null, CategoryConstants.PRICE, 0, categories, dataReaders);
+                pipelineData = new MLIndicator(conf, null, null, null, catName, cat, categories, dataReaders);
             }
-            return aggregate;
+            if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
+                conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, value);
+                pipelineData = new PredictorLSTM(conf, null, null, null, catName, cat/*, categories, dataReaders*/);
+            }
+            return pipelineData;
         }
 
     }
@@ -149,34 +167,38 @@ public class NeuralNetChromosome extends AbstractChromosome {
         private String ml;
         private Pipeline[] dataReaders;
         private AbstractCategory[] categories;
-
-        public MyCallable(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories) {
+        private String catName;
+        private Integer cat;
+        
+        public MyCallable(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat) {
             this.conf = conf;
             this.ml = ml;
             this.dataReaders = dataReaders;
             this.categories = categories;
+            this.catName = catName;
+            this.cat = cat;
         }
 
         @Override
-        public Aggregator call() throws Exception {
-            return new MyFactory().myfactory(conf, ml, dataReaders, categories);
+        public PipelineResultData call() throws Exception {
+            return new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat);
         }
     }
 
     @Override
     public Individual crossover(AbstractChromosome evaluation) {
-        NNConfig newNNConfig =  nnConfig.crossover(((NeuralNetChromosome) evaluation).nnConfig);
-        NeuralNetChromosome eval = new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig);
+        NeuralNetConfig newNNConfig =  nnConfig.crossover(((NeuralNetChromosome) evaluation).nnConfig);
+        NeuralNetChromosome eval = new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat);
         return new Individual(eval);
     }
 
     @Override
     public AbstractChromosome copy() {
-        NNConfig newNNConfig = null;
+        NeuralNetConfig newNNConfig = null;
         if (nnConfig != null) {
-            newNNConfig = (NNConfig) (nnConfig.copy());
+            newNNConfig = (NeuralNetConfig) (nnConfig.copy());
         }
-        return new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig);
+        return new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat);
     }
     
     @Override
@@ -187,5 +209,10 @@ public class NeuralNetChromosome extends AbstractChromosome {
     @Override
     public String toString() {
         return key + " " + nnConfig;
+    }
+
+    @Override
+    public boolean isAscending() {
+        return ascending;
     }
 }
