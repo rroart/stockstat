@@ -18,4 +18,6 @@ module evolution.chromosome {
     requires model;
     requires aggregate;
     requires pipeline.model;
+    requires common.model;
+    requires pipeline.predictor;
 }

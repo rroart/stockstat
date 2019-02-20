@@ -17,4 +17,5 @@ module ml.spark {
     requires stockstat.shadow.spark;
     requires ml.common;
     requires pipeline.model;
+    requires com.fasterxml.jackson.databind;
 }
