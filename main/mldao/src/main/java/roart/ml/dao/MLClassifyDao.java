@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
-import roart.common.ml.NNConfigs;
+import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.model.LearnTestClassifyResult;
@@ -41,7 +41,7 @@ public class MLClassifyDao {
         }
     }
 
-    public LearnTestClassifyResult learntestclassify(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, double[]> map2, Map<Double, String> shortMap) {
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, double[]> map2, Map<Double, String> shortMap) {
         long time1 = System.currentTimeMillis();
         LearnTestClassifyResult result = access.learntestclassify(nnconfigs, indicator, map, model, size, period, mapname, outcomes, map2, shortMap);
         long time = (System.currentTimeMillis() - time1);
@@ -50,7 +50,7 @@ public class MLClassifyDao {
         return result;
     }
 
-    public Double learntest(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
         long time1 = System.currentTimeMillis();
         Double prob = access.learntest(nnconfigs, indicator, map, model, size, period, mapname, outcomes);
         long time = (System.currentTimeMillis() - time1);

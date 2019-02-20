@@ -7,14 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.pipeline.common.aggregate.Aggregator;
-import roart.common.ml.NNConfigs;
+import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.model.LearnTestClassifyResult;
 
 public class MLClassifyLearnTestPredictCallable implements Callable {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private NNConfigs nnconfigs;
+    private NeuralNetConfigs nnconfigs;
     
     private Aggregator indicator;
     
@@ -38,7 +38,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
 
     private MLClassifyDao mldao;
     
-    public MLClassifyLearnTestPredictCallable(NNConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model,
+    public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model,
             int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime,
             Map<String, double[]> map2, Map<Double, String> shortMap) {
         super();
