@@ -77,10 +77,12 @@ public class MyXMLConfig {
         configInstance.setConfigValueMap(new HashMap<String, Object>());
         ConfigConstantMaps.makeDefaultMap();
         ConfigConstantMaps.makeTextMap();
+        ConfigConstantMaps.makeRangeMap();
         ConfigConstantMaps.makeTypeMap();
         configInstance.setDeflt(ConfigConstantMaps.deflt);
         configInstance.setType(ConfigConstantMaps.map);
         configInstance.setText(ConfigConstantMaps.text);
+        configInstance.setRange(ConfigConstantMaps.range);
         if (configxml != null) {
             printout();
             doc = configxml.getDocument();
