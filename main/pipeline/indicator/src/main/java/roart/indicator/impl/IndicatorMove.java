@@ -19,9 +19,9 @@ public class IndicatorMove extends Indicator {
     public IndicatorMove(MyMyConfig conf, String string, List<StockItem>[] datedstocklists, int period) throws Exception {
         super(conf, string, period);
         List<StockItem>[] stocklistPeriod = StockUtil.getListSorted(datedstocklists, 2, period);
-        Map<String, Integer>[] periodmap = StockUtil.getListMove(2, stocklistPeriod, period);
+        Map<String, Integer>[] periodmapArray = StockUtil.getListMove(2, stocklistPeriod, period);
 
-        this.periodmap = periodmap[0];
+        this.periodmap = periodmapArray[0];
         this.period = period;
         fieldSize = fieldSize();
     }
