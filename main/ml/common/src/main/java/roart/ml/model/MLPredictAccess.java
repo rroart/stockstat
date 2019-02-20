@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.ml.NeuralNetConfigs;
 import roart.pipeline.common.predictor.AbstractPredictor;
 
 public abstract class MLPredictAccess {
@@ -14,11 +15,11 @@ public abstract class MLPredictAccess {
 
     protected List<MLPredictModel> models;
     
-    public abstract Double[] predictone(AbstractPredictor predictor, Double[] list, MLPredictModel model, int size, String period, int outcomes, int windowsize, int horizon, int epochs);
+    public abstract LearnTestPredictResult predictone(NeuralNetConfigs nnconfigs, AbstractPredictor predictor, Double[] list, MLPredictModel model, int size, String period, int outcomes);
 
     public abstract Double eval(int modelInt, String period, String mapname);
 
-    public abstract Map<String, Double[]> predict(AbstractPredictor predictor, Map<String, Double[]> map, MLPredictModel model, int size, String period, int outcomes, int windowsize, int horizon, int epochs);
+    public abstract LearnTestPredictResult predict(NeuralNetConfigs nnconfigs, AbstractPredictor predictor, Map<String, Double[]> map, MLPredictModel model, int size, String period, int outcomes);
 
     public abstract List<MLPredictModel> getModels();
 

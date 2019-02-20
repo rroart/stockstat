@@ -2,6 +2,10 @@ package roart.ml.model;
 
 import java.util.List;
 
+import roart.common.ml.TensorflowDNNConfig;
+import roart.common.ml.TensorflowLConfig;
+import roart.common.ml.TensorflowLSTMConfig;
+
 public class LearnTestPredict {
     public List<Double[]> slides;
     //public List<Double> next;
@@ -15,10 +19,14 @@ public class LearnTestPredict {
     public String mapname;
     public int outcomes;
     public Double prob;
-    public int horizon;
-    public int epochs;
-    public int windowsize;
-    public Double[] predicted;
-    public List<Double[]> predictedlist;
-    public Double accuracy;
+
+    private TensorflowLSTMConfig tensorflowLSTMConfig;
+
+    public TensorflowLSTMConfig getTensorflowLSTMConfig() {
+        return tensorflowLSTMConfig;
+    }
+
+    public void setTensorflowLSTMConfig(TensorflowLSTMConfig tensorflowLSTMConfig) {
+        this.tensorflowLSTMConfig = tensorflowLSTMConfig;
+    }
 }

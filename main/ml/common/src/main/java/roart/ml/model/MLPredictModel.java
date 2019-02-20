@@ -1,16 +1,43 @@
 package roart.ml.model;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetConfig;
+import roart.common.ml.NeuralNetConfigs;
 import roart.pipeline.common.predictor.AbstractPredictor;
 
 public abstract class MLPredictModel {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     public abstract int getId();
 
     public abstract String getName();
+
+    public abstract String getKey();
+    
+    private MyMyConfig conf;
+
+    public MyMyConfig getConf() {
+        return conf;
+    }
+
+    public void setConf(MyMyConfig conf) {
+        this.conf = conf;
+    }
+
+    public MLPredictModel(MyMyConfig conf) {
+        this.conf = conf;
+    }
 
     //@Override
     public int addTitles(Object[] objs, int retindex, AbstractPredictor indicator, String title, String key, String subType, List<Integer> typeList0, Map<Integer, String> mapTypes0, String dao) {
@@ -60,5 +87,25 @@ public abstract class MLPredictModel {
         val += add;
         map.put(key, val);
     }
+
+    protected <T> T convert(Class<T> clazz) {
+        try {
+            return new ObjectMapper().readValue((String) getConf().getConfigValueMap().get(getKey()), clazz);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    protected <T> T getDefault(Class<T> clazz) {
+        try {
+            return new ObjectMapper().readValue((String) getConf().getDeflt().get(getKey()), clazz);
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public abstract NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestPredict param);
 
 }
