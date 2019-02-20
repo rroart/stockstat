@@ -411,6 +411,9 @@ public class MyVaadinUI extends UI implements ViewDisplay {
         horTester2.addComponent(getTestMLReset(PipelineConstants.MLINDICATOR));
         horTester2.addComponent(getTestML(PipelineConstants.MLINDICATOR, false));
         horTester2.addComponent(getTestML(PipelineConstants.MLINDICATOR, true));
+        horTester2.addComponent(getTestMLReset(PipelineConstants.PREDICTORSLSTM));
+        horTester2.addComponent(getTestML(PipelineConstants.PREDICTORSLSTM, false));
+        horTester2.addComponent(getTestML(PipelineConstants.PREDICTORSLSTM, true));
 
         HorizontalLayout horManual = new HorizontalLayout();
         horManual.setHeight("20%");

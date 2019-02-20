@@ -129,6 +129,10 @@ export class EvolvebarComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ActionSetconfigvaluemap([ 'aggregators.indicator.mlconfig', null ]));
   }
 
+  resetPredictorLSTM(event, props) {
+    this.store.dispatch(new ActionSetconfigvaluemap([ 'machinelearning.tensorflow.lstm.config', null ]));
+  }
+
   evolveRecommender(event, props) {
     this.store.dispatch(new ActionGetevolve(['getevolverecommender', false, this.main.config, '']));
   }
@@ -141,6 +145,10 @@ export class EvolvebarComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ActionGetevolve(['getevolvenn', false, this.main.config, 'mlindicator']));
   }
 
+  evolvePredictorLSTM(event, props) {
+    this.store.dispatch(new ActionGetevolve(['getevolvenn', false, this.main.config, 'predictorlstm']));
+  }
+
   evolveAndSetRecommender(event, props) {
     this.store.dispatch(new ActionGetevolve(['getevolverecommender', true, this.main.config, '']));
   }
@@ -151,6 +159,10 @@ export class EvolvebarComponent implements OnInit, OnDestroy {
 
   evolveAndSetMlindicator(event, props) {
     this.store.dispatch(new ActionGetevolve(['getevolvenn', true, this.main.config, 'mlindicator']));
+  }
+
+  evolveAndSetPredictorLSTM(event, props) {
+    this.store.dispatch(new ActionGetevolve(['getevolvenn', true, this.main.config, 'predictorlstm']));
   }
 
 async delay(ms: number) {

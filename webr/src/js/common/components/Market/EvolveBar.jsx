@@ -32,6 +32,10 @@ class EvolveBar extends PureComponent {
     props.setconfigvaluemap([ 'aggregators.indicator.mlconfig', null ]);
   }
 
+  resetPredictorLSTM(event, props) {
+    props.setconfigvaluemap([ 'machinelearning.tensorflow.lstm.config', null ]);
+  }
+
   evolveRecommender(event, props) {
     props.getevolve(['getevolverecommender', false, props.main.config, '']);
   }
@@ -44,6 +48,10 @@ class EvolveBar extends PureComponent {
     props.getevolve(['getevolvenn', false, props.main.config, 'mlindicator']);
   }
 
+  evolvePredictorLSTM(event, props) {
+    props.getevolve(['getevolvenn', false, props.main.config, 'predictorlstm']);
+  }
+
   evolveAndSetRecommender(event, props) {
     props.getevolve(['getevolverecommender', true, props.main.config, '']);
   }
@@ -54,6 +62,10 @@ class EvolveBar extends PureComponent {
 
   evolveAndSetMlindicator(event, props) {
     props.getevolve(['getevolvenn', true, props.main.config, 'mlindicator']);
+  }
+
+  evolveAndSetPredictorLSTM(event, props) {
+    props.getevolve(['getevolvenn', true, props.main.config, 'predictorlstm']);
   }
 
 /*
@@ -110,7 +122,7 @@ class EvolveBar extends PureComponent {
             <Button bsStyle="primary" onClick={ (e) => this.evolveAndSetMLMACD(e, this.props) } >Evolve MLMACD and set</Button>
           </NavItem>
         </Nav>
-       </Navbar>
+      </Navbar>
       <Navbar>
         <Navbar.Header>
           <Navbar.Brand>
@@ -126,6 +138,24 @@ class EvolveBar extends PureComponent {
           </NavItem>
           <NavItem eventKey={3} href="#">
             <Button bsStyle="primary" onClick={ (e) => this.evolveAndSetMlindicator(e, this.props) } >Evolve mlindicator and set</Button>
+          </NavItem>
+        </Nav>
+      </Navbar>
+      <Navbar>
+        <Navbar.Header>
+          <Navbar.Brand>
+            <a href="#home">{this.type}</a>
+          </Navbar.Brand>
+        </Navbar.Header>
+        <Nav>
+          <NavItem eventKey={1} href="#">
+	    <Button bsStyle="primary" onClick={ (e) => this.resetPredictorLSTM(e, this.props) } >Reset predictor lstm</Button>
+          </NavItem>
+          <NavItem eventKey={2} href="#">
+	    <Button bsStyle="primary" onClick={ (e) => this.evolvePredictorLSTM(e, this.props) } >Evolve predictor lstm</Button>
+          </NavItem>
+          <NavItem eventKey={3} href="#">
+            <Button bsStyle="primary" onClick={ (e) => this.evolveAndSetPredictorLSTM(e, this.props) } >Evolve predictor lstm and set</Button>
           </NavItem>
         </Nav>
        </Navbar>
