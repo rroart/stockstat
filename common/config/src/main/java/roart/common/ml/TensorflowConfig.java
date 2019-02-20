@@ -1,6 +1,6 @@
 package roart.common.ml;
 
-public abstract class TensorflowConfig extends NNConfig {
+public abstract class TensorflowConfig extends NeuralNetConfig {
 
     public static final int MAX_STEPS = 200;
     public static final int MAX_HIDDENLAYERS = 4;

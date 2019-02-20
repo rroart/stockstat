@@ -19,6 +19,8 @@ public class MyConfig {
     
     private Map<String, Object> deflt = new HashMap<>();
     
+    private Map<String, Double[]> range = new HashMap<>();
+    
     private Map<String, Class> type = new HashMap<>();
 
     //public boolean useSpark = false;
@@ -129,6 +131,14 @@ public class MyConfig {
 
     public void setType(Map<String, Class> type) {
         this.type = type;
+    }
+
+    public Map<String, Double[]> getRange() {
+        return range;
+    }
+
+    public void setRange(Map<String, Double[]> range) {
+        this.range = range;
     }
 
     /**

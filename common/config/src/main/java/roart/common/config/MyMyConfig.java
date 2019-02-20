@@ -11,6 +11,7 @@ public class MyMyConfig extends MyConfig {
         setConfigValueMap(config.getConfigValueMap());
         setDeflt(config.getDeflt());
         setText(config.getText());
+        setRange(config.getRange());
         setType(config.getType());
         fixIntegerDouble();
         this.mydate = config.mydate;
@@ -260,7 +261,7 @@ public class MyMyConfig extends MyConfig {
     }
      */
     public int getMACDHistogramDeltaDays() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHHISTOGRAMDELTADAYS);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTADAYS);
     }
 
     /*
@@ -393,6 +394,39 @@ public class MyMyConfig extends MyConfig {
                 && wantMLTensorflow();
     }
 
+    public  boolean wantLSTM() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM)
+                && wantMLTensorflow();
+    }
+
+    public String getMCPConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG);
+    }
+
+    public String getLRConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG);
+    }
+
+    public String getOVRConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG);
+    }
+
+    public String getDNNConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG);
+    }
+
+    public String getDNNLConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG);
+    }
+
+    public String getLConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG);
+    }
+
+    public String getLSTMConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+    }
+
     public  int weightBuyHist() {
         return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTHISTOGRAM);
     }
@@ -507,20 +541,9 @@ public class MyMyConfig extends MyConfig {
 
     public boolean wantPredictorLSTM() {
         return (Boolean) getValueOrDefault(ConfigConstants.PREDICTORSLSTM) 
+                && wantLSTM()
                 && wantPredictors() 
                 && wantMLTensorflow();
-    }
-
-    public Integer getPredictorLSTMHorizon() {
-        return (Integer) getValueOrDefault(ConfigConstants.PREDICTORSLSTMHORIZON);
-    }
-
-    public Integer getPredictorLSTMEpochs() {
-        return (Integer) getValueOrDefault(ConfigConstants.PREDICTORSLSTMEPOCHS);
-    }
-
-    public Integer getPredictorLSTMWindowsize() {
-        return (Integer) getValueOrDefault(ConfigConstants.PREDICTORSLSTMWINDOWSIZE);
     }
 
     /*

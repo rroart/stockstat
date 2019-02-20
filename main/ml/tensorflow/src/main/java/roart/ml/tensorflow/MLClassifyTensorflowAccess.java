@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
-import roart.common.ml.NNConfigs;
+import roart.common.ml.NeuralNetConfig;
+import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.TensorflowDNNConfig;
 import roart.common.ml.TensorflowLConfig;
 import roart.eureka.util.EurekaUtil;
@@ -39,21 +40,21 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     private void findModels() {
         models = new ArrayList<>();
         if (conf.wantDNN()) {
-            MLClassifyModel model = new MLClassifyTensorflowDNNModel();
+            MLClassifyModel model = new MLClassifyTensorflowDNNModel(conf);
             models.add(model);
         }
         if (conf.wantDNNL()) {
-            MLClassifyModel model = new MLClassifyTensorflowDNNLModel();
+            MLClassifyModel model = new MLClassifyTensorflowDNNLModel(conf);
             models.add(model);
         }
         if (conf.wantL()) {
-            MLClassifyModel model = new MLClassifyTensorflowLModel();
+            MLClassifyModel model = new MLClassifyTensorflowLModel(conf);
             models.add(model);
         }	    
     }
 
     @Override
-    public Double learntest(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period, String mapname,
             int outcomes) {
         return learntestInner(nnconfigs, map, size, period, mapname, outcomes, model);
     }
@@ -63,7 +64,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return models;
     }
 
-    private Double learntestInner(NNConfigs nnconfigs, Map<double[], Double> map, int size, String period, String mapname, int outcomes,
+    private Double learntestInner(NeuralNetConfigs nnconfigs, Map<double[], Double> map, int size, String period, String mapname, int outcomes,
             MLClassifyModel model) {
         // not used?
         List<List<Object>> listlist = getListList(map);
@@ -187,7 +188,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NNConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map,
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map,
             MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<String, double[]> map2,
             Map<Double, String> shortMap) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
@@ -216,7 +217,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             lconfig = new TensorflowLConfig(2000);
         }
         param.setTensorflowDNNConfig(dnnConfig);
-        param.setTensorflowLConfig(lconfig);
+        NeuralNetConfig m = ((MLClassifyTensorflowModel) model).getModelAndSet(nnconfigs, param);
         param.setTrainingarray(trainingArray);
         param.setTrainingcatarray(trainingCatArray);
         param.setModelInt(model.getId());

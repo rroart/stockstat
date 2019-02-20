@@ -2,10 +2,11 @@ package roart.config;
 
 import java.util.HashMap;
 import java.util.Map;
-import roart.calculate.CalcComplexNode;
+
 import roart.common.config.ConfigConstants;
 import roart.common.config.XMLType;
 import roart.common.constants.CategoryConstants;
+import roart.gene.impl.CalcComplexGene;
 
 public class ConfigConstantMaps {
     public static Map<String, Class> map = new HashMap();
@@ -25,19 +26,26 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, String.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT, Integer.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNL, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG, String.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, String.class);
         map.put(ConfigConstants.INDICATORS, Boolean.class);
         map.put(ConfigConstants.INDICATORSMOVE, Boolean.class);
         map.put(ConfigConstants.INDICATORSMACD, Boolean.class);
         map.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA, Boolean.class);
-        map.put(ConfigConstants.INDICATORSMACDMACHHISTOGRAMDELTADAYS, Integer.class);
-
+        map.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTADAYS, Integer.class);
         map.put(ConfigConstants.INDICATORSMACDMACDMOMENTUMDELTA, Boolean.class);
         map.put(ConfigConstants.INDICATORSMACDACDMOMENTUMDELTADAYS, Integer.class);
         map.put(ConfigConstants.INDICATORSMACDRECOMMEND, Boolean.class);
@@ -80,9 +88,11 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, Integer.class);
         map.put(ConfigConstants.PREDICTORS, Boolean.class);
         map.put(ConfigConstants.PREDICTORSLSTM, Boolean.class);
+  /*
         map.put(ConfigConstants.PREDICTORSLSTMEPOCHS, Integer.class);
         map.put(ConfigConstants.PREDICTORSLSTMHORIZON, Integer.class);
         map.put(ConfigConstants.PREDICTORSLSTMWINDOWSIZE, Integer.class);
+*/
         map.put(ConfigConstants.MISC, Boolean.class);
         map.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, Boolean.class);
         map.put(ConfigConstants.MISCMLSTATS, Boolean.class);
@@ -189,18 +199,26 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, "spark://127.0.0.1:7077");
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG, "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"nn\" : [ 1, 1 ] }");
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, "{ \"maxiter\" : 100, \"tol\" : 1.0E-6 }");
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : true }");
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, "{ \"steps\" : 2000, \"hiddenlayers\" : 3, \"hiddenunits\" : [ 10, 20, 10 ] }");
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNL, Boolean.FALSE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG, "{ }");
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG, "{ \"steps\" : 5 }");
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, "{ \"epochs\": 5, \"windowsize\": 3, \"horizon\": 5 }");
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, "http://localhost:8000");
         deflt.put(ConfigConstants.INDICATORS, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMOVE, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA, Boolean.TRUE);
-        deflt.put(ConfigConstants.INDICATORSMACDMACHHISTOGRAMDELTADAYS, 3);
+        deflt.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTADAYS, 3);
 
         deflt.put(ConfigConstants.INDICATORSMACDMACDMOMENTUMDELTA, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMACDACDMOMENTUMDELTADAYS, 3);
@@ -244,9 +262,11 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, 3);
         deflt.put(ConfigConstants.PREDICTORS, Boolean.TRUE);
         deflt.put(ConfigConstants.PREDICTORSLSTM, Boolean.TRUE);
+/*
         deflt.put(ConfigConstants.PREDICTORSLSTMEPOCHS, 5);
         deflt.put(ConfigConstants.PREDICTORSLSTMHORIZON, 5);
         deflt.put(ConfigConstants.PREDICTORSLSTMWINDOWSIZE, 3);
+  */
         deflt.put(ConfigConstants.MISC, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCMLSTATS, Boolean.TRUE);
@@ -271,8 +291,8 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.TESTRECOMMENDPERIOD, CategoryConstants.PRICE);
         deflt.put(ConfigConstants.TESTRECOMMENDFACTOR, 10);
          */
-        deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "{ 'generations' : 100, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 16, 'mutate' : 2, 'generationcreate' : 1, 'useoldelite' : true }");
-        deflt.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "{ 'generations' : 10, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 4, 'mutate' : 2, 'generationcreate' : 1, 'useoldelite' : true }");
+        deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }");
+        deflt.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }");
         /*
         deflt.put(ConfigConstants.EVOLUTIONGENERATIONS, 2);
         deflt.put(ConfigConstants.EVOLUTIONCHILDREN, 4);
@@ -358,18 +378,26 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, "Machine Learning Spark Master");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT, "Machine Learning Spark Network Timeout");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, "Enable Spark ML MCP");
+        text.put(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG, "Config for Spark ML MCP");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, "Enable Spark ML LR");
+        text.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, "Config for Spark ML LR");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, "Enable Spark ML OVR");
+        text.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, "Config for Spark ML OVR");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, "Enable Tensorflow");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, "Enable Tensorflow DNN");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, "Config for Tensorflow DNN");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNL, "Enable Tensorflow DNNL");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG, "Config for Tensorflow DNNL");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, "Enable Tensorflow L");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG, "Config for Tensorflow L");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, "Enable Tensorflow (Keras) LSTM");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, "Config for Tensorflow (Keras) LSTM");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, "Tensorflow Server");
         text.put(ConfigConstants.INDICATORS, "Enable indicators");
         text.put(ConfigConstants.INDICATORSMOVE, "Enable move indicator");
         text.put(ConfigConstants.INDICATORSMACD, "Enable MACD indicator");
         text.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA, "Enable MACD histogram delta");
-        text.put(ConfigConstants.INDICATORSMACDMACHHISTOGRAMDELTADAYS, "MACD histogram delta days");
+        text.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTADAYS, "MACD histogram delta days");
 
         text.put(ConfigConstants.INDICATORSMACDMACDMOMENTUMDELTA, "Enable MACD momentum delta");
         text.put(ConfigConstants.INDICATORSMACDACDMOMENTUMDELTADAYS, "MACD momentum delta days");
@@ -413,9 +441,11 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, "STOCH delta days");
         text.put(ConfigConstants.PREDICTORS, "Enable predictors");
         text.put(ConfigConstants.PREDICTORSLSTM, "Enable LSTM predictor");
+/*
         text.put(ConfigConstants.PREDICTORSLSTMEPOCHS, "LSTM epochs");
         text.put(ConfigConstants.PREDICTORSLSTMHORIZON, "LSTM horizon");
         text.put(ConfigConstants.PREDICTORSLSTMWINDOWSIZE, "LSTM windowsize");
+  */
         text.put(ConfigConstants.MISC, "Misc");
         text.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, "Enable turning price/index into percent based on first date");
         text.put(ConfigConstants.MISCMLSTATS, "Enable ML stats for time usage");
@@ -504,6 +534,21 @@ public class ConfigConstantMaps {
 
     }
 
+    public static Map<String, Double[]> range = new HashMap();
+
+    public static void makeRangeMap() {
+        if (!range.isEmpty()) {
+            return;
+        }
+        range.put(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO, new Double[] { 1.0, 50.0 } );
+        range.put(ConfigConstants.INDICATORSMACDDAYSAFTERZERO, new Double[] { 1.0, 20.0 } );
+/*
+        range.put(ConfigConstants.PREDICTORSLSTMEPOCHS, new Double[] { 1.0, 10.0 } );
+        range.put(ConfigConstants.PREDICTORSLSTMHORIZON, new Double[] { 1.0, 10.0 } );
+        range.put(ConfigConstants.PREDICTORSLSTMWINDOWSIZE, new Double[] { 2.0, 10.0 } );
+        */
+    }
+    
     public static Map<String, XMLType> mymap = new HashMap<>();
     public static void makeMap() {
         mymap.put(ConfigConstants.PROPFILE, new XMLType(null, null, null));
@@ -523,18 +568,26 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, new XMLType( String.class, "spark://127.0.0.1:7077", "Machine Learning Spark Master"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT, new XMLType( Integer.class, null, "Machine Learning Spark Network Timeout"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML MCP"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG, new XMLType( String.class, "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"nn\" : [ 1, 1 ] }", "Config for Spark ML MCP"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML LR"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, new XMLType( String.class, "{ \"maxiter\" : 100, \"tol\" : 1.0E-6 }", "Config for Spark ML LR"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML OVR"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, new XMLType( String.class, "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : true }", "Config for Spark ML OVR"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow DNN"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, new XMLType( String.class, "{ \"steps\" : 2000, \"hiddenlayers\" : 3, \"hiddenunits\" : [ 10, 20, 10 ] }", "Config for Tensorflow DNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNL, new XMLType( Boolean.class, Boolean.FALSE, "Enable Tensorflow DNNL"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG, new XMLType( String.class, "", "Config for Tensorflow DNNL"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow L"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG, new XMLType( String.class, "{ \"steps\" : 5 }", "Config for Tensorflow L"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow (Keras) LSTM"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, new XMLType( String.class, "{ \"epochs\": 5, \"windowsize\": 3, \"horizon\": 5 }", "Config for Tensorflow (Keras) LSTM"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, new XMLType( String.class, "http://localhost:8000", "Tensorflow Server"));
         mymap.put(ConfigConstants.INDICATORS, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicators"));
         mymap.put(ConfigConstants.INDICATORSMOVE, new XMLType( Boolean.class, Boolean.TRUE, "Enable move indicator"));
         mymap.put(ConfigConstants.INDICATORSMACD, new XMLType( Boolean.class, Boolean.TRUE, "Enable MACD indicator"));
         mymap.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA, new XMLType( Boolean.class, Boolean.TRUE, "Enable MACD histogram delta"));
-        mymap.put(ConfigConstants.INDICATORSMACDMACHHISTOGRAMDELTADAYS, new XMLType( Integer.class, 3, "MACD histogram delta days"));
+        mymap.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTADAYS, new XMLType( Integer.class, 3, "MACD histogram delta days"));
         mymap.put(ConfigConstants.INDICATORSMACDMACDMOMENTUMDELTA, new XMLType( Boolean.class, Boolean.TRUE, "Enable MACD momentum delta"));
         mymap.put(ConfigConstants.INDICATORSMACDACDMOMENTUMDELTADAYS, new XMLType( Integer.class, 3, "MACD momentum delta days"));
         mymap.put(ConfigConstants.INDICATORSMACDRECOMMEND, new XMLType( Boolean.class, Boolean.TRUE, "Enable MACD buy/sell recommendation"));
@@ -551,8 +604,8 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.INDICATORSMACDMACHINELEARNING, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD machine learning"));
         mymap.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGMOMENTUMML, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD momentum machine learning"));
         mymap.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD histogram machine learning"));
-        mymap.put(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO, new XMLType( Integer.class, 25, "Days before zero"));
-        mymap.put(ConfigConstants.INDICATORSMACDDAYSAFTERZERO, new XMLType( Integer.class, 10, "Days after zero"));
+        mymap.put(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO, new XMLType( Integer.class, 25, "Days before zero", new Double[] { 1.0, 50.0 } ));
+        mymap.put(ConfigConstants.INDICATORSMACDDAYSAFTERZERO, new XMLType( Integer.class, 10, "Days after zero", new Double[] { 1.0, 20.0 } ));
         mymap.put(ConfigConstants.INDICATORSRSI, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator RSI"));
         mymap.put(ConfigConstants.INDICATORSRSIDELTA, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator RSI delta"));
         mymap.put(ConfigConstants.INDICATORSRSIDELTADAYS, new XMLType( Integer.class, 3, "RSI delta days"));
@@ -577,9 +630,11 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, new XMLType( Integer.class, 3, "STOCH delta days"));
         mymap.put(ConfigConstants.PREDICTORS, new XMLType( Boolean.class, Boolean.TRUE, "Enable predictors"));
         mymap.put(ConfigConstants.PREDICTORSLSTM, new XMLType( Boolean.class, Boolean.TRUE, "Enable LSTM predictor"));
+/*
         mymap.put(ConfigConstants.PREDICTORSLSTMWINDOWSIZE, new XMLType( Integer.class, 3, "LSTM windowsize"));
         mymap.put(ConfigConstants.PREDICTORSLSTMHORIZON, new XMLType( Integer.class, 5, "LSTM horizon"));
         mymap.put(ConfigConstants.PREDICTORSLSTMEPOCHS, new XMLType( Integer.class, 5, "LSTM epochs"));
+*/
         mymap.put(ConfigConstants.MISC, new XMLType( Boolean.class, Boolean.TRUE, "Misc"));
         mymap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, new XMLType( Boolean.class, Boolean.TRUE, "Enable turning price/index into percent based on first date"));
         mymap.put(ConfigConstants.MISCMLSTATS, new XMLType( Boolean.class, Boolean.TRUE, "Enable ML stats for time usage"));
@@ -594,12 +649,12 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, new XMLType( Boolean.class, Boolean.TRUE, "Enable unified graph equalizing"));
         mymap.put(ConfigConstants.MISCFILTERWEEKEND, new XMLType( Boolean.class, Boolean.TRUE, "Filter out weekend data"));
         mymap.put(ConfigConstants.MISCFILTERHOLIDAY, new XMLType( Boolean.class, Boolean.TRUE, "Filter out holiday data"));
-        mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new XMLType( String.class, "{ 'generations' : 100, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 16, 'mutate' : 2, 'generationcreate' : 1 }", "ML GP config"));
+        mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, new XMLType( Integer.class, 10, "Test complex recommender future days"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXINTERVALDAYS, new XMLType( Integer.class, 5, "Test complex recommender interval days"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, new XMLType( Integer.class, 10, "Test simple recommender future days"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, new XMLType( Integer.class, 5, "Test simple recommender interval days"));
-        mymap.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new XMLType( String.class, "{ 'generations' : 10, 'children' : 4, 'crossover' : 2, 'elite' : 1, 'elitecloneandmutate' : 1, 'select' : 4, 'mutate' : 2, 'generationcreate' : 1 }", "Indicator recommender GP config"));
+        mymap.put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "Indicator recommender GP config"));
         mymap.put(ConfigConstants.AGGREGATORS, new XMLType( Boolean.class, Boolean.TRUE, "Enable aggregators"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, new XMLType( Boolean.class, Boolean.TRUE, "Enable aggregated recommender"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLE, new XMLType( Boolean.class, Boolean.TRUE, "Enable aggregated recommender simple"));

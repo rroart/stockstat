@@ -38,7 +38,7 @@ public class TensorflowLConfig extends TensorflowConfig {
     }
 
     @Override
-    public NNConfig crossover(NNConfig otherNN) {
+    public NeuralNetConfig crossover(NeuralNetConfig otherNN) {
         TensorflowLConfig offspring = new TensorflowLConfig(steps);
         TensorflowLConfig other = (TensorflowLConfig) otherNN;
         Random rand = new Random();
@@ -49,7 +49,7 @@ public class TensorflowLConfig extends TensorflowConfig {
      }
 
     @Override
-    public NNConfig copy() {
+    public NeuralNetConfig copy() {
          return new TensorflowLConfig(steps);
     }
     

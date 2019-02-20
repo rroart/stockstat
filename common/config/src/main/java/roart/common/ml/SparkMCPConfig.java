@@ -155,7 +155,7 @@ public class SparkMCPConfig extends SparkConfig {
     }
 
     @Override
-    public NNConfig crossover(NNConfig otherNN) {
+    public NeuralNetConfig crossover(NeuralNetConfig otherNN) {
         validate();
         SparkMCPConfig offspring = new SparkMCPConfig(maxiter, layers, tol);
         offspring.setNn(Arrays.copyOf(nn, nn.length));
@@ -173,7 +173,7 @@ public class SparkMCPConfig extends SparkConfig {
     }
 
     @Override
-    public NNConfig copy() {
+    public NeuralNetConfig copy() {
         SparkMCPConfig newMCP = new SparkMCPConfig(maxiter, layers, tol);
         if (nn != null) {
             newMCP.setNn(Arrays.copyOf(nn, nn.length));

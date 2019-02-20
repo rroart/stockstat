@@ -1,9 +1,9 @@
 package roart.common.ml;
 
-public abstract class NNConfig {
+public abstract class NeuralNetConfig {
     private String name;
 
-    public NNConfig(String name) {
+    public NeuralNetConfig(String name) {
         super();
         this.name = name;
     }
@@ -20,9 +20,9 @@ public abstract class NNConfig {
     
     public abstract void mutate();
     
-    public abstract NNConfig crossover(NNConfig other);
+    public abstract NeuralNetConfig crossover(NeuralNetConfig other);
 
-    public abstract NNConfig copy();
+    public abstract NeuralNetConfig copy();
 
     public abstract boolean empty();
 }

@@ -7,6 +7,8 @@ public class XMLType {
     
     private String text;
     
+    private Double[] range;
+    
     public XMLType(Class type, Object defaults, String text) {
         super();
         this.type = type;
@@ -14,6 +16,11 @@ public class XMLType {
         this.text = text;
     }
     
+    public XMLType(Class type, Object defaults, String text, Double[] doubles) {
+        this(type, defaults, text);
+        this.range = range;
+    }
+
     public Class getType() {
         return type;
     }
@@ -36,5 +43,13 @@ public class XMLType {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Double[] getRange() {
+        return range;
+    }
+
+    public void setRange(Double[] range) {
+        this.range = range;
     }
 }

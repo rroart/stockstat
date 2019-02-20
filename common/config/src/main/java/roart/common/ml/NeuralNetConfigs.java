@@ -2,28 +2,31 @@ package roart.common.ml;
 
 import roart.common.config.ConfigConstants;
 
-public class NNConfigs {
+public class NeuralNetConfigs {
     private SparkLRConfig sparkLRConfig;
-    
+
     private SparkMCPConfig sparkMCPConfig;
-    
+
     private SparkOVRConfig sparkOVRConfig;
-    
+
     private TensorflowDNNConfig tensorflowDNNConfig;
-    
+
     private TensorflowLConfig tensorflowLConfig;
 
-    public NNConfigs(SparkLRConfig sparkLRConfig, SparkMCPConfig sparkMCPConfig, SparkOVRConfig sparkOVRConfig,
-            TensorflowDNNConfig tensorflowDNNConfig, TensorflowLConfig tensorflowLConfig) {
+    private TensorflowLSTMConfig tensorflowLSTMConfig;
+
+    public NeuralNetConfigs(SparkLRConfig sparkLRConfig, SparkMCPConfig sparkMCPConfig, SparkOVRConfig sparkOVRConfig,
+            TensorflowDNNConfig tensorflowDNNConfig, TensorflowLConfig tensorflowLConfig, TensorflowLSTMConfig tensorflowLSTMConfig) {
         super();
         this.sparkLRConfig = sparkLRConfig;
         this.sparkMCPConfig = sparkMCPConfig;
         this.sparkOVRConfig = sparkOVRConfig;
         this.tensorflowDNNConfig = tensorflowDNNConfig;
         this.tensorflowLConfig = tensorflowLConfig;
+        this.tensorflowLSTMConfig = tensorflowLSTMConfig;
     }
 
-    public NNConfigs() {
+    public NeuralNetConfigs() {
         super();
     }
 
@@ -66,28 +69,39 @@ public class NNConfigs {
     public void setTensorflowLConfig(TensorflowLConfig tensorflowLConfig) {
         this.tensorflowLConfig = tensorflowLConfig;
     }
-    
-    public void set(String key, NNConfig conf) {
+
+    public TensorflowLSTMConfig getTensorflowLSTMConfig() {
+        return tensorflowLSTMConfig;
+    }
+
+    public void setTensorflowLSTMConfig(TensorflowLSTMConfig tensorflowLSTMConfig) {
+        this.tensorflowLSTMConfig = tensorflowLSTMConfig;
+    }
+
+    public void set(String key, NeuralNetConfig conf) {
         switch (key) {
         case ConfigConstants.MACHINELEARNINGSPARKMLLR:
-                sparkLRConfig = (SparkLRConfig) conf;
+            sparkLRConfig = (SparkLRConfig) conf;
             break;
         case ConfigConstants.MACHINELEARNINGSPARKMLMCP:
-                sparkMCPConfig = (SparkMCPConfig) conf;
-                break;
+            sparkMCPConfig = (SparkMCPConfig) conf;
+            break;
         case ConfigConstants.MACHINELEARNINGSPARKMLOVR:
-                sparkOVRConfig = (SparkOVRConfig) conf;
-                break;
+            sparkOVRConfig = (SparkOVRConfig) conf;
+            break;
         case ConfigConstants.MACHINELEARNINGTENSORFLOWDNN:
-                 tensorflowDNNConfig = (TensorflowDNNConfig) conf;
-                 break;
+            tensorflowDNNConfig = (TensorflowDNNConfig) conf;
+            break;
         case ConfigConstants.MACHINELEARNINGTENSORFLOWL:
-                tensorflowLConfig = (TensorflowLConfig) conf;
-        break; 
+            tensorflowLConfig = (TensorflowLConfig) conf;
+            break; 
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
+            tensorflowLSTMConfig = (TensorflowLSTMConfig) conf;
+            break; 
         }
     }
 
-    public NNConfig get(String key) {
+    public NeuralNetConfig get(String key) {
         switch (key) {
         case ConfigConstants.MACHINELEARNINGSPARKMLLR:
             if (sparkLRConfig == null) {
@@ -114,6 +128,11 @@ public class NNConfigs {
                 tensorflowLConfig = new TensorflowLConfig();
             }
             return tensorflowLConfig;
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
+            if (tensorflowLSTMConfig == null) {
+                tensorflowLSTMConfig = new TensorflowLSTMConfig();
+            }
+            return tensorflowLSTMConfig;
         }
         return null;
     }

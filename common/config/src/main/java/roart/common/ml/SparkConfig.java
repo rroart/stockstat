@@ -2,7 +2,7 @@ package roart.common.ml;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class SparkConfig extends NNConfig {
+public abstract class SparkConfig extends NeuralNetConfig {
 
     public static final int MAX_ITER = 200;
     public static final int MAX_LAYERS = 5;

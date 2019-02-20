@@ -136,7 +136,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
     }
 
     @Override
-    public NNConfig crossover(NNConfig otherNN) {
+    public NeuralNetConfig crossover(NeuralNetConfig otherNN) {
         validate();
         TensorflowDNNConfig offspring = new TensorflowDNNConfig(steps, hiddenlayers);
         offspring.setHiddenunits(Arrays.copyOf(hiddenunits, hiddenunits.length));
@@ -154,7 +154,7 @@ public class TensorflowDNNConfig extends TensorflowConfig {
     }
 
     @Override
-    public NNConfig copy() {
+    public NeuralNetConfig copy() {
         TensorflowDNNConfig newL = new TensorflowDNNConfig(hiddenlayers, hiddenlayers);
         if (hiddenunits != null) {
             newL.setHiddenunits(Arrays.copyOf(hiddenunits, hiddenunits.length));

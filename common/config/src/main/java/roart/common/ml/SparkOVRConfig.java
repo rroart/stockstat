@@ -86,7 +86,7 @@ public class SparkOVRConfig extends SparkConfig {
     }
 
     @Override
-    public NNConfig crossover(NNConfig otherNN) {
+    public NeuralNetConfig crossover(NeuralNetConfig otherNN) {
         SparkOVRConfig offspring = new SparkOVRConfig(maxiter, tol, fitintercept);
         SparkOVRConfig other = (SparkOVRConfig) otherNN;
         Random rand = new Random();
@@ -103,7 +103,7 @@ public class SparkOVRConfig extends SparkConfig {
     }
 
     @Override
-    public NNConfig copy() {
+    public NeuralNetConfig copy() {
         return new SparkOVRConfig(maxiter, tol, fitintercept);
     }
     

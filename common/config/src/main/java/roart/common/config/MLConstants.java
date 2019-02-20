@@ -11,4 +11,5 @@ public class MLConstants {
     public static final String DNN = "DNN";
     public static final String DNNL = "DNNL";
     public static final String L = "L";
+    public static final String LSTM = "LSTM";
 }

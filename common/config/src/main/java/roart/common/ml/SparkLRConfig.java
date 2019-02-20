@@ -107,7 +107,7 @@ public class SparkLRConfig extends SparkConfig {
     }
 
     @Override
-    public NNConfig crossover(NNConfig otherNN) {
+    public NeuralNetConfig crossover(NeuralNetConfig otherNN) {
         //SparkLRConfig offspring = new SparkLRConfig(maxiter, reg, elasticnet);
         SparkLRConfig offspring = new SparkLRConfig(maxiter, tol);
         SparkLRConfig other = (SparkLRConfig) otherNN;
@@ -130,7 +130,7 @@ public class SparkLRConfig extends SparkConfig {
     }
 
     @Override
-    public NNConfig copy() {
+    public NeuralNetConfig copy() {
         return new SparkLRConfig(maxiter, tol);
         //return new SparkLRConfig(maxiter, reg, elasticnet);
     }

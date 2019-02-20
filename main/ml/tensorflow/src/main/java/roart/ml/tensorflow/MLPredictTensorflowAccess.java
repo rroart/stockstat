@@ -11,8 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
+import roart.common.ml.NeuralNetConfig;
+import roart.common.ml.NeuralNetConfigs;
 import roart.eureka.util.EurekaUtil;
 import roart.ml.model.LearnTestPredict;
+import roart.ml.model.LearnTestPredictResult;
 import roart.ml.model.MLPredictAccess;
 import roart.ml.model.MLPredictModel;
 import roart.pipeline.common.predictor.AbstractPredictor;
@@ -34,15 +37,15 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
     private void findModels() {
         models = new ArrayList<>();
         if (conf.wantDNN()) {
-            MLPredictModel model = new MLPredictTensorflowLSTMModel();
+            MLPredictModel model = new MLPredictTensorflowLSTMModel(conf);
             models.add(model);
         }
     }
 
     @Override
-    public Double[] predictone(AbstractPredictor predictor, Double[] list, MLPredictModel model, int size, String period,
-            int outcomes, int windowsize, int horizon, int epochs) {
-        return predictInner(list, size, period, outcomes, model, horizon, epochs, epochs);
+    public LearnTestPredictResult predictone(NeuralNetConfigs nnconfigs, AbstractPredictor predictor, Double[] list, MLPredictModel model, int size,
+            String period, int outcomes) {
+        return predictInner(nnconfigs, list, size, period, outcomes, model);
     }
 
     @Override
@@ -50,20 +53,18 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
         return models;
     }
 
-    private Double[] predictInner(Double[] list, int size, String period, int outcomes,
-            MLPredictModel model, int windowsize,int horizon, int epochs) {
+    private LearnTestPredictResult predictInner(NeuralNetConfigs nnconfigs, Double[] list, int size, String period,
+            int outcomes, MLPredictModel model) {
         LearnTestPredict param = new LearnTestPredict();
+        model.getModelAndSet(nnconfigs, param);
         param.modelInt = model.getId();
         param.size = size;
         param.period = period;
         param.outcomes = outcomes;
         param.array = list;
-        param.windowsize = windowsize;
-        param.horizon = horizon;
-        param.epochs = epochs;
         log.info("evalin {} {}", param.modelInt, period);
-        LearnTestPredict result = EurekaUtil.sendMe(LearnTestPredict.class, param, tensorflowServer + "/predictone");
-        return result.predicted;
+        LearnTestPredictResult result = EurekaUtil.sendMe(LearnTestPredictResult.class, param, tensorflowServer + "/predictone");
+        return result;
     }
 
     @Override
@@ -79,18 +80,19 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
     }
 
     @Override
-    public Map<String, Double[]> predict(AbstractPredictor predictor, Map<String, Double[]> map, MLPredictModel model, int size,
-            String period, int outcomes, int windowsize, int horizon, int epochs) {
+    public LearnTestPredictResult predict(NeuralNetConfigs nnconfigs, AbstractPredictor predictor, Map<String, Double[]> map, MLPredictModel model,
+            int size, String period, int outcomes) {
         if (map.isEmpty()) {
-            return new HashMap<>();
+            return null;
         }
-        return predictInner(map, model, size, period, horizon, epochs, epochs);
+        return predictInner(nnconfigs, map, model, size, period);
     }
 
-    private Map<String, Double[]> predictInner(Map<String, Double[]> map, MLPredictModel model, int size, String period,
-            int windowsize, int horizon, int epochs) {
+    private LearnTestPredictResult predictInner(NeuralNetConfigs nnconfigs, Map<String, Double[]> map, MLPredictModel model, int size,
+            String period) {
         List<String> retList = new ArrayList<>();
         LearnTestPredict param = new LearnTestPredict();
+        model.getModelAndSet(nnconfigs, param);
         int i = 0;
         List<Object[]> objobj = new ArrayList<>();
         for (Entry<String, Double[]> entry : map.entrySet()) {
@@ -107,20 +109,26 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
             log.info("inner {}", Arrays.asList(obj));
         }
         param.arraylist = objobj;
-        param.windowsize = windowsize;
-        param.horizon = horizon;
-        param.epochs = epochs;
         log.info("evalin {} {}", param.modelInt, size);
-        LearnTestPredict ret = EurekaUtil.sendMe(LearnTestPredict.class, param, tensorflowServer + "/predict");
+        LearnTestPredictResult ret = EurekaUtil.sendMe(LearnTestPredictResult.class, param, tensorflowServer + "/predict");
         List<Double[]> arraylist = ret.predictedlist;
-        Map<String, Double[]> retMap = new HashMap<>();
+        List<Double> accuracylist = ret.accuracylist;
+        Map<String, Double[]> predictMap = new HashMap<>();
+        Map<String, Double> accuracyMap = new HashMap<>();
         int count = 0;
         for (Entry<String, Double[]> entry : map.entrySet()) {
             String key = entry.getKey();
+            Double accuracy = accuracylist.get(count);
             Double[] value = arraylist.get(count++);
-            retMap.put(key, value);
+            if (accuracy < 0) {
+                continue;
+            }
+            accuracyMap.put(key, accuracy);
+            predictMap.put(key, value);
         }
-        return retMap;
+        ret.accuracyMap = accuracyMap;
+        ret.predictMap = predictMap;
+        return ret;
     }
 
 }

@@ -13,11 +13,14 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
+import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.ml.dao.MLPredictDao;
+import roart.ml.model.LearnTestPredictResult;
 import roart.ml.model.MLPredictModel;
 import roart.model.StockItem;
 import roart.result.model.ResultItemTableRow;
@@ -164,6 +167,7 @@ public class PredictorLSTM extends AbstractPredictor {
         }
         log.info("time0 {}", (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
+        probabilityMap = new HashMap<>();
 
         long time2 = System.currentTimeMillis();
         log.info("time2 {}", (System.currentTimeMillis() - time2));
@@ -185,16 +189,16 @@ public class PredictorLSTM extends AbstractPredictor {
     }
 
     private void doPredictions(MyMyConfig conf, Map<String, Double[]> mapResult) {
-        int horizon = conf.getPredictorLSTMHorizon();
-        int windowsize = conf.getPredictorLSTMWindowsize();
-        int epochs = conf.getPredictorLSTMEpochs();
         try {
             List<PredSubType> subTypes = wantedSubTypes();
             for (PredSubType subType : subTypes) {
                 for (MLPredictDao mldao : mldaos) {
                     for (MLPredictModel model : mldao.getModels()) {
-                        Map<String, Double[]> localMapResult = getMapResultList(conf, mldao, horizon, windowsize, epochs, model);
+                        LearnTestPredictResult result = getMapResultList(conf, mldao, model);
+                        Map<String, Double[]> localMapResult = result.predictMap;
                         mapResult.putAll(localMapResult);
+                        Map<String, Double> accuracyMap = result.accuracyMap;
+                        probabilityMap.putAll(accuracyMap);
                     }
                 }
             }
@@ -213,27 +217,27 @@ public class PredictorLSTM extends AbstractPredictor {
             log.info("list {} {}", list.length, windowsize);
             if (list != null && list.length > 2 * windowsize ) {
                 Double[] list3 = ArrayUtils.toObject(list);
-                Double[] result = mldao.predictone(this, list3, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime, windowsize, horizon, epochs);  
-                localMapResult.put(id, result);
+                LearnTestPredictResult result = mldao.predictone(new NeuralNetConfigs(), this, list3, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime);  
+                localMapResult.put(id, result.predicted);
+                probabilityMap.put(id, result.accuracy);
             }
         }
         return localMapResult;
     }
 
-    private Map<String, Double[]> getMapResultList(MyMyConfig conf, MLPredictDao mldao, int horizon, int windowsize,
-            int epochs, MLPredictModel model) {
+    private LearnTestPredictResult getMapResultList(MyMyConfig conf, MLPredictDao mldao, MLPredictModel model) {
         Map<String, Double[]> map = new HashMap<>();
         for (String id : listMap.keySet()) {
             double[][] list0 = truncListMap.get(id);
             double[] list = list0[0];
             // TODO check reverse. move up before if?
-            log.info("list {} {}", list.length, windowsize);
-            if (list != null && list.length > 2 * windowsize ) {
+            if (list != null) {
+                log.info("list {}", list.length);
                 Double[] list3 = ArrayUtils.toObject(list);
                 map.put(id, list3);
             }
         }
-        return mldao.predict(this, map, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime, windowsize, horizon, epochs);  
+        return mldao.predict(this, new NeuralNetConfigs(), map, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime);  
     }
 
     private void createResultMap(MyMyConfig conf, Map<String, Double[]> mapResult) {
