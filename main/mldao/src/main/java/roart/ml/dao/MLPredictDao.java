@@ -10,6 +10,8 @@ import java.util.HashSet;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.ml.NeuralNetConfigs;
+import roart.ml.model.LearnTestPredictResult;
 import roart.ml.model.MLPredictAccess;
 import roart.ml.model.MLPredictModel;
 import roart.ml.spark.MLPredictSparkAccess;
@@ -44,11 +46,11 @@ public class MLPredictDao {
         }
     }
 
-    public Double[] predictone(AbstractPredictor predictor, Double[] list, MLPredictModel modeln, int size, String period, int outcomes, Map<MLPredictModel, Long> mapTime, int windowsize, int horizon, int epochs) {
-        Double[] predict = null;
+    public LearnTestPredictResult predictone(NeuralNetConfigs nnconfigs, AbstractPredictor predictor, Double[] list, MLPredictModel modeln, int size, String period, int outcomes, Map<MLPredictModel, Long> mapTime) {
+        LearnTestPredictResult predict = null;
         for (MLPredictModel model : getModels()) {
             long time1 = System.currentTimeMillis();
-            predict = access.predictone(predictor, list, model, size, period, outcomes, windowsize, horizon, epochs);
+            predict = access.predictone(nnconfigs, predictor, list, model, size, period, outcomes);
             long time = (System.currentTimeMillis() - time1);
             log.info("time {} {} {} {}", model, period, time, predict);
             MLPredictModel.mapAdder(mapTime, model, time);
@@ -64,9 +66,9 @@ public class MLPredictDao {
         return access.eval(modelInt, period, mapname);
     }
 
-    public Map<String, Double[]> predict(AbstractPredictor indicator, Map<String, Double[]> map, MLPredictModel model, int size, String period, int outcomes, Map<MLPredictModel, Long> mapTime, int windowsize, int horizon, int epochs) {
+    public LearnTestPredictResult predict(AbstractPredictor indicator, NeuralNetConfigs nnconfigs, Map<String, Double[]> map, MLPredictModel model, int size, String period, int outcomes, Map<MLPredictModel, Long> mapTime) {
         long time1 = System.currentTimeMillis();
-        Map<String, Double[]> resultAccess = access.predict(indicator, map, model, size, period, outcomes, windowsize, horizon, epochs);
+        LearnTestPredictResult resultAccess = access.predict(nnconfigs, indicator, map, model, size, period, outcomes);
         long time = (System.currentTimeMillis() - time1);
         log.info("time {} {} {}", model, period, time);
         MLPredictModel.mapAdder(mapTime, model, time);
