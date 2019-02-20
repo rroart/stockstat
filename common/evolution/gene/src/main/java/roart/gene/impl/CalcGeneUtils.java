@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.MLConstants;
 import roart.common.config.MyConfig;
-import roart.common.ml.NNConfig;
+import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.SparkLRConfig;
 import roart.common.ml.SparkMCPConfig;
 import roart.common.ml.SparkOVRConfig;
@@ -60,12 +60,12 @@ public class CalcGeneUtils {
             String key = keys.get(i);
             Object value = conf.getConfigValueMap().get(key);
             // this if is added to the original
-            if (value instanceof NNConfig) {
+            if (value instanceof NeuralNetConfig) {
                 continue;
             }
             if (value instanceof String) {
-                Class classs = NNConfig.class;
-                NNConfig anode = mapper.readValue((String) value, NNConfig.class);
+                Class classs = NeuralNetConfig.class;
+                NeuralNetConfig anode = mapper.readValue((String) value, NeuralNetConfig.class);
                 switch (anode.getName()) {
                 case MLConstants.MCP:
                     classs = SparkMCPConfig.class;
@@ -87,7 +87,7 @@ public class CalcGeneUtils {
                     break;
                         
                 }
-                anode = (NNConfig) mapper.readValue((String) value, classs);
+                anode = (NeuralNetConfig) mapper.readValue((String) value, classs);
                 conf.getConfigValueMap().put(key, anode);
                 return;
             }
@@ -114,7 +114,7 @@ public class CalcGeneUtils {
     public static void transformFromNode(MyConfig conf, List<String> keys) throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         for (String key : keys) {
-            NNConfig node = (NNConfig) conf.getConfigValueMap().get(key);
+            NeuralNetConfig node = (NeuralNetConfig) conf.getConfigValueMap().get(key);
             String string = mapper.writeValueAsString(node);
             conf.getConfigValueMap().put(key, string);
         }
