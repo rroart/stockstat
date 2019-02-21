@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.service.MLService;
-import roart.service.PredictionService;
+import roart.service.PredictorService;
 import roart.service.RecommenderService;
 
 public class ServiceAction extends Action {
@@ -81,7 +81,7 @@ public class ServiceAction extends Action {
                 setMemory(new RecommenderService().doRecommender(market, days, null, save, new ArrayList<>(), true));
                 break;
             case PREDICTOR:
-                setMemory(new PredictionService().doPredict(market, days, null, save, true));
+                setMemory(new PredictorService().doPredict(market, days, null, save, true));
                 break;
             case MLMACD:
                 setMemory(new MLService().doMLMACD(market, days, null, save, true));
