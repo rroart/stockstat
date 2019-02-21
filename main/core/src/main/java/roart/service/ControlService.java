@@ -311,10 +311,10 @@ public class ControlService {
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat) throws Exception {
         Aggregator[] aggregates = new Aggregator[4];
-        aggregates[0] = new AggregatorRecommenderIndicator(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, categories, datareaders, disableList);
-        aggregates[1] = new RecommenderRSI(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, categories);
-        aggregates[2] = new MLMACD(conf, Constants.PRICE, stocks, periodDataMap, catName, cat, categories, idNameMap);
-        aggregates[3] = new MLIndicator(conf, Constants.PRICE, marketdatamap, periodDataMap, catName, cat, categories, datareaders);
+        aggregates[0] = new AggregatorRecommenderIndicator(conf, catName, stocks, marketdatamap, periodDataMap, categories, datareaders, disableList);
+        aggregates[1] = new RecommenderRSI(conf, catName, stocks, marketdatamap, periodDataMap, categories);
+        aggregates[2] = new MLMACD(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap);
+        aggregates[3] = new MLIndicator(conf, catName, marketdatamap, periodDataMap, catName, cat, categories, datareaders);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSMACD));

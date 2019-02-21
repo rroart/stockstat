@@ -147,15 +147,15 @@ public class NeuralNetChromosome extends AbstractChromosome {
             PipelineResultData pipelineData = null;
             if (ml.equals(PipelineConstants.MLMACD)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
-                pipelineData = new MLMACD(conf, null, null, null, catName, cat, categories, new HashMap<>());
+                pipelineData = new MLMACD(conf, catName, null, null, catName, cat, categories, new HashMap<>());
             } 
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
-                pipelineData = new MLIndicator(conf, null, null, null, catName, cat, categories, dataReaders);
+                pipelineData = new MLIndicator(conf, catName, null, null, catName, cat, categories, dataReaders);
             }
             if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
                 conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, value);
-                pipelineData = new PredictorLSTM(conf, null, null, null, catName, cat/*, categories, dataReaders*/);
+                pipelineData = new PredictorLSTM(conf, catName, null, null, catName, cat/*, categories, dataReaders*/);
             }
             return pipelineData;
         }
