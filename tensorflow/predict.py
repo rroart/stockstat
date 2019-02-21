@@ -69,11 +69,11 @@ def old_build_model(layers):
     print("> Compilation Time : ", time.time() - start)
     return model
 
-def build_model(look_back):
+def build_model(look_back, batch_size):
     print("before model")
     model = Sequential()
     batch_size = 1
-    #look_back = 3
+    # (shape[0], shape[1], shape[2])
     model.add(LSTM(look_back + 1, batch_input_shape=(batch_size, look_back, 1), stateful=True, return_sequences=True))
     model.add(LSTM(look_back + 1, batch_input_shape=(batch_size, look_back, 1), stateful=True))
     #model.add(LSTM(4, input_shape=(1, look_back)))
@@ -134,8 +134,15 @@ class Predict:
         look_back = tensorflowLSTMConfig.windowsize
         epochs = tensorflowLSTMConfig.epochs
         horizon = tensorflowLSTMConfig.horizon
+        train_size = int(len(array) * 0.75)
+        test_size = len(array) - train_size
+        print(len(array))
+        print(train_size)
+        print(test_size)
         # -1 is used as NaN
         if len(array) == 0:
+            return [], -1.0
+        if test_size <= (look_back + 1):
             return [], -1.0
         print("array")
         print(array)
@@ -159,8 +166,6 @@ class Predict:
         # normalize the dataset
         #print("dataset ", dataset)
         scaler = MinMaxScaler(feature_range=(0, 1))
-        train_size = int(len(dataset) * 0.75)
-        print(train_size)
         predictme = dataset[train_size - look_back - 1:train_size - 1]
         print("predictme")
         print(predictme)
@@ -192,20 +197,25 @@ class Predict:
         print(testX.shape)
         print(testY.shape)
         trainX = np.reshape(trainX, (trainX.shape[0], trainX.shape[1], 1))
+        batch_size = len(trainX)
         testX = np.reshape(testX, (testX.shape[0], testX.shape[1], 1))
         predictme = np.reshape(predictme, (predictme.shape[1], predictme.shape[0], 1))
         #predictme = predictme[np.newaxis, :]
         print("reshaped")
         print(trainX.shape)
+        print(len(trainX), " ", trainX.shape[1], " ", trainX.shape[2])
         print(predictme.shape)
         print(predictme)
         #testX = np.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
         # create and fit the LSTM network
-        model = build_model(look_back)
+        model = build_model(look_back, batch_size)
 
         #print("tx ", trainX)
         print("tx ", trainX.shape)
         model.fit(trainX, trainY, epochs=epochs, batch_size=1, verbose=0, shuffle=False)
+        #for i in range(epochs):
+            #model.fit(trainX, trainY, epochs=1, batch_size=batch_size, verbose=0, shuffle=False)
+            #model.reset_states()
         # make predictions
         loss = model.evaluate(testX, testY, batch_size=1)
         print("Score")
@@ -338,6 +348,7 @@ class Predict:
         print(predictedlist)
 #        print(predicted2)
         print("leaving")
+        print("\nTest Accuracy: ", accuracylist)
         queue.put(Response(json.dumps({"predictedlist": predictedlist, "accuracylist": accuracylist}), mimetype='application/json'))
 
     def do_learntest2(self, request):
