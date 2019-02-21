@@ -9,14 +9,25 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.PredictorParam;
+import roart.evolution.algorithm.impl.OrdinaryEvolution;
+import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.MLMACDChromosome;
+import roart.evolution.chromosome.impl.PredictorChromosome;
+import roart.evolution.config.EvolutionConfig;
+import roart.evolution.species.Individual;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
+import roart.service.MLService;
+import roart.service.PredictorService;
 
 public class ComponentPredictor extends Component {
 
@@ -44,7 +55,42 @@ public class ComponentPredictor extends Component {
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
             Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
         log.info("Component not impl {}", this.getClass().getName());
-        return new HashMap<>();        
+        ObjectMapper mapper = new ObjectMapper();
+        EvolutionConfig evolutionConfig = null;
+        try {
+            evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
+        /*
+        List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
+        confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
+        */
+        List<String> keys = new ArrayList<>();
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+        PredictorChromosome chromosome = new PredictorChromosome(conf, keys);
+
+        Map<String, String> retMap = new HashMap<>();
+        try {
+            Individual best = evolution.getFittest(evolutionConfig, chromosome);
+            Map<String, Object> confMap = null;
+            String market = okListMap.values().iterator().next().get(0).getMarket();
+            ControlService srv = new ControlService();
+            srv.getConfig();            
+            List<Double> newConfidenceList = new ArrayList<>();
+            srv.conf.getConfigValueMap().putAll(confMap);
+            List<MemoryItem> memories = new PredictorService().doPredict(srv, market, 0, null, false, false);
+            for(MemoryItem memory : memories) {
+                newConfidenceList.add(memory.getConfidence());
+            }
+            log.info("New confidences {}", newConfidenceList);
+            retMap.put("key", newConfidenceList.toString());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new HashMap<>();
     }
 
     public List<MemoryItem> calculatePredictor(PredictorParam param) throws Exception {
