@@ -36,7 +36,7 @@ import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
 import roart.service.ControlService;
 import roart.service.MLService;
-import roart.service.PredictionService;
+import roart.service.PredictorService;
 import roart.service.RecommenderService;
 import roart.util.ServiceUtil;
 
@@ -88,7 +88,7 @@ public class ServiceController {
             method = RequestMethod.GET)
     public void getPredict(@PathVariable String market)
             throws Exception {
-        new PredictionService().doPredict(market, 0, null, true, true);
+        new PredictorService().doPredict(market, 0, null, true, true);
     }
 
     @RequestMapping(value = "/mlmacd/{market}",
