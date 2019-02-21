@@ -32,7 +32,7 @@ public class CategoryPeriod extends Category {
         if (periodText.equals("cy")) {
             indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), i, datareaders, false));
             indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), i, datareaders, false));
-            predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, getTitle(), i));
+            predictors.add(new PredictorLSTM(conf, getTitle() + " LSTM", marketdatamap, periodDataMap, getTitle(), i));
         }
         createIndicatorMap(periodText);
     }

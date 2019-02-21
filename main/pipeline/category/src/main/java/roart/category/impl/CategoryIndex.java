@@ -43,7 +43,7 @@ public class CategoryIndex extends Category {
         indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
         indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
         indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
-        predictors.add(new PredictorLSTM(conf, getTitle() + "LSTM", marketdatamap, periodDataMap, getTitle(), Constants.INDEXVALUECOLUMN));
+        predictors.add(new PredictorLSTM(conf, getTitle() + " LSTM", marketdatamap, periodDataMap, getTitle(), Constants.INDEXVALUECOLUMN));
         createIndicatorMap(Constants.INDEX);
     }
 
