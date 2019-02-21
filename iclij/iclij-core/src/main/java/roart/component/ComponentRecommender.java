@@ -214,8 +214,8 @@ public class ComponentRecommender extends Component {
     
     private Map<String, String> handleBuySell(MyMyConfig conf, Map<Object[], List<MemoryItem>> badListMap, List<String> list) {
         Map<String, String> retMap = new HashMap<>();
-        //List<List<String>> listPerm = getAllPerms(list);
-        List<List<String>> listPerm = disableAllButOne(list);
+        List<List<String>> listPerm = getAllPerms(list);
+        //List<List<String>> listPerm = disableAllButOne(list);
         String market = badListMap.values().iterator().next().get(0).getMarket();
         ControlService srv = new ControlService();
         srv.getConfig();            
