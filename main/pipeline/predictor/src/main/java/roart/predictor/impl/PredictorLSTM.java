@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.OptionalDouble;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -19,6 +20,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
+import roart.ml.common.MLClassifyModel;
 import roart.ml.dao.MLPredictDao;
 import roart.ml.model.LearnTestPredictResult;
 import roart.ml.model.MLPredictModel;
@@ -328,13 +330,30 @@ public class PredictorLSTM extends AbstractPredictor {
     public Object[] getResultItemTitle() {
         Object[] objs = new Object[fieldSize];
         int retindex = 0;
+        OptionalDouble average = probabilityMap
+                .values()
+                .stream()
+                .mapToDouble(a -> (Double) a)
+                .average();
         // TODO make OO of this
+        String val = "";
+        // TODO workaround
+        try {
+            val = "" + MLClassifyModel.roundmebig(average.getAsDouble());
+            //val = "" + MLClassifyModel.roundme(mldao.eval(model . getId(), key, subType + mapType));
+        } catch (Exception e) {
+            log.error("Exception fix later, refactor", e);
+        }
         List<PredSubType> subTypes = wantedSubTypes();
         for (PredSubType subType : subTypes) {
             for (MLPredictDao mldao : mldaos) {
-                retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
+                objs[retindex++] = title + Constants.WEBBR + val;
+                //objs[retindex++] = predictorName() + Constants.WEBBR + "value";
+                //retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
             }
         }
+        
+
         log.info("fieldsizet {}", retindex);
         return objs;
     }
