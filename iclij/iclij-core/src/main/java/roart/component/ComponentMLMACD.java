@@ -18,14 +18,22 @@ import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
 import roart.component.model.MLMACDParam;
 import roart.common.pipeline.PipelineConstants;
 import roart.config.IclijXMLConfig;
+import roart.evolution.algorithm.impl.OrdinaryEvolution;
+import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.MLMACDChromosome;
+import roart.evolution.config.EvolutionConfig;
+import roart.evolution.species.Individual;
+import roart.gene.AbstractGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
+import roart.service.MLService;
 import roart.util.ServiceUtil;
 import roart.util.ServiceUtilConstants;
 
@@ -179,7 +187,38 @@ public class ComponentMLMACD extends Component {
     public Map<String, String> improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
             Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
             Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
-        log.info("Component not impl {}" + this.getClass().getName());
+        
+        ObjectMapper mapper = new ObjectMapper();
+        EvolutionConfig evolutionConfig = null;
+        try {
+            evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
+        List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
+        confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
+        ConfigMapChromosome chromosome = new MLMACDChromosome(conf, confList);
+
+        Map<String, String> retMap = new HashMap<>();
+        try {
+            Individual best = evolution.getFittest(evolutionConfig, chromosome);
+            Map<String, Object> confMap = null;
+            String market = okListMap.values().iterator().next().get(0).getMarket();
+            ControlService srv = new ControlService();
+            srv.getConfig();            
+            List<Double> newConfidenceList = new ArrayList<>();
+            srv.conf.getConfigValueMap().putAll(confMap);
+            List<MemoryItem> memories = new MLService().doMLMACD(srv, market, 0, null, false, false);
+            for(MemoryItem memory : memories) {
+                newConfidenceList.add(memory.getConfidence());
+            }
+            log.info("New confidences {}", newConfidenceList);
+            retMap.put("key", newConfidenceList.toString());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         return new HashMap<>();
     }
 
