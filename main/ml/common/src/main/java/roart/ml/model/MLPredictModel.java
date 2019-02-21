@@ -92,7 +92,7 @@ public abstract class MLPredictModel {
         try {
             return new ObjectMapper().readValue((String) getConf().getConfigValueMap().get(getKey()), clazz);
         } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
+            log.info(Constants.ERROR);
             return null;
         }
     }
