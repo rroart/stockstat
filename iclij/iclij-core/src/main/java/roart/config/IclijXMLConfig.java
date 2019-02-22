@@ -137,18 +137,20 @@ public class IclijXMLConfig {
                 node = base + "." + here;
             }
             String node0 = node;
+            // node is for nodes with eventual children, need id=..., but no enable
+            // node0 is for map get put
             System.out.println("b " + node);
             String enable = (String) elem2.getProperty("[@enable]");
             if (enable != null) {
-                node = node + "[@enable]";
+                //node = node + "[@enable]";
                 node0 = node0 + "[@enable]";
                 key = "[@enable]";
             }
             System.out.println("en " + enable);
             String id = (String) elem2.getProperty("[@id]");
             if (id != null) {
-                node = node + "[@id=" + id + "]";
-                node0 = node0 + "[@id]";
+                node0 = node0 + "[@id=" + id + "]";
+                node = node + "[@id]";
                 key = key + "[@id=" + id + "]";
             }
             System.out.println("id " + id);
@@ -158,11 +160,14 @@ public class IclijXMLConfig {
             Object o = null;
             Iterator<String> grr = elem2.getKeys();
             while (grr.hasNext()) {
-            String s0 = grr.next();
+                String s0 = grr.next();
                 System.out.println("s0 " + s0);
             }
             String text = node;
             Class myclass = IclijConfigConstantMaps.map.get(node0);
+            if (myclass == null) {
+                myclass = IclijConfigConstantMaps.map.get(node);
+            }
             String s = "";
             if (myclass == null) {
                 //System.out.println("Unknown " + text);
@@ -173,29 +178,29 @@ public class IclijXMLConfig {
                 log.info("Unknown " + text);
                 //continue;
             } else {
-            String s2 = "";
-            switch (myclass.getName()) {
-            case "java.lang.String":
-                o = elem2.getString("");
-                //o = configxml.getString(s);
-                break;
-            case "java.lang.Integer":
-                o = elem2.getInt("");
-                break;
-            case "java.lang.Double":
-                o = elem2.getDouble("");
-                break;
-            case "java.lang.Boolean":
-                //elem2.get
-                o = Boolean.valueOf(enable);
-                //o = elem2.getBoolean(key);
-                //o = configxml.getBoolean(s);
-                break;
-            default:
-                //System.out.println("unknown " + myclass.getName());
-                log.info("unknown " + myclass.getName());
-            }
-            configInstance.getConfigValueMap().put(node, o);
+                String s2 = "";
+                switch (myclass.getName()) {
+                case "java.lang.String":
+                    o = elem2.getString("");
+                    //o = configxml.getString(s);
+                    break;
+                case "java.lang.Integer":
+                    o = elem2.getInt("");
+                    break;
+                case "java.lang.Double":
+                    o = elem2.getDouble("");
+                    break;
+                case "java.lang.Boolean":
+                    //elem2.get
+                    o = Boolean.valueOf(enable);
+                    //o = elem2.getBoolean(key);
+                    //o = configxml.getBoolean(s);
+                    break;
+                default:
+                    //System.out.println("unknown " + myclass.getName());
+                    log.info("unknown " + myclass.getName());
+                }
+                configInstance.getConfigValueMap().put(node0, o);
             }
             setValues(elem2, node);
         }
