@@ -166,6 +166,9 @@ public class IclijXMLConfig {
             String text = node;
             Class myclass = IclijConfigConstantMaps.map.get(node0);
             if (myclass == null) {
+                myclass = (Class) IclijConfigConstantMaps.deflt.get(node0);
+            }
+            if (myclass == null) {
                 myclass = IclijConfigConstantMaps.map.get(node);
             }
             String s = "";
