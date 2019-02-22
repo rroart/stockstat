@@ -35,10 +35,10 @@ public class IclijConfigConstants {
     public static final String VERIFICATIONRECOMMENDERTOPBOTTOM = "verification.recommender.topbottom";
     @Deprecated
     public static final String VERIFICATIONIMPROVEPROFIT = "verification.improveprofit[@enable]";
-    public static final String MARKETSMARKETLISTMARKET = "markets.marketlist.market";
-    public static final String MARKETSTRADEMARKETSMARKET = "markets.trademarkets.trademarket";
-    public static final String MARKETSIMPORTANTSIMPORTANT = "markets.importants.important";
-    public static final String MARKETSMARKETLISTMARKET2 = "markets.marketlist.market[@id]";
-    public static final String MARKETSTRADEMARKETSMARKET2 = "markets.trademarkets.trademarket[@id]";
-    public static final String MARKETSIMPORTANTSIMPORTANT2 = "markets.importants.important[@id]";
+    public static final String MARKETSMARKETLISTMARKET2 = "markets.marketlist.market";
+    public static final String MARKETSTRADEMARKETSMARKET2 = "markets.trademarkets.trademarket";
+    public static final String MARKETSIMPORTANTSIMPORTANT2 = "markets.importants.important";
+    public static final String MARKETSMARKETLISTMARKET = "markets.marketlist.market[@id]";
+    public static final String MARKETSTRADEMARKETSMARKET = "markets.trademarkets.trademarket[@id]";
+    public static final String MARKETSIMPORTANTSIMPORTANT = "markets.importants.important[@id]";
 }
