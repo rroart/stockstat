@@ -20,7 +20,7 @@ import roart.component.Component;
 import roart.component.ComponentFactory;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
-import roart.config.TradeMarket;
+import roart.config.FilterMarket;
 import roart.db.IclijDbDao;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
@@ -163,10 +163,11 @@ public class ImproveProfitAction extends Action {
         return nameMap;
     }
     
-    private List<TradeMarket> getTradeMarkets(IclijConfig instance) {
-        List<TradeMarket> markets = null;
+    @Deprecated
+    private List<FilterMarket> getTradeMarkets(IclijConfig instance) {
+        List<FilterMarket> markets = null;
         try { 
-            markets = IclijXMLConfig.getTradeMarkets(instance);
+            markets = IclijXMLConfig.getFilterMarkets(instance);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

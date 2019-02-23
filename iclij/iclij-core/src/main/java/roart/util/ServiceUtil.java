@@ -34,7 +34,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.config.IclijXMLConfig;
-import roart.config.TradeMarket;
+import roart.config.FilterMarket;
 import roart.constants.IclijPipelineConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
@@ -118,8 +118,8 @@ public class ServiceUtil {
         List<IncDecItem> listAll = IncDecItem.getAll();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
-        List<TradeMarket> markets = conf.getTradeMarkets(instance);
-        for (TradeMarket market : markets) {
+        List<FilterMarket> markets = conf.getFilterMarkets(instance);
+        for (FilterMarket market : markets) {
             if (date == null) {
                 date = LocalDate.now();
             }

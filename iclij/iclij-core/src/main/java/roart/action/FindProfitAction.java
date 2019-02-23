@@ -26,7 +26,7 @@ import roart.component.Component;
 import roart.component.ComponentFactory;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
-import roart.config.TradeMarket;
+import roart.config.FilterMarket;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.model.IncDecItem;
@@ -50,26 +50,26 @@ public class FindProfitAction extends Action {
 
         IclijConfig config = IclijXMLConfig.getConfigInstance();
         boolean save = true;
-        List<TradeMarket> markets = getMarkets();
-        for (TradeMarket market : markets) {
+        List<FilterMarket> filtermarkets = getFilterMarkets();
+        for (FilterMarket filtermarket : filtermarkets) {
             LocalDate olddate = LocalDate.now();        
-            olddate = olddate.minusDays(market.getRecordage());
-            List<MemoryItem> marketMemory = getMarketMemory(market.getMarket());
-            getPicks(market, save, olddate, marketMemory, config, null);
+            olddate = olddate.minusDays(filtermarket.getRecordage());
+            List<MemoryItem> marketMemory = getMarketMemory(filtermarket.getMarket());
+            getPicksFiltered(filtermarket, save, olddate, marketMemory, config, null);
         }
     }
 
     public Map<String, IncDecItem>[] getPicks(String market, boolean save, LocalDate date, List<MemoryItem> memoryItems, IclijConfig config, Map<String, Object> updateMap) {
-        List<TradeMarket> markets = getMarkets();
-        TradeMarket foundTradeMarket = null;
+        List<FilterMarket> filtermarkets = getFilterMarkets();
+        FilterMarket foundFilterMarket = null;
         // TODO check if two markets
-        for (TradeMarket aTradeMarket : markets) {
-            if (market.equals(aTradeMarket.getMarket())) {
-                foundTradeMarket = aTradeMarket;
+        for (FilterMarket aFilterMarket : filtermarkets) {
+            if (market.equals(aFilterMarket.getMarket())) {
+                foundFilterMarket = aFilterMarket;
                 break;
             }
         }
-        if (foundTradeMarket == null) {
+        if (foundFilterMarket == null) {
             Map<String, IncDecItem>[] buysell = new Map[2];
             Map<String, IncDecItem> buys = new HashMap<>();
             Map<String, IncDecItem> sells = new HashMap<>();
@@ -77,10 +77,10 @@ public class FindProfitAction extends Action {
             buysell[1] = sells;
             return buysell;
         }
-        return getPicks(foundTradeMarket, save, date, memoryItems, config, updateMap);
+        return getPicksFiltered(foundFilterMarket, save, date, memoryItems, config, updateMap);
     }
     
-    private Map<String, IncDecItem>[] getPicks(TradeMarket market, boolean save, LocalDate olddate, List<MemoryItem> marketMemory, IclijConfig config, Map<String, Object> updateMap) {
+    private Map<String, IncDecItem>[] getPicksFiltered(FilterMarket filtermarket, boolean save, LocalDate olddate, List<MemoryItem> marketMemory, IclijConfig config, Map<String, Object> updateMap) {
         log.info("Getting picks for date {}", olddate);
         Map<String, IncDecItem>[] buysell = new Map[2];
         if (marketMemory == null) {
@@ -95,11 +95,11 @@ public class FindProfitAction extends Action {
         currentList.forEach(m -> listGetterAdder(listMap, new Object[]{m.getComponent(), m.getPosition() }, m));
         Map<Object[], List<MemoryItem>> okListMap = new HashMap<>();
         Map<Object[], Double> okConfMap = new HashMap<>();
-        filterMemoryListMapsWithConfidence(market, listMap, okListMap, okConfMap);
+        filterMemoryListMapsWithConfidence(filtermarket, listMap, okListMap, okConfMap);
         Map<String, List<Integer>> listComponent = createComponentPositionListMap(okListMap);
         ControlService srv = new ControlService();
         srv.getConfig();
-        srv.conf.setMarket(market.getMarket());
+        srv.conf.setMarket(filtermarket.getMarket());
         srv.conf.setdate(TimeUtil.convertDate(olddate));
         Map<String, Component> componentMap = getComponentMap(listComponent);
 
@@ -111,12 +111,12 @@ public class FindProfitAction extends Action {
         Map<String, Map<String, Object>> maps = result0;
         Map<String, String> nameMap = getNameMap(maps);
         handleComponent(okListMap, okConfMap, listComponent, srv, componentMap, buys, sells, maps, nameMap, config, updateMap);
-        String category = market.getInccategory();
+        String category = filtermarket.getInccategory();
         if (category != null) {
             Map<String, Object> categoryMap = maps.get(category);
             if (categoryMap != null) {
                 Integer offsetDays = null;
-                Integer incdays = market.getIncdays();
+                Integer incdays = filtermarket.getIncdays();
                 if (incdays != null) {
                     if (incdays == 0) {
                         int year = olddate.getYear();
@@ -135,9 +135,9 @@ public class FindProfitAction extends Action {
                        offsetDays = incdays;
                     }
                 }
-                Double threshold = market.getIncthreshold();
+                Double threshold = filtermarket.getIncthreshold();
                 Map<String, List<List>> listMap3 = getCategoryList(maps, category);
-                Map<String, IncDecItem> buysFilter = buyFilterOnIncreaseValue(market, buys, maps, threshold, categoryMap,
+                Map<String, IncDecItem> buysFilter = buyFilterOnIncreaseValue(filtermarket, buys, maps, threshold, categoryMap,
                         listMap3, offsetDays);
                 buys = buysFilter;
             }
@@ -188,7 +188,7 @@ public class FindProfitAction extends Action {
         return listMap3;
     }
 
-    private Map<String, IncDecItem> buyFilterOnIncreaseValue(TradeMarket market, Map<String, IncDecItem> buys,
+    private Map<String, IncDecItem> buyFilterOnIncreaseValue(FilterMarket market, Map<String, IncDecItem> buys,
             Map<String, Map<String, Object>> maps, Double threshold, Map<String, Object> categoryMap,
             Map<String, List<List>> listMap3, Integer offsetDays) {
         Map<String, IncDecItem> buysFilter = new HashMap<>();
@@ -274,7 +274,7 @@ public class FindProfitAction extends Action {
         return listComponent;
     }
 
-    private void filterMemoryListMapsWithConfidence(TradeMarket market, Map<Object[], List<MemoryItem>> listMap,
+    private void filterMemoryListMapsWithConfidence(FilterMarket market, Map<Object[], List<MemoryItem>> listMap,
             Map<Object[], List<MemoryItem>> okListMap, Map<Object[], Double> okConfMap) {
         for(Entry<Object[], List<MemoryItem>> entry : listMap.entrySet()) {
             Object[] keys = entry.getKey();
@@ -313,12 +313,12 @@ public class FindProfitAction extends Action {
         return marketMemory;
     }
 
-    private List<TradeMarket> getMarkets() {
+    private List<FilterMarket> getFilterMarkets() {
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         //instance.
-        List<TradeMarket> markets = null;
+        List<FilterMarket> markets = null;
         try { 
-            markets = IclijXMLConfig.getTradeMarkets(instance);
+            markets = IclijXMLConfig.getFilterMarkets(instance);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

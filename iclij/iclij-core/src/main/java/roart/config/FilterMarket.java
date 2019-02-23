@@ -1,6 +1,6 @@
 package roart.config;
 
-public class TradeMarket {
+public class FilterMarket {
     private String market;
 
     private String inccategory;
@@ -17,7 +17,7 @@ public class TradeMarket {
 
     private Integer recordage;
     
-    public TradeMarket() {
+    public FilterMarket() {
         
     }
 

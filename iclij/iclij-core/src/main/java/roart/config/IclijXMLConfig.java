@@ -623,23 +623,25 @@ public class IclijXMLConfig {
         return retList;
     }
 
-    public List<TradeMarket> getTradeMarkets() throws JsonParseException, JsonMappingException, IOException {
-        String markets = IclijXMLConfig.getConfigXML().getString("trademarkets.trademarket");
+    //?
+    @Deprecated
+    public List<FilterMarket> getFilterMarkets() throws JsonParseException, JsonMappingException, IOException {
+        String markets = IclijXMLConfig.getConfigXML().getString("filtermarkets.filtermarket");
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(markets, new TypeReference<List<TradeMarket>>(){});
+        return mapper.readValue(markets, new TypeReference<List<FilterMarket>>(){});
     }    
 
-    public static List<TradeMarket> getTradeMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
-        List<TradeMarket> retList = new ArrayList<>();
+    public static List<FilterMarket> getFilterMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
+        List<FilterMarket> retList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
-        ConfigTreeMap map = config.getConfigTreeMap().search("markets.trademarkets");
+        ConfigTreeMap map = config.getConfigTreeMap().search("markets.filtermarkets");
         System.out.println(config.getConfigValueMap().keySet());
         for (Entry<String, ConfigTreeMap> entry : map.getConfigTreeMap().entrySet()) {
             ConfigTreeMap value = entry.getValue();
             String text = entry.getValue().getName();
             String text2 = (String) config.getConfigValueMap().get(text);
             Map<String, ConfigTreeMap> aMap = entry.getValue().getConfigTreeMap();
-            TradeMarket market = mapper.readValue(text2, new TypeReference<TradeMarket>(){});
+            FilterMarket market = mapper.readValue(text2, new TypeReference<FilterMarket>(){});
             retList.add(market);
         }
         return retList;

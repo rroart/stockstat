@@ -39,6 +39,6 @@ public class IclijConfigConstants {
     public static final String MARKETSTRADEMARKETSMARKET2 = "markets.trademarkets.trademarket";
     public static final String MARKETSIMPORTANTSIMPORTANT2 = "markets.importants.important";
     public static final String MARKETSMARKETLISTMARKET = "markets.marketlist.market[@id]";
-    public static final String MARKETSTRADEMARKETSMARKET = "markets.trademarkets.trademarket[@id]";
+    public static final String MARKETSFILTERMARKETSMARKET = "markets.filtermarkets.filtermarket[@id]";
     public static final String MARKETSIMPORTANTSIMPORTANT = "markets.importants.important[@id]";
 }
