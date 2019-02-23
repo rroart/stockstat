@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.HierarchicalConfiguration;
@@ -119,6 +120,19 @@ public class MyXMLConfig {
                 configInstance.getConfigValueMap().put(s, o);
             }
         }
+        Set<String> setKeys = configInstance.getConfigValueMap().keySet();
+        Set<String> dfltKeys = configInstance.getDeflt().keySet();
+        dfltKeys.removeAll(setKeys);
+        System.out.println("keys to set " + dfltKeys);
+        for (String key : dfltKeys) {
+            ConfigTreeMap map = configInstance.getConfigTreeMap();
+            ConfigTreeMap.insert(map.getConfigTreeMap(), key, key, "", ConfigConstantMaps.deflt);
+            Object object = ConfigConstantMaps.deflt.get(key);
+            if (configInstance.getConfigValueMap().get(key) == null) {
+                configInstance.getConfigValueMap().put(key, object);
+            }
+        }
+
     }
 
     private void printout() {

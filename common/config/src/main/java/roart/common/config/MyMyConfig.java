@@ -22,8 +22,13 @@ public class MyMyConfig extends MyConfig {
         for(Entry<String, Object> entry : getConfigValueMap().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
+            if (value == null) {
+                System.out.println("Null val " + key);
+                continue;
+            }
             Class classType = getType().get(key);
                     
+            System.out.println("k " + key + " " + value + " " +classType);
             if (value.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
                 getConfigValueMap().put(key, Double.valueOf(((Integer)value).intValue()));
             }

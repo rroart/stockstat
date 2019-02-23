@@ -51,4 +51,49 @@ public class ConfigTreeMap {
         String rest = name.substring(index + 1);
         return search(map.get(first).getConfigTreeMap(), rest);
     }
+
+    public static void insert(Map<String, ConfigTreeMap> map, String name, String fullName, String path, Map<String, Object> deflt) {
+        int index = name.indexOf('.');
+        if (index == - 1) {
+            Boolean enabled = null;
+            if (name.contains("[@enable]")) {
+                enabled = (Boolean) deflt.get(fullName);
+            }
+            name = name.replaceFirst("\\[@enable\\]", "");
+            if (map.get(name) != null) {
+                return;
+            }
+            ConfigTreeMap newTree = new ConfigTreeMap();
+            newTree.setName(fullName);
+            newTree.setEnabled(enabled);
+            map.put(name, newTree);
+            return;
+            //return map.get(name);
+        }
+        String first = name.substring(0, index);
+        first = first.replaceFirst("\\[@enable\\]", "");
+        String rest = name.substring(index + 1);
+        String newPath = first;
+        if (!path.isEmpty()) {
+            newPath = path + "." + first;
+        }
+        ConfigTreeMap nextMap = map.get(first);
+        if (nextMap == null) {
+            Boolean enabled = null;
+            if (name.contains("[@enable]")) {
+                enabled = (Boolean) deflt.get(fullName);
+            }
+            name = name.replaceFirst("\\[@enable\\]", "");
+            if (map.get(name) != null) {
+                return;
+            }
+            ConfigTreeMap newTree = new ConfigTreeMap();
+            newTree.setName(newPath);
+            newTree.setEnabled(enabled);
+            map.put(first, newTree);            
+            nextMap = newTree;
+        }
+        insert(nextMap.getConfigTreeMap(), rest, fullName, newPath, deflt);
+    }
+
 }

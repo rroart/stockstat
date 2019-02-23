@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.commons.configuration2.Configuration;
@@ -122,6 +124,20 @@ public class IclijXMLConfig {
         setValues(iter, "" /*root*/);
         //iter.get
         //List<HierarchicalConfiguration<ImmutableNode>> iter3 = configxml.childConfigurationsAt(elem);
+        Set<String> setKeys = configInstance.getConfigValueMap().keySet();
+        Set<String> dfltKeys = configInstance.getDeflt().keySet();
+        dfltKeys.removeAll(setKeys);
+        System.out.println("keys to set " + dfltKeys);
+        for (String key : dfltKeys) {
+            ConfigTreeMap map = configInstance.getConfigTreeMap();
+            ConfigTreeMap.insert(map.getConfigTreeMap(), key, key, "", IclijConfigConstantMaps.deflt);
+            Object object = IclijConfigConstantMaps.deflt.get(key);
+            if (configInstance.getConfigValueMap().get(key) == null) {
+                configInstance.getConfigValueMap().put(key, object);
+            }
+        }
+        int jj = 0;
+        // then defalts
     }
 
     private void setValues(HierarchicalConfiguration<ImmutableNode> elem, String base) {
@@ -378,6 +394,36 @@ public class IclijXMLConfig {
             }
         }
         System.out.println("keys " + configMap.getConfigTreeMap().keySet());
+        /*
+        Set<String> defKeys = IclijConfigConstantMaps.deflt.keySet();
+        System.out.println("defkeys " + defKeys);
+        Set<String> myDefKeys = new HashSet<>();
+        String newBase = baseString + "." + name;
+        newBase = newBase.replaceFirst(".config.", "");
+        for (String key : defKeys) {
+            if (!baseString.isBlank() && key.startsWith(newBase)) {
+                String rest = key.substring(newBase.length());
+                if (!rest.isBlank()) {
+                    if (rest.startsWith(".")) {
+                        rest = rest.substring(1);
+                    }
+                    int index = rest.indexOf('.');
+                    if (index < 0) {
+                        rest = rest.replaceFirst("\\[@enable\\]", "");
+                        if (!rest.isBlank()) {
+                            myDefKeys.add(rest);
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("keys2 " + myDefKeys);
+        myDefKeys.removeAll(configMap.getConfigTreeMap().keySet());
+        System.out.println("keys3 " + myDefKeys);
+        if (!myDefKeys.isEmpty()) {
+            int jj = 0;
+        }
+        */
         return mytext;        
     }
 
