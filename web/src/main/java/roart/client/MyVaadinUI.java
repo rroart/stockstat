@@ -100,7 +100,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
     protected void init(VaadinRequest request) {
         log.info("testme {}", VaadinService.getCurrent().getDeploymentConfiguration().isProductionMode());
         this.getNavigator().setErrorView(this.getNavigator().getCurrentView());
-        EurekaUtil.initEurekaClient();
+        //EurekaUtil.initEurekaClient();
         controlService = new ControlService();
         controlService.getConfig();
         final VerticalLayout layout = new VerticalLayout();

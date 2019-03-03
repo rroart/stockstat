@@ -130,7 +130,6 @@
       <groupId>com.netflix.eureka</groupId>
       <artifactId>eureka-client</artifactId>
       <version>${eurekaclient.version}</version>
-      <scope>runtime</scope>
       <exclusions>
         <exclusion>
           <groupId>javax.servlet</groupId>

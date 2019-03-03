@@ -91,7 +91,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
     protected void init(VaadinRequest vaadinRequest) {
         log.info("testme {}", VaadinService.getCurrent().getDeploymentConfiguration().isProductionMode());
         this.getNavigator().setErrorView(this.getNavigator().getCurrentView());
-        EurekaUtil.initEurekaClient();
+        //EurekaUtil.initEurekaClient();
         
         controlService = new IclijWebControlService();
         controlService.getConfig();

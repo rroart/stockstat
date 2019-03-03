@@ -28,4 +28,5 @@ module web {
     requires spring.context;
     requires vaadin.spring;
     requires myexecutor;
+    requires spring.beans;
 }

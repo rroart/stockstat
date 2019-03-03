@@ -1,5 +1,6 @@
 package roart.client;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,6 +22,8 @@ import roart.eureka.util.EurekaUtil;
 public class WebApplication implements CommandLineRunner {
 
         // this is not running
+    @Value("${spring.profiles.active:}")
+    private String activeProfile;
     
         public static void main(String[] args) throws Exception {
                 SpringApplication.run(WebApplication.class, args);
@@ -28,7 +31,8 @@ public class WebApplication implements CommandLineRunner {
 
         @Override
         public void run(String... args) throws InterruptedException {
-            EurekaUtil.initEurekaClient();
+            System.out.println("Using profile " + activeProfile);
+            EurekaUtil.initEurekaClient(activeProfile);
         }
 
         @Bean(name = "OBJECT_MAPPER_BEAN")

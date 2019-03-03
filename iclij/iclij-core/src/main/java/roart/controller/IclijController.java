@@ -16,6 +16,7 @@ import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;
 import roart.service.ControlService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,18 +30,27 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableDiscoveryClient
 public class IclijController implements CommandLineRunner {
 
+    @Value("${spring.profiles.active:}")
+    private String activeProfile;
+    
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(IclijController.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {	    
-	    EurekaUtil.initEurekaClient();
+	    System.out.println("Using profile " + activeProfile);
+	    EurekaUtil.initEurekaClient(activeProfile);
+	    try {
             MyExecutors.init(new double[] { IclijXMLConfig.getConfigInstance().mpServerCpu() } );
             if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() || IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
                 Action action = new MainAction();
                 action.goal(null);
             }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	    }
 	}
 
 	@Bean(name = "OBJECT_MAPPER_BEAN")

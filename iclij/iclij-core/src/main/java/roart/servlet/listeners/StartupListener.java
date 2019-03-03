@@ -14,7 +14,7 @@ public class StartupListener implements javax.servlet.ServletContextListener {
     private static final Logger log = LoggerFactory.getLogger(StartupListener.class);
 
     public void contextInitialized(ServletContextEvent context)  {
-    	EurekaUtil.initEurekaClient();
+    	//EurekaUtil.initEurekaClient();
         try {
             ControlService maininst = new ControlService();
 			//maininst.dbengine(false);

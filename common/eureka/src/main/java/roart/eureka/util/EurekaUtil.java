@@ -31,7 +31,10 @@ public class EurekaUtil {
     public static EurekaClient eurekaClient = null;
     public static DiscoveryClient discoveryClient = null;
 
-    public static EurekaClient initEurekaClient() {
+    private static String postfix;
+    
+    public static EurekaClient initEurekaClient(String mypostfix) {
+        postfix = mypostfix;
         DiscoveryManager.getInstance().initComponent(
                 new MyDataCenterInstanceConfig(),
                 new DefaultEurekaClientConfig());
@@ -82,6 +85,7 @@ public class EurekaUtil {
     
     public static <T> T sendMe(Class<T> myclass, Object param, String appName, String path, ObjectMapper objectMapper) {
 
+        appName = appName + postfix;
         String homePageUrl = null;
         log.info("homePagePre " + appName + " " + path);
         if (discoveryClient != null) {

@@ -11,8 +11,12 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import java.util.HashMap;
 import java.util.HashSet;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +31,15 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.config.MyXMLConfig;
 import roart.db.dao.DbDao;
+import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;
 import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.service.ControlService;
 import roart.service.evolution.EvolutionService;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -41,12 +48,15 @@ import org.springframework.context.annotation.Bean;
 @RestController
 @SpringBootApplication
 @EnableDiscoveryClient
-public class ServiceController {
+public class ServiceController implements CommandLineRunner {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private ControlService instance;
 
+    @Value("${spring.profiles.active:}")
+    private String activeProfile;
+    
     private ControlService getInstance() {
         if (instance == null) {
             instance = new ControlService();
@@ -263,6 +273,12 @@ public class ServiceController {
         SpringApplication.run(ServiceController.class, args);
     }
 
+    @Override
+    public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {        
+        System.out.println("Using profile " + activeProfile);
+        EurekaUtil.initEurekaClient(activeProfile);
+    }
+    
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {
