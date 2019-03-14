@@ -36,7 +36,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
 
     private void findModels() {
         models = new ArrayList<>();
-        if (conf.wantDNN()) {
+        if (conf.wantLSTM()) {
             MLPredictModel model = new MLPredictTensorflowLSTMModel(conf);
             models.add(model);
         }
