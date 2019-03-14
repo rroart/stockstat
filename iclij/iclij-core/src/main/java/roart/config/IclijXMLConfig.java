@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -38,6 +39,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigTreeMap;
 import roart.common.constants.Constants;
+import roart.iclij.config.MLConfigs;
+import roart.iclij.config.MLConfigs;
 import roart.iclij.config.IclijConfig;
 
 public class IclijXMLConfig {
@@ -50,7 +53,7 @@ public class IclijXMLConfig {
     //public static String configFile = "/tmp/iclij.xml";
 
     public static IclijXMLConfig instance() {
-        if (instance == null) {
+        if (true || instance == null) {
             instance = new IclijXMLConfig();
         }
         return instance;
@@ -137,6 +140,12 @@ public class IclijXMLConfig {
             }
         }
         int jj = 0;
+        try {
+            getMarkets(configInstance);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         // then defalts
     }
 
@@ -153,20 +162,23 @@ public class IclijXMLConfig {
                 node = base + "." + here;
             }
             String node0 = node;
+            //String fullnode = node;
             // node is for nodes with eventual children, need id=..., but no enable
             // node0 is for map get put
             System.out.println("b " + node);
             String enable = (String) elem2.getProperty("[@enable]");
             if (enable != null) {
                 //node = node + "[@enable]";
-                node0 = node0 + "[@enable]";
+                //node0 = node0 + "[@enable]";
+                //fullnode = node;
                 key = "[@enable]";
             }
             System.out.println("en " + enable);
             String id = (String) elem2.getProperty("[@id]");
             if (id != null) {
                 node0 = node0 + "[@id=" + id + "]";
-                node = node + "[@id]";
+                node = node + "[@id=" + id + "]";
+                //fullnode = fullnode + "[@id=" + id + "]";
                 key = key + "[@id=" + id + "]";
             }
             System.out.println("id " + id);
@@ -180,12 +192,23 @@ public class IclijXMLConfig {
                 System.out.println("s0 " + s0);
             }
             String text = node;
+            if (text.equals("findprofit.mlindicator.mlconfig")) {
+                int jj = 0;
+            }
             Class myclass = IclijConfigConstantMaps.map.get(node0);
             if (myclass == null) {
                 myclass = (Class) IclijConfigConstantMaps.deflt.get(node0);
             }
             if (myclass == null) {
                 myclass = IclijConfigConstantMaps.map.get(node);
+            }
+            if (myclass == null) {
+                String node1 = node0.replaceFirst("\\[@id=[a-z]*\\]", "[@id]");
+                myclass = (Class) IclijConfigConstantMaps.map.get(node1);
+            }
+            if (myclass == null) {
+                String node1 = node.replaceFirst("\\[@id=[a-z]*\\]", "[@id]");
+                myclass = (Class) IclijConfigConstantMaps.map.get(node1);
             }
             String s = "";
             if (myclass == null) {
@@ -219,6 +242,7 @@ public class IclijXMLConfig {
                     //System.out.println("unknown " + myclass.getName());
                     log.info("unknown " + myclass.getName());
                 }
+                log.info("grr {} {}", node0, o);
                 configInstance.getConfigValueMap().put(node0, o);
             }
             setValues(elem2, node);
@@ -371,7 +395,7 @@ public class IclijXMLConfig {
         if (attribute != null) {
             enabled = !attribute.equals("false");
             if (/*leafNode &&*/ !attribute.isEmpty()) {
-                name = name + "[@enable]";
+                //name = name + "[@enable]";
             }
         }
         configMap.setName(baseString + "." + name);
@@ -387,7 +411,7 @@ public class IclijXMLConfig {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 ConfigTreeMap newMap = new ConfigTreeMap();
                 Element element = (Element) node;
-                String newBaseString = baseString + "." + basename;
+                String newBaseString = baseString + "." + name;
                 newBaseString = newBaseString.replaceFirst(".config.", "");
                 String text = handleDoc(element, newMap, newBaseString);
                 configMap.getConfigTreeMap().put(text, newMap);
@@ -604,10 +628,10 @@ public class IclijXMLConfig {
         return configxml;
     }
 
-    public List<Market> getMarkets() throws JsonParseException, JsonMappingException, IOException {
+    public List<MarketConfig> getMarkets() throws JsonParseException, JsonMappingException, IOException {
         String markets = IclijXMLConfig.getConfigXML().getString("markets.marketlist");
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(markets, new TypeReference<List<Market>>(){});
+        return mapper.readValue(markets, new TypeReference<List<MarketConfig>>(){});
     }
 
     public static List<Market> getMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
@@ -616,23 +640,64 @@ public class IclijXMLConfig {
         ConfigTreeMap map = config.getConfigTreeMap().search("markets.marketlist");
         for (Entry<String, ConfigTreeMap> entry : map.getConfigTreeMap().entrySet()) {
             String text = entry.getValue().getName();
-            String text2 = (String) config.getConfigValueMap().get(text);
-            Market market = mapper.readValue(text2, new TypeReference<Market>(){});
+            ConfigTreeMap configMap = entry.getValue();
+            Market market = new Market();
+
+            MarketConfig marketConfig = getConfig(configMap, "config", MarketConfig.class, config);
+            if (marketConfig == null) {
+                int jj = 0;
+                log.error("Empty market config");
+                continue;
+            }
+            MarketFilter marketFilter = getConfig(configMap, "filter", MarketFilter.class, config);
+            MLConfigs mlConfigs = getConfig(configMap, "mlconfig", MLConfigs.class, config);
+            MLConfigs defaultMlConfigs = getDefaultMlConfigs(config, mapper, text);
+            defaultMlConfigs.merge(mlConfigs);
+            market.setConfig(marketConfig);
+            market.setFilter(marketFilter);
+            market.setMlconfig(defaultMlConfigs);
+            //String text2 = (String) config.getConfigValueMap().get(text);
+            //MarketConfig market = mapper.readValue(text2, new TypeReference<MarketConfig>(){});
             retList.add(market);
         }
         return retList;
     }
 
+    private static MLConfigs getDefaultMlConfigs(IclijConfig config, ObjectMapper mapper, String text) {
+        text = text.replaceFirst("\\[@id=[a-z]*\\]", "[@id]");
+        String mlConfigsString = (String) config.getDeflt().get(text + ".mlconfig");
+        try {
+            return mapper.readValue(mlConfigsString, MLConfigs.class);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return null;
+    }
+
+    public static <T> T getConfig(ConfigTreeMap configMap, String key, Class<T> myclass, IclijConfig config) {
+        ObjectMapper mapper = new ObjectMapper();
+        ConfigTreeMap value = configMap.getConfigTreeMap().get(key);
+        if (value != null) {
+            String name = value.getName();
+            String atext = (String) config.getConfigValueMap().get(name);
+            try {
+                return mapper.readValue(atext, myclass);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
     //?
     @Deprecated
-    public List<FilterMarket> getFilterMarkets() throws JsonParseException, JsonMappingException, IOException {
+    public List<MarketFilter> getFilterMarkets() throws JsonParseException, JsonMappingException, IOException {
         String markets = IclijXMLConfig.getConfigXML().getString("filtermarkets.filtermarket");
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(markets, new TypeReference<List<FilterMarket>>(){});
+        return mapper.readValue(markets, new TypeReference<List<MarketFilter>>(){});
     }    
 
-    public static List<FilterMarket> getFilterMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
-        List<FilterMarket> retList = new ArrayList<>();
+    public static List<MarketFilter> getFilterMarkets(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
+        List<MarketFilter> retList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         ConfigTreeMap map = config.getConfigTreeMap().search("markets.filtermarkets");
         System.out.println(config.getConfigValueMap().keySet());
@@ -641,7 +706,7 @@ public class IclijXMLConfig {
             String text = entry.getValue().getName();
             String text2 = (String) config.getConfigValueMap().get(text);
             Map<String, ConfigTreeMap> aMap = entry.getValue().getConfigTreeMap();
-            FilterMarket market = mapper.readValue(text2, new TypeReference<FilterMarket>(){});
+            MarketFilter market = mapper.readValue(text2, new TypeReference<MarketFilter>(){});
             retList.add(market);
         }
         return retList;

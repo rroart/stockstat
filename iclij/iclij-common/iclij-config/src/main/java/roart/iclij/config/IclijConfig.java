@@ -117,12 +117,36 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLINDICATOR);
     }
 
+    public String getFindProfitMLMACDMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLMACDMLCONFIG);
+    }
+
+    public String getFindProfitMLIndicatorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLINDICATORMLCONFIG);
+    }
+
+    public String getFindProfitMLMACDEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLMACDEVOLUTIONCONFIG);
+    }
+
+    public String getFindProfitMLIndicatorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLINDICATOREVOLUTIONCONFIG);
+    }
+
     public boolean wantsFindProfitRecommender() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITRECOMMENDER);
     }
 
     public boolean wantsFindProfitPredictor() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITPREDICTOR);
+    }
+
+    public String getFindProfitPredictorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITPREDICTORMLCONFIG);
+    }
+
+    public String getFindProfitPredictorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG);
     }
 
     public boolean wantsImproveProfitAutorun() {
@@ -137,12 +161,36 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLINDICATOR);
     }
 
-    public boolean wantsImproveProfitRecommender() {
+    public String getImproveProfitMLMACDMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLMACDMLCONFIG);
+    }
+
+    public String getImproveProfitMLIndicatorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLINDICATORMLCONFIG);
+    }
+
+    public String getImproveProfitMLMACDEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLMACDEVOLUTIONCONFIG);
+    }
+
+    public String getImproveProfitMLIndicatorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG);
+    }
+
+   public boolean wantsImproveProfitRecommender() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITRECOMMENDER);
     }
 
     public boolean wantsImproveProfitPredictor() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITPREDICTOR);
+    }
+
+    public String getImproveProfitPredictorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITPREDICTORMLCONFIG);
+    }
+
+    public String getImproveProfitPredictorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG);
     }
 
     public int singlemarketLoops() {
@@ -184,6 +232,18 @@ public class IclijConfig {
 
     public boolean wantEvolveML() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEML);
+    }
+
+    public String getEvolveMLEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG);
+    }
+
+    public String getEvolveIndicatorrecommenderEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG);
+    }
+
+    public String getEvolveMLMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLMLCONFIG);
     }
 
     public Object getValueOrDefault(String key) {
