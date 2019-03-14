@@ -170,7 +170,7 @@ public class EvolutionService {
             Recommend recommend = entry.getValue().get(0);
             Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
-            if (macdrsiMinMax.length == 1) {
+            if (macdrsiMinMax == null || macdrsiMinMax.length == 1) {
                 int jj = 0;
             }
     
@@ -522,6 +522,10 @@ public class EvolutionService {
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
    
         for (String key : keys) {
+            System.out.println(conf.getValueOrDefault(key));
+            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(key))) {
+                continue;
+            }
             MyMyConfig workingConf = conf.copy();
             for (String tmpkey : keys) {
                 boolean enabled = (boolean) workingConf.getValueOrDefault(tmpkey);
