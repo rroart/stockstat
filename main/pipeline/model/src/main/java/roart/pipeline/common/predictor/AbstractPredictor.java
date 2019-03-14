@@ -59,6 +59,7 @@ public abstract class AbstractPredictor extends PipelineResultData {
         return null;
     }
 
+    @Override
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.CATEGORY, category);
