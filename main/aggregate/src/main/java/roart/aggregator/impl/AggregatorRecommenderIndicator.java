@@ -83,6 +83,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         Map<String, Double[]> result = new HashMap<>();
         TaUtil tu = new TaUtil();
         resultMap = new HashMap<>();
+        if (!isEnabled()) {
+            return;
+        }
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             String recommender = entry.getKey();
             List<AbstractIndicator> indicators = Recommend.getIndicators(recommender, usedRecommenders, indicatorMap);
@@ -166,7 +169,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
 
     @Override
     public boolean isEnabled() {
-        return conf.wantMACDRSIRecommender();
+        return conf.wantIndicatorRecommender();
     }
 
     @Override
