@@ -76,7 +76,13 @@ public class PredictorLSTM extends AbstractPredictor {
             }
             if (conf.wantMLTensorflow()) {
                 mldaos.add(new MLPredictDao("tensorflow", conf));
+                if (mldaos.get(0).getModels().isEmpty()) {
+                    int jj = 0;
+                }
             }
+        }
+        if (mldaos.isEmpty()) {
+            int jj = 0;
         }
         fieldSize = fieldSize();
         if (conf.wantMLTimes()) {

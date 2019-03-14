@@ -127,6 +127,9 @@ public class NeuralNetChromosome extends AbstractChromosome {
             log.info(Constants.EXCEPTION, e);
         }
         Map<String, Object> map = (Map<String, Object>) pipelineData.getLocalResultMap().get(PipelineConstants.PROBABILITY);
+        if (map == null) {
+            int jj = 0;
+        }
         double fitness = 0;
         for (Entry<String, Object> entry : map.entrySet()) {
             Double value = (Double) entry.getValue();

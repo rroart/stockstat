@@ -247,7 +247,7 @@ public class MLMACD extends Aggregator {
 
         }
         if (!anythingHere(listMap)) {
-            System.out.println("empty"+key);
+            log.debug("empty {}", key);
             return;
         }
         log.info("time0 {}", (System.currentTimeMillis() - time0));
@@ -262,15 +262,15 @@ public class MLMACD extends Aggregator {
         }
         long time2 = System.currentTimeMillis();
         objectMap = (Map<String, Object[]>) object;
-        //System.out.println("imap " + objectMap.size());
+        //log.debug("imap " + objectMap.size());
         log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
-        log.info("listmap {} {}", listMap.size(), listMap.keySet());
+        log.debug("listmap {} {}", listMap.size(), listMap.keySet());
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<String, Map<double[], Double>> mapMap = createPosNegMaps(conf);
         // map from h/m to model to posnegcom map<model, results>
         Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
-        log.info("Period {} {}", title, mapMap.keySet());
+        log.debug("Period {} {}", title, mapMap.keySet());
         String nnconfigString = conf.getMLMACDMLConfig();
         NeuralNetConfigs nnConfigs = null;
         if (nnconfigString != null) {
@@ -335,14 +335,14 @@ public class MLMACD extends Aggregator {
                             resultMeta.setLearnMap(countMap);
 
                             Map<String, double[]> map2 = mapIdMap.get(mapName);
-                            log.info("map name {}", mapName);
+                            log.debug("map name {}", mapName);
                             if (map == null || mapMap.get(mapName) == null) {
                                 log.error("map null and continue? {}", mapName);
                                 continue;
                             }
                             int outcomes = (int) map.values().stream().distinct().count();
                             outcomes = 4;
-                            log.info("Outcomes {}", outcomes);
+                            log.debug("Outcomes {}", outcomes);
                             LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime, map2, labelMapShort);  
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
@@ -424,14 +424,14 @@ public class MLMACD extends Aggregator {
                             getResultMetas().add(resultMeta);
 
                             Map<String, double[]> map2 = mapIdMap.get(mapName);
-                            log.info("map name {}", mapName);
+                            log.debug("map name {}", mapName);
                             if (map == null || map2 == null || map2.isEmpty()|| mapMap.get(mapName) == null) {
                                 log.warn("Map null and continue? {}", mapName);
                                 continue;
                             }
                             int outcomes = (int) map.values().stream().distinct().count();
                             outcomes = 4;
-                            log.info("Outcomes {}", outcomes);
+                            log.debug("Outcomes {}", outcomes);
                             Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime, map2, labelMapShort);  
                             Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                             futureList.add(future);
@@ -538,7 +538,7 @@ public class MLMACD extends Aggregator {
             momMap.put(id, momentum);
             resultMap.put(id, fields);
             if (momentum == null) {
-                System.out.println("zero mom for id " + id);
+                log.debug("zero mom for id {}", id);
             }
             int retindex = 0; //tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
 
@@ -550,7 +550,7 @@ public class MLMACD extends Aggregator {
                 List<MacdSubType> subTypes2 = wantedSubTypes();
                 for (MacdSubType subType : subTypes2) {
                     Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
-                    //System.out.println("mapget " + subType + " " + mapResult.keySet());
+                    //log.debug("mapget " + subType + " " + mapResult.keySet());
                     for (MLClassifyDao mldao : mldaos) {
                         for (MLClassifyModel model : mldao.getModels()) {
                             Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
@@ -558,7 +558,7 @@ public class MLMACD extends Aggregator {
                             //String mapType = mapTypes.get(mapTypeInt);
                             //Map<String, Double[]> mapResult3 = mapResult2.get(mapType);
                             //String mapName = subType.getType() + mapType;
-                            //System.out.println("fields " + fields.length + " " + retindex);
+                            //log.debug("fields " + fields.length + " " + retindex);
                             List<Integer> typeList = getTypeList();
                             Map<Integer, String> mapTypes = getMapTypes();
                             for (int mapTypeInt : typeList) {
@@ -581,14 +581,14 @@ public class MLMACD extends Aggregator {
                                     int jj = 0;
                                 }
                                 //retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
-                                //System.out.println("sizej "+retindex);
+                                //log.debug("sizej "+retindex);
                             }
                             //}
                         }   
                     }
                 }
             }
-            //System.out.println("ri" + retindex);
+            //log.debug("ri" + retindex);
             if (retindex != fieldSize) {
                 log.error("Field size too small {} < {}", retindex, fieldSize);
             }
@@ -661,14 +661,14 @@ public class MLMACD extends Aggregator {
         String mapType = mapTypes.get(mapTypeInt);
         String mapName = subType.getType() + mapType;
         Map<String, double[]> map = mapIdMap.get(mapName);
-        log.info("map name {}", mapName);
+        log.debug("map name {}", mapName);
         if (map == null || mapMap.get(mapName) == null) {
             log.error("map null and continue? {}", mapName);
             return null;
         }
         int outcomes = (int) map.values().stream().distinct().count();
         outcomes = 4;
-        log.info("Outcomes {}", outcomes);
+        log.debug("Outcomes {}", outcomes);
         Map<String, Double[]> classifyResult = mldao.classify(this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, labelMapShort, mapTime);
         mapResult2.put(mapType, classifyResult);
         return classifyResult;
@@ -707,7 +707,7 @@ public class MLMACD extends Aggregator {
                         }
                         int outcomes = (int) map.values().stream().distinct().count();
                         outcomes = 4;
-                        log.info("Outcomes {}", outcomes);
+                        log.debug("Outcomes {}", outcomes);
                         Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime);  
                         probabilityMap.put("" + model . getId() + key + subType + mapType, testaccuracy);
                         IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
@@ -743,21 +743,21 @@ public class MLMACD extends Aggregator {
             Object[] objs = objectMap.get(id);
             Double[] momentum = momMap.get(id);
             if (momentum == null) {
-                log.info("no macd for id {}", id);
+                log.debug("no macd for id {}", id);
             }
             MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
             MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
 
             double[][] list = truncListMap.get(id);
-            System.out.println("t " + Arrays.toString(list[0]));
-            log.info("listsize {}", list.length);
+            log.debug("t {}", Arrays.toString(list[0]));
+            log.debug("listsize {}", list.length);
             if (conf.wantPercentizedPriceIndex() && list[0].length > 0) {
                 list[0] = ArraysUtil.getPercentizedPriceIndex(list[0], key, 0);
             }
-            log.info("beg end {} {} {}", id, begOfArray.value, endOfArray.value);
-            log.info("list {} {} ", list.length, Arrays.asList(list));
+            log.debug("beg end {} {} {}", id, begOfArray.value, endOfArray.value);
+            log.debug("list {} {} ", list.length, Arrays.asList(list));
             double[] trunclist = ArrayUtils.subarray(list[0], begOfArray.value, begOfArray.value + endOfArray.value);
-            log.info("trunclist {} {}", list.length, Arrays.asList(trunclist));
+            log.debug("trunclist {} {}", list.length, Arrays.asList(trunclist));
             if (conf.wantML()) {
                 if (momentum != null && momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
                     Map<String, Double> labelMap2 = createLabelMap2();
@@ -808,7 +808,7 @@ public class MLMACD extends Aggregator {
             }
             double[] doubleArray = new double[] { endOfArray.value - end };
             offsetMap.put(id, doubleArray);
-            log.info("t {} {} {}", subType, id, valueListOrig[end]);
+            log.debug("t {} {} {}", subType, id, valueListOrig[end]);
             double[] truncArray = ArraysUtil.getSub(array, start, end);
             commonMap.put(id, truncArray);
             if (!newNeg.isEmpty()) {
@@ -863,7 +863,7 @@ public class MLMACD extends Aggregator {
             } else {
                 textlabel = labelopposite;
             }
-            log.info("{}: {} {} at {}", textlabel, id, getName(id), end);
+            log.debug("{}: {} {} at {}", textlabel, id, getName(id), end);
             printme(textlabel, end, list, array);
             double[] truncArray = ArraysUtil.getSub(array, entry.getKey(), end);
             Double doublelabel = labelMap2.get(textlabel);
@@ -898,8 +898,8 @@ public class MLMACD extends Aggregator {
         }
         String m1 = me1.toString();
         String m2 = me2.toString();
-        log.info("me1 {}", m1);
-        log.info("me2 {}", m2);
+        log.debug("me1 {}", m1);
+        log.debug("me2 {}", m2);
     }
 
     public void addEventRow(String text, String name, String id) {
@@ -936,7 +936,7 @@ public class MLMACD extends Aggregator {
 
     public static void printout(Double[] type, String id, Map<Double, String> labelMapShort) {
         if (type != null) {
-            //System.out.println("Type " + labelMapShort.get(type[0]) + " id " + id);
+            //log.debug("Type " + labelMapShort.get(type[0]) + " id " + id);
         }
     }
 
@@ -1010,7 +1010,7 @@ public class MLMACD extends Aggregator {
             objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
         }
         retindex = getTitles(retindex, objs);
-        log.info("fieldsizet {}", retindex);
+        log.debug("fieldsizet {}", retindex);
         return objs;
     }
 

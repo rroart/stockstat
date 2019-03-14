@@ -183,15 +183,15 @@ public class ControlService {
                 for (int i = 0; i < datareaders.length; i++) {
                     Map map = datareaders[i].getLocalResultMap();
                     maps.put(datareaders[i].pipelineName(), map);
-                    log.info("pi {}", datareaders[i].pipelineName());
+                    log.debug("pi {}", datareaders[i].pipelineName());
                 }
                 for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     Map map = categories[i].getIndicatorLocalResultMap();
                     maps.put(categories[i].getTitle(), map);
-                    log.info("ca {}", categories[i].getTitle());
+                    log.debug("ca {}", categories[i].getTitle());
                 }
                 for (int i = 0; i < aggregates.length; i++) {
-                    log.info("ag {}", aggregates[i].getName());
+                    log.debug("ag {}", aggregates[i].getName());
                     Map map = aggregates[i].getLocalResultMap();
                     maps.put(aggregates[i].getName(), map);
                 }
@@ -499,6 +499,9 @@ public class ControlService {
     public void getDates(MyMyConfig conf, Map<String, Map<String, Object>> maps) {
         List<StockItem> stocks = null;
         try {
+            if ("0".equals(conf.getMarket())) {
+                int jj = 0;
+            }
             stocks = DbDao.getAll(conf.getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
