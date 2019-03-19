@@ -128,6 +128,7 @@ public class ArraysUtil {
         if (list == null) {
             return list;
         }
+        Double[] retlist = new Double[list.length]; 
         if ((CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key) || ("cy").equals(key)) {
             int i = 0;
             double first = 0;
@@ -139,14 +140,17 @@ public class ArraysUtil {
             }
             for (; i < list.length; i ++) {
                 if (list[i] != null) {
-                    list[i] *= 100 / first;
+                    retlist[i] = list[i]* 100 / first;
                 }
             }
         }
-        return list;
+        return retlist;
     }
 
     public static double[] getPercentizedPriceIndex(double[] list, String key, int category) {
+        if (list.length == 0) {
+            return list;
+        }
         return getPercentizedPriceIndex(list, key, category, list[0]);
     }
 
@@ -154,13 +158,14 @@ public class ArraysUtil {
         if (list == null || list.length == 0) {
             return list;
         }
+        double[] retlist = new double[list.length];
         if (category < 0 || (CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key) || ("cy").equals(key)) {
             int i = 0;
             for (; i < list.length; i ++) {
-                list[i] *= 100 / first;
+                retlist[i] = list[i] * 100 / first;
             }
         }
-        return list;
+        return retlist;
     }
 
     public static boolean verifyPercentized(Double[] list, String key) {
