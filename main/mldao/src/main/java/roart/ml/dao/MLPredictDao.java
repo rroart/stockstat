@@ -84,6 +84,7 @@ public class MLPredictDao {
         return size;
     }
 
+    @Deprecated
     public int addTitles(Object[] objs, int retindex, AbstractPredictor indicator, String title, String key, String subType) {
         for (MLPredictModel model : getModels()) {
             //retindex = model.addTitles(objs, retindex, indicator, title, key, subType, null, null, this);
