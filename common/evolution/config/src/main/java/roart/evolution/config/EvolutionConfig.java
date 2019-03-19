@@ -98,4 +98,34 @@ public class EvolutionConfig {
         this.useoldelite = useoldelite;
     }
 
+    public void merge(EvolutionConfig other) {
+        if (other == null) {
+            return;
+        }
+        if (other.generations != null) {
+            this.generations = other.generations;
+        }
+        if (other.crossover != null) {
+            this.crossover = other.crossover;
+        }
+        if (other.elite != null) {
+            this.elite = other.elite;
+        }
+        if (other.elitecloneandmutate != null) {
+            this.elitecloneandmutate = other.elitecloneandmutate;
+        }
+        if (other.select != null) {
+            this.select = other.select;
+        }
+        if (other.mutate != null) {
+            this.mutate = other.mutate;
+        }
+        if (other.generationcreate != null) {
+            this.generationcreate = other.generationcreate;
+        }
+        if (other.useoldelite != null) {
+            this.useoldelite = other.useoldelite;
+        }
+    }    
+
 }
