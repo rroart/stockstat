@@ -102,6 +102,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
             for (int j = 0; j < value.length; j ++) {
                 obj[j] = value[j];
             }
+            System.out.println("key1 " + key + " " + (value.length > 0 ? value[value.length - 1] : null));
             objobj.add(obj);
             retList.add(key);
         }
@@ -110,6 +111,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
         }
         param.arraylist = objobj;
         log.info("evalin {} {}", param.modelInt, size);
+        log.info("Used ML config {}", nnconfigs.getTensorflowLSTMConfig());
         LearnTestPredictResult ret = EurekaUtil.sendMe(LearnTestPredictResult.class, param, tensorflowServer + "/predict");
         List<Double[]> arraylist = ret.predictedlist;
         List<Double> accuracylist = ret.accuracylist;
@@ -120,6 +122,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
             String key = entry.getKey();
             Double accuracy = accuracylist.get(count);
             Double[] value = arraylist.get(count++);
+            System.out.println("key2 " + key + " " + (value.length > 0 ? value[0] + " " + value[value.length - 1] : null));
             if (accuracy < 0) {
                 continue;
             }
