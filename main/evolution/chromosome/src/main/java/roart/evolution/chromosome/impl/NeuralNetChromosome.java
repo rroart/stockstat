@@ -27,7 +27,7 @@ import roart.common.pipeline.model.PipelineResultData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.pipeline.Pipeline;
-import roart.pipeline.common.aggregate.Aggregator;
+import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorLSTM;
 
 public class NeuralNetChromosome extends AbstractChromosome {
@@ -150,15 +150,17 @@ public class NeuralNetChromosome extends AbstractChromosome {
             PipelineResultData pipelineData = null;
             if (ml.equals(PipelineConstants.MLMACD)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
-                pipelineData = new MLMACD(conf, catName, null, null, catName, cat, categories, new HashMap<>());
+                pipelineData = new MLMACD(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
             } 
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
                 pipelineData = new MLIndicator(conf, catName, null, null, catName, cat, categories, dataReaders);
             }
             if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
+                value = mapper.writeValueAsString(nnConfigs.getTensorflowLSTMConfig());
                 conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, value);
-                pipelineData = new PredictorLSTM(conf, catName, null, null, catName, cat/*, categories, dataReaders*/);
+                pipelineData = new PredictorLSTM(conf, catName, null, null, catName, cat, categories, dataReaders);
+                ((AbstractPredictor) pipelineData).calculate();
             }
             return pipelineData;
         }

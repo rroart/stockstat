@@ -31,6 +31,14 @@ public abstract class AbstractPredictor extends PipelineResultData {
 
     public abstract boolean isEnabled();
 
+    public String getTitle() {
+        return title;
+    }
+    
+    public int getCategory() {
+        return category;
+    }
+    
     public Object[] getResultItemTitle() {
     	Object[] titleArray = new Object[1];
     	titleArray[0] = title;
@@ -70,6 +78,10 @@ public abstract class AbstractPredictor extends PipelineResultData {
     }
 
     public abstract String predictorName();
+
+    public abstract void calculate() throws Exception;
+
+    public abstract boolean hasValue();
     
 }
 

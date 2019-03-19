@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.indicator.AbstractIndicator;
@@ -43,7 +44,6 @@ public class CategoryIndex extends Category {
         indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
         indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
         indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));
-        predictors.add(new PredictorLSTM(conf, getTitle() + " LSTM", marketdatamap, periodDataMap, getTitle(), Constants.INDEXVALUECOLUMN));
         createIndicatorMap(Constants.INDEX);
     }
 
@@ -61,11 +61,6 @@ public class CategoryIndex extends Category {
                         r.addarr(indicator.getResultItemTitle());
                     }
                 }
-                for (AbstractPredictor predictor : predictors) {
-                    if (predictor.isEnabled()) {
-                        r.addarr(predictor.getResultItemTitle());
-                    }
-                }
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -81,11 +76,6 @@ public class CategoryIndex extends Category {
                 for (AbstractIndicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItem(stock));
-                    }
-                }
-                for (AbstractPredictor predictor : predictors) {
-                    if (predictor.isEnabled()) {
-                        r.addarr(predictor.getResultItem(stock));
                     }
                 }
             }

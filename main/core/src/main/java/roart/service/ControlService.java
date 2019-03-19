@@ -164,21 +164,28 @@ public class ControlService {
             List<StockItem> dayStocks = stockdatemap.get(mydate);
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     periodText, marketdatamap, periodDataMap, datedstocklists, datareaders);
-
+            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, dayStocks,
+                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders, categories);
+            //new ServiceUtil().createPredictors(categories);
+            new ServiceUtil().calculatePredictors(predictors);
+            
             Aggregator[] aggregates = getAggregates(conf, stocks,
                     periodText, marketdatamap, periodDataMap, categories, datareaders, disableList, idNameMap, catName, cat);
 
-            ResultItemTableRow headrow = createHeadRow(categories, aggregates);
+            ResultItemTableRow headrow = createHeadRow(categories, predictors, aggregates);
             table.add(headrow);
             //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
-            createRows(conf, table, datedstocks, categories, aggregates);
+            createRows(conf, table, datedstocks, categories, predictors, aggregates);
             log.info("retlist2 {}",table.size());
             addOtherTables(categories);
+            addOtherTables(predictors);
             addOtherTables(aggregates);
+            /*
             for (AbstractCategory category : categories) {
                 List<AbstractPredictor> predictors = category.getPredictors();
                 addOtherTables(predictors);
             }
+            */
             if (maps != null) {
                 for (int i = 0; i < datareaders.length; i++) {
                     Map map = datareaders[i].getLocalResultMap();
@@ -189,6 +196,14 @@ public class ControlService {
                     Map map = categories[i].getIndicatorLocalResultMap();
                     maps.put(categories[i].getTitle(), map);
                     log.debug("ca {}", categories[i].getTitle());
+                }
+                for (int i = 0; i < Constants.ALLPERIODS; i++) {
+                    if (predictors[i] == null) {
+                        continue;
+                    }
+                    Map map = predictors[i].getLocalResultMap();
+                    maps.put(predictors[i].getTitle(), map);
+                    log.debug("ca {}", predictors[i].getTitle());
                 }
                 for (int i = 0; i < aggregates.length; i++) {
                     log.debug("ag {}", aggregates[i].getName());
@@ -236,6 +251,9 @@ public class ControlService {
 
     private void addOtherTables(List<AbstractPredictor> predictors) {
         for (AbstractPredictor predictor : predictors) {
+            if (predictor == null) {
+                continue;
+            }
             Map<Integer, List<ResultItemTableRow>> tableMap = predictor.otherTables();
             if (tableMap == null) {
                 continue;
@@ -251,7 +269,7 @@ public class ControlService {
     }
 
     private void createRows(MyMyConfig conf, ResultItemTable table, List<StockItem> datedstocks, AbstractCategory[] categories,
-            Aggregator[] aggregates) {
+            AbstractPredictor[] predictors, Aggregator[] aggregates) {
         if (conf.getMarket() == null) {
             return;
         }
@@ -264,6 +282,11 @@ public class ControlService {
             try {
                 for (int i = 0; i < Constants.ALLPERIODS; i++) {
                     categories[i].addResultItem(row, stock);
+                }
+                for (AbstractPredictor predictor : predictors) {
+                    if (predictor != null) {
+                        row.addarr(predictor.getResultItem(stock));
+                    }
                 }
                 for (int i = 0; i < aggregates.length; i++) {
                     if (aggregates[i].isEnabled()) {
@@ -290,13 +313,34 @@ public class ControlService {
         }
     }
 
-    private ResultItemTableRow createHeadRow(AbstractCategory[] categories, Aggregator[] aggregates) {
+    private void addOtherTables(AbstractPredictor[] predictors) {
+        for (int i = 0; i < Constants.ALLPERIODS; i++) {
+            if (predictors[i] == null) {
+                continue;
+            }
+            Map<Integer, List<ResultItemTableRow>> tableMap = predictors[i].otherTables();
+            for (Entry<Integer, List<ResultItemTableRow>> entry : tableMap.entrySet()) {
+                List<ResultItemTableRow> resultItems = entry.getValue();
+                ResultItemTable otherTable = otherTableMap.get(entry.getKey());
+                for (ResultItemTableRow row : resultItems) {
+                    otherTable.add(row);
+                }
+            }
+        }
+    }
+
+    private ResultItemTableRow createHeadRow(AbstractCategory[] categories, AbstractPredictor[] predictors, Aggregator[] aggregates) {
         ResultItemTableRow headrow = new ResultItemTableRow();
         headrow.add(Constants.IMG);
         headrow.add("Name");
         headrow.add("Date");
         for (int i = 0; i < Constants.ALLPERIODS; i++) {
             categories[i].addResultItemTitle(headrow);
+        }
+        for (AbstractPredictor predictor : predictors) {
+            if (predictor != null) {
+                headrow.addarr(predictor.getResultItemTitle());
+            }
         }
         for (int i = 0; i < aggregates.length; i++) {
             if (aggregates[i].isEnabled()) {
@@ -313,7 +357,7 @@ public class ControlService {
         Aggregator[] aggregates = new Aggregator[4];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, catName, stocks, marketdatamap, periodDataMap, categories, datareaders, disableList);
         aggregates[1] = new RecommenderRSI(conf, catName, stocks, marketdatamap, periodDataMap, categories);
-        aggregates[2] = new MLMACD(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap);
+        aggregates[2] = new MLMACD(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
         aggregates[3] = new MLIndicator(conf, catName, marketdatamap, periodDataMap, catName, cat, categories, datareaders);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));

@@ -24,8 +24,10 @@ import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
+import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.pipeline.impl.DataReader;
 import roart.pipeline.impl.ExtraReader;
+import roart.predictor.impl.PredictorLSTM;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockUtil;
@@ -206,4 +208,31 @@ public class ServiceUtil {
         return categories;
     }
 
+    public AbstractPredictor[] getPredictors(MyMyConfig conf, List<StockItem> stocks,
+            String[] periodText,
+            Map<String, MarketData> marketdatamap,
+            Map<String, PeriodData> periodDataMap, List<StockItem>[] datedstocklists, Pipeline[] datareaders, AbstractCategory[] categories) throws Exception {
+        AbstractPredictor[] predictors = new AbstractPredictor[Constants.ALLPERIODS];
+        //predictors[0] = new PredictorLSTM(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, datareaders, categories);
+        //predictors[1] = new PredictorLSTM(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, datareaders, categories);
+        for (int i = 0; i < Constants.ALLPERIODS; i++) {
+            AbstractPredictor predictor = new PredictorLSTM(conf, categories[i].getTitle() + " LSTM", marketdatamap, periodDataMap, categories[i].getTitle(), categories[i].getPeriod(), categories, datareaders);
+            if (predictor.isEnabled()) {
+                if (categories[i].getPeriod() == Constants.INDEXVALUECOLUMN || categories[i].getPeriod() == Constants.PRICECOLUMN || categories[i].getTitle().equals("cy")) {
+                    if (predictor.hasValue()) {
+                        predictors[i] = predictor;
+                    }
+                }
+            }
+        }
+        return predictors;
+    }
+
+    public void calculatePredictors(AbstractPredictor[] predictors) throws Exception {
+        for (AbstractPredictor predictor : predictors) {
+            if (predictor != null) {
+                predictor.calculate();
+            }
+        }
+    }
 }

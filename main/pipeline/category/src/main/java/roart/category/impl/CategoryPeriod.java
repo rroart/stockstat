@@ -3,6 +3,7 @@ package roart.category.impl;
 import java.util.List;
 import java.util.Map;
 
+import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.indicator.AbstractIndicator;
@@ -21,7 +22,8 @@ public class CategoryPeriod extends Category {
 
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
-
+    private Integer cy;
+    
     public CategoryPeriod(MyMyConfig conf, int i, String periodText, List<StockItem> stocks,             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap,
             List<StockItem>[] datedstocklists, Pipeline[] datareaders) throws Exception {
@@ -32,7 +34,7 @@ public class CategoryPeriod extends Category {
         if (periodText.equals("cy")) {
             indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), i, datareaders, false));
             indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), i, datareaders, false));
-            predictors.add(new PredictorLSTM(conf, getTitle() + " LSTM", marketdatamap, periodDataMap, getTitle(), i));
+            cy = i;
         }
         createIndicatorMap(periodText);
     }

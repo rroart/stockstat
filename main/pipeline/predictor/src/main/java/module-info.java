@@ -20,4 +20,6 @@ module pipeline.predictor {
     requires common.util;
     requires model;
     requires common.model;
+    requires pipeline.indicator;
+    requires com.fasterxml.jackson.databind;
 }

@@ -41,6 +41,7 @@ import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
+import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.pipeline.impl.DataReader;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
@@ -451,6 +452,10 @@ public class EvolutionService {
             List<StockItem> dayStocks = stockdatemap.get(mydate);
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     periodText, marketdatamap, periodDataMap, datedstocklists, datareaders);
+            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, dayStocks,
+                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders, categories);
+            //new ServiceUtil().createPredictors(categories);
+            new ServiceUtil().calculatePredictors(predictors);
     
             findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, catName, cat);
     

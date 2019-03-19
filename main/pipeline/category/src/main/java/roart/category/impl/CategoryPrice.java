@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.indicator.AbstractIndicator;
@@ -42,7 +43,6 @@ public class CategoryPrice extends Category {
         indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), Constants.PRICECOLUMN, datareaders, false));
         indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), Constants.PRICECOLUMN, datareaders, false));
         indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), Constants.PRICECOLUMN, datareaders, false));
-        predictors.add(new PredictorLSTM(conf, getTitle() + " LSTM", marketdatamap, periodDataMap, getTitle(), Constants.PRICECOLUMN));
         createIndicatorMap(Constants.PRICE);
     }
 
@@ -56,11 +56,6 @@ public class CategoryPrice extends Category {
                     r.add(getTitle() + " h");
                 }
                 r.add("Currency");
-                for (AbstractPredictor predictor : predictors) {
-                    if (predictor.isEnabled()) {
-                        r.addarr(predictor.getResultItemTitle());
-                    }
-                }
                 for (AbstractIndicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItemTitle());
@@ -79,11 +74,6 @@ public class CategoryPrice extends Category {
                 Object[] array = resultMap.get(stock.getId());
                 r.addarr(Arrays.copyOfRange(array, 0, dataArraySize));
                 r.add(stock.getCurrency());
-                for (AbstractPredictor predictor : predictors) {
-                    if (predictor.isEnabled()) {
-                        r.addarr(predictor.getResultItem(stock));
-                    }
-                }
                 for (AbstractIndicator indicator : indicators) {
                     if (indicator.isEnabled()) {
                         r.addarr(indicator.getResultItem(stock));

@@ -66,4 +66,5 @@ module core {
     requires evolution.chromosome;
     requires pipeline.category;
     requires pipeline.indicator;
+    requires pipeline.predictor;
 }

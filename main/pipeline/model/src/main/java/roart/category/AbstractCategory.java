@@ -14,7 +14,6 @@ import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
-import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.ResultItemTableRow;
 
 public abstract class AbstractCategory {
@@ -25,7 +24,6 @@ public abstract class AbstractCategory {
     protected MyMyConfig conf;
     protected List<StockItem> stocks;
     protected List<AbstractIndicator> indicators = new ArrayList<>();
-    protected List<AbstractPredictor> predictors = new ArrayList<>();
     private Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
     protected Pipeline[] datareaders;
     protected int period;
@@ -74,6 +72,7 @@ public abstract class AbstractCategory {
         this.title = title;
     }
 
+    /*
     public List<AbstractPredictor> getPredictors() {
         return predictors;
     }
@@ -81,17 +80,10 @@ public abstract class AbstractCategory {
     public void setPredictors(List<AbstractPredictor> predictors) {
         this.predictors = predictors;
     }
+    */
 
     public Map<String, Object> getResultMap() {
         Map<String, Object> map = new HashMap<>();
-        for (AbstractPredictor predictor : predictors) {
-            if (predictor.isEnabled()) {
-                Map<String, Object> tmpMap = predictor.getResultMap();
-                if (tmpMap != null) {
-                    map.putAll(tmpMap);
-                }
-            }
-        }
         for (AbstractIndicator indicator : indicators) {
             if (indicator.isEnabled()) {
                 Map<String, Object> tmpMap = indicator.getResultMap();
@@ -105,16 +97,6 @@ public abstract class AbstractCategory {
     
     public Map<String, Map<String, Object>> getIndicatorLocalResultMap() {
         Map<String, Map<String, Object>> map = new HashMap<>();
-        for (AbstractPredictor predictor : predictors) {
-            if (predictor.isEnabled()) {
-                Map<String, Object> tmpMap = predictor.getLocalResultMap();
-                if (tmpMap != null) {
-                    System.out.println("Adding predictor " + predictor.predictorName());
-                    System.out.println("exist " + map.containsKey(predictor.predictorName()));
-                    map.put(predictor.predictorName(), tmpMap);
-                }
-            }
-        }
         for (AbstractIndicator indicator : indicators) {
             if (indicator.isEnabled()) {
                 Map<String, Object> tmpMap = indicator.getLocalResultMap();
@@ -161,6 +143,28 @@ public abstract class AbstractCategory {
             }
         }
     }
+
+    /*
+    @Deprecated
+    protected void addPredictor(AbstractPredictor predictor) {
+        if (predictor.isEnabled()) {
+            predictors.add(predictor);
+        }
+    }
+
+    @Deprecated
+    public void addPredictors(AbstractCategory[] categories) throws Exception {        
+    }
+
+    @Deprecated
+    public void calculatePredictors(AbstractCategory[] categories) throws Exception {        
+        for (AbstractCategory category : categories) {
+            for (AbstractPredictor predictor : category.predictors) {
+                predictor.calculate();
+            }
+        }
+    }
+*/
 
 }
 
