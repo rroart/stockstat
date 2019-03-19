@@ -71,12 +71,12 @@ public class TensorflowLSTMConfig extends TensorflowConfig {
     public void randomize() {
         generateEpochs();
         generateWindowsize();
-        generateHorizon();
+        // generateHorizon();
     }
 
     @Override
     public void mutate() {
-        int task = random.nextInt(3);
+        int task = random.nextInt(2);
         switch (task) {
         case 0:
             generateEpochs();
@@ -101,7 +101,7 @@ public class TensorflowLSTMConfig extends TensorflowConfig {
             offspring.windowsize = other.getWindowsize();
         }
         if (random.nextBoolean()) {
-            offspring.horizon = other.getHorizon();
+            // offspring.horizon = other.getHorizon();
         }
         return offspring;
     }
