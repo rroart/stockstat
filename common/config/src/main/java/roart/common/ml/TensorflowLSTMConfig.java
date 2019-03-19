@@ -116,4 +116,9 @@ public class TensorflowLSTMConfig extends TensorflowConfig {
         return epochs == null || windowsize == null || horizon == null;
     }
 
+    @Override
+    public String toString() {
+        return getName() + " " + getEpochs() + " " + getWindowsize() + " " + getHorizon();
+    }
+
 }
