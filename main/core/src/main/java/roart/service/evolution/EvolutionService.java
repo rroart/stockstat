@@ -552,6 +552,8 @@ public class EvolutionService {
             NeuralNetConfig newnnconf = bestEval2.getNnConfig();
             newNNConfigs.set(key, newnnconf);
         }
+        ObjectMapper mapper = new ObjectMapper();
+        String newNNConfigstring = mapper.writeValueAsString(newNNConfigs);
         String myKey = null;
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
             myKey = ConfigConstants.AGGREGATORSINDICATORMLCONFIG;
@@ -561,9 +563,8 @@ public class EvolutionService {
         }
         if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
             myKey = ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG;
+            newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowLSTMConfig());
         }
-        ObjectMapper mapper = new ObjectMapper();
-        String newNNConfigstring = mapper.writeValueAsString(newNNConfigs);
         updateMap.put(myKey, newNNConfigstring);
         ResultItemTableRow row = new ResultItemTableRow();
         row.add(myKey);
