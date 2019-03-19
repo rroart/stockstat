@@ -63,9 +63,15 @@ public class OneFourEvolution extends EvolutionAlgorithm {
             }
             calculate(population);
             Collections.sort(population);
+            if (!chromosome.isAscending()) {
+                Collections.reverse(population);
+            }
 
         }
         Collections.sort(population);
+        if (!chromosome.isAscending()) {
+            Collections.reverse(population);
+        }
         //printmap(population.get(0).getConf().getConfigValueMap());
         //printmap(population.get(population.size() - 1).getConf().getConfigValueMap());
         return population.get(0);

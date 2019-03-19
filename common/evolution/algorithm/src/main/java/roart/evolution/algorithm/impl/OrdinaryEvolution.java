@@ -38,7 +38,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
 
     private Individual getBest(int selectionSize, Population population,
-            boolean useMax, AbstractChromosome evaluation) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
+            boolean useMax, AbstractChromosome chromosome) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
         //printmap(population.getFittest().getConf().getConfigValueMap());
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         
@@ -46,7 +46,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             log.info("Iteration {} of {}", i, getEvolutionConfig().getGenerations());
             population.truncate(Math.min(population.size(), getEvolutionConfig().getSelect()));
            
-            List<Individual> children = crossover(getEvolutionConfig().getCrossover(), population.getIndividuals(), useMax, evaluation);
+            List<Individual> children = crossover(getEvolutionConfig().getCrossover(), population.getIndividuals(), useMax, chromosome);
             
             mutateList(population.getIndividuals(), getEvolutionConfig().getElite(), population.size(), getEvolutionConfig().getMutate(), false, useMax);
             List<Individual> clonedmutated = clonedmutated(getEvolutionConfig().getElitecloneandmutate(), population.getIndividuals().get(0).getEvaluation());
@@ -55,10 +55,13 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
             population.getIndividuals().addAll(children);
             population.getIndividuals().addAll(clonedmutated);
             
-            List<Individual> created = created(getEvolutionConfig().getGenerationcreate(), evaluation);
+            List<Individual> created = created(getEvolutionConfig().getGenerationcreate(), chromosome);
             population.getIndividuals().addAll(created);
             calculate(population.getIndividuals());
             Collections.sort(population.getIndividuals());
+            if (!chromosome.isAscending()) {
+                Collections.reverse(population.getIndividuals());
+            }
         }
         printmap(population.getIndividuals());
         //printmap(population.getIndividuals().get(0).getConf().getConfigValueMap());
