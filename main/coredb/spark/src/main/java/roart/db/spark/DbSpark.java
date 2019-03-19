@@ -208,11 +208,14 @@ public class DbSpark {
             double[][] values = listMap.get(id);
             //values = ArraysUtil.getArrayNonNullReverse(values);
 
+            /*
             if (wantPercentizedPriceIndex && values.length > 0 && values[0].length > 0) {
                 double first = values[0][0];
-                for(int i = 0; i < values.length; i ++)
+                for(int i = 0; i < values.length; i ++) {
                     values[i] = ArraysUtil.getPercentizedPriceIndex(values[i], key, ind.getCategory(), first);
+                }
             }
+            */
             if ("0P0000RVOF".equals(id)) {              
                 log.info("braz " + Arrays.toString(values));                
             }

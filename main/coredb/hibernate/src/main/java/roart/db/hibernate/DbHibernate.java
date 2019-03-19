@@ -70,11 +70,13 @@ public class DbHibernate {
             if ("F00000HGSN".equals(id)) {              
                 log.info("braz " + Arrays.toString(list));                
             }
+            /*
            if (wantPercentizedPriceIndex && list.length > 0 && list[0].length > 0) {
                double first = list[0][0];
                for(int i = 0; i < list.length; i ++)
                 list[i] = ArraysUtil.getPercentizedPriceIndex(list[i], key, indicator.getCategory(), first);
             }
+           */
            if ("F00000HGSN".equals(id)) {              
                log.info("braz " + Arrays.toString(list));                
            }
