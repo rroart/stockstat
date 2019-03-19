@@ -40,6 +40,9 @@ public class TimeUtil {
     }
 
     public static String convertDate2(LocalDate date) {
+        if (date == null) {
+            return null;
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         return date.format(formatter);
     }
