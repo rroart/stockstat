@@ -667,7 +667,9 @@ public class MyMyConfig extends MyConfig {
     }
 
     public boolean wantAggregatorsIndicatorML() {
-        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOR);
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOR) &&
+                wantAggregators() &&
+                wantML ();
     }
 
     public String getAggregatorsMLIndicatorMLConfig() {
@@ -675,9 +677,10 @@ public class MyMyConfig extends MyConfig {
     }
 
     public boolean wantMLMACD() {
-        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACD)
-                && isMACDEnabled() 
-                && wantML();
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACD) &&
+                wantAggregators() &&
+                isMACDEnabled() &&
+                wantML();
     }
 
     public String getMLMACDMLConfig() {
