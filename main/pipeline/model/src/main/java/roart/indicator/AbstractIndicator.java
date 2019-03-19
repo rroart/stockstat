@@ -34,7 +34,16 @@ public abstract class AbstractIndicator extends Calculatable {
     protected Object[] emptyField;
 
     protected Map<String, Double[][]> listMap;
+    protected Map<String, Double[][]> fillListMap;
+
     protected Map<String, double[][]> truncListMap;
+    protected Map<String, double[][]> truncFillListMap;
+    
+    protected Map<String, Double[][]> base100ListMap;
+    protected Map<String, Double[][]> base100FillListMap;
+    
+    protected Map<String, double[][]> truncBase100ListMap;
+    protected Map<String, double[][]> truncBase100FillListMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
     protected Map<String, Object[]> objectMap;

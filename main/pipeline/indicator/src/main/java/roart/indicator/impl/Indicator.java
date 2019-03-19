@@ -85,32 +85,38 @@ public class Indicator extends AbstractIndicator {
             return;
         }
         this.listMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+        this.fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
         this.truncListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
+        this.truncFillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);       
+        this.base100ListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.BASE100LIST);
+        this.base100FillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.BASE100FILLLIST);
+        this.truncBase100ListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100LIST);       
+        this.truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);       
         if (!anythingHere(listMap)) {
             log.info("empty {}", key);
             return;
         }
-        List<Map> resultList = getMarketCalcResults(dbDao, truncListMap);
+        List<Map> resultList = getMarketCalcResults(dbDao, conf.wantPercentizedPriceIndex() ? truncBase100FillListMap : truncFillListMap);
         objectMap = resultList.get(0);
         calculatedMap = resultList.get(1);
         resultMap = resultList.get(2);
     }
 
-    protected List getMarketCalcResults(DbAccess dbDao, Map<String, double[][]> truncListMap) {
+    protected List getMarketCalcResults(DbAccess dbDao, Map<String, double[][]> aListMap) {
         List<Map> resultList = new ArrayList<>();
-        if (truncListMap == null || truncListMap.isEmpty()) {
+        if (aListMap == null || aListMap.isEmpty()) {
             return resultList;
         }
         long time0 = System.currentTimeMillis();
         log.info("time0 {}", (System.currentTimeMillis() - time0));
 
         long time2 = System.currentTimeMillis();
-        Map<String, Object[]> myObjectMap = dbDao.doCalculationsArr(conf, truncListMap, key, this, conf.wantPercentizedPriceIndex());
+        Map<String, Object[]> myObjectMap = dbDao.doCalculationsArr(conf, aListMap, key, this, conf.wantPercentizedPriceIndex());
 
         log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
-        log.info("listmap {} {}", truncListMap.size(), truncListMap.keySet());
-        Map<String, Double[]> myCalculatedMap = getCalculatedMap(myObjectMap, truncListMap);
+        log.info("listmap {} {}", aListMap.size(), aListMap.keySet());
+        Map<String, Double[]> myCalculatedMap = getCalculatedMap(myObjectMap, aListMap);
 
         Map<String, Object[]> myResultMap = getResultMap(conf, myObjectMap, myCalculatedMap);
         log.info("time1 {}", (System.currentTimeMillis() - time1));

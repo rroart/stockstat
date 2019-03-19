@@ -29,6 +29,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.db.dao.DbDao;
 import roart.executor.MyExecutors;
+import roart.pipeline.Pipeline;
 import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.Constants;
 import roart.ml.dao.MLClassifyDao;
@@ -49,8 +50,8 @@ public class MLMACD extends Aggregator {
 
     Map<String, PeriodData> periodDataMap;
     String key;
-    Map<String, Double[][]> listMap;
-    Map<String, double[][]> truncListMap;
+    private Map<String, Double[][]> macdListMap;
+    private Map<String, double[][]> listMap;
     // TODO save and return this map
     // TODO need getters for this and not? buy/sell
     Map<String, Double[]> momMap;
@@ -69,8 +70,8 @@ public class MLMACD extends Aggregator {
         return objectMap;
     }
 
-    public Map<String, Double[][]> getListMap() {
-        return listMap;
+    private Map<String, Double[][]> getListMap() {
+        return macdListMap;
     }
 
     private int fieldSize = 0;
@@ -107,7 +108,7 @@ public class MLMACD extends Aggregator {
     }
 
     public MLMACD(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, PeriodData> periodDataMap, 
-            String title, int category, AbstractCategory[] categories, Map<String, String> idNameMap) throws Exception {
+            String title, int category, AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders) throws Exception {
         super(conf, string, category);
         this.periodDataMap = periodDataMap;
         this.key = title;
@@ -130,7 +131,7 @@ public class MLMACD extends Aggregator {
             eventTableRows = new ArrayList<>();
         }
         if (isEnabled()) {
-            calculateMomentums(conf, periodDataMap, category, categories);    
+            calculateMomentums(conf, periodDataMap, category, categories, datareaders);    
             cleanMLDaos();
         }
     }
@@ -225,7 +226,7 @@ public class MLMACD extends Aggregator {
     }
     // TODO make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, PeriodData> periodDataMap,
-            int category2, AbstractCategory[] categories) throws Exception {
+            int category2, AbstractCategory[] categories, Pipeline[] datareaders) throws Exception {
         AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, category);
         if (cat == null) {
             return;
@@ -238,15 +239,30 @@ public class MLMACD extends Aggregator {
         Object object = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
         Object mom0 = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
         momMap = (Map<String, Double[]>) mom0;
-        truncListMap = (Map<String, double[][]>) cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.TRUNCLIST);
-
+        //truncListMap = (Map<String, double[][]>) cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.TRUNCBASE100LIST);
+        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        Pipeline datareader = pipelineMap.get("" + category);
+        if (datareader == null) {
+            log.info("empty {}", category);
+            return;
+        }
+        //this.listMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+        //this.fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
+                //(Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
+        /*
+        this.truncFillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);       
+        this.base100ListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.BASE100LIST);
+        this.truncBase100ListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100LIST);       
+        this.truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);       
+*/
+        Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);
+        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);
+        this.listMap = conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap;
+        
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        this.listMap = (Map<String, Double[][]>) list0;
-        if (conf.wantPercentizedPriceIndex()) {
-
-        }
-        if (!anythingHere(listMap)) {
+        this.macdListMap = (Map<String, Double[][]>) list0;
+        if (!anythingHere(macdListMap)) {
             log.debug("empty {}", key);
             return;
         }
@@ -265,7 +281,7 @@ public class MLMACD extends Aggregator {
         //log.debug("imap " + objectMap.size());
         log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
-        log.debug("listmap {} {}", listMap.size(), listMap.keySet());
+        log.debug("listmap {} {}", macdListMap.size(), macdListMap.keySet());
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<String, Map<double[], Double>> mapMap = createPosNegMaps(conf);
         // map from h/m to model to posnegcom map<model, results>
@@ -532,7 +548,7 @@ public class MLMACD extends Aggregator {
 
     private void createResultMap(MyMyConfig conf,
             Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult) {
-        for (String id : listMap.keySet()) {
+        for (String id : macdListMap.keySet()) {
             Double[] momentum = momMap.get(id);
             Object[] fields = new Object[fieldSize];
             momMap.put(id, momentum);
@@ -599,7 +615,7 @@ public class MLMACD extends Aggregator {
         // calculate sections and do ML
         // a map from h/m + com/neg/sub to map<id, values>
         Map<String, Map<String, double[]>> mapIdMap= new HashMap<>();
-        for (Entry<String, Double[][]> entry : listMap.entrySet()) {
+        for (Entry<String, Double[][]> entry : macdListMap.entrySet()) {
             Double[][] list = entry.getValue();
             Double[] origMain = Arrays.copyOf(list[0], list[0].length);
             list[0] = ArraysUtil.getPercentizedPriceIndex(list[0], key);
@@ -739,7 +755,7 @@ public class MLMACD extends Aggregator {
 
     private Map<String, Map<double[], Double>> createPosNegMaps(MyMyConfig conf) {
         Map<String, Map<double[], Double>> mapMap = new HashMap<>();
-        for (String id : listMap.keySet()) {
+        for (String id : macdListMap.keySet()) {
             Object[] objs = objectMap.get(id);
             Double[] momentum = momMap.get(id);
             if (momentum == null) {
@@ -748,7 +764,7 @@ public class MLMACD extends Aggregator {
             MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
             MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
 
-            double[][] list = truncListMap.get(id);
+            double[][] list = listMap.get(id);
             log.debug("t {}", Arrays.toString(list[0]));
             log.debug("listsize {}", list.length);
             if (conf.wantPercentizedPriceIndex() && list[0].length > 0) {
