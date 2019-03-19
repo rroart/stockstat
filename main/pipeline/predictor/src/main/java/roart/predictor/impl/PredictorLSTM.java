@@ -14,12 +14,16 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.TensorflowLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
+import roart.indicator.util.IndicatorUtils;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.dao.MLPredictDao;
 import roart.ml.model.LearnTestPredictResult;
@@ -27,8 +31,10 @@ import roart.ml.model.MLPredictModel;
 import roart.model.StockItem;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockDao;
+import roart.stockutil.StockUtil;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
+import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
 
 public class PredictorLSTM extends AbstractPredictor {
@@ -36,8 +42,17 @@ public class PredictorLSTM extends AbstractPredictor {
     Map<String, MarketData> marketdatamap;
     Map<String, PeriodData> periodDataMap;
     String key;
-    Map<String, Double[][]> listMap;
-    Map<String, double[][]> truncListMap;
+    protected Map<String, Double[][]> listMap;
+    protected Map<String, Double[][]> fillListMap;
+
+    protected Map<String, double[][]> truncListMap;
+    protected Map<String, double[][]> truncFillListMap;
+    
+    protected Map<String, Double[][]> base100ListMap;
+    protected Map<String, Double[][]> base100FillListMap;
+    
+    protected Map<String, double[][]> truncBase100ListMap;
+    protected Map<String, double[][]> truncBase100FillListMap;
     Object[] emptyField = new Object[1];
     Map<MLPredictModel, Long> mapTime = new HashMap<>();
 
@@ -59,8 +74,11 @@ public class PredictorLSTM extends AbstractPredictor {
     }
 
     List<MLPredictDao> mldaos = new ArrayList<>();
+    
+    private AbstractCategory[] categories;
+    private Pipeline[] datareaders;
 
-    public PredictorLSTM(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title, int category) throws Exception {
+    public PredictorLSTM(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title, int category, AbstractCategory[] categories, Pipeline[] datareaders) throws Exception {
         super(conf, string, category);
         if (!isEnabled()) {
             return;
@@ -68,6 +86,8 @@ public class PredictorLSTM extends AbstractPredictor {
         this.marketdatamap = marketdatamap;
         this.periodDataMap = periodDataMap;
         this.key = title;
+        this.categories = categories;
+        this.datareaders = datareaders;
         makeWantedSubTypes();
         makeMapTypes();
         if (conf.wantML()) {
@@ -94,7 +114,7 @@ public class PredictorLSTM extends AbstractPredictor {
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
-        calculate(conf, marketdatamap, periodDataMap, category);        
+        //calculate(); //conf, marketdatamap, periodDataMap, category, categories);        
     }
 
     private interface PredSubType {
@@ -157,18 +177,42 @@ public class PredictorLSTM extends AbstractPredictor {
     }
     
     // TODO make an oo version of this
-    private void calculate(MyMyConfig conf, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, int category) throws Exception {
+    @Override
+    public void calculate() throws Exception { // MyMyConfig conf, Map<String, MarketData> marketdatamap,
+           // Map<String, PeriodData> periodDataMap, int category2, AbstractCategory[] categories) throws Exception {
+        if (!isEnabled()) {
+            return;
+        }
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
+        
+        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, category);
+        if (cat == null) {
+            return;
+        }
+        log.info("checkthis {}", category == cat.getPeriod());
+        log.info("checkthis {}", title.equals(cat.getTitle()));
+        log.info("checkthis {}", key.equals(title));
+        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        Pipeline datareader = pipelineMap.get("" + category);
+        if (datareader == null) {
+            log.info("empty {}", category);
+            return;
+        }
+        this.listMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+        this.fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
+        this.truncListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCLIST);       
+        this.truncFillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);       
+        this.base100ListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.BASE100LIST);
+        this.base100FillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.BASE100FILLLIST);
+        this.truncBase100ListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100LIST);       
+        this.truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);       
+
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        Map<String, Double[][]> retArray = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
-        this.listMap = retArray;
-        this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
-        if (conf.wantPercentizedPriceIndex()) {
-
-        }
+        //Map<String, Double[][]> retArray = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        //this.listMap = retArray;
+        //this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
         if (!anythingHere(listMap)) {
             log.info("empty {}", key);
             return;
@@ -176,6 +220,14 @@ public class PredictorLSTM extends AbstractPredictor {
         log.info("time0 {}", (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
         probabilityMap = new HashMap<>();
+
+        NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
+        String nnconfigString = conf.getLSTMConfig();
+        if (nnconfigString != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            TensorflowLSTMConfig lstmConfig = mapper.readValue(nnconfigString, TensorflowLSTMConfig.class);
+            nnConfigs.setTensorflowLSTMConfig(lstmConfig);
+        }
 
         long time2 = System.currentTimeMillis();
         log.info("time2 {}", (System.currentTimeMillis() - time2));
@@ -188,21 +240,25 @@ public class PredictorLSTM extends AbstractPredictor {
         }
         Map<String, Double[]> mapResult = new HashMap<>();
         if (conf.wantML()) {
-            doPredictions(conf, mapResult);
+            if (false && conf.wantPercentizedPriceIndex()) {
+                doPredictions(conf, mapResult, base100FillListMap, truncBase100FillListMap, nnConfigs);
+            } else {
+                doPredictions(conf, mapResult, fillListMap, truncFillListMap, nnConfigs);                
+            }
         }
-        createResultMap(conf, mapResult);
+        createResultMap(conf, mapResult, false && conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap);
         log.info("time1 {}", (System.currentTimeMillis() - time1));
         handleSpentTime(conf);
 
     }
 
-    private void doPredictions(MyMyConfig conf, Map<String, Double[]> mapResult) {
+    private void doPredictions(MyMyConfig conf, Map<String, Double[]> mapResult, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs) {
         try {
             List<PredSubType> subTypes = wantedSubTypes();
             for (PredSubType subType : subTypes) {
                 for (MLPredictDao mldao : mldaos) {
                     for (MLPredictModel model : mldao.getModels()) {
-                        LearnTestPredictResult result = getMapResultList(conf, mldao, model);
+                        LearnTestPredictResult result = getMapResultList(conf, mldao, model, aListMap, aTruncListMap, nnConfigs);
                         Map<String, Double[]> localMapResult = result.predictMap;
                         mapResult.putAll(localMapResult);
                         Map<String, Double> accuracyMap = result.accuracyMap;
@@ -216,10 +272,10 @@ public class PredictorLSTM extends AbstractPredictor {
     }
 
     private Map<String, Double[]> getMapResult(MyMyConfig conf, MLPredictDao mldao, int horizon, int windowsize,
-            int epochs, MLPredictModel model) {
+            int epochs, MLPredictModel model, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap) {
         Map<String, Double[]> localMapResult = new HashMap<>();
-        for (String id : listMap.keySet()) {
-            double[][] list0 = truncListMap.get(id);
+        for (String id : aListMap.keySet()) {
+            double[][] list0 = aTruncListMap.get(id);
             double[] list = list0[0];
             // TODO check reverse. move up before if?
             log.info("list {} {}", list.length, windowsize);
@@ -233,10 +289,11 @@ public class PredictorLSTM extends AbstractPredictor {
         return localMapResult;
     }
 
-    private LearnTestPredictResult getMapResultList(MyMyConfig conf, MLPredictDao mldao, MLPredictModel model) {
+    private LearnTestPredictResult getMapResultList(MyMyConfig conf, MLPredictDao mldao, MLPredictModel model, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs) {
         Map<String, Double[]> map = new HashMap<>();
-        for (String id : listMap.keySet()) {
-            double[][] list0 = truncListMap.get(id);
+        for (String id : aListMap.keySet()) {
+            Double[] listl = aListMap.get(id)[0];
+            double[][] list0 = aTruncListMap.get(id);
             double[] list = list0[0];
             // TODO check reverse. move up before if?
             if (list != null) {
@@ -245,11 +302,11 @@ public class PredictorLSTM extends AbstractPredictor {
                 map.put(id, list3);
             }
         }
-        return mldao.predict(this, new NeuralNetConfigs(), map, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime);  
+        return mldao.predict(this, nnConfigs, map, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime);  
     }
 
-    private void createResultMap(MyMyConfig conf, Map<String, Double[]> mapResult) {
-        for (String id : listMap.keySet()) {
+    private void createResultMap(MyMyConfig conf, Map<String, Double[]> mapResult, Map<String, Double[][]> aListMap) {
+        for (String id : aListMap.keySet()) {
             Object[] fields = new Object[1];
             resultMap.put(id, fields);
             int retindex = 0;
@@ -280,7 +337,18 @@ public class PredictorLSTM extends AbstractPredictor {
         }
     }
 
-    private boolean anythingHere(Map<String, Double[][]> listMap2) {
+    protected boolean anythingHere(Map<String, Double[][]> myListMap) {
+        for (Double[][] array : myListMap.values()) {
+            for (int i = 0; i < array[0].length; i++) {
+                if (array[0][i] != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private boolean anythingHereNot(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
             for (int i = 0; i < array.length; i++) {
                 if (array[0][i] != null) {
@@ -382,5 +450,13 @@ public class PredictorLSTM extends AbstractPredictor {
     public String predictorName() {
         return PipelineConstants.LSTM;
     }
+    
+    @Override
+    public boolean hasValue() {
+        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
+        Pipeline datareader = pipelineMap.get("" + category);
+        return anythingHere((Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST));
+    }
+
 }
 
