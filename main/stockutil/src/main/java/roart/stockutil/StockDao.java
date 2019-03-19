@@ -213,7 +213,6 @@ public class StockDao {
         if (i != null) {
             Double[][] j = i;
         }
-        retMap = getReverseArrSparseFillHolesArr(conf, retMap);
         return retMap;
     }
 
@@ -241,10 +240,6 @@ public class StockDao {
         return retList;
     }
 
-    public static int maxHoleNumber(MyMyConfig conf) {
-        return conf.getMaxHoles();
-    }
-
     public static Map<String, Double[]> getReverse(Map<String, Double[]> listMap) {
         Map<String, Double[]> retMap = new HashMap<>();
         for (Entry<String, Double[]> entry : listMap.entrySet()) {
@@ -252,27 +247,6 @@ public class StockDao {
             ArrayUtils.reverse(array);
             retMap.put(entry.getKey(), array);
         }
-        return retMap;
-    }
-
-    public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(MyMyConfig conf, Map<String, Double[][]> listMap) {
-        Map<String, Double[][]> retMap = /*getReverse*/(listMap);
-        for (Entry<String, Double[][]> entry : listMap.entrySet()) {
-            Double[][] array = entry.getValue();
-            Double[][] newArray = new Double[array.length][];
-            for (int i = 0; i < array.length; i ++) {
-                newArray[i] = ArraysUtil.fixMapHoles(array[i], null, maxHoleNumber(conf));
-            }
-            retMap.put(entry.getKey(), newArray);
-        }      
-        return retMap;
-    }
-
-    public static Map<String, Double[]> getReverseArrSparseFillHoles(MyMyConfig conf, Map<String, Double[]> listMap) {
-        Map<String, Double[]> retMap = /*getReverse*/(listMap);
-        for (Entry<String, Double[]> entry : listMap.entrySet()) {
-            retMap.put(entry.getKey(), ArraysUtil.fixMapHoles(entry.getValue(), null, maxHoleNumber(conf)));
-        }      
         return retMap;
     }
 }
