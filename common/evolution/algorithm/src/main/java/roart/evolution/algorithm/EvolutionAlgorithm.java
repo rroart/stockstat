@@ -117,6 +117,9 @@ public abstract class EvolutionAlgorithm {
         for (Future<Individual> future : futureList) {
             Individual individual = future.get();
         }
+        if (true) {
+            int jj = 0;
+        }
     }
     
     class EvolutionCallable implements Callable {
