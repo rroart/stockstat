@@ -95,7 +95,8 @@ public class ComponentRecommender extends ComponentNoML {
     @Override
     public void calculate(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
         RecommenderData param = (RecommenderData) componentparam;
-        Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
+        //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
+        Map resultMaps = (Map) param.getResultMap();
         for (int i = 0; i < 2; i++) {
         Object[] keys = new Object[2];
         keys[0] = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
