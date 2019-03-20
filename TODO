@@ -6,6 +6,22 @@ W: Work
 C: Change
 
 Iclij
+F: Save updatemap
+B: Flask predict stalls/hangs
+F: rerun memories after evolution
+C: predictor result maps in core
+F: auto find important indexes commodities etc
+B: some default config overrids existing (componentpredictor)
+C: enable configvalues in core, from single to list (like lstms)
+C: split db for core/iclij
+F: lastclock 22
+C: database w/ dev for incdec mem
+B: getmarkets empty config in iclijxmlconfig
+C: move importants into markets
+F: connect two markets, like morncat and nordfund
+F: classify ml macd zero turns with increase
+F: go for score for one alternative, skip ml test result
+F: get market missing some
 F: use other new indicators
 B: restart interrupted find profit
 WF: Start with no recent data, then most time spenders.
@@ -19,14 +35,12 @@ F: Iclij verif show new ml config
 F: Use testaccuracy in iclij
 WF: get market data icli with date
 F: Iclij mltimes
-B: Iclij web xml tree
 B: Auto iclij missing ai, memory
 WF: for loop for recommend
 WT: unify verify and singlemark
 B: Recommender NAN
 B: SQL var 255 overflow (too long descr)
 F: Subclass incdecitem instead of having non-saved
-B: iPredictor implement, and not running
 F: Test ml conf gen for each loop?
 B: no mlstat -> mapmaps
 B: No ml conf
@@ -46,6 +60,7 @@ B: look at findprofit, getimprovement two layers of new ControlService
 F: Remove findprofit both inc dec, go to improve
 
 Iclij evolution recommender
+T: drop special handling for lstm config
 B: serviceutil 76 nasdaq tradcomm?
 B: again confidencefactor null?
 B: conf. factor still null in comp.rec., and further down
@@ -60,8 +75,11 @@ F: Recommender combine keys/improveaction?
 B: improvement lack srv. setdate
 
 Core
+C: move indicator out of category, use mostwanted cat
+C: java 8 dates
+C: Parameter/class cleanups for indicators, aggregators etc
+B: NaN at top of table with simple recommender
 F: use other new indicators
-C: rename calcnode to gene
 F: ML use test result
 T: MLPredictModel addtitles deprecate
 T: mlmacd mlindicator anythinghere better heuristics?
@@ -70,7 +88,6 @@ B: stockstatcore terminates/crashes?
 WB: new ControlService w/o date transfer
 F: Use Java quantlib
 B: Timeutil null date breakpoint
-B: ose get nan on run single new date
 B: Fix problem when extras use same market
 T: MLindicator Map<String, Double[][]> list0 = (Map<String, Double[][]>) localResultMap.get next usage
 F: Stockst komb 1m 1w m macd etc
@@ -78,16 +95,18 @@ F: Mlind? use pure gold oil price
 F: Use 4 macd with ml
 F: RSI and usemax
 B: Use ose/nordfund on sunday with date
-C: Non-null, trunc data ordering (rel to I0)
+B: ose get nan on run single new date
 
 Build
+C: Rename neuralnetconfig to gene/chromosome
+C: Change NN to NeuralNet
 B: log rotate
 T: pom auto tidy
 T: pom versioning
 T: space/tabs
 
 Design
-T: Pipe, Categ constructor, split off calculate
+T: Narrow down number of categories contstructed
 T: Make stock value to return a new class instead of double[]
 T: Dataimport zero/content check
 T: Change result map keys, due to overlap
@@ -100,6 +119,14 @@ WF: Each mldao with threadpool
 B: Spark truncates getAll?
 
 ML
+C: split out gene out of SparkMCPConfig etc, let the gene contain SparkMCPConfig
+F: more ml (like tf batch, keras lstm layers, nodes) config into json
+F: iclij save ML config to db (I11)
+C: Ignore too small sets
+B: Mlindicator MLClassifySparkAccess learntestclassify 6 NaN (tautil 199 rsi beg end NaN) ose 19.02.16
+C: NeuralNetChromosome change price to most wanted
+C: Merge LSTM with others
+C: ML reconfig default configs based on evolution
 T: Nvidia
 WB: tf open file limi
 B: Flask threaded tf process lock (Tf server/client hangs)
@@ -108,7 +135,6 @@ T: Tf python cleanup
 F: Look at tf serving?
 F: Save tensorflow config to xml file
 F: DNNL
-C: Put config LSTM under ml
 B: Spark giving nonexisting prediction also.
 F: mlmacd improve, full pattern
 F: Mlind (w/ lr) with same data as evolve recommender
@@ -153,21 +179,20 @@ F: Use fuzzy logic or uncertainty
 Config
 T: Synch XML reader config code
 T: making instances
-T: Check all use of configs
-C: include defaults in map, for constructing gui tree
 WF: ConfigMaps use class
 WF: MyExecutors and cpu config
 T: Fix thresholds, common standard
 T: MyMyConfig getValueOrDefault use more
 F: no env SPARK_DRIVER_HOST, use config file?
+T: insert has duplicated code
 
 Data
 B: my box import does not work
-B: 0.0 as ose value, filter (I0)
 B: nasdaq verify loop
 F: Use volume
 F: Add interest
-F: Stockstat metadata for imports
+F: Stockstat metadata for imports, preferred order for price, index, cy
+B: 0.0 as ose value cboeval index, set null in db
 
 All
 WF: change date system to from to
@@ -198,6 +223,28 @@ java.lang.NullPointerException: null
         at roart.aggregate.AggregatorRecommenderIndicator.<init>(AggregatorRecommenderIndicator.java:92)
         at roart.service.ControlService.getAggregates(ControlService.java:332)
 
+WT: Check all use of configs (I21).
+WC: Move Predictor out of Category (I17).
+WT: Pipeline, Category constructor, split off calculate (I16)
+WT: Refactor (I14)
+WB: Iclij Predictor implement (I12)
+WF: Evolve improvements for all 4 improvers (I4)
+WF: Improve MLMACD (I5)
+WF: Improve Predictor (I6)
+WC: JSON market/finder/improver evolve ml config (I9)
+DB: When index/price is 0 change to null (I20)
+DC: Non-null, trunc data ordering (I19)
+DC: Put base100 in a new field (I18).
+DC: Config constant/name remove [@enable], keep only [@id] (I15)
+DC: Include defaults in map, for constructing gui tree (I8)
+DC: Rename trademarket to filtermarket (I10)
+DF: dev build incl db spark (I13)
+DB: Iclij web xml tree no text box due to attribues/values (I7)
+DC: (Core) rename calcnode to gene (I0)
+DC: Put config LSTM under ml (I1)
+DC: ML config in map config value as JSON (I2)
+DF: Evolution population score sort order (I3)
+DC: Rename nnconfig to full name
 DF: service simple with redirect output
 DB: ver 0/x
 DF: Tf gpu need singlethread flask
