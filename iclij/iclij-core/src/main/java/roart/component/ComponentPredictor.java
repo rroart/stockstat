@@ -2,9 +2,12 @@ package roart.component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +15,21 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
+import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.MLConfigs;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.ml.TensorflowLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
-import roart.component.model.PredictorParam;
+import roart.common.util.JsonUtil;
+import roart.common.util.TimeUtil;
+import roart.component.model.ComponentInput;
+import roart.component.model.ComponentData;
+import roart.component.model.PredictorData;
+import roart.config.Market;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.evolution.chromosome.impl.MLMACDChromosome;
 import roart.evolution.chromosome.impl.PredictorChromosome;
@@ -28,32 +40,158 @@ import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
 import roart.service.MLService;
 import roart.service.PredictorService;
+import roart.service.model.ProfitData;
 
-public class ComponentPredictor extends Component {
+public class ComponentPredictor extends ComponentML {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Override
-    public void enable(MyMyConfig conf) {
-        conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.TRUE);                
+    public void enable(Map<String, Object> valueMap) {
+        valueMap.put(ConfigConstants.PREDICTORS, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.PREDICTORSLSTM, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.FALSE);                
     }
 
     @Override
-    public void disable(MyMyConfig conf) {
-        conf.getConfigValueMap().put(ConfigConstants.PREDICTORS, Boolean.FALSE);        
+    public void disable(Map<String, Object> valueMap) {
+        valueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);        
     }
 
-    @Override
-    public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
-            Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
-            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config, Map<String, Object> updateMap) {
-        log.info("Component not impl {}", this.getClass().getName());
+    public static MLConfigs getDisableNonLSTM() {
+        EvolveMLConfig config = new EvolveMLConfig();
+        config.setEnable(false);
+        config.setEvolve(false);
+        MLConfigs configs = new MLConfigs();
+        configs.setL(config);
+        configs.setLr(config);
+        configs.setDnn(config);
+        configs.setMcp(config);
+        configs.setOvr(config);
+        return configs;
     }
     
     @Override
-    public Map<String, String> improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
-            Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
-            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve) {
+        //log.info("Component not impl {}", this.getClass().getName());
+        
+        PredictorData param = new PredictorData(componentparam);
+        
+        String lstmConf = param.getService().conf.getLSTMConfig();
+        int futuredays = 0;
+        try { 
+            TensorflowLSTMConfig lstm = new ObjectMapper().readValue(lstmConf, TensorflowLSTMConfig.class);
+            futuredays = lstm.getHorizon();
+        } catch (Exception e) {
+            log.error("Exception", e);
+        }
+        param.setFuturedays(futuredays);
+
+        String pipeline = PipelineConstants.PREDICTORSLSTM;
+        //boolean evolve = param.getInput().getConfig().wantEvolveML();
+        String localMl = param.getInput().getConfig().getFindProfitPredictorMLConfig();
+        MLConfigs overrideLSTM = getDisableNonLSTM();
+        //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
+        String localEvolve = param.getInput().getConfig().getFindProfitPredictorEvolutionConfig();
+        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve, localEvolve);
+        
+        Map<String, Object> maps = param.getResultMap();
+        Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);
+        
+        return param;
+        /*
+        String localMl = param.getInput().getConfig().getFindProfitPredictorMLConfig();
+        String ml = param.getInput().getConfig().getEvolveMLMLConfig();
+        MLConfigs marketMlConfig = market.getMlconfig();
+        MLConfigs mlConfig = JsonUtil.convert(ml, MLConfigs.class);
+        MLConfigs localMLConfig = JsonUtil.convert(localMl, MLConfigs.class);
+        //MLConfigs disableLSTM = ComponentMLIndicator.getDisableLSTM();
+        mlConfig.merge(localMLConfig);
+        //mlConfig.merge(disableLSTM);
+        mlConfig.merge(marketMlConfig);
+        Map<String, EvolveMLConfig> mlConfigMap = mlConfig.getAll();
+        if (param.getInput().getConfig().wantEvolveML()) {
+            ComponentMLMACD.setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
+            Map<String, Object> anUpdateMap = param.getService().getEvolveML(true, new ArrayList<>(), PipelineConstants.PREDICTORSLSTM, param.getService().conf);
+            if (param.getInput().getValuemap() != null) {
+                param.getInput().getValuemap().putAll(anUpdateMap); 
+            }
+        }
+        ComponentMLMACD.setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
+        Map predictorMaps = (Map) param.getResultMap(PipelineConstants.PREDICTORSLSTM, new HashMap<>());
+        //resultMaps = srv.getContent();
+        //Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.PREDICTORSLSTM);
+        //System.out.println("mlm " + mlMACDMaps.keySet());
+        //Integer category = (Integer) mlMACDMaps.get(PipelineConstants.CATEGORY);
+        //String categoryTitle = (String) mlMACDMaps.get(PipelineConstants.CATEGORYTITLE);
+        param.setCategory(predictorMaps);
+        Map<String, List<Object>> resultMap = (Map<String, List<Object>>) predictorMaps.get(PipelineConstants.RESULT);
+        if (resultMap == null) {
+            return;
+        }
+        Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) predictorMaps.get(PipelineConstants.PROBABILITY);
+        */
+        /*
+        List<List> resultMetaArray = (List<List>) mlMACDMaps.get(PipelineConstants.RESULTMETAARRAY);
+        //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
+        List<Object> objectList = (List<Object>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
+        List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
+        */
+        //Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+        //System.out.println("k2 " + categoryValueMap.keySet());
+        //calculate(profitdata, param);
+    }
+    
+    @Override
+    public void calculate(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
+        PredictorData param = (PredictorData) componentparam;
+        Object[] keys = new Object[2];
+        keys[0] = PipelineConstants.PREDICTORSLSTM;
+        keys[1] = null;
+        keys = ComponentMLMACD.getRealKeys(keys, profitdata.getInputdata().getConfMap().keySet());
+        Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keys);
+        Map<String, Object> resultMap = (Map<String, Object>) param.getResultMap().get("result");
+        List<MyElement> list0 = new ArrayList<>();
+        //List<MyElement> list1 = new ArrayList<>();
+        Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
+        for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+            String key = entry.getKey();
+            List<List<Double>> resultList = entry.getValue();
+            List<Double> mainList = resultList.get(0);
+            if (mainList == null) {
+                continue;
+            }
+            List<Object> list = (List<Object>) resultMap.get(key);
+            if (list == null) {
+                continue;
+            }
+            if (list.isEmpty()) {
+                continue;
+            }
+            if (list0.isEmpty()) {
+                continue;
+            }
+            if (list0.get(0) != null) {
+                list0.add(new MyElement(key, (Double) list.get(0)));
+            }
+            //list1.add(new MyElement(key, list.get(1)));
+        }
+        Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
+        //Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
+        handleBuySell(profitdata, param.getService(), param.getInput().getConfig(), keys, confidenceFactor, list0);
+        //handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list1);
+    }
+    
+    @Override
+    public Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {
         log.info("Component not impl {}", this.getClass().getName());
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = null;
@@ -75,13 +213,18 @@ public class ComponentPredictor extends Component {
         Map<String, String> retMap = new HashMap<>();
         try {
             Individual best = evolution.getFittest(evolutionConfig, chromosome);
-            Map<String, Object> confMap = null;
-            String market = okListMap.values().iterator().next().get(0).getMarket();
+            PredictorChromosome bestChromosome = (PredictorChromosome) best.getEvaluation();
+            //MyMyConfig co = c.getConf();
+            //List<String> k = c.getConfList();
+            Map<String, Object> confMap = bestChromosome.getMap();
+            //Map<String, Object> confMap = null;
+            String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
             ControlService srv = new ControlService();
             srv.getConfig();            
+            srv.conf.setMarket(marketName);
             List<Double> newConfidenceList = new ArrayList<>();
             srv.conf.getConfigValueMap().putAll(confMap);
-            List<MemoryItem> memories = new PredictorService().doPredict(srv, market, 0, null, false, false);
+            List<MemoryItem> memories = new PredictorService().doPredict(new ComponentInput(marketName, LocalDate.now(), null, false, false), confMap);
             for(MemoryItem memory : memories) {
                 newConfidenceList.add(memory.getConfidence());
             }
@@ -93,7 +236,10 @@ public class ComponentPredictor extends Component {
         return new HashMap<>();
     }
 
-    public List<MemoryItem> calculatePredictor(PredictorParam param) throws Exception {
+    @Override
+    public List<MemoryItem> calculate2(ComponentData componentparam) throws Exception {
+        PredictorData param = (PredictorData) componentparam;
+        Map<String, List<Double>> resultMap = (Map<String, List<Double>>) param.getResultMap().get("result");
         List<MemoryItem> memoryList = new ArrayList<>();
         long total = 0;
         long goodInc = 0;
@@ -106,12 +252,13 @@ public class ComponentPredictor extends Component {
             if (mainList != null) {
                 Double valFuture = mainList.get(mainList.size() - 1);
                 Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays());
-                List<Double> predFutureList = param.getResultMap().get(key);
+                List<Double> predFutureList = resultMap.get(key);
                 if (predFutureList == null) {
                     continue;
                 }
                 Double predFuture = predFutureList.get(0);
                 if (valFuture != null && valNow != null && predFuture != null) {
+                    System.out.println("vals " + valNow + " " + valFuture + " " + predFuture);
                     total++;
                     if (predFuture > valNow) {
                         totalInc++;
@@ -169,5 +316,63 @@ public class ComponentPredictor extends Component {
         memoryList.add(decMemory);
         return memoryList;
     }
+    
+    private void handleBuySell(ProfitData profitdata, ControlService srv, IclijConfig config, Object[] keys,
+            Double confidenceFactor, List<MyElement> list) {
+        int listSize = list.size();
+        int recommend = config.recommendTopBottom();
+        if (listSize < recommend * 3) {
+            return;
+        }
+        List<MyElement> topList = list.subList(0, recommend);
+        List<MyElement> bottomList = list.subList(listSize - recommend, listSize);
+        Double max = list.get(0).getValue();
+        Double min = list.get(listSize - 1).getValue();
+        Double diff = max - min;
+        for (MyElement element : topList) {
+            if (confidenceFactor == null || element.getValue() == null) {
+                int jj = 0;
+                continue;
+            }
+            double confidence = confidenceFactor * (element.getValue() - min) / diff;
+            String recommendation = "recommend buy";
+            //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
+            //incdec.setIncrease(true);
+            //buys.put(element.getKey(), incdec);
+            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(srv.conf.getdate()));
+            incdec.setIncrease(true);
+        }
+        for (MyElement element : bottomList) {
+            if (confidenceFactor == null || element.getValue() == null) {
+                int jj = 0;
+                continue;
+            }
+            double confidence = confidenceFactor * (element.getValue() - min) / diff;
+            String recommendation = "recommend sell";
+            //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
+            //incdec.setIncrease(false);
+            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(srv.conf.getdate()));
+            incdec.setIncrease(false);
+        }
+    }
+
+    private class MyElement {
+        public String key;
+        public Double value;
+        
+        public MyElement(String key, Double value) {
+            this.key = key;
+            this.value = value;
+        }
+        
+        public String getKey() {
+            return key;
+        }
+        
+        public Double getValue() {
+            return value;
+        }
+    }
+    
 }
 
