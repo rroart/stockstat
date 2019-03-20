@@ -1,58 +1,36 @@
 package roart.config;
 
+import roart.iclij.config.MLConfigs;
+
 public class Market {
-    private String market;
-
-    private Short time;
+    private MarketConfig config;
     
-    private Short improvetime;
+    private MarketFilter filter;
     
-    private String id;
+    private MLConfigs mlconfig;
 
-    private Short startoffset;
-    
-    public Market() {
-        
-    }
-    
-    public String getMarket() {
-        return market;
+    public MarketConfig getConfig() {
+        return config;
     }
 
-    public void setMarket(String market) {
-        this.market = market;
+    public void setConfig(MarketConfig config) {
+        this.config = config;
     }
 
-    public Short getTime() {
-        return time;
+    public MarketFilter getFilter() {
+        return filter;
     }
 
-    public void setTime(Short time) {
-        this.time = time;
+    public void setFilter(MarketFilter filter) {
+        this.filter = filter;
     }
 
-    public Short getImprovetime() {
-        return improvetime;
+    public MLConfigs getMlconfig() {
+        return mlconfig;
     }
 
-    public void setImprovetime(Short improvetime) {
-        this.improvetime = improvetime;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Short getStartoffset() {
-        return startoffset;
-    }
-
-    public void setStartoffset(Short startoffset) {
-        this.startoffset = startoffset;
+    public void setMlconfig(MLConfigs mlConfigs) {
+        this.mlconfig = mlConfigs;
     }
 
 }

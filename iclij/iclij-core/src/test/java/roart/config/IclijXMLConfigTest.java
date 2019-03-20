@@ -21,16 +21,16 @@ public void setup() {
 
 @Test
 public void test() throws JsonParseException, JsonMappingException, IOException {
-    Market m = new Market();
-    m.setTime((short) 5);
+    MarketConfig m = new MarketConfig();
+    m.setFindtime((short) 5);
     m.setMarket("cb");
-    List<Market> l = new ArrayList<>();
+    List<MarketConfig> l = new ArrayList<>();
     l.add(m);
     ObjectMapper mapper = new ObjectMapper();
     System.out.println(mapper.writeValueAsString(l));
     IclijConfig conf = IclijXMLConfig.getConfigInstance();
-    List<Market> ret = IclijXMLConfig.getMarkets(conf);
-    List<FilterMarket> ret2 = IclijXMLConfig.getFilterMarkets(conf);
+    List<MarketConfig> ret = IclijXMLConfig.getMarkets(conf);
+    List<MarketFilter> ret2 = IclijXMLConfig.getFilterMarkets(conf);
 }
 }
 

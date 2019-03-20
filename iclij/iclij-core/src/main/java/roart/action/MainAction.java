@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
 import roart.service.ControlService;
 
@@ -20,7 +21,7 @@ public class MainAction extends Action {
 
     @SuppressWarnings("squid:S2189")
     @Override
-    public void goal(Action parent) throws InterruptedException {
+    public void goal(Action parent, ComponentData param) throws InterruptedException {
         IclijXMLConfig.getConfigInstance();
         System.out.println("Start");
         ControlService srv = new ControlService();
@@ -62,7 +63,7 @@ public class MainAction extends Action {
                 addIfNotContaining(updateDBACtion);
             } else {
                 Action action = getGoals().poll();
-                action.goal(this);
+                action.goal(this, param);
             }
         }
     }

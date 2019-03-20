@@ -95,6 +95,7 @@ public class ControlService {
     public Map<String, Map<String, Object>> getContent() {
         return getContent(new ArrayList<>());
     }
+    
     public Map<String, Map<String, Object>> getContent(List<String> disableList) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
@@ -175,18 +176,20 @@ public class ControlService {
         getConfig();
     }
 
-    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList) {
+    public List<ResultItem> getEvolveRecommender(boolean doSet, List<String> disableList, Map<String, Object> updateMap) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setConfList(disableList);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
-            conf = new MyMyConfig(result.getConfig());
+            //conf = new MyMyConfig(result.getConfig());
+            updateMap.putAll(result.getMaps().get("update"));
         }
         return result.getList();
+        //return result.getMaps().get("update");
     }
 
-    public Map<String, Object> getEvolveML(boolean doSet, List<String> disableList, String ml, MyMyConfig conf) {
+    public List<ResultItem> getEvolveML(boolean doSet, List<String> disableList, String ml, MyMyConfig conf, Map<String, Object> updateMap) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         Set<String> ids = new HashSet<>();
@@ -195,10 +198,11 @@ public class ControlService {
         param.setConfList(disableList);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVENN);
         if (doSet) {
-            Map<String, Object> updateMap = result.getMaps().get("update");
-            conf.getConfigValueMap().putAll(updateMap);
-            return updateMap;
+            updateMap.putAll(result.getMaps().get("update"));
+            //Map<String, Object> updateMap = result.getMaps().get("update");
+            //conf.getConfigValueMap().putAll(updateMap);
+            //return updateMap;
         }
-        return null;
+        return result.getList();
     }
 }

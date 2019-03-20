@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
+import roart.component.model.ComponentInput;
+import roart.component.model.ComponentData;
+import roart.service.ControlService;
 import roart.service.MLService;
 import roart.service.PredictorService;
 import roart.service.RecommenderService;
@@ -73,21 +76,30 @@ public class ServiceAction extends Action {
     }
 
     @Override
-    public void goal(Action parent) throws InterruptedException {
+    public void goal(Action parent, ComponentData param) throws InterruptedException {
         log.info("At {} : Updating {} {}", new Date(), market, task);
+        /*
+        ControlService srv = new ControlService();
+        srv.getConfig();
+        srv.conf.setMarket(market);
+        ComponentInput input = new ComponentInput(market, date, 0, save, true);
+        ComponentData param = new ComponentData(input);
+        param.setService(srv);
+        param.setFutureDate(date);
+        */
         try {
             switch (task) {
             case RECOMMENDER:
-                setMemory(new RecommenderService().doRecommender(market, days, null, save, new ArrayList<>(), true));
+                setMemory(new RecommenderService().doRecommender(param, new ArrayList<>()));
                 break;
             case PREDICTOR:
-                setMemory(new PredictorService().doPredict(market, days, null, save, true));
+                setMemory(new PredictorService().doPredict(param));
                 break;
             case MLMACD:
-                setMemory(new MLService().doMLMACD(market, days, null, save, true));
+                setMemory(new MLService().doMLMACD(param));
                 break;
             case MLINDICATOR:
-                setMemory(new MLService().doMLIndicator(market, days, null, save, true));
+                setMemory(new MLService().doMLIndicator(param));
                 break;
             }
         } catch (Exception e) {

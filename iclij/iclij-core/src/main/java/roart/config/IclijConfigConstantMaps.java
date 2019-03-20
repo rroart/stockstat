@@ -8,7 +8,7 @@ import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLType;
 
 public class IclijConfigConstantMaps {
-    private static final String MLCONFIG = "{ \"mcp\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : false }, \"lr\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : false }, \"ovr\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : false }, \"dnn\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : false },  \"l\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : false }, \"lstm\" : { \"load\" : true, \"save\" : true, \"enable\" : false, \"evolve\" : false } }";
+    private static final String MLCONFIG = "{ \"mcp\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }, \"lr\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }, \"ovr\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }, \"dnn\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true },  \"l\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }, \"lstm\" : { \"load\" : true, \"save\" : true, \"enable\" : false, \"evolve\" : false } }";
 
     private static final String MLCONFIGLSTM = "{ \"lstm\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true } }";
 

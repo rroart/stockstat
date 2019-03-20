@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import roart.component.model.ComponentData;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
 
 public class VerifyProfitAction extends Action {
 
     @Override
-    public void goal(Action parent) throws InterruptedException {
+    public void goal(Action parent, ComponentData param) throws InterruptedException {
     }
 
     public List<MapList> doVerify(List<IncDecItem> list, int days, boolean increase, Map<String, List<List<Double>>> categoryValueMap, LocalDate date) {

@@ -1,8 +1,6 @@
 package roart.config;
 
-public class FilterMarket {
-    private String market;
-
+public class MarketFilter {
     private String inccategory;
     
     private Integer incdays;
@@ -17,16 +15,8 @@ public class FilterMarket {
 
     private Integer recordage;
     
-    public FilterMarket() {
+    public MarketFilter() {
         
-    }
-
-    public String getMarket() {
-        return market;
-    }
-
-    public void setMarket(String market) {
-        this.market = market;
     }
 
     public String getInccategory() {

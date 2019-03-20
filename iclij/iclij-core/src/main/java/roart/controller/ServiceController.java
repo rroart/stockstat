@@ -2,6 +2,7 @@ package roart.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +32,7 @@ import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.service.ServiceParam;
+import roart.component.model.ComponentInput;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
@@ -74,35 +76,35 @@ public class ServiceController {
             method = RequestMethod.POST)
     public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)
             throws Exception {
-        return ServiceUtil.getVerify(param.getIclijConfig(), param.getOffset());
+        return ServiceUtil.getVerify(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/recommender/{market}",
             method = RequestMethod.GET)
     public void getRecommender(@PathVariable String market)
             throws Exception {
-        new RecommenderService().doRecommender(market, 0, null, true, new ArrayList<>(), true);
+        new RecommenderService().doRecommender(new ComponentInput(null, null, market, LocalDate.now(), 0, true, true, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/predictor/{market}",
             method = RequestMethod.GET)
     public void getPredict(@PathVariable String market)
             throws Exception {
-        new PredictorService().doPredict(market, 0, null, true, true);
+        new PredictorService().doPredict(new ComponentInput(null, null, market, null, null, true, true, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/mlmacd/{market}",
             method = RequestMethod.GET)
     public void getMLMACD(@PathVariable String market)
             throws Exception {
-        new MLService().doMLMACD(market, 0, null, true, true);
+        new MLService().doMLMACD(new ComponentInput(null, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/mlindicator/{market}",
             method = RequestMethod.GET)
     public void getMLIndicator(@PathVariable String market)
             throws Exception {
-        new MLService().doMLIndicator(market, 0, null, true, true);
+        new MLService().doMLIndicator(new ComponentInput(null, null, market, null, null, true, true, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/findprofit",
@@ -110,7 +112,7 @@ public class ServiceController {
     public void getFindProfit()
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        new FindProfitAction().goal(null);
+        new FindProfitAction().goal(null, null);
     }
 
     @RequestMapping(value = "/improveprofit",
@@ -118,7 +120,7 @@ public class ServiceController {
     public void getImproveProfit()
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
-        new ImproveProfitAction().goal(null);
+        new ImproveProfitAction().goal(null, null);
     }
 
     @RequestMapping(value = "/findprofit",
@@ -126,7 +128,11 @@ public class ServiceController {
     public IclijServiceResult getFindProfitMarket(@RequestBody IclijServiceParam param)
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        return ServiceUtil.getFindProfit(param.getIclijConfig(), param.getOffset());
+        LocalDate date = param.getIclijConfig().getDate();
+        if (date == null) {
+            date = LocalDate.now();
+        }
+        return ServiceUtil.getFindProfit(new ComponentInput(param.getIclijConfig(), null, null, date, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
         //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
        //IclijServiceResult ret = new IclijServiceResult();
        //ret.setError(error);
@@ -139,7 +145,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        return ServiceUtil.getImproveProfit(param.getIclijConfig(), param.getOffset());
+        return ServiceUtil.getImproveProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/updatedb",
@@ -147,7 +153,7 @@ public class ServiceController {
     public void getUpdateDb()
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
-        new UpdateDBAction().goal(null);
+        new UpdateDBAction().goal(null, null);
     }
 
 }

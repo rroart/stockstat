@@ -3,17 +3,16 @@ package roart.component.model;
 import java.util.List;
 import java.util.Map;
 
-public class RecommenderParam extends ComponentParam {
-    private int futuredays;
+public class RecommenderData extends ComponentData {
     
     private Map<String, List<Double>> recommendBuySell;
 
-    public int getFuturedays() {
-        return futuredays;
+    public RecommenderData() {
+        
     }
-
-    public void setFuturedays(int futuredays) {
-        this.futuredays = futuredays;
+    
+    public RecommenderData(ComponentData componentparam) {
+        super(componentparam);
     }
 
     public Map<String, List<Double>> getRecommendBuySell() {

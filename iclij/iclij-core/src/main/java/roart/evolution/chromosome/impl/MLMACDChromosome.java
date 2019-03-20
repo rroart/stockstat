@@ -13,6 +13,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
+import roart.component.model.ComponentInput;
 import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
 import roart.service.MLService;
@@ -51,15 +52,17 @@ public class MLMACDChromosome extends ConfigMapChromosome {
 
     class MyFactory {
         public List<MemoryItem> myfactory(MyMyConfig conf, String ml) throws Exception {
+            /*
             ControlService srv = new ControlService();
             srv.getConfig();            
             srv.conf.getConfigValueMap().putAll(getMap());
+            */
             if (ml.equals(PipelineConstants.MLMACD)) {
-                List<MemoryItem> memories = new MLService().doMLMACD(srv, conf.getMarket(), 0, null, false, false);
+                List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(conf.getMarket(), null, null, false, false), getMap());
                 return memories;
             } 
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
-                List<MemoryItem> memories = new MLService().doMLIndicator(srv, conf.getMarket(), 0, null, false, false);
+                List<MemoryItem> memories = new MLService().doMLIndicator(new ComponentInput(conf.getMarket(), null, null, false, false), getMap());
                 return memories;
             }
             return null;

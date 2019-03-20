@@ -16,51 +16,20 @@ import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.ComponentFactory;
+import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
+import roart.config.MarketConfig;
 import roart.db.IclijDbDao;
 import roart.iclij.model.MemoryItem;
+import roart.util.ServiceUtil;
 
 public class UpdateDBAction extends Action {
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    private List<String> getFindProfitComponents(IclijConfig config) {
-        List<String> components = new ArrayList<>();
-        if (config.wantsFindProfitRecommender()) {
-            components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        }
-        if (config.wantsFindProfitPredictor()) {
-            components.add(PipelineConstants.PREDICTORSLSTM);
-        }
-        if (config.wantsFindProfitMLMACD()) {
-            components.add(PipelineConstants.MLMACD);
-        }
-        if (config.wantsFindProfitMLIndicator()) {
-            components.add(PipelineConstants.MLINDICATOR);
-        }
-        return components;
-    }
-
-    private List<String> getImproveProfitComponents(IclijConfig config) {
-        List<String> components = new ArrayList<>();
-        if (config.wantsImproveProfitRecommender()) {
-            components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        }
-        if (config.wantsImproveProfitPredictor()) {
-            components.add(PipelineConstants.PREDICTORSLSTM);
-        }
-        if (config.wantsImproveProfitMLMACD()) {
-            components.add(PipelineConstants.MLMACD);
-        }
-        if (config.wantsImproveProfitMLIndicator()) {
-            components.add(PipelineConstants.MLINDICATOR);
-        }
-        return components;
-    }
-
     @Override
-    public void goal(Action parent) throws InterruptedException {
+    public void goal(Action parent, ComponentData param) throws InterruptedException {
         List<Market> markets = getMarkets();
         List<MemoryItem> toCheck = findMarketComponentsToCheck(markets);
         Queue<Action> goals = getGoals(toCheck);
@@ -103,26 +72,26 @@ public class UpdateDBAction extends Action {
         for (Market market : markets) {
             List<MemoryItem> marketMemory = null;
             try {
-                marketMemory = IclijDbDao.getAll(market.getMarket());
+                marketMemory = IclijDbDao.getAll(market.getConfig().getMarket());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
             if (marketMemory == null) {
-                log.error("Marketmemory null for {}", market.getMarket());
+                log.error("Marketmemory null for {}", market.getConfig().getMarket());
                 continue;
             }
-            for (String component : getFindProfitComponents(instance)) {
+            for (String component : ServiceUtil.getFindProfitComponents(instance)) {
                 List<MemoryItem> marketComponents = marketMemory.stream().filter(m -> component.equals(m.getComponent())).collect(Collectors.toList());
                 Collections.sort(marketComponents, (o1, o2) -> (o2.getRecord().compareTo(o1.getRecord())));
                 if (marketComponents == null || marketComponents.isEmpty()) {
                     MemoryItem memoryItem = new MemoryItem();
                     memoryItem.setComponent(component);
-                    memoryItem.setMarket(market.getMarket());
+                    memoryItem.setMarket(market.getConfig().getMarket());
                     toCheck.add(memoryItem);
                 } else {
                     MemoryItem last = marketComponents.get(0);
                     long time = TimeUtil.daysSince(last.getRecord());
-                    if (time > market.getTime()) {
+                    if (time > market.getConfig().getFindtime()) {
                         toCheck.add(last);
                     }
                 }
@@ -137,25 +106,26 @@ public class UpdateDBAction extends Action {
         return toCheck;
     }
 
-    public Queue<Action> findAllMarketComponentsToCheck(String marketName, LocalDate date, int days, boolean save, IclijConfig config) {
+    public Queue<Action> findAllMarketComponentsToCheck(ComponentData param, int days, IclijConfig config, List<String> components) {
+        days += param.getLoopoffset();
         List<Market> markets = getMarkets();
         Queue<Action> goals = new LinkedList<>();
         for (Market market : markets) {
-            if (!market.getMarket().equals(marketName)) {
+            if (!market.getConfig().getMarket().equals(param.getMarket())) {
                 continue;
             }
-            Short startOffset = market.getStartoffset();
+            Short startOffset = market.getConfig().getStartoffset();
             if (startOffset != null) {
                 System.out.println("Using offset " + startOffset);
                 log.info("Using offset {}", startOffset);
                 days += startOffset;
             }
-            for (String component : getImproveProfitComponents(config)) {
-                ServiceAction serviceAction = new ComponentFactory().factory(market.getMarket(), component);
+            for (String component : components) {
+                ServiceAction serviceAction = new ComponentFactory().factory(market.getConfig().getMarket(), component);
                 if (serviceAction != null) {
-                    serviceAction.setDate(date);
+                    serviceAction.setDate(param.getFutureDate());
                     serviceAction.setDays(days);
-                    serviceAction.setSave(save);
+                    serviceAction.setSave(param.isDoSave());
                     goals.add(serviceAction);
                 }
             }

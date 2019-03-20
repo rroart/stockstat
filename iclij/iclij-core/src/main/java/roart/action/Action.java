@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import roart.component.model.ComponentData;
 import roart.constants.IclijPipelineConstants;
 import roart.iclij.model.MemoryItem;
 
@@ -30,7 +31,7 @@ public abstract class Action {
         this.memory = memory;
     }
 
-    public abstract void goal(Action parent) throws InterruptedException;
+    public abstract void goal(Action parent, ComponentData param) throws InterruptedException;
 
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();

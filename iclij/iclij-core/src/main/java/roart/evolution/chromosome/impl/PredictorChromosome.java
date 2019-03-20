@@ -1,6 +1,7 @@
 package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.component.model.ComponentInput;
 import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
 import roart.service.PredictorService;
@@ -45,11 +47,13 @@ public class PredictorChromosome extends ConfigMapChromosome {
 
     class MyFactory {
         public List<MemoryItem> myfactory(MyMyConfig conf, String ml) throws Exception {
+            /*
             ControlService srv = new ControlService();
             srv.getConfig();            
             srv.conf.getConfigValueMap().putAll(getMap());
+            */
             if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
-                List<MemoryItem> memories = new PredictorService().doPredict(srv, conf.getMarket(), 0, null, false, false);
+                List<MemoryItem> memories = new PredictorService().doPredict(new ComponentInput(conf.getMarket(), LocalDate.now(), Integer.valueOf(0), false, false), getMap());
                 return memories;
             } 
             return null;

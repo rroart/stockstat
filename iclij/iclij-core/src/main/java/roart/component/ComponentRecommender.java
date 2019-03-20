@@ -18,13 +18,18 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.MLConfigs;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.RecommendConstants;
 import roart.common.util.TimeUtil;
-import roart.component.model.RecommenderParam;
+import roart.component.model.ComponentInput;
+import roart.component.model.PredictorData;
+import roart.component.model.ComponentData;
+import roart.component.model.RecommenderData;
 import roart.common.pipeline.PipelineConstants;
 import roart.config.IclijXMLConfig;
+import roart.config.Market;
 import roart.evolution.fitness.AbstractScore;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.executor.MyExecutors;
@@ -32,56 +37,75 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
 import roart.service.RecommenderService;
+import roart.service.model.ProfitData;
 
-public class ComponentRecommender extends Component {
+public class ComponentRecommender extends ComponentNoML {
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Override
-    public void enable(MyMyConfig conf) {
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORS, Boolean.TRUE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.TRUE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.TRUE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.TRUE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.TRUE);                
+    public void enable(Map<String, Object> valueMap) {
+        valueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.TRUE);                
     }
 
     @Override
-    public void disable(MyMyConfig conf) {
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORS, Boolean.FALSE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.FALSE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.FALSE);                
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.FALSE);                
+    public void disable(Map<String, Object> valueMap) {
+        valueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.FALSE);                
     }
 
     @Override
-    public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions,
-            Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
-            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config, Map<String, Object> updateMap) {
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        if (instance.wantEvolveRecommender()) {
-            srv.getEvolveRecommender(true, new ArrayList<>());
-        }
-        resultMaps = srv.getContent();
-        String market = okListMap.values().iterator().next().get(0).getMarket();
-        findBuySellRecommendations(resultMaps, nameMap, market, buys, sells, okConfMap, okListMap, srv, config);
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve) {
+    
+        RecommenderData param = new RecommenderData(componentparam);        
+        
+        int futuredays = (int) param.getService().conf.getTestIndicatorRecommenderComplexFutureDays();
+        param.setFuturedays(futuredays);
+
+        String pipeline = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
+        String localMl = null;
+        MLConfigs overrideLSTM = ComponentMLIndicator.getDisableLSTM();
+        //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
+        String localEvolve = null;
+        handle2(market, param, profitdata, positions, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, null, param.getInput().getConfig().wantEvolveRecommender(), localEvolve);
+
+        Map<String, Object> resultMap = param.getResultMap();
+        Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
+        Map<String, List<Double>> recommendBuySell = (Map<String, List<Double>>) resultMap2.get(RecommendConstants.COMPLEX);
+        param.setRecommendBuySell(recommendBuySell);
+
+        //handleEvolve(null, null, null, null, instance.wantEvolveRecommender(), param);
+        //Map recommenderMaps = (Map) param.getResultMap(param.getService(), PipelineConstants.MLMACD, new HashMap<>());
+        //Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLMACD);
+        //param.setCategory(recommenderMaps);
+        //param.getAndSetCategoryValueMap();
+        //resultMaps = srv.getContent();
+        return param;
+        //findBuySellRecommendations(profitdata, param);
     }
 
-    private void findBuySellRecommendations(Map<String, Map<String, Object>> resultMaps, Map<String, String> nameMap, String market, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, ControlService srv, IclijConfig config) {
+    @Override
+    public void calculate(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
+        RecommenderData param = (RecommenderData) componentparam;
+        Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
         for (int i = 0; i < 2; i++) {
         Object[] keys = new Object[2];
         keys[0] = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
         keys[1] = i;
-        keys = ComponentMLMACD.getRealKeys(keys, okConfMap.keySet());
+        keys = ComponentMLMACD.getRealKeys(keys, profitdata.getInputdata().getConfMap().keySet());
         //System.out.println(okListMap.get(keys));
-        Double confidenceFactor = okConfMap.get(keys);
+        Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keys);
         //System.out.println(okConfMap.keySet());
         //System.out.println(okListMap.keySet());
-        Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
-        String categoryTitle = (String) maps.get(PipelineConstants.CATEGORYTITLE);
+        Map maps = (Map) resultMaps; //.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         Map<String, Map> resultMap0 = (Map<String, Map>) maps.get(PipelineConstants.RESULT);
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) resultMap0.get(RecommendConstants.COMPLEX);
         if (resultMap == null) {
@@ -89,7 +113,7 @@ public class ComponentRecommender extends Component {
         }
         List<MyElement> list0 = new ArrayList<>();
         //List<MyElement> list1 = new ArrayList<>();
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+        Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
         for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
             String key = entry.getKey();
             List<List<Double>> resultList = entry.getValue();
@@ -106,16 +130,15 @@ public class ComponentRecommender extends Component {
         }
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         //Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
-        handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list0);
+        handleBuySell(profitdata, param, keys, confidenceFactor, list0);
         //handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list1);
         }
     }
 
-    private void handleBuySell(Map<String, String> nameMap, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells,
-            Map<Object[], List<MemoryItem>> okListMap, ControlService srv, IclijConfig config, Object[] keys,
-            Double confidenceFactor, List<MyElement> list) {
+    private void handleBuySell(ProfitData profitdata, ComponentData param, Object[] keys, Double confidenceFactor,
+            List<MyElement> list) {
         int listSize = list.size();
-        int recommend = config.recommendTopBottom();
+        int recommend = param.getInput().getConfig().recommendTopBottom();
         if (listSize < recommend * 3) {
             return;
         }
@@ -134,7 +157,7 @@ public class ComponentRecommender extends Component {
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(buys, element.getKey(), confidence, okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
+            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
             incdec.setIncrease(true);
         }
         for (MyElement element : bottomList) {
@@ -146,7 +169,7 @@ public class ComponentRecommender extends Component {
             String recommendation = "recommend sell";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(sells, element.getKey(), confidence, okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
+            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
             incdec.setIncrease(false);
         }
     }
@@ -183,14 +206,12 @@ public class ComponentRecommender extends Component {
         return sellList;
     }
     @Override
-    public Map<String, String> improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
-            Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> badConfMap,
-            Map<Object[], List<MemoryItem>> badListMap, Map<String, String> nameMap) {
+    public Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {
         Map<String, String> retMap = new HashMap<>();
         List<String> list = getBuy();
-        retMap.putAll(handleBuySell(conf, badListMap, list));
+        retMap.putAll(handleBuySell(conf, profitdata.getInputdata().getListMap(), list));
         list = getSell();
-        retMap.putAll(handleBuySell(conf, badListMap, list));
+        retMap.putAll(handleBuySell(conf, profitdata.getInputdata().getListMap(), list));
         return retMap;
     }
 
@@ -219,6 +240,7 @@ public class ComponentRecommender extends Component {
         String market = badListMap.values().iterator().next().get(0).getMarket();
         ControlService srv = new ControlService();
         srv.getConfig();            
+        srv.conf.setMarket(market);
         // plus testrecommendfactor
         int factor = 100;
         log.info("market {}", market);
@@ -231,7 +253,7 @@ public class ComponentRecommender extends Component {
             log.info("For disable {}", Integer.toHexString(index++));
             try {
                 //List<MemoryItem> memories = ServiceUtil.doRecommender(srv, market, 0, null, false, aList, false);
-                Callable callable = new RecommenderCallable(srv, market, 0, null, false, aList, false);  
+                Callable callable = new RecommenderCallable(srv, new ComponentInput(market, LocalDate.now(), 0, false, false), aList);  
                 Future<List<MemoryItem>> future = MyExecutors.run(callable, 0);
                 futureList.add(future);
                 futureMap.put(future, aList);
@@ -276,7 +298,9 @@ public class ComponentRecommender extends Component {
         return listPerm;
     }
     
-    public List<MemoryItem> calculateRecommender(RecommenderParam param) throws Exception {
+    @Override
+    public List<MemoryItem> calculate2(ComponentData componentparam) throws Exception {
+        RecommenderData param = (RecommenderData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         AbstractScore eval = new ProportionScore();
         for (int i = 0; i < 2; i++) {
@@ -307,7 +331,7 @@ public class ComponentRecommender extends Component {
         return changeSet;
     }
 
-    public void getMemories(RecommenderParam param, List<MemoryItem> memoryList, AbstractScore eval, int position) throws Exception {
+    public void getMemories(RecommenderData param, List<MemoryItem> memoryList, AbstractScore eval, int position) throws Exception {
         Map<String, List<Double>> resultMap = new HashMap<>();
         for (String key : param.getCategoryValueMap().keySet()) {
             List<Double> vals = param.getRecommendBuySell().get(key);
@@ -665,28 +689,15 @@ public class ComponentRecommender extends Component {
     class RecommenderCallable implements Callable {
         private ControlService srv;
        
-        private String market;
-        
-        private Integer offset; 
-        
-        private String aDate;
-        
-        private boolean doSave;
+        private ComponentInput componentInput;
         
         private List<String> disableList;
         
-        private boolean doPrint;
-
-        public RecommenderCallable(ControlService srv, String market, Integer offset, String aDate, boolean doSave,
-                List<String> disableList, boolean doPrint) {
+        public RecommenderCallable(ControlService srv, ComponentInput componentInput, List<String> aList) {
             super();
             this.srv = srv;
-            this.market = market;
-            this.offset = offset;
-            this.aDate = aDate;
-            this.doSave = doSave;
-            this.disableList = disableList;
-            this.doPrint = doPrint;
+            this.componentInput = componentInput;
+            this.disableList = aList;
         }
 
         public ControlService getSrv() {
@@ -697,38 +708,6 @@ public class ComponentRecommender extends Component {
             this.srv = srv;
         }
 
-        public String getMarket() {
-            return market;
-        }
-
-        public void setMarket(String market) {
-            this.market = market;
-        }
-
-        public Integer getOffset() {
-            return offset;
-        }
-
-        public void setOffset(Integer offset) {
-            this.offset = offset;
-        }
-
-        public String getaDate() {
-            return aDate;
-        }
-
-        public void setaDate(String aDate) {
-            this.aDate = aDate;
-        }
-
-        public boolean isDoSave() {
-            return doSave;
-        }
-
-        public void setDoSave(boolean doSave) {
-            this.doSave = doSave;
-        }
-
         public List<String> getDisableList() {
             return disableList;
         }
@@ -737,17 +716,10 @@ public class ComponentRecommender extends Component {
             this.disableList = disableList;
         }
 
-        public boolean isDoPrint() {
-            return doPrint;
-        }
-
-        public void setDoPrint(boolean doPrint) {
-            this.doPrint = doPrint;
-        }
-
         @Override
         public List<MemoryItem> call() throws Exception {
-             return new RecommenderService().doRecommender(srv, market, 0, null, doSave, disableList, false);
+            
+             return new RecommenderService().doRecommender(componentInput, disableList);
         }
 
     }

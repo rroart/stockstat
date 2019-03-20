@@ -1,10 +1,13 @@
 package roart.component;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -15,14 +18,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.action.FindProfitAction;
 import roart.common.config.ConfigConstants;
+import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.MLConfig;
+import roart.iclij.config.MLConfigs;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
-import roart.component.model.MLMACDParam;
+import roart.component.model.ComponentData;
+import roart.component.model.ComponentInput;
+import roart.component.model.MLIndicatorData;
+import roart.component.model.MLMACDData;
 import roart.common.pipeline.PipelineConstants;
 import roart.config.IclijXMLConfig;
+import roart.config.Market;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.evolution.chromosome.impl.MLMACDChromosome;
@@ -34,68 +45,108 @@ import roart.iclij.model.MemoryItem;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.MLService;
+import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 import roart.util.ServiceUtilConstants;
 
-public class ComponentMLMACD extends Component {
+public class ComponentMLMACD extends ComponentML {
     private Logger log = LoggerFactory.getLogger(ComponentMLMACD.class);
     @Override
-    public void enable(MyMyConfig conf) {
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);        
-        conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+    public void enable(Map<String, Object> valueMap) {
+        valueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
     }
 
     @Override
-    public void disable(MyMyConfig conf) {
-        conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACD, Boolean.FALSE);        
-        conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+    public void disable(Map<String, Object> valueMap) {
+        valueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
     }
 
     @Override
-    public void handle(ControlService srv, MyMyConfig conf, Map<String, Map<String, Object>> resultMaps, List<Integer> positions, Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap, Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap, IclijConfig config, Map<String, Object> updateMap) {
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve) {
         //if (true) return;
         //System.out.println(resultMaps.keySet());
-        List<String> nns = getnns();
-        setnns(conf, config, nns);
-        if (config.wantEvolveML()) {
-            Map<String, Object> anUpdateMap = srv.getEvolveML(true, new ArrayList<>(), PipelineConstants.MLMACD, conf);
-            if (updateMap != null) {
-                updateMap.putAll(anUpdateMap); 
+  
+        MLMACDData param = new MLMACDData(componentparam);
+
+        int daysafterzero = (int) param.getService().conf.getMACDDaysAfterZero();
+        param.setFuturedays(daysafterzero);
+        
+        String pipeline = PipelineConstants.MLMACD;
+        String localMl = param.getInput().getConfig().getFindProfitMLMACDMLConfig();
+        MLConfigs overrideLSTM = ComponentMLIndicator.getDisableLSTM();
+        //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
+        String localEvolve = param.getInput().getConfig().getFindProfitMLMACDEvolutionConfig();
+        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve, localEvolve);
+        Map resultMaps = param.getResultMap();
+        handleMLMeta(param, resultMaps);
+        return param;
+        /*
+        int offset = 0;
+        String aDate = "";
+        try {
+            param.setDatesAndOffset(param.getService(), daysafterzero, offset, aDate);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+   
+        String localMl = param.getInput().getConfig().getFindProfitMLMACDMLConfig();
+        String ml = param.getInput().getConfig().getEvolveMLMLConfig();
+        MLConfigs marketMlConfig = market.getMlconfig();
+        MLConfigs mlConfig = JsonUtil.convert(ml, MLConfigs.class);
+        MLConfigs localMLConfig = JsonUtil.convert(localMl, MLConfigs.class);
+        MLConfigs disableLSTM = ComponentMLIndicator.getDisableLSTM();
+        mlConfig.merge(localMLConfig);
+        mlConfig.merge(marketMlConfig);
+        mlConfig.merge(disableLSTM);
+        Map<String, EvolveMLConfig> mlConfigMap = mlConfig.getAll();
+        if (param.getInput().getConfig().wantEvolveML()) {
+            ComponentMLMACD.setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
+            Map<String, Object> anUpdateMap = param.getService().getEvolveML(true, new ArrayList<>(), PipelineConstants.MLMACD, param.getService().conf);
+            if (param.getInput().getValuemap() != null) {
+                param.getInput().getValuemap().putAll(anUpdateMap); 
             }
         }
-        resultMaps = srv.getContent();
-        Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLMACD);
-        //System.out.println("mlm " + mlMACDMaps.keySet());
-        Integer category = (Integer) mlMACDMaps.get(PipelineConstants.CATEGORY);
-        String categoryTitle = (String) mlMACDMaps.get(PipelineConstants.CATEGORYTITLE);
+        ComponentMLMACD.setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
+        //resultMaps = srv.getContent();
+        Map mlMACDMaps = (Map) param.getResultMap(PipelineConstants.MLMACD, new HashMap<>());
+        //Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLMACD);
+        param.setCategory(mlMACDMaps);
         Map<String, List<Object>> resultMap = (Map<String, List<Object>>) mlMACDMaps.get(PipelineConstants.RESULT);
         if (resultMap == null) {
             return;
         }
-        Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) mlMACDMaps.get(PipelineConstants.PROBABILITY);
-        List<List> resultMetaArray = (List<List>) mlMACDMaps.get(PipelineConstants.RESULTMETAARRAY);
-        //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
-        List<Object> objectList = (List<Object>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
-        List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+        handleMLMeta(param, mlMACDMaps);
+        param.getAndSetCategoryValueMap();
+        //Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + param.getCategory()).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
+    */
+        
+        //calculate(param.getService(), positions, profitdata, param);
+    }
 
+    @Override
+    public void calculate(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
+        MLMACDData param = (MLMACDData) componentparam;
+        Map<String, Object> resultMap = param.getResultMap();
         int resultIndex = 0;
         int count = 0;
-        for (List meta : resultMetaArray) {
+        for (List meta : param.getResultMetaArray()) {
             int returnSize = (int) meta.get(2);
 
             if (positions.contains(count)) {
                 Object[] keys = new Object[2];
                 keys[0] = PipelineConstants.MLMACD;
                 keys[1] = count;
-                for (String key : categoryValueMap.keySet()) {
-                    List<List<Double>> resultList = categoryValueMap.get(key);
+                for (String key : param.getCategoryValueMap().keySet()) {
+                    List<List<Double>> resultList = param.getCategoryValueMap().get(key);
                     List<Double> mainList = resultList.get(0);
                     if (mainList == null) {
                         continue;
                     }
-                    List<Object> list = resultMap.get(key);
+                    List<Object> list = (List<Object>) resultMap.get(key);
                     if (list == null) {
                         continue;
                     }
@@ -105,17 +156,17 @@ public class ComponentMLMACD extends Component {
                     }
                     boolean increase = false;
                     //System.out.println(okConfMap.keySet());
-                    Set<Object[]> keyset = okConfMap.keySet();
+                    Set<Object[]> keyset = profitdata.getInputdata().getConfMap().keySet();
                     keys = getRealKeys(keys, keyset);
                     //System.out.println(okListMap.keySet());
                     if (tfpn.equals(FindProfitAction.TP) || tfpn.equals(FindProfitAction.FN)) {
                         increase = true;
-                        IncDecItem incdec = mapAdder(buys, key, okConfMap.get(keys), okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getConfMap().get(keys), profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                     if (tfpn.equals(FindProfitAction.TN) || tfpn.equals(FindProfitAction.FP)) {
                         increase = false;
-                        IncDecItem incdec = mapAdder(sells, key, okConfMap.get(keys), okListMap.get(keys), nameMap, TimeUtil.convertDate(srv.conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getConfMap().get(keys), profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                 }                        
@@ -124,9 +175,9 @@ public class ComponentMLMACD extends Component {
             resultIndex += returnSize;
             count++;
         }
-
     }
 
+    @Deprecated
     static void setnns(MyMyConfig conf, IclijConfig config, List<String> nns) {
         Map<String, String> map = config.getConv();
         for (String key : nns) {
@@ -138,14 +189,17 @@ public class ComponentMLMACD extends Component {
         }
     }
 
+    @Deprecated
     static List<String> getnns() {
         List<String> nns = new ArrayList<>();
+        /*
         nns.add(IclijConfigConstants.EVOLVEMLDNN);
         nns.add(IclijConfigConstants.EVOLVEMLDNNL);
         nns.add(IclijConfigConstants.EVOLVEMLL);
         nns.add(IclijConfigConstants.EVOLVEMLLR);
         nns.add(IclijConfigConstants.EVOLVEMLMCP);
         nns.add(IclijConfigConstants.EVOLVEMLOVR);
+        */
         return nns;
     }
 
@@ -165,6 +219,9 @@ public class ComponentMLMACD extends Component {
         return keys;
     }
     static IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, List<MemoryItem> memoryList, Map<String, String> nameMap, LocalDate date) {
+        if (memoryList == null) {
+            int jj = 0;
+        }
         MemoryItem memory = memoryList.get(0);
         IncDecItem val = map.get(key);
         if (val == null) {
@@ -184,9 +241,7 @@ public class ComponentMLMACD extends Component {
     }
 
     @Override
-    public Map<String, String> improve(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<Integer> positions,
-            Map<String, IncDecItem> buys, Map<String, IncDecItem> sells, Map<Object[], Double> okConfMap,
-            Map<Object[], List<MemoryItem>> okListMap, Map<String, String> nameMap) {
+    public Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {
         
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = null;
@@ -204,13 +259,15 @@ public class ComponentMLMACD extends Component {
         Map<String, String> retMap = new HashMap<>();
         try {
             Individual best = evolution.getFittest(evolutionConfig, chromosome);
-            Map<String, Object> confMap = null;
-            String market = okListMap.values().iterator().next().get(0).getMarket();
-            ControlService srv = new ControlService();
-            srv.getConfig();            
+            ConfigMapChromosome bestChromosome = (ConfigMapChromosome) best.getEvaluation();
+            Map<String, Object> confMap = bestChromosome.getMap();
+            //Map<String, Object> confMap = null;
+            String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
+            //ControlService srv = new ControlService();
+            //srv.getConfig();            
             List<Double> newConfidenceList = new ArrayList<>();
-            srv.conf.getConfigValueMap().putAll(confMap);
-            List<MemoryItem> memories = new MLService().doMLMACD(srv, market, 0, null, false, false);
+            //srv.conf.getConfigValueMap().putAll(confMap);
+            List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(marketName, null, null, false, false), confMap);
             for(MemoryItem memory : memories) {
                 newConfidenceList.add(memory.getConfidence());
             }
@@ -222,7 +279,9 @@ public class ComponentMLMACD extends Component {
         return new HashMap<>();
     }
 
-    public List<MemoryItem> calculateMLMACD(MLMACDParam param) throws Exception {
+    @Override
+    public List<MemoryItem> calculate2(ComponentData componentparam) throws Exception {
+        MLMACDData param = (MLMACDData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;
         int count = 0;
@@ -250,7 +309,7 @@ public class ComponentMLMACD extends Component {
             double goodFPprob = 0;
             double goodTNprob = 0;
             double goodFNprob = 0;
-            int size = param.getResultMap().values().iterator().next().size();
+            //int size = param.getResultMap().values().iterator().next().size();
             for (String key : param.getCategoryValueMap().keySet()) {
                 if (key.equals("VIX")) {
                     int jj = 0;
@@ -260,7 +319,7 @@ public class ComponentMLMACD extends Component {
                 if (mainList == null) {
                     continue;
                 }
-                List<Object> list = param.getResultMap().get(key);
+                List<Object> list = (List<Object>) param.getResultMap().get(key);
                 if (list == null) {
                     continue;
                 }
@@ -274,8 +333,8 @@ public class ComponentMLMACD extends Component {
                     continue;
                 }
                 int offsetZero = (int) Math.round(off.get(0));
-                Double valFuture = mainList.get(mainList.size() - 1 - param.getOffset() - offsetZero);
-                Double valNow = mainList.get(mainList.size() - 1 - param.getDaysafterzero() - param.getOffset() - offsetZero);
+                Double valFuture = mainList.get(mainList.size() - 1 - param.getLoopoffset() - offsetZero);
+                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays() - param.getLoopoffset() - offsetZero);
                 Double tfpnProb = null;
                 if (returnSize > 1) {
                     tfpnProb = (Double) list.get(resultIndex + 1);
@@ -326,7 +385,7 @@ public class ComponentMLMACD extends Component {
             memory.setRecord(LocalDate.now());
             memory.setDate(param.getBaseDate());
             memory.setUsedsec(param.getUsedsec());
-            memory.setFuturedays(param.getDaysafterzero());
+            memory.setFuturedays(param.getFuturedays());
             memory.setFuturedate(param.getFutureDate());
             memory.setComponent(PipelineConstants.MLMACD);
             memory.setCategory(param.getCategoryTitle());
@@ -435,5 +494,6 @@ public class ComponentMLMACD extends Component {
         }
         return memoryList;
     }
+
 }
 

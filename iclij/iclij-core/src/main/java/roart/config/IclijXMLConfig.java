@@ -53,7 +53,7 @@ public class IclijXMLConfig {
     //public static String configFile = "/tmp/iclij.xml";
 
     public static IclijXMLConfig instance() {
-        if (true || instance == null) {
+        if (instance == null) {
             instance = new IclijXMLConfig();
         }
         return instance;

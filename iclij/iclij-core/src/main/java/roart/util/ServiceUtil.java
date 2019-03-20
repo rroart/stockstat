@@ -33,8 +33,11 @@ import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
+import roart.component.model.ComponentInput;
+import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
-import roart.config.FilterMarket;
+import roart.config.Market;
+import roart.config.MarketFilter;
 import roart.constants.IclijPipelineConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
@@ -42,6 +45,7 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.IclijServiceResult;
 import roart.service.ControlService;
+import roart.service.model.ProfitData;
 
 public class ServiceUtil {
     private static Logger log = LoggerFactory.getLogger(ServiceUtil.class);
@@ -101,6 +105,22 @@ public class ServiceUtil {
         return cat;
     }
     
+    public static String getWantedCategory2(Map<String, Map<String, Object>> maps, String type) throws Exception {
+        System.out.println(maps.keySet());
+        List<String> wantedList = new ArrayList<>();
+        wantedList.add(Constants.PRICE);
+        wantedList.add(Constants.INDEX);
+        wantedList.add("cy");
+        String cat = null;
+        for (String wanted : wantedList) {
+            Map<String, Object> map = maps.get(wanted + " " + type.toUpperCase());
+            if (map != null) {
+                return wanted;
+            }
+        }
+        return cat;
+    }
+    
     public static IclijServiceResult getConfig() throws Exception {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
@@ -118,21 +138,21 @@ public class ServiceUtil {
         List<IncDecItem> listAll = IncDecItem.getAll();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
-        List<FilterMarket> markets = conf.getFilterMarkets(instance);
-        for (FilterMarket market : markets) {
+        List<Market> markets = conf.getMarkets(instance);
+        for (Market market : markets) {
             if (date == null) {
                 date = LocalDate.now();
             }
             LocalDate newdate = date;
-            LocalDate olddate = date.minusDays(market.getRecordage());
+            LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
             listAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
             List<IncDecItem> currentIncDecs = listAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
             currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
-            currentIncDecs = currentIncDecs.stream().filter(m -> market.getMarket().equals(m.getMarket())).collect(Collectors.toList());
+            currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
             List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
-            List<IclijServiceList> subLists = getServiceList(market.getMarket(), listInc, listDec, listIncDec);
+            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
             lists.addAll(subLists);
         }
         IclijServiceResult result = new IclijServiceResult();
@@ -188,71 +208,53 @@ public class ServiceUtil {
         return listIncDec;
     }
 
-    public static IclijServiceResult getVerify(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
+    public static IclijServiceResult getVerify(ComponentInput componentInput) throws Exception {
 	String type = "Verify";
-        IclijServiceResult result = new IclijServiceResult();
-        result.setLists(new ArrayList<>());
-        List<IclijServiceList> retLists = result.getLists();
-        String market = config.getMarket();
-        if (market == null) {
-            return result;
-        }
-        LocalDate date = config.getDate();
-        ControlService srv = new ControlService();
-        srv.getConfig();
-        srv.conf.setMarket(market);
-        List<String> stocks = srv.getDates(market);
-        if (loopOffset != null) {
-            int index = getDateIndex(date, stocks);
-            index = index - loopOffset;
-            // TODO calculate backward limit for all components
-            if (index <= 0) {
-                return result;
-            }
-            date = getDateIndex(stocks, index);
-        }
-        int days = config.verificationDays();
-        getFindProfitVerify(result, retLists, config, type, market, loopOffset, date, srv, stocks, days);
+        int days = componentInput.getConfig().verificationDays();
+        IclijServiceResult result = getFindProfitVerify(componentInput, type, days);
         print(result);
         return result;
     }
 
-    private static void getFindProfitVerify(IclijServiceResult result, List<IclijServiceList> retLists,
-            IclijConfig config, String type, String market, Integer loopOffset, LocalDate date, ControlService srv,
-            List<String> stocks, int days) throws ParseException, InterruptedException {
-        int offset = getDateOffset(date, stocks);
-        if (date == null) {
-            date = getLastDate(stocks);
+    private static IclijServiceResult getFindProfitVerify(ComponentInput componentInput, String type, int days) throws ParseException, InterruptedException {
+
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(new ArrayList<>());
+        List<IclijServiceList> retLists = result.getLists();
+
+        ComponentData param = null; 
+        try {
+            param = getParam(componentInput, days);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
         }
-        log.info("Stock size {} ", stocks.size());
-        log.info("Main date {} ", date);
-        String aDate = stocks.get(stocks.size() - 1 - offset - days);
-        LocalDate oldDate = TimeUtil.convertDate(aDate);
-        log.info("Old date {} ", oldDate);
+        
         IclijServiceList header = new IclijServiceList();
         result.getLists().add(header);
-        header.setTitle(type + " " + "Market: " + config.getMarket() + " Date: " + config.getDate() + " Offset: " + loopOffset);
+        header.setTitle(type + " " + "Market: " + componentInput.getConfig().getMarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + componentInput.getLoopoffset());
         List<MapList> aList = new ArrayList<>();
         header.setList(aList);
         MapList mapList = new MapList();
         mapList.setKey("Dates");
-        mapList.setValue("Base " + oldDate + " Future " + date);
+        mapList.setValue("Base " + param.getBaseDate() + " Future " + param.getFutureDate());
         aList.add(mapList);
-        boolean save = config.wantVerificationSave();
+        param.getInput().setDoSave(componentInput.getConfig().wantVerificationSave());
         FindProfitAction findProfitAction = new FindProfitAction();
-        List<MemoryItem> allMemoryItems = getMemoryItems(config, market, days, date, offset, save);
+        List<MemoryItem> allMemoryItems = getMemoryItems(componentInput.getConfig(), param, days, getFindProfitComponents(componentInput.getConfig()));
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
-        Map<String, IncDecItem>[] buysells = findProfitAction.getPicks(market, save, oldDate, allMemoryItems, config, updateMap);
-        List<IncDecItem> listInc = new ArrayList<>(buysells[0].values());
-        List<IncDecItem> listDec = new ArrayList<>(buysells[1].values());
+        param.setUpdateMap(updateMap);
+        ProfitData buysells = findProfitAction.getPicks(param, allMemoryItems);
+        List<IncDecItem> listInc = new ArrayList<>(buysells.getBuys().values());
+        List<IncDecItem> listDec = new ArrayList<>(buysells.getSells().values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
 	if (days > 0) {
-	    getVerifyProfit(retLists, days, date, srv, oldDate, listInc, listDec);
+	    getVerifyProfit(retLists, days, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
 	}
-        List<IclijServiceList> subLists = getServiceList(market, listInc, listDec, listIncDec);
+        List<IclijServiceList> subLists = getServiceList(param.getMarket(), listInc, listDec, listIncDec);
         retLists.addAll(subLists);
         
         retLists.add(memories);
@@ -262,8 +264,56 @@ public class ServiceUtil {
         result.setMaps(mapmaps);
         IclijServiceList updates = convert(updateMap);
         retLists.add(updates);
+        
+        return result;
     }
 
+    private static ComponentData getParam(ComponentInput input, int days) throws Exception {
+        ComponentData param = new ComponentData(input);
+        String market = input.getConfig().getMarket();
+        if (market == null) {
+            throw new Exception("Market null");
+        }
+        LocalDate date = input.getConfig().getDate();
+        ControlService srv = new ControlService();
+        //srv.getConfig();
+        /*
+        List<String> stockdates = srv.getDates(market);
+	if (date == null) {
+	    date = TimeUtil.convertDate(stockdates.get(stockdates.size() - 1));
+	}
+        if (input.getLoopoffset() != null) {
+            int index = getDateIndex(date, stockdates);
+            index = index - input.getLoopoffset();
+            // TODO calculate backward limit for all components
+            if (index <= 0) {
+                throw new Exception("Index <= 0");
+            }
+            date = getDateIndex(stockdates, index);
+        }
+                
+        int dateoffset = getDateOffset(date, stockdates);
+        if (date == null) {
+            date = getLastDate(stockdates);
+        }
+        log.info("Stock size {} ", stockdates.size());
+        log.info("Main date {} ", date);
+        String baseDateStr = stockdates.get(stockdates.size() - 1 - dateoffset - days);
+        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
+        log.info("Old date {} ", baseDate);
+        param.setBaseDate(baseDate);
+        param.setFutureDate(date);
+        param.setOffset(dateoffset);
+        */
+        
+        param.setService(srv);
+        srv.conf.setMarket(market);
+        param.getInput().setMarket(market);
+        // verification days, 0 or something
+        param.setOffset(days);
+        //param.setDates(days, input.getLoopoffset(), TimeUtil.convertDate2(input.getEnddate()));
+        return param;
+    }
     /*
     if (config.wantsImproveProfit()) {
         ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
@@ -313,7 +363,7 @@ public class ServiceUtil {
         for (Entry<String, Object> map : updateMap.entrySet()) {
             MapList m = new MapList();
             m.setKey(map.getKey());
-            m.setValue((String) map.getValue()); 
+            m.setValue((String) map.getValue().toString()); 
             aList.add(m);
         }
         list.setList(aList);
@@ -330,7 +380,7 @@ public class ServiceUtil {
         log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        Component.disabler(srv.conf);
+        Component.disabler(srv.conf.getConfigValueMap());
         Map<String, Map<String, Object>> resultMaps = srv.getContent();
         Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
@@ -349,9 +399,9 @@ public class ServiceUtil {
         retLists.add(decMap);
     }
 
-    private static void getImprovements(List<IclijServiceList> retLists, String market, LocalDate date, boolean save,
-            ImproveProfitAction improveProfitAction, List<MemoryItem> allMemoryItems) {
-        Map<String, String> map = improveProfitAction.getImprovements(market, save, date, allMemoryItems);        
+    private static void getImprovements(List<IclijServiceList> retLists, ComponentData param,
+            ImproveProfitAction improveProfitAction, List<MemoryItem> allMemoryItems) throws Exception {
+        Map<String, String> map = improveProfitAction.getImprovements(param, allMemoryItems);        
         List<MapList> mapList = improveProfitAction.getList(map);
         IclijServiceList resultMap = new IclijServiceList();
         resultMap.setTitle("Improve Profit Info");
@@ -359,76 +409,55 @@ public class ServiceUtil {
         retLists.add(resultMap);
     }
 
-    public static IclijServiceResult getFindProfit(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
+    public static IclijServiceResult getFindProfit(ComponentInput componentInput) throws Exception {
 	String type = "FindProfit";
-        IclijServiceResult result = new IclijServiceResult();
-        result.setLists(new ArrayList<>());
-        List<IclijServiceList> retLists = result.getLists();
-        String market = config.getMarket();
-        if (market == null) {
-            return result;
-        }
         int days = 0;  // config.verificationDays();
-        LocalDate date = config.getDate();
-        ControlService srv = new ControlService();
-        srv.getConfig();
-        srv.conf.setMarket(market);
-        List<String> stocks = srv.getDates(market);
-        if (loopOffset != null) {
-            int index = getDateIndex(date, stocks);
-            index = index - loopOffset;
-            // TODO calculate backward limit for all components
-            if (index <= 0) {
-                return result;
-            }
-            date = getDateIndex(stocks, index);
-        }
-        getFindProfitVerify(result, retLists, config, type, market, loopOffset, date, srv, stocks, days);
+        IclijServiceResult result = getFindProfitVerify(componentInput, type, days);
         print(result);
         return result;
     }
 
-    public static IclijServiceResult getImproveProfit(IclijConfig config, Integer loopOffset) throws InterruptedException, ParseException {
-        loopOffset = 0;
+    public static List<String> getFindProfitComponents(IclijConfig config) {
+        List<String> components = new ArrayList<>();
+        if (config.wantsFindProfitRecommender()) {
+            components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        }
+        if (config.wantsFindProfitPredictor()) {
+            components.add(PipelineConstants.PREDICTORSLSTM);
+        }
+        if (config.wantsFindProfitMLMACD()) {
+            components.add(PipelineConstants.MLMACD);
+        }
+        if (config.wantsFindProfitMLIndicator()) {
+            components.add(PipelineConstants.MLINDICATOR);
+        }
+        return components;
+    }
+
+    public static IclijServiceResult getImproveProfit(ComponentInput componentInput) throws Exception {
+        int loopOffset = 0;
+        int days = 0; // config.verificationDays();
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
         List<IclijServiceList> retLists = result.getLists();
-        String market = config.getMarket();
-        if (market == null) {
+
+        ComponentData param = null; 
+        try {
+            param = getParam(componentInput, days);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
             return result;
         }
-        LocalDate date = config.getDate();
-        ControlService srv = new ControlService();
-        srv.getConfig();
-        srv.conf.setMarket(market);
-        List<String> stocks = srv.getDates(market);
-        if (loopOffset != null) {
-            int index = getDateIndex(date, stocks);
-            index = index - loopOffset;
-            // TODO calculate backward limit for all components
-            if (index <= 0) {
-                return result;
-            }
-            date = getDateIndex(stocks, index);
-        }
-        int days = 0; // config.verificationDays();
-        int offset = getDateOffset(date, stocks);
-        if (date == null) {
-            date = getLastDate(stocks);
-        }
-        log.info("Main date {} ", date);
-        String aDate = stocks.get(stocks.size() - 1 - offset - days);
-        LocalDate oldDate = TimeUtil.convertDate(aDate);
-        log.info("Old date {} ", oldDate);
-        boolean save = false;
+
+        param.getInput().setDoSave(false);
         //FindProfitAction findProfitAction = new FindProfitAction();
         ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
-        List<MemoryItem> allMemoryItems = getMemoryItems(config, market, days, date, offset, save);
+        List<MemoryItem> allMemoryItems = getMemoryItems(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
-        getImprovements(retLists, market, date, save, improveProfitAction, allMemoryItems);
+        getImprovements(retLists, param, improveProfitAction, allMemoryItems);
 
         retLists.add(memories);
         
@@ -438,6 +467,23 @@ public class ServiceUtil {
         IclijServiceList updates = convert(updateMap);
         retLists.add(updates);
         return result;
+    }
+
+    private static List<String> getImproveProfitComponents(IclijConfig config) {
+        List<String> components = new ArrayList<>();
+        if (config.wantsImproveProfitRecommender()) {
+            components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        }
+        if (config.wantsImproveProfitPredictor()) {
+            components.add(PipelineConstants.PREDICTORSLSTM);
+        }
+        if (config.wantsImproveProfitMLMACD()) {
+            components.add(PipelineConstants.MLMACD);
+        }
+        if (config.wantsImproveProfitMLIndicator()) {
+            components.add(PipelineConstants.MLINDICATOR);
+        }
+        return components;
     }
 
     private static LocalDate getLastDate(List<String> stocks) throws ParseException {
@@ -468,13 +514,12 @@ public class ServiceUtil {
         return offset;
     }
 
-    private static List<MemoryItem> getMemoryItems(IclijConfig config, String market, int days, LocalDate date,
-            int offset, boolean save) throws InterruptedException {
+    private static List<MemoryItem> getMemoryItems(IclijConfig config, ComponentData param, int days, List<String> components) throws InterruptedException {
         List<MemoryItem> allMemoryItems = new ArrayList<>();
         UpdateDBAction updateDbAction = new UpdateDBAction();
-        Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(market, date, days + offset, save, config);
+        Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(param, days, config, components);
         for (Action serviceAction : serviceActions) {
-            serviceAction.goal(null);
+            serviceAction.goal(null, param);
             Map<String, Object> resultMap = serviceAction.getLocalResultMap();
             List<MemoryItem> memoryItems = (List<MemoryItem>) resultMap.get(IclijPipelineConstants.MEMORY);
             if (memoryItems != null) {
