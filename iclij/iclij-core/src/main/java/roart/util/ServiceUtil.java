@@ -210,13 +210,13 @@ public class ServiceUtil {
 
     public static IclijServiceResult getVerify(ComponentInput componentInput) throws Exception {
 	String type = "Verify";
-        int days = componentInput.getConfig().verificationDays();
-        IclijServiceResult result = getFindProfitVerify(componentInput, type, days);
+        int verificationdays = componentInput.getConfig().verificationDays();
+        IclijServiceResult result = getFindProfitVerify(componentInput, type, verificationdays);
         print(result);
         return result;
     }
 
-    private static IclijServiceResult getFindProfitVerify(ComponentInput componentInput, String type, int days) throws ParseException, InterruptedException {
+    private static IclijServiceResult getFindProfitVerify(ComponentInput componentInput, String type, int verificationdays) throws ParseException, InterruptedException {
 
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
@@ -224,35 +224,35 @@ public class ServiceUtil {
 
         ComponentData param = null; 
         try {
-            param = getParam(componentInput, days);
+            param = getParam(componentInput, verificationdays);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
         
-        IclijServiceList header = new IclijServiceList();
-        result.getLists().add(header);
-        header.setTitle(type + " " + "Market: " + componentInput.getConfig().getMarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + componentInput.getLoopoffset());
-        List<MapList> aList = new ArrayList<>();
-        header.setList(aList);
-        MapList mapList = new MapList();
-        mapList.setKey("Dates");
-        mapList.setValue("Base " + param.getBaseDate() + " Future " + param.getFutureDate());
-        aList.add(mapList);
         param.getInput().setDoSave(componentInput.getConfig().wantVerificationSave());
         FindProfitAction findProfitAction = new FindProfitAction();
-        List<MemoryItem> allMemoryItems = getMemoryItems(componentInput.getConfig(), param, days, getFindProfitComponents(componentInput.getConfig()));
+        List<MemoryItem> allMemoryItems = getMemoryItems(componentInput.getConfig(), param, verificationdays, getFindProfitComponents(componentInput.getConfig()));
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
         param.setUpdateMap(updateMap);
         ProfitData buysells = findProfitAction.getPicks(param, allMemoryItems);
+
+        try {
+            param.setFuturedays(verificationdays);
+            param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        addHeader(componentInput, type, result, param);
+        
         List<IncDecItem> listInc = new ArrayList<>(buysells.getBuys().values());
         List<IncDecItem> listDec = new ArrayList<>(buysells.getSells().values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
-	if (days > 0) {
-	    getVerifyProfit(retLists, days, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
+	if (verificationdays > 0) {
+	    getVerifyProfit(retLists, verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
 	}
         List<IclijServiceList> subLists = getServiceList(param.getMarket(), listInc, listDec, listIncDec);
         retLists.addAll(subLists);
@@ -266,6 +266,19 @@ public class ServiceUtil {
         retLists.add(updates);
         
         return result;
+    }
+
+    private static void addHeader(ComponentInput componentInput, String type, IclijServiceResult result,
+            ComponentData param) {
+        IclijServiceList header = new IclijServiceList();
+        result.getLists().add(header);
+        header.setTitle(type + " " + "Market: " + componentInput.getConfig().getMarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + componentInput.getLoopoffset());
+        List<MapList> aList = new ArrayList<>();
+        header.setList(aList);
+        MapList mapList = new MapList();
+        mapList.setKey("Dates");
+        mapList.setValue("Base " + param.getBaseDate() + " Future " + param.getFutureDate());
+        aList.add(mapList);
     }
 
     private static ComponentData getParam(ComponentInput input, int days) throws Exception {
@@ -310,7 +323,7 @@ public class ServiceUtil {
         srv.conf.setMarket(market);
         param.getInput().setMarket(market);
         // verification days, 0 or something
-        param.setOffset(days);
+        param.setOffset(0); // was days
         //param.setDates(days, input.getLoopoffset(), TimeUtil.convertDate2(input.getEnddate()));
         return param;
     }
