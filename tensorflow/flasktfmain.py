@@ -75,7 +75,7 @@ if __name__ == '__main__':
         threaded = True
         print("Run threaded")
     port = 8000
-    if len(sys.argv) > 1 and (not hasgpu) and sys.argv[1] == 'dev':
+    if len(sys.argv) > 1 and sys.argv[1] == 'dev':
         port = 8008
         print("Run other port")
     app.run(host='0.0.0.0', port=port, threaded=threaded)
