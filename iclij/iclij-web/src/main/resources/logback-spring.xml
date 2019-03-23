@@ -2,10 +2,10 @@
 <configuration>
  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
  <springProfile name="default">
-   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}stockstatcore.log}"/>
+   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}iclijweb.log}"/>
  </springProfile>
  <springProfile name="dev">
-   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}stockstatcoredev.log}"/>
+   <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}iclijwebdev.log}"/>
  </springProfile>
  <property name="LOG_FILE_MAX_SIZE" value="1024MB" />
  <property name="FILE_LOG_PATTERN" value="%date %level [%thread] %logger{10} [%file:%line] %msg%n" />
