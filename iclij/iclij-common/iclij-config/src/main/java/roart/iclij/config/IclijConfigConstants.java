@@ -8,6 +8,7 @@ public class IclijConfigConstants {
     public static final String EVOLVEMLMLCONFIG = "evolve.ml.mlconfig";
     public static final String EVOLVEMLEVOLUTIONCONFIG = "evolve.ml.evolutionconfig";
     public static final String EVOLVEMLTENSORFLOWSERVER = "evolve.ml.tensorflowserver";
+    public static final String MISCSHUTDOWNHOUR = "misc.shutdownhour";
     public static final String MPSERVERCPU = "mp.server.cpu";
     public static final String MPCLIENTCPU = "mp.client.cpu";
     public static final String FINDPROFITAUTORUN = "findprofit.autorun";
