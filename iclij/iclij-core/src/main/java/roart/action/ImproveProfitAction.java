@@ -49,10 +49,10 @@ public class ImproveProfitAction extends Action {
             ComponentInput input = new ComponentInput(config, LocalDate.now(), config.getMarket(), null, null, false, false, new ArrayList<>(), new HashMap<>());
             param = new ComponentData(input);
             ControlService srv = new ControlService();
-            srv.getConfig();
+            //srv.getConfig();
+            param.setService(srv);
             srv.conf.setMarket(config.getMarket());
             srv.conf.setdate(TimeUtil.convertDate(input.getEnddate()));
-            param.setService(srv);
         }
         boolean save = true;
         List<Market> markets = getMarkets(config);
