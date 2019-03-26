@@ -97,6 +97,10 @@ public class IclijConfig {
         this.conv = conv;
     }
 
+    public Integer serverShutdownHour() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.MISCSHUTDOWNHOUR);
+    }
+
     public double mpServerCpu() {
         return (Double) getValueOrDefault(IclijConfigConstants.MPSERVERCPU);
     }

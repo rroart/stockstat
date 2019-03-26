@@ -28,6 +28,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.EVOLVEMLMLCONFIG, String.class);
         map.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, String.class);
         map.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, String.class);
+        map.put(IclijConfigConstants.MISCSHUTDOWNHOUR, Integer.class);
         map.put(IclijConfigConstants.MPSERVERCPU, Double.class);
         map.put(IclijConfigConstants.MPCLIENTCPU, Double.class);
         map.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.class);
@@ -132,6 +133,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.EVOLVEMLMLCONFIG, "Evolution default ml enabled");
         text.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, "Enable evolution generated ml server");
         text.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, "ML GP config");
+        text.put(IclijConfigConstants.MISCSHUTDOWNHOUR, "Server shutdown hour");
         text.put(IclijConfigConstants.MPSERVERCPU, "Server cpu usage");
         text.put(IclijConfigConstants.MPCLIENTCPU, "Client cpu usage");
         text.put(IclijConfigConstants.FINDPROFITAUTORUN, "Enable find profit autorun");
@@ -188,6 +190,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.EVOLVEMLMLCONFIG, new IclijXMLType(String.class, null, "Evolution default ml enabled"));
         mymap.put(IclijConfigConstants.EVOLVEMLTENSORFLOWSERVER, new IclijXMLType(String.class, "http://localhost:8000", "Enable evolution generated ml server", ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER));
         mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config", ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG));
+        mymap.put(IclijConfigConstants.MISCSHUTDOWNHOUR, new IclijXMLType(Integer.class, null, "Server shutdown hour"));
         mymap.put(IclijConfigConstants.MPSERVERCPU, new IclijXMLType(Double.class, 0.5, "Server cpu usage"));
         mymap.put(IclijConfigConstants.MPCLIENTCPU, new IclijXMLType(Double.class, 0.5, "Client cpu usage"));
         mymap.put(IclijConfigConstants.FINDPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit autorun"));
