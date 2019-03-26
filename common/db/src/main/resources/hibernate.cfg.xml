@@ -29,6 +29,8 @@
         <mapping class="roart.db.model.Meta"/>
 	<mapping class="roart.db.model.Memory"/>
 	<mapping class="roart.db.model.IncDec"/>
+	<mapping class="roart.db.model.Config"/>
+	<mapping class="roart.db.model.Timing"/>
 
     </session-factory>
 
