@@ -41,12 +41,12 @@ public class MLService {
 
     public List<MemoryItem> doMLMACD(ComponentInput input, Map<String, Object> configValueMap) throws Exception {
         ControlService srv = new ControlService();
-        srv.getConfig();
-        srv.conf.setMarket(input.getMarket());
-        srv.conf.getConfigValueMap().putAll(configValueMap);
+        //srv.getConfig();
         //ComponentInput input = new ComponentInput(market, TimeUtil.convertDate(aDate), null, 0, doSave, true);
         ComponentData param = new ComponentData(input);
         param.setService(srv);
+        srv.conf.setMarket(input.getMarket());
+        srv.conf.getConfigValueMap().putAll(configValueMap);
         //param.setFutureDate(TimeUtil.convertDate(aDate));
 
         return doMLMACD(param);
@@ -71,7 +71,7 @@ public class MLService {
         Component component = new ComponentMLMACD();
         ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false);
         componentData.setUsedsec(time0);
-        return component.calculate2(componentData);
+        return component.calculateMemory(componentData);
 
         /*
         MLMACDData param = new MLMACDData(componentparam);
@@ -107,7 +107,7 @@ public class MLService {
             // TODO add more offset
             // TODO verify dates and offsets
             componentparam.setUsedsec(time0);
-            return new ComponentMLMACD().calculate2(componentparam);
+            return new ComponentMLMACD().calculateMemory(componentparam);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -121,12 +121,12 @@ public class MLService {
 
     public List<MemoryItem> doMLIndicator(ComponentInput input, Map<String, Object> configValueMap) throws Exception {
         ControlService srv = new ControlService();
-        srv.getConfig();
-        srv.conf.setMarket(input.getMarket());
-        srv.conf.getConfigValueMap().putAll(configValueMap);
+        //srv.getConfig();
         //ComponentInput input = new ComponentInput(market, TimeUtil.convertDate(aDate), null, 0, doSave, true);
         ComponentData param = new ComponentData(input);
         param.setService(srv);
+        srv.conf.setMarket(input.getMarket());
+        srv.conf.getConfigValueMap().putAll(configValueMap);
         //param.setFutureDate(TimeUtil.convertDate(aDate));
 
         return doMLIndicator(param);
@@ -151,7 +151,7 @@ public class MLService {
         Component component = new ComponentMLIndicator();
         ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false);
         componentData.setUsedsec(time0);
-        return component.calculate2(componentData);
+        return component.calculateMemory(componentData);
 
         /*
         MLIndicatorData param = new MLIndicatorData(componentparam);
@@ -206,7 +206,7 @@ public class MLService {
         /*
         try {
             componentparam.setUsedsec(time0);
-            return new ComponentMLIndicator().calculate2(componentparam);
+            return new ComponentMLIndicator().calculateMemory(componentparam);
             //result.config = MyPropertyConfig.instance();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

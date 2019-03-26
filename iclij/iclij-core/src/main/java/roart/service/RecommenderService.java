@@ -37,11 +37,11 @@ public class RecommenderService {
 
     public List<MemoryItem> doRecommender(ComponentInput componentInput, List<String> disableList) throws Exception {
         ControlService srv = new ControlService();
-        srv.getConfig();
-        srv.conf.setMarket(componentInput.getMarket());
+        //srv.getConfig();
         //srv.conf.getConfigValueMap().putAll(configValueMap);
         ComponentData param = new ComponentData(componentInput);
         param.setService(srv);
+        srv.conf.setMarket(componentInput.getMarket());
         param.setBaseDate(componentInput.getEnddate());
         return doRecommender(param, disableList);
     }
@@ -54,7 +54,7 @@ public class RecommenderService {
         Component component = new ComponentRecommender();
         ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false);
         componentData.setUsedsec(time0);
-        return component.calculate2(componentData);
+        return component.calculateMemory(componentData);
 
         /*
         RecommenderData param = new RecommenderData(componentparam);

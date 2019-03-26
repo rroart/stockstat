@@ -36,12 +36,11 @@ public class PredictorService {
 
     public List<MemoryItem> doPredict(ComponentInput componentInput, Map<String, Object> configValueMap) throws Exception {
         ControlService srv = new ControlService();
-        srv.getConfig();
-        srv.conf.setMarket(componentInput.getMarket());
-        srv.conf.getConfigValueMap().putAll(configValueMap);
         ComponentData param = new ComponentData(componentInput);
         param.setBaseDate(componentInput.getEnddate());
         param.setService(srv);
+        srv.conf.setMarket(componentInput.getMarket());
+        srv.conf.getConfigValueMap().putAll(configValueMap);
         return doPredict(param);
     }
 
@@ -67,7 +66,7 @@ public class PredictorService {
         Component component = new ComponentPredictor();
         ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false);
         componentData.setUsedsec(time0);
-        return component.calculate2(componentData);
+        return component.calculateMemory(componentData);
 
         //PredictorData param = new PredictorData(componentparam);
         /*
