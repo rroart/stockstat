@@ -125,8 +125,7 @@ public class ComponentMLIndicator extends ComponentML {
         double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
         param.setThreshold(threshold);
 
-        String pipeline = PipelineConstants.MLINDICATOR;
-        handle2(market, param, profitdata, positions, pipeline, evolve);
+        handle2(market, param, profitdata, positions, evolve);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
@@ -446,14 +445,13 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata) {
-        // TODO Auto-generated method stub
-        return null;
+    public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
+        return getDisableLSTM();
     }
 
     @Override
-    public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
-        return getDisableLSTM();
+    public String getPipeline() {
+        return PipelineConstants.MLINDICATOR;
     }
 
 }

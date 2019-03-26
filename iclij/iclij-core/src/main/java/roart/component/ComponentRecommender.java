@@ -72,8 +72,7 @@ public class ComponentRecommender extends ComponentNoML {
         int futuredays = (int) param.getService().conf.getTestIndicatorRecommenderComplexFutureDays();
         param.setFuturedays(futuredays);
 
-        String pipeline = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
-        handle2(market, param, profitdata, positions, pipeline, param.getInput().getConfig().wantEvolveRecommender());
+        handle2(market, param, profitdata, positions, param.getInput().getConfig().wantEvolveRecommender());
 
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
@@ -747,6 +746,11 @@ public class ComponentRecommender extends ComponentNoML {
     @Override
     public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
         return null;
+    }
+
+    @Override
+    public String getPipeline() {
+        return PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
     }
 
 }

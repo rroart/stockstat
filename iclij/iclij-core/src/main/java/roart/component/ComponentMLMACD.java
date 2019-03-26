@@ -74,8 +74,7 @@ public class ComponentMLMACD extends ComponentML {
         int daysafterzero = (int) param.getService().conf.getMACDDaysAfterZero();
         param.setFuturedays(daysafterzero);
         
-        String pipeline = PipelineConstants.MLMACD;
-        handle2(market, param, profitdata, positions, pipeline, evolve);
+        handle2(market, param, profitdata, positions, evolve);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         return param;
@@ -497,12 +496,6 @@ public class ComponentMLMACD extends ComponentML {
     }
 
     @Override
-    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public String getLocalMLConfig(ComponentData componentdata) {
         return componentdata.getInput().getConfig().getFindProfitMLMACDMLConfig();
     }
@@ -510,6 +503,11 @@ public class ComponentMLMACD extends ComponentML {
     @Override
     public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
         return ComponentMLIndicator.getDisableLSTM();
+    }
+
+    @Override
+    public String getPipeline() {
+        return PipelineConstants.MLMACD;
     }
     
 }

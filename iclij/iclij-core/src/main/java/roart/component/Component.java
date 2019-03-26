@@ -66,8 +66,7 @@ public abstract class Component {
     
     public abstract Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions);
 
-    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, String pipeline, boolean evolve) {
-        long time0 = System.currentTimeMillis();
+    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve) {
         try {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
         } catch (ParseException e) {
@@ -76,22 +75,35 @@ public abstract class Component {
         Map<String, Object> valueMap = new HashMap<>();
         Component.disabler(valueMap);
         this.enable(valueMap);
+        String pipeline = getPipeline();
         param.getService().conf.getConfigValueMap().putAll(valueMap);
         if (evolve) {   
+            long time0 = System.currentTimeMillis();
             evolveMap = handleEvolve(market, pipeline, evolve, param);
+            saveTiming(param, evolve, time0);
         }
         valueMap.putAll(evolveMap);
+        long time0 = System.currentTimeMillis();
         Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
         param.setCategory(resultMaps);
         param.getAndSetCategoryValueMap();
+        saveTiming(param, false, time0);
+    }
+
+    private void saveTiming(ComponentData param, boolean evolve, long time0) {
         TimingItem timing = new TimingItem();
-        timing.setAction(null);
+        timing.setAction("findprofit");
         timing.setMarket(param.getInput().getMarket());
         timing.setEvolve(evolve);
-        timing.setComponent(null);
+        timing.setComponent(getPipeline());
         timing.setTime(time0);
         timing.setRecord(LocalDate.now());
-        timing.setDate(param.getBaseDate());
+        timing.setDate(param.getFutureDate());
+        try {
+            timing.save();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
     }
     
     protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param);
@@ -122,5 +134,7 @@ public abstract class Component {
 
     public abstract List<MemoryItem> calculateMemory(ComponentData param) throws Exception;
 
+    public abstract String getPipeline();
+    
 }
 

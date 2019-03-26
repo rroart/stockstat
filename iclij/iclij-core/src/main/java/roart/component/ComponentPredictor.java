@@ -95,8 +95,7 @@ public class ComponentPredictor extends ComponentML {
         }
         param.setFuturedays(futuredays);
 
-        String pipeline = PipelineConstants.PREDICTORSLSTM;
-        handle2(market, param, profitdata, positions, pipeline, evolve);
+        handle2(market, param, profitdata, positions, evolve);
         
         Map<String, Object> maps = param.getResultMap();
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);
@@ -382,6 +381,11 @@ public class ComponentPredictor extends ComponentML {
     @Override
     public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
         return getDisableNonLSTM();
+    }
+
+    @Override
+    public String getPipeline() {
+        return PipelineConstants.PREDICTORSLSTM;
     }
 
 }
