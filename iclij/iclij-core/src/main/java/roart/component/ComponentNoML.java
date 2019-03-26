@@ -11,6 +11,7 @@ import roart.component.model.ComponentData;
 import roart.component.model.RecommenderData;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
+import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.result.model.ResultItem;
@@ -19,7 +20,7 @@ import roart.service.model.ProfitData;
 public abstract class ComponentNoML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve, ComponentData param, String localEvolve) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve, ComponentData param) {
         if (evolve) {
             String confStr = param.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {
@@ -35,4 +36,14 @@ public abstract class ComponentNoML extends Component {
         return new HashMap<>();
     }
 
+
+    @Override
+    public EvolutionConfig getEvolutionConfig(ComponentData componentdata) {
+        return null;
+    }
+
+    @Override
+    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
+        return null;
+    }
 }

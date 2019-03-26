@@ -29,32 +29,17 @@ public abstract class ComponentML extends Component {
 
     @Override
     protected Map<String, Object> handleEvolve(Market market, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve,
-            ComponentData param, String localEvolve) {
+            ComponentData param) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
-        System.out.println(param.getInput().getConfig().getEvolveMLMLConfig());
-        String ml = param.getInput().getConfig().getEvolveMLMLConfig();
-        MLConfigs marketMlConfig = market.getMlconfig();
-        MLConfigs mlConfig = JsonUtil.convert(ml, MLConfigs.class);
-        MLConfigs localMLConfig = JsonUtil.convert(localMl, MLConfigs.class);
-        // special
-        //componentparam.MLConfigs overrideLSTM = getDisableLSTM();
-        mlConfig.merge(localMLConfig);
-        mlConfig.merge(marketMlConfig);
-        mlConfig.merge(overrideLSTM);
-        Map<String, EvolveMLConfig> mlConfigMap = mlConfig.getAll();
+        Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);
         // part special
         // if (param.getInput().getConfig().wantEvolveML()) {
         if (evolve) {
-            String confStr = param.getInput().getConfig().getEvolveMLEvolutionConfig();
-            EvolutionConfig evolveConfig = JsonUtil.convert(confStr, EvolutionConfig.class);
-            EvolutionConfig localEvolveConfig = JsonUtil.convert(localEvolve, EvolutionConfig.class);
-            evolveConfig.merge(localEvolveConfig);
+            EvolutionConfig evolveConfig = getEvolutionConfig(param);
             String newConfStr = JsonUtil.convert(evolveConfig);
-            if (confStr != null) {
-                param.getService().conf.getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
-            }          
-            
+            param.getService().conf.getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
+             
             Map<String, Object> evolveMap = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
             param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
@@ -66,6 +51,32 @@ public abstract class ComponentML extends Component {
         }
         return new HashMap<>();
         //Map<String, Object> i = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
+    }
+
+    @Override
+    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData param) {
+        System.out.println(param.getInput().getConfig().getEvolveMLMLConfig());
+        String localMl = getLocalMLConfig(param);
+        String ml = param.getInput().getConfig().getEvolveMLMLConfig();
+        MLConfigs marketMlConfig = market.getMlconfig();
+        MLConfigs mlConfig = JsonUtil.convert(ml, MLConfigs.class);
+        MLConfigs localMLConfig = JsonUtil.convert(localMl, MLConfigs.class);
+        // special
+        MLConfigs overrideLSTM = getOverrideMLConfig(param);
+        mlConfig.merge(localMLConfig);
+        mlConfig.merge(marketMlConfig);
+        mlConfig.merge(overrideLSTM);
+        Map<String, EvolveMLConfig> mlConfigMap = mlConfig.getAll();
+        return mlConfigMap;
+    }
+
+    @Override
+    public EvolutionConfig getEvolutionConfig(ComponentData param) {
+        String confStr = param.getInput().getConfig().getEvolveMLEvolutionConfig();
+        EvolutionConfig evolveConfig = JsonUtil.convert(confStr, EvolutionConfig.class);
+        EvolutionConfig localEvolveConfig = getLocalEvolutionConfig(param);
+        evolveConfig.merge(localEvolveConfig);
+        return evolveConfig;
     }
 
     protected void handleMLMeta(ComponentMLData param, Map<String, List<Object>> mlMaps) {

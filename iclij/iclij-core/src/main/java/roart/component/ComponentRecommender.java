@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.common.config.MyMyConfig;
@@ -30,6 +31,7 @@ import roart.component.model.RecommenderData;
 import roart.common.pipeline.PipelineConstants;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
+import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.AbstractScore;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.executor.MyExecutors;
@@ -74,8 +76,7 @@ public class ComponentRecommender extends ComponentNoML {
         String localMl = null;
         MLConfigs overrideLSTM = ComponentMLIndicator.getDisableLSTM();
         //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
-        String localEvolve = null;
-        handle2(market, param, profitdata, positions, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, null, param.getInput().getConfig().wantEvolveRecommender(), localEvolve);
+        handle2(market, param, profitdata, positions, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, null, param.getInput().getConfig().wantEvolveRecommender());
 
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
@@ -93,7 +94,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public void calculate(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
         RecommenderData param = (RecommenderData) componentparam;
         //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
         Map resultMaps = (Map) param.getResultMap();
@@ -300,7 +301,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
     
     @Override
-    public List<MemoryItem> calculate2(ComponentData componentparam) throws Exception {
+    public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
         RecommenderData param = (RecommenderData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         AbstractScore eval = new ProportionScore();
@@ -735,5 +736,21 @@ public class ComponentRecommender extends ComponentNoML {
             return Double.compare(score0, score);
         }
     }
+
+    @Override
+    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata) {
+        return null;
+    }
+
+    @Override
+    public String getLocalMLConfig(ComponentData componentdata) {
+        return null;
+    }
+
+    @Override
+    public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
+        return null;
+    }
+
 }
 

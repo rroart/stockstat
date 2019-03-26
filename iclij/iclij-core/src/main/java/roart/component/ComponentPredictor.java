@@ -100,8 +100,7 @@ public class ComponentPredictor extends ComponentML {
         String localMl = param.getInput().getConfig().getFindProfitPredictorMLConfig();
         MLConfigs overrideLSTM = getDisableNonLSTM();
         //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
-        String localEvolve = param.getInput().getConfig().getFindProfitPredictorEvolutionConfig();
-        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve, localEvolve);
+        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve);
         
         Map<String, Object> maps = param.getResultMap();
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);
@@ -147,11 +146,11 @@ public class ComponentPredictor extends ComponentML {
         */
         //Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
-        //calculate(profitdata, param);
+        //calculateIncDec(profitdata, param);
     }
     
     @Override
-    public void calculate(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
         PredictorData param = (PredictorData) componentparam;
         Object[] keys = new Object[2];
         keys[0] = PipelineConstants.PREDICTORSLSTM;
@@ -237,7 +236,7 @@ public class ComponentPredictor extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculate2(ComponentData componentparam) throws Exception {
+    public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
         PredictorData param = (PredictorData) componentparam;
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) param.getResultMap().get("result");
         List<MemoryItem> memoryList = new ArrayList<>();
@@ -374,5 +373,20 @@ public class ComponentPredictor extends ComponentML {
         }
     }
     
+    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
+        String localEvolve = componentdata.getInput().getConfig().getFindProfitPredictorEvolutionConfig();
+        return JsonUtil.convert(localEvolve, EvolutionConfig.class);
+    }
+
+    @Override
+    public String getLocalMLConfig(ComponentData componentdata) {
+        return componentdata.getInput().getConfig().getFindProfitPredictorMLConfig();
+    }
+
+    @Override
+    public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
+        return getDisableNonLSTM();
+    }
+
 }
 

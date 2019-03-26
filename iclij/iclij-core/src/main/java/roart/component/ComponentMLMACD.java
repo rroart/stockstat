@@ -78,8 +78,7 @@ public class ComponentMLMACD extends ComponentML {
         String localMl = param.getInput().getConfig().getFindProfitMLMACDMLConfig();
         MLConfigs overrideLSTM = ComponentMLIndicator.getDisableLSTM();
         //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
-        String localEvolve = param.getInput().getConfig().getFindProfitMLMACDEvolutionConfig();
-        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve, localEvolve);
+        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         return param;
@@ -124,11 +123,11 @@ public class ComponentMLMACD extends ComponentML {
         //System.out.println("k2 " + categoryValueMap.keySet());
     */
         
-        //calculate(param.getService(), positions, profitdata, param);
+        //calculateIncDec(param.getService(), positions, profitdata, param);
     }
 
     @Override
-    public void calculate(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
         MLMACDData param = (MLMACDData) componentparam;
         Map<String, Object> resultMap = param.getResultMap();
         int resultIndex = 0;
@@ -280,7 +279,7 @@ public class ComponentMLMACD extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculate2(ComponentData componentparam) throws Exception {
+    public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
         MLMACDData param = (MLMACDData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;
@@ -495,5 +494,26 @@ public class ComponentMLMACD extends ComponentML {
         return memoryList;
     }
 
+    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
+        String localEvolve = componentdata.getInput().getConfig().getFindProfitMLMACDEvolutionConfig();
+        return JsonUtil.convert(localEvolve, EvolutionConfig.class);
+    }
+
+    @Override
+    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getLocalMLConfig(ComponentData componentdata) {
+        return componentdata.getInput().getConfig().getFindProfitMLMACDMLConfig();
+    }
+
+    @Override
+    public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
+        return ComponentMLIndicator.getDisableLSTM();
+    }
+    
 }
 

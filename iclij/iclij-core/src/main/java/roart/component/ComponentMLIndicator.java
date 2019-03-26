@@ -27,6 +27,7 @@ import roart.component.model.ComponentInput;
 import roart.component.model.MLIndicatorData;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
+import roart.evolution.config.EvolutionConfig;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.result.model.ResultMeta;
@@ -110,7 +111,7 @@ public class ComponentMLIndicator extends ComponentML {
         //Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
 
-        //calculate(positions, profitdata, resultMap, param);
+        //calculateIncDec(positions, profitdata, resultMap, param);
 
     }
 
@@ -129,16 +130,16 @@ public class ComponentMLIndicator extends ComponentML {
         MLConfigs overrideLSTM = getDisableLSTM();
         //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
         String localEvolve = param.getInput().getConfig().getFindProfitMLIndicatorEvolutionConfig();
-        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve, localEvolve);
+        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
         return param;
-        //calculate(positions, profitdata, resultMap, param);
+        //calculateIncDec(positions, profitdata, resultMap, param);
     }
 
     @Override
-    public void calculate(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         int resultIndex = 0;
         int count = 0;
@@ -225,7 +226,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculate2(ComponentData componentparam) throws Exception {
+    public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         Map<String, Object> resultMap = param.getResultMap();
@@ -437,5 +438,27 @@ public class ComponentMLIndicator extends ComponentML {
         */
         //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
     }
+    
+    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
+        String localEvolve = componentdata.getInput().getConfig().getFindProfitMLIndicatorEvolutionConfig();
+        return JsonUtil.convert(localEvolve, EvolutionConfig.class);
+    }
+
+    @Override
+    public String getLocalMLConfig(ComponentData componentdata) {
+        return componentdata.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
+    }
+
+    @Override
+    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
+        return getDisableLSTM();
+    }
+
 }
 

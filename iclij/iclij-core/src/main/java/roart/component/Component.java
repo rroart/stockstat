@@ -1,6 +1,7 @@
 package roart.component;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +23,11 @@ import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
 import roart.component.model.PredictorData;
 import roart.config.Market;
+import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.TimingItem;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.model.ProfitData;
@@ -60,7 +63,8 @@ public abstract class Component {
     
     public abstract Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions);
 
-    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve, String localEvolve) {
+    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
+        long time0 = System.currentTimeMillis();
         try {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
         } catch (ParseException e) {
@@ -70,16 +74,33 @@ public abstract class Component {
         Component.disabler(valueMap);
         this.enable(valueMap);
         param.getService().conf.getConfigValueMap().putAll(valueMap);
-        Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param, localEvolve);
+        Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
         valueMap.putAll(evolveMap);
         Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
         param.setCategory(resultMaps);
         param.getAndSetCategoryValueMap();
-
+        TimingItem timing = new TimingItem();
+        timing.setAction(null);
+        timing.setMarket(param.getInput().getMarket());
+        timing.setEvolve(evolve);
+        timing.setComponent(null);
+        timing.setTime(time0);
+        timing.setRecord(LocalDate.now());
+        timing.setDate(param.getBaseDate());
     }
     
-    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve, ComponentData param, String localEvolve);
+    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve, ComponentData param);
 
+    public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata);
+    
+    public abstract EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata);
+    
+    public abstract Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata);
+
+    public abstract String getLocalMLConfig(ComponentData componentdata);
+
+    public abstract MLConfigs getOverrideMLConfig(ComponentData componentdata);
+    
     public void set(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions,
             boolean evolve) {
         /*
@@ -92,9 +113,9 @@ public abstract class Component {
         */
     }
 
-    public abstract void calculate(ComponentData param, ProfitData profitdata, List<Integer> positions);
+    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions);
 
-    public abstract List<MemoryItem> calculate2(ComponentData param) throws Exception;
+    public abstract List<MemoryItem> calculateMemory(ComponentData param) throws Exception;
 
 }
 
