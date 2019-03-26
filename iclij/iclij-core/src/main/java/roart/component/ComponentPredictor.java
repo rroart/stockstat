@@ -96,11 +96,7 @@ public class ComponentPredictor extends ComponentML {
         param.setFuturedays(futuredays);
 
         String pipeline = PipelineConstants.PREDICTORSLSTM;
-        //boolean evolve = param.getInput().getConfig().wantEvolveML();
-        String localMl = param.getInput().getConfig().getFindProfitPredictorMLConfig();
-        MLConfigs overrideLSTM = getDisableNonLSTM();
-        //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
-        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve);
+        handle2(market, param, profitdata, positions, pipeline, evolve);
         
         Map<String, Object> maps = param.getResultMap();
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);

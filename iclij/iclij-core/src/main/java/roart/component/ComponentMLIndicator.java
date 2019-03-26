@@ -126,11 +126,7 @@ public class ComponentMLIndicator extends ComponentML {
         param.setThreshold(threshold);
 
         String pipeline = PipelineConstants.MLINDICATOR;
-        String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
-        MLConfigs overrideLSTM = getDisableLSTM();
-        //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
-        String localEvolve = param.getInput().getConfig().getFindProfitMLIndicatorEvolutionConfig();
-        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve);
+        handle2(market, param, profitdata, positions, pipeline, evolve);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();

@@ -28,8 +28,7 @@ import roart.service.model.ProfitData;
 public abstract class ComponentML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve,
-            ComponentData param) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
         Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);

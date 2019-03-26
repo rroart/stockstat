@@ -20,7 +20,7 @@ import roart.service.model.ProfitData;
 public abstract class ComponentNoML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve, ComponentData param) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param) {
         if (evolve) {
             String confStr = param.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {

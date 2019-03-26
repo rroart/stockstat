@@ -75,10 +75,7 @@ public class ComponentMLMACD extends ComponentML {
         param.setFuturedays(daysafterzero);
         
         String pipeline = PipelineConstants.MLMACD;
-        String localMl = param.getInput().getConfig().getFindProfitMLMACDMLConfig();
-        MLConfigs overrideLSTM = ComponentMLIndicator.getDisableLSTM();
-        //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
-        handle2(market, param, profitdata, positions, pipeline, localMl, overrideLSTM, evolve);
+        handle2(market, param, profitdata, positions, pipeline, evolve);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         return param;

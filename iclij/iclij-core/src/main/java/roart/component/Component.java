@@ -48,6 +48,9 @@ public abstract class Component {
     
     private boolean evolve;
   */  
+    
+    private Map<String, Object> evolveMap = new HashMap<>();
+    
     public abstract void enable(Map<String, Object> valueMap);
     
     public abstract void disable(Map<String, Object> valueMap);
@@ -63,7 +66,7 @@ public abstract class Component {
     
     public abstract Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions);
 
-    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
+    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, String pipeline, boolean evolve) {
         long time0 = System.currentTimeMillis();
         try {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
@@ -74,7 +77,9 @@ public abstract class Component {
         Component.disabler(valueMap);
         this.enable(valueMap);
         param.getService().conf.getConfigValueMap().putAll(valueMap);
-        Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
+        if (evolve) {   
+            evolveMap = handleEvolve(market, pipeline, evolve, param);
+        }
         valueMap.putAll(evolveMap);
         Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
         param.setCategory(resultMaps);
@@ -89,7 +94,7 @@ public abstract class Component {
         timing.setDate(param.getBaseDate());
     }
     
-    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve, ComponentData param);
+    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param);
 
     public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata);
     

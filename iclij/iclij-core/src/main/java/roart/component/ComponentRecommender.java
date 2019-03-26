@@ -73,10 +73,7 @@ public class ComponentRecommender extends ComponentNoML {
         param.setFuturedays(futuredays);
 
         String pipeline = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
-        String localMl = null;
-        MLConfigs overrideLSTM = ComponentMLIndicator.getDisableLSTM();
-        //Map<String, Object> evolveMap = handleEvolve(market, pipeline, localMl, overrideLSTM, evolve, param);
-        handle2(market, param, profitdata, positions, PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null, null, param.getInput().getConfig().wantEvolveRecommender());
+        handle2(market, param, profitdata, positions, pipeline, param.getInput().getConfig().wantEvolveRecommender());
 
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
