@@ -44,7 +44,7 @@ public class MainAction extends Action {
             if (firstRun) {
                 firstRun = false;
                 if (doUpdateDB) {
-                    addIfNotContaining(updateDBACtion);
+                    // not yet addIfNotContaining(updateDBACtion);
                 }
                 if (getGoals().isEmpty()) {
                     if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() ) {        
