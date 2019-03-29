@@ -22,6 +22,7 @@ import roart.config.Market;
 import roart.config.MarketConfig;
 import roart.db.IclijDbDao;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.TimingItem;
 import roart.util.ServiceUtil;
 
 public class UpdateDBAction extends Action {
@@ -66,6 +67,26 @@ public class UpdateDBAction extends Action {
         return goals;
     }
 
+    @Deprecated
+    private List<MemoryItem> findMarketComponentsToCheck3(List<Market> markets) {
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        List<MemoryItem> toCheck = new ArrayList<>();
+        for (Market market : markets) {
+            List<TimingItem> marketMemory = null;
+            try {
+                marketMemory = IclijDbDao.getAllTiming(); //(market.getConfig().getMarket());
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            if (marketMemory == null) {
+                log.error("Marketmemory null for {}", market.getConfig().getMarket());
+                continue;
+            }
+            
+        }
+        return toCheck;
+    }
+    
     private List<MemoryItem> findMarketComponentsToCheck(List<Market> markets) {
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         List<MemoryItem> toCheck = new ArrayList<>();
