@@ -33,6 +33,7 @@ import roart.common.constants.EurekaConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.service.ServiceParam;
 import roart.component.model.ComponentInput;
+import roart.config.IclijXMLConfig;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
@@ -69,7 +70,7 @@ public class ServiceController {
             method = RequestMethod.POST)
     public IclijServiceResult getContent(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
             throws Exception {
-        return ServiceUtil.getContent(param.getIclijConfig());
+        return ServiceUtil.getContent(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,
@@ -112,7 +113,7 @@ public class ServiceController {
     public void getFindProfit()
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        new FindProfitAction().goal(null, null);
+        new FindProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/improveprofit",
@@ -128,11 +129,7 @@ public class ServiceController {
     public IclijServiceResult getFindProfitMarket(@RequestBody IclijServiceParam param)
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        LocalDate date = param.getIclijConfig().getDate();
-        if (date == null) {
-            date = LocalDate.now();
-        }
-        return ServiceUtil.getFindProfit(new ComponentInput(param.getIclijConfig(), null, null, date, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getFindProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
         //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
        //IclijServiceResult ret = new IclijServiceResult();
        //ret.setError(error);
