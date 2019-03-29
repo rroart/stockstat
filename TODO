@@ -4,18 +4,18 @@ T: Tech debt
 D: Done
 W: Work
 C: Change
+R: Reject
 
 Iclij
-F: Save updatemap
+T: check mapmaps.put("ml")
+F: Timing add subcomponent for mls etc
 B: Flask predict stalls/hangs
-F: rerun memories after evolution
 C: predictor result maps in core
 F: auto find important indexes commodities etc
-B: some default config overrids existing (componentpredictor)
+?DB: some default config overrids existing (componentpredictor)
 C: enable configvalues in core, from single to list (like lstms)
 C: split db for core/iclij
-F: lastclock 22
-C: database w/ dev for incdec mem
+RC: database w/ dev for incdec mem
 B: getmarkets empty config in iclijxmlconfig
 C: move importants into markets
 F: connect two markets, like morncat and nordfund
@@ -23,23 +23,11 @@ F: classify ml macd zero turns with increase
 F: go for score for one alternative, skip ml test result
 F: get market missing some
 F: use other new indicators
-B: restart interrupted find profit
-WF: Start with no recent data, then most time spenders.
-F: icli result with config data
 WB: icli web sendme null
 F: Doc iclij configs
-WF: iclij table with %-t/f
-WF: Save icli result
 F: Iclij rerun manually recommendation
-F: Iclij verif show new ml config
-F: Use testaccuracy in iclij
-WF: get market data icli with date
-F: Iclij mltimes
 B: Auto iclij missing ai, memory
-WF: for loop for recommend
-WT: unify verify and singlemark
 B: Recommender NAN
-B: SQL var 255 overflow (too long descr)
 F: Subclass incdecitem instead of having non-saved
 F: Test ml conf gen for each loop?
 B: no mlstat -> mapmaps
@@ -75,12 +63,12 @@ F: Recommender combine keys/improveaction?
 B: improvement lack srv. setdate
 
 Core
+B: evolve predictor value checks
 C: move indicator out of category, use mostwanted cat
 C: java 8 dates
 C: Parameter/class cleanups for indicators, aggregators etc
 B: NaN at top of table with simple recommender
 F: use other new indicators
-F: ML use test result
 T: MLPredictModel addtitles deprecate
 T: mlmacd mlindicator anythinghere better heuristics?
 WF: discard sat/sun/hol for all lang
@@ -113,7 +101,6 @@ T: Change result map keys, due to overlap
 
 Database
 T: better transaction handling
-T: Parametrize jdbc setting
 B: Getdates null
 WF: Each mldao with threadpool
 B: Spark truncates getAll?
@@ -121,12 +108,9 @@ B: Spark truncates getAll?
 ML
 C: split out gene out of SparkMCPConfig etc, let the gene contain SparkMCPConfig
 F: more ml (like tf batch, keras lstm layers, nodes) config into json
-F: iclij save ML config to db (I11)
 C: Ignore too small sets
 B: Mlindicator MLClassifySparkAccess learntestclassify 6 NaN (tautil 199 rsi beg end NaN) ose 19.02.16
 C: NeuralNetChromosome change price to most wanted
-C: Merge LSTM with others
-C: ML reconfig default configs based on evolution
 T: Nvidia
 WB: tf open file limi
 B: Flask threaded tf process lock (Tf server/client hangs)
@@ -155,6 +139,7 @@ WF: Dockerize tensorflow etc
 WF: Multiple datasources, pandas-datareader
 
 MS
+B: Eureka transportexception
 T: EurekaUtil deprecation
 T: EurekaUtil wait loop
 T: Eureka setup/config
@@ -179,8 +164,6 @@ F: Use fuzzy logic or uncertainty
 Config
 T: Synch XML reader config code
 T: making instances
-WF: ConfigMaps use class
-WF: MyExecutors and cpu config
 T: Fix thresholds, common standard
 T: MyMyConfig getValueOrDefault use more
 F: no env SPARK_DRIVER_HOST, use config file?
@@ -223,15 +206,32 @@ java.lang.NullPointerException: null
         at roart.aggregate.AggregatorRecommenderIndicator.<init>(AggregatorRecommenderIndicator.java:92)
         at roart.service.ControlService.getAggregates(ControlService.java:332)
 
+F: Iclij mltimes
+C: Merge LSTM with others
+C: ML reconfig default configs based on evolution (I25)
+F: ML use test result (I28)
+F: Iclij verif show new ml config
+F: Use testaccuracy in iclij (I26)
+F: icli result with config data (I29)
+WC: run memories after evolution (I30)
+WC: lstm market config, override wantpred etc (I24)
+WF: restart interrupted find profit (I23)
+WF: Iclij load/save ML config, updatemap (I11)
+WF: Shutdown, last run clock 22 (I22)
+WF: Start with no recent data, then most time spenders (I27)
+WF: iclij table with %-t/f
+WF: Save icli result
+WF: get market data icli with date
 WT: Check all use of configs (I21).
-WC: Move Predictor out of Category (I17).
 WT: Pipeline, Category constructor, split off calculate (I16)
-WT: Refactor (I14)
-WB: Iclij Predictor implement (I12)
+WT: Refactor out common Iclij find/improveprofit code (I14)
 WF: Evolve improvements for all 4 improvers (I4)
 WF: Improve MLMACD (I5)
 WF: Improve Predictor (I6)
-WC: JSON market/finder/improver evolve ml config (I9)
+WB: SQL var 255 overflow (I31)
+DC: Move Predictor out of Category (I17).
+DC: JSON market/finder/improver evolve ml config (I9)
+DB: Iclij Predictor implement (I12)
 DB: When index/price is 0 change to null (I20)
 DC: Non-null, trunc data ordering (I19)
 DC: Put base100 in a new field (I18).
@@ -244,6 +244,11 @@ DC: (Core) rename calcnode to gene (I0)
 DC: Put config LSTM under ml (I1)
 DC: ML config in map config value as JSON (I2)
 DF: Evolution population score sort order (I3)
+DF: for loop for recommend
+DF: ConfigMaps use class
+DF: MyExecutors and cpu config
+DT: unify verify and singlemark
+DT: Parametrize jdbc setting
 DC: Rename nnconfig to full name
 DF: service simple with redirect output
 DB: ver 0/x
