@@ -41,6 +41,13 @@ public class ComponentInput {
         this.config = config;
         this.startdate = startdate;
         this.market = market;
+        if (enddate == null) {
+            LocalDate date = config.getDate();
+            if (date == null) {
+                date = LocalDate.now();
+            }
+            enddate = date;
+        }
         this.enddate = enddate;
         this.loopoffset = loopoffset != null ? loopoffset : 0;
         this.doSave = doSave;
