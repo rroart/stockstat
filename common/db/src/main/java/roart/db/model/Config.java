@@ -40,7 +40,7 @@ public class Config implements Serializable {
     @Column
     private String id;
 
-    @Column
+    @Column(length = 511)
     private String value;
 
     @Column

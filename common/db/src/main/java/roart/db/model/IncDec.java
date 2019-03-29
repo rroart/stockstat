@@ -40,7 +40,7 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     @Column
     private String name;
 
-    @Column
+    @Column(length = 511)
     private String description;
 
     @Column
