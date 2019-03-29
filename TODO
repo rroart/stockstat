@@ -212,14 +212,6 @@ C: ML reconfig default configs based on evolution (I25)
 F: ML use test result (I28)
 F: Iclij verif show new ml config
 F: Use testaccuracy in iclij (I26)
-F: icli result with config data (I29)
-WC: run memories after evolution (I30)
-WC: lstm market config, override wantpred etc (I24)
-WF: restart interrupted find profit (I23)
-WF: Iclij load/save ML config, updatemap (I11)
-WF: Shutdown, last run clock 22 (I22)
-WF: Start with no recent data, then most time spenders (I27)
-WF: iclij table with %-t/f
 WF: Save icli result
 WF: get market data icli with date
 WT: Check all use of configs (I21).
@@ -228,7 +220,16 @@ WT: Refactor out common Iclij find/improveprofit code (I14)
 WF: Evolve improvements for all 4 improvers (I4)
 WF: Improve MLMACD (I5)
 WF: Improve Predictor (I6)
+WF: icli result with config data (I29)
+WC: run memories after evolution (I30)
+WC: lstm market config, override wantpred etc (I24)
+WF: restart interrupted find profit (I23)
+WF: Start with no recent data, then most time spenders (I27)
+WF: Shutdown, last run clock 22 (I22)
+WC: Iclij get market with memories and updates (I32)
 WB: SQL var 255 overflow (I31)
+WF: Iclij load/save ML config, updatemap (I11)
+WF: iclij table with %-t/f
 DC: Move Predictor out of Category (I17).
 DC: JSON market/finder/improver evolve ml config (I9)
 DB: Iclij Predictor implement (I12)
