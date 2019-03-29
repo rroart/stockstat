@@ -48,6 +48,8 @@ public class ComponentData {
 
     private Map<String, Object> updateMap;
     
+    private String action;
+    
     public ComponentData() {
         
     }
@@ -64,8 +66,9 @@ public class ComponentData {
         this.resultMap = componentparam.resultMap;
         this.categoryValueMap = componentparam.categoryValueMap;
         this.usedsec = componentparam.usedsec;
-        this.updateMap = componentparam.updateMap;
+        this.updateMap = new HashMap<>(); //componentparam.updateMap;
         this.configValueMap = new HashMap<>(this.service.conf.getConfigValueMap());
+        this.action = componentparam.action;
     }
 
     public ComponentData(ComponentInput input) {
@@ -198,6 +201,14 @@ public class ComponentData {
         this.updateMap = updateMap;
     }
 
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     public int setDates(int futuredaysNot, Integer offsetNot, String aDate) throws ParseException {
         List<String> stockdates = service.getDates(getMarket());
 	String date = aDate;
@@ -208,6 +219,9 @@ public class ComponentData {
             }
         }
         if (date == null) {
+            if (stockdates.isEmpty()) {
+                int jj = 0;
+            }
             date = stockdates.get(stockdates.size() - 1);
         }
         int dateoffset = 0;

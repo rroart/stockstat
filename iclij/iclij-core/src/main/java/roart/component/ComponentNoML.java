@@ -1,21 +1,28 @@
 package roart.component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
+import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.RecommenderData;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
 import roart.evolution.config.EvolutionConfig;
+import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
+import roart.iclij.model.ConfigItem;
 import roart.result.model.ResultItem;
 import roart.service.model.ProfitData;
+import roart.util.ServiceUtil;
 
 public abstract class ComponentNoML extends Component {
 
@@ -28,6 +35,7 @@ public abstract class ComponentNoML extends Component {
             }
             Map<String, Object> anUpdateMap = new HashMap<>();
             List<ResultItem> retlist = param.getService().getEvolveRecommender(true, new ArrayList<>(), anUpdateMap);
+            nomlSaves(param, anUpdateMap);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
             }
@@ -36,6 +44,36 @@ public abstract class ComponentNoML extends Component {
         return new HashMap<>();
     }
 
+    @Override
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        String marketName = market.getConfig().getMarket();
+        String component = getPipeline();
+        Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false);
+        map.putAll(configMap);
+        return map;
+    }
+    
+    private void nomlSaves(ComponentData param, Map<String, Object> anUpdateMap) {
+        for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
+            String key = entry.getKey();
+            Object object = entry.getValue();
+            ConfigItem configItem = new ConfigItem();
+            configItem.setAction(param.getAction());
+            configItem.setComponent(getPipeline());
+            configItem.setDate(param.getBaseDate());
+            configItem.setId(key);
+            configItem.setMarket(param.getMarket());
+            configItem.setRecord(LocalDate.now());
+            String value = JsonUtil.convert(object);
+            configItem.setValue(value);
+            try {
+                configItem.save();
+            } catch (Exception e) {
+                log.info(Constants.EXCEPTION, e);
+            }
+        }
+    }
 
     @Override
     public EvolutionConfig getEvolutionConfig(ComponentData componentdata) {

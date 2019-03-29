@@ -1,5 +1,6 @@
 package roart.component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
@@ -21,9 +23,11 @@ import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
+import roart.iclij.model.ConfigItem;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
+import roart.util.ServiceUtil;
 
 public abstract class ComponentML extends Component {
 
@@ -43,6 +47,7 @@ public abstract class ComponentML extends Component {
             param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
             List<ResultItem> retlist = param.getService().getEvolveML(true, new ArrayList<>(), pipeline, param.getService().conf, anUpdateMap);
+            mlSaves(mlConfigMap, param, anUpdateMap);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
             }
@@ -50,6 +55,50 @@ public abstract class ComponentML extends Component {
         }
         return new HashMap<>();
         //Map<String, Object> i = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
+    }
+
+    private void mlSaves(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap) {
+        for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
+            String key = entry.getKey();
+            EvolveMLConfig config = entry.getValue();
+            if (config.getSave()) {
+                ConfigItem configItem = new ConfigItem();
+                configItem.setAction(param.getAction());
+                configItem.setComponent(getPipeline());
+                configItem.setDate(param.getBaseDate());
+                configItem.setId(key);
+                configItem.setMarket(param.getMarket());
+                configItem.setRecord(LocalDate.now());
+                String value = JsonUtil.convert(anUpdateMap.get(key));
+                configItem.setValue(value);
+                try {
+                    configItem.save();
+                } catch (Exception e) {
+                    log.info(Constants.EXCEPTION, e);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market) throws Exception {
+        Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);
+        return mlLoads(mlConfigMap, param, anUpdateMap, market);
+    }
+    
+    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
+            String key = entry.getKey();
+            EvolveMLConfig config = entry.getValue();
+            if (config.getLoad()) {
+                String marketName = market.getConfig().getMarket();
+                String component = getPipeline();
+                Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false);
+                map.putAll(configMap);
+            }
+        }
+        return map;
     }
 
     @Override

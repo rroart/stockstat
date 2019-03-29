@@ -75,6 +75,12 @@ public abstract class Component {
         Map<String, Object> valueMap = new HashMap<>();
         Component.disabler(valueMap);
         this.enable(valueMap);
+        try {
+            Map<String, Object> loadValues = mlLoads(param, null, market);
+            valueMap.putAll(loadValues);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         String pipeline = getPipeline();
         param.getService().conf.getConfigValueMap().putAll(valueMap);
         if (evolve) {   
@@ -92,7 +98,7 @@ public abstract class Component {
 
     private void saveTiming(ComponentData param, boolean evolve, long time0) {
         TimingItem timing = new TimingItem();
-        timing.setAction("findprofit");
+        timing.setAction(param.getAction());
         timing.setMarket(param.getInput().getMarket());
         timing.setEvolve(evolve);
         timing.setComponent(getPipeline());
@@ -136,5 +142,7 @@ public abstract class Component {
 
     public abstract String getPipeline();
     
+    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market) throws Exception;
+
 }
 
