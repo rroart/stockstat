@@ -128,6 +128,7 @@ public class ConfigItem {
 
     private static ConfigItem getConfigItem(Config config) {
         ConfigItem configItem = new ConfigItem();
+        configItem.setAction(config.getAction());
         configItem.setDate(TimeUtil.convertDate(config.getDate()));
         configItem.setId(config.getId());
         configItem.setComponent(config.getComponent());
