@@ -28,7 +28,7 @@ import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
 import roart.action.WebData;
 import roart.action.UpdateDBAction;
-import roart.action.VerifyProfitAction;
+import roart.action.VerifyProfit;
 import roart.iclij.config.IclijConfig;
 import roart.common.config.MyConfig;
 import roart.common.constants.Constants;
@@ -186,16 +186,15 @@ public class ServiceUtil {
             String marketName = market.getConfig().getMarket();
             Map<String, Object> anUpdateMap = updateMarketMap.get(marketName);
             IclijServiceList updates = convert(marketName, anUpdateMap);
-            List<IclijServiceList> retLists = result.getLists();
-            retLists.add(updates);
+            lists.add(updates);
 
             List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market.getConfig().getMarket());
             List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate());
             
             IclijServiceList memories = new IclijServiceList();
-            memories.setTitle("Memories");
+            memories.setTitle("Memories " + marketName);
             memories.setList(currentList);
-
+            lists.add(memories);
 
         }
         print(result);
@@ -465,7 +464,7 @@ public class ServiceUtil {
         Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
 
-        VerifyProfitAction verify = new VerifyProfitAction();
+        VerifyProfit verify = new VerifyProfit();
         List<MapList> inc = verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
         IclijServiceList incMap = new IclijServiceList();
         incMap.setTitle("Increase verify");
