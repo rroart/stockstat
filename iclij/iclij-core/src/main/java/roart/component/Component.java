@@ -71,6 +71,8 @@ public abstract class Component {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
+        } catch (IndexOutOfBoundsException e) {
+            log.error(Constants.EXCEPTION, e);
         }
         Map<String, Object> valueMap = new HashMap<>();
         Component.disabler(valueMap);
