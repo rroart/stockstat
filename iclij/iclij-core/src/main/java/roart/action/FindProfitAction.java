@@ -107,10 +107,6 @@ public class FindProfitAction extends Action {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            List<String> stockDates = param.getService().getDates(marketName);
-            if (stockDates == null || stockDates.isEmpty()) {
-                continue;
-            }
             //param.setMarket(market.getConfig().getMarket());
             //ComponentData param = new ComponentData();
             //ComponentInput input = new ComponentInput(config, null, market.getConfig().getMarket(), olddate, null, save, false, new ArrayList<>(), new HashMap<>());
@@ -121,6 +117,10 @@ public class FindProfitAction extends Action {
             param.setService(srv);
             //param.setOffset(0);
             srv.conf.setMarket(market.getConfig().getMarket());
+            List<String> stockDates = param.getService().getDates(marketName);
+            if (stockDates == null || stockDates.isEmpty()) {
+                continue;
+            }
             //srv.conf.setdate(TimeUtil.convertDate(input.getEnddate()));
             componentDataMap.put(marketName, param);
             LocalDate olddate = param.getInput().getEnddate();
