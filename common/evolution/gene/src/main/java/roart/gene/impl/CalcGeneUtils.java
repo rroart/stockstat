@@ -47,8 +47,13 @@ public class CalcGeneUtils {
                 node = CalcGeneFactory.get(anode.className, jsonValue, minMax, i, useMax);
                 node.randomize();
             } else {
-                anode = mapper.readValue(jsonValue, CalcGene.class);
-                node = CalcGeneFactory.get(anode.className, jsonValue, minMax, i, useMax);
+                // temp workaround for (I33)
+                // anode = mapper.readValue(jsonValue, CalcGene.class);
+                if (jsonValue.contains(CalcComplexGene.class.getName())) {
+                    node = CalcGeneFactory.get("NotDouble", jsonValue, minMax, i, useMax);                    
+                } else {
+                    node = CalcGeneFactory.get("Double", jsonValue, minMax, i, useMax);
+                }
             }
             conf.getConfigValueMap().put(key, node);
         }

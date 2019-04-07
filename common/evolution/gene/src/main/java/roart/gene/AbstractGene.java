@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         include = JsonTypeInfo.As.PROPERTY,  
         property = "_class")  
 @JsonSubTypes({  
-    @Type(value = CalcGene.class, name = "roart.gene.CalcGene") })  
+    @Type(value = CalcGene.class, name = "CalcGene") })  
 public abstract class AbstractGene {
 
     public String className;
