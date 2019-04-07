@@ -73,6 +73,7 @@ public abstract class Component {
             log.error(Constants.EXCEPTION, e);
         } catch (IndexOutOfBoundsException e) {
             log.error(Constants.EXCEPTION, e);
+            return;
         }
         Map<String, Object> valueMap = new HashMap<>();
         Component.disabler(valueMap);
