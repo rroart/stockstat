@@ -139,6 +139,7 @@ public class FindProfitAction extends Action {
                 List<MarketTime> marketTime = getList(IclijConstants.FINDPROFIT, componentMap, timings, market, param);
                 marketTimes.addAll(marketTime);
             } else {
+                int jj = 0;
             }
         }
         Collections.sort(marketTimes, (o1, o2) -> (Double.valueOf(o2.time).compareTo(Double.valueOf(o1.time))));
@@ -174,6 +175,10 @@ public class FindProfitAction extends Action {
             myData.memoryItems = newMemories;
         } catch (InterruptedException e) {
             log.error(Constants.EXCEPTION, e);
+            return;
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return;
         }
         getPicksFiltered(myData, param, marketTime.market, marketTime);
     }
