@@ -107,6 +107,10 @@ public class FindProfitAction extends Action {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
+            List<String> stockDates = param.getService().getDates(marketName);
+            if (stockDates == null || stockDates.isEmpty()) {
+                continue;
+            }
             //param.setMarket(market.getConfig().getMarket());
             //ComponentData param = new ComponentData();
             //ComponentInput input = new ComponentInput(config, null, market.getConfig().getMarket(), olddate, null, save, false, new ArrayList<>(), new HashMap<>());
