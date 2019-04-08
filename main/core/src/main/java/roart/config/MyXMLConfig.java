@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -120,9 +121,11 @@ public class MyXMLConfig {
                 configInstance.getConfigValueMap().put(s, o);
             }
         }
+        System.out.println("mysize1 " + configInstance.getDeflt().size());
         Set<String> setKeys = configInstance.getConfigValueMap().keySet();
-        Set<String> dfltKeys = configInstance.getDeflt().keySet();
+        Set<String> dfltKeys = new HashSet<>(configInstance.getDeflt().keySet());
         dfltKeys.removeAll(setKeys);
+        System.out.println("mysize2 " + configInstance.getDeflt().size());
         System.out.println("keys to set " + dfltKeys);
         for (String key : dfltKeys) {
             ConfigTreeMap map = configInstance.getConfigTreeMap();
