@@ -51,6 +51,7 @@ import roart.eureka.util.EurekaUtil;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.TimingItem;
 import roart.iclij.service.IclijServiceList;
 import roart.result.model.ResultItemBytes;
 import roart.result.model.ResultItemTable;
@@ -693,11 +694,33 @@ public class MyIclijUI extends UI implements ViewDisplay {
             List<IncDecItem> mylist = objectMapper.convertValue(list, new TypeReference<List<IncDecItem>>() { });
             Grid<IncDecItem> table = getGridFromList2(item, mylist);
             ts.addComponent(table);
+            return;
+        }
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("time")) {
+            List<TimingItem> mylist = objectMapper.convertValue(list, new TypeReference<List<TimingItem>>() { });
+            Grid<TimingItem> table = getGridFromList4(item, mylist);
+            ts.addComponent(table);            
         } else {
             List<MapList> mylist = objectMapper.convertValue(list, new TypeReference<List<MapList>>() { });
             Grid<MapList> table = getGridFromList3(item, mylist);
             ts.addComponent(table);
         }
+    }
+
+    private Grid<TimingItem> getGridFromList4(IclijServiceList item, List<TimingItem> mylist) {
+        Grid<TimingItem> table = new Grid<>();
+        table.setCaption(item.getTitle());
+        table.addColumn(TimingItem::getRecord).setCaption("Record");
+        table.addColumn(TimingItem::getDate).setCaption("Date");
+        table.addColumn(TimingItem::getMarket).setCaption("Market");
+        table.addColumn(TimingItem::getAction).setCaption("Action");
+        table.addColumn(TimingItem::isEvolve).setCaption("Evolve");
+        table.addColumn(TimingItem::getComponent).setCaption("Component");
+        table.addColumn(TimingItem::getTime).setCaption("Time");
+        table.setWidth("90%");
+        table.setItems(mylist);
+        System.out.println("added");
+        return table;
     }
 
     private Grid<MapList> getGridFromList3(IclijServiceList item, List<MapList> mylist) {

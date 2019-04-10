@@ -91,6 +91,7 @@ public class FindProfitAction extends Action {
         // find recommended picks
         WebData myData = new WebData();
         myData.updateMap = new HashMap<>();
+        myData.timingMap = new HashMap<>();
 	
         IclijConfig config = IclijXMLConfig.getConfigInstance();
         //boolean save = true;
@@ -147,6 +148,9 @@ public class FindProfitAction extends Action {
             }
         }
         Collections.sort(marketTimes, (o1, o2) -> (Double.valueOf(o2.time).compareTo(Double.valueOf(o1.time))));
+        for (MarketTime marketTime : marketTimes) {
+            myData.timingMap.put(marketTime.market.getConfig().getMarket(), marketTime.timings);
+        }
         for (MarketTime marketTime : marketTimes) {
             if (marketTime.time == 0.0) {
                 ComponentData param = componentDataMap.get(marketTime.market.getConfig().getMarket());

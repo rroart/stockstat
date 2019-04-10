@@ -46,6 +46,7 @@ import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.TimingItem;
 import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.IclijServiceResult;
 import roart.service.ControlService;
@@ -151,6 +152,12 @@ public class ServiceUtil {
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
             lists.addAll(subLists);
         }
+        List<TimingItem> listAllTimings = TimingItem.getAll();
+        for (Market market : markets) {
+            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market);
+            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
+            lists.addAll(subLists);
+        }
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
@@ -201,6 +208,19 @@ public class ServiceUtil {
         return result;
     }
 
+    public static List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market) {
+        if (date == null) {
+            date = LocalDate.now();
+        }
+        LocalDate newdate = date;
+        LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
+        List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
+        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
+        currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
+        currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
+        return currentIncDecs;
+    }
+
     public static List<IncDecItem> getCurrentIncDecs(LocalDate date, List<IncDecItem> listAll, Market market) {
         if (date == null) {
             date = LocalDate.now();
@@ -218,6 +238,17 @@ public class ServiceUtil {
         IclijServiceList header = new IclijServiceList();
         header.setTitle(title);
         return header;
+    }
+
+    private static List<IclijServiceList> getServiceList(String market, List<TimingItem> listIncDec) {
+        List<IclijServiceList> subLists = new ArrayList<>();
+        if (!listIncDec.isEmpty()) {
+            IclijServiceList incDec = new IclijServiceList();
+            incDec.setTitle(market + " " + "timing");
+            incDec.setList(listIncDec);
+            subLists.add(incDec);
+        }
+        return subLists;
     }
 
     private static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,

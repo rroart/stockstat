@@ -10,4 +10,5 @@ public class WebData {
     public ProfitData profitData;
     public List<MemoryItem> memoryItems;
     public Map<String, Object> updateMap;
+    public Map<String, Object> timingMap;
 }
