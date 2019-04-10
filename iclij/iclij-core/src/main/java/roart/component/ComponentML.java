@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.TensorflowLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
@@ -58,6 +60,66 @@ public abstract class ComponentML extends Component {
     }
 
     private void mlSaves(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap) {
+        for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
+            String key = entry.getKey();
+            String nnconfigString = (String) entry.getValue();
+            //Map<String, String> mapToConfig = MLConfigs.getMapToConfig();
+            NeuralNetConfigs nnConfigs = null;
+            try {
+                if (getPipeline().equals(PipelineConstants.PREDICTORSLSTM)) {
+                    nnConfigs = new NeuralNetConfigs();
+                    ObjectMapper mapper = new ObjectMapper();
+                    TensorflowLSTMConfig nnConfig = mapper.readValue(nnconfigString, TensorflowLSTMConfig.class);
+                    nnConfigs.setTensorflowLSTMConfig(nnConfig);                
+                } else {
+                    ObjectMapper mapper = new ObjectMapper();
+                    nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
+                }
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            for (Entry<String, EvolveMLConfig> entry2 : mlConfigMap.entrySet()) {
+                String key2 = entry2.getKey();
+                EvolveMLConfig config = entry2.getValue();
+                if (!config.getSave()) {
+                    if (nnConfigs.get(key2) != null) {
+                        log.error("Key {} not null", key2);
+                    }
+                    nnConfigs.set(key2, null);
+                }
+            }
+            String value = null;
+            try {
+                if (getPipeline().equals(PipelineConstants.PREDICTORSLSTM)) {
+                    TensorflowLSTMConfig nnConfig = nnConfigs.getTensorflowLSTMConfig();
+                    value = JsonUtil.convert(nnConfig);
+                } else {
+                    value = JsonUtil.convert(nnConfigs);
+                }
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            if (value == null) {
+                continue;
+            }
+            ConfigItem configItem = new ConfigItem();
+            configItem.setAction(param.getAction());
+            configItem.setComponent(getPipeline());
+            configItem.setDate(param.getBaseDate());
+            configItem.setId(key);
+            configItem.setMarket(param.getMarket());
+            configItem.setRecord(LocalDate.now());
+            configItem.setValue(value);
+            try {
+                configItem.save();
+            } catch (Exception e) {
+                log.info(Constants.EXCEPTION, e);
+            }
+        }
+    }
+
+    private void mlSavesNot(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap) {
+        Map<String, String> mapToConfig = MLConfigs.getMapToConfig();
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
             String key = entry.getKey();
             EvolveMLConfig config = entry.getValue();
@@ -69,7 +131,11 @@ public abstract class ComponentML extends Component {
                 configItem.setId(key);
                 configItem.setMarket(param.getMarket());
                 configItem.setRecord(LocalDate.now());
-                String value = JsonUtil.convert(anUpdateMap.get(key));
+                String configKey = mapToConfig.get(key);
+                String value = JsonUtil.convert(anUpdateMap.get(configKey));
+                if (value == null) {
+                    continue;
+                }
                 configItem.setValue(value);
                 try {
                     configItem.save();
