@@ -107,4 +107,16 @@ public class MLConfigs {
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, lstm);
         return map;
     }
+
+    @Deprecated
+    public static Map<String, String> getMapToConfig() {
+        Map<String, String> map = new HashMap<>();
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+        return map;
+    }
 }
