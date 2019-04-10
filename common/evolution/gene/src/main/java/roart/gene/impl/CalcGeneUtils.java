@@ -49,7 +49,7 @@ public class CalcGeneUtils {
             } else {
                 // temp workaround for (I33)
                 // anode = mapper.readValue(jsonValue, CalcGene.class);
-                if (jsonValue.contains(CalcComplexGene.class.getName())) {
+                if (jsonValue.contains(CalcComplexGene.class.getSimpleName())) {
                     node = CalcGeneFactory.get("NotDouble", jsonValue, minMax, i, useMax);                    
                 } else {
                     node = CalcGeneFactory.get("Double", jsonValue, minMax, i, useMax);

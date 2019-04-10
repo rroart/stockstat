@@ -15,7 +15,15 @@ public class JsonUtil {
         ObjectMapper mapper = new ObjectMapper();
         if (text != null) {
             try {
-                return mapper.readValue(text, myclass);
+                String strippedtext = text;
+                if (strippedtext.charAt(0) == '\"') {
+                    strippedtext = strippedtext.substring(1, strippedtext.length() - 1);
+                }
+                strippedtext = strippedtext.replaceAll("\\\\", "");
+                if (text.length() != strippedtext.length()) {
+                    log.info("Stripping json text {} to {}", text, strippedtext);
+                }
+                return mapper.readValue(strippedtext, myclass);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
