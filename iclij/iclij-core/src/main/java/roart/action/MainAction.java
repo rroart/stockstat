@@ -47,12 +47,7 @@ public class MainAction extends Action {
                     // not yet addIfNotContaining(updateDBACtion);
                 }
                 if (getGoals().isEmpty()) {
-                    if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() ) {        
-                        getGoals().add(new FindProfitAction());
-                    }
-                    if (IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
-                        getGoals().add(new ImproveProfitAction());
-                    }
+                    addGoals();
                 }
             }
             if (getGoals().isEmpty()) {
@@ -60,11 +55,21 @@ public class MainAction extends Action {
                     Thread.sleep(3600 * 1000);
                 } catch (Exception e) {
                 }
-                addIfNotContaining(updateDBACtion);
+                addGoals();
+                //addIfNotContaining(updateDBACtion);
             } else {
                 Action action = getGoals().poll();
                 action.goal(this, param);
             }
+        }
+    }
+
+    private void addGoals() {
+        if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() ) {        
+            getGoals().add(new FindProfitAction());
+        }
+        if (IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
+            getGoals().add(new ImproveProfitAction());
         }
     }
 
