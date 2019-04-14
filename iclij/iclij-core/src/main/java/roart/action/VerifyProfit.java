@@ -10,10 +10,9 @@ import roart.iclij.model.MapList;
 
 public class VerifyProfit {
 
-    public List<MapList> doVerify(List<IncDecItem> list, int days, boolean increase, Map<String, List<List<Double>>> categoryValueMap, LocalDate date) {
-        List<MapList> mapList = new ArrayList<>();
+    public void doVerify(List<IncDecItem> list, int days, boolean increase, Map<String, List<List<Double>>> categoryValueMap, LocalDate date) {
         if (days <= 0) {
-            return mapList;
+            return;
         }
         for (IncDecItem item : list) {
             String id = item.getId();
@@ -34,6 +33,5 @@ public class VerifyProfit {
                 }
             }
         }
-        return mapList;
     }
 }

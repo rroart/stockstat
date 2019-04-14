@@ -28,7 +28,6 @@ import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
 import roart.action.WebData;
 import roart.action.UpdateDBAction;
-import roart.action.VerifyProfit;
 import roart.iclij.config.IclijConfig;
 import roart.common.config.MyConfig;
 import roart.common.constants.Constants;
@@ -331,25 +330,42 @@ public class ServiceUtil {
         updateMap = myData.updateMap;
         allMemoryItems.addAll(myData.memoryItems);
         
-        try {
-            param.setFuturedays(verificationdays);
-            param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
-        } catch (ParseException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        addHeader(componentInput, type, result, param);
-        
         List<IncDecItem> listInc = new ArrayList<>(buysells.getBuys().values());
         List<IncDecItem> listDec = new ArrayList<>(buysells.getSells().values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
-	if (verificationdays > 0) {
-	    getVerifyProfit(retLists, verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
-	}
+        if (verificationdays > 0) {
+            try {
+                param.setFuturedays(verificationdays);
+                param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }            
+            findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
+            /*
+            List<MapList> inc = new ArrayList<>();
+            List<MapList> dec = new ArrayList<>();
+            IclijServiceList incMap = new IclijServiceList();
+            incMap.setTitle("Increase verify");
+            incMap.setList(inc);
+            IclijServiceList decMap = new IclijServiceList();
+            decMap.setTitle("Decrease verify");
+            decMap.setList(dec);
+            retLists.add(incMap);
+            retLists.add(decMap);
+            */
+        }
+        addHeader(componentInput, type, result, param);
+        
         List<IclijServiceList> subLists = getServiceList(param.getMarket(), listInc, listDec, listIncDec);
         retLists.addAll(subLists);
         
         retLists.add(memories);
-        
+       
+        {
+            List<TimingItem> currentTimings = (List<TimingItem>) myData.timingMap.get(market.getConfig().getMarket());
+            List<IclijServiceList> subLists2 = getServiceList(market.getConfig().getMarket(), currentTimings);
+            retLists.addAll(subLists2);
+        }
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
@@ -484,40 +500,21 @@ public class ServiceUtil {
         return TimeUtil.convertDate(newDate);
     }
 
-    private static void getVerifyProfit(List<IclijServiceList> retLists, int days, LocalDate date, ControlService srv,
-            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec) {
-        log.info("Verify compare date {} with {}", oldDate, date);
-        LocalDate futureDate = date;
-        srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        Component.disabler(srv.conf.getConfigValueMap());
-        Map<String, Map<String, Object>> resultMaps = srv.getContent();
-        Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+    
 
-        VerifyProfit verify = new VerifyProfit();
-        List<MapList> inc = verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
-        IclijServiceList incMap = new IclijServiceList();
-        incMap.setTitle("Increase verify");
-        incMap.setList(inc);
-        List<MapList> dec = verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
-        IclijServiceList decMap = new IclijServiceList();
-        decMap.setTitle("Decrease verify");
-        decMap.setList(dec);
-        retLists.add(incMap);
-        retLists.add(decMap);
-    }
-
+    /*
+    @Deprecated
     private static void getImprovements(List<IclijServiceList> retLists, ComponentData param,
             ImproveProfitAction improveProfitAction, List<MemoryItem> allMemoryItems) throws Exception {
-        Map<String, String> map = improveProfitAction.getImprovements(param, allMemoryItems);        
+        Map<String, String> map = improveProfitAction.getMarket(param, allMemoryItems);        
         List<MapList> mapList = improveProfitAction.getList(map);
         IclijServiceList resultMap = new IclijServiceList();
         resultMap.setTitle("Improve Profit Info");
         resultMap.setList(mapList);
         retLists.add(resultMap);
     }
-
+*/
+    
     public static IclijServiceResult getFindProfit(ComponentInput componentInput) throws Exception {
 	String type = "FindProfit";
         int days = 0;  // config.verificationDays();
@@ -561,12 +558,18 @@ public class ServiceUtil {
         param.getInput().setDoSave(false);
         //FindProfitAction findProfitAction = new FindProfitAction();
         ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
-        List<MemoryItem> allMemoryItems = getMemoryItems(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
+        List<MemoryItem> allMemoryItems = new ArrayList<>(); // getMemoryItems(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
-        getImprovements(retLists, param, improveProfitAction, allMemoryItems);
+        Market market = improveProfitAction.findMarket(param);
+        WebData webData = improveProfitAction.getMarket(null, param, market);        
+        List<MapList> mapList = improveProfitAction.getList(webData.updateMap);
+        IclijServiceList resultMap = new IclijServiceList();
+        resultMap.setTitle("Improve Profit Info");
+        resultMap.setList(mapList);
+        retLists.add(resultMap);
 
         retLists.add(memories);
         
@@ -578,7 +581,7 @@ public class ServiceUtil {
         return result;
     }
 
-    private static List<String> getImproveProfitComponents(IclijConfig config) {
+    public static List<String> getImproveProfitComponents(IclijConfig config) {
         List<String> components = new ArrayList<>();
         if (config.wantsImproveProfitRecommender()) {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
