@@ -74,6 +74,9 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         int bit = random.nextInt(getBuy().size());
         //int bit = random.nextInt(bits);
         listIdx = listIdx ^ (1 << bit);
+        if (listIdx >= listPerm.size()) {
+            listIdx = 0;
+        }
     }
     
     @Override
