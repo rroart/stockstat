@@ -20,6 +20,8 @@ public class TensorflowLSTMConfig extends TensorflowConfig {
     
     private Integer horizon;
     
+    public boolean full = false;
+    
     public Integer getEpochs() {
         return epochs;
     }
@@ -71,12 +73,17 @@ public class TensorflowLSTMConfig extends TensorflowConfig {
     public void randomize() {
         generateEpochs();
         generateWindowsize();
-        // generateHorizon();
+        if (full) {
+            generateHorizon();
+        }
     }
 
     @Override
     public void mutate() {
         int task = random.nextInt(2);
+        if (full) {
+            task = random.nextInt(3);
+        }
         switch (task) {
         case 0:
             generateEpochs();
@@ -100,8 +107,8 @@ public class TensorflowLSTMConfig extends TensorflowConfig {
         if (random.nextBoolean()) {
             offspring.windowsize = other.getWindowsize();
         }
-        if (random.nextBoolean()) {
-            // offspring.horizon = other.getHorizon();
+        if (full && random.nextBoolean()) {
+            offspring.horizon = other.getHorizon();
         }
         return offspring;
     }
