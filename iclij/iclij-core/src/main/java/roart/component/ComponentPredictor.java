@@ -80,7 +80,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve) {
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) {
         //log.info("Component not impl {}", this.getClass().getName());
         
         PredictorData param = new PredictorData(componentparam);
@@ -95,7 +95,7 @@ public class ComponentPredictor extends ComponentML {
         }
         param.setFuturedays(futuredays);
 
-        handle2(market, param, profitdata, positions, evolve);
+        handle2(market, param, profitdata, positions, evolve, new HashMap<>());
         
         Map<String, Object> maps = param.getResultMap();
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);
@@ -185,7 +185,11 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions) {
+        List<String> confList = getConfList();
+        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM);
+        return improve(param, chromosome);
+        /*
         log.info("Component not impl {}", this.getClass().getName());
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = null;
@@ -195,14 +199,16 @@ public class ComponentPredictor extends ComponentML {
             log.error(Constants.EXCEPTION, e);
         }
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
+        */
         /*
         List<String> confList = new ArrayList<>();
         confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
         confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
         */
+        /*
         List<String> keys = new ArrayList<>();
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
-        PredictorChromosome chromosome = new PredictorChromosome(conf, keys);
+        PredictorChromosome chromosome2 = new PredictorChromosome(conf, keys, param, profitdata, market, positions);
 
         Map<String, String> retMap = new HashMap<>();
         try {
@@ -227,7 +233,8 @@ public class ComponentPredictor extends ComponentML {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        return new HashMap<>();
+        return param;
+        */
     }
 
     @Override
@@ -386,6 +393,13 @@ public class ComponentPredictor extends ComponentML {
     @Override
     public String getPipeline() {
         return PipelineConstants.PREDICTORSLSTM;
+    }
+    
+    @Override
+    public List<String> getConfList() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+        return list;
     }
 
 }
