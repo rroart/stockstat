@@ -212,6 +212,7 @@ B: java.lang.NullPointerException: null
         at roart.action.FindProfitAction.findMarket(FindProfitAction.java:348)
         at roart.service.MLService.doMLIndicator(MLService.java:137)
 
+B: Json encoding (I40)
 WF: More improve on web (I39)
 WC: Change improve recommender to evolution (I38)
 WC: Change improve mlindicator to evolution (I37)
