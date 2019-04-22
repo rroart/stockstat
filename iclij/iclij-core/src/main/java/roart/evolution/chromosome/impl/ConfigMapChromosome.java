@@ -1,9 +1,17 @@
 package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
@@ -11,9 +19,22 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import roart.action.FindProfitAction;
+import roart.action.WebData;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.TimeUtil;
+import roart.component.Component;
+import roart.component.ComponentFactory;
+import roart.component.model.ComponentData;
+import roart.config.Market;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MemoryItem;
+import roart.service.model.ProfitData;
+import roart.util.ServiceUtil;
 
 @JsonTypeInfo(  
         use = JsonTypeInfo.Id.NAME,  
@@ -22,15 +43,27 @@ import roart.evolution.species.Individual;
 @JsonSubTypes({  
     @Type(value = MLMACDChromosome.class, name = "roart.evolution.chromosome.impl.MLMACDChromosome") })  
 public class ConfigMapChromosome extends AbstractChromosome {
-    private Map<String, Object> map;
+    private Map<String, Object> map = new HashMap<>();
     
-    private MyMyConfig conf;
+    protected List<String> confList;
     
-    private List<String> confList;
+    protected ComponentData param;
     
-    public ConfigMapChromosome(MyMyConfig conf, List<String> confList) {
-        this.conf = conf;
+    protected ProfitData profitdata;
+    
+    protected Market market;
+    
+    protected List<Integer> positions;
+    
+    protected String componentName;
+    
+    public ConfigMapChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName) {
         this.confList = confList;
+        this.param = param;
+        this.profitdata = profitdata;
+        this.market = market;
+        this.positions = positions;
+        this.componentName = componentName;
     }
     
     public Map<String, Object> getMap() {
@@ -39,14 +72,6 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     public void setMap(Map<String, Object> map) {
         this.map = map;
-    }
-
-    public MyMyConfig getConf() {
-        return conf;
-    }
-
-    public void setConf(MyMyConfig conf) {
-        this.conf = conf;
     }
 
     public List<String> getConfList() {
@@ -74,8 +99,12 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     private void generateConfigNum(Random rand, int conf) {
         String confName = confList.get(conf);
-        Double[] range = this.conf.getRange().get(confName);
-        Class type = this.conf.getType().get(confName);
+        Double[] range = this.param.getService().conf.getRange().get(confName);
+        Class type = this.param.getService().conf.getType().get(confName);
+        if (type == Boolean.class) {
+            Boolean b = (Boolean) this.param.getService().conf.getValueOrDefault(confName);
+            map.put(confName, !b);
+        }
         if (type == Integer.class) {
             Integer i = (range[0].intValue()) + rand.nextInt(range[1].intValue() - range[0].intValue());
             map.put(confName, i);
@@ -88,7 +117,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
  
     @Override
     public Individual crossover(AbstractChromosome other) {
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(conf, confList);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, param, profitdata, market, positions, componentName);
         Random rand = new Random();
         for (int conf = 0; conf < confList.size(); conf++) {
             String confName = confList.get(conf);
@@ -120,14 +149,78 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     @Override
     public double getFitness() throws JsonParseException, JsonMappingException, IOException {
-        return 0;
+        List<MemoryItem> memoryItems = null;
+        WebData myData = new WebData();
+        myData.updateMap = new HashMap<>();
+        myData.memoryItems = new ArrayList<>();
+        //myData.profitData = new ProfitData();
+        myData.timingMap = new HashMap<>();
+        try {
+            int verificationdays = param.getInput().getConfig().verificationDays();
+            boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
+            Component component = ComponentFactory.factory(componentName);
+            boolean evolve = component.wantEvolve(param.getInput().getConfig());
+            //ProfitData profitdata = new ProfitData();
+            myData.profitData = profitdata;
+            boolean myevolve = component.wantImproveEvolve();
+            ComponentData componentData = component.handle(market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map);
+            //componentData.setUsedsec(time0);
+            myData.updateMap.putAll(componentData.getUpdateMap());
+            List<MemoryItem> memories;
+            try {
+                memories = component.calculateMemory(componentData);
+                myData.memoryItems.addAll(memories);
+           } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            ComponentData componentData2 = component.handle(market, (ComponentData) param, profitdata, positions, evolve, map);
+            component.calculateIncDec(componentData2, profitdata, positions);
+            
+            List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
+            List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
+            List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
+            if (verificationdays > 0) {
+                try {
+                    //param.setFuturedays(verificationdays);
+                    param.setFuturedays(0);
+                    param.setOffset(0);
+                    param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
+                } catch (ParseException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }            
+                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
+            }
+
+            if (false) {
+                List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+                long count = listDecBoolean.stream().filter(i -> i).count();                            
+                double fitness = count / listDecBoolean.size();
+                List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+                long count2 = listIncBoolean.stream().filter(i -> i).count();                            
+                double fitness2 = count / listIncBoolean.size();
+                double fitness3 = (fitness + fitness2) / 2;
+            }
+            //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        double fitness = 0;
+        memoryItems = myData.memoryItems;
+        for (MemoryItem memoryItem : memoryItems) {
+            Double value = memoryItem.getConfidence();
+            fitness += value;
+        }
+        if (!memoryItems.isEmpty()) {
+            fitness = fitness / memoryItems.size();
+        }
+        // or rather verified incdec
+        return fitness;
     }
 
     @Override
     public AbstractChromosome copy() {
-        // TODO Auto-generated method stub
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(conf, confList);
-        chromosome.map = this.map;
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, param, profitdata, market, positions, componentName);
+        chromosome.map = new HashMap<>(this.map);
         return chromosome;
     }
 
