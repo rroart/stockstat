@@ -12,4 +12,5 @@ module db {
     requires org.hibernate.orm.core;
     requires slf4j.api;
     requires java.naming;
+    requires java.transaction;
 }

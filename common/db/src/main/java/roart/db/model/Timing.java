@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -107,29 +108,40 @@ public class Timing implements Serializable {
     }
 
     @Transient
+    @Transactional
     public static List<Timing> getAll() throws Exception {
+	List<Timing> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
-        List<Timing> list = session.createQuery("from Timing").list();
+        list = session.createQuery("from Timing").list();
         transaction.commit();
+	}
         return list;
     }
 
     @Transient
+    @Transactional
     public static List<Timing> getAll(String mymarket) throws Exception {
+	List<Timing> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
-        List<Timing> list = session.createQuery("from Timing where market = :mymarket").setParameter("mymarket",  mymarket).list();
+        list = session.createQuery("from Timing where market = :mymarket").setParameter("mymarket",  mymarket).list();
         transaction.commit();
+	}
         return list;
     }
 
     @Transient
+    @Transactional
     public void save() throws Exception {
         Session session = HibernateUtil.getMyHibernateSession();
+        synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
         session.save(this);
         transaction.commit();
+        }
     }
 
 }

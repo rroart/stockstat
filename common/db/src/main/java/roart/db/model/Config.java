@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -117,29 +118,40 @@ public class Config implements Serializable {
     }
 
     @Transient
+    @Transactional
     public static List<Config> getAll() throws Exception {
+	List<Config> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
-        List<Config> list = session.createQuery("from Config").list();
+        list = session.createQuery("from Config").list();
         transaction.commit();
+	}
         return list;
     }
 
     @Transient
+    @Transactional
     public static List<Config> getAll(String mymarket) throws Exception {
+	List<Config> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
-        List<Config> list = session.createQuery("from Config where market = :mymarket").setParameter("mymarket",  mymarket).list();
+        list = session.createQuery("from Config where market = :mymarket").setParameter("mymarket",  mymarket).list();
         transaction.commit();
+	}
         return list;
     }
 
     @Transient
+    @Transactional
     public void save() throws Exception {
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
         session.save(this);
         transaction.commit();
+	}
     }
 
 }

@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -448,29 +449,40 @@ public class Memory implements Serializable {
     }
 
     @Transient
+    @Transactional
     public static List<Memory> getAll() throws Exception {
+	List<Memory> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
-        List<Memory> list = session.createQuery("from Memory").list();
+        list = session.createQuery("from Memory").list();
         transaction.commit();
+	}
         return list;
     }
 
     @Transient
+    @Transactional
     public static List<Memory> getAll(String mymarket) throws Exception {
+	List<Memory> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
-        List<Memory> list = session.createQuery("from Memory where market = :mymarket").setParameter("mymarket",  mymarket).list();
+        list = session.createQuery("from Memory where market = :mymarket").setParameter("mymarket",  mymarket).list();
         transaction.commit();
+	}
         return list;
     }
 
     @Transient
+    @Transactional
     public void save() throws Exception {
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
         session.save(this);
         transaction.commit();
+	}
     }
 
 }

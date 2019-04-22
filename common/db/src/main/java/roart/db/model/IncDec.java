@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.transaction.Transactional;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -125,29 +126,40 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     }
 
     @Transient
+    @Transactional
     public static List<IncDec> getAll() throws Exception {
+	List<IncDec> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
-        List<IncDec> list = session.createQuery("from IncDec").list();
+        list = session.createQuery("from IncDec").list();
         transaction.commit();
+	}
         return list;
     }
 
     @Transient
+    @Transactional
     public static List<IncDec> getAll(String mymarket) throws Exception {
-        Session session = HibernateUtil.getMyHibernateSession();
+	List<IncDec> list = null;
+	Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
-        List<IncDec> list = session.createQuery("from IncDec where market = :mymarket").setParameter("mymarket",  mymarket).list();
+        list = session.createQuery("from IncDec where market = :mymarket").setParameter("mymarket",  mymarket).list();
         transaction.commit();
+	}
         return list;
     }
 
     @Transient
+    @Transactional
     public void save() throws Exception {
         Session session = HibernateUtil.getMyHibernateSession();
+	synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
         session.save(this);
         transaction.commit();
+	}
     }
 
 }
