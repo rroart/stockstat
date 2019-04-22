@@ -212,10 +212,11 @@ B: java.lang.NullPointerException: null
         at roart.action.FindProfitAction.findMarket(FindProfitAction.java:348)
         at roart.service.MLService.doMLIndicator(MLService.java:137)
 
+WF: More improve on web (I39)
 WC: Change improve recommender to evolution (I38)
 WC: Change improve mlindicator to evolution (I37)
 WT: Better transaction handling (I36)
-B: findprof loop only first evolve, findprof 670 (I35)
+WC: Findprofit loop only evolve first (I35)
 B: future verifydays 8 not 10
 ?: Core w verify incdec proportion
 ?: CL for permit og evolusjon handler.
