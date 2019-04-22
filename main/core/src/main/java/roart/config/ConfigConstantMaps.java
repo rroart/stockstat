@@ -542,6 +542,11 @@ public class ConfigConstantMaps {
         }
         range.put(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO, new Double[] { 1.0, 50.0 } );
         range.put(ConfigConstants.INDICATORSMACDDAYSAFTERZERO, new Double[] { 1.0, 20.0 } );
+        range.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, new Double[] { 2.0, 5.0 } );
+        range.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, new Double[] { 2.0, 25.0 } );
+        range.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, new Double[] { 2.0, 15.0 } );
+        range.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, new Double[] { 0.0, 1.0 } );
+
 /*
         range.put(ConfigConstants.PREDICTORSLSTMEPOCHS, new Double[] { 1.0, 10.0 } );
         range.put(ConfigConstants.PREDICTORSLSTMHORIZON, new Double[] { 1.0, 10.0 } );

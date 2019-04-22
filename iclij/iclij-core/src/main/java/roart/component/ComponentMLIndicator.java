@@ -27,6 +27,8 @@ import roart.component.model.ComponentInput;
 import roart.component.model.MLIndicatorData;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
+import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.MLIndicatorChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
@@ -116,7 +118,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
 
         MLIndicatorData param = new MLIndicatorData(componentparam);
 
@@ -125,7 +127,7 @@ public class ComponentMLIndicator extends ComponentML {
         double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
         param.setThreshold(threshold);
 
-        handle2(market, param, profitdata, positions, evolve);
+        handle2(market, param, profitdata, positions, evolve, aMap);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
@@ -183,7 +185,11 @@ public class ComponentMLIndicator extends ComponentML {
     }
     
     @Override
-    public Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions) {
+        List<String> confList = getConfList();
+        ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR);
+        return improve(param, chromosome);
+/*
         Map<String, String> retMap = new HashMap<>();
         List<String> permList = new ArrayList<>();
         String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
@@ -208,6 +214,50 @@ public class ComponentMLIndicator extends ComponentML {
             try {
                 List<Double> newConfidenceList = new ArrayList<>();
                 List<MemoryItem> memories = new MLService().doMLIndicator(new ComponentInput(marketName, null, null, false, false), confMap);
+                {
+                
+                }
+                for(MemoryItem memory : memories) {
+                    newConfidenceList.add(memory.getConfidence());
+                }
+                log.info("New confidences {}", newConfidenceList);
+                retMap.put(key, newConfidenceList.toString());
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return retMap;
+        */
+    }
+
+    public Map<String, String> improveNot(ComponentData param, Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {
+        Map<String, String> retMap = new HashMap<>();
+        List<String> permList = new ArrayList<>();
+        String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
+        //ControlService srv = new ControlService();
+        //srv.getConfig();            
+        permList.add(ConfigConstants.AGGREGATORSINDICATORMACD);
+        permList.add(ConfigConstants.AGGREGATORSINDICATORRSI);
+        Map<String, Object> confMap = new HashMap<>();
+        int size = permList.size();
+        int bitsize = (1 << size) - 1;
+        for (int i = 1; i < bitsize; i++) {
+            String key = "";
+            for (int j = 0; j < size; j++) {
+                log.info("Doing {} {}", i, j);
+                if ((i & (1 << j)) != 0) {
+                    confMap.put(permList.get(j), Boolean.TRUE);
+                    key = key + permList.get(j);
+                } else {
+                    confMap.put(permList.get(j), Boolean.FALSE);
+                }
+            }
+            try {
+                List<Double> newConfidenceList = new ArrayList<>();
+                List<MemoryItem> memories = new MLService().doMLIndicator(new ComponentInput(marketName, null, null, false, false), confMap);
+                {
+                
+                }
                 for(MemoryItem memory : memories) {
                     newConfidenceList.add(memory.getConfidence());
                 }
@@ -454,5 +504,18 @@ public class ComponentMLIndicator extends ComponentML {
         return PipelineConstants.MLINDICATOR;
     }
 
+    @Override
+    public List<String> getConfList() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSINDICATORMACD);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
+        list.add(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
+        list.add(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
+        return list;
+    }
 }
 
