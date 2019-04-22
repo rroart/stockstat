@@ -234,6 +234,21 @@ public class MyIclijUI extends UI implements ViewDisplay {
         return button;
     }
 
+    private Button getMarketImprove() {
+        Button button = new Button("Get market improve data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayImproveResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
     private Button getSingleMarket() {
         Button button = new Button("Run and get single market data");
         button.addClickListener(new Button.ClickListener() {
@@ -469,6 +484,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         horOther.addComponent(getSingleMarketLoop());
         HorizontalLayout horOther2 = new HorizontalLayout();
         horOther2.addComponent(getImproveProfit());
+        horOther2.addComponent(getMarketImprove());
         //horStat.addComponent(getStat());
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
@@ -573,6 +589,10 @@ public class MyIclijUI extends UI implements ViewDisplay {
         */
     }
 
+    private void displayImproveResults() {
+        controlService.getContentImprove(this);
+    }
+    
     private void displaySingleMarket() {
         //System.out.println("h0");
         controlService.getSingleMarket(this);

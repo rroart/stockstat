@@ -145,6 +145,13 @@ public class IclijWebControlService {
         new IclijThread(ui, param).start();
     }
 
+    public void getContentImprove(MyIclijUI ui) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setIclijConfig(getIclijConf());
+        param.setWebpath(EurekaConstants.GETCONTENTIMPROVE);
+        new IclijThread(ui, param).start();
+    }
+
     public void getSingleMarket(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());

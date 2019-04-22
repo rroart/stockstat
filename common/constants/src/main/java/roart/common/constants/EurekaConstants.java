@@ -18,4 +18,5 @@ public class EurekaConstants {
     public static final String SETCONFIG = "setconfig";
     public static final String GETEVOLVERECOMMENDER = "getevolverecommender";
     public static final String GETEVOLVENN = "getevolvenn";
+    public static final String GETCONTENTIMPROVE = "getcontentimprove";
 }
