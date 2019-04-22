@@ -162,7 +162,7 @@ public class IndicatorChromosome extends AbstractChromosome {
         double finalRecommend = evalUtil.calculateResult(resultMap);
         //finalRecommend *= 0.1;
         //double reco = count * (1 - Math.abs(finalRecommend-count)/Math.max(Math.abs(finalRecommend), count));
-        log.info("Recommend {}", finalRecommend);
+        log.debug("Recommend {}", finalRecommend);
         return finalRecommend;
     }
 
