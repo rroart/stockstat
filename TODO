@@ -94,16 +94,17 @@ T: pom versioning
 T: space/tabs
 
 Design
+T: Exception handling
 T: Narrow down number of categories contstructed
 T: Make stock value to return a new class instead of double[]
 T: Dataimport zero/content check
 T: Change result map keys, due to overlap
 
 Database
-T: better transaction handling
 B: Getdates null
 WF: Each mldao with threadpool
 B: Spark truncates getAll?
+C: Spark config jdbc
 
 ML
 C: split out gene out of SparkMCPConfig etc, let the gene contain SparkMCPConfig
@@ -162,6 +163,7 @@ F: Add info about nltk.download() large_grammar
 F: Use fuzzy logic or uncertainty
 
 Config
+B: Wrong use of deflt with settings?
 T: Synch XML reader config code
 T: making instances
 T: Fix thresholds, common standard
@@ -206,6 +208,19 @@ java.lang.NullPointerException: null
         at roart.aggregate.AggregatorRecommenderIndicator.<init>(AggregatorRecommenderIndicator.java:92)
         at roart.service.ControlService.getAggregates(ControlService.java:332)
 
+B: java.lang.NullPointerException: null
+        at roart.action.FindProfitAction.findMarket(FindProfitAction.java:348)
+        at roart.service.MLService.doMLIndicator(MLService.java:137)
+
+WC: Change improve recommender to evolution (I38)
+WC: Change improve mlindicator to evolution (I37)
+WT: Better transaction handling (I36)
+B: findprof loop only first evolve, findprof 670 (I35)
+B: future verifydays 8 not 10
+?: Core w verify incdec proportion
+?: CL for permit og evolusjon handler.
+?: missing use score
+?: incdec in core?
 F: Iclij mltimes
 C: Merge LSTM with others
 C: ML reconfig default configs based on evolution (I25)
@@ -230,6 +245,8 @@ WC: Iclij get market with memories and updates (I32)
 WB: SQL var 255 overflow (I31)
 WF: Iclij load/save ML config, updatemap (I11)
 WF: iclij table with %-t/f
+DF: GUI with added timing data (I34)
+DB: Jackson can not find _class (I33)
 DC: Move Predictor out of Category (I17).
 DC: JSON market/finder/improver evolve ml config (I9)
 DB: Iclij Predictor implement (I12)
