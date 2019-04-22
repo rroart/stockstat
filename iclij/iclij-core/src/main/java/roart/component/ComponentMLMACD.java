@@ -65,7 +65,7 @@ public class ComponentMLMACD extends ComponentML {
     }
 
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve) {
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) {
         //if (true) return;
         //System.out.println(resultMaps.keySet());
   
@@ -74,7 +74,7 @@ public class ComponentMLMACD extends ComponentML {
         int daysafterzero = (int) param.getService().conf.getMACDDaysAfterZero();
         param.setFuturedays(daysafterzero);
         
-        handle2(market, param, profitdata, positions, evolve);
+        handle2(market, param, profitdata, positions, evolve, aMap);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         return param;
@@ -131,7 +131,7 @@ public class ComponentMLMACD extends ComponentML {
         for (List meta : param.getResultMetaArray()) {
             int returnSize = (int) meta.get(2);
 
-            if (positions.contains(count)) {
+            if (positions != null && positions.contains(count)) {
                 Object[] keys = new Object[2];
                 keys[0] = PipelineConstants.MLMACD;
                 keys[1] = count;
@@ -236,20 +236,14 @@ public class ComponentMLMACD extends ComponentML {
     }
 
     @Override
-    public Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions) {
+        List<String> confList = getConfList();
+        ConfigMapChromosome chromosome = new MLMACDChromosome(param, profitdata, confList, market, positions, PipelineConstants.MLMACD);
+        return improve(param, chromosome);
         
-        ObjectMapper mapper = new ObjectMapper();
-        EvolutionConfig evolutionConfig = null;
-        try {
-            evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
+        /*
+        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-        List<String> confList = new ArrayList<>();
-        confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
-        confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
-        ConfigMapChromosome chromosome = new MLMACDChromosome(conf, confList);
 
         Map<String, String> retMap = new HashMap<>();
         try {
@@ -272,6 +266,15 @@ public class ComponentMLMACD extends ComponentML {
             log.error(Constants.EXCEPTION, e);
         }
         return new HashMap<>();
+        */
+    }
+
+    @Override
+    protected List<String> getConfList() {
+        List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
+        confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
+        return confList;
     }
 
     @Override
