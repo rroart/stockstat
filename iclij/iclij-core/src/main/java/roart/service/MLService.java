@@ -69,7 +69,7 @@ public class MLService {
         new ComponentMLMACD().handle(market, componentparam, profitdata, new ArrayList<>(), setValueMap, false);
 */
         Component component = new ComponentMLMACD();
-        ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false);
+        ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
         return component.calculateMemory(componentData);
 
@@ -149,7 +149,7 @@ public class MLService {
         */
         
         Component component = new ComponentMLIndicator();
-        ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false);
+        ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
         return component.calculateMemory(componentData);
 

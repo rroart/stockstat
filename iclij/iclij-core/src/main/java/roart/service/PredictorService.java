@@ -64,7 +64,7 @@ public class PredictorService {
         */
         
         Component component = new ComponentPredictor();
-        ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false);
+        ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
         return component.calculateMemory(componentData);
 
