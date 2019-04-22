@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.db.model.Config;
 
@@ -102,7 +103,7 @@ public class ConfigItem {
         config.setMarket(getMarket());
         config.setRecord(TimeUtil.convertDate(getRecord()));
         config.setScore(getScore());
-        config.setValue(getValue());
+        config.setValue(JsonUtil.strip(getValue()));
         config.save();
     }
     
@@ -135,7 +136,7 @@ public class ConfigItem {
         configItem.setMarket(config.getMarket());
         configItem.setRecord(TimeUtil.convertDate(config.getRecord()));
         configItem.setScore(config.getScore());
-        configItem.setValue(config.getValue());
+        configItem.setValue(JsonUtil.strip(config.getValue()));
         return configItem;
     }
 
