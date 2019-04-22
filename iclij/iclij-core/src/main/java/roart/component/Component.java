@@ -23,8 +23,13 @@ import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
 import roart.component.model.PredictorData;
 import roart.config.Market;
+import roart.constants.IclijConstants;
+import roart.evolution.algorithm.impl.OrdinaryEvolution;
+import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.evolution.config.EvolutionConfig;
+import roart.evolution.species.Individual;
 import roart.iclij.config.EvolveMLConfig;
+import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.TimingItem;
@@ -62,11 +67,11 @@ public abstract class Component {
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
     }
     
-    public abstract ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve);
+    public abstract ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap);
     
-    public abstract Map<String, String> improve(Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions);
+    public abstract ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions);
 
-    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve) {
+    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) {
         try {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
         } catch (ParseException e) {
@@ -92,6 +97,7 @@ public abstract class Component {
             saveTiming(param, evolve, time0);
         }
         valueMap.putAll(evolveMap);
+        valueMap.putAll(aMap);
         long time0 = System.currentTimeMillis();
         Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
         param.setCategory(resultMaps);
@@ -100,6 +106,9 @@ public abstract class Component {
     }
 
     private void saveTiming(ComponentData param, boolean evolve, long time0) {
+        if (IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
+            return;
+        }
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setMarket(param.getInput().getMarket());
@@ -146,6 +155,53 @@ public abstract class Component {
     public abstract String getPipeline();
     
     protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market) throws Exception;
+
+    protected abstract EvolutionConfig getImproveEvolutionConfig(IclijConfig config);
+    
+    protected abstract List<String> getConfList();
+    
+    public abstract boolean wantEvolve(IclijConfig config);
+    
+    public abstract boolean wantImproveEvolve();
+    
+    public ComponentData improve(ComponentData param, ConfigMapChromosome chromosome) {
+        long time0 = System.currentTimeMillis();
+        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
+        OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
+
+        Map<String, String> retMap = new HashMap<>();
+        try {
+            Individual best = evolution.getFittest(evolutionConfig, chromosome);
+            ConfigMapChromosome bestChromosome = (ConfigMapChromosome) best.getEvaluation();
+            Map<String, Object> confMap = bestChromosome.getMap();
+            param.setUpdateMap(confMap);
+            Map<String, Double> scoreMap = new HashMap<>();
+            double score = best.getFitness();
+            confMap.put("score", "" + score);
+            scoreMap.put("" + score, score);
+            param.setScoreMap(scoreMap);
+            saveTiming(param, true, time0);
+            //bestChromosome.get
+            //Map<String, Object> confMap = null;
+            //String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
+            //ControlService srv = new ControlService();
+            //srv.getConfig();    
+            /*
+            List<Double> newConfidenceList = new ArrayList<>();
+            //srv.conf.getConfigValueMap().putAll(confMap);
+            List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(marketName, null, null, false, false), confMap);
+            for(MemoryItem memory : memories) {
+                newConfidenceList.add(memory.getConfidence());
+            }
+            log.info("New confidences {}", newConfidenceList);
+            retMap.put("key", newConfidenceList.toString());
+            */
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return param;
+    }
+
 
 }
 
