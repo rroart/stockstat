@@ -33,11 +33,13 @@ public class IclijConfigConstants {
     public static final String IMPROVEPROFITPREDICTOR = "improveprofit.predictor";
     public static final String IMPROVEPROFITPREDICTOREVOLUTIONCONFIG = "improveprofit.predictor.evolutionconfig";
     public static final String IMPROVEPROFITPREDICTORMLCONFIG = "improveprofit.predictor.mlconfig";
+    public static final String SINGLEMARKETEVOLVEFIRSTONLY = "singlemarket.evolvefirstonly";
     public static final String SINGLEMARKETLOOPS = "singlemarket.loops";
     public static final String SINGLEMARKETLOOPINTERVAL = "singlemarket.loopinterval";
     public static final String VERIFICATION = "verification";
     public static final String VERIFICATIONSAVE = "verification.save";
     public static final String VERIFICATIONDAYS = "verification.days";
+    public static final String VERIFICATIONEVOLVEFIRSTONLY = "verification.evolvefirstonly";
     public static final String VERIFICATIONLOOPS = "verification.loops";
     public static final String VERIFICATIONLOOPINTERVAL = "verification.loopinterval";
     public static final String VERIFICATIONRECOMMENDERTOPBOTTOM = "verification.recommender.topbottom";

@@ -197,6 +197,10 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG);
     }
 
+    public boolean singlemarketEvolveFirstOnly() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY);
+    }
+
     public int singlemarketLoops() {
         return (Integer) getValueOrDefault(IclijConfigConstants.SINGLEMARKETLOOPS);
     }
@@ -216,6 +220,10 @@ public class IclijConfig {
 
     public int verificationDays() {
         return (Integer) getValueOrDefault(IclijConfigConstants.VERIFICATIONDAYS);
+    }
+
+    public boolean verificationEvolveFirstOnly() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONEVOLVEFIRSTONLY);
     }
 
     public int verificationLoops() {
