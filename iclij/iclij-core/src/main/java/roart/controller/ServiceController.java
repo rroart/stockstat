@@ -73,6 +73,13 @@ public class ServiceController {
         return ServiceUtil.getContent(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
     }
 
+    @RequestMapping(value = "/" + EurekaConstants.GETCONTENTIMPROVE,
+            method = RequestMethod.POST)
+    public IclijServiceResult getContentImprove(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getContentImprove(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
     @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,
             method = RequestMethod.POST)
     public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)
@@ -121,7 +128,8 @@ public class ServiceController {
     public void getImproveProfit()
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
-        new ImproveProfitAction().goal(null, null);
+        //new ImproveProfitAction().goal(null, null);
+        new ImproveProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/findprofit",
