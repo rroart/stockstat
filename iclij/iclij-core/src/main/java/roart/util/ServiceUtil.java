@@ -153,7 +153,7 @@ public class ServiceUtil {
         }
         List<TimingItem> listAllTimings = TimingItem.getAll();
         for (Market market : markets) {
-            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market);
+            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.FINDPROFIT);
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
@@ -207,13 +207,90 @@ public class ServiceUtil {
         return result;
     }
 
-    public static List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market) {
+    public static IclijServiceResult getContentImprove(ComponentInput componentInput) throws Exception {
+        LocalDate date = componentInput.getEnddate();
+        IclijXMLConfig i = new IclijXMLConfig();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+
+        List<IncDecItem> listAll = IncDecItem.getAll();
+        List<IclijServiceList> lists = new ArrayList<>();
+        lists.add(getHeader("Content"));
+        List<Market> markets = conf.getMarkets(instance);
+        /*
+        for (Market market : markets) {
+            List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market);
+            List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
+            List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
+            List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
+            lists.addAll(subLists);
+        }
+        */
+        List<TimingItem> listAllTimings = TimingItem.getAll();
+        for (Market market : markets) {
+            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.IMPROVEPROFIT);
+            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
+            lists.addAll(subLists);
+        }
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(lists);
+
+        /*
+        ComponentData param = null; 
+        try {
+            param = getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+         */
+        
+        Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
+        Map<String, Object> updateMap = new HashMap<>();
+        FindProfitAction findProfitAction = new FindProfitAction();
+        //Market market = findProfitAction.findMarket(param);
+        //String marketName = market.getConfig().getMarket();
+        List<String> componentList = getFindProfitComponents(componentInput.getConfig());
+        for (Market market : findProfitAction.getMarkets()) {
+            Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
+            for (Component component : componentMap.values()) {
+                Map<String, Object> anUpdateMap = loadConfig(null, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false);
+                updateMarketMap.put(market.getConfig().getMarket(), anUpdateMap);
+                updateMap.putAll(anUpdateMap);
+            }
+        }
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        for (Market market : findProfitAction.getMarkets()) {
+        //for (Entry<String, Map<String, Object>> entry : updateMarketMap.entrySet()) {
+            String marketName = market.getConfig().getMarket();
+            Map<String, Object> anUpdateMap = updateMarketMap.get(marketName);
+            IclijServiceList updates = convert(marketName, anUpdateMap);
+            lists.add(updates);
+
+            List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market.getConfig().getMarket());
+            List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate());
+            
+            IclijServiceList memories = new IclijServiceList();
+            memories.setTitle("Memories " + marketName);
+            memories.setList(currentList);
+            lists.add(memories);
+
+        }
+        print(result);
+        return result;
+    }
+
+    public static List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action) {
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
         LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
         List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
+        filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
         List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
@@ -278,7 +355,7 @@ public class ServiceUtil {
         return subLists;
     }
 
-    private static List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec) {
+    public static List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec) {
         // and a new list for common items
         List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
         List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
@@ -325,7 +402,8 @@ public class ServiceUtil {
         Map<String, Object> updateMap = new HashMap<>();
         //param.setUpdateMap(updateMap);
         Market market = findProfitAction.findMarket(param);
-        WebData myData = findProfitAction.getMarket(null, param, market);
+        boolean evolve = getEvolve(verificationdays, param);
+        WebData myData = findProfitAction.getMarket(null, param, market, evolve);
         ProfitData buysells = myData.profitData; // findProfitAction.getPicks(param, allMemoryItems);
         updateMap = myData.updateMap;
         allMemoryItems.addAll(myData.memoryItems);
@@ -335,7 +413,8 @@ public class ServiceUtil {
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
         if (verificationdays > 0) {
             try {
-                param.setFuturedays(verificationdays);
+                param.setFuturedays(0);
+                param.setOffset(0);
                 param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
             } catch (ParseException e) {
                 log.error(Constants.EXCEPTION, e);
@@ -375,6 +454,20 @@ public class ServiceUtil {
         return result;
     }
 
+    public static boolean getEvolve(int verificationdays, ComponentData param) {
+        Boolean evolvefirst;
+        if (verificationdays > 0) {
+            evolvefirst = param.getInput().getConfig().verificationEvolveFirstOnly();
+        } else {
+            evolvefirst = param.getInput().getConfig().singlemarketEvolveFirstOnly();
+        }
+        boolean evolve = true;
+        if (evolvefirst && param.getInput().getLoopoffset() > 0) {
+            evolve = false;
+        }
+        return evolve;
+    }
+
     private static void addHeader(ComponentInput componentInput, String type, IclijServiceResult result,
             ComponentData param) {
         IclijServiceList header = new IclijServiceList();
@@ -405,7 +498,7 @@ public class ServiceUtil {
             param.getInput().setMarket(market);
         }
         // verification days, 0 or something
-        param.setOffset(0); // was days
+        param.setOffset(days);
         //srv.getConfig();
         /*
         List<String> stockdates = srv.getDates(market);
