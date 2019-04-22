@@ -34,7 +34,7 @@ public abstract class ComponentNoML extends Component {
                 param.getService().conf.getConfigValueMap().put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, confStr);
             }
             Map<String, Object> anUpdateMap = new HashMap<>();
-            List<ResultItem> retlist = param.getService().getEvolveRecommender(true, new ArrayList<>(), anUpdateMap);
+            List<ResultItem> retlist = param.getService().getEvolveRecommender(true, param.getDisableList(), anUpdateMap);
             nomlSaves(param, anUpdateMap);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
@@ -84,4 +84,32 @@ public abstract class ComponentNoML extends Component {
     public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
         return null;
     }
+    
+    @Override
+    protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
+        /*
+        ObjectMapper mapper = new ObjectMapper();
+        EvolutionConfig evolutionConfig = null;
+        try {
+            evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        */
+        // too heavy?
+        // String evolveString = config.getEvolveIndicatorrecommenderEvolutionConfig();
+        String evolveString = config.getEvolveMLEvolutionConfig();
+        return JsonUtil.convert(evolveString, EvolutionConfig.class);
+    }
+    
+    @Override
+    public boolean wantEvolve(IclijConfig config) {
+        return config.wantEvolveRecommender();
+    }
+
+    @Override
+    public boolean wantImproveEvolve() {
+        return true;
+    }
+    
 }

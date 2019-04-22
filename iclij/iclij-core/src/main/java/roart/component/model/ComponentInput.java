@@ -33,6 +33,9 @@ public class ComponentInput {
         this.loopoffset = offset != null ? offset : 0;
         this.doSave = doSave;
         this.doPrint = doPrint;
+        if (doSave == false) {
+            int jj = 0;
+        }
     }
 
     public ComponentInput(IclijConfig config, LocalDate startdate, String market, LocalDate enddate, Integer loopoffset,
@@ -51,6 +54,9 @@ public class ComponentInput {
         this.enddate = enddate;
         this.loopoffset = loopoffset != null ? loopoffset : 0;
         this.doSave = doSave;
+        if (doSave == false) {
+            int jj = 0;
+        }
         this.doPrint = doPrint;
         this.keys = keys;
         this.valuemap = valuemap;

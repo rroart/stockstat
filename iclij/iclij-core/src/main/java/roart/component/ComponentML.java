@@ -48,7 +48,7 @@ public abstract class ComponentML extends Component {
             Map<String, Object> evolveMap = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
             param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
-            List<ResultItem> retlist = param.getService().getEvolveML(true, new ArrayList<>(), pipeline, param.getService().conf, anUpdateMap);
+            List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap);
             mlSaves(mlConfigMap, param, anUpdateMap);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
@@ -225,4 +225,30 @@ public abstract class ComponentML extends Component {
         }
         return returnmap;
     }
+    
+    @Override
+    protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
+        /*
+        ObjectMapper mapper = new ObjectMapper();
+        EvolutionConfig evolutionConfig = null;
+        try {
+            evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        */
+        String evolveString = config.getEvolveMLEvolutionConfig();
+        return JsonUtil.convert(evolveString, EvolutionConfig.class);
+    }
+    
+    @Override
+    public boolean wantEvolve(IclijConfig config) {
+        return config.wantEvolveML();
+    }
+    
+    @Override
+    public boolean wantImproveEvolve() {
+        return false;
+    }
+    
 }

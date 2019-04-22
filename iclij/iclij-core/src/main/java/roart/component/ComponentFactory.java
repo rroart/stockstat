@@ -25,6 +25,7 @@ public class ComponentFactory {
         }
     }
 
+    @Deprecated
     public ServiceAction factory(String market, String component) {
         ServiceAction serviceAction = null;
         switch (component) {

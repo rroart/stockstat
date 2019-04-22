@@ -2,6 +2,7 @@ package roart.component.model;
 
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,11 @@ public class ComponentData {
 
     private Map<String, Object> updateMap;
     
+    private Map<String, Double> scoreMap;
+    
     private String action;
+    
+    private List<String> disableList = new ArrayList<>();
     
     public ComponentData() {
         
@@ -69,6 +74,7 @@ public class ComponentData {
         this.updateMap = new HashMap<>(); //componentparam.updateMap;
         this.configValueMap = new HashMap<>(this.service.conf.getConfigValueMap());
         this.action = componentparam.action;
+        this.disableList = componentparam.disableList;
     }
 
     public ComponentData(ComponentInput input) {
@@ -201,12 +207,28 @@ public class ComponentData {
         this.updateMap = updateMap;
     }
 
+    public Map<String, Double> getScoreMap() {
+        return scoreMap;
+    }
+
+    public void setScoreMap(Map<String, Double> scoreMap) {
+        this.scoreMap = scoreMap;
+    }
+
     public String getAction() {
         return action;
     }
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public List<String> getDisableList() {
+        return disableList;
+    }
+
+    public void setDisableList(List<String> disableList) {
+        this.disableList = disableList;
     }
 
     public int setDates(int futuredaysNot, Integer offsetNot, String aDate) throws ParseException {
