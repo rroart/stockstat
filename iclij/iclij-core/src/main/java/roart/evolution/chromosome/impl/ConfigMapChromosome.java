@@ -156,7 +156,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
         //myData.profitData = new ProfitData();
         myData.timingMap = new HashMap<>();
         double memoryFitness = 0.0;
-        double incdecFitness = 0.0
+        double incdecFitness = 0.0;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
             boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
