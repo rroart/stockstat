@@ -94,7 +94,9 @@ public abstract class Component {
         if (evolve) {   
             long time0 = System.currentTimeMillis();
             evolveMap = handleEvolve(market, pipeline, evolve, param);
-            saveTiming(param, evolve, time0);
+            if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
+                saveTiming(param, evolve, time0);
+            }
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
@@ -102,13 +104,12 @@ public abstract class Component {
         Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
         param.setCategory(resultMaps);
         param.getAndSetCategoryValueMap();
-        saveTiming(param, false, time0);
+        if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
+            saveTiming(param, false, time0);
+        }
     }
 
     private void saveTiming(ComponentData param, boolean evolve, long time0) {
-        if (IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-            return;
-        }
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setMarket(param.getInput().getMarket());
