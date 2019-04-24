@@ -155,6 +155,8 @@ public class ConfigMapChromosome extends AbstractChromosome {
         myData.memoryItems = new ArrayList<>();
         //myData.profitData = new ProfitData();
         myData.timingMap = new HashMap<>();
+        double memoryFitness = 0.0;
+        double incdecFitness = 0.0
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
             boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
@@ -191,7 +193,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
             }
 
-            if (false) {
+            if (true) {
                 List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
                 long count = listDecBoolean.stream().filter(i -> i).count();                            
                 double fitness = count / listDecBoolean.size();
@@ -199,6 +201,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 long count2 = listIncBoolean.stream().filter(i -> i).count();                            
                 double fitness2 = count / listIncBoolean.size();
                 double fitness3 = (fitness + fitness2) / 2;
+                incdecFitness = fitness3;
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
         } catch (Exception e) {
@@ -208,13 +211,18 @@ public class ConfigMapChromosome extends AbstractChromosome {
         memoryItems = myData.memoryItems;
         for (MemoryItem memoryItem : memoryItems) {
             Double value = memoryItem.getConfidence();
+            if (value == null) {
+                int jj = 0;
+            }
             fitness += value;
         }
         if (!memoryItems.isEmpty()) {
             fitness = fitness / memoryItems.size();
+            memoryFitness = fitness;
         }
         // or rather verified incdec
-        return fitness;
+        log.info("Fit {} {}", incdecFitness, memoryFitness);
+        return memoryFitness;
     }
 
     @Override
