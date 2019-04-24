@@ -196,11 +196,23 @@ public class ConfigMapChromosome extends AbstractChromosome {
             if (true) {
                 List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
                 long count = listDecBoolean.stream().filter(i -> i).count();                            
-                double fitness = count / listDecBoolean.size();
+                int fitnesses = 0;
+                double fitness = 0;
+                if (listDecBoolean.size() != 0) {
+                    fitness = count / listDecBoolean.size();
+                    fitnesses++;
+                }
                 List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
                 long count2 = listIncBoolean.stream().filter(i -> i).count();                            
-                double fitness2 = count / listIncBoolean.size();
-                double fitness3 = (fitness + fitness2) / 2;
+                double fitness2 = 0;
+                if (listIncBoolean.size() != 0) {
+                    fitness2 = count2 / listIncBoolean.size();
+                    fitnesses++;
+                }
+                double fitness3 = 0;
+                if (fitnesses != 0) {
+                    fitness3 = (fitness + fitness2) / fitnesses;
+                }
                 incdecFitness = fitness3;
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
