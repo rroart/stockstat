@@ -31,6 +31,7 @@ import roart.evolution.species.Individual;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
+import roart.iclij.model.ConfigItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.TimingItem;
 import roart.result.model.ResultMeta;
@@ -178,10 +179,25 @@ public abstract class Component {
             param.setUpdateMap(confMap);
             Map<String, Double> scoreMap = new HashMap<>();
             double score = best.getFitness();
-            confMap.put("score", "" + score);
+            //confMap.put("score", "" + score);
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
             saveTiming(param, true, time0);
+            {
+                ConfigItem configItem = new ConfigItem();
+                configItem.setAction(param.getAction());
+                configItem.setComponent(getPipeline());
+                configItem.setDate(param.getBaseDate());
+                configItem.setId("score " + confMap.keySet());
+                configItem.setMarket(param.getMarket());
+                configItem.setRecord(LocalDate.now());
+                configItem.setValue("" + score);
+                try {
+                    configItem.save();
+                } catch (Exception e) {
+                    log.info(Constants.EXCEPTION, e);
+                }                
+            }
             //bestChromosome.get
             //Map<String, Object> confMap = null;
             //String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
