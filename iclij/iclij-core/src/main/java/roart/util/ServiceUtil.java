@@ -255,7 +255,7 @@ public class ServiceUtil {
         for (Market market : findProfitAction.getMarkets()) {
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
             for (Component component : componentMap.values()) {
-                Map<String, Object> anUpdateMap = loadConfig(null, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false);
+                Map<String, Object> anUpdateMap = loadConfig(null, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false);
                 updateMarketMap.put(market.getConfig().getMarket(), anUpdateMap);
                 updateMap.putAll(anUpdateMap);
             }
