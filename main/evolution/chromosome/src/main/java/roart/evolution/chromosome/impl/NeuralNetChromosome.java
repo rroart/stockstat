@@ -124,7 +124,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
         try {
         pipelineData = new MyFactory().myfactory(conf, ml, dataReaders, categories, catName, cat);
         } catch (Exception e) {
-            log.info(Constants.EXCEPTION, e);
+            log.error(Constants.EXCEPTION, e);
         }
         Map<String, Object> map = (Map<String, Object>) pipelineData.getLocalResultMap().get(PipelineConstants.PROBABILITY);
         if (map == null) {
