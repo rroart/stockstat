@@ -45,6 +45,9 @@ public class Timing implements Serializable {
     private Double time;
 
     @Column
+    private Double score;
+
+    @Column
     private Date record;
 
     @Column
@@ -89,6 +92,14 @@ public class Timing implements Serializable {
 
     public void setTime(Double time) {
         this.time = time;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
     }
 
     public Date getRecord() {

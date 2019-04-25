@@ -96,7 +96,7 @@ public abstract class Component {
             long time0 = System.currentTimeMillis();
             evolveMap = handleEvolve(market, pipeline, evolve, param);
             if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-                saveTiming(param, evolve, time0);
+                saveTiming(param, evolve, time0, null);
             }
         }
         valueMap.putAll(evolveMap);
@@ -106,11 +106,11 @@ public abstract class Component {
         param.setCategory(resultMaps);
         param.getAndSetCategoryValueMap();
         if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-            saveTiming(param, false, time0);
+            saveTiming(param, false, time0, null);
         }
     }
 
-    private void saveTiming(ComponentData param, boolean evolve, long time0) {
+    private void saveTiming(ComponentData param, boolean evolve, long time0, Double score) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setMarket(param.getInput().getMarket());
@@ -119,6 +119,7 @@ public abstract class Component {
         timing.setTime(time0);
         timing.setRecord(LocalDate.now());
         timing.setDate(param.getFutureDate());
+        timing.setScore(score);
         try {
             timing.save();
         } catch (Exception e) {
@@ -182,8 +183,9 @@ public abstract class Component {
             //confMap.put("score", "" + score);
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
-            saveTiming(param, true, time0);
-            {
+            param.setFutureDate(LocalDate.now());
+            saveTiming(param, true, time0, score);
+            if (false) {
                 ConfigItem configItem = new ConfigItem();
                 configItem.setAction(param.getAction());
                 configItem.setComponent(getPipeline());

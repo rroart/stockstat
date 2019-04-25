@@ -22,6 +22,8 @@ public class TimingItem {
     
     private Double time;
 
+    private Double score;
+    
     public LocalDate getRecord() {
         return record;
     }
@@ -78,9 +80,17 @@ public class TimingItem {
         this.time = time;
     }
 
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
     @Override
     public String toString() {
-        return market + " " + component + " " + action + " " + record + " " + date + " " + evolve + " " + time + "\n"; 
+        return market + " " + component + " " + action + " " + record + " " + date + " " + evolve + " " + time + " " + score + "\n"; 
     }
     
     public void save() throws Exception {
@@ -92,6 +102,7 @@ public class TimingItem {
         timing.setMarket(getMarket());
         timing.setRecord(TimeUtil.convertDate(getRecord()));
         timing.setTime(getTime());
+        timing.setScore(getScore());
         timing.save();
     }
     
@@ -124,6 +135,7 @@ public class TimingItem {
         timingItem.setMarket(timing.getMarket());
         timingItem.setRecord(TimeUtil.convertDate(timing.getRecord()));
         timingItem.setTime(timing.getTime());
+        timingItem.setScore(timing.getScore());
         return timingItem;
     }
 
