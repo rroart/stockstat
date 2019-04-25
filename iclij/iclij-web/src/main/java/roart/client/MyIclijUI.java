@@ -48,6 +48,7 @@ import com.vaadin.ui.VerticalLayout;
 import roart.common.config.ConfigTreeMap;
 import roart.common.constants.Constants;
 import roart.eureka.util.EurekaUtil;
+import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
@@ -719,12 +720,35 @@ public class MyIclijUI extends UI implements ViewDisplay {
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("time")) {
             List<TimingItem> mylist = objectMapper.convertValue(list, new TypeReference<List<TimingItem>>() { });
             Grid<TimingItem> table = getGridFromList4(item, mylist);
+            ts.addComponent(table);
+            return;
+        }
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("value")) {
+            List<ConfigItem> mylist = objectMapper.convertValue(list, new TypeReference<List<ConfigItem>>() { });
+            Grid<ConfigItem> table = getGridFromList5(item, mylist);
             ts.addComponent(table);            
         } else {
             List<MapList> mylist = objectMapper.convertValue(list, new TypeReference<List<MapList>>() { });
             Grid<MapList> table = getGridFromList3(item, mylist);
             ts.addComponent(table);
         }
+    }
+
+    private Grid<ConfigItem> getGridFromList5(IclijServiceList item, List<ConfigItem> mylist) {
+        Grid<ConfigItem> table = new Grid<>();
+        table.setCaption(item.getTitle());
+        table.addColumn(ConfigItem::getRecord).setCaption("Record");
+        table.addColumn(ConfigItem::getDate).setCaption("Date");
+        table.addColumn(ConfigItem::getMarket).setCaption("Market");
+        table.addColumn(ConfigItem::getAction).setCaption("Action");
+        table.addColumn(ConfigItem::getId).setCaption("Id");
+        table.addColumn(ConfigItem::getValue).setCaption("Value");
+        table.addColumn(ConfigItem::getComponent).setCaption("Component");
+        table.addColumn(ConfigItem::getScore).setCaption("Score");
+        table.setWidth("90%");
+        table.setItems(mylist);
+        System.out.println("added");
+        return table;
     }
 
     private Grid<TimingItem> getGridFromList4(IclijServiceList item, List<TimingItem> mylist) {
@@ -737,6 +761,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(TimingItem::isEvolve).setCaption("Evolve");
         table.addColumn(TimingItem::getComponent).setCaption("Component");
         table.addColumn(TimingItem::getTime).setCaption("Time");
+        table.addColumn(TimingItem::getScore).setCaption("Score");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");
