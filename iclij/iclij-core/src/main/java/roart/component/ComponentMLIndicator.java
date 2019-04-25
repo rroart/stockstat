@@ -185,7 +185,8 @@ public class ComponentMLIndicator extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
+	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR);
         return improve(param, chromosome);

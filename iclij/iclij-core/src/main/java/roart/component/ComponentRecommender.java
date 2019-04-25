@@ -213,7 +213,8 @@ public class ComponentRecommender extends ComponentNoML {
     }
     
     @Override
-    public ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
+	ComponentData param = new ComponentData(componentparam);
         Map<String, String> retMap = new HashMap<>();
         List<String> list = getBuy();
         return handleBuySell(param, market, profitdata, profitdata.getInputdata().getListMap(), list);
@@ -401,6 +402,9 @@ public class ComponentRecommender extends ComponentNoML {
     public void getMemories(RecommenderData param, List<MemoryItem> memoryList, AbstractScore eval, int position) throws Exception {
         Map<String, List<Double>> resultMap = new HashMap<>();
         for (String key : param.getCategoryValueMap().keySet()) {
+            if (param.getRecommendBuySell() == null) {
+                int jj = 0;
+            }
             List<Double> vals = param.getRecommendBuySell().get(key);
             if (vals == null) {
                 continue;

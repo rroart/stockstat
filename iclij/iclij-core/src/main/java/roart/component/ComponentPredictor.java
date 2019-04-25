@@ -185,7 +185,8 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
+	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM);
         return improve(param, chromosome);

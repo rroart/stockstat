@@ -236,7 +236,8 @@ public class ComponentMLMACD extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
+	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapChromosome chromosome = new MLMACDChromosome(param, profitdata, confList, market, positions, PipelineConstants.MLMACD);
         return improve(param, chromosome);
