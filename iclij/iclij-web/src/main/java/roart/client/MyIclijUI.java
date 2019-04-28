@@ -711,7 +711,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
             ts.addComponent(table);
             return;
         }
-        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("score")) {
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("increase")) {
             List<IncDecItem> mylist = objectMapper.convertValue(list, new TypeReference<List<IncDecItem>>() { });
             Grid<IncDecItem> table = getGridFromList2(item, mylist);
             ts.addComponent(table);
@@ -723,7 +723,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
             ts.addComponent(table);
             return;
         }
-        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("value")) {
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("id")) {
             List<ConfigItem> mylist = objectMapper.convertValue(list, new TypeReference<List<ConfigItem>>() { });
             Grid<ConfigItem> table = getGridFromList5(item, mylist);
             ts.addComponent(table);            
