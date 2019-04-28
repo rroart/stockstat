@@ -101,7 +101,8 @@ public class FindProfitAction extends Action {
         myData.updateMap = new HashMap<>();
         myData.timingMap = new HashMap<>();
 	
-        IclijConfig config = IclijXMLConfig.getConfigInstance();
+        IclijConfig config = paramTemplate.getInput().getConfig();
+        //IclijXMLConfig.getConfigInstance();
         //boolean save = true;
         List<MarketTime> marketTimes = new ArrayList<>();
         Map<String, ComponentData> componentDataMap = new HashMap<>();
