@@ -119,7 +119,7 @@ public class ImproveProfitAction extends Action {
                 log.error(Constants.EXCEPTION, e);
             }
             List<IncDecItem> currentIncDecs = ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
-            if (currentIncDecs == null || currentIncDecs.isEmpty()) {
+            if (currentIncDecs == null || currentIncDecs.isEmpty() || timings.isEmpty()) {
                 List<String> componentList = ServiceUtil.getImproveProfitComponents(config);
                 Map<String, Component> componentMap = FindProfitAction.getComponentMap(componentList, market);
                 List<MarketTime> marketTime = getList(IclijConstants.IMPROVEPROFIT, componentMap, timings, market, param);
@@ -223,8 +223,9 @@ public class ImproveProfitAction extends Action {
             myData.profitData = new ProfitData();
         }
         marketMemory.addAll(myData.memoryItems);
-        
-        List<MemoryItem> currentList = new FindProfitAction().filterKeepRecent(marketMemory, param.getInput().getEnddate());
+        LocalDate prevdate = param.getInput().getEnddate();
+        prevdate = prevdate.minusDays(market.getFilter().getRecordage());
+        List<MemoryItem> currentList = new FindProfitAction().filterKeepRecent(marketMemory, prevdate);
         // or make a new object instead of the object array. use this as a pair
         //System.out.println(currentList.get(0).getRecord());
         Map<Object[], List<MemoryItem>> listMap = new HashMap<>();

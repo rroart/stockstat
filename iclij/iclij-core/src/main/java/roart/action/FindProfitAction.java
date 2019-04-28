@@ -142,7 +142,7 @@ public class FindProfitAction extends Action {
             List<IncDecItem> marketIncdecitems = incdecitems.stream().filter(m -> marketName.equals(m.getMarket())).collect(Collectors.toList());
             
             List<IncDecItem> currentIncDecs = ServiceUtil.getCurrentIncDecs(olddate, marketIncdecitems, market);
-            if (currentIncDecs == null || currentIncDecs.isEmpty()) {
+            if (currentIncDecs == null || currentIncDecs.isEmpty() || timings.isEmpty()) {
                 List<String> componentList = ServiceUtil.getFindProfitComponents(config);
                 Map<String, Component> componentMap = getComponentMap(componentList, market);
                 List<MarketTime> marketTime = getList(IclijConstants.FINDPROFIT, componentMap, timings, market, param);
