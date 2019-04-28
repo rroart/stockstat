@@ -83,7 +83,8 @@ public class PredictorChromosome extends ConfigMapChromosome {
 
     @Override
     public AbstractChromosome copy() {
-        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, componentName);
+        ComponentData newparam = new ComponentData(param);
+        PredictorChromosome chromosome = new PredictorChromosome(confList, newparam, profitdata, market, positions, componentName);
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         chromosome.config = (TensorflowLSTMConfig) config.copy();
         return chromosome;

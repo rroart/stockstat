@@ -59,6 +59,9 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         //map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, string);
         //setMap(map);
         param.setDisableList(listPerm.get(listIdx));
+        if (listIdx == 62) {
+            int jj = 0;
+        }
         return super.getFitness();
     }
 
@@ -106,7 +109,8 @@ public class RecommenderChromosome extends ConfigMapChromosome {
 
     @Override
     public AbstractChromosome copy() {
-        RecommenderChromosome chromosome = new RecommenderChromosome(confList, param, profitdata, market, positions, componentName);
+        ComponentData newparam = new ComponentData(param);
+        RecommenderChromosome chromosome = new RecommenderChromosome(confList, newparam, profitdata, market, positions, componentName);
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         chromosome.listIdx = listIdx;
         return chromosome;

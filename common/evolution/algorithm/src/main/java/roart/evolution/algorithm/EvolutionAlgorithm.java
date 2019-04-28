@@ -28,6 +28,8 @@ public abstract class EvolutionAlgorithm {
 
     private EvolutionConfig evolutionConfig;
     
+    private boolean doParallel = true;
+    
     public EvolutionAlgorithm(EvolutionConfig evolutionConfig) {
         super();
         this.evolutionConfig = evolutionConfig;
@@ -39,6 +41,14 @@ public abstract class EvolutionAlgorithm {
 
     public void setEvolutionConfig(EvolutionConfig evolutionConfig) {
         this.evolutionConfig = evolutionConfig;
+    }
+
+    public boolean doParallel() {
+        return doParallel;
+    }
+
+    public void setParallel(boolean doParallel) {
+        this.doParallel = doParallel;
     }
 
     public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender) throws Exception;
@@ -105,7 +115,25 @@ public abstract class EvolutionAlgorithm {
         return list;
     }
 
-    protected void calculate(List<Individual> pop) throws InterruptedException, ExecutionException {
+    protected void calculate(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
+        if (doParallel) {
+            calculateParallel(pop);
+        } else {
+            calculateSeq(pop);
+        }
+    }
+    
+    private void calculateSeq(List<Individual> pop) throws InterruptedException, ExecutionException, JsonParseException, JsonMappingException, IOException {
+        for (Individual individual : pop) {
+            if (individual.getFitness() == null) {
+                long start = System.currentTimeMillis();
+                individual.recalculateScore();
+                individual.setCalculateTime(System.currentTimeMillis() - start);
+            }
+        }
+    }
+    
+    private void calculateParallel(List<Individual> pop) throws InterruptedException, ExecutionException {
         List<Future<Individual>> futureList = new ArrayList<>();
         for (Individual individual : pop) {
             if (individual.getFitness() == null) {

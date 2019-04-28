@@ -171,7 +171,8 @@ public abstract class Component {
         long time0 = System.currentTimeMillis();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-
+        evolution.setParallel(false);
+        
         Map<String, String> retMap = new HashMap<>();
         try {
             Individual best = evolution.getFittest(evolutionConfig, chromosome);

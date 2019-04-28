@@ -157,6 +157,8 @@ public class ConfigMapChromosome extends AbstractChromosome {
         myData.timingMap = new HashMap<>();
         double memoryFitness = 0.0;
         double incdecFitness = 0.0;
+        int b = param.getService().conf.hashCode();
+        boolean c = param.getService().conf.wantIndicatorRecommender();
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
             boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
@@ -165,6 +167,9 @@ public class ConfigMapChromosome extends AbstractChromosome {
             //ProfitData profitdata = new ProfitData();
             myData.profitData = profitdata;
             boolean myevolve = component.wantImproveEvolve();
+            if (!param.getService().conf.wantIndicatorRecommender()) {
+                int jj = 0;
+            }
             ComponentData componentData = component.handle(market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map);
             //componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
@@ -199,14 +204,14 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 int fitnesses = 0;
                 double fitness = 0;
                 if (listDecBoolean.size() != 0) {
-                    fitness = count / listDecBoolean.size();
+                    fitness = ((double) count) / listDecBoolean.size();
                     fitnesses++;
                 }
                 List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
                 long count2 = listIncBoolean.stream().filter(i -> i).count();                            
                 double fitness2 = 0;
                 if (listIncBoolean.size() != 0) {
-                    fitness2 = count2 / listIncBoolean.size();
+                    fitness2 = ((double) count2) / listIncBoolean.size();
                     fitnesses++;
                 }
                 double fitness3 = 0;
@@ -234,12 +239,13 @@ public class ConfigMapChromosome extends AbstractChromosome {
         }
         // or rather verified incdec
         log.info("Fit {} {}", incdecFitness, memoryFitness);
-        return memoryFitness;
+        return incdecFitness;
     }
 
     @Override
     public AbstractChromosome copy() {
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, param, profitdata, market, positions, componentName);
+        ComponentData newparam = new ComponentData(param);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, newparam, profitdata, market, positions, componentName);
         chromosome.map = new HashMap<>(this.map);
         return chromosome;
     }

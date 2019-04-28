@@ -61,7 +61,9 @@ public class ComponentData {
     
     public ComponentData(ComponentData componentparam) {
         this.input = componentparam.input;
+        this.input.setValuemap(new HashMap<>(componentparam.input.getValuemap()));
         this.service = componentparam.service;
+        this.service.conf.setConfigValueMap(new HashMap<>(this.service.conf.getConfigValueMap()));
         this.category = componentparam.category;
         this.categoryTitle = componentparam.categoryTitle;
         this.baseDate = componentparam.baseDate;
