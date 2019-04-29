@@ -88,6 +88,9 @@ public class ConfigMapChromosome extends AbstractChromosome {
         for (int conf = 0; conf < confList.size(); conf++) {
             generateConfigNum(rand, conf);
         }
+        if (!validate()) {
+            fixValidation();
+        }
     }
 
     @Override
@@ -95,6 +98,9 @@ public class ConfigMapChromosome extends AbstractChromosome {
         Random rand = new Random();
         int conf = rand.nextInt(confList.size());
         generateConfigNum(rand, conf);
+        if (!validate()) {
+            fixValidation();
+        }
     }
 
     private void generateConfigNum(Random rand, int conf) {
@@ -126,6 +132,9 @@ public class ConfigMapChromosome extends AbstractChromosome {
             } else {
                 chromosome.map.put(confName, ((ConfigMapChromosome) other).map.get(confName));
             }
+        }
+        if (!chromosome.validate()) {
+            chromosome.fixValidation();
         }
         return new Individual(chromosome);
     }
@@ -230,6 +239,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             Double value = memoryItem.getConfidence();
             if (value == null) {
                 int jj = 0;
+                continue;
             }
             fitness += value;
         }

@@ -35,4 +35,10 @@ public abstract class AbstractChromosome {
     public abstract boolean isEmpty();
     
     public abstract boolean isAscending();
+    
+    public boolean validate() {
+        return true;
+    }
+    
+    public void fixValidation() { };
 }

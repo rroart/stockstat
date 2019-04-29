@@ -145,6 +145,9 @@ public class MLIndicator extends Aggregator {
         int listlen = conf.getTableDays();
         List<Map<String, Double[][]>> listList = (List<Map<String, Double[][]>>) retObj[2];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
+        if (dayIndicatorMap == null) {
+            int jj = 0;
+        }
         Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
         if (indicatorMap == null) {
             return new HashMap<>();
@@ -640,6 +643,9 @@ public class MLIndicator extends Aggregator {
 
     @Override
     public boolean isEnabled() {
+        if (!conf.wantAggregatorsIndicatorMACD() && !conf.wantAggregatorsIndicatorRSI()) {
+            return false;
+        }
         return conf.wantAggregatorsIndicatorML();
     }
 
