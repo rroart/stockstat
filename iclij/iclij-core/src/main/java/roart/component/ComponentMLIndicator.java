@@ -140,10 +140,13 @@ public class ComponentMLIndicator extends ComponentML {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         int resultIndex = 0;
         int count = 0;
+        if (param.getResultMetaArray() == null) {
+            int jj = 0;
+        }
         for (List meta : param.getResultMetaArray()) {
             int returnSize = (int) meta.get(2);
 
-            if (positions.contains(count)) {
+            if (positions != null && positions.contains(count)) {
                 Object[] keys = new Object[2];
                 keys[0] = PipelineConstants.MLINDICATOR;
                 keys[1] = count;
