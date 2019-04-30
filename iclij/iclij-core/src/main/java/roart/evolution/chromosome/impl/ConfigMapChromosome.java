@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.action.FindProfitAction;
+import roart.action.ImproveProfitAction;
 import roart.action.WebData;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
@@ -34,6 +35,7 @@ import roart.evolution.species.Individual;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.model.ProfitData;
+import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
 
 @JsonTypeInfo(  
@@ -186,9 +188,17 @@ public class ConfigMapChromosome extends AbstractChromosome {
             try {
                 memories = component.calculateMemory(componentData);
                 myData.memoryItems.addAll(memories);
-           } catch (Exception e) {
+            } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
+
+            Map<Object[], List<MemoryItem>> listMap = new HashMap<>();
+            myData.memoryItems.forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new Object[]{m.getComponent(), m.getPosition() }, m));
+            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap);        
+            //ProfitData profitdata = new ProfitData();
+            profitdata.setInputdata(inputdata);
+            inputdata.setNameMap(new HashMap<>());
+            
             ComponentData componentData2 = component.handle(market, (ComponentData) param, profitdata, positions, evolve, map);
             component.calculateIncDec(componentData2, profitdata, positions);
             
@@ -248,7 +258,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             memoryFitness = fitness;
         }
         // or rather verified incdec
-        log.info("Fit {} {}", incdecFitness, memoryFitness);
+        log.info("Fit {} {} {}", this.componentName, incdecFitness, memoryFitness);
         return incdecFitness;
     }
 

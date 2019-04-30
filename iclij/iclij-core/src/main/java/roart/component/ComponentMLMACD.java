@@ -126,12 +126,20 @@ public class ComponentMLMACD extends ComponentML {
     public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
         MLMACDData param = (MLMACDData) componentparam;
         Map<String, Object> resultMap = param.getResultMap();
+        Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
+        System.out.println("c " + aResultMap.keySet());
+        System.out.println("a " + resultMap.keySet());
+        System.out.println("b " + param.getCategoryValueMap().keySet());
+        System.out.println("d " + profitdata.getInputdata().getConfMap().keySet());
+        for (Object[] key : profitdata.getInputdata().getConfMap().keySet()) {
+            System.out.println("e " + ((String)key[0]) + " " + ((int)key[1]));
+        }
         int resultIndex = 0;
         int count = 0;
         for (List meta : param.getResultMetaArray()) {
             int returnSize = (int) meta.get(2);
 
-            if (positions != null && positions.contains(count)) {
+            if (positions == null || positions.contains(count)) {
                 Object[] keys = new Object[2];
                 keys[0] = PipelineConstants.MLMACD;
                 keys[1] = count;
@@ -141,7 +149,7 @@ public class ComponentMLMACD extends ComponentML {
                     if (mainList == null) {
                         continue;
                     }
-                    List<Object> list = (List<Object>) resultMap.get(key);
+                    List<Object> list = (List<Object>) aResultMap.get(key);
                     if (list == null) {
                         continue;
                     }

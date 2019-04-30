@@ -415,7 +415,7 @@ public class ImproveProfitAction extends Action {
         return foundMarket;
     }
     
-    private ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Object[], List<MemoryItem>> listMap) {
+    public ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Object[], List<MemoryItem>> listMap) {
         Map<Object[], List<MemoryItem>> badListMap = new HashMap<>();
         Map<Object[], Double> badConfMap = new HashMap<>();
         for(Object[] keys : listMap.keySet()) {
@@ -495,7 +495,7 @@ public class ImproveProfitAction extends Action {
         return listMap.computeIfAbsent(key, k -> new ArrayList<>());
     }
 
-    private <K, E> void listGetterAdder(Map<K, List<E>> listMap, K key, E element) {
+    public <K, E> void listGetterAdder(Map<K, List<E>> listMap, K key, E element) {
         List<E> list = listGetter(listMap, key);
         list.add(element);
     }

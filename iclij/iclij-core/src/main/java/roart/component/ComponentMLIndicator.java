@@ -146,7 +146,7 @@ public class ComponentMLIndicator extends ComponentML {
         for (List meta : param.getResultMetaArray()) {
             int returnSize = (int) meta.get(2);
 
-            if (positions != null && positions.contains(count)) {
+            if (positions == null || positions.contains(count)) {
                 Object[] keys = new Object[2];
                 keys[0] = PipelineConstants.MLINDICATOR;
                 keys[1] = count;
@@ -279,6 +279,7 @@ public class ComponentMLIndicator extends ComponentML {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         Map<String, Object> resultMap = param.getResultMap();
+        Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         int resultIndex = 0;
         int count = 0;
         for (ResultMeta meta : param.getResultMeta()) {
@@ -319,7 +320,7 @@ public class ComponentMLIndicator extends ComponentML {
                     continue;
                 }
                 boolean incThreshold = (valFuture / valNow - 1) >= param.getThreshold();
-                List<Object> list = (List<Object>) resultMap.get(key);
+                List<Object> list = (List<Object>) aResultMap.get(key);
                 if (list == null) {
                     continue;
                 }
