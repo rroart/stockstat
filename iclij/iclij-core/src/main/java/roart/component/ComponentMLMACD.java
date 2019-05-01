@@ -289,6 +289,8 @@ public class ComponentMLMACD extends ComponentML {
     @Override
     public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
         MLMACDData param = (MLMACDData) componentparam;
+        Map<String, Object> resultMap = param.getResultMap();
+        Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;
         int count = 0;
@@ -326,13 +328,16 @@ public class ComponentMLMACD extends ComponentML {
                 if (mainList == null) {
                     continue;
                 }
-                List<Object> list = (List<Object>) param.getResultMap().get(key);
+                List<Object> list = (List<Object>) aResultMap.get(key);
                 if (list == null) {
                     continue;
                 }
                 String tfpn = (String) list.get(resultIndex);
                 if (tfpn == null) {
                     continue;
+                }
+                if (offsetMap == null) {
+                    int jj = 0;
                 }
                 List<Double> off = offsetMap.get(key);
                 if (off == null) {
