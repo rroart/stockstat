@@ -238,6 +238,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
                     fitness3 = (fitness + fitness2) / fitnesses;
                 }
                 incdecFitness = fitness3;
+                log.info("Fit {} {}", fitness, fitness2);
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
         } catch (Exception e) {
