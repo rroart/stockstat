@@ -170,10 +170,12 @@ public class ComponentPredictor extends ComponentML {
             if (list.isEmpty()) {
                 continue;
             }
+            /*
             if (list0.isEmpty()) {
                 continue;
             }
-            if (list0.get(0) != null) {
+            */
+            if (list.get(0) != null) {
                 list0.add(new MyElement(key, (Double) list.get(0)));
             }
             //list1.add(new MyElement(key, list.get(1)));
@@ -189,6 +191,8 @@ public class ComponentPredictor extends ComponentML {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM);
+        TensorflowLSTMConfig config = new TensorflowLSTMConfig(5, 5, 5);
+        chromosome.setConfig(config);
         return improve(param, chromosome);
         /*
         log.info("Component not impl {}", this.getClass().getName());
