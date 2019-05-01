@@ -34,6 +34,14 @@ public class PredictorChromosome extends ConfigMapChromosome {
         super(confList, param, profitdata, market, positions, component);
     }
 
+    public TensorflowLSTMConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(TensorflowLSTMConfig config) {
+        this.config = config;
+    }
+
     @Override
     public double getFitness()
             throws JsonParseException, JsonMappingException, IOException {
