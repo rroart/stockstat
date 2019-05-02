@@ -174,7 +174,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             int verificationdays = param.getInput().getConfig().verificationDays();
             boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
             Component component = ComponentFactory.factory(componentName);
-            boolean evolve = component.wantEvolve(param.getInput().getConfig());
+            boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
             //ProfitData profitdata = new ProfitData();
             myData.profitData = profitdata;
             boolean myevolve = component.wantImproveEvolve();
