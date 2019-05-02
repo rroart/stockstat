@@ -604,7 +604,7 @@ public class FindProfitAction extends Action {
         }
         ProfitInputData input = new ProfitInputData();
         input.setConfMap(okConfMap);
-        input.setListMap(listMap);
+        input.setListMap(okListMap);
         return input;
     }
 
