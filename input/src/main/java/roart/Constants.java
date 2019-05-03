@@ -2,30 +2,40 @@ package roart;
 
 public class Constants {
 
-    public final static String ID = "id";
-    public final static String MARKETID = "marketid";
-    public final static String NAME = "name";
-    public final static String DATE = "date";
-    public final static String INDEXVALUE = "indexvalue";
-    public final static String INDEXVALUELOW = "indexvaluelow";
-    public final static String INDEXVALUEHIGH = "indexvaluehigh";
-    public final static String CURRENCY = "currency";
-    public final static String PRICE = "price";
-    public final static String PRICELOW = "pricelow";
-    public final static String PRICEHIGH = "pricehigh";
-    public final static String VOLUME = "volume";
-    public final static String PERIOD1 = "period1";
-    public final static String PERIOD2 = "period2";
-    public final static String PERIOD3 = "period3";
-    public final static String PERIOD4 = "period4";
-    public final static String PERIOD5 = "period5";
-    public final static String PERIOD6 = "period6";
-    public final static String PERIOD7 = "period7";
-    public final static String PERIOD8 = "period8";
-    public final static String PERIOD9 = "period9";
-    //    public final static String
-    public final static String MARKET = "market";
-    public final static String META = "meta";
-    public final static String ROWS = "rows";
-    public final static String ROW = "row";
+    public static final String ALTID = "altid";
+    public static final String ID = "id";
+    public static final String MARKETID = "marketid";
+    public static final String NAME = "name";
+    public static final String DATE = "date";
+    public static final String INDEXVALUE = "indexvalue";
+    public static final String INDEXVALUELOW = "indexvaluelow";
+    public static final String INDEXVALUEHIGH = "indexvaluehigh";
+    public static final String CURRENCY = "currency";
+    public static final String PRICE = "price";
+    public static final String PRICELOW = "pricelow";
+    public static final String PRICEHIGH = "pricehigh";
+    public static final String VOLUME = "volume";
+    public static final String OTHERALTID = "otheraltid";
+    public static final String OTHERID = "otherid";
+    public static final String OTHERMARKET = "othermarket";
+    public static final String PERIOD1 = "period1";
+    public static final String PERIOD2 = "period2";
+    public static final String PERIOD3 = "period3";
+    public static final String PERIOD4 = "period4";
+    public static final String PERIOD5 = "period5";
+    public static final String PERIOD6 = "period6";
+    public static final String PERIOD7 = "period7";
+    public static final String PERIOD8 = "period8";
+    public static final String PERIOD9 = "period9";
+    public static final String ORDER = "order";
+    public static final String RESET = "reset";
+    // public static final String RECORD = "record";
+    public static final String TYPE = "type";
+    public static final String VALUE = "value";
+    //    public static final String
+    public static final String MARKET = "market";
+    public static final String META = "meta";
+    public static final String ROWS = "rows";
+    public static final String ROW = "row";
+    public static final String RELATIONROW = "relationrow";
 }
