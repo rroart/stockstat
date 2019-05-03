@@ -119,7 +119,7 @@ public class ImproveProfitAction extends Action {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            List<IncDecItem> currentIncDecs = ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
+            List<IncDecItem> currentIncDecs = null; // ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
             if (currentIncDecs == null || currentIncDecs.isEmpty() || timings.isEmpty()) {
                 List<String> componentList = ServiceUtil.getImproveProfitComponents(config);
                 Map<String, Component> componentMap = FindProfitAction.getComponentMap(componentList, market);
