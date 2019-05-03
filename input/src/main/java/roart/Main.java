@@ -308,9 +308,9 @@ public class Main {
                 relation.setOtherId(new String(otherid));
             }
             if (othermarket == null || othermarket.equals("-")) {
-                relation.setMarket(null);
+                relation.setOtherMarket(null);
             } else {
-                relation.setMarket(new String(othermarket));
+                relation.setOtherMarket(new String(othermarket));
             }
             relation.setRecord(LocalDate.now());
             if (type == null || type.equals("-")) {
@@ -319,9 +319,9 @@ public class Main {
                 relation.setType(new String(type));
             }
             if (value == null || value.equals("-")) {
-                relation.setType(null);
+                relation.setValue(null);
             } else {
-                relation.setType(new String(value));
+                relation.setValue(Double.valueOf(value));
             }
 
         }
