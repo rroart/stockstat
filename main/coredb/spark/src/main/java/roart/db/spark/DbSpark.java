@@ -135,7 +135,9 @@ public class DbSpark {
                 String period7 = row.getAs("period7");
                 String period8 = row.getAs("period8");
                 String period9 = row.getAs("period9");
-                return new MetaItem(marketid, period1, period2, period3, period4, period5, period6, period7, period8, period9);
+                String priority = row.getAs("priority");
+                String reset = row.getAs("reset");
+                return new MetaItem(marketid, period1, period2, period3, period4, period5, period6, period7, period8, period9, priority, reset);
             }
         }
         return null;

@@ -31,6 +31,7 @@
 	<mapping class="roart.db.model.IncDec"/>
 	<mapping class="roart.db.model.Config"/>
 	<mapping class="roart.db.model.Timing"/>
+	<mapping class="roart.db.model.Relation"/>
 
     </session-factory>
 

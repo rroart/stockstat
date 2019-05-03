@@ -47,6 +47,10 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
     private String period8;
     @Column
     private String period9;
+    @Column
+    private String priority;
+    @Column
+    private String reset;
 
     public String getMarketid() {
         return marketid;
@@ -126,6 +130,22 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
 
     public void setPeriod9(String period9) {
         this.period9 = period9;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getReset() {
+        return reset;
+    }
+
+    public void setReset(String reset) {
+        this.reset = reset;
     }
 
     @Transient
