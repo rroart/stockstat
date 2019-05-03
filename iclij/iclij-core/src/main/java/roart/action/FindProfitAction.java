@@ -574,7 +574,7 @@ public class FindProfitAction extends Action {
         return componentMap;
     }
 
-    Map<String, List<Integer>> createComponentPositionListMap(Map<Object[], List<MemoryItem>> okListMap) {
+    public Map<String, List<Integer>> createComponentPositionListMap(Map<Object[], List<MemoryItem>> okListMap) {
         Map<String, List<Integer>> listComponent = new HashMap<>();
         for (Object[] keys : okListMap.keySet()) {
             String component = (String) keys[0];

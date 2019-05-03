@@ -197,8 +197,10 @@ public class ConfigMapChromosome extends AbstractChromosome {
             ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap);        
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
+            Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
             inputdata.setNameMap(new HashMap<>());
-            
+            List<Integer> positions = listComponent.get(componentName);
+
             ComponentData componentData2 = component.handle(market, (ComponentData) param, profitdata, positions, evolve, map);
             component.calculateIncDec(componentData2, profitdata, positions);
             
