@@ -327,12 +327,11 @@ public class MLMACD extends Aggregator {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
                             Map<double[], Double> map = mapMap.get(mapName);
-                            if (map == null) {
-                                log.error("map null {}", mapName);
-                                continue;
+                            Map<String, Long> countMap = null;
+                            if (map != null) {
+                                IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
+                                countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                             }
-                            IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
-                            Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                             // make OO of this, create object
                             Object[] meta = new Object[9];
                             meta[0] = mldao.getName();
@@ -349,10 +348,11 @@ public class MLMACD extends Aggregator {
                             resultMeta.setSubType(subType.getType());
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
+                            getResultMetas().add(resultMeta);
 
                             Map<String, double[]> map2 = mapIdMap.get(mapName);
                             log.debug("map name {}", mapName);
-                            if (map == null || mapMap.get(mapName) == null) {
+                            if (map == null || map2 == null || map2.isEmpty()) {
                                 log.error("map null and continue? {}", mapName);
                                 continue;
                             }
@@ -362,18 +362,20 @@ public class MLMACD extends Aggregator {
                             LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime, map2, labelMapShort);  
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
-                            probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
-                            meta[6] = result.getAccuracy();
-                            resultMeta.setTestAccuracy(result.getAccuracy());
-                            getResultMetas().add(resultMeta);
 
                             Map<String, Long> countMap2 = null;
-                            if (classifyResult != null) {
+                            if (classifyResult != null && !classifyResult.isEmpty()) {
                                 countMap2 = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
                             }
                             if (countMap2 == null) {
+				testCount++;
                                 continue;
                             }
+                            
+                            probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
+                            meta[6] = result.getAccuracy();
+                            resultMeta.setTestAccuracy(result.getAccuracy());
+
                             addEventRow(subType, countMap2);
                             handleResultMeta(testCount, offsetMap, countMap);
                             testCount++;
@@ -415,12 +417,11 @@ public class MLMACD extends Aggregator {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
                             Map<double[], Double> map = mapMap.get(mapName);
-                            if (map == null) {
-                                log.error("map null {}", mapName);
-                                continue;
-                            }
-                            IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
-                            Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
+                            Map<String, Long> countMap = null;
+                            if (map != null) {
+				IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
+				countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));
+			    }
                             // make OO of this, create object
                             Object[] meta = new Object[9];
                             meta[0] = mldao.getName();
@@ -441,7 +442,7 @@ public class MLMACD extends Aggregator {
 
                             Map<String, double[]> map2 = mapIdMap.get(mapName);
                             log.debug("map name {}", mapName);
-                            if (map == null || map2 == null || map2.isEmpty()|| mapMap.get(mapName) == null) {
+                            if (map == null || map2 == null || map2.isEmpty()) {
                                 log.warn("Map null and continue? {}", mapName);
                                 continue;
                             }
@@ -467,15 +468,17 @@ public class MLMACD extends Aggregator {
                 Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
                 Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
                 mapResult2.put(mapType, classifyResult);
-                probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
-                handleResultMetaAccuracy(testCount, result);
                 Map<String, Long> countMap2 = null;
-                if (classifyResult != null) {
+                if (classifyResult != null && !classifyResult.isEmpty()) {
                     countMap2 = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
                 }
                 if (countMap2 == null) {
                     continue;
                 }
+                
+                probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
+                handleResultMetaAccuracy(testCount, result);
+
                 addEventRow(subType, countMap2);
                 Map<String, double[]> offsetMap = mapIdMap.get(subType.getType());
                 handleResultMeta(testCount, offsetMap, countMap2);
@@ -614,7 +617,7 @@ public class MLMACD extends Aggregator {
     private Map<String, Map<String, double[]>> getNewestPosNeg(Map<Double, String> labelMapShort) {
         // calculate sections and do ML
         // a map from h/m + com/neg/sub to map<id, values>
-        Map<String, Map<String, double[]>> mapIdMap= new HashMap<>();
+        Map<String, Map<String, double[]>> mapIdMap = new HashMap<>();
         for (Entry<String, Double[][]> entry : macdListMap.entrySet()) {
             Double[][] list = entry.getValue();
             Double[] origMain = Arrays.copyOf(list[0], list[0].length);
@@ -658,6 +661,7 @@ public class MLMACD extends Aggregator {
                             countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
                         }
                         if (countMap == null) {
+                            testCount++;
                             continue;
                         }
                         addEventRow(subType, countMap);
@@ -909,6 +913,10 @@ public class MLMACD extends Aggregator {
         StringBuilder me1 = new StringBuilder();
         StringBuilder me2 = new StringBuilder();
         for (int i = end - 3; i <= end + conf.getMACDDaysAfterZero(); i++) {
+            if ( i < 0 ) {
+                int jj = 0;
+                return;
+            }
             me1.append(values[i] + " ");
             me2.append(array[i] + " ");
         }
