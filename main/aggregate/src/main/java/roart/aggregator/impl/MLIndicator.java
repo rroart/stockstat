@@ -305,9 +305,11 @@ public class MLIndicator extends Aggregator {
                     resultMeta1.setModelName(model1.getName());
                     resultMeta1.setReturnSize(model1.getReturnSize());
                     resultMeta1.setLearnMap(countMap1);
+                    getResultMetas().add(resultMeta1);
                     Map<String, double[]> map = indicatorMap3;
                     if (map == null) {
                         log.error("map null ");
+                        testCount++;
                         continue;
                     } else {
                         log.info("keyset {}", map.keySet());
@@ -318,7 +320,6 @@ public class MLIndicator extends Aggregator {
                     probabilityMap.put(mldao1.getName() + model1.getId(), result.getAccuracy());
                     meta1[4] = result.getAccuracy();
                     resultMeta1.setTestAccuracy(result.getAccuracy());
-                    getResultMetas().add(resultMeta1);
                     mapResult.put(model1, classifyResult);
                     IndicatorUtils.filterNonExistingClassifications(labelMapShort, classifyResult);
                     Map<String, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
@@ -540,6 +541,7 @@ public class MLIndicator extends Aggregator {
                 Map<String, double[]> map = indicatorMap3;
                 if (map == null) {
                     log.error("map null ");
+                    testCount++;
                     continue;
                 } else {
                     log.info("keyset {}", map.keySet());
