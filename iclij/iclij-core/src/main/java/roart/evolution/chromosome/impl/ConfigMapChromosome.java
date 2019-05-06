@@ -187,6 +187,9 @@ public class ConfigMapChromosome extends AbstractChromosome {
             List<MemoryItem> memories;
             try {
                 memories = component.calculateMemory(componentData);
+                if (memories == null || memories.isEmpty()) {
+                    int jj = 0;
+                }
                 myData.memoryItems.addAll(memories);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -240,7 +243,13 @@ public class ConfigMapChromosome extends AbstractChromosome {
                     fitness3 = (fitness + fitness2) / fitnesses;
                 }
                 incdecFitness = fitness3;
-                log.info("Fit {} {}", fitness, fitness2);
+                double fitness4 = 0;
+                int sum = listDecBoolean.size() + listIncBoolean.size();
+                if (sum > 0) {
+                    fitness4 = ((double)(count + count2)) / sum;
+                }
+                incdecFitness = fitness4;
+                log.info("Fit {} {} {} {} {}", fitness, fitness2, fitness3, fitness4, sum);
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
         } catch (Exception e) {
