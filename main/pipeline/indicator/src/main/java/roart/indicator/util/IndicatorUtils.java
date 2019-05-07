@@ -268,7 +268,8 @@ public class IndicatorUtils {
 
         // for more extra end
         // TODO change
-        for (int j = futureDays; j < tableDays; j += intervalDays) {
+        int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
+        for (int j = futureDays; j < tableDays - deltas; j += intervalDays) {
             Map<String, Double[]> indicatorMap = new HashMap<>();
             for (String id : listList.get(0).keySet()) {
                 Double[] result = new Double[0];
