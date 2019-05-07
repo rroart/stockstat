@@ -263,7 +263,9 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 int jj = 0;
                 continue;
             }
-            fitness += value;
+            if (!value.isNaN()) {
+                fitness += value;
+            }
         }
         if (!memoryItems.isEmpty()) {
             fitness = fitness / memoryItems.size();
