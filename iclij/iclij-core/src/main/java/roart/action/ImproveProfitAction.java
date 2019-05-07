@@ -422,22 +422,27 @@ public class ImproveProfitAction extends Action {
             List<MemoryItem> memoryList = listMap.get(keys);
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
             if (confidences.isEmpty()) {
-                continue;
+                int jj = 0;
+                //continue;
             }
             confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
             Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
             if (!minOpt.isPresent()) {
-                continue;
+                int jj = 0;
+                //continue;
             }
-            Double min = minOpt.get();
+            Double min = 0.0;
+            if (minOpt.isPresent()) {
+                min = minOpt.get();
+            }
             // do the bad ones
             // do not yet improve on the good enough ones
             if (false /*min >= market.getConfidence()*/) {
                 continue;
             }
-            Optional<Double> maxOpt = confidences.parallelStream().reduce(Double::max);
-            Double max = maxOpt.get();
-            System.out.println("Mark " + market.getConfig().getMarket() + " " + keys[0] + " " + min + " " + max );
+            //Optional<Double> maxOpt = confidences.parallelStream().reduce(Double::max);
+            //Double max = maxOpt.get();
+            //System.out.println("Mark " + market.getConfig().getMarket() + " " + keys[0] + " " + min + " " + max );
             //Double conf = market.getConfidence();
             //System.out.println(conf);
             badListMap.put(keys, listMap.get(keys));
