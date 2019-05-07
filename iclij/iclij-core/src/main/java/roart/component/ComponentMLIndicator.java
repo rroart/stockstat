@@ -138,6 +138,8 @@ public class ComponentMLIndicator extends ComponentML {
     @Override
     public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
         MLIndicatorData param = (MLIndicatorData) componentparam;
+        Map<String, Object> resultMap = param.getResultMap();
+        Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         int resultIndex = 0;
         int count = 0;
         if (param.getResultMetaArray() == null) {
@@ -156,7 +158,7 @@ public class ComponentMLIndicator extends ComponentML {
                     if (mainList == null) {
                         continue;
                     }
-                    List<Object> list = (List<Object>) param.getResultMap().get(key);
+                    List<Object> list = (List<Object>) aResultMap.get(key);
                     if (list == null) {
                         continue;
                     }
