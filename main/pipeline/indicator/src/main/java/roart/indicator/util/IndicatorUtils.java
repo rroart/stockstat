@@ -269,6 +269,9 @@ public class IndicatorUtils {
         // for more extra end
         // TODO change
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
+        if (tableDays < deltas) {
+            deltas = 0;
+        }
         for (int j = futureDays; j < tableDays - deltas; j += intervalDays) {
             Map<String, Double[]> indicatorMap = new HashMap<>();
             for (String id : listList.get(0).keySet()) {
@@ -296,16 +299,26 @@ public class IndicatorUtils {
         retobj[0] = dayIndicatorMap;
         retobj[1] = indicatorMinMax;
         retobj[2] = listList;
+        if (indicatorMinMax == null || indicatorMinMax.length == 1) {
+            int jj = 0;
+        }
+        if (dayIndicatorMap == null || dayIndicatorMap.isEmpty()) {
+            int jj = 0;
+        }
         return retobj;
     }
 
     private static void findMinMax(int arraySize, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
             List<Double>[] indicatorLists, List<Double>[] indicatorMinMax) {
+        try {
         if (!dayIndicatorMap.isEmpty()) {
             for (int i = 0; i < arraySize; i++) {
                 indicatorMinMax[i].add(Collections.min(indicatorLists[i]));
                 indicatorMinMax[i].add(Collections.max(indicatorLists[i]));
             }
+        }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
         }
     }
 
