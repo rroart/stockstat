@@ -68,12 +68,12 @@ public class ComponentMLMACD extends ComponentML {
     public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) {
         //if (true) return;
         //System.out.println(resultMaps.keySet());
-  
+
         MLMACDData param = new MLMACDData(componentparam);
 
         int daysafterzero = (int) param.getService().conf.getMACDDaysAfterZero();
         param.setFuturedays(daysafterzero);
-        
+
         handle2(market, param, profitdata, positions, evolve, aMap);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
@@ -86,7 +86,7 @@ public class ComponentMLMACD extends ComponentML {
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         }
-   
+
         String localMl = param.getInput().getConfig().getFindProfitMLMACDMLConfig();
         String ml = param.getInput().getConfig().getEvolveMLMLConfig();
         MLConfigs marketMlConfig = market.getMlconfig();
@@ -117,8 +117,8 @@ public class ComponentMLMACD extends ComponentML {
         param.getAndSetCategoryValueMap();
         //Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + param.getCategory()).get(PipelineConstants.LIST);
         //System.out.println("k2 " + categoryValueMap.keySet());
-    */
-        
+         */
+
         //calculateIncDec(param.getService(), positions, profitdata, param);
     }
 
@@ -139,6 +139,9 @@ public class ComponentMLMACD extends ComponentML {
         for (List meta : param.getResultMetaArray()) {
             int returnSize = (int) meta.get(2);
 
+            if (positions == null) {
+                int jj = 0;
+            }
             if (positions == null || positions.contains(count)) {
                 Object[] keys = new Object[2];
                 keys[0] = PipelineConstants.MLMACD;
@@ -202,7 +205,7 @@ public class ComponentMLMACD extends ComponentML {
         nns.add(IclijConfigConstants.EVOLVEMLLR);
         nns.add(IclijConfigConstants.EVOLVEMLMCP);
         nns.add(IclijConfigConstants.EVOLVEMLOVR);
-        */
+         */
         return nns;
     }
 
@@ -224,6 +227,10 @@ public class ComponentMLMACD extends ComponentML {
     static IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, List<MemoryItem> memoryList, Map<String, String> nameMap, LocalDate date) {
         if (memoryList == null) {
             int jj = 0;
+            System.out.println("Key " + key);
+            if (map != null) {
+                System.out.println("Keys" + map.keySet());
+            }
         }
         MemoryItem memory = memoryList.get(0);
         IncDecItem val = map.get(key);
@@ -245,11 +252,11 @@ public class ComponentMLMACD extends ComponentML {
 
     @Override
     public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
-	ComponentData param = new ComponentData(componentparam);
+        ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapChromosome chromosome = new MLMACDChromosome(param, profitdata, confList, market, positions, PipelineConstants.MLMACD);
         return improve(param, chromosome);
-        
+
         /*
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
@@ -275,7 +282,7 @@ public class ComponentMLMACD extends ComponentML {
             log.error(Constants.EXCEPTION, e);
         }
         return new HashMap<>();
-        */
+         */
     }
 
     @Override
@@ -302,7 +309,7 @@ public class ComponentMLMACD extends ComponentML {
             /*
             Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
             Map<String, Integer> countMapClass = (Map<String, Integer>) meta.get(7);
-            */
+             */
             Map<String, Integer> countMapLearn = (Map<String, Integer>) param.getResultMeta().get(count).getLearnMap();
             Map<String, Integer> countMapClass = (Map<String, Integer>) param.getResultMeta().get(count).getClassifyMap();
             long total = 0;
@@ -331,6 +338,9 @@ public class ComponentMLMACD extends ComponentML {
                 List<Object> list = (List<Object>) aResultMap.get(key);
                 if (list == null) {
                     continue;
+                }
+                if (list.get(resultIndex) != null && !(list.get(resultIndex) instanceof String)) {
+                    int jj = 0;
                 }
                 String tfpn = (String) list.get(resultIndex);
                 if (tfpn == null) {
@@ -432,32 +442,45 @@ public class ComponentMLMACD extends ComponentML {
                 fpClassOrig = countMapClass.containsKey(ServiceUtilConstants.FP) ? countMapClass.get(ServiceUtilConstants.FP) : 0;
                 fnClassOrig = countMapClass.containsKey(ServiceUtilConstants.FN) ? countMapClass.get(ServiceUtilConstants.FN) : 0;
             }
-            Integer tpSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.TP) ? countMapLearn.get(ServiceUtilConstants.TP) : 0;
-            Integer tnSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.TN) ? countMapLearn.get(ServiceUtilConstants.TN) : 0;
-            Integer fpSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.FP) ? countMapLearn.get(ServiceUtilConstants.FP) : 0;
-            Integer fnSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.FN) ? countMapLearn.get(ServiceUtilConstants.FN) : 0;
-            boolean doTP = countMapLearn.containsKey(ServiceUtilConstants.TP);
-            boolean doFP = countMapLearn.containsKey(ServiceUtilConstants.FP);
-            boolean doTN = countMapLearn.containsKey(ServiceUtilConstants.TN);
-            boolean doFN = countMapLearn.containsKey(ServiceUtilConstants.FN);
             int keys = 0;
-            if (doTP) {
-                keys++;
-            }
-            if (doFP) {
-                keys++;
-            }
-            if (doTN) {
-                keys++;
-            }
-            if (doFN) {
-                keys++;
+            Integer tpSizeOrig = null;
+            Integer tnSizeOrig = null;
+            Integer fpSizeOrig = null;
+            Integer fnSizeOrig = null;
+            boolean doTP = false;
+            boolean doFP = false;
+            boolean doTN = false;
+            boolean doFN = false;
+            if (countMapLearn != null) {
+                tpSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.TP) ? countMapLearn.get(ServiceUtilConstants.TP) : 0;
+                tnSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.TN) ? countMapLearn.get(ServiceUtilConstants.TN) : 0;
+                fpSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.FP) ? countMapLearn.get(ServiceUtilConstants.FP) : 0;
+                fnSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.FN) ? countMapLearn.get(ServiceUtilConstants.FN) : 0;
+                doTP = countMapLearn.containsKey(ServiceUtilConstants.TP);
+                doFP = countMapLearn.containsKey(ServiceUtilConstants.FP);
+                doTN = countMapLearn.containsKey(ServiceUtilConstants.TN);
+                doFN = countMapLearn.containsKey(ServiceUtilConstants.FN);
+                if (doTP) {
+                    keys++;
+                }
+                if (doFP) {
+                    keys++;
+                }
+                if (doTN) {
+                    keys++;
+                }
+                if (doFN) {
+                    keys++;
+                }
             }
             Integer totalClass = null;
             if (countMapClass != null) {
                 totalClass = tpClassOrig + tnClassOrig + fpClassOrig + fnClassOrig;
             }
-            Integer totalSize = tpSizeOrig + tnSizeOrig + fpSizeOrig + fnSizeOrig;
+            Integer totalSize = null;
+            if (countMapLearn != null) {
+                totalSize = tpSizeOrig + tnSizeOrig + fpSizeOrig + fnSizeOrig;
+            }
             Double learnConfidence = null;
             if (countMapClass != null) {
                 learnConfidence = keys != 0 && totalClass != 0 && totalSize != 0 ? (double) (
@@ -499,7 +522,7 @@ public class ComponentMLMACD extends ComponentML {
             }
             memoryList.add(memory);
             if (param.isDoPrint()) {
-            System.out.println(memory);
+                System.out.println(memory);
             }
             resultIndex += returnSize;
             count++;
@@ -526,6 +549,6 @@ public class ComponentMLMACD extends ComponentML {
     public String getPipeline() {
         return PipelineConstants.MLMACD;
     }
-    
+
 }
 
