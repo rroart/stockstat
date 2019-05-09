@@ -157,6 +157,7 @@ public class EvolutionService {
             return retlist;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
+            log.info("Market {}", conf.getMarket());
             return new ArrayList<>();
         }
     }
