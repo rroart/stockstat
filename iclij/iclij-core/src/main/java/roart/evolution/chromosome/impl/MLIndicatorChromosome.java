@@ -9,6 +9,7 @@ import roart.common.config.MyMyConfig;
 import roart.component.model.ComponentData;
 import roart.config.Market;
 import roart.evolution.chromosome.AbstractChromosome;
+import roart.evolution.species.Individual;
 import roart.service.model.ProfitData;
 
 public class MLIndicatorChromosome extends ConfigMapChromosome {
@@ -51,5 +52,23 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
         return chromosome;
     }
     
+    @Override
+    public Individual crossover(AbstractChromosome other) {
+        ComponentData newparam = new ComponentData(param);
+        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(confList, newparam, profitdata, market, positions, componentName);
+        Random rand = new Random();
+        for (int conf = 0; conf < confList.size(); conf++) {
+            String confName = confList.get(conf);
+            if (rand.nextBoolean()) {
+                chromosome.getMap().put(confName, this.getMap().get(confName));
+            } else {
+                chromosome.getMap().put(confName, ((ConfigMapChromosome) other).getMap().get(confName));
+            }
+        }
+        if (!chromosome.validate()) {
+            chromosome.fixValidation();
+        }
+        return new Individual(chromosome);
+    }
 
 }
