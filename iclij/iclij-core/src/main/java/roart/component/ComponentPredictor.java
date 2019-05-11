@@ -95,7 +95,7 @@ public class ComponentPredictor extends ComponentML {
         }
         param.setFuturedays(futuredays);
 
-        handle2(market, param, profitdata, positions, evolve, new HashMap<>());
+        handle2(market, param, profitdata, positions, evolve, aMap);
         
         Map<String, Object> maps = param.getResultMap();
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);
@@ -192,6 +192,7 @@ public class ComponentPredictor extends ComponentML {
         List<String> confList = getConfList();
         PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM);
         TensorflowLSTMConfig config = new TensorflowLSTMConfig(5, 5, 5);
+        config.full = true;
         chromosome.setConfig(config);
         return improve(param, chromosome);
         /*

@@ -49,6 +49,7 @@ public class PredictorChromosome extends ConfigMapChromosome {
         Map<String, Object> map = new HashMap<>();
         String string = JsonUtil.convert(config);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, string);
+        param.getService().conf.getConfigValueMap().putAll(map);
         setMap(map);
         return super.getFitness();
     }
@@ -138,5 +139,16 @@ public class PredictorChromosome extends ConfigMapChromosome {
         }
 
     }
+   
+    @Override
+    public boolean validate() {
+        return config.full == true;
+    }
     
+    @Override
+    public void fixValidation() { 
+        config.full = true;
+        log.error("Config full was false");
+    }
+
 }
