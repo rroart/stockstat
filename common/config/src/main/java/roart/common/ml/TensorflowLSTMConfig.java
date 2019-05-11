@@ -57,6 +57,14 @@ public class TensorflowLSTMConfig extends TensorflowConfig {
         super(MLConstants.LSTM);
     }
 
+    public TensorflowLSTMConfig(Integer epochs, Integer windowsize, Integer horizon, boolean full) {
+        super(MLConstants.LSTM);
+        this.epochs = epochs;
+        this.windowsize = windowsize;
+        this.horizon = horizon;
+        this.full = full;
+    }
+
     private void generateEpochs() {
         epochs = 1 + random.nextInt(MAX_EPOCHS);
     }
@@ -101,6 +109,7 @@ public class TensorflowLSTMConfig extends TensorflowConfig {
     public NeuralNetConfig crossover(NeuralNetConfig otherNN) {
         TensorflowLSTMConfig offspring = new TensorflowLSTMConfig(epochs, windowsize, horizon);
         TensorflowLSTMConfig other = (TensorflowLSTMConfig) otherNN;
+        offspring.full = other.full;
         if (random.nextBoolean()) {
             offspring.epochs = other.getEpochs();
         }
@@ -115,7 +124,7 @@ public class TensorflowLSTMConfig extends TensorflowConfig {
 
     @Override
     public NeuralNetConfig copy() {
-        return new TensorflowLSTMConfig(epochs, windowsize, horizon);
+        return new TensorflowLSTMConfig(epochs, windowsize, horizon, full);
     }
 
     @Override
