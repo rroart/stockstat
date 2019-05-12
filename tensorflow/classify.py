@@ -62,7 +62,7 @@ class Classify:
                 )
             
         #predictions = list(classifier.predict(input_fn=get_classifier_inputs)["classes"])
-        predictions = classifier.predict(input_fn=get_classifier_inputs)
+        #predictions = classifier.predict(input_fn=get_classifier_inputs)
         #for prediction in predictions:
         #    print(prediction)
         predictions = classifier.predict(input_fn=get_classifier_inputs)
