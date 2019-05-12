@@ -307,7 +307,7 @@ public class MLIndicator extends Aggregator {
                     resultMeta1.setLearnMap(countMap1);
                     getResultMetas().add(resultMeta1);
                     Map<String, double[]> map = indicatorMap3;
-                    if (map == null) {
+                    if (map == null || map.isEmpty()) {
                         log.error("map null ");
                         testCount++;
                         continue;
@@ -377,7 +377,7 @@ public class MLIndicator extends Aggregator {
                     resultMeta1.setLearnMap(countMap1);
                     getResultMetas().add(resultMeta1);
                     Map<String, double[]> map = indicatorMap3;
-                    if (map == null) {
+                    if (map == null || map.isEmpty()) {
                         log.error("map null ");
                         continue;
                     } else {

@@ -192,7 +192,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<String, double[]> map2,
             Map<Double, String> shortMap) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
-        if (map2 == null) {
+        if (map2 == null || map2.isEmpty()) {
             result.setCatMap(new HashMap<>());
             return result;
         }
