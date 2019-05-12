@@ -46,19 +46,19 @@ import roart.util.ServiceUtil;
     @Type(value = MLMACDChromosome.class, name = "roart.evolution.chromosome.impl.MLMACDChromosome") })  
 public class ConfigMapChromosome extends AbstractChromosome {
     private Map<String, Object> map = new HashMap<>();
-    
+
     protected List<String> confList;
-    
+
     protected ComponentData param;
-    
+
     protected ProfitData profitdata;
-    
+
     protected Market market;
-    
+
     protected List<Integer> positions;
-    
+
     protected String componentName;
-    
+
     public ConfigMapChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName) {
         this.confList = confList;
         this.param = param;
@@ -67,7 +67,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
         this.positions = positions;
         this.componentName = componentName;
     }
-    
+
     public Map<String, Object> getMap() {
         return map;
     }
@@ -122,7 +122,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             map.put(confName, d);
         }
     }
- 
+
     @Override
     public Individual crossover(AbstractChromosome other) {
         ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, param, profitdata, market, positions, componentName);
@@ -206,7 +206,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
             ComponentData componentData2 = component.handle(market, (ComponentData) param, profitdata, positions, evolve, map);
             component.calculateIncDec(componentData2, profitdata, positions);
-            
+
             List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
             List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
             List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
