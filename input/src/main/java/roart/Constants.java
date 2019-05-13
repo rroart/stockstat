@@ -27,7 +27,7 @@ public class Constants {
     public static final String PERIOD7 = "period7";
     public static final String PERIOD8 = "period8";
     public static final String PERIOD9 = "period9";
-    public static final String ORDER = "order";
+    public static final String PRIORITY = "priority";
     public static final String RESET = "reset";
     // public static final String RECORD = "record";
     public static final String TYPE = "type";

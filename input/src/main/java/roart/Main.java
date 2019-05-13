@@ -342,7 +342,7 @@ public class Main {
             Element period7Elem = (Element) elem.getElementsByTagName(Constants.PERIOD7).item(0);
             Element period8Elem = (Element) elem.getElementsByTagName(Constants.PERIOD8).item(0);
             Element period9Elem = (Element) elem.getElementsByTagName(Constants.PERIOD9).item(0);
-            Element orderElem = (Element) elem.getElementsByTagName(Constants.ORDER).item(0);
+            Element orderElem = (Element) elem.getElementsByTagName(Constants.PRIORITY).item(0);
             Element resetElem = (Element) elem.getElementsByTagName(Constants.RESET).item(0);
             String marketid = marketidElem.getTextContent();
             String period1 = null;
