@@ -35,7 +35,7 @@ public class RecommenderRSI extends Aggregator {
         String dateme = dt.format(conf.getdate());
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         //this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
-        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories);
+        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
         if (cat == null) {
             return;
         }

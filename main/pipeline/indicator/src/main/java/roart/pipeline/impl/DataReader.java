@@ -13,6 +13,7 @@ import roart.common.util.ArraysUtil;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
+import roart.stockutil.MetaUtil;
 import roart.stockutil.StockDao;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -83,7 +84,7 @@ public class DataReader extends Pipeline {
         boolean currentYear = false;
         if (category >= 0) {
             categoryTitle = marketData.periodtext[category];
-            currentYear = "cy".equals(categoryTitle);
+            currentYear = MetaUtil.currentYear(marketData, categoryTitle);
         }
         if (category == Constants.INDEXVALUECOLUMN) {
             categoryTitle = CategoryConstants.INDEX;
@@ -98,7 +99,7 @@ public class DataReader extends Pipeline {
         this.fillListMap = getReverseArrSparseFillHolesArr(conf, listMap);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
         this.truncFillListMap = ArraysUtil.getTruncListArr(this.fillListMap);
-        if (conf.wantPercentizedPriceIndex()) {
+        if (conf.wantPercentizedPriceIndex() && MetaUtil.normalPeriod(marketData, category, categoryTitle)) {
             this.base100ListMap = getBase100(this.listMap, categoryTitle);
             this.base100FillListMap = getBase100(this.fillListMap, categoryTitle);
             this.truncBase100ListMap = getBase100(this.truncListMap, categoryTitle, category);
@@ -129,7 +130,7 @@ public class DataReader extends Pipeline {
             if (value != null) {
                 Double[][] newValue = new Double[value.length][];
                 for (int i = 0; i < value.length; i++) {
-                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i], catTitle);
+                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i]);
                 }
                 aMap.put(entry.getKey(), newValue);
             }
@@ -144,7 +145,7 @@ public class DataReader extends Pipeline {
             if (value != null) {
                 double[][] newValue = new double[value.length][];
                 for (int i = 0; i < value.length; i++) {
-                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i], catTitle, cat);
+                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i]);
                 }
                 aMap.put(entry.getKey(), newValue);
             }

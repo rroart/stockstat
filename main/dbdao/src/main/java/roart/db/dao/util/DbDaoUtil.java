@@ -42,4 +42,14 @@ public class DbDaoUtil {
         return periodText;
     }
 
+    public static MetaItem getMeta(String market, MyMyConfig conf) {
+        MetaItem meta = null;
+        try {
+            meta = DbDao.getById(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return meta;
+    }
+    
 }

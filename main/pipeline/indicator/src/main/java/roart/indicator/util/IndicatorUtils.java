@@ -24,6 +24,7 @@ import roart.indicator.impl.IndicatorMACD;
 import roart.indicator.impl.IndicatorRSI;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
+import roart.model.MetaItem;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.data.ExtraData;
@@ -352,6 +353,9 @@ public class IndicatorUtils {
     private static int getExtraDataSize(MyMyConfig conf, ExtraData extraData, int arraySize,
             List<AbstractIndicator> allIndicators) throws Exception {
         if (extraData.pairDateMap != null) {
+            if (!extraData.pairDateMap.isEmpty()) {
+                int jj = 0;
+            }
             arraySize += 2 * extraData.pairDateMap.keySet().size();
             System.out.println("sizes " + arraySize);
         }
@@ -462,17 +466,20 @@ public class IndicatorUtils {
         return pipelineMap;
     }
 
-    public static AbstractCategory getWantedCategory(AbstractCategory[] categories) throws Exception {
-        List<String> wantedList = new ArrayList<>();
-        wantedList.add(CategoryConstants.PRICE);
-        wantedList.add(CategoryConstants.INDEX);
-        wantedList.add("cy");
+    public static AbstractCategory getWantedCategory(AbstractCategory[] categories, MetaItem meta) throws Exception {
+        String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
+        String[] priorities;
+        String priority = meta.getPriority();
+        if (priority != null) {
+            priorities = priority.split(",");            
+        } else {
+            priorities = defaultPriorities;
+        }
         AbstractCategory cat = null;
-        for (String wanted : wantedList) {
+        for (String aPriority : priorities) {
             for (AbstractCategory category : categories) {
-                if (cat == null && category.hasContent() && category.getTitle().equals(wanted)) {
-                    cat = category;
-                    break;
+                if (category.getTitle().equals(aPriority) && category.hasContent()) {
+                    return category;
                 }
             }
         }
@@ -503,6 +510,36 @@ public class IndicatorUtils {
             int cat = (int) pair.getSecond();
             if (StockUtil.hasStockValue(stocks, cat)) {
                 return cat;
+            }
+        }
+        return null;
+    }
+
+    public static Integer getWantedCategory(List<StockItem> stocks, MetaItem meta) throws Exception {
+        Integer[] defaultPris = { Constants.PRICECOLUMN, Constants.INDEXVALUECOLUMN };
+        String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
+        String[] priorities;
+        String priority = meta.getPriority();
+        if (priority != null) {
+            priorities = priority.split(",");            
+        } else {
+            priorities = defaultPriorities;
+        }
+        for (String aPriority : priorities) {
+            for (int i = 0; i < defaultPriorities.length; i++) {
+                if (defaultPriorities[i].equals(aPriority)) {
+                    if (StockUtil.hasStockValue(stocks, defaultPris[i])) {
+                        return defaultPris[i];
+                    }
+                }
+            }
+            String[] periods = meta.getPeriod();
+            for (int i = 0; i < periods.length; i++) {
+                if (aPriority.equals(periods[i])) {
+                    if (StockUtil.hasStockValue(stocks, i)) {
+                        return i;
+                    }                    
+                }
             }
         }
         return null;

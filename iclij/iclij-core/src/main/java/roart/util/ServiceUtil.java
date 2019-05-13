@@ -89,11 +89,12 @@ public class ServiceUtil {
         return medianValue;
     }
 
+    @Deprecated
     public static String getWantedCategory(Map<String, Map<String, Object>> maps, String type) throws Exception {
         List<String> wantedList = new ArrayList<>();
         wantedList.add(Constants.PRICE);
         wantedList.add(Constants.INDEX);
-        wantedList.add("cy");
+        //wantedList.add("cy");
         String cat = null;
         for (String wanted : wantedList) {
             Map<String, Object> map = maps.get(wanted);
@@ -114,12 +115,17 @@ public class ServiceUtil {
         List<String> wantedList = new ArrayList<>();
         wantedList.add(Constants.PRICE);
         wantedList.add(Constants.INDEX);
-        wantedList.add("cy");
+        //wantedList.add("cy");
         String cat = null;
         for (String wanted : wantedList) {
             Map<String, Object> map = maps.get(wanted + " " + type.toUpperCase());
             if (map != null) {
                 return wanted;
+            }
+        }
+        for (String key : maps.keySet()) {
+            if (key.endsWith(" " + type.toUpperCase())) {
+                return key.substring(0, key.length() - 1 - type.length());
             }
         }
         return cat;
@@ -203,6 +209,17 @@ public class ServiceUtil {
             lists.add(memories);
 
         }
+
+        List[] objects = new RelationUtil().method(componentInput);
+        
+        IclijServiceList incdecs = new IclijServiceList();
+        incdecs.setTitle("Incdecs");
+        incdecs.setList(objects[0]);
+
+        IclijServiceList relations = new IclijServiceList();
+        relations.setTitle("Relations");
+        relations.setList(objects[1]);
+
         print(result);
         return result;
     }
@@ -310,7 +327,7 @@ public class ServiceUtil {
         return currentIncDecs;
     }
 
-    private static IclijServiceList getHeader(String title) {
+    static IclijServiceList getHeader(String title) {
         IclijServiceList header = new IclijServiceList();
         header.setTitle(title);
         return header;
@@ -327,7 +344,7 @@ public class ServiceUtil {
         return subLists;
     }
 
-    private static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
+    static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
             List<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
         if (!listInc.isEmpty()) {
@@ -665,7 +682,7 @@ public class ServiceUtil {
         retLists.add(resultMap);
 
         retLists.add(memories);
-        
+
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);

@@ -131,7 +131,7 @@ public class ControlService {
             Map<String, PeriodData> periodDataMap = new ServiceUtil().getPerioddatamap(markets,
                     marketdatamap);
 
-            Integer cat = IndicatorUtils.getWantedCategory(stocks, periodDataMap.get("cy"));
+            Integer cat = IndicatorUtils.getWantedCategory(stocks, marketdatamap.get(conf.getMarket()).meta);
             String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
             String catName = EvolutionService.getCatName(cat, periodText);
 

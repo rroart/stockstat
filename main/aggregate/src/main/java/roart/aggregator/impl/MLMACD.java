@@ -621,7 +621,7 @@ public class MLMACD extends Aggregator {
         for (Entry<String, Double[][]> entry : macdListMap.entrySet()) {
             Double[][] list = entry.getValue();
             Double[] origMain = Arrays.copyOf(list[0], list[0].length);
-            list[0] = ArraysUtil.getPercentizedPriceIndex(list[0], key);
+            list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
             Object[] objs = objectMap.get(entry.getKey());
             MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
             MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
@@ -772,7 +772,7 @@ public class MLMACD extends Aggregator {
             log.debug("t {}", Arrays.toString(list[0]));
             log.debug("listsize {}", list.length);
             if (conf.wantPercentizedPriceIndex() && list[0].length > 0) {
-                list[0] = ArraysUtil.getPercentizedPriceIndex(list[0], key, 0);
+                list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
             }
             log.debug("beg end {} {} {}", id, begOfArray.value, endOfArray.value);
             log.debug("list {} {} ", list.length, Arrays.asList(list));

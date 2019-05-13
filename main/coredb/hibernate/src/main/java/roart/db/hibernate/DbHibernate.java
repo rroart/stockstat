@@ -51,7 +51,7 @@ public class DbHibernate {
             //Double[] list = ArraysUtil.getArrayNonNullReverse(listMap.get(id));
             Double [] list = listMap.get(id);
             if (wantPercentizedPriceIndex) {
-                list = ArraysUtil.getPercentizedPriceIndex(list, key);
+                list = ArraysUtil.getPercentizedPriceIndex(list);
             }
             log.info("beg end " + id + " "+ key);
             //System.out.println("beg end " + begOfArray.value + " " + endOfArray.value);

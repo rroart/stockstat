@@ -124,60 +124,54 @@ public class ArraysUtil {
      * @return new array
      */
 
-    public static Double[] getPercentizedPriceIndex(Double[] list, String key) {
+    public static Double[] getPercentizedPriceIndex(Double[] list) {
         if (list == null) {
             return list;
         }
         Double[] retlist = new Double[list.length]; 
-        if ((CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key) || ("cy").equals(key)) {
-            int i = 0;
-            double first = 0;
-            for (i = 0; i < list.length; i ++) {
-                if (list[i] != null) {
-                    first = list[i];
-                    break;
-                }
+        int i = 0;
+        double first = 0;
+        for (i = 0; i < list.length; i ++) {
+            if (list[i] != null) {
+                first = list[i];
+                break;
             }
-            for (; i < list.length; i ++) {
-                if (list[i] != null) {
-                    retlist[i] = list[i]* 100 / first;
-                }
+        }
+        for (; i < list.length; i ++) {
+            if (list[i] != null) {
+                retlist[i] = list[i]* 100 / first;
             }
         }
         return retlist;
     }
 
-    public static double[] getPercentizedPriceIndex(double[] list, String key, int category) {
+    public static double[] getPercentizedPriceIndex(double[] list) {
         if (list.length == 0) {
             return list;
         }
-        return getPercentizedPriceIndex(list, key, category, list[0]);
+        return getPercentizedPriceIndex(list, list[0]);
     }
 
-    public static double[] getPercentizedPriceIndex(double[] list, String key, int category, double first) {
+    public static double[] getPercentizedPriceIndex(double[] list, double first) {
         if (list == null || list.length == 0) {
             return list;
         }
         double[] retlist = new double[list.length];
-        if (category < 0 || (CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key) || ("cy").equals(key)) {
-            int i = 0;
-            for (; i < list.length; i ++) {
-                retlist[i] = list[i] * 100 / first;
-            }
+        int i = 0;
+        for (; i < list.length; i ++) {
+            retlist[i] = list[i] * 100 / first;
         }
         return retlist;
     }
 
     public static boolean verifyPercentized(Double[] list, String key) {
-        if ((CategoryConstants.INDEX).equals(key) || (CategoryConstants.PRICE).equals(key)) {
-            if (list != null) {
-                if (list[0] == 100.0) {
-                    return true;
-                } else {
-                    System.out.println("Not rescaled");
-                    log.error("Not rescaled");
-                    return false;
-                }
+        if (list != null) {
+            if (list[0] == 100.0) {
+                return true;
+            } else {
+                System.out.println("Not rescaled");
+                log.error("Not rescaled");
+                return false;
             }
         }
         return true;

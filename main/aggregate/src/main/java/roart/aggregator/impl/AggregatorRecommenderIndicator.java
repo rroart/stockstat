@@ -48,10 +48,10 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList) throws Exception {
         super(conf, index, 0);
         this.disableList = disableList;
-       AbstractCategory cat = IndicatorUtils.getWantedCategory(categories);
-       if (cat == null) {
-           return;
-       }
+        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
+        if (cat == null) {
+            return;
+        }
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
         Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
         Map<String, Double[]> list0 = (Map<String, Double[]>) localResultMap.get(localResultMap.keySet().iterator().next()).get(PipelineConstants.LIST);

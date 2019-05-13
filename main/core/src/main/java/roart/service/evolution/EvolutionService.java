@@ -131,7 +131,7 @@ public class EvolutionService {
             }
             log.info("Datestocksize {}", datedstocks.size());
     
-            Integer cat = IndicatorUtils.getWantedCategory(stocks, periodDataMap.get("cy"));
+            Integer cat = IndicatorUtils.getWantedCategory(stocks, marketdatamap.get(conf.getMarket()).meta);
             if (cat == null) {
                 return new ArrayList<>();
             }
@@ -287,7 +287,7 @@ public class EvolutionService {
             }
             log.info("Datestocksize {}", datedstocks.size());
     
-            Integer cat = IndicatorUtils.getWantedCategory(stocks, periodDataMap.get("cy"));
+            Integer cat = IndicatorUtils.getWantedCategory(stocks, marketdatamap.get(conf.getMarket()).meta);
             if (cat == null) {
                 return new ArrayList<>();
             }
@@ -435,7 +435,7 @@ public class EvolutionService {
             }
             log.info("Datestocksize {}", datedstocks.size());
     
-            Integer cat = IndicatorUtils.getWantedCategory(stocks, periodDataMap.get("cy"));
+            Integer cat = IndicatorUtils.getWantedCategory(stocks, marketdatamap.get(conf.getMarket()).meta);
             if (cat == null) {
                 return new ArrayList<>();
             }

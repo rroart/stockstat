@@ -24,6 +24,7 @@ import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.Constants;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
+import roart.stockutil.MetaUtil;
 import roart.stockutil.StockDao;
 import roart.model.data.MarketData;
 import roart.stockutil.StockUtil;
@@ -101,7 +102,7 @@ public class ExtraReader extends Pipeline {
 
             boolean currentYear = false;
             if (category >= 0) {
-                currentYear = "cy".equals(marketData.periodtext[category]);
+                currentYear = MetaUtil.currentYear(marketData, marketData.periodtext[category]);
             }
         }
     }
@@ -155,6 +156,7 @@ public class ExtraReader extends Pipeline {
         marketdata.stocks = stocksId;
         String[] periodText = DbDaoUtil.getPeriodText(market, conf);
         marketdata.periodtext = periodText;
+        marketdata.meta = DbDao.getById(market, conf);
         Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocksId);
         // the main list, based on freshest or specific date.
 
@@ -177,6 +179,9 @@ public class ExtraReader extends Pipeline {
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
         int size = dateList.size() - 1;
         if (size - j < 0) {
+            int jj = 0;
+        }
+        if ((size - (j + (deltas - 1))) < 0) {
             int jj = 0;
         }
         Date date = dateList.get(size - j);

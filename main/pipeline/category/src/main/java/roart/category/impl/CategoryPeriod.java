@@ -3,7 +3,6 @@ package roart.category.impl;
 import java.util.List;
 import java.util.Map;
 
-import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.indicator.AbstractIndicator;
@@ -11,11 +10,11 @@ import roart.indicator.impl.IndicatorMACD;
 import roart.indicator.impl.IndicatorMove;
 import roart.indicator.impl.IndicatorRSI;
 import roart.model.StockItem;
-import roart.pipeline.Pipeline;
-import roart.predictor.impl.PredictorLSTM;
-import roart.result.model.ResultItemTableRow;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
+import roart.pipeline.Pipeline;
+import roart.result.model.ResultItemTableRow;
+import roart.stockutil.MetaUtil;
 import roart.stockutil.StockUtil;
 
 public class CategoryPeriod extends Category {
@@ -31,7 +30,9 @@ public class CategoryPeriod extends Category {
         period = i;
         createResultMap(conf, stocks);
         indicators.add(new IndicatorMove(conf, "Δ" + getTitle(), datedstocklists, period));
-        if (periodText.equals("cy")) {
+        String market = conf.getMarket();
+        MarketData marketData = marketdatamap.get(market);
+        if (MetaUtil.currentYear(marketData, periodText)) {
             indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), i, datareaders, false));
             indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), i, datareaders, false));
             cy = i;
