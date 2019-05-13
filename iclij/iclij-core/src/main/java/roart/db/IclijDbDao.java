@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.RelationItem;
 import roart.iclij.model.TimingItem;
 
 public class IclijDbDao {
@@ -21,6 +22,10 @@ public class IclijDbDao {
 
     public static List<TimingItem> getAllTiming() throws Exception {
         return TimingItem.getAll();        
+    }
+
+    public static List<RelationItem> getAllRelations() throws Exception {
+        return RelationItem.getAll();        
     }
 
 }
