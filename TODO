@@ -7,6 +7,7 @@ C: Change
 R: Reject
 
 Iclij
+T: componentdata usage parallell
 T: check mapmaps.put("ml")
 F: Timing add subcomponent for mls etc
 B: Flask predict stalls/hangs
@@ -147,6 +148,7 @@ T: Eureka setup/config
 T: Eureka wait for notify
 
 Front
+F: display task and kill button
 B: vaadin with errorview
 T/F: vaadin 10, or go for angular/reactredux?
 WF: Vaadin threads
@@ -176,7 +178,6 @@ B: my box import does not work
 B: nasdaq verify loop
 F: Use volume
 F: Add interest
-F: Stockstat metadata for imports, preferred order for price, index, cy
 B: 0.0 as ose value cboeval index, set null in db
 
 All
@@ -212,7 +213,19 @@ B: java.lang.NullPointerException: null
         at roart.action.FindProfitAction.findMarket(FindProfitAction.java:348)
         at roart.service.MLService.doMLIndicator(MLService.java:137)
 
-B: Json encoding (I40)
+C: configmapchr minimum count
+B: mlindicator extras index out of bounds
+C: evol get top list
+B: x countmaplearn null, x mapadder memory null, x python
+B: x cgfact 52, evserv 159, x findminmax
+?: chromosome split in inc and dec
+B: Value limits (I46)
+B: x double, x positions, x printme, x offsetmap null
+WT: ComponentData parallel problem, use sequential evolution calculations (I45)
+WF: Config on web (I44)
+WF: Stockstat metadata for imports, preferred order for price, index, cy (I41)
+WF: relation table (I42)
+WB: Json encoding (I40)
 WF: More improve on web (I39)
 WC: Change improve recommender to evolution (I38)
 WC: Change improve mlindicator to evolution (I37)
@@ -221,14 +234,14 @@ WC: Findprofit loop only evolve first (I35)
 B: future verifydays 8 not 10
 ?: Core w verify incdec proportion
 ?: CL for permit og evolusjon handler.
-?: missing use score
+WB: Missing use score (I43)
 ?: incdec in core?
 F: Iclij mltimes
 C: Merge LSTM with others
 C: ML reconfig default configs based on evolution (I25)
 F: ML use test result (I28)
 F: Iclij verif show new ml config
-F: Use testaccuracy in iclij (I26)
+F: Use testaccuracy in iclij / compare with reliab/conf incdec (I26)
 WF: Save icli result
 WF: get market data icli with date
 WT: Check all use of configs (I21).

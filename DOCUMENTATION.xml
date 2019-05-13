@@ -2018,7 +2018,9 @@ There are two phases, data acquisition and usage.
     </listitem>
     <listitem>
       <para>
-      meta: marketid period1 period2 period3 period4 period5 period6-9
+	meta: marketid period1 period2 period3 period4 period5 period6-9
+	priority: prioritized Price,Index,c y for use with indicators etc
+	reset: like c y(y), name(reset frequency)
       </para>
     </listitem>
     <listitem>
@@ -2111,7 +2113,7 @@ Table days (R days): how many days to use for the graph or statistics
   </sect1>
 </chapter>
 <chapter id="tensorflow">
-  <title id="tensorflow">
+  <title id="tensorflowterm">
     Tensorflow
   </title>
   <sect1>
@@ -2667,7 +2669,7 @@ Table days (R days): how many days to use for the graph or statistics
   </para>
 </chapter>
 <chapter id="docker">
-  <title>
+  <title id="dockerterm">
     Docker
   </title>
   <para>
