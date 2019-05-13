@@ -52,6 +52,7 @@ import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.RelationItem;
 import roart.iclij.model.TimingItem;
 import roart.iclij.service.IclijServiceList;
 import roart.result.model.ResultItemBytes;
@@ -705,7 +706,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
             log.error("List null or empty");
             return;
         }
-        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("usedsec")) {
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("category")) {
             List<MemoryItem> mylist = objectMapper.convertValue(list, new TypeReference<List<MemoryItem>>() { });
             Grid<MemoryItem> table = getGridFromList(item, mylist);
             ts.addComponent(table);
@@ -723,6 +724,12 @@ public class MyIclijUI extends UI implements ViewDisplay {
             ts.addComponent(table);
             return;
         }
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("type")) {
+            List<RelationItem> mylist = objectMapper.convertValue(list, new TypeReference<List<RelationItem>>() { });
+            Grid<RelationItem> table = getGridFromList6(item, mylist);
+            ts.addComponent(table);
+            return;
+        }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("id")) {
             List<ConfigItem> mylist = objectMapper.convertValue(list, new TypeReference<List<ConfigItem>>() { });
             Grid<ConfigItem> table = getGridFromList5(item, mylist);
@@ -732,6 +739,24 @@ public class MyIclijUI extends UI implements ViewDisplay {
             Grid<MapList> table = getGridFromList3(item, mylist);
             ts.addComponent(table);
         }
+    }
+
+    private Grid<RelationItem> getGridFromList6(IclijServiceList item, List<RelationItem> mylist) {
+        Grid<RelationItem> table = new Grid<>();
+        table.setCaption(item.getTitle());
+        table.addColumn(RelationItem::getRecord).setCaption("Record");
+        table.addColumn(RelationItem::getMarket).setCaption("Market");
+        table.addColumn(RelationItem::getId).setCaption("Id");
+        table.addColumn(RelationItem::getAltId).setCaption("AltId");
+        table.addColumn(RelationItem::getType).setCaption("Type");
+        table.addColumn(RelationItem::getValue).setCaption("Value");
+        table.addColumn(RelationItem::getOtherMarket).setCaption("OtherMarket");
+        table.addColumn(RelationItem::getOtherId).setCaption("OtherId");
+        table.addColumn(RelationItem::getOtherAltId).setCaption("OtherAltId");
+        table.setWidth("90%");
+        table.setItems(mylist);
+        System.out.println("added");
+        return table;
     }
 
     private Grid<ConfigItem> getGridFromList5(IclijServiceList item, List<ConfigItem> mylist) {
