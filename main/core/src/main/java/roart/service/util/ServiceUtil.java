@@ -20,6 +20,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
+import roart.model.MetaItem;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -30,6 +31,7 @@ import roart.pipeline.impl.ExtraReader;
 import roart.predictor.impl.PredictorLSTM;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
+import roart.stockutil.MetaUtil;
 import roart.stockutil.StockUtil;
 
 import org.slf4j.Logger;
@@ -80,6 +82,7 @@ public class ServiceUtil {
             marketdata.stocks = stocks;
             String[] periodText = DbDaoUtil.getPeriodText(market, conf);
             marketdata.periodtext = periodText;
+            marketdata.meta = DbDao.getById(market, conf);
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
             System.out.println("grr " + stockdatemap.keySet());
             // the main list, based on freshest or specific date.
@@ -176,6 +179,9 @@ public class ServiceUtil {
         TreeSet<String> set = new TreeSet<>(stockdatemap.keySet());
         List<String> list = new ArrayList<>(set);
         int size = list.size();
+        if (size == 0) {
+            int jj = 0;
+        }
         date = list.get(size - 1);
         conf.setdate(dt.parse(date));
         log.info("mydate2 {}", conf.getdate());
@@ -215,10 +221,11 @@ public class ServiceUtil {
         AbstractPredictor[] predictors = new AbstractPredictor[Constants.ALLPERIODS];
         //predictors[0] = new PredictorLSTM(conf, Constants.INDEX, stocks, marketdatamap, periodDataMap, datareaders, categories);
         //predictors[1] = new PredictorLSTM(conf, Constants.PRICE, stocks, marketdatamap, periodDataMap, datareaders, categories);
+        MarketData marketdata = marketdatamap.get(conf.getMarket());
         for (int i = 0; i < Constants.ALLPERIODS; i++) {
             AbstractPredictor predictor = new PredictorLSTM(conf, categories[i].getTitle() + " LSTM", marketdatamap, periodDataMap, categories[i].getTitle(), categories[i].getPeriod(), categories, datareaders);
             if (predictor.isEnabled()) {
-                if (categories[i].getPeriod() == Constants.INDEXVALUECOLUMN || categories[i].getPeriod() == Constants.PRICECOLUMN || categories[i].getTitle().equals("cy")) {
+                if (MetaUtil.normalPeriod(marketdata, categories[i].getPeriod(), categories[i].getTitle())) {
                     if (predictor.hasValue()) {
                         predictors[i] = predictor;
                     }
