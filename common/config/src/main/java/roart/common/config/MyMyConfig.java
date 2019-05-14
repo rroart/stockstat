@@ -731,6 +731,12 @@ public class MyMyConfig extends MyConfig {
 
     public Object getValueOrDefault(String key) {
         Object retVal = getConfigValueMap().get(key);
+        if (retVal != null) {
+            Class classType = getType().get(key);
+            if (retVal.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
+                getConfigValueMap().put(key, Double.valueOf(((Integer)retVal).intValue()));
+            }
+        }
         //System.out.println("r " + retVal + " " + deflt.get(key));
         return Optional.ofNullable(retVal).orElse(getDeflt().get(key));
     }
