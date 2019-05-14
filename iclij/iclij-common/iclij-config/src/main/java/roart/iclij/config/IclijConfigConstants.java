@@ -23,6 +23,7 @@ public class IclijConfigConstants {
     public static final String FINDPROFITPREDICTOREVOLUTIONCONFIG = "findprofit.predictor.evolutionconfig";
     public static final String FINDPROFITPREDICTORMLCONFIG = "findprofit.predictor.mlconfig";
     public static final String IMPROVEPROFITAUTORUN = "improveprofit.autorun";
+    public static final String IMPROVEPROFITFITNESSMINIMUM = "improveprofit.fitnessminimum";
     public static final String IMPROVEPROFITRECOMMENDER = "improveprofit.recommender";
     public static final String IMPROVEPROFITMLMACD = "improveprofit.mlmacd";
     public static final String IMPROVEPROFITMLMACDEVOLUTIONCONFIG = "improveprofit.mlmacd.evolutionconfig";

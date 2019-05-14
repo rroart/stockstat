@@ -43,6 +43,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.FINDPROFITPREDICTORMLCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, Integer.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLINDICATORMLCONFIG, String.class);
@@ -100,6 +101,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.FINDPROFITPREDICTORMLCONFIG, MLCONFIGLSTM);
         deflt.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, 10);
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.TRUE);
 	deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATORMLCONFIG, MLCONFIG);
@@ -152,6 +154,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, "Find profit predictor evolution config");
         text.put(IclijConfigConstants.FINDPROFITPREDICTORMLCONFIG, "Find profit predictor ml enabled");
         text.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, "Enable improve profit autorun");
+        text.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, "Enable improve profit fitness minimum");
         text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, "Enable improve profit mlindicator");
         text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, "Improve profit mlindicator evolution config");
         text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATORMLCONFIG, "Improve profit mlindicator ml enabled");
@@ -211,6 +214,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Find profit predictor evolution config"));
         mymap.put(IclijConfigConstants.FINDPROFITPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGLSTM, "Find profit predictor ml enable"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit autorun"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable improve profit fitness minimum"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlindicator"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve profit mlindicator evolution config"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATORMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "Improve profit mlindicator ml enable"));

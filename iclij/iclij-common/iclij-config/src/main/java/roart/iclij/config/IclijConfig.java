@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Map.Entry;
 
 import roart.common.config.ConfigTreeMap;
 
@@ -155,6 +156,10 @@ public class IclijConfig {
 
     public boolean wantsImproveProfitAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITAUTORUN);
+    }
+
+    public int getImproveProfitFitnessMinimum() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM);
     }
 
     public boolean wantsImproveProfitMLMACD() {

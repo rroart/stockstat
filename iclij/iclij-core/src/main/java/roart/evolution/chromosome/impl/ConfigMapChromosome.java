@@ -249,6 +249,11 @@ public class ConfigMapChromosome extends AbstractChromosome {
                     fitness4 = ((double)(count + count2)) / sum;
                 }
                 incdecFitness = fitness4;
+                int minimum = param.getInput().getConfig().getImproveProfitFitnessMinimum();
+                if (minimum > 0 && sum < minimum) {
+                    log.info("Fit sum too small {} < {}", sum, minimum);
+                    incdecFitness = 0;
+                }
                 log.info("Fit {} {} {} {} {}", fitness, fitness2, fitness3, fitness4, sum);
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
