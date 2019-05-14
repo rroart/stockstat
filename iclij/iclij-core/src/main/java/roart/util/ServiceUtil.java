@@ -210,18 +210,25 @@ public class ServiceUtil {
 
         }
 
-        List[] objects = new RelationUtil().method(componentInput);
+        addRelations(componentInput, lists, new ArrayList<>());
+        
+        print(result);
+        return result;
+    }
+
+    private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, List<IncDecItem> listIncDecs) throws Exception {
+        List[] objects = new RelationUtil().method(componentInput, listIncDecs);
         
         IclijServiceList incdecs = new IclijServiceList();
-        incdecs.setTitle("Incdecs");
+        incdecs.setTitle("Incdecs with relations");
         incdecs.setList(objects[0]);
 
         IclijServiceList relations = new IclijServiceList();
         relations.setTitle("Relations");
         relations.setList(objects[1]);
 
-        print(result);
-        return result;
+        lists.add(incdecs);
+        lists.add(relations);
     }
 
     public static IclijServiceResult getContentImprove(ComponentInput componentInput) throws Exception {
@@ -374,15 +381,18 @@ public class ServiceUtil {
 
     public static List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec) {
         // and a new list for common items
-        List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
-        List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
-        List<IncDecItem> listIncDec = listInc.stream().filter(m -> decIds.contains(m.getId())).collect(Collectors.toList());
-        List<IncDecItem> listDecInc = listDec.stream().filter(m -> incIds.contains(m.getId())).collect(Collectors.toList());
+        //List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        //List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        //List<IncDecItem> listIncDec = listInc.stream().filter(m -> decIds.contains(m.getId())).collect(Collectors.toList());
+        //List<IncDecItem> listDecInc = listDec.stream().filter(m -> incIds.contains(m.getId())).collect(Collectors.toList());
 
-        listInc.removeAll(listIncDec);
-        listDec.removeAll(listDecInc);
-        listIncDec.addAll(listDecInc);
-        return listIncDec;
+        List<IncDecItem> common = new ArrayList<>(listInc);
+        common.retainAll(listDec);
+        
+        listInc.removeAll(common);
+        listDec.removeAll(common);
+        //listIncDec.addAll(listDecInc);
+        return common;
     }
 
     public static IclijServiceResult getVerify(ComponentInput componentInput) throws Exception {
@@ -394,7 +404,7 @@ public class ServiceUtil {
         return result;
     }
 
-    private static IclijServiceResult getFindProfitVerify(ComponentInput componentInput, String type, int verificationdays) throws ParseException, InterruptedException {
+    private static IclijServiceResult getFindProfitVerify(ComponentInput componentInput, String type, int verificationdays) throws Exception {
 
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
@@ -467,7 +477,12 @@ public class ServiceUtil {
         result.setMaps(mapmaps);
         IclijServiceList updates = convert(market.getConfig().getMarket(), updateMap);
         retLists.add(updates);
+
+        List<IncDecItem> listIncDecs = new ArrayList<>(buysells.getBuys().values());
+        listIncDecs.addAll(buysells.getSells().values());
         
+        addRelations(componentInput, retLists, listIncDecs);
+
         return result;
     }
 
