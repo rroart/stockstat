@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Queue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -135,7 +136,7 @@ public class FindProfitAction extends Action {
             componentDataMap.put(marketName, param);
             LocalDate olddate = param.getInput().getEnddate();
             try {
-                param.setFuturedays(market.getFilter().getRecordage());
+                //param.setFuturedays(market.getFilter().getRecordage());
                 //param.setDates(market.getFilter().getRecordage(), 0, TimeUtil.convertDate2(olddate));
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -227,7 +228,7 @@ public class FindProfitAction extends Action {
         if (!filterTimings.isEmpty()) {
             Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
             LocalDate olddate = LocalDate.now();
-            olddate = olddate.minusDays(market.getFilter().getRecordage());
+            olddate = olddate.minusDays(market.getConfig().getFindtime());
             int size = Math.min(AVERAGE_SIZE, filterTimings.size());
             OptionalDouble average = filterTimings
                     .subList(0, size)
@@ -691,9 +692,12 @@ public class FindProfitAction extends Action {
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
         Component.disabler(srv.conf.getConfigValueMap());
         Map<String, Map<String, Object>> resultMaps = srv.getContent();
+        Set<String> i = resultMaps.keySet();
         Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+        //categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("Price").get(PipelineConstants.LIST);
+        Set<String> j2 = resultMaps.get("" + category).keySet();
     
         VerifyProfit verify = new VerifyProfit();
         verify.doVerify(listInc, days, true, categoryValueMap, oldDate);

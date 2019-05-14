@@ -108,7 +108,7 @@ public class ImproveProfitAction extends Action {
             LocalDate olddate = LocalDate.now().minusDays(market.getConfig().getImprovetime()); // enddays?
 
             try {
-                param.setFuturedays(market.getFilter().getRecordage());
+                //param.setFuturedays(market.getFilter().getRecordage());
                 //param.setDates(market.getFilter().getRecordage(), 0, TimeUtil.convertDate2(olddate));
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -341,7 +341,7 @@ public class ImproveProfitAction extends Action {
         if (!filterTimings.isEmpty()) {
             Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
             LocalDate olddate = LocalDate.now();
-            olddate = olddate.minusDays(market.getFilter().getRecordage());
+            olddate = olddate.minusDays(market.getConfig().getImprovetime());
             int size = Math.min(AVERAGE_SIZE, filterTimings.size());
             OptionalDouble average = filterTimings
                     .subList(0, size)
