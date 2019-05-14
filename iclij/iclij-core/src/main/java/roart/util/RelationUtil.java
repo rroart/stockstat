@@ -21,11 +21,12 @@ import roart.iclij.model.TimingItem;
 import roart.iclij.service.IclijServiceList;
 
 public class RelationUtil {
-    public List[] method(ComponentInput componentInput) throws Exception {
+    public List[] method(ComponentInput componentInput, List<IncDecItem> listIncDecs) throws Exception {
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         List<IncDecItem> listAll = IncDecItem.getAll();
+        /*
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(ServiceUtil.getHeader("Content"));
         
@@ -36,7 +37,7 @@ public class RelationUtil {
         Map<Pair<String, String>, IncDecItem> incPairMap= new HashMap<>();
         Map<Pair<String, String>, IncDecItem> decPairMap= new HashMap<>();
         Map<Pair<String, String>, IncDecItem> incDecPairMap= new HashMap<>();
-        
+        */
         /*
 
     rel: market, id/null
@@ -49,7 +50,7 @@ public class RelationUtil {
          
 
          */
-        
+        /*
         List<Market> markets = conf.getMarkets(instance);
         for (Market market : markets) {
             List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market);
@@ -72,18 +73,22 @@ public class RelationUtil {
             //List<IclijServiceList> subLists = ServiceUtil.getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
             //lists.addAll(subLists);
         }
+        */
         
         List<RelationItem> relations = IclijDbDao.getAllRelations();
         
-        List<RelationItem> foundRelations = search(listAll, relations);
+        //List<RelationItem> foundRelations = search(listAll, relations);
         
-        List<TimingItem> listAllTimings = TimingItem.getAll();
-        List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, IclijConstants.IMPROVEPROFIT);
+        //List<TimingItem> listAllTimings = TimingItem.getAll();
+        //List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, IclijConstants.IMPROVEPROFIT);
         //List<IncDecItem> listAll = IncDecItem.getAll();
-        List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, null);
-        List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
-        List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
-        List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
+        List<IncDecItem> currentIncDecs = new ArrayList<>();
+        currentIncDecs.addAll(listIncDecs);
+        List<Market> markets = conf.getMarkets(instance);
+        for (Market market : markets) {
+            List<IncDecItem> marketCurrentIncDecs = ServiceUtil.getCurrentIncDecs(date, listAll, market);
+            currentIncDecs.addAll(marketCurrentIncDecs);
+        }
         
         List<RelationItem> alreadyFound = new ArrayList<>();
         
@@ -196,6 +201,7 @@ public class RelationUtil {
         }
     }
     
+    @Deprecated
     public static List<IncDecItem> getCurrentIncDecs(LocalDate date, List<IncDecItem> listAll, Market market2) {
         if (date == null) {
             date = LocalDate.now();
@@ -209,6 +215,7 @@ public class RelationUtil {
         return currentIncDecs;
     }
 
+    @Deprecated
     public static List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, String action) {
         if (date == null) {
             date = LocalDate.now();
