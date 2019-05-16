@@ -735,6 +735,7 @@ public class MyMyConfig extends MyConfig {
             Class classType = getType().get(key);
             if (retVal.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
                 getConfigValueMap().put(key, Double.valueOf(((Integer)retVal).intValue()));
+                retVal = Double.valueOf(((Integer)retVal).intValue());
             }
         }
         //System.out.println("r " + retVal + " " + deflt.get(key));
