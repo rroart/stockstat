@@ -154,9 +154,11 @@ public class FindProfitAction extends Action {
             }
         }
         Collections.sort(marketTimes, (o1, o2) -> (Double.valueOf(o2.time).compareTo(Double.valueOf(o1.time))));
+        /*
         for (MarketTime marketTime : marketTimes) {
             myData.timingMap.put(marketTime.market.getConfig().getMarket(), marketTime.timings);
         }
+        */
         for (MarketTime marketTime : marketTimes) {
             if (marketTime.time == 0.0) {
                 ComponentData param = componentDataMap.get(marketTime.market.getConfig().getMarket());
@@ -407,6 +409,10 @@ public class FindProfitAction extends Action {
         }
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
         myData.profitData = profitdata;
+        
+        Map<String, Object> timingMap = new HashMap<>();
+        timingMap.put(market.getConfig().getMarket(), param.getTimings());
+        myData.timingMap = timingMap;
 
         /*
         ComponentParam param = new ComponentParam(input);

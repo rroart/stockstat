@@ -96,8 +96,9 @@ public abstract class Component {
             long time0 = System.currentTimeMillis();
             evolveMap = handleEvolve(market, pipeline, evolve, param);
             if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-                saveTiming(param, evolve, time0, null);
-            }
+                TimingItem timing = saveTiming(param, evolve, time0, null);
+                param.getTimings().add(timing);
+           }
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
@@ -106,11 +107,12 @@ public abstract class Component {
         param.setCategory(resultMaps);
         param.getAndSetCategoryValueMap();
         if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-            saveTiming(param, false, time0, null);
+            TimingItem timing = saveTiming(param, false, time0, null);
+            param.getTimings().add(timing);
         }
     }
 
-    private void saveTiming(ComponentData param, boolean evolve, long time0, Double score) {
+    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setMarket(param.getInput().getMarket());
@@ -122,9 +124,11 @@ public abstract class Component {
         timing.setScore(score);
         try {
             timing.save();
+            return timing;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        return null;
     }
     
     protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param);
@@ -185,7 +189,8 @@ public abstract class Component {
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
             param.setFutureDate(LocalDate.now());
-            saveTiming(param, true, time0, score);
+            TimingItem timing = saveTiming(param, true, time0, score);
+            param.getTimings().add(timing);
             if (false) {
                 ConfigItem configItem = new ConfigItem();
                 configItem.setAction(param.getAction());

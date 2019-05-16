@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
+import roart.iclij.model.TimingItem;
 import roart.service.ControlService;
 import roart.util.ServiceUtil;
 
@@ -55,6 +56,8 @@ public class ComponentData {
     
     private List<String> disableList = new ArrayList<>();
     
+    private List<TimingItem> timings = new ArrayList<>();
+    
     public ComponentData() {
         
     }
@@ -77,6 +80,7 @@ public class ComponentData {
         this.configValueMap = new HashMap<>(this.service.conf.getConfigValueMap());
         this.action = componentparam.action;
         this.disableList = componentparam.disableList;
+        this.timings = componentparam.timings;
     }
 
     public ComponentData(ComponentInput input) {
@@ -231,6 +235,14 @@ public class ComponentData {
 
     public void setDisableList(List<String> disableList) {
         this.disableList = disableList;
+    }
+
+    public List<TimingItem> getTimings() {
+        return timings;
+    }
+
+    public void setTimings(List<TimingItem> timings) {
+        this.timings = timings;
     }
 
     public int setDates(int futuredaysNot, Integer offsetNot, String aDate) throws ParseException {
