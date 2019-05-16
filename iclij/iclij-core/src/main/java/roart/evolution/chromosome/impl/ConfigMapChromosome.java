@@ -224,18 +224,20 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
             if (true) {
                 List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
-                long count = listDecBoolean.stream().filter(i -> i).count();                            
+                long countDec = listDecBoolean.stream().filter(i -> i).count();                            
                 int fitnesses = 0;
                 double fitness = 0;
-                if (listDecBoolean.size() != 0) {
-                    fitness = ((double) count) / listDecBoolean.size();
+                long sizeDec = listDecBoolean.size();
+                if (sizeDec != 0) {
+                    fitness = ((double) countDec) / sizeDec;
                     fitnesses++;
                 }
                 List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
-                long count2 = listIncBoolean.stream().filter(i -> i).count();                            
+                long countInc = listIncBoolean.stream().filter(i -> i).count();                            
+                long sizeInc = listIncBoolean.size();
                 double fitness2 = 0;
-                if (listIncBoolean.size() != 0) {
-                    fitness2 = ((double) count2) / listIncBoolean.size();
+                if (sizeInc != 0) {
+                    fitness2 = ((double) countInc) / sizeInc;
                     fitnesses++;
                 }
                 double fitness3 = 0;
@@ -244,17 +246,17 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 }
                 incdecFitness = fitness3;
                 double fitness4 = 0;
-                int sum = listDecBoolean.size() + listIncBoolean.size();
-                if (sum > 0) {
-                    fitness4 = ((double)(count + count2)) / sum;
+                long size = sizeDec + sizeInc;
+                if (size > 0) {
+                    fitness4 = ((double)(countDec + countInc)) / size;
                 }
                 incdecFitness = fitness4;
                 int minimum = param.getInput().getConfig().getImproveProfitFitnessMinimum();
-                if (minimum > 0 && sum < minimum) {
-                    log.info("Fit sum too small {} < {}", sum, minimum);
+                if (minimum > 0 && size < minimum) {
+                    log.info("Fit sum too small {} < {}", size, minimum);
                     incdecFitness = 0;
                 }
-                log.info("Fit {} {} {} {} {}", fitness, fitness2, fitness3, fitness4, sum);
+                log.info("Fit {} ( {} / {} ) {} ( {} / {} ) {} {} ( {} / {} )", fitness, countDec, sizeDec, fitness2, countInc, sizeInc, fitness3, fitness4, countDec + countInc, size);
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
         } catch (Exception e) {
