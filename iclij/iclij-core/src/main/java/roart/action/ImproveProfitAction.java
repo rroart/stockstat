@@ -84,7 +84,7 @@ public class ImproveProfitAction extends Action {
         IclijConfig config = paramTemplate.getInput().getConfig();
         //IclijXMLConfig.getConfigInstance();
         //instance.
-        List<MarketTime> marketTimes = new ArrayList<>();
+        List<MarketComponentTime> marketTimes = new ArrayList<>();
         Map<String, ComponentData> componentDataMap = new HashMap<>();
         for (Market market : markets) {
             String marketName = market.getConfig().getMarket();
@@ -123,23 +123,25 @@ public class ImproveProfitAction extends Action {
             if (currentIncDecs == null || currentIncDecs.isEmpty() || timings.isEmpty()) {
                 List<String> componentList = ServiceUtil.getImproveProfitComponents(config);
                 Map<String, Component> componentMap = FindProfitAction.getComponentMap(componentList, market);
-                List<MarketTime> marketTime = getList(IclijConstants.IMPROVEPROFIT, componentMap, timings, market, param);
+                List<MarketComponentTime> marketTime = getList2(IclijConstants.IMPROVEPROFIT, componentMap, timings, market, param);
                 marketTimes.addAll(marketTime);
             } else {
                 int jj = 0;
             }
         }
         Collections.sort(marketTimes, (o1, o2) -> (Double.valueOf(o2.time).compareTo(Double.valueOf(o1.time))));
-        for (MarketTime marketTime : marketTimes) {
+        /*
+        for (MarketComponentTime marketTime : marketTimes) {
             myData.timingMap.put(marketTime.market.getConfig().getMarket(), marketTime.timings);
         }
-        for (MarketTime marketTime : marketTimes) {
+        */
+        for (MarketComponentTime marketTime : marketTimes) {
             if (marketTime.time == 0.0) {
                 ComponentData param = componentDataMap.get(marketTime.market.getConfig().getMarket());
                 getPicksFiltered(myData, param, config, marketTime);                
             }
         }
-        for (MarketTime marketTime : marketTimes) {
+        for (MarketComponentTime marketTime : marketTimes) {
             if (marketTime.time > 0.0) {
                 if (config.serverShutdownHour() != null) {
                     int shutdown = config.serverShutdownHour();
@@ -271,6 +273,73 @@ public class ImproveProfitAction extends Action {
         */
 }
 
+    private void getPicksFiltered(WebData myData, ComponentData param, IclijConfig config, MarketComponentTime marketTime) {
+        log.info("Getting picks for date {}", param.getInput().getEnddate());
+        try {
+            // List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime);
+            myData.memoryItems = new ArrayList<>(); // newMemories;
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return;
+        }
+        Market market = marketTime.market;
+        List<MemoryItem> marketMemory = new FindProfitAction().getMarketMemory(marketTime.market.getConfig().getMarket());
+        if (marketMemory == null) {
+            myData.profitData = new ProfitData();
+        }
+        marketMemory.addAll(myData.memoryItems);
+        LocalDate prevdate = param.getInput().getEnddate();
+        prevdate = prevdate.minusDays(market.getFilter().getRecordage());
+        List<MemoryItem> currentList = new FindProfitAction().filterKeepRecent(marketMemory, prevdate);
+        // or make a new object instead of the object array. use this as a pair
+        //System.out.println(currentList.get(0).getRecord());
+        Map<Object[], List<MemoryItem>> listMap = new HashMap<>();
+        // map subcat + posit -> list
+        currentList.forEach(m -> listGetterAdder(listMap, new Object[]{m.getComponent(), m.getPosition() }, m));
+        ProfitInputData inputdata = filterMemoryListMapsWithConfidence(market, listMap);        
+        ProfitData profitdata = new ProfitData();
+        profitdata.setInputdata(inputdata);
+        Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
+       
+        Map<String, Component> componentMap = new HashMap<>();
+        componentMap.put(marketTime.componentName, marketTime.component);
+
+        param.getAndSetCategoryValueMap();
+        Map<String, Map<String, Object>> maps = param.getResultMaps();
+        Map<String, String> nameMap = getNameMap(maps);
+        inputdata.setNameMap(nameMap);
+        
+        handleComponent(market, profitdata, param, componentMap);
+                
+        filterBuys(param, market, profitdata, maps);
+        //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
+        myData.profitData = profitdata;
+
+        Map<String, Object> timingMap = new HashMap<>();
+        timingMap.put(market.getConfig().getMarket(), param.getTimings());
+        myData.timingMap = timingMap;
+
+        /*
+        ComponentParam param = new ComponentParam(input);
+        ControlService srv = new ControlService();
+        srv.getConfig();
+        srv.conf.setMarket(market.getConfig().getMarket());
+        srv.conf.setdate(TimeUtil.convertDate(input.getEnddate()));
+        param.setService(srv);
+        param.getInput().setMarket(srv.conf.getMarket());
+        param.getInput().setDoPrint(false);
+        param.getInput().setDoSave(false);        
+        */
+        
+        //Component.disabler(param.getService().conf);
+
+        /*
+        Map<String, Map<String, Object>> result0 = param.getService().getContent();
+        Map<String, Map<String, Object>> maps = result0;
+        inputdata.setResultMaps(maps);
+        */
+    }
+
     private void filterBuys(ComponentData param, Market market, ProfitData profitdata,
             Map<String, Map<String, Object>> maps) {
         List<String> dates = param.getService().getDates(param.getService().conf.getMarket());        
@@ -333,6 +402,32 @@ public class ImproveProfitAction extends Action {
         return marketTimes;
     }
 
+    private List<MarketComponentTime> getList2(String action, Map<String, Component> componentMap, List<TimingItem> timings, Market market, ComponentData param) {
+        List<MarketComponentTime> marketTimes = new ArrayList<>();
+        String marketName = market.getConfig().getMarket();
+
+        //= ServiceUtil.getFindProfitComponents(config);
+        for (Entry<String, Component> entry : componentMap.entrySet()) {
+            String componentName = entry.getKey();
+            Component component = entry.getValue();
+            List<TimingItem> timingToDo = new ArrayList<>();
+            MarketComponentTime marketTime = new MarketComponentTime();
+            marketTime.market = market;
+            marketTime.componentName = componentName;
+            marketTime.component = component;
+            marketTime.timings = timingToDo;
+            boolean evolve = component.wantEvolve(param.getInput().getConfig());
+            List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true);
+            if (evolve) {
+                handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimingsEvolution, evolve);               
+            }
+            List<TimingItem> filterTimings = getMyTimings(timings, marketName, action, componentName, false);
+            handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimings, evolve);
+            marketTimes.add(marketTime);
+        }
+        return marketTimes;
+    }
+
     private static final int AVERAGE_SIZE = 5;
     
     private void handleFilterTimings(String action, Market market, MarketTime marketTime,
@@ -377,8 +472,58 @@ public class ImproveProfitAction extends Action {
         }
     }
 
+    private void handleFilterTimings(String action, Market market, MarketComponentTime marketTime,
+            List<TimingItem> timingToDo, String component, List<TimingItem> filterTimings, boolean evolve) {
+        String marketName = market.getConfig().getMarket();
+        if (!filterTimings.isEmpty()) {
+            Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
+            LocalDate olddate = LocalDate.now();
+            olddate = olddate.minusDays(market.getConfig().getImprovetime());
+            int size = Math.min(AVERAGE_SIZE, filterTimings.size());
+            OptionalDouble average = filterTimings
+                    .subList(0, size)
+                    .stream()
+                    .mapToDouble(TimingItem::getTime)
+                    .average();
+
+            if (olddate.isBefore(filterTimings.get(0).getDate())) {
+                // no recent enough is found
+                marketTime.time += average.getAsDouble();
+                if (!evolve) {
+                    marketTime.time += average.getAsDouble();
+                }
+                TimingItem timing = new TimingItem();
+                timing.setMarket(marketName);
+                timing.setAction(action);
+                timing.setComponent(component);
+                timing.setEvolve(evolve);
+                timing.setTime(average.getAsDouble());
+                timingToDo.add(timing);
+            } else {
+                // recent enough is found
+                // nothing to do
+            }
+        } else {
+            TimingItem timing = new TimingItem();
+            timing.setMarket(marketName);
+            timing.setAction(action);
+            timing.setComponent(component);
+            timing.setEvolve(evolve);
+            timing.setTime(Double.valueOf(0));
+            timingToDo.add(timing);
+        }
+    }
+
     public class MarketTime {
         public Map<String, Component> componentMap;
+        Market market;
+        double time;
+        List<TimingItem> timings;
+    }
+    
+    public class MarketComponentTime {
+        String componentName;
+        Component component;
         Market market;
         double time;
         List<TimingItem> timings;
