@@ -114,10 +114,61 @@ public class RelationUtil {
                 done = foundRelations2.isEmpty();
             }
         }
+        
+        alreadyFound = filter(currentIncDecs, alreadyFound);
+        currentIncDecs = filter2(alreadyFound, currentIncDecs);
+        
         List[] retObjects = new ArrayList[2];
         retObjects[0] = currentIncDecs;
         retObjects[1] = alreadyFound;
         return retObjects;
+    }
+
+    private List<IncDecItem> filter2(List<RelationItem> relations, List<IncDecItem> currentIncDecs) {
+        List<IncDecItem> retain = new ArrayList<>();
+        // partof
+        for (RelationItem aRelation : relations) {
+            String market = aRelation.getMarket();
+            String id = aRelation.getId();
+            String othermarket = aRelation.getOtherMarket();
+            String otherid = aRelation.getOtherId();
+            for (IncDecItem item : currentIncDecs) {
+                if (market.equals(item.getMarket())) {
+                    if (item.getId() != null && item.getId().equals(id)) {
+                        retain.add(item);
+                    }
+                }
+                if (othermarket.equals(item.getMarket())) {
+                    if (item.getId() != null && item.getId().equals(otherid)) {
+                        retain.add(item);
+                    }
+                }
+            }
+            // equivalent
+        }
+        return retain;
+    }
+
+    private List<RelationItem> filter(List<IncDecItem> currentIncDecs, List<RelationItem> relations) {
+        List<RelationItem> retain = new ArrayList<>();
+        for (IncDecItem item : currentIncDecs) {
+            String market = item.getMarket();
+            String id = item.getId();
+            // partof
+            for (RelationItem aRelation : relations) {
+                if (!market.equals(aRelation.getMarket())) {
+                    continue;
+                }
+                if (aRelation.getId() != null && aRelation.getId().equals(id)) {
+                    retain.add(aRelation);
+                }
+                if (aRelation.getOtherId() != null && aRelation.getOtherId().equals(id)) {
+                    retain.add(aRelation);
+                }
+            }
+            // equivalent
+        }
+        return retain;
     }
 
     private List<RelationItem> searchEquivalent(RelationItem relation, List<RelationItem> relations) {
