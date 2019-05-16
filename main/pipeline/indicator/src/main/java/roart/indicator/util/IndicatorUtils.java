@@ -469,7 +469,10 @@ public class IndicatorUtils {
     public static AbstractCategory getWantedCategory(AbstractCategory[] categories, MetaItem meta) throws Exception {
         String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
         String[] priorities;
-        String priority = meta.getPriority();
+        String priority = null;
+        if (meta != null) {
+            priority = meta.getPriority();
+        }
         if (priority != null) {
             priorities = priority.split(",");            
         } else {
@@ -519,7 +522,10 @@ public class IndicatorUtils {
         Integer[] defaultPris = { Constants.PRICECOLUMN, Constants.INDEXVALUECOLUMN };
         String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
         String[] priorities;
-        String priority = meta.getPriority();
+        String priority = null;
+        if (meta != null) {
+            priority = meta.getPriority();
+        }
         if (priority != null) {
             priorities = priority.split(",");            
         } else {
@@ -533,7 +539,10 @@ public class IndicatorUtils {
                     }
                 }
             }
-            String[] periods = meta.getPeriod();
+            String[] periods = new String[0];
+            if (meta != null) {
+                periods = meta.getPeriod();
+            }
             for (int i = 0; i < periods.length; i++) {
                 if (aPriority.equals(periods[i])) {
                     if (StockUtil.hasStockValue(stocks, i)) {
