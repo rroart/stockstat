@@ -3,9 +3,11 @@ package roart.evolution.chromosome.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -58,6 +60,10 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         //String string = JsonUtil.convert(config);
         //map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, string);
         //setMap(map);
+        Set<String> conf = new HashSet<>(confList);
+        Set<String> disable = new HashSet<>(listPerm.get(listIdx));
+        conf.removeAll(disable);
+        map.put("recommenders", conf);
         param.setDisableList(listPerm.get(listIdx));
         if (listIdx == 62) {
             int jj = 0;
@@ -116,4 +122,11 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         return chromosome;
     }
     
+    @Override
+    public String toString() {
+        Set<String> conf = new HashSet<>(confList);
+        Set<String> disable = new HashSet<>(listPerm.get(listIdx));
+        conf.removeAll(disable);
+        return conf.toString();
+    }
 }
