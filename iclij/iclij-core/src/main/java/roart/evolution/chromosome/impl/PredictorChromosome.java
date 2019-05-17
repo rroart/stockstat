@@ -151,4 +151,9 @@ public class PredictorChromosome extends ConfigMapChromosome {
         log.error("Config full was false");
     }
 
+    @Override
+    public String toString() {
+        return config.toString();
+    }
+    
 }
