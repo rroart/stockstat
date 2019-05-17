@@ -83,6 +83,9 @@ public class IncDecItem {
     }
 
     public void setDescription(String description) {
+        if (description.length() > 510) {
+            description = description.substring(0, 510);
+        }
         this.description = description;
     }
 

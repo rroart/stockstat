@@ -78,6 +78,9 @@ public class ConfigItem {
     }
 
     public void setValue(String value) {
+        if (value.length() > 510) {
+            value = value.substring(0, 510);
+        }
         this.value = value;
     }
 
