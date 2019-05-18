@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.ComponentRecommender;
 import roart.component.model.ComponentData;
@@ -56,18 +57,16 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     @Override
     public double getFitness()
             throws JsonParseException, JsonMappingException, IOException {
-        Map<String, Object> map = new HashMap<>();
+        //Map<String, Object> map = new HashMap<>();
         //String string = JsonUtil.convert(config);
         //map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, string);
         //setMap(map);
         Set<String> conf = new HashSet<>(confList);
         Set<String> disable = new HashSet<>(listPerm.get(listIdx));
         conf.removeAll(disable);
-        map.put("recommenders", conf);
+        getMap().put(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, conf);
+    
         param.setDisableList(listPerm.get(listIdx));
-        if (listIdx == 62) {
-            int jj = 0;
-        }
         return super.getFitness();
     }
 
