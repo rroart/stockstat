@@ -111,7 +111,7 @@ public class FindProfitAction extends Action {
             String marketName = market.getConfig().getMarket();
             //LocalDate olddate = LocalDate.now();        
             //olddate = olddate.minusDays(market.getFilter().getRecordage());
-            ComponentInput input = new ComponentInput(IclijXMLConfig.getConfigInstance(), null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), new HashMap<>());
+            ComponentInput input = new ComponentInput(config, null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), new HashMap<>());
             ComponentData param = null;
             try {
                 param = ServiceUtil.getParam(input, 0);
