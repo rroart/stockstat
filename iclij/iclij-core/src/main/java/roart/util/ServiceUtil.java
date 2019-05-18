@@ -684,9 +684,9 @@ public class ServiceUtil {
         //FindProfitAction findProfitAction = new FindProfitAction();
         ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
         List<MemoryItem> allMemoryItems = new ArrayList<>(); // getMemoryItems(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
-        IclijServiceList memories = new IclijServiceList();
-        memories.setTitle("Memories");
-        memories.setList(allMemoryItems);
+        //IclijServiceList memories = new IclijServiceList();
+        //memories.setTitle("Memories");
+        //memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
         Market market = improveProfitAction.findMarket(param);
         WebData webData = improveProfitAction.getMarket(null, param, market);        
@@ -696,8 +696,19 @@ public class ServiceUtil {
         resultMap.setList(mapList);
         retLists.add(resultMap);
 
-        retLists.add(memories);
+        //retLists.add(memories);
 
+        List<IclijServiceList> lists = new ArrayList<>();
+        Map<String, Object> timingMap = webData.timingMap;
+        for (Entry<String, Object> entry : timingMap.entrySet()) {
+            String marketName = entry.getKey();
+            List<TimingItem> list = (List<TimingItem>) entry.getValue();
+            List<IclijServiceList> subLists = getServiceList(marketName, list);
+            lists.addAll(subLists);
+        }
+        result.setLists(lists);
+        
+        updateMap = webData.updateMap;
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
