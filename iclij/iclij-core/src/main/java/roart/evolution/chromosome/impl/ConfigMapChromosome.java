@@ -2,12 +2,14 @@ package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ import roart.action.WebData;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
@@ -32,6 +35,7 @@ import roart.component.model.ComponentData;
 import roart.config.Market;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.model.ProfitData;
@@ -280,7 +284,30 @@ public class ConfigMapChromosome extends AbstractChromosome {
         }
         // or rather verified incdec
         log.info("Fit {} {} {}", this.componentName, incdecFitness, memoryFitness);
+        configSaves(param, getMap());
+        param.getUpdateMap().putAll(getMap());
         return incdecFitness;
+    }
+
+    private void configSaves(ComponentData param, Map<String, Object> anUpdateMap) {
+        for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
+            String key = entry.getKey();
+            Object object = entry.getValue();
+            ConfigItem configItem = new ConfigItem();
+            configItem.setAction(param.getAction());
+            configItem.setComponent(componentName);
+            configItem.setDate(param.getBaseDate());
+            configItem.setId(key);
+            configItem.setMarket(param.getMarket());
+            configItem.setRecord(LocalDate.now());
+            String value = JsonUtil.convert(object);
+            configItem.setValue(value);
+            try {
+                configItem.save();
+            } catch (Exception e) {
+                log.info(Constants.EXCEPTION, e);
+            }
+        }
     }
 
     @Override
