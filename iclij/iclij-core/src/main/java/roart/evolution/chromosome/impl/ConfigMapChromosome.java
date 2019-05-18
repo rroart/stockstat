@@ -296,7 +296,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             ConfigItem configItem = new ConfigItem();
             configItem.setAction(param.getAction());
             configItem.setComponent(componentName);
-            configItem.setDate(param.getBaseDate());
+            configItem.setDate(LocalDate.now());
             configItem.setId(key);
             configItem.setMarket(param.getMarket());
             configItem.setRecord(LocalDate.now());
