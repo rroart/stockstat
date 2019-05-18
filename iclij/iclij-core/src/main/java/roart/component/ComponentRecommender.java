@@ -142,6 +142,18 @@ public class ComponentRecommender extends ComponentNoML {
         if (listSize < recommend * 3) {
             return;
         }
+        for (Object[] key : profitdata.getInputdata().getConfMap().keySet()) {
+            try {
+                Object keyone = key[1];
+                String keyonetext = "";
+                if (keyone != null) {
+                    keyonetext = "" + (int)key[1];
+                }
+                System.out.println("e " + ((String)key[0]) + " " + keyonetext);
+            } catch (Exception e) {
+                log.error("grr" + key);
+            }
+        }
         List<MyElement> topList = list.subList(0, recommend);
         List<MyElement> bottomList = list.subList(listSize - recommend, listSize);
         Double max = list.get(0).getValue();
