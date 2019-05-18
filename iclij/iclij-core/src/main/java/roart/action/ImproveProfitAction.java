@@ -88,7 +88,7 @@ public class ImproveProfitAction extends Action {
         Map<String, ComponentData> componentDataMap = new HashMap<>();
         for (Market market : markets) {
             String marketName = market.getConfig().getMarket();
-            ComponentInput input = new ComponentInput(IclijXMLConfig.getConfigInstance(), null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), new HashMap<>());
+            ComponentInput input = new ComponentInput(config, null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), new HashMap<>());
             ComponentData param = null;
             try {
                 param = ServiceUtil.getParam(input, 0);
@@ -251,6 +251,7 @@ public class ImproveProfitAction extends Action {
         filterBuys(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
         myData.profitData = profitdata;
+        myData.updateMap.putAll(param.getUpdateMap());
 
         /*
         ComponentParam param = new ComponentParam(input);
