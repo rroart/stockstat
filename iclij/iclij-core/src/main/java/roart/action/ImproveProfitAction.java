@@ -661,7 +661,7 @@ public class ImproveProfitAction extends Action {
         for (Entry<String, Object> entry : map.entrySet()) {
             MapList ml = new MapList();
             ml.setKey(entry.getKey());
-            ml.setValue((String) entry.getValue());
+            ml.setValue((String) entry.getValue().toString());
             retList.add(ml);
         }
         return retList;
@@ -695,6 +695,9 @@ public class ImproveProfitAction extends Action {
     }
 
     private void handleComponent(Market market, ProfitData profitdata, ComponentData param, Map<String, Component> componentMap) {
+        if (param.getUpdateMap() == null) {
+            param.setUpdateMap(new HashMap<>());
+        }
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
             if (component == null) {
@@ -704,6 +707,10 @@ public class ImproveProfitAction extends Action {
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
             ComponentData componentData = component.improve(param, market, profitdata, null);
+            Map<String, Object> updateMap = componentData.getUpdateMap();
+            if (updateMap != null) {
+                param.getUpdateMap().putAll(updateMap);
+            }
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           

@@ -713,7 +713,7 @@ public class ServiceUtil {
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
         IclijServiceList updates = convert(null, updateMap);
-        retLists.add(updates);
+        lists.add(updates);
         return result;
     }
 
