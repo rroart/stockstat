@@ -251,7 +251,6 @@ public class ImproveProfitAction extends Action {
         filterBuys(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
         myData.profitData = profitdata;
-        myData.updateMap.putAll(param.getUpdateMap());
 
         /*
         ComponentParam param = new ComponentParam(input);
@@ -319,6 +318,8 @@ public class ImproveProfitAction extends Action {
         Map<String, Object> timingMap = new HashMap<>();
         timingMap.put(market.getConfig().getMarket(), param.getTimings());
         myData.timingMap = timingMap;
+
+        myData.updateMap.putAll(param.getUpdateMap());
 
         /*
         ComponentParam param = new ComponentParam(input);
