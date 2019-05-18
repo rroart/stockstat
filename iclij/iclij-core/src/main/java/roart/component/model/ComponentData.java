@@ -307,7 +307,7 @@ public class ComponentData {
             service.conf.getConfigValueMap().putAll(updateMap);
         }
         service.conf.setdate(TimeUtil.convertDate(this.getBaseDate()));
-        Map<String, Map<String, Object>> maps = service.getContent();
+        Map<String, Map<String, Object>> maps = service.getContent(getDisableList());
         this.resultMaps = maps;
         Map<String, Object> aMap = (Map) maps.get(mapName);
         this.resultMap = aMap;
