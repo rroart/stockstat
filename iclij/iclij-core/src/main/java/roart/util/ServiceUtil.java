@@ -666,6 +666,7 @@ public class ServiceUtil {
     }
 
     public static IclijServiceResult getImproveProfit(ComponentInput componentInput) throws Exception {
+        try {
         int loopOffset = 0;
         int days = 0; // config.verificationDays();
         IclijServiceResult result = new IclijServiceResult();
@@ -715,6 +716,10 @@ public class ServiceUtil {
         IclijServiceList updates = convert(null, updateMap);
         lists.add(updates);
         return result;
+        } catch (Exception e) {
+            log.error("Ex", e);
+        }
+        return null;
     }
 
     public static List<String> getImproveProfitComponents(IclijConfig config) {
@@ -791,9 +796,29 @@ public class ServiceUtil {
             }
         }
         Collections.sort(filterConfigs, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
+        Map<String, Class> type = param.getService().conf.getType();
         Map<String, Object> updateMap = new HashMap<>();
         for (ConfigItem config : filterConfigs) {
-            updateMap.put(config.getId(), config.getValue());
+            Object value = config.getValue();
+            String string = config.getValue();
+            Class myclass = type.get(config.getId());
+            switch (myclass.getName()) {
+            case "java.lang.String":
+                break;
+            case "java.lang.Integer":
+                value = Integer.valueOf(string);
+                break;
+            case "java.lang.Double":
+                value = Double.valueOf(string);
+                break;
+            case "java.lang.Boolean":
+                value = Boolean.valueOf(string);
+                break;
+            default:
+                log.info("unknown " + myclass.getName());
+            }
+
+            updateMap.put(config.getId(), value);
         }
         return updateMap;
     }
