@@ -240,7 +240,7 @@ public class IclijXMLConfig {
                     break;
                 default:
                     //System.out.println("unknown " + myclass.getName());
-                    log.info("unknown " + myclass.getName());
+                    log.info("unknown {}", myclass.getName());
                 }
                 log.info("grr {} {}", node0, o);
                 configInstance.getConfigValueMap().put(node0, o);
