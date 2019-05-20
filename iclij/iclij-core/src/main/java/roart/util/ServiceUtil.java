@@ -802,6 +802,10 @@ public class ServiceUtil {
             Object value = config.getValue();
             String string = config.getValue();
             Class myclass = type.get(config.getId());
+            if (myclass == null) {
+                log.error("No class for {}", config.getId());
+                continue;
+            }
             switch (myclass.getName()) {
             case "java.lang.String":
                 break;
@@ -815,7 +819,7 @@ public class ServiceUtil {
                 value = Boolean.valueOf(string);
                 break;
             default:
-                log.info("unknown " + myclass.getName());
+                log.info("unknown {}", myclass.getName());
             }
 
             updateMap.put(config.getId(), value);
