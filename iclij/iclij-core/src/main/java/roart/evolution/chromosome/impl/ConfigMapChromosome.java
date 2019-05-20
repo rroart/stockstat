@@ -325,7 +325,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     @Override
     public String toString() {
-        return confList.toString();
+        return map.toString();
     }
 
     @Override
