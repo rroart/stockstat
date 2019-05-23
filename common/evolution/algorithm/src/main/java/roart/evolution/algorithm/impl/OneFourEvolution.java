@@ -31,8 +31,6 @@ public class OneFourEvolution extends EvolutionAlgorithm {
         String market = null; //"tradcomm";
         //List<Double> macdLists[] = new ArrayList[4];
 
-        // TODO clone config
-
         Individual parent = getBest(four, five, populationBuy, true, recommend);
         return parent;
     }

@@ -69,7 +69,6 @@ public class IndicatorSTOCH extends Indicator {
         return tu.getSRSIAndDelta(conf.getRSIDeltaDays(), conf.getRSIDeltaDays(), objs, offset);
     }
     
-    // TODO call tautil
     @Override
     public int getResultSize() {
         int size = 2;

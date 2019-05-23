@@ -552,7 +552,6 @@ public class ImproveProfitAction extends Action {
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         List<Market> markets = getMarkets(instance);
         Market foundMarket = null;
-        // TODO check if two markets
         for (Market aMarket : markets) {
             if (param.getMarket().equals(aMarket.getConfig().getMarket())) {
                 foundMarket = aMarket;

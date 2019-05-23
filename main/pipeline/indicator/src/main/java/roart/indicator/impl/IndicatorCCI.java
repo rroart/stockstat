@@ -66,7 +66,6 @@ public class IndicatorCCI extends Indicator {
         return tu.getRsiAndDelta(conf.getCCIDeltaDays(), objs, offset);
     }
         
-    // TODO call tautil
     @Override
     public int getResultSize() {
         return 2;        

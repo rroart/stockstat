@@ -104,8 +104,6 @@ public class MLService {
         */
         /*
         try {
-            // TODO add more offset
-            // TODO verify dates and offsets
             componentparam.setUsedsec(time0);
             return new ComponentMLMACD().calculateMemory(componentparam);
         } catch (Exception e) {

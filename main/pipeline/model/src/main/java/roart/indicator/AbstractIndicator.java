@@ -44,8 +44,8 @@ public abstract class AbstractIndicator extends Calculatable {
     
     protected Map<String, double[][]> truncBase100ListMap;
     protected Map<String, double[][]> truncBase100FillListMap;
-    // TODO save and return this map
-    // TODO need getters for this and not? buy/sell
+    // save and return this map
+    // need getters for this and not? buy/sell
     protected Map<String, Object[]> objectMap;
     protected Map<String, Object[]> objectFixedMap;
     protected Map<String, Double[]> calculatedMap;
@@ -161,7 +161,7 @@ public abstract class AbstractIndicator extends Calculatable {
             Double[] calculated = getCalculated(objectMap, id);
             if (calculated != null) {
                 result.put(id, calculated);
-                // TODO and continue?
+                // and continue?
             } else {
                 log.info("nothing for id {}", id);
             }

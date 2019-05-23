@@ -540,7 +540,6 @@ public class ServiceUtil {
         if (input.getLoopoffset() != null) {
             int index = getDateIndex(date, stockdates);
             index = index - input.getLoopoffset();
-            // TODO calculate backward limit for all components
             if (index <= 0) {
                 throw new Exception("Index <= 0");
             }

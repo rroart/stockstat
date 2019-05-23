@@ -52,8 +52,8 @@ public class MLMACD extends Aggregator {
     String key;
     private Map<String, Double[][]> macdListMap;
     private Map<String, double[][]> listMap;
-    // TODO save and return this map
-    // TODO need getters for this and not? buy/sell
+    // save and return this map
+    // need getters for this and not? buy/sell
     Map<String, Double[]> momMap;
     Object[] emptyField;
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
@@ -224,7 +224,7 @@ public class MLMACD extends Aggregator {
             wantedSubTypes.add(new MacdSubTypeMacd());
         }
     }
-    // TODO make an oo version of this
+    // make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, PeriodData> periodDataMap,
             int category2, AbstractCategory[] categories, Pipeline[] datareaders) throws Exception {
         AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, category);
@@ -561,7 +561,7 @@ public class MLMACD extends Aggregator {
             }
             int retindex = 0; //tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
 
-            // TODO make OO of this
+            // make OO of this
             if (conf.wantML()) {
                 Map<Double, String> labelMapShort2 = createLabelMapShort();
                 //int momidx = 6;
@@ -781,7 +781,7 @@ public class MLMACD extends Aggregator {
             if (conf.wantML()) {
                 if (momentum != null && momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
                     Map<String, Double> labelMap2 = createLabelMap2();
-                    // TODO also macd
+                    // also macd
                     if (endOfArray.value > 0) {
                         List<MacdSubType> subTypes = wantedSubTypes();
                         for (MacdSubType subType : subTypes) {
@@ -1039,7 +1039,7 @@ public class MLMACD extends Aggregator {
     }
 
     private int getTitles(int retindex, Object[] objs) {
-        // TODO make OO of this
+        // make OO of this
         List<MacdSubType> subTypes = wantedSubTypes();
         for (MacdSubType subType : subTypes) {
             for (MLClassifyDao mldao : mldaos) {
@@ -1048,7 +1048,7 @@ public class MLMACD extends Aggregator {
                     for (int mapTypeInt : typeList) {
                         String mapType = mapTypes.get(mapTypeInt);
                         String val = "";
-                        // TODO workaround
+                        // workaround
                         try {
                             val = "" + MLClassifyModel.roundme((Double) probabilityMap.get("" + model . getId() + key + subType + mapType));
                             //val = "" + MLClassifyModel.roundme(mldao.eval(model . getId(), key, subType + mapType));

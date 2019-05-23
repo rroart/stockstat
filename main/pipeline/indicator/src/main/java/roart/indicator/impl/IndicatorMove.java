@@ -13,7 +13,7 @@ public class IndicatorMove extends Indicator {
 
     protected Map<String, Integer> periodmap;
 
-    // TODO fix category/period
+    // fix category/period
     int period;
 
     public IndicatorMove(MyMyConfig conf, String string, List<StockItem>[] datedstocklists, int period) throws Exception {

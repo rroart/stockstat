@@ -138,7 +138,7 @@ public class ControlService {
             if (stocks.size() != marketdatamap.get(conf.getMarket()).stocks.size()) {
                 log.error("Sizes {} {}", stocks.size(), marketdatamap.get(conf.getMarket()).stocks.size());
             }
-            // TODO temp hack
+            // temp hack
             Map<String, String> idNameMap = getIdNameMap(stockidmap);
 
             // the main list, based on freshest or specific date.
@@ -384,7 +384,7 @@ public class ControlService {
 
     /**
      * Create result graphs
-     * @param guiSize TODO
+     * @param guiSize gui size
      * 
      * @return the image list
      */
@@ -441,7 +441,7 @@ public class ControlService {
      * Create result graphs for one
      * 
      * myid the id of the unit
-     * @param guiSize TODO
+     * @param guiSize gui size
      * @return the image list
      */
 

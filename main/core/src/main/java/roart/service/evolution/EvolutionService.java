@@ -140,8 +140,8 @@ public class EvolutionService {
             datareaders[0] = dataReader;
     
             // no...get this from the category
-            // TODO make oo of this
-            // TODO optimize with constructors, no need for duplicate
+            // make oo of this
+            // optimize with constructors, no need for duplicate
             // map from type (complex/simple) to recommender and keysets
             Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
@@ -194,7 +194,7 @@ public class EvolutionService {
                     row.add("" + newEval.getConf().getConfigValueMap().get(id));
                     table.add(row);
                 }
-                // TODO have a boolean here
+                // have a boolean here
                 for (String id : scoreList) {
                     IndicatorChromosome newEval = (IndicatorChromosome) fittestIndividual.getEvaluation();
                     updateMap.put(id, newEval.getConf().getConfigValueMap().get(id));
@@ -296,8 +296,8 @@ public class EvolutionService {
             datareaders[0] = dataReader;
     
             // no...get this from the category
-            // TODO make oo of this
-            // TODO optimize with constructors, no need for duplicate
+            // make oo of this
+            // optimize with constructors, no need for duplicate
             // map from type (complex/simple) to recommender and keysets
             Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);

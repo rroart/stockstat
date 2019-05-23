@@ -145,7 +145,7 @@ public class GraphCategoryPrice extends GraphCategory {
         int epochs = conf.getPredictorLSTMEpochs();
         */
         
-        // TODO check reverse. move up before if?
+        // check reverse. move up before if?
         if (list != null) {
             log.info("list {} {}", list.length);
             String key = null;

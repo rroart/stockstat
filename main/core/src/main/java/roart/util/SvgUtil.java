@@ -95,12 +95,12 @@ public class SvgUtil {
      * @param name Filename for the debug image
      * @param xsize2 Suggested X axis size
      * @param ysize2 Suggested Y axis size
-     * @param days TODO
+     * @param days days
      * @param days how many days to display
-     * @param topbottom TODO
+     * @param topbottom top count
      * @param topbottom how many items
-     * @param guiSize TODO
-     * @param size TODO
+     * @param guiSize gui size
+     * @param size size
      * @return a stream resource for the image
      */
 
@@ -111,7 +111,7 @@ public class SvgUtil {
             if (xsize + 0*100 > guiSize.x) {
                 xsize = guiSize.x - 0*100 - 200;
             }
-            // TODO gui size is wrong, temp fix
+            // gui size is wrong, temp fix
             xsize = 1024;
             ysize = 768;
             ysize = size * ysize / 100;

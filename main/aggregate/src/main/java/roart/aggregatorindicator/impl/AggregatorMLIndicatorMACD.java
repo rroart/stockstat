@@ -25,7 +25,7 @@ public class AggregatorMLIndicatorMACD extends AggregatorMLIndicator {
         return conf.wantAggregatorsIndicatorMACD();
     }
 
-    // TODO this is duplicated
+    // this is duplicated
     @Override
     public AbstractIndicator getIndicator(Map<String, MarketData> marketdatamap, int category,
             Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap, Pipeline[] datareaders) throws Exception {

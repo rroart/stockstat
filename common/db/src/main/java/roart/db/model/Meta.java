@@ -186,14 +186,4 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
         return (List<Meta>) HibernateUtil.convert(HibernateUtil.currentSession().createQuery("from Meta where marketid = :mymarket").setParameter("mymarket",  mymarket).list(), Meta.class);
     }
 
-    /*
-    @Transient
-    public int compareTo(Meta arg0) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-     */
-
-    //@Transient
-
 }

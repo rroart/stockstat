@@ -60,7 +60,6 @@ public class MyConfig {
 
 	private boolean rsiDeltaEnabled = true;
 
-	// TODO warning this looks weird, avoid for now?
 	private boolean stochrsiEnabled = false;
 
 	private boolean stochrsiDeltaEnabled = false;

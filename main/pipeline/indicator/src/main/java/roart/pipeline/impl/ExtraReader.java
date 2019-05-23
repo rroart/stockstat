@@ -120,7 +120,6 @@ public class ExtraReader extends Pipeline {
     }
     @Override
     public Map<Integer, Map<String, Object>> getResultMap() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -268,7 +267,7 @@ public class ExtraReader extends Pipeline {
         return 35;
     }
 
-    // TODO only dup due to maxholes and lacking parametrization of string/pair
+    // only dup due to maxholes and lacking parametrization of string/pair
     public static Map<Pair<String, String>, Double[][]> getReverseArrSparseFillHolesArr(MyConfig conf, Map<Pair<String, String>, Double[][]> listMap) {
         Map<Pair<String, String>, Double[][]> retMap = /*getReverse*/(listMap);
         for (Entry<Pair<String, String>, Double[][]> entry : listMap.entrySet()) {

@@ -180,7 +180,6 @@ public class ArraysUtil {
     private static int getArrayNonNullReversenot(List<Double> list, double[] values) {
         int count = values.length;
         for (Double val : list) {
-            // TODO bounds check
             if (val != null && count > 0) {
                 values[--count] = val;
             }
@@ -201,7 +200,6 @@ public class ArraysUtil {
         boolean display = false;
         List<Double> newList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            // TODO bounds check
             Double val = list.get(i);
             if (val != null && count < values.length) {
                 newList.add(val);
@@ -226,7 +224,6 @@ public class ArraysUtil {
         boolean display = false;
         List<Double> newList = new ArrayList<>();
         for (int i = 0; i < list.length; i++) {
-            // TODO bounds check
             Double val = list[i];
             if (val != null && count < values.length) {
                 newList.add(val);
@@ -260,7 +257,6 @@ public class ArraysUtil {
     private static int getArrayNonNull(List<Double> list, double[] values) {
         int size = 0;
         for (Double val : list) {
-            // TODO bounds check
             if (val != null && size < values.length) {
                 values[size++] = val;
             }
@@ -285,9 +281,7 @@ public class ArraysUtil {
         for (int start : map.keySet()) {
             int end = map.get(start);
             if (end - start + 1 >= before) {
-                // TODO check exact limit
                 start = end - before + 1;
-                // TODO check exact limit
                 if (end + after < size) {
                     retMap.put(start, end);
                 }
@@ -312,9 +306,7 @@ public class ArraysUtil {
             int start = entry.getKey();
             int end = entry.getValue();
             if (end - start + 1 >= before) {
-                // TODO check exact limit
                 start = end - before + 1;
-                // TODO check exact limit
                 if (end + after >= size) {
                     retMap.put(start, end);
                 }

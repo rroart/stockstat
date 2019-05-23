@@ -63,8 +63,6 @@ public class TaUtil {
     public static final int THREEIDXARRTWOFIXED = 6;
     public static final int THREEIDXARRTHREEFIXED = 7;
 
-    // TODO make OO version of this, when getting another stat lib
-
     Object[] getRSI(int days, String market,
             String id, Set<Pair<String, String>> ids, Map<String, MarketData> marketdatamap, PeriodData perioddata, String periodstr) {
         Set<Pair<String, Integer>> pairs = perioddata.pairs;
@@ -100,7 +98,6 @@ public class TaUtil {
         double[] low = new double[days];
         double[] high = new double[days];
         double[] close = new double[days];
-        // TODO make new getarr for low high
         int size = getArr(days, market, id, ids, periodInt, datedstocklists, close, low, high);
         return getInnerCCI(low, high, close, size);
     }
@@ -114,7 +111,6 @@ public class TaUtil {
         double[] low = new double[days];
         double[] high = new double[days];
         double[] close = new double[days];
-        // TODO make new getarr for low high
         int size = getArr(days, market, id, ids, periodInt, datedstocklists, close, low, high);
         return getInnerATR(low, high, close, size);
     }
@@ -128,7 +124,6 @@ public class TaUtil {
         double[] low = new double[days];
         double[] high = new double[days];
         double[] close = new double[days];
-        // TODO make new getarr for low high
         int size = getArr(days, market, id, ids, periodInt, datedstocklists, close, low, high);
         return getInnerSTOCH(low, high, close, size);
     }

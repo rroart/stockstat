@@ -116,7 +116,7 @@ public class EurekaUtil {
             //System.out.println(converter.getClass().getName());
             if (converter instanceof MappingJackson2HttpMessageConverter) {
                 //log.info("setting object ignore");
-                // TODO temp fix for extra duplicated arr in json
+                // temp fix for extra duplicated arr in json
                 MappingJackson2HttpMessageConverter jsonConverter = (MappingJackson2HttpMessageConverter) converter;
                 jsonConverter.setObjectMapper(objectMapper);
             }		

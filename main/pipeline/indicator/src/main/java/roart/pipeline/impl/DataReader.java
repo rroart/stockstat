@@ -75,7 +75,6 @@ public class DataReader extends Pipeline {
         readData(conf, marketdatamap, category);        
     }
 
-    // TODO make an oo version of this
     private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category) throws Exception {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());

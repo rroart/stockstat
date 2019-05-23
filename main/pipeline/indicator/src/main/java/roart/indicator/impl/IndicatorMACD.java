@@ -83,7 +83,6 @@ public class IndicatorMACD extends Indicator {
 
     }
     
-    // TODO call tautil
     @Override
     public int getResultSize() {
         return 4;        

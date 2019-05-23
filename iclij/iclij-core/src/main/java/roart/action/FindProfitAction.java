@@ -338,7 +338,6 @@ public class FindProfitAction extends Action {
     public static Market findMarket(ComponentData param) {
         List<Market> markets = getMarkets();
         Market foundFilterMarket = null;
-        // TODO check if two markets
         for (Market aMarket : markets) {
             try {
             if (param.getInput().getMarket().equals(aMarket.getConfig().getMarket())) {

@@ -119,7 +119,7 @@ public class ControlService {
 
     /**
      * Create result graphs
-     * @param guiSize TODO
+     * @param guiSize gui size
      * 
      * @return the image list
      */
@@ -135,12 +135,11 @@ public class ControlService {
      * Create result graphs for one
      * 
      * myid the id of the unit
-     * @param guiSize TODO
+     * @param guiSize gui size
      * @return the image list
      */
 
     public List getContentGraph(Set<Pair<String, String>> ids) {
-		// TODO fix quick workaround for serialization
     	Set<String> idset = new HashSet<>();
     	for (Pair pair : ids) {
     		idset.add(pair.getFirst() + "," + pair.getSecond());

@@ -173,7 +173,6 @@ public class MLIndicator extends Aggregator {
         return retMap;
     }
 
-    // TODO make an oo version of this
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories, Pipeline[] datareaders) throws Exception {
         AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, category);
@@ -253,7 +252,7 @@ public class MLIndicator extends Aggregator {
             if (mergedCatMap.keySet().isEmpty()) {
                 log.info("Merget set empty");
             }
-            // TODO add a null check
+            // add a null check
             int arrayLength = mergedCatMap.keySet().iterator().next().length;
             for(double[] array : mergedCatMap.keySet()) {
                 if (array.length != arrayLength) {
@@ -444,7 +443,7 @@ public class MLIndicator extends Aggregator {
             Object[] arrayResult = new Object[0];
             for (AbstractIndicator indicator : indicators) {
                 String indicatorName = indicator.indicatorName();
-                // TODO fix
+                // fix
                 Map<String, Double[][]> aListMap = (Map<String, Double[][]>) cat.getIndicatorLocalResultMap().get(indicatorName).get(PipelineConstants.LIST);
                 Double[][] aResult = aListMap.get(id);
                 arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
@@ -485,7 +484,7 @@ public class MLIndicator extends Aggregator {
             resultMap.put(id, fields);
             int retindex = 0 ;
 
-            // TODO make OO of this
+            // make OO of this
             if (conf.wantML()) {
                 Map<Double, String> labelMapShort2 = createLabelMapShort();
                 for (MLClassifyDao mldao : mldaos) {
@@ -525,7 +524,7 @@ public class MLIndicator extends Aggregator {
                 if (indicator != null) {
                     indicatorMap.put(indicator, ind.getIndicator(marketdatamap, category, newIndicatorMap, usedIndicatorMap, datareaders));
                 }
-                // TODO fix
+                // fix
                 Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
                 ids.retainAll(aResult.keySet());
             }
@@ -722,14 +721,14 @@ public class MLIndicator extends Aggregator {
     }
 
     private int getTitles(int retindex, Object[] objs) {
-        // TODO make OO of this
+        // make OO of this
         for (MLClassifyDao mldao : mldaos) {
             for (MLClassifyModel model : mldao.getModels()) {
                 List<Integer> typeList = getTypeList();
                 for (int mapTypeInt : typeList) {
                     String mapType = mapTypes.get(mapTypeInt);
                     String val = "";
-                    // TODO workaround
+                    // workaround
                     try {
                         val = "" + MLClassifyModel.roundme((Double) probabilityMap.get(mldao.getName() + model.getId()));
                     } catch (Exception e) {

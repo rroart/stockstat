@@ -10,7 +10,6 @@ import roart.ml.model.LearnTestPredict;
 public class MLPredictTensorflowLSTMModel extends MLPredictTensorflowModel {
     public MLPredictTensorflowLSTMModel(MyMyConfig conf) {
         super(conf);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

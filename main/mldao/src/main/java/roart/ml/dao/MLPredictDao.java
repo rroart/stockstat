@@ -35,7 +35,7 @@ public class MLPredictDao {
         if (type == null) {
             return;
         }
-        // TODO temp fix
+        // temp fix
         if (true || access == null) {
             if (type.equals(ConfigConstants.SPARK)) {
                 access = new MLPredictSparkAccess(conf);
@@ -59,7 +59,7 @@ public class MLPredictDao {
         return null;
     }
 
-    // TODO delete?
+    // delete?
 
     @Deprecated
     public Double eval(int modelInt, String period, String mapname) {

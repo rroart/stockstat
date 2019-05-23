@@ -75,7 +75,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                         indicatorMap.put(indicator, newIndicator);
                     }
                 }
-                // TODO fix
+                // fix
                 Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
                 ids.retainAll(aResult.keySet());
             }
@@ -125,7 +125,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     if (disableList.contains(key)) {
                         continue;
                     }
-                    // TODO temp fix
+                    // temp fix
                     Object o = conf.getConfigValueMap().get(key);
                     if (o instanceof Integer) {
                         Integer oint = (Integer) o;
@@ -147,7 +147,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     if (disableList.contains(key)) {
                         continue;
                     }
-                    // TODO temp fix
+                    // temp fix
                     Object o = conf.getConfigValueMap().get(key);
                     if (o instanceof Integer) {
                         Integer oint = (Integer) o;

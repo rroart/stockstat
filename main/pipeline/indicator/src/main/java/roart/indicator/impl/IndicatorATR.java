@@ -10,7 +10,7 @@ import roart.talib.util.TaUtil;
 
 public class IndicatorATR extends Indicator {
 
-    // TODO extend to three cats
+    // extend to three cats
     public IndicatorATR(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.key = title;
@@ -70,7 +70,6 @@ public class IndicatorATR extends Indicator {
         return tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, offset);
     }
         
-    // TODO call tautil
     @Override
     public int getResultSize() {
         return 2;        

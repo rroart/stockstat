@@ -201,7 +201,6 @@ public class ServiceController implements CommandLineRunner {
             throws Exception {
         ServiceResult result = new ServiceResult();
         try {
-            // TODO fix quick workaround for serialization
             Set<Pair<String,String>> ids = new HashSet<>();
             for (String union : param.getIds()) {
                 String[] idsplit = union.split(",");

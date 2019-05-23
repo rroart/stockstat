@@ -143,7 +143,7 @@ public class IclijXMLConfig {
         try {
             getMarkets(configInstance);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            log.error(Constants.EXCEPTION, e);
             e.printStackTrace();
         }
         // then defalts

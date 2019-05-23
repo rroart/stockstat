@@ -44,8 +44,6 @@ public class IndicatorChromosome extends AbstractChromosome {
         this.keys = keys;
     }
 
-    // TODO add deltadays?
-
     private MyMyConfig conf;
 
     private Object[] retObj;
@@ -135,7 +133,7 @@ public class IndicatorChromosome extends AbstractChromosome {
             if (list[newlistidx] == null || list[curlistidx] == null) {
                 continue;
             }
-            // TODO change filtering?
+            // change filtering?
             double change = (list[newlistidx]/list[curlistidx] - 0);
             Double[] momrsi = entry.getValue();
             double recommend = 0;
@@ -144,7 +142,7 @@ public class IndicatorChromosome extends AbstractChromosome {
                 if (disableList.contains(key)) {
                     continue;
                 }
-                // TODO temp fix
+                // temp fix
                 Object o = conf.getConfigValueMap().get(key);
                 if (conf.getConfigValueMap().get(key) instanceof Integer) {
                     int jj = 0;

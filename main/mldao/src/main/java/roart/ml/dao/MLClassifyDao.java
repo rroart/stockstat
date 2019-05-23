@@ -30,7 +30,7 @@ public class MLClassifyDao {
         if (type == null) {
             return;
         }
-        // TODO temp fix
+        // temp fix
         if (true || access == null) {
             if (type.equals(ConfigConstants.SPARK)) {
                 access = new MLClassifySparkAccess(conf);

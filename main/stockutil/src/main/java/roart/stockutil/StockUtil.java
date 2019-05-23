@@ -188,7 +188,7 @@ public class StockUtil {
      * Create an array of stocklists based on the desired date and intervals
      * 
      * @param stockdatemap a map of dates to stock lists
-     * @param datedate TODO
+     * @param datedate date
      * @param count the number of lists to return
      * @param mytableintervaldays the interval between the dates
      * @return array of stock lists based on date
@@ -1146,6 +1146,9 @@ public class StockUtil {
         List<StockItem> retList = new ArrayList<>();
         for (StockItem stock : stocks) {
             Date date = stock.getDate();
+            if (date == null || stock.getDate() == null) {
+                int jj = 0;
+            }
             calendar.setTime(date);
             if (!(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
                     calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {

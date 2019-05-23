@@ -75,7 +75,6 @@ public class Indicator extends AbstractIndicator {
         }
     }
 
-    // TODO make an oo version of this
     protected void calculateAll(int category, Pipeline[] datareaders) throws Exception {
         DbAccess dbDao = DbDao.instance(conf);
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
@@ -128,7 +127,6 @@ public class Indicator extends AbstractIndicator {
 
     @Override
     public boolean isEnabled() {
-        // TODO Auto-generated method stub
         return false;
     }
 

@@ -9,8 +9,6 @@ import roart.common.constants.RecommendConstants;
 
 public class RSIRecommendComplex extends RecommendRSI {
     
-    // TODO add deltadays?
-    
     public RSIRecommendComplex(MyMyConfig conf) {
         super(conf);
     }

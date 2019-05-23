@@ -8,8 +8,6 @@ import roart.common.config.MyMyConfig;
 
 public abstract class MACDRecommend extends RecommendMACD {
     
-    // TODO add deltadays?
-    
     public MACDRecommend(MyMyConfig conf) {
         super(conf);
     }

@@ -23,8 +23,6 @@ import roart.model.data.MarketData;
 @Deprecated
 public class IndicatorEvaluationNew extends AbstractChromosome {
     
-    // TODO add deltadays?
-    
     private MyMyConfig conf;
 
     private Object[] retObj;
@@ -104,10 +102,10 @@ public class IndicatorEvaluationNew extends AbstractChromosome {
             if (list[newlistidx] == null || list[curlistidx] == null) {
                 continue;
             }
-	    // TODO change filtering?
+	    // change filtering?
             double change = (list[newlistidx]/list[curlistidx] - 1);
             Double[] momrsi = entry.getValue();
-            // TODO temp fix
+            // temp fix
             CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
             double value = momrsi[index];
             recommend += node.calc(value, 0) * change;

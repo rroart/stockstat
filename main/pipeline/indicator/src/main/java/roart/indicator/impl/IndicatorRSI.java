@@ -72,7 +72,6 @@ public class IndicatorRSI extends Indicator {
         return tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, offset);
     }
 
-    // TODO call tautil
     @Override
     public int getResultSize() {
         return 2;        

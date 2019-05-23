@@ -18,8 +18,6 @@ import roart.stockutil.StockDao;
 
 public class MACDRecommendComplex extends RecommendMACD {
     
-    // TODO add deltadays?
-    
     public MACDRecommendComplex(MyMyConfig conf) {
         super(conf);
     }

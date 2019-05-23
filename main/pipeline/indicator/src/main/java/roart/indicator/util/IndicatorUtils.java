@@ -179,7 +179,7 @@ public class IndicatorUtils {
         if (listList.isEmpty()) {
             return retobj;
         }
-        // TODO copy the retain from aggregator?
+        // copy the retain from aggregator?
         Set<String> ids = new HashSet<>();
         ids.addAll(listList.get(0).keySet());
 
@@ -209,7 +209,7 @@ public class IndicatorUtils {
 
 
 
-        // TODO change
+        // change
         for (int j = futureDays; j < tableDays; j += intervalDays) {
             Map<String, Double[]> indicatorMap = new HashMap<>();
             for (String id : listList.get(0).keySet()) {
@@ -257,7 +257,7 @@ public class IndicatorUtils {
         if (listList.isEmpty()) {
             return retobj;
         }
-        // TODO copy the retain from aggregator?
+        // copy the retain from aggregator?
         Set<String> ids = new HashSet<>();
         ids.addAll(listList.get(0).keySet());
 
@@ -268,7 +268,7 @@ public class IndicatorUtils {
         }
 
         // for more extra end
-        // TODO change
+        // change
         int deltas = conf.getAggregatorsIndicatorExtrasDeltas();
         if (tableDays < deltas) {
             deltas = 0;
@@ -431,7 +431,7 @@ public class IndicatorUtils {
                 }
             }
         }
-        // TODO make indicator factory
+        // make indicator factory
         if (indicatorSet.add(PipelineConstants.INDICATORMACD) && conf.wantAggregatorsIndicatorExtrasMACD()) {
             allIndicators.add(new IndicatorMACD(conf, null, null, 42, datareaders, true));       
         }

@@ -8,8 +8,6 @@ import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
 import roart.talib.util.TaUtil;
 
-// TODO warning this looks weird, avoid for now?
-
 public class IndicatorSTOCHRSI extends Indicator {
 
     public IndicatorSTOCHRSI(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
@@ -71,7 +69,6 @@ public class IndicatorSTOCHRSI extends Indicator {
         return tu.getSRSIAndDelta(conf.getSTOCHRSIDeltaDays(), conf.getSTOCHRSIDeltaDays(), objs, offset);
     }
     
-    // TODO call tautil
     @Override
     public int getResultSize() {
         int size = 2;

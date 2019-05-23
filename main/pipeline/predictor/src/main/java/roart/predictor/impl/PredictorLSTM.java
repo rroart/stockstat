@@ -176,7 +176,7 @@ public class PredictorLSTM extends AbstractPredictor {
         wantedSubTypes.add(new PredSubTypeSingle());
     }
     
-    // TODO make an oo version of this
+    // make an oo version of this
     @Override
     public void calculate() throws Exception { // MyMyConfig conf, Map<String, MarketData> marketdatamap,
            // Map<String, PeriodData> periodDataMap, int category2, AbstractCategory[] categories) throws Exception {
@@ -277,7 +277,7 @@ public class PredictorLSTM extends AbstractPredictor {
         for (String id : aListMap.keySet()) {
             double[][] list0 = aTruncListMap.get(id);
             double[] list = list0[0];
-            // TODO check reverse. move up before if?
+            // check reverse. move up before if?
             log.info("list {} {}", list.length, windowsize);
             if (list != null && list.length > 2 * windowsize ) {
                 Double[] list3 = ArrayUtils.toObject(list);
@@ -295,7 +295,7 @@ public class PredictorLSTM extends AbstractPredictor {
             Double[] listl = aListMap.get(id)[0];
             double[][] list0 = aTruncListMap.get(id);
             double[] list = list0[0];
-            // TODO check reverse. move up before if?
+            // check reverse. move up before if?
             if (list != null) {
                 log.info("list {}", list.length);
                 Double[] list3 = ArrayUtils.toObject(list);
@@ -409,9 +409,9 @@ public class PredictorLSTM extends AbstractPredictor {
                 .stream()
                 .mapToDouble(a -> (Double) a)
                 .average();
-        // TODO make OO of this
+        // make OO of this
         String val = "";
-        // TODO workaround
+        // workaround
         try {
             val = "" + MLClassifyModel.roundmebig(average.getAsDouble());
             //val = "" + MLClassifyModel.roundme(mldao.eval(model . getId(), key, subType + mapType));

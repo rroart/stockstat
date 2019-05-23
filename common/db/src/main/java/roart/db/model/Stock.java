@@ -302,14 +302,4 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
         return (List<Stock>) HibernateUtil.convert(HibernateUtil.currentSession().createQuery("from Stock where marketid = :mymarket").setParameter("mymarket",  mymarket).list(), Stock.class);
     }
 
-    /*
-    @Transient
-    public int compareTo(Stock arg0) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-     */
-
-    //@Transient
-
 }
