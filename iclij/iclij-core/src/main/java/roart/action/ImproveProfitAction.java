@@ -130,6 +130,9 @@ public class ImproveProfitAction extends Action {
             }
         }
         Collections.sort(marketTimes, (o1, o2) -> (Double.valueOf(o2.time).compareTo(Double.valueOf(o1.time))));
+        for (MarketComponentTime marketTime : marketTimes) {
+            log.info("MarketTime {}", marketTime);
+        }
         /*
         for (MarketComponentTime marketTime : marketTimes) {
             myData.timingMap.put(marketTime.market.getConfig().getMarket(), marketTime.timings);
@@ -529,6 +532,11 @@ public class ImproveProfitAction extends Action {
         Market market;
         double time;
         List<TimingItem> timings;
+        
+        @Override
+        public String toString() {
+            return market.getConfig().getMarket() + " " + componentName + " " + time;
+        }
     }
     
     private List<TimingItem> getMyTimings(List<TimingItem> timings, String market, String action, String component, boolean evolve) {
