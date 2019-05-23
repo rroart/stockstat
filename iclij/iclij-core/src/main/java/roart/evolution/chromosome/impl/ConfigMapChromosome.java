@@ -261,7 +261,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
                     incdecFitness = 0;
                 }
                 log.info("Fit {} ( {} / {} ) {} ( {} / {} ) {} {} ( {} / {} )", fitness, countDec, sizeDec, fitness2, countInc, sizeInc, fitness3, fitness4, countDec + countInc, size);
-                log.info("Fit {} {}", this.hashCode(), this.toString());
+                log.info("Fit #{} {}", this.hashCode(), this.toString());
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
         } catch (Exception e) {

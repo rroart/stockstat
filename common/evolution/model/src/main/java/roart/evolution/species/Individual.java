@@ -76,7 +76,7 @@ public class Individual  implements Comparable<Individual>{
 
     @Override
     public String toString() {
-        return "" + fitness + " " + calculatetime + " " + chromosome;
+        return "" + fitness + " " + calculatetime + " #" + chromosome.hashCode() + " " + chromosome;
     }
 
     public Double getFitness() {
