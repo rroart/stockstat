@@ -179,7 +179,6 @@ public class DbSpark {
         for (String id : listMap.keySet()) {
             Double[] values = listMap.get(id);
             //values = ArraysUtil.getArrayNonNullReverse(values);
-            // TODO !!!
             if (wantPercentizedPriceIndex) {
                 values = ArraysUtil.getPercentizedPriceIndex(values);
             }
