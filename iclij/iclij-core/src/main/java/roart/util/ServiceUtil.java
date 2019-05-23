@@ -166,7 +166,6 @@ public class ServiceUtil {
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
-        /*
         ComponentData param = null; 
         try {
             param = getParam(componentInput, 0);
@@ -174,7 +173,6 @@ public class ServiceUtil {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
-         */
         
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -185,7 +183,7 @@ public class ServiceUtil {
         for (Market market : findProfitAction.getMarkets()) {
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
             for (Component component : componentMap.values()) {
-                Map<String, Object> anUpdateMap = loadConfig(null, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false);
+                Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false);
                 updateMarketMap.put(market.getConfig().getMarket(), anUpdateMap);
                 updateMap.putAll(anUpdateMap);
             }
@@ -260,7 +258,6 @@ public class ServiceUtil {
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
-        /*
         ComponentData param = null; 
         try {
             param = getParam(componentInput, 0);
@@ -268,7 +265,6 @@ public class ServiceUtil {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
-         */
         
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -279,7 +275,7 @@ public class ServiceUtil {
         for (Market market : findProfitAction.getMarkets()) {
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
             for (Component component : componentMap.values()) {
-                Map<String, Object> anUpdateMap = loadConfig(null, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false);
+                Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false);
                 updateMarketMap.put(market.getConfig().getMarket(), anUpdateMap);
                 updateMap.putAll(anUpdateMap);
             }
@@ -803,7 +799,7 @@ public class ServiceUtil {
             Class myclass = type.get(config.getId());
             if (myclass == null) {
                 log.error("No class for {}", config.getId());
-                continue;
+                myclass = String.class;
             }
             switch (myclass.getName()) {
             case "java.lang.String":
