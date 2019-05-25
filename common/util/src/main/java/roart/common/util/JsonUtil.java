@@ -4,12 +4,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import roart.common.constants.Constants;
 
 public class JsonUtil {
 
     private static Logger log = LoggerFactory.getLogger(JsonUtil.class);
+
+    public static <T> T convert(String text, TypeReference<T> typeref) {
+        ObjectMapper mapper = new ObjectMapper();
+        if (text != null) {
+            try {
+                String strippedtext = strip(text);
+                return mapper.convertValue(strippedtext, typeref);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
 
     public static <T> T convert(String text, Class<T> myclass) {
         ObjectMapper mapper = new ObjectMapper();
