@@ -255,6 +255,7 @@ public class ComponentMLMACD extends ComponentML {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapChromosome chromosome = new MLMACDChromosome(param, profitdata, confList, market, positions, PipelineConstants.MLMACD);
+        loadme(param, chromosome, market, confList);
         return improve(param, chromosome);
 
         /*

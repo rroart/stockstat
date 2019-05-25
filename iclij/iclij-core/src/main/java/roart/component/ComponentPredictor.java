@@ -41,6 +41,7 @@ import roart.service.ControlService;
 import roart.service.MLService;
 import roart.service.PredictorService;
 import roart.service.model.ProfitData;
+import roart.util.ServiceUtil;
 
 public class ComponentPredictor extends ComponentML {
 
@@ -193,6 +194,18 @@ public class ComponentPredictor extends ComponentML {
         PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM);
         TensorflowLSTMConfig config = new TensorflowLSTMConfig(5, 5, 5);
         config.full = true;
+        Map<String, Object> map = null;
+        try {
+            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        if (map != null) {
+            String configStr = (String) map.get(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+            if (configStr != null) {
+                config = JsonUtil.convert(configStr, TensorflowLSTMConfig.class);
+            }
+        }
         chromosome.setConfig(config);
         return improve(param, chromosome);
         /*

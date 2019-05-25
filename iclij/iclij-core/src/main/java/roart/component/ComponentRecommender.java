@@ -2,6 +2,7 @@ package roart.component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +17,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
@@ -23,6 +26,8 @@ import roart.iclij.config.MLConfigs;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.RecommendConstants;
+import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentInput;
 import roart.component.model.PredictorData;
@@ -43,6 +48,7 @@ import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
 import roart.service.RecommenderService;
 import roart.service.model.ProfitData;
+import roart.util.ServiceUtil;
 
 public class ComponentRecommender extends ComponentNoML {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -227,9 +233,36 @@ public class ComponentRecommender extends ComponentNoML {
     @Override
     public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
 	ComponentData param = new ComponentData(componentparam);
-        Map<String, String> retMap = new HashMap<>();
-        List<String> list = getBuy();
-        return handleBuySell(param, market, profitdata, profitdata.getInputdata().getListMap(), list);
+        //Map<String, String> retMap = new HashMap<>();
+        //List<String> list = getBuy();
+        List<String> confList = getConfList();        
+        
+        Map<String, Object> map = null;
+        try {
+            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        if (map != null) {
+            String configStr = (String) map.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+            if (configStr != null) {
+                String[] confArray = JsonUtil.convert(configStr, String[].class);
+                confList = Arrays.asList(confArray);
+                //List<String> confList2 = JsonUtil.convert(str, new TypeReference<List<String>>() { });
+                //config = JsonUtil.convert(configStr, new TypeReference<List<String>>() { });
+                //config = JsonUtil.convert(configStr, new TypeReference<String[]>() { });
+                //if (config == null) {
+                //    config = null; //new ArrayList<>();
+                //}
+            }
+        }
+
+        RecommenderChromosome chromosome = new RecommenderChromosome(getConfList(), confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+
+        //chromosome.setConfList(confList);
+        
+        return improve(param, chromosome);
+        //return handleBuySell(param, market, profitdata, profitdata.getInputdata().getListMap(), list);
         //list = getSell();
         //retMap.putAll(handleBuySell(param, market, profitdata, conf, profitdata.getInputdata().getListMap(), list));
         //return retMap;
@@ -253,9 +286,10 @@ public class ComponentRecommender extends ComponentNoML {
         return listPerm;
     }
     
+    @Deprecated
     private ComponentData handleBuySell(ComponentData param, Market market, ProfitData profitdata, Map<Object[], List<MemoryItem>> badListMap, List<String> list) {
         List<String> confList = getConfList();
-        RecommenderChromosome chromosome = new RecommenderChromosome(confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        RecommenderChromosome chromosome = new RecommenderChromosome(null, confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         if (true) return improve(param, chromosome);
         Map<String, String> retMap = new HashMap<>();
         List<List<String>> listPerm = getAllPerms(list);

@@ -148,6 +148,9 @@ public class ComponentMLIndicator extends ComponentML {
         for (List meta : param.getResultMetaArray()) {
             int returnSize = (int) meta.get(2);
 
+            if (positions == null) {
+                int jj = 0;
+            }
             if (positions == null || positions.contains(count)) {
                 Object[] keys = new Object[2];
                 keys[0] = PipelineConstants.MLINDICATOR;
@@ -194,6 +197,7 @@ public class ComponentMLIndicator extends ComponentML {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR);
+        loadme(param, chromosome, market, confList);
         return improve(param, chromosome);
 /*
         Map<String, String> retMap = new HashMap<>();

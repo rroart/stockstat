@@ -25,11 +25,41 @@ import roart.service.model.ProfitData;
 
 public class RecommenderChromosome extends ConfigMapChromosome {
     private List<List<String>> listPerm = ComponentRecommender.getAllPerms(getBuy());
+    private List<Set<String>> setPerms = makeSet(listPerm);
     
     private int listIdx;
     
-    public RecommenderChromosome( List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component) {
+    public RecommenderChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component) {
         super(confList, param, profitdata, market, positions, component);
+    }
+
+    private List<Set<String>> makeSet(List<List<String>> listPerm) {
+        List<Set<String>> retlist = new ArrayList<>();
+        for (List<String> aList : listPerm) {
+            retlist.add(new HashSet<>(aList));
+        }
+        return retlist;
+    }
+
+    public RecommenderChromosome(List<String> defaultConfList, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component) {
+        super(confList, param, profitdata, market, positions, component);
+        Set<String> defaultConfSet = new HashSet<>(defaultConfList);
+        Set<String> confSet = new HashSet<>(confList);
+        Set<String> disableSet = new HashSet<>(defaultConfSet);
+        disableSet.removeAll(confSet);
+        listIdx = 0;
+        for (Set<String> aSet : setPerms) {
+            if (disableSet.size() == aSet.size()) {
+                if (disableSet.containsAll(aSet)) {
+                    break;
+                }
+            }
+            listIdx++;
+        }
+        if (listIdx == setPerms.size()) {
+            listIdx = 0;
+            this.confList = defaultConfList;
+        }
     }
 
     public List<String> getBuy() {

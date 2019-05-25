@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import roart.component.model.PredictorData;
 import roart.config.Market;
 import roart.constants.IclijConstants;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
@@ -37,6 +39,7 @@ import roart.iclij.model.TimingItem;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.model.ProfitData;
+import roart.util.ServiceUtil;
 
 public abstract class Component {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -227,6 +230,32 @@ public abstract class Component {
         return param;
     }
 
+    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList) {
+        List<String> config = new ArrayList<>();
+        
+        Map<String, Object> map = null;
+        try {
+            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        if (map != null && !map.isEmpty()) {
+            Set<String> keys = map.keySet();
+            for (String key : confList) {
+                if (!keys.contains(key)) {
+                    map.remove(key);
+                }
+            }
+            /*
+            String configStr = (String) map.get(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER);
+            if (configStr != null) {
+                config = JsonUtil.convert(configStr, new TypeReference<List<String>>() { });
+            }
+            */
+        }
 
+        chromosome.setMap(map);
+
+    }
 }
 
