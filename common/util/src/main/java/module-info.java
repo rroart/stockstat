@@ -12,5 +12,6 @@ module common.util {
     requires org.apache.commons.lang3;
     requires common.constants;
     requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.core;
     //requires slf4j.api;
 }
