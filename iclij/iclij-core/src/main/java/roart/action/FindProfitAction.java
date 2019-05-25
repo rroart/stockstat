@@ -698,7 +698,7 @@ public class FindProfitAction extends Action {
         return allMemories;
     }
 
-    public void getVerifyProfit(int days, LocalDate date, ControlService srv,
+    public double getVerifyProfit(int days, LocalDate date, ControlService srv,
             LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec) {
         log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
@@ -715,6 +715,7 @@ public class FindProfitAction extends Action {
         VerifyProfit verify = new VerifyProfit();
         verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
         verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
+        return verify.getTrend(days, categoryValueMap);
     }
 
 

@@ -154,7 +154,7 @@ public class ServiceUtil {
             List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
-            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
+            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec, 0, 0);
             lists.addAll(subLists);
         }
         List<TimingItem> listAllTimings = TimingItem.getAll();
@@ -348,13 +348,17 @@ public class ServiceUtil {
     }
 
     static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
-            List<IncDecItem> listIncDec) {
+            List<IncDecItem> listIncDec, int verificationdays, double trend) {
         List<IclijServiceList> subLists = new ArrayList<>();
         if (!listInc.isEmpty()) {
             List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listIncBoolean.stream().filter(i -> i).count();                            
             IclijServiceList inc = new IclijServiceList();
-            inc.setTitle(market + " " + "Increase ( verified " + count + " / " + listIncBoolean.size() + " )");
+            String trendStr = "";
+            if (verificationdays > 0) {
+                trendStr = " Increase: " + trend;
+            }
+            inc.setTitle(market + " " + "Increase ( verified " + count + " / " + listIncBoolean.size() + " )" + trendStr);
             inc.setList(listInc);
             subLists.add(inc);
         }
@@ -434,6 +438,7 @@ public class ServiceUtil {
         List<IncDecItem> listInc = new ArrayList<>(buysells.getBuys().values());
         List<IncDecItem> listDec = new ArrayList<>(buysells.getSells().values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+        double trend = 0;
         if (verificationdays > 0) {
             try {
                 param.setFuturedays(0);
@@ -442,7 +447,7 @@ public class ServiceUtil {
             } catch (ParseException e) {
                 log.error(Constants.EXCEPTION, e);
             }            
-            findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
+            trend = findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
             /*
             List<MapList> inc = new ArrayList<>();
             List<MapList> dec = new ArrayList<>();
@@ -458,7 +463,7 @@ public class ServiceUtil {
         }
         addHeader(componentInput, type, result, param);
         
-        List<IclijServiceList> subLists = getServiceList(param.getMarket(), listInc, listDec, listIncDec);
+        List<IclijServiceList> subLists = getServiceList(param.getMarket(), listInc, listDec, listIncDec, verificationdays, trend);
         retLists.addAll(subLists);
         
         retLists.add(memories);

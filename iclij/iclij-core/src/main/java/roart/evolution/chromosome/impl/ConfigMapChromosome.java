@@ -214,6 +214,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
             List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
             List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
+            double incProp = 0;
             if (verificationdays > 0) {
                 try {
                     //param.setFuturedays(verificationdays);
@@ -223,7 +224,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }            
-                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
+                incProp = new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
             }
 
             if (true) {
@@ -260,7 +261,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
                     log.info("Fit sum too small {} < {}", size, minimum);
                     incdecFitness = 0;
                 }
-                log.info("Fit {} ( {} / {} ) {} ( {} / {} ) {} {} ( {} / {} )", fitness, countDec, sizeDec, fitness2, countInc, sizeInc, fitness3, fitness4, countDec + countInc, size);
+                log.info("Fit {} {} ( {} / {} ) {} ( {} / {} ) {} {} ( {} / {} )", incProp, fitness, countDec, sizeDec, fitness2, countInc, sizeInc, fitness3, fitness4, countDec + countInc, size);
                 log.info("Fit #{} {}", this.hashCode(), this.toString());
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
