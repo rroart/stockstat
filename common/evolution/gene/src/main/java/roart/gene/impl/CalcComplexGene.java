@@ -2,6 +2,7 @@ package roart.gene.impl;
 
 import java.util.Random;
 
+import roart.common.util.JsonUtil;
 import roart.gene.AbstractGene;
 import roart.gene.CalcGene;
 
@@ -238,5 +239,10 @@ public class CalcComplexGene extends CalcGene {
             node.setWeight(((CalcComplexGene) other).getWeight());            
         }
         return node;
+    }
+    
+    @Override
+    public String toString() {
+        return JsonUtil.convert(this);
     }
 }
