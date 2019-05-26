@@ -233,7 +233,7 @@ public class FindProfitAction extends Action {
         if (!filterTimings.isEmpty()) {
             Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
             LocalDate olddate = LocalDate.now();
-            olddate = olddate.minusDays(market.getConfig().getFindtime());
+            olddate = olddate.minusDays(((long) AVERAGE_SIZE) * market.getConfig().getFindtime());
             int size = Math.min(AVERAGE_SIZE, filterTimings.size());
             OptionalDouble average = filterTimings
                     .subList(0, size)
