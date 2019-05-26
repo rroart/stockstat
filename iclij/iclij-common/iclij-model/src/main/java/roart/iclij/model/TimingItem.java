@@ -20,7 +20,7 @@ public class TimingItem {
     
     private String component;
     
-    private Double time;
+    private Double mytime;
 
     private Double score;
     
@@ -72,12 +72,12 @@ public class TimingItem {
         this.component = component;
     }
 
-    public Double getTime() {
-        return time;
+    public Double getMytime() {
+        return mytime;
     }
 
-    public void setTime(Double time) {
-        this.time = time;
+    public void setMytime(Double time) {
+        this.mytime = time;
     }
 
     public Double getScore() {
@@ -90,7 +90,7 @@ public class TimingItem {
 
     @Override
     public String toString() {
-        return market + " " + component + " " + action + " " + record + " " + date + " " + evolve + " " + time + " " + score + "\n"; 
+        return market + " " + component + " " + action + " " + record + " " + date + " " + evolve + " " + mytime + " " + score + "\n"; 
     }
     
     public void save() throws Exception {
@@ -101,7 +101,7 @@ public class TimingItem {
         timing.setEvolve(isEvolve());
         timing.setMarket(getMarket());
         timing.setRecord(TimeUtil.convertDate(getRecord()));
-        timing.setTime(getTime());
+        timing.setTime(getMytime());
         timing.setScore(getScore());
         timing.save();
     }
@@ -134,12 +134,12 @@ public class TimingItem {
         timingItem.setEvolve(timing.isEvolve());
         timingItem.setMarket(timing.getMarket());
         timingItem.setRecord(TimeUtil.convertDate(timing.getRecord()));
-        timingItem.setTime(timing.getTime());
+        timingItem.setMytime(timing.getTime());
         timingItem.setScore(timing.getScore());
         return timingItem;
     }
 
     public void setTime(long time0) {
-        this.time = ((double) (System.currentTimeMillis()) - time0) / 1000;
+        this.mytime = ((double) (System.currentTimeMillis()) - time0) / 1000;
     }
 }

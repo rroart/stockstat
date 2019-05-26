@@ -238,7 +238,7 @@ public class FindProfitAction extends Action {
             OptionalDouble average = filterTimings
                     .subList(0, size)
                     .stream()
-                    .mapToDouble(TimingItem::getTime)
+                    .mapToDouble(TimingItem::getMytime)
                     .average();
 
             if (olddate.isBefore(filterTimings.get(0).getDate())) {
@@ -252,7 +252,7 @@ public class FindProfitAction extends Action {
                 timing.setAction(action);
                 timing.setComponent(component);
                 timing.setEvolve(evolve);
-                timing.setTime(average.getAsDouble());
+                timing.setMytime(average.getAsDouble());
                 timingToDo.add(timing);
             } else {
                 // recent enough is found
@@ -264,7 +264,7 @@ public class FindProfitAction extends Action {
             timing.setAction(action);
             timing.setComponent(component);
             timing.setEvolve(evolve);
-            timing.setTime(Double.valueOf(0));
+            timing.setMytime(Double.valueOf(0));
             timingToDo.add(timing);
         }
     }
@@ -325,7 +325,7 @@ public class FindProfitAction extends Action {
                 timing.setAction(action);
                 timing.setComponent(component);
                 timing.setEvolve(evolve);
-                timing.setTime(Double.valueOf(0));
+                timing.setMytime(Double.valueOf(0));
                 timingToDo.add(timing);
             }
             TimingItem timing = new TimingItem();
@@ -333,7 +333,7 @@ public class FindProfitAction extends Action {
             timing.setAction(action);
             timing.setComponent(component);
             timing.setEvolve(false);
-            timing.setTime(Double.valueOf(0));
+            timing.setMytime(Double.valueOf(0));
             timingToDo.add(timing);
         }
         marketTime.timings = timingToDo;

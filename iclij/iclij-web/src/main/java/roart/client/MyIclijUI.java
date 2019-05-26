@@ -718,7 +718,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
             ts.addComponent(table);
             return;
         }
-        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("time")) {
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("mytime")) {
             List<TimingItem> mylist = objectMapper.convertValue(list, new TypeReference<List<TimingItem>>() { });
             Grid<TimingItem> table = getGridFromList4(item, mylist);
             ts.addComponent(table);
@@ -785,7 +785,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(TimingItem::getAction).setCaption("Action");
         table.addColumn(TimingItem::isEvolve).setCaption("Evolve");
         table.addColumn(TimingItem::getComponent).setCaption("Component");
-        table.addColumn(TimingItem::getTime).setCaption("Time");
+        table.addColumn(TimingItem::getMytime).setCaption("Time");
         table.addColumn(TimingItem::getScore).setCaption("Score");
         table.setWidth("90%");
         table.setItems(mylist);
