@@ -150,7 +150,7 @@ public class ServiceUtil {
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
         for (Market market : markets) {
-            List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market);
+            List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market, market.getFilter().getRecordage());
             List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
@@ -159,7 +159,7 @@ public class ServiceUtil {
         }
         List<TimingItem> listAllTimings = TimingItem.getAll();
         for (Market market : markets) {
-            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.FINDPROFIT);
+            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.FINDPROFIT, market.getFilter().getRecordage());
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
@@ -251,7 +251,7 @@ public class ServiceUtil {
         */
         List<TimingItem> listAllTimings = TimingItem.getAll();
         for (Market market : markets) {
-            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.IMPROVEPROFIT);
+            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.IMPROVEPROFIT, market.getFilter().getRecordage());
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
@@ -303,12 +303,12 @@ public class ServiceUtil {
         return result;
     }
 
-    public static List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action) {
+    public static List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action, int days) {
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
-        LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
+        LocalDate olddate = date.minusDays(days);
         List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
         filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
         List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
@@ -317,12 +317,12 @@ public class ServiceUtil {
         return currentIncDecs;
     }
 
-    public static List<IncDecItem> getCurrentIncDecs(LocalDate date, List<IncDecItem> listAll, Market market) {
+    public static List<IncDecItem> getCurrentIncDecs(LocalDate date, List<IncDecItem> listAll, Market market, int days) {
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
-        LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
+        LocalDate olddate = date.minusDays(days);
         List<IncDecItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
         List<IncDecItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());

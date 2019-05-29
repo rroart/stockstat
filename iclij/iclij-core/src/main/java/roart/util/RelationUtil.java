@@ -86,7 +86,7 @@ public class RelationUtil {
         currentIncDecs.addAll(listIncDecs);
         List<Market> markets = conf.getMarkets(instance);
         for (Market market : markets) {
-            List<IncDecItem> marketCurrentIncDecs = ServiceUtil.getCurrentIncDecs(date, listAll, market);
+            List<IncDecItem> marketCurrentIncDecs = ServiceUtil.getCurrentIncDecs(date, listAll, market, market.getFilter().getRecordage());
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
         
