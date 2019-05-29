@@ -105,7 +105,7 @@ public class ImproveProfitAction extends Action {
                 continue;
             }
             componentDataMap.put(marketName, param);
-            LocalDate olddate = LocalDate.now().minusDays(market.getConfig().getImprovetime()); // enddays?
+            LocalDate olddate = LocalDate.now(); // minusDays(market.getConfig().getImprovetime()); // enddays?
 
             try {
                 //param.setFuturedays(market.getFilter().getRecordage());
@@ -119,11 +119,12 @@ public class ImproveProfitAction extends Action {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
+            List<TimingItem> currentTimings = ServiceUtil.getCurrentTimings(olddate, timings, market, IclijConstants.IMPROVEPROFIT, market.getConfig().getImprovetime());
             List<IncDecItem> currentIncDecs = null; // ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
             if (currentIncDecs == null || currentIncDecs.isEmpty() || timings.isEmpty()) {
                 List<String> componentList = ServiceUtil.getImproveProfitComponents(config);
                 Map<String, Component> componentMap = FindProfitAction.getComponentMap(componentList, market);
-                List<MarketComponentTime> marketTime = getList2(IclijConstants.IMPROVEPROFIT, componentMap, timings, market, param);
+                List<MarketComponentTime> marketTime = getList(IclijConstants.IMPROVEPROFIT, componentMap, timings, market, param, currentTimings);
                 marketTimes.addAll(marketTime);
             } else {
                 int jj = 0;
@@ -407,7 +408,7 @@ public class ImproveProfitAction extends Action {
         return marketTimes;
     }
 
-    private List<MarketComponentTime> getList2(String action, Map<String, Component> componentMap, List<TimingItem> timings, Market market, ComponentData param) {
+    private List<MarketComponentTime> getList(String action, Map<String, Component> componentMap, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings) {
         List<MarketComponentTime> marketTimes = new ArrayList<>();
         String marketName = market.getConfig().getMarket();
 
@@ -415,6 +416,10 @@ public class ImproveProfitAction extends Action {
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             String componentName = entry.getKey();
             Component component = entry.getValue();
+            List<TimingItem> currentTimingFiltered = currentTimings.stream().filter(m -> m != null && componentName.equals(m.getComponent())).collect(Collectors.toList());;
+            if (!currentTimingFiltered.isEmpty()) {
+                continue;
+            }
             List<TimingItem> timingToDo = new ArrayList<>();
             MarketComponentTime marketTime = new MarketComponentTime();
             marketTime.market = market;
