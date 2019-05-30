@@ -175,7 +175,7 @@ public class FindProfitAction extends Action {
                     shutdown --;
                     LocalTime now = LocalTime.now();
                     int minutes = 60 * now.getHour() + now.getMinute();
-                    minutes += marketTime.time;
+                    minutes += marketTime.time / 60;
                     if (minutes >= shutdown * 60) {
                         continue;
                     }
