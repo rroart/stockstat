@@ -38,4 +38,5 @@ public class Constants {
     public static final String ROWS = "rows";
     public static final String ROW = "row";
     public static final String RELATIONROW = "relationrow";
+    public static final String SCRIPT = "script";
 }

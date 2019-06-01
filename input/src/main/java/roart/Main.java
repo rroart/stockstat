@@ -5,6 +5,10 @@ import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
 import roart.db.model.HibernateUtil;
 import roart.db.model.Meta;
 import roart.db.model.Relation;
@@ -13,14 +17,20 @@ import roart.db.model.Stock;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
-    public static void main(String argv[]) {
+    private static final String FIELD = "\\\"([^\\\"]+)\\\":";
+    private static final String ILLEGAL_CHARS = "(i?)([^\\s=\"'a-zA-Z0-9._-])";
+
+    public static void main(String[] argv) {
         try {
             File file = new File(argv[0]);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -31,6 +41,7 @@ public class Main {
             handleRelation(doc);
             handleMeta(doc);
             NodeList nl = handleStock(doc); 
+            handleJson(doc, argv[0]);
             HibernateUtil.commit();
             System.out.println("Added for length " + nl.getLength());
         } catch (Exception e) {
@@ -38,6 +49,48 @@ public class Main {
             e.printStackTrace();
         }
         System.exit(0);
+    }
+
+    private static void handleJson(Document doc, String filename) {
+        NodeList nl = doc.getElementsByTagName(Constants.SCRIPT);
+        for (int i = 0 ; i < nl.getLength(); i++ ) {
+            Node node = nl.item(i);
+            Element elem = (Element) node;
+            String json = elem.getTextContent();
+            json = json.replaceFirst("window.__initialState__=", "");
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = null;
+            try {
+                filename = filename.replaceAll(".xml", ".json.xml");
+                json = json.replaceAll("\\\\u002F", "/");
+                //json = json.replaceAll("\\\"\\u002F([\\u002F\\w]+)\\\":","\\\"\\\\$1\\\":");
+                //json = json.replaceAll("\\\"\\/([\\/{}?=\\w]+)\\\":","\\\"$1\\\":");
+                json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
+                json = sanitizeField(json);
+                //json = json.replaceAll("\\\"\\u002F([\\u002F\\w]+)\\\"\\:","\\\"\\\\$1\\\":");
+                //json = json.replaceAll("\\\"\\/([\\/\\w]+)\\\"\\:","\\\"$1\\\":");
+                jsonNode = mapper.readTree(json);
+                XmlMapper xmlMapper = new XmlMapper();
+                xmlMapper.writeValue(new File(filename), json);
+            } catch (IOException e) {
+                System.out.println("Exception " +e);
+                e.printStackTrace();
+            }
+        }     
+    }
+
+    private static String sanitizeField(String json) {
+        final Matcher matcher = Pattern.compile(FIELD).matcher(json);
+        StringBuffer sb = new StringBuffer();
+        while(matcher.find()) {
+            String elementName = Pattern.compile(ILLEGAL_CHARS).matcher(matcher.group())
+                    .replaceAll("").trim();
+            elementName = elementName.replaceAll("[ =]", "");
+            matcher.appendReplacement(sb, elementName + ":");
+        }
+        matcher.appendTail(sb);
+        json = sb.toString();
+        return json;
     }
 
     private static NodeList handleStock(Document doc) throws Exception, ParseException {
@@ -146,8 +199,13 @@ public class Main {
             stock.setId(id);
             stock.setMarketid(marketid);
             stock.setName(name);
+            Date date;
             SimpleDateFormat dt = new SimpleDateFormat("dd.MM.yyyy"); 
-            Date date = dt.parse(datestr); 
+            if (datestr.length() == 13 && datestr.matches("-?\\d+")) {
+                date = new Date(Long.valueOf(datestr));
+            } else {
+                date = dt.parse(datestr);
+            }
             stock.setDate(date);
             if (indexvalue == null || indexvalue.equals("-")) {
                 stock.setIndexvalue(null);
