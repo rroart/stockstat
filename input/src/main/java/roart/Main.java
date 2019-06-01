@@ -71,7 +71,7 @@ public class Main {
                 //json = json.replaceAll("\\\"\\/([\\/\\w]+)\\\"\\:","\\\"$1\\\":");
                 jsonNode = mapper.readTree(json);
                 XmlMapper xmlMapper = new XmlMapper();
-                xmlMapper.writeValue(new File(filename), json);
+                xmlMapper.writeValue(new File(filename), jsonNode);
             } catch (IOException e) {
                 System.out.println("Exception " +e);
                 e.printStackTrace();
