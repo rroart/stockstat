@@ -203,6 +203,9 @@ public class Main {
             SimpleDateFormat dt = new SimpleDateFormat("dd.MM.yyyy"); 
             if (datestr.length() == 13 && datestr.matches("-?\\d+")) {
                 date = new Date(Long.valueOf(datestr));
+                date.setHours(0);
+                date.setMinutes(0);
+                date.setSeconds(0);
             } else {
                 date = dt.parse(datestr);
             }
