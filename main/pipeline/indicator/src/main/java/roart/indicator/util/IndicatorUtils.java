@@ -248,12 +248,6 @@ public class IndicatorUtils {
         int arraySize = getCommonArraySizeAndObjectMap(indicators, objectMapsList, listList);
         Object[] retobj = new Object[3];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
-        List<Double>[] indicatorLists = new ArrayList[arraySize];
-        List<Double>[] indicatorMinMax = new ArrayList[arraySize];
-        for (int tmpj = 0; tmpj < arraySize; tmpj ++) {
-            indicatorLists[tmpj] = new ArrayList<>();
-            indicatorMinMax[tmpj] = new ArrayList<>();
-        }
         if (listList.isEmpty()) {
             return retobj;
         }
@@ -265,6 +259,12 @@ public class IndicatorUtils {
         // for extrareader data
         if (extraData != null) {
             arraySize = getExtraDataSize(conf, extraData, arraySize, allIndicators);
+        }
+        List<Double>[] indicatorLists = new ArrayList[arraySize];
+        List<Double>[] indicatorMinMax = new ArrayList[arraySize];
+        for (int tmpj = 0; tmpj < arraySize; tmpj ++) {
+            indicatorLists[tmpj] = new ArrayList<>();
+            indicatorMinMax[tmpj] = new ArrayList<>();
         }
 
         // for more extra end
