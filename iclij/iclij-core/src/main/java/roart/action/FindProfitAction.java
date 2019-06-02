@@ -46,6 +46,7 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.TimingItem;
+import roart.iclij.model.Trend;
 import roart.iclij.service.IclijServiceList;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
@@ -216,10 +217,10 @@ public class FindProfitAction extends Action {
             boolean evolve = component.wantEvolve(param.getInput().getConfig());
             List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true);
             if (evolve) {
-                handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimingsEvolution, evolve);               
+                handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate());               
             }
             List<TimingItem> filterTimings = getMyTimings(timings, marketName, action, componentName, false);
-            handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimings, evolve);
+            handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimings, evolve, param.getInput().getEnddate());
         }
         marketTime.componentMap = componentMap;
         marketTime.timings = timingToDo;
@@ -228,12 +229,11 @@ public class FindProfitAction extends Action {
     }
 
     private void handleFilterTimings(String action, Market market, MarketTime marketTime,
-            List<TimingItem> timingToDo, String component, List<TimingItem> filterTimings, boolean evolve) {
+            List<TimingItem> timingToDo, String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date) {
         String marketName = market.getConfig().getMarket();
         if (!filterTimings.isEmpty()) {
             Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
-            LocalDate olddate = LocalDate.now();
-            olddate = olddate.minusDays(((long) AVERAGE_SIZE) * market.getConfig().getFindtime());
+            LocalDate olddate = date.minusDays(((long) AVERAGE_SIZE) * market.getConfig().getFindtime());
             int size = Math.min(AVERAGE_SIZE, filterTimings.size());
             OptionalDouble average = filterTimings
                     .subList(0, size)
@@ -698,23 +698,42 @@ public class FindProfitAction extends Action {
         return allMemories;
     }
 
-    public double getVerifyProfit(int days, LocalDate date, ControlService srv,
+    public void getVerifyProfit(int days, LocalDate date, ControlService srv,
             LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec) {
         log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
         Component.disabler(srv.conf.getConfigValueMap());
         Map<String, Map<String, Object>> resultMaps = srv.getContent();
-        Set<String> i = resultMaps.keySet();
+        //Set<String> i = resultMaps.keySet();
         Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
         Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
         //categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("Price").get(PipelineConstants.LIST);
-        Set<String> j2 = resultMaps.get("" + category).keySet();
+        //Set<String> j2 = resultMaps.get("" + category).keySet();
     
         VerifyProfit verify = new VerifyProfit();
         verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
         verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
+        //return verify.getTrend(days, categoryValueMap);
+    }
+
+    public Trend getTrend(int days, LocalDate date, ControlService srv) {
+        //log.info("Verify compare date {} with {}", oldDate, date);
+        LocalDate futureDate = date;
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
+        Component.disabler(srv.conf.getConfigValueMap());
+        Map<String, Map<String, Object>> resultMaps = srv.getContent();
+        //Set<String> i = resultMaps.keySet();
+        Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
+        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+        //categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("Price").get(PipelineConstants.LIST);
+        //Set<String> j2 = resultMaps.get("" + category).keySet();
+    
+        VerifyProfit verify = new VerifyProfit();
+        //verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
+        //verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
         return verify.getTrend(days, categoryValueMap);
     }
 
