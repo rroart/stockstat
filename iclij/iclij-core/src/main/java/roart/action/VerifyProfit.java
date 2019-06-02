@@ -2,6 +2,7 @@ package roart.action;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalDouble;
@@ -33,7 +34,7 @@ public class VerifyProfit {
                             (!increase && valFuture < valNow);
                     item.setDate(date);
                     item.setVerified(verified);
-                    item.setVerificationComment("Change: " + valFuture / valNow + " Old: " + valNow + " New: " + valFuture);
+                    item.setVerificationComment("Change: " + Trend.roundme(valFuture / valNow) + " Old: " + valNow + " New: " + valFuture);
                 }
             }
         }
@@ -79,6 +80,8 @@ public class VerifyProfit {
                 .mapToDouble(a -> a)
                 .average();
         trend.incAverage = average.getAsDouble();
+        trend.min = Collections.min(incs);
+        trend.max = Collections.max(incs);
         return trend;
     }
 }
