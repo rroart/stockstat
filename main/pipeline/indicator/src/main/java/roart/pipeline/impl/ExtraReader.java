@@ -59,6 +59,10 @@ public class ExtraReader extends Pipeline {
         List<LinkedHashMap> list = (List<LinkedHashMap>) mapper.readValue(str, List.class);
         List<Pair<String, String>> pairs = new ArrayList<>();
         for (LinkedHashMap mi : list) {
+            // skip if the same market
+            if (conf.getMarket().equals(mi.get("market"))) {
+                continue;
+            }
             System.out.println("mi"+mi+" " + mi.toString());
             Pair<String, String> pair = new Pair(mi.get("market"), mi.get("id"));
             String cat = (String) mi.get("category");
