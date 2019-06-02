@@ -105,7 +105,7 @@ public class ImproveProfitAction extends Action {
                 continue;
             }
             componentDataMap.put(marketName, param);
-            LocalDate olddate = LocalDate.now(); // minusDays(market.getConfig().getImprovetime()); // enddays?
+            LocalDate olddate = param.getInput().getEnddate();
 
             try {
                 //param.setFuturedays(market.getFilter().getRecordage());
@@ -397,10 +397,10 @@ public class ImproveProfitAction extends Action {
             boolean evolve = component.wantEvolve(param.getInput().getConfig());
             List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true);
             if (evolve) {
-                handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimingsEvolution, evolve);               
+                handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate());               
             }
             List<TimingItem> filterTimings = getMyTimings(timings, marketName, action, componentName, false);
-            handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimings, evolve);
+            handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimings, evolve, param.getInput().getEnddate());
         }
         marketTime.componentMap = componentMap;
         marketTime.timings = timingToDo;
@@ -429,10 +429,10 @@ public class ImproveProfitAction extends Action {
             boolean evolve = component.wantEvolve(param.getInput().getConfig());
             List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true);
             if (evolve) {
-                handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimingsEvolution, evolve);               
+                handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate());               
             }
             List<TimingItem> filterTimings = getMyTimings(timings, marketName, action, componentName, false);
-            handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimings, evolve);
+            handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimings, evolve, param.getInput().getEnddate());
             marketTimes.add(marketTime);
         }
         return marketTimes;
@@ -441,12 +441,11 @@ public class ImproveProfitAction extends Action {
     private static final int AVERAGE_SIZE = 5;
     
     private void handleFilterTimings(String action, Market market, MarketTime marketTime,
-            List<TimingItem> timingToDo, String component, List<TimingItem> filterTimings, boolean evolve) {
+            List<TimingItem> timingToDo, String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date) {
         String marketName = market.getConfig().getMarket();
         if (!filterTimings.isEmpty()) {
             Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
-            LocalDate olddate = LocalDate.now();
-            olddate = olddate.minusDays(market.getConfig().getImprovetime());
+            LocalDate olddate = date.minusDays(market.getConfig().getImprovetime());
             int size = Math.min(AVERAGE_SIZE, filterTimings.size());
             OptionalDouble average = filterTimings
                     .subList(0, size)
@@ -483,12 +482,11 @@ public class ImproveProfitAction extends Action {
     }
 
     private void handleFilterTimings(String action, Market market, MarketComponentTime marketTime,
-            List<TimingItem> timingToDo, String component, List<TimingItem> filterTimings, boolean evolve) {
+            List<TimingItem> timingToDo, String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date) {
         String marketName = market.getConfig().getMarket();
         if (!filterTimings.isEmpty()) {
             Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
-            LocalDate olddate = LocalDate.now();
-            olddate = olddate.minusDays(((long) AVERAGE_SIZE) * market.getConfig().getImprovetime());
+            LocalDate olddate = date.minusDays(((long) AVERAGE_SIZE) * market.getConfig().getImprovetime());
             int size = Math.min(AVERAGE_SIZE, filterTimings.size());
             OptionalDouble average = filterTimings
                     .subList(0, size)
