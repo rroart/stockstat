@@ -46,6 +46,7 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.TimingItem;
+import roart.iclij.model.Trend;
 import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.IclijServiceResult;
 import roart.service.ControlService;
@@ -140,6 +141,8 @@ public class ServiceUtil {
     }
     
     public static IclijServiceResult getContent(ComponentInput componentInput) throws Exception {
+        IclijServiceResult result = new IclijServiceResult();
+
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig i = new IclijXMLConfig();
         IclijXMLConfig conf = IclijXMLConfig.instance();
@@ -148,13 +151,33 @@ public class ServiceUtil {
         List<IncDecItem> listAll = IncDecItem.getAll();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
+        Map<String, Object> trendMap = new HashMap<>();
         List<Market> markets = conf.getMarkets(instance);
         for (Market market : markets) {
+            ComponentData param = null;
+            try {
+                param = ServiceUtil.getParam(componentInput, 0);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            param.setAction(IclijConstants.FINDPROFIT);
+            ControlService srv = new ControlService();
+            //srv.getConfig();
+            param.setService(srv);
+            //param.setOffset(0);
+            srv.conf.setMarket(market.getConfig().getMarket());
+            // the market may be incomplete, the exception and skip
+            try {
+                Trend trend = new FindProfitAction().getTrend(instance.verificationDays(), date, param.getService());
+                trendMap.put(market.getConfig().getMarket(), trend);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
             List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market, market.getFilter().getRecordage());
             List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
-            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec, 0, 0);
+            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
             lists.addAll(subLists);
         }
         List<TimingItem> listAllTimings = TimingItem.getAll();
@@ -163,7 +186,6 @@ public class ServiceUtil {
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
-        IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
         ComponentData param = null; 
@@ -207,6 +229,9 @@ public class ServiceUtil {
             lists.add(memories);
 
         }
+
+        IclijServiceList trends = convert(trendMap);
+        lists.add(trends);
 
         addRelations(componentInput, lists, new ArrayList<>());
         
@@ -348,16 +373,13 @@ public class ServiceUtil {
     }
 
     static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
-            List<IncDecItem> listIncDec, int verificationdays, double trend) {
+            List<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
         if (!listInc.isEmpty()) {
             List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listIncBoolean.stream().filter(i -> i).count();                            
             IclijServiceList inc = new IclijServiceList();
             String trendStr = "";
-            if (verificationdays > 0) {
-                trendStr = " Increase: " + trend;
-            }
             inc.setTitle(market + " " + "Increase ( verified " + count + " / " + listIncBoolean.size() + " )" + trendStr);
             inc.setList(listInc);
             subLists.add(inc);
@@ -438,7 +460,9 @@ public class ServiceUtil {
         List<IncDecItem> listInc = new ArrayList<>(buysells.getBuys().values());
         List<IncDecItem> listDec = new ArrayList<>(buysells.getSells().values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
-        double trend = 0;
+        Map<String, Object> trendMap = new HashMap<>();
+        Trend trend = findProfitAction.getTrend(param.getInput().getConfig().verificationDays(), param.getFutureDate(), param.getService());
+        trendMap.put(market.getConfig().getMarket(), trend);
         if (verificationdays > 0) {
             try {
                 param.setFuturedays(0);
@@ -447,7 +471,7 @@ public class ServiceUtil {
             } catch (ParseException e) {
                 log.error(Constants.EXCEPTION, e);
             }            
-            trend = findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
+            findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
             /*
             List<MapList> inc = new ArrayList<>();
             List<MapList> dec = new ArrayList<>();
@@ -463,7 +487,7 @@ public class ServiceUtil {
         }
         addHeader(componentInput, type, result, param);
         
-        List<IclijServiceList> subLists = getServiceList(param.getMarket(), listInc, listDec, listIncDec, verificationdays, trend);
+        List<IclijServiceList> subLists = getServiceList(param.getMarket(), listInc, listDec, listIncDec);
         retLists.addAll(subLists);
         
         retLists.add(memories);
@@ -478,6 +502,9 @@ public class ServiceUtil {
         result.setMaps(mapmaps);
         IclijServiceList updates = convert(market.getConfig().getMarket(), updateMap);
         retLists.add(updates);
+
+        IclijServiceList trends = convert(trendMap);
+        retLists.add(trends);
 
         List<IncDecItem> listIncDecs = new ArrayList<>(buysells.getBuys().values());
         listIncDecs.addAll(buysells.getSells().values());
@@ -614,6 +641,20 @@ public class ServiceUtil {
             MapList m = new MapList();
             m.setKey(map.getKey());
             m.setValue((String) map.getValue().toString()); 
+            aList.add(m);
+        }
+        list.setList(aList);
+        return list;
+    }
+
+    private static IclijServiceList convert(Map<String, Object> map) {
+        IclijServiceList list = new IclijServiceList();
+        list.setTitle("Trends");
+        List<MapList> aList = new ArrayList<>();
+        for (Entry<String, Object> entry : map.entrySet()) {
+            MapList m = new MapList();
+            m.setKey(entry.getKey());
+            m.setValue(entry.getValue().toString()); 
             aList.add(m);
         }
         list.setList(aList);

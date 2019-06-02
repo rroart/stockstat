@@ -38,6 +38,7 @@ import roart.evolution.species.Individual;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Trend;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
@@ -214,7 +215,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
             List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
             List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
-            double incProp = 0;
+            Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
             if (verificationdays > 0) {
                 try {
                     //param.setFuturedays(verificationdays);
@@ -224,7 +225,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }            
-                incProp = new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
+                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
             }
 
             if (true) {

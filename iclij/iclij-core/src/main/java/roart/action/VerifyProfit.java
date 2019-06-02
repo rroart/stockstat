@@ -4,10 +4,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalDouble;
 import java.util.Map.Entry;
 
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
+import roart.iclij.model.TimingItem;
+import roart.iclij.model.Trend;
 
 public class VerifyProfit {
 
@@ -36,12 +39,13 @@ public class VerifyProfit {
         }
     }
 
-    public double getTrend(int days, Map<String, List<List<Double>>> categoryValueMap) {
+    public Trend getTrend(int days, Map<String, List<List<Double>>> categoryValueMap) {
+        Trend trend = new Trend();
         if (days <= 0) {
-            return 0;
+            return trend;
         }
         int count = 0;
-        int inc = 0;
+        List<Double> incs = new ArrayList<>();
         for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
             List<List<Double>> resultList = entry.getValue();
             if (resultList == null || resultList.isEmpty()) {
@@ -53,15 +57,28 @@ public class VerifyProfit {
                 Double valNow = mainList.get(mainList.size() - 1 - days);
                 if (valFuture != null && valNow != null) {
                     if (valFuture > valNow) {
-                        inc++;
+                        trend.up++;
                     }
+                    if (valFuture.equals(valNow)) {
+                        trend.neutral++;
+                    }
+                    if (valFuture < valNow) {
+                        trend.down++;
+                    }
+                    incs.add(valFuture / valNow);
                     count++;
                 }
             }
         }
         if (count == 0) {
-            return 0;
+            return trend;
         }
-        return ( (double) inc) / count;
+        trend.incProp = ((double) trend.up) / count;
+        OptionalDouble average = incs
+                .stream()
+                .mapToDouble(a -> a)
+                .average();
+        trend.incAverage = average.getAsDouble();
+        return trend;
     }
 }
