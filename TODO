@@ -7,23 +7,22 @@ C: Change
 R: Reject
 
 Iclij
+T: controlservice getcontentgraph fix quick workaround for serialization
+T: Find/ImproveProfitAction findProfit two markets case
 T: componentdata usage parallell
 T: check mapmaps.put("ml")
-F: Timing add subcomponent for mls etc
+RF?: Timing add subcomponent for mls etc
 B: Flask predict stalls/hangs
-C: predictor result maps in core
+WC?: predictor result maps in core
 F: auto find important indexes commodities etc
 ?DB: some default config overrids existing (componentpredictor)
 C: enable configvalues in core, from single to list (like lstms)
 C: split db for core/iclij
-RC: database w/ dev for incdec mem
 B: getmarkets empty config in iclijxmlconfig
 C: move importants into markets
-F: connect two markets, like morncat and nordfund
 F: classify ml macd zero turns with increase
 F: go for score for one alternative, skip ml test result
 F: get market missing some
-F: use other new indicators
 WB: icli web sendme null
 F: Doc iclij configs
 F: Iclij rerun manually recommendation
@@ -50,7 +49,7 @@ F: Remove findprofit both inc dec, go to improve
 
 Iclij evolution recommender
 T: drop special handling for lstm config
-B: serviceutil 76 nasdaq tradcomm?
+B: serviceutil nasdaq tradcomm?
 B: again confidencefactor null?
 B: conf. factor still null in comp.rec., and further down
 T: Fix getRealkeys, both inside an in findBuySell... (confidencefactor was null)
@@ -64,15 +63,49 @@ F: Recommender combine keys/improveaction?
 B: improvement lack srv. setdate
 
 Core
+C: GraphCategoryPrice predictme check reverse, move code?
+C: IndicatorEvaluationNew IndicatorChromosome add deltadays
+C: IndicatorEvaluationNew IndicatorChromosome getEvaluations filtering and temp fix
+T: ControlService getContent temp fix for idnamemap
+C: MACDRecommendComplex MACDRecommend MACDRecommendSimple RSIRecommendComplex RSIRecommend RSIRecommendSimple add deltadays?
+T: AggregatorMLIndicatorMACD RSI duplication
+T: RecommenderRSI not yet implemented?
+T: MLIndicator/MLMACD calculateMomentums createresultMap getTitles make oo version
+T: MLIndicator/MLMACD getTitles fix workaround
+T: MLMACD createPosNegMaps also do MACD
+T: MLMACD save return map, getters setters
+T: MLIndicator calculateMomentums add null check?
+T: MLIndicator getMergedLists getIndicators fix map getter?
+T: AggregatorRecommenderIndicator constructor fix map getter?
+T: AggregatorRecommenderIndicator constructor fix temp fixes?
+T: IndicatorMove fix cat/period
+T: AbstractIndicator save and return map, add getters setters
+T: AbstractIndicator getCalculatedMap add continue?
+T: IndicatorCCI STOCHRSI RSI MACD ATR STOCH getResultSize call tautil
+C: IndicatorATR extend to 3 cats
+T: Indicator calculateAll make oo version
+T: IndicatorUtils getDayIndicatorMap copy the retain?, extra end
+T: IndicatorUtils getAllIndicators make factory
+T: PredictorLSTM calculate getResultItemTitle make OO version
+T: PredictorLSTM getResultItemTitle workaround
+T: PredictorLSTM getMapResult+List check reverse
+T: SvgUtil chartToStream gui size wrong
+T: ExtraReader getReverseArrSparseFillHolesArr duplicated
+T: DataReader readData make oo version
+T: DbDao MLClassifyDao MLPredictDao instance methods temp fix with true 
+T: servicecontroller getcontentgraph2 fix quick workaround for serialization
+T: arraysutil limit/bound check in getArrayNonNullReversenot getArrayNonNullReverse getArrayNonNullReverse getArrayNonNull getAcceptedRanges getFreshRanges
+T: resultitembytes reimplement fullsize
+T: eurekautil sendme has a temp fix for extra duplicated arr in json
+C: talib getcci/atr/stoch make new getarr for low high
+C: make oo version of talib after using another stat lib
+B: weird stochrsi curve
 B: evolve predictor value checks
 C: move indicator out of category, use mostwanted cat
-C: java 8 dates
 C: Parameter/class cleanups for indicators, aggregators etc
 B: NaN at top of table with simple recommender
-F: use other new indicators
 T: MLPredictModel addtitles deprecate
 T: mlmacd mlindicator anythinghere better heuristics?
-WF: discard sat/sun/hol for all lang
 B: stockstatcore terminates/crashes?
 WB: new ControlService w/o date transfer
 F: Use Java quantlib
@@ -127,6 +160,9 @@ F: Mlind (w/ lr) with same data as evolve recommender
 F: MACD two dim input w (macd, %)
 
 Evolution
+T: EvolutionService getEvolveRecommender getEvolveRecommenderSingle make oo version, no duplicates
+T: EvolutionService findRecommendSettings add boolean
+T: onefour getfittest clone config
 T: More evolution refactor
 T: Update OneFour evolution
 F: Use swarm algorithm
@@ -182,7 +218,6 @@ B: 0.0 as ose value cboeval index, set null in db
 
 All
 WF: change date system to from to
-T: Put TODO in code here
 
 Unknown
 C: Fixed left
@@ -194,72 +229,87 @@ F: Indicator/predictor save created/generated data
 WF: Save file result enable t/f
 
 Outdated/wait for reproduction
-B: KZKAK:IND...
-B: Aggregator recommender gets problem with old tradcurr data
-B: ComponentMLMACD Double instead of String (not reproduced with dbg).
-Caused by: java.lang.ClassCastException: java.lang.Double cannot be cast to java.lang.String
-        at roart.component.ComponentMLMACD.handle(ComponentMLMACD.java:75)
-2018-01-28 21:28:50,162 ERROR [qtp1915579460-24] r.s.ControlService [ControlService.java:234] Exception
-java.lang.IndexOutOfBoundsException: Index: 20, Size: 20
-        at java.util.ArrayList.rangeCheck(ArrayList.java:657)
-        at java.util.ArrayList.get(ArrayList.java:433)
-        at roart.aggregate.MLMACD.handleResultMeta(MLMACD.java:446)
-B: morncat (w cy no price) and aggregator price, npe
-java.lang.NullPointerException: null
-        at roart.aggregate.AggregatorRecommenderIndicator.<init>(AggregatorRecommenderIndicator.java:92)
-        at roart.service.ControlService.getAggregates(ControlService.java:332)
+All deleted, wait for new
 
-B: java.lang.NullPointerException: null
-        at roart.action.FindProfitAction.findMarket(FindProfitAction.java:348)
-        at roart.service.MLService.doMLIndicator(MLService.java:137)
-
-C: configmapchr minimum count
-B: mlindicator extras index out of bounds
-C: evol get top list
+F: Input source with JSON, convert and save to XML (I63)
+T: input handlejson find better way
+C: find/improve run with dates? (I64) localdate.now check
+RC: Do not used minusDays, use datelist
+C: ML shuffle
+T: duplicated configSaved in componentNoMl and configMapChromosome
+?: check recordage usage. only with reader
+B: Tensorflow hangs w/ recovery
+B: Fit repets
+B: Lots of improvers missing
+C: java 8 dates (I59)
+F: use other new indicators (I60)
+WT: Put TODO in code here (I58)
+?: TimingItem getTime JS overlap (I61)
+?: configitem newest
+?: check mlloads improve
+C: set jsonignore in mymyconfig
+C: priority changes , to .
 B: x countmaplearn null, x mapadder memory null, x python
 B: x cgfact 52, evserv 159, x findminmax
-?: chromosome split in inc and dec
-B: Value limits (I46)
 B: x double, x positions, x printme, x offsetmap null
+?: incdec in core?
+?: Core w verify incdec proportion
+?: CL for permit og evolusjon handler.
+?: chromosome split in inc and dec
+F: Iclij mltimes
+C: Merge LSTM with others
+C: java 12 (I50)
+C: ML reconfig default configs based on evolution (I25)
+F: ML use test result (I28)
+F: Iclij verif show new ml config
+F: Use testaccuracy in iclij / compare with reliab/conf incdec (I26)
+B: future verifydays 8 not 10 (I51)
+B: mlindicator extras index out of bounds (I48)
+C: mlindicator extras ignore if same market?
+F: Use trend more (I65)
+WB: Improvers got run two day in a row (I62)
+WC: Evolution get top list with config (I56)
+?: Try improve/find with old date.
+?: improve evolvefirst?
+WB: Improve updates wrongly returns findprofit (I57)
+WB: Get new timings instead of old (I55)
+WC: Improveprofit use market/component tuple when calculating (I54)
+WB: Value limits (I46)
+WB: Wrong handling of list commons (I53)
+WC: Use findtime improvetime instead of recordage (I52)
+WB: Fix config int double conversion from JSON (I49)
+WC: ConfigMapChromosome minimum IncDec count (I47)
 WT: ComponentData parallel problem, use sequential evolution calculations (I45)
 WF: Config on web (I44)
 WF: Stockstat metadata for imports, preferred order for price, index, cy (I41)
-WF: relation table (I42)
+WF: connect two markets, like morncat and nordfund
+WF: Relation table (I42)
 WB: Json encoding (I40)
 WF: More improve on web (I39)
 WC: Change improve recommender to evolution (I38)
 WC: Change improve mlindicator to evolution (I37)
 WT: Better transaction handling (I36)
 WC: Findprofit loop only evolve first (I35)
-B: future verifydays 8 not 10
-?: Core w verify incdec proportion
-?: CL for permit og evolusjon handler.
 WB: Missing use score (I43)
-?: incdec in core?
-F: Iclij mltimes
-C: Merge LSTM with others
-C: ML reconfig default configs based on evolution (I25)
-F: ML use test result (I28)
-F: Iclij verif show new ml config
-F: Use testaccuracy in iclij / compare with reliab/conf incdec (I26)
 WF: Save icli result
 WF: get market data icli with date
 WT: Check all use of configs (I21).
 WT: Pipeline, Category constructor, split off calculate (I16)
 WT: Refactor out common Iclij find/improveprofit code (I14)
-WF: Evolve improvements for all 4 improvers (I4)
-WF: Improve MLMACD (I5)
-WF: Improve Predictor (I6)
 WF: icli result with config data (I29)
-WC: run memories after evolution (I30)
-WC: lstm market config, override wantpred etc (I24)
-WF: restart interrupted find profit (I23)
-WF: Start with no recent data, then most time spenders (I27)
-WF: Shutdown, last run clock 22 (I22)
 WC: Iclij get market with memories and updates (I32)
 WB: SQL var 255 overflow (I31)
 WF: Iclij load/save ML config, updatemap (I11)
 WF: iclij table with %-t/f
+WF: discard sat/sun/hol for all lang
+DF: Evolve improvements for all 4 improvers (I4)
+DF: Improve MLMACD (I5)
+DF: Improve Predictor (I6)
+DC: run memories after evolution (I30)
+DC: lstm market config, override wantpred etc (I24)
+WF: restart interrupted find profit (I23)
+DF: Start with no recent data, then most time spenders (I27)
+DF: Shutdown, last run clock 22 (I22)
 DF: GUI with added timing data (I34)
 DB: Jackson can not find _class (I33)
 DC: Move Predictor out of Category (I17).
@@ -272,6 +322,7 @@ DC: Config constant/name remove [@enable], keep only [@id] (I15)
 DC: Include defaults in map, for constructing gui tree (I8)
 DC: Rename trademarket to filtermarket (I10)
 DF: dev build incl db spark (I13)
+DC: database w/ dev for incdec mem
 DB: Iclij web xml tree no text box due to attribues/values (I7)
 DC: (Core) rename calcnode to gene (I0)
 DC: Put config LSTM under ml (I1)
