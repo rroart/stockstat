@@ -203,10 +203,11 @@ public class ServiceUtil {
         //String marketName = market.getConfig().getMarket();
         List<String> componentList = getFindProfitComponents(componentInput.getConfig());
         for (Market market : findProfitAction.getMarkets()) {
+            updateMarketMap.put(market.getConfig().getMarket(), new HashMap<>());
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
             for (Component component : componentMap.values()) {
                 Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false);
-                updateMarketMap.put(market.getConfig().getMarket(), anUpdateMap);
+                updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
                 updateMap.putAll(anUpdateMap);
             }
         }
@@ -298,10 +299,11 @@ public class ServiceUtil {
         //String marketName = market.getConfig().getMarket();
         List<String> componentList = getFindProfitComponents(componentInput.getConfig());
         for (Market market : findProfitAction.getMarkets()) {
+            updateMarketMap.put(market.getConfig().getMarket(), new HashMap<>());
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
             for (Component component : componentMap.values()) {
                 Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false);
-                updateMarketMap.put(market.getConfig().getMarket(), anUpdateMap);
+                updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
                 updateMap.putAll(anUpdateMap);
             }
         }
