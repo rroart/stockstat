@@ -173,7 +173,7 @@ public class ServiceUtil {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market, market.getFilter().getRecordage());
+            List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime());
             List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
@@ -182,7 +182,7 @@ public class ServiceUtil {
         }
         List<TimingItem> listAllTimings = TimingItem.getAll();
         for (Market market : markets) {
-            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.FINDPROFIT, market.getFilter().getRecordage());
+            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.FINDPROFIT, market.getConfig().getFindtime());
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
@@ -222,7 +222,7 @@ public class ServiceUtil {
             lists.add(updates);
 
             List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market.getConfig().getMarket());
-            List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate());
+            List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate(), market.getConfig().getFindtime());
             
             IclijServiceList memories = new IclijServiceList();
             memories.setTitle("Memories " + marketName);
@@ -277,7 +277,7 @@ public class ServiceUtil {
         */
         List<TimingItem> listAllTimings = TimingItem.getAll();
         for (Market market : markets) {
-            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.IMPROVEPROFIT, market.getFilter().getRecordage());
+            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.IMPROVEPROFIT, market.getConfig().getImprovetime());
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
@@ -318,7 +318,7 @@ public class ServiceUtil {
             lists.add(updates);
 
             List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market.getConfig().getMarket());
-            List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate());
+            List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate(), market.getConfig().getImprovetime());
             
             IclijServiceList memories = new IclijServiceList();
             memories.setTitle("Memories " + marketName);
@@ -828,11 +828,12 @@ public class ServiceUtil {
     }
 
     public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve) throws Exception {
-        LocalDate now = LocalDate.now();
-        LocalDate olddate = now.minusDays(market.getFilter().getRecordage());
+        LocalDate date = param.getInput().getEnddate();
+        LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
         List<ConfigItem> filterConfigs = new ArrayList<>();
         List<ConfigItem> configs = ConfigItem.getAll();
         List<ConfigItem> currentConfigs = configs.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
+        currentConfigs = currentConfigs.stream().filter(m -> date.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
         for (ConfigItem config : currentConfigs) {
             if (marketName.equals(config.getMarket()) && action.equals(config.getAction()) && component.equals(config.getComponent())) {
                 filterConfigs.add(config);

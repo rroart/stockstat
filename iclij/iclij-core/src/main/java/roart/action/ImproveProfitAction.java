@@ -231,8 +231,8 @@ public class ImproveProfitAction extends Action {
         }
         marketMemory.addAll(myData.memoryItems);
         LocalDate prevdate = param.getInput().getEnddate();
-        prevdate = prevdate.minusDays(market.getFilter().getRecordage());
-        List<MemoryItem> currentList = new FindProfitAction().filterKeepRecent(marketMemory, prevdate);
+        prevdate = prevdate.minusDays(market.getConfig().getImprovetime());
+        List<MemoryItem> currentList = new FindProfitAction().filterKeepRecent(marketMemory, prevdate, market.getConfig().getImprovetime());
         // or make a new object instead of the object array. use this as a pair
         //System.out.println(currentList.get(0).getRecord());
         Map<Object[], List<MemoryItem>> listMap = new HashMap<>();
@@ -293,8 +293,8 @@ public class ImproveProfitAction extends Action {
         }
         marketMemory.addAll(myData.memoryItems);
         LocalDate prevdate = param.getInput().getEnddate();
-        prevdate = prevdate.minusDays(market.getFilter().getRecordage());
-        List<MemoryItem> currentList = new FindProfitAction().filterKeepRecent(marketMemory, prevdate);
+        prevdate = prevdate.minusDays(market.getConfig().getImprovetime());
+        List<MemoryItem> currentList = new FindProfitAction().filterKeepRecent(marketMemory, prevdate, market.getConfig().getImprovetime());
         // or make a new object instead of the object array. use this as a pair
         //System.out.println(currentList.get(0).getRecord());
         Map<Object[], List<MemoryItem>> listMap = new HashMap<>();

@@ -375,7 +375,7 @@ public class FindProfitAction extends Action {
         }
         marketMemory.addAll(myData.memoryItems);
         
-        List<MemoryItem> currentList = filterKeepRecent(marketMemory, param.getInput().getEnddate());
+        List<MemoryItem> currentList = filterKeepRecent(marketMemory, param.getInput().getEnddate(), marketTime.market.getConfig().getFindtime());
         // or make a new object instead of the object array. use this as a pair
         //System.out.println(currentList.get(0).getRecord());
         Map<Object[], List<MemoryItem>> listMap = new HashMap<>();
@@ -622,17 +622,19 @@ public class FindProfitAction extends Action {
         return input;
     }
 
-    public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate olddate) {
+    public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days) {
+        LocalDate olddate = date.minusDays(days);
         for (MemoryItem item : marketMemory) {
             if (item.getRecord() == null) {
                 item.setRecord(LocalDate.now());
             }
         }
         // temp workaround
-        if (olddate == null) {
+        if (date == null) {
             return marketMemory;
         }
         List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
+        currentList = currentList.stream().filter(m -> date.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
         return currentList;
     }
 
