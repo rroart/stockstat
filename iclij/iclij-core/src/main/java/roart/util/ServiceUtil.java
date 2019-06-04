@@ -336,10 +336,10 @@ public class ServiceUtil {
         }
         LocalDate newdate = date;
         LocalDate olddate = date.minusDays(days);
-        List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
+        List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
         filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
-        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
-        currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
+        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
+        currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }
@@ -350,9 +350,9 @@ public class ServiceUtil {
         }
         LocalDate newdate = date;
         LocalDate olddate = date.minusDays(days);
-        List<IncDecItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
-        List<IncDecItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
-        currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
+        List<IncDecItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
+        List<IncDecItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
+        currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }
@@ -832,8 +832,8 @@ public class ServiceUtil {
         LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
         List<ConfigItem> filterConfigs = new ArrayList<>();
         List<ConfigItem> configs = ConfigItem.getAll();
-        List<ConfigItem> currentConfigs = configs.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
-        currentConfigs = currentConfigs.stream().filter(m -> date.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
+        List<ConfigItem> currentConfigs = configs.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
+        currentConfigs = currentConfigs.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         for (ConfigItem config : currentConfigs) {
             if (marketName.equals(config.getMarket()) && action.equals(config.getAction()) && component.equals(config.getComponent())) {
                 filterConfigs.add(config);

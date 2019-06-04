@@ -633,8 +633,8 @@ public class FindProfitAction extends Action {
         if (date == null) {
             return marketMemory;
         }
-        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());
-        currentList = currentList.stream().filter(m -> date.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
+        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
+        currentList = currentList.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         return currentList;
     }
 
