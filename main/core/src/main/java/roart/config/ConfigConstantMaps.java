@@ -11,7 +11,7 @@ import roart.gene.impl.CalcComplexGene;
 public class ConfigConstantMaps {
     private static final String CONFIG_DNNL = "{ }";
 
-    private static final String CONFIG_L = "{ \"steps\" : 5 }";
+    private static final String CONFIG_L = "{ \"steps\" : 100 }";
 
     private static final String CONFIG_LSTM = "{ \"epochs\": 5, \"windowsize\": 3, \"horizon\": 5 }";
 
@@ -21,7 +21,7 @@ public class ConfigConstantMaps {
 
     private static final String CONFIG_MCP = "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"nn\" : [ 1, 1 ] }";
 
-    private static final String CONFIG_OVR = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : true }";
+    private static final String CONFIG_OVR = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : false }";
 
     public static Map<String, Class> map = new HashMap();
 
