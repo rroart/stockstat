@@ -9,6 +9,20 @@ import roart.common.constants.CategoryConstants;
 import roart.gene.impl.CalcComplexGene;
 
 public class ConfigConstantMaps {
+    private static final String CONFIG_DNNL = "{ }";
+
+    private static final String CONFIG_L = "{ \"steps\" : 5 }";
+
+    private static final String CONFIG_LSTM = "{ \"epochs\": 5, \"windowsize\": 3, \"horizon\": 5 }";
+
+    private static final String CONFIG_DNN = "{ \"steps\" : 2000, \"hiddenlayers\" : 3, \"hiddenunits\" : [ 10, 20, 10 ] }";
+
+    private static final String CONFIG_LR = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6 }";
+
+    private static final String CONFIG_MCP = "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"nn\" : [ 1, 1 ] }";
+
+    private static final String CONFIG_OVR = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : true }";
+
     public static Map<String, Class> map = new HashMap();
 
     public static void makeTypeMap() {
@@ -199,20 +213,20 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, "spark://127.0.0.1:7077");
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG, "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"nn\" : [ 1, 1 ] }");
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG, CONFIG_MCP);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, "{ \"maxiter\" : 100, \"tol\" : 1.0E-6 }");
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, CONFIG_LR);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : true }");
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, CONFIG_OVR);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, "{ \"steps\" : 2000, \"hiddenlayers\" : 3, \"hiddenunits\" : [ 10, 20, 10 ] }");
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, CONFIG_DNN);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNL, Boolean.FALSE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG, "{ }");
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG, CONFIG_DNNL);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG, "{ \"steps\" : 5 }");
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG, CONFIG_L);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, "{ \"epochs\": 5, \"windowsize\": 3, \"horizon\": 5 }");
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, CONFIG_LSTM);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, "http://localhost:8000");
         deflt.put(ConfigConstants.INDICATORS, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMOVE, Boolean.TRUE);
@@ -573,20 +587,20 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, new XMLType( String.class, "spark://127.0.0.1:7077", "Machine Learning Spark Master"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT, new XMLType( Integer.class, null, "Machine Learning Spark Network Timeout"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML MCP"));
-        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG, new XMLType( String.class, "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"nn\" : [ 1, 1 ] }", "Config for Spark ML MCP"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG, new XMLType( String.class, CONFIG_MCP, "Config for Spark ML MCP"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML LR"));
-        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, new XMLType( String.class, "{ \"maxiter\" : 100, \"tol\" : 1.0E-6 }", "Config for Spark ML LR"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, new XMLType( String.class, CONFIG_LR, "Config for Spark ML LR"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML OVR"));
-        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, new XMLType( String.class, "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : true }", "Config for Spark ML OVR"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, new XMLType( String.class, CONFIG_OVR, "Config for Spark ML OVR"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow DNN"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, new XMLType( String.class, "{ \"steps\" : 2000, \"hiddenlayers\" : 3, \"hiddenunits\" : [ 10, 20, 10 ] }", "Config for Tensorflow DNN"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, new XMLType( String.class, CONFIG_DNN, "Config for Tensorflow DNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNL, new XMLType( Boolean.class, Boolean.FALSE, "Enable Tensorflow DNNL"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG, new XMLType( String.class, "", "Config for Tensorflow DNNL"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG, new XMLType( String.class, CONFIG_DNNL, "Config for Tensorflow DNNL"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow L"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG, new XMLType( String.class, "{ \"steps\" : 5 }", "Config for Tensorflow L"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG, new XMLType( String.class, CONFIG_L, "Config for Tensorflow L"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow (Keras) LSTM"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, new XMLType( String.class, "{ \"epochs\": 5, \"windowsize\": 3, \"horizon\": 5 }", "Config for Tensorflow (Keras) LSTM"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, new XMLType( String.class, CONFIG_LSTM, "Config for Tensorflow (Keras) LSTM"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, new XMLType( String.class, "http://localhost:8000", "Tensorflow Server"));
         mymap.put(ConfigConstants.INDICATORS, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicators"));
         mymap.put(ConfigConstants.INDICATORSMOVE, new XMLType( Boolean.class, Boolean.TRUE, "Enable move indicator"));
