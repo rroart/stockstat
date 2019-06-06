@@ -142,6 +142,11 @@ public class FindProfitAction extends Action {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
+            
+            List<TimingItem> currentTimings = ServiceUtil.getCurrentTimings(olddate, timings, market, IclijConstants.FINDPROFIT, market.getConfig().getFindtime());
+            if (!currentTimings.isEmpty()) {
+                continue;
+            }
             List<IncDecItem> marketIncdecitems = incdecitems.stream().filter(m -> marketName.equals(m.getMarket())).collect(Collectors.toList());
             
             List<IncDecItem> currentIncDecs = ServiceUtil.getCurrentIncDecs(olddate, marketIncdecitems, market, market.getConfig().getFindtime());
@@ -633,8 +638,8 @@ public class FindProfitAction extends Action {
         if (date == null) {
             return marketMemory;
         }
-        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
-        currentList = currentList.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
+        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getFuturedate()) <= 0).collect(Collectors.toList());
+        currentList = currentList.stream().filter(m -> date.compareTo(m.getFuturedate()) >= 0).collect(Collectors.toList());
         return currentList;
     }
 
