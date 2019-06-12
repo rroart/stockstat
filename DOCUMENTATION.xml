@@ -520,10 +520,10 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  </row>
 	  <row>
 	    <entry>
-	      indicators.macd.macdmomentumdelta
+	      indicators.macd.macdmacddelta
 	    </entry>
 	    <entry>
-	      Use momentum change
+	      Use macd change
 	    </entry>
 	    <entry>
 	      true
@@ -531,7 +531,29 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  </row>
 	  <row>
 	    <entry>
-	      indicators.macd.macdmomentumdeltadays
+	      indicators.macd.macdmacddeltadays
+	    </entry>
+	    <entry>
+	      Number of days past for calculating change
+	    </entry>
+	    <entry>
+	      3
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.macdsignaldelta
+	    </entry>
+	    <entry>
+	      Use signal change
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.macdsignaldeltadays
 	    </entry>
 	    <entry>
 	      Number of days past for calculating change
@@ -586,10 +608,10 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  </row>
 	  <row>
 	    <entry>
-	      indicators.macd.recommend.buy.weightmomemtum
+	      indicators.macd.recommend.buy.weightmacd
 	    </entry>
 	    <entry>
-	      Recommender weight for momentum
+	      Recommender weight for macd
 	    </entry>
 	    <entry>
 	      20
@@ -597,10 +619,32 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  </row>
 	  <row>
 	    <entry>
-	      indicators.macd.recommend.buy.weightmomemtumdelta
+	      indicators.macd.recommend.buy.weightmacddelta
 	    </entry>
 	    <entry>
-	      Recommender weight for momentum delta
+	      Recommender weight for macd delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.buy.weightsignal
+	    </entry>
+	    <entry>
+	      Recommender weight for signal
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.buy.weightsignaldelta
+	    </entry>
+	    <entry>
+	      Recommender weight for signal delta
 	    </entry>
 	    <entry>
 	      20
@@ -641,10 +685,10 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  </row>
 	  <row>
 	    <entry>
-	      indicators.macd.recommend.sell.weightmomemtum
+	      indicators.macd.recommend.sell.weightmacd
 	    </entry>
 	    <entry>
-	      Recommender weight for momentum
+	      Recommender weight for macd
 	    </entry>
 	    <entry>
 	      20
@@ -652,10 +696,32 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  </row>
 	  <row>
 	    <entry>
-	      indicators.macd.recommend.sell.weightmomemtumdelta
+	      indicators.macd.recommend.sell.weightmacddelta
 	    </entry>
 	    <entry>
-	      Recommender weight for momentum delta
+	      Recommender weight for macd delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.sell.weightsignal
+	    </entry>
+	    <entry>
+	      Recommender weight for signal
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.recommend.sell.weightsignaldelta
+	    </entry>
+	    <entry>
+	      Recommender weight for signal delta
 	    </entry>
 	    <entry>
 	      20
@@ -674,10 +740,21 @@ Need to provide postgres with a database stockstat, and username/password stocks
 	  </row>
 	  <row>
 	    <entry>
-	      indicators.macd.machinelearning.momemtumml
+	      indicators.macd.machinelearning.macdml
 	    </entry>
 	    <entry>
-	      Use MACD machine learning for momentum
+	      Use MACD machine learning for macd
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+	      indicators.macd.machinelearning.signalml
+	    </entry>
+	    <entry>
+	      Use MACD machine learning for signal
 	    </entry>
 	    <entry>
 	      true
@@ -1298,10 +1375,10 @@ aggregators.indicatorrecommender.simple.macd.buy.weighthistogramdelta
 	  </row>
 	  <row>
 	    <entry>
-aggregators.indicatorrecommender.simple.macd.buy.weightmomemtum
+aggregators.indicatorrecommender.simple.macd.buy.weightmacd
 	    </entry>
 	    <entry>
-	      Simple recommender buy weight for momentum
+	      Simple recommender buy weight for macd
 	    </entry>
 	    <entry>
 	      20
@@ -1309,10 +1386,32 @@ aggregators.indicatorrecommender.simple.macd.buy.weightmomemtum
 	  </row>
 	  <row>
 	    <entry>
-aggregators.indicatorrecommender.simple.macd.buy.weightmomemtumdelta
+aggregators.indicatorrecommender.simple.macd.buy.weightmacddelta
 	    </entry>
 	    <entry>
-	      Simple recommender buy weight for momentum delta
+	      Simple recommender buy weight for macd delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.buy.weightsignal
+	    </entry>
+	    <entry>
+	      Simple recommender buy weight for signal
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.buy.weightsignaldelta
+	    </entry>
+	    <entry>
+	      Simple recommender buy weight for signal delta
 	    </entry>
 	    <entry>
 	      20
@@ -1353,10 +1452,10 @@ aggregators.indicatorrecommender.simple.macd.sell.weighthistogramdelta
 	  </row>
 	  <row>
 	    <entry>
-aggregators.indicatorrecommender.simple.macd.sell.weightmomemtum
+aggregators.indicatorrecommender.simple.macd.sell.weightmacd
 	    </entry>
 	    <entry>
-	      Simple recommender sell weight for momentum
+	      Simple recommender sell weight for macd
 	    </entry>
 	    <entry>
 	      20
@@ -1364,10 +1463,32 @@ aggregators.indicatorrecommender.simple.macd.sell.weightmomemtum
 	  </row>
 	  <row>
 	    <entry>
-aggregators.indicatorrecommender.simple.macd.sell.weightmomemtumdelta
+aggregators.indicatorrecommender.simple.macd.sell.weightmacddelta
 	    </entry>
 	    <entry>
-	      Simple recommender sell weight for momentum delta
+	      Simple recommender sell weight for macd delta
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.sell.weightsignal
+	    </entry>
+	    <entry>
+	      Simple recommender sell weight for signal
+	    </entry>
+	    <entry>
+	      20
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.simple.macd.sell.weightsignaldelta
+	    </entry>
+	    <entry>
+	      Simple recommender sell weight for signal delta
 	    </entry>
 	    <entry>
 	      20
@@ -1506,7 +1627,7 @@ aggregators.indicatorrecommender.complex.macd.buy.weighthistogramdeltanode
 	  </row>
 	  <row>
 	    <entry>
-aggregators.indicatorrecommender.complex.macd.buy.weightmomemtumnode
+aggregators.indicatorrecommender.complex.macd.buy.weightmacdnode
 	    </entry>
 	    <entry>
 	      JSON object
@@ -1517,7 +1638,29 @@ aggregators.indicatorrecommender.complex.macd.buy.weightmomemtumnode
 	  </row>
 	  <row>
 	    <entry>
-aggregators.indicatorrecommender.complex.macd.buy.weightmomemtumdeltanode
+aggregators.indicatorrecommender.complex.macd.buy.weightmacddeltanode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.buy.weightsignalnode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.buy.weightsignaldeltanode
 	    </entry>
 	    <entry>
 	      JSON object
@@ -1561,7 +1704,7 @@ aggregators.indicatorrecommender.complex.macd.sell.weighthistogramdeltanode
 	  </row>
 	  <row>
 	    <entry>
-aggregators.indicatorrecommender.complex.macd.sell.weightmomemtumnode
+aggregators.indicatorrecommender.complex.macd.sell.weightmacdnode
 	    </entry>
 	    <entry>
 	      JSON object
@@ -1572,7 +1715,29 @@ aggregators.indicatorrecommender.complex.macd.sell.weightmomemtumnode
 	  </row>
 	  <row>
 	    <entry>
-aggregators.indicatorrecommender.complex.macd.sell.weightmomemtumdeltanode
+aggregators.indicatorrecommender.complex.macd.sell.weightmacddeltanode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.sell.weightsignalnode
+	    </entry>
+	    <entry>
+	      JSON object
+	    </entry>
+	    <entry>
+	      null
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.indicatorrecommender.complex.macd.sell.weightsignaldeltanode
 	    </entry>
 	    <entry>
 	      JSON object
@@ -1987,7 +2152,7 @@ aggregators.mlmacd
   </para>
   <para>
     MACD has the most extensive machine learning support in Stockstat.
-    When the MACD indicator histogram or momentum changes sign, it may be a buy or sell indicator. The downside is, there are a lot of false positives/negatives.
+    When the MACD indicator histogram, signal or macd changes sign, it may be a buy or sell indicator. The downside is, there are a lot of false positives/negatives.
     It has been attempted to make the system learn what is true/false positives/negatives based on a consequecutive number of days before zero (turning sign) and then a number of consequecutive days after zero, with only one crossing of the zero. 
   </para>
   <para>

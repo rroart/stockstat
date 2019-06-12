@@ -16,8 +16,10 @@ public abstract class MACDRecommend extends RecommendMACD {
         List<String> buyList = new ArrayList<>();
         buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTHISTOGRAM);
         buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTHISTOGRAMDELTA);
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMOMENTUM);
-        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMOMENTUMDELTA);
+        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMACD);
+        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMACDDELTA);
+        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTSIGNAL);
+        buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTSIGNALDELTA);
         return buyList;
     }
 
@@ -25,8 +27,10 @@ public abstract class MACDRecommend extends RecommendMACD {
         List<String> sellList = new ArrayList<>();
         sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTHISTOGRAM);
         sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTHISTOGRAMDELTA);
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMOMENTUM);
-        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMOMENTUMDELTA);
+        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMACD);
+        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMACDDELTA);
+        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNAL);
+        sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNALDELTA);
         return sellList;
     }
 

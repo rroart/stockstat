@@ -181,11 +181,15 @@ public class MyMyConfig extends MyConfig {
     	}
      */
     public boolean isMACDDeltaEnabled() {
-        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDMOMENTUMDELTA);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDMACDDELTA);
     }
 
     public boolean isMACDHistogramDeltaEnabled() {
         return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA);
+    }
+
+    public boolean isMACDSignalDeltaEnabled() {
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDSIGNALDELTA);
     }
 
     /*
@@ -257,7 +261,7 @@ public class MyMyConfig extends MyConfig {
     }
 
     public int getMACDDeltaDays() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDACDMOMENTUMDELTADAYS);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDMACDDELTADAYS);
     }
 
     /*
@@ -267,6 +271,10 @@ public class MyMyConfig extends MyConfig {
      */
     public int getMACDHistogramDeltaDays() {
         return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTADAYS);
+    }
+
+    public int getMACDSignalDeltaDays() {
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDMACDSIGNALDELTADAYS);
     }
 
     /*
@@ -441,11 +449,11 @@ public class MyMyConfig extends MyConfig {
     }
 
     public  int weightBuyMacd() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMOMENTUM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMACD);
     }
 
     public  int weightBuyMacdDelta() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMOMENTUMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTMACDDELTA);
     }
 
     public  int weightSellHist() {
@@ -457,11 +465,11 @@ public class MyMyConfig extends MyConfig {
     }
 
     public  int weightSellMacd() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMOMENTUM);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMACD);
     }
 
     public  int weightSellMacdDelta() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMOMENTUMDELTA);
+        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTMACDDELTA);
     }
 
     public  boolean wantRecommenderRSI() {
@@ -493,7 +501,11 @@ public class MyMyConfig extends MyConfig {
     }
 
     public  boolean wantMLMacd() {
-        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHINELEARNINGMOMENTUMML);
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML);
+    }
+
+    public  boolean wantMLSignal() {
+        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML);
     }
 
     public boolean wantMLTimes() {
@@ -732,6 +744,7 @@ public class MyMyConfig extends MyConfig {
     public Object getValueOrDefault(String key) {
         Object retVal = getConfigValueMap().get(key);
         if (retVal != null) {
+            String cl = retVal.getClass().getName();
             Class classType = getType().get(key);
             if (retVal.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
                 getConfigValueMap().put(key, Double.valueOf(((Integer)retVal).intValue()));
