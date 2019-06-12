@@ -6,6 +6,8 @@
  *
  */
 module talib {
+    exports roart.talib;
+    exports roart.talib.impl;
     exports roart.talib.util;
 
     requires common.constants;
@@ -17,4 +19,5 @@ module talib {
     requires ta.lib;
     requires model;
     requires stockutil;
+    requires ta4j.core;
 }
