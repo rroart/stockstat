@@ -6,6 +6,8 @@ import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
+import roart.talib.Ta;
+import roart.talib.impl.TalibCCI;
 import roart.talib.util.TaUtil;
 
 public class IndicatorCCI extends Indicator {
@@ -43,27 +45,27 @@ public class IndicatorCCI extends Indicator {
     
     @Override
     public Object calculate(double[][] array) {
-        TaUtil tu = new TaUtil();
-        return tu.getCCI(array[1], array[2], array[0], conf.getDays(), conf.isCCIDeltaEnabled(), conf.getCCIDeltaDays());
+        Ta tu = new TalibCCI();
+        return tu.calculate(array);
     }
 
     @Override
     protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-        return tu.getRsiAndDelta(conf.getCCIDeltaDays(), objs);
+        return tu.getWithOneAndDelta(conf.getCCIDeltaDays(), objs);
     }
 
     @Override
     protected void getFieldResult(Double[] result, Object[] fields) {
         TaUtil tu = new TaUtil();
-        tu.getRSIAndDelta(conf.isCCIDeltaEnabled(),  result, fields);
+        tu.getWithOneAndDelta(conf.isCCIDeltaEnabled(),  result, fields);
     }
 
     @Override
     public Object[] getDayResult(Object[] objs, int offset) {
         TaUtil tu = new TaUtil();
-        return tu.getRsiAndDelta(conf.getCCIDeltaDays(), objs, offset);
+        return tu.getWithOneAndDelta(conf.getCCIDeltaDays(), objs, offset);
     }
         
     @Override

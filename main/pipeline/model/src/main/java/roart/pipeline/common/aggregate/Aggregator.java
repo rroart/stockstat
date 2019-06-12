@@ -59,7 +59,7 @@ public abstract class Aggregator extends PipelineResultData {
 
     public abstract Object[] getResultItem(StockItem stock);
 
-    public Object calculate(double[] array) {
+    public Object calculate(double[][] array) {
         return null;
     }
 

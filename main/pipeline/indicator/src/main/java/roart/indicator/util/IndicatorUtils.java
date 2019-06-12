@@ -68,7 +68,7 @@ public class IndicatorUtils {
             Map<String, Double[]> momMap = new HashMap<>();
             for (String id : listMap.keySet()) {
                 Object[] objs = objectMap.get(id);
-                Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs, j);
+                Double[] momentum = tu.getWithThreeAndDelta(conf.getMACDHistogramDeltaDays(), conf.getMACDDeltaDays(), conf.getMACDSignalDeltaDays(), objs, j);
                 if (momentum != null) {
                     momMap.put(id, momentum);
                     IndicatorUtils.addToLists(macdLists, momentum);
@@ -101,7 +101,7 @@ public class IndicatorUtils {
             Map<String, Double[]> rsiMap = new HashMap<>();
             for (String id : listMap.keySet()) {
                 Object[] objs = objectMap.get(id);
-                Double[] rsi = tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, j);
+                Double[] rsi = tu.getWithOneAndDelta(conf.getRSIDeltaDays(), objs, j);
                 if (rsi != null) {
                     rsiMap.put(id, rsi);
                     IndicatorUtils.addToLists(rsiLists, rsi);
@@ -134,8 +134,8 @@ public class IndicatorUtils {
             for (String id : listMacdMap.keySet()) {
                 Object[] objsMacd = objectMacdMap.get(id);
                 Object[] objsRSI = objectRsiMap.get(id);
-                Double[] momentum = tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objsMacd, j);
-                Double[] rsi = tu.getRsiAndDelta(conf.getRSIDeltaDays(), objsRSI, j);
+                Double[] momentum = tu.getWithThreeAndDelta(conf.getMACDHistogramDeltaDays(), conf.getMACDDeltaDays(), conf.getMACDSignalDeltaDays(), objsMacd, j);
+                Double[] rsi = tu.getWithOneAndDelta(conf.getRSIDeltaDays(), objsRSI, j);
                 if (momentum != null) {
                     Double[] momrsi = ArrayUtils.addAll(momentum, rsi);
                     momrsiMap.put(id, momrsi);

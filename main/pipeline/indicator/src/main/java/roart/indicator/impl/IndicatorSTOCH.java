@@ -6,6 +6,8 @@ import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
+import roart.talib.Ta;
+import roart.talib.impl.TalibSTOCH;
 import roart.talib.util.TaUtil;
 
 public class IndicatorSTOCH extends Indicator {
@@ -46,27 +48,27 @@ public class IndicatorSTOCH extends Indicator {
         if (array.length != 180 && array.length > 0) {
             log.info("180");
         }
-        TaUtil tu = new TaUtil();
-        return tu.getSTOCH(array[1], array[2], array[0], conf.getDays(), conf.isSTOCHDeltaEnabled(), conf.getSTOCHDeltaDays());
+        Ta tu = new TalibSTOCH();
+        return tu.calculate(array);
     }
 
     @Override
     protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-        return tu.getSRSIAndDelta(conf.getSTOCHDeltaDays(), conf.getSTOCHDeltaDays(), objs);
+        return tu.getWithTwoAndDelta(conf.getSTOCHDeltaDays(), conf.getSTOCHDeltaDays(), objs);
     }
 
     @Override
     protected void getFieldResult(Double[] result, Object[] fields) {
         TaUtil tu = new TaUtil();
-        tu.getSRSIAndDelta(conf.isSTOCHDeltaEnabled(), conf.isSTOCHDeltaEnabled(), result, fields);
+        tu.getWithTwoAndDelta(conf.isSTOCHDeltaEnabled(), conf.isSTOCHDeltaEnabled(), result, fields);
     }
 
     @Override
     public Object[] getDayResult(Object[] objs, int offset) {
         TaUtil tu = new TaUtil();
-        return tu.getSRSIAndDelta(conf.getRSIDeltaDays(), conf.getRSIDeltaDays(), objs, offset);
+        return tu.getWithTwoAndDelta(conf.getSTOCHDeltaDays(), conf.getSTOCHDeltaDays(), objs, offset);
     }
     
     @Override

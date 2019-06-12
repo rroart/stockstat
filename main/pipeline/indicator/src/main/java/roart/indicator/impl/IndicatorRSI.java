@@ -7,6 +7,8 @@ import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.Constants;
 import roart.pipeline.Pipeline;
+import roart.talib.Ta;
+import roart.talib.impl.TalibRSI;
 import roart.talib.util.TaUtil;
 
 public class IndicatorRSI extends Indicator {
@@ -49,27 +51,27 @@ public class IndicatorRSI extends Indicator {
 
     @Override
     public Object calculate(double[][] array) {
-        TaUtil tu = new TaUtil();
-        return tu.getRsiAndDeltaFull(array[0], conf.getDays(), conf.getRSIDeltaDays());
+        Ta tu = new TalibRSI();
+        return tu.calculate(array);
     }
 
     @Override
     protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-        return tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs);
+        return tu.getWithOneAndDelta(conf.getRSIDeltaDays(), objs);
     }
 
     @Override
     protected void getFieldResult(Double[] momentum, Object[] fields) {
         TaUtil tu = new TaUtil();
-        tu.getRSIAndDelta(conf.isRSIDeltaEnabled(),  momentum, fields);
+        tu.getWithOneAndDelta(conf.isRSIDeltaEnabled(),  momentum, fields);
     }
 
     @Override
     public Object[] getDayResult(Object[] objs, int offset) {
         TaUtil tu = new TaUtil();
-        return tu.getRsiAndDelta(conf.getRSIDeltaDays(), objs, offset);
+        return tu.getWithOneAndDelta(conf.getRSIDeltaDays(), objs, offset);
     }
 
     @Override
