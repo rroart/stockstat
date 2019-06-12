@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tictactec.ta.lib.MInteger;
 
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
@@ -41,6 +40,8 @@ import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
 import roart.model.data.PeriodData;
+import roart.talib.Ta;
+import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaUtil;
 import roart.pipeline.common.aggregate.Aggregator;
 
@@ -159,7 +160,7 @@ public class MLMACD extends Aggregator {
         }
         @Override
         public int getArrIdx() {
-            return TaUtil.MACDIDXHIST;
+            return TalibMACD.MACDIDXHIST;
         }
     }
 
@@ -174,7 +175,22 @@ public class MLMACD extends Aggregator {
         }
         @Override
         public int getArrIdx() {
-            return TaUtil.MACDIDXMACD;
+            return TalibMACD.MACDIDXMACD;
+        }
+    }
+
+    private class MacdSubTypeSignal implements MacdSubType {
+        @Override
+        public String getType() {
+            return "S";
+        }
+        @Override
+        public String getName() {
+            return "Sig";
+        }
+        @Override
+        public int getArrIdx() {
+            return TalibMACD.MACDIDXSIGN;
         }
     }
 
@@ -222,6 +238,9 @@ public class MLMACD extends Aggregator {
         }
         if (conf.wantMLMacd()) {
             wantedSubTypes.add(new MacdSubTypeMacd());
+        }
+        if (conf.wantMLSignal()) {
+            wantedSubTypes.add(new MacdSubTypeSignal());
         }
     }
     // make an oo version of this
@@ -623,11 +642,11 @@ public class MLMACD extends Aggregator {
             Double[] origMain = Arrays.copyOf(list[0], list[0].length);
             list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
             Object[] objs = objectMap.get(entry.getKey());
-            MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
-            MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
-            Double[] trunclist = ArraysUtil.getSubExclusive(list[0], begOfArray.value, begOfArray.value + endOfArray.value);
-            Double[] trunclistOrig = ArraysUtil.getSubExclusive(origMain, begOfArray.value, begOfArray.value + endOfArray.value);
-            if (endOfArray.value == 0) {
+            int begOfArray = (int) objs[TalibMACD.MACDIDXBEG];
+            int endOfArray = (int) objs[TalibMACD.MACDIDXEND];
+            Double[] trunclist = ArraysUtil.getSubExclusive(list[0], begOfArray, begOfArray + endOfArray);
+            Double[] trunclistOrig = ArraysUtil.getSubExclusive(origMain, begOfArray, begOfArray + endOfArray);
+            if (endOfArray == 0) {
                 continue;
             }
             List<MacdSubType> subTypes = wantedSubTypes();
@@ -765,8 +784,8 @@ public class MLMACD extends Aggregator {
             if (momentum == null) {
                 log.debug("no macd for id {}", id);
             }
-            MInteger begOfArray = (MInteger) objs[TaUtil.MACDIDXBEG];
-            MInteger endOfArray = (MInteger) objs[TaUtil.MACDIDXEND];
+            int begOfArray = (int) objs[TalibMACD.MACDIDXBEG];
+            int endOfArray = (int) objs[TalibMACD.MACDIDXEND];
 
             double[][] list = listMap.get(id);
             log.debug("t {}", Arrays.toString(list[0]));
@@ -774,19 +793,19 @@ public class MLMACD extends Aggregator {
             if (conf.wantPercentizedPriceIndex() && list[0].length > 0) {
                 list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
             }
-            log.debug("beg end {} {} {}", id, begOfArray.value, endOfArray.value);
+            log.debug("beg end {} {} {}", id, begOfArray, endOfArray);
             log.debug("list {} {} ", list.length, Arrays.asList(list));
-            double[] trunclist = ArrayUtils.subarray(list[0], begOfArray.value, begOfArray.value + endOfArray.value);
+            double[] trunclist = ArrayUtils.subarray(list[0], begOfArray, begOfArray + endOfArray);
             log.debug("trunclist {} {}", list.length, Arrays.asList(trunclist));
             if (conf.wantML()) {
                 if (momentum != null && momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
                     Map<String, Double> labelMap2 = createLabelMap2();
                     // also macd
-                    if (endOfArray.value > 0) {
+                    if (endOfArray > 0) {
                         List<MacdSubType> subTypes = wantedSubTypes();
                         for (MacdSubType subType : subTypes) {
                             double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
-                            Map<Integer, Integer>[] map = ArraysUtil.searchForward(aMacdArray, endOfArray.value);
+                            Map<Integer, Integer>[] map = ArraysUtil.searchForward(aMacdArray, endOfArray);
                             getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, POSTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[0], labelFN, labelTN);
                             getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, NEGTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[1], labelTP, labelFP);
                         }
@@ -800,18 +819,18 @@ public class MLMACD extends Aggregator {
     }
 
     private void getMlMappings(String name, String subType, Map<Double, String> labelMapShort, Map<String, Map<String, double[]>> mapIdMap,
-            String id, double[] array, MInteger endOfArray,
+            String id, double[] array, int endOfArray,
             Double[] valueList, Double[] valueListOrig) {
         Map<String, double[]> offsetMap = mapGetter(mapIdMap, subType);
         Map<String, double[]> commonMap = mapGetter(mapIdMap, subType + CMNTYPESTR);
         Map<String, double[]> posMap = mapGetter(mapIdMap, subType + POSTYPESTR);
         Map<String, double[]> negMap = mapGetter(mapIdMap, subType + NEGTYPESTR);
-        Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, endOfArray.value);
+        Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, endOfArray);
         Map<Integer, Integer> pos = map[0];
         Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), valueList.length);
         Map<Integer, Integer> neg = map[1];
         Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), valueList.length);
-        printSignChange(name, id, newPos, newNeg, endOfArray.value, conf.getMACDDaysAfterZero(), labelMapShort);
+        printSignChange(name, id, newPos, newNeg, endOfArray, conf.getMACDDaysAfterZero(), labelMapShort);
         if (!newNeg.isEmpty() || !newPos.isEmpty()) {
             int start = 0;
             int end = 0;
@@ -823,10 +842,10 @@ public class MLMACD extends Aggregator {
                 start = newPos.keySet().iterator().next();
                 end = newPos.get(start);
             }
-            if (end + 1 >= endOfArray.value) {
+            if (end + 1 >= endOfArray) {
                 return;
             }
-            double[] doubleArray = new double[] { endOfArray.value - end };
+            double[] doubleArray = new double[] { endOfArray - end };
             offsetMap.put(id, doubleArray);
             log.debug("t {} {} {}", subType, id, valueListOrig[end]);
             double[] truncArray = ArraysUtil.getSub(array, start, end);
@@ -992,9 +1011,9 @@ public class MLMACD extends Aggregator {
     }
 
     @Override
-    public Object calculate(double[] array) {
-        TaUtil tu = new TaUtil();
-        return tu.getMomAndDeltaFull(array, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
+    public Object calculate(double[][] array) {
+        Ta tu = new TalibMACD();
+        return tu.calculate(array);
     }
 
     @Override
@@ -1029,8 +1048,12 @@ public class MLMACD extends Aggregator {
         if (conf.isMACDHistogramDeltaEnabled()) {
             objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "hist";
         }
-        objs[retindex++] = title + Constants.WEBBR + "mom";
+        objs[retindex++] = title + Constants.WEBBR + "macd";
         if (conf.isMACDDeltaEnabled()) {
+            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
+        }
+        objs[retindex++] = title + Constants.WEBBR + "sig";
+        if (conf.isMACDSignalDeltaEnabled()) {
             objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
         }
         retindex = getTitles(retindex, objs);

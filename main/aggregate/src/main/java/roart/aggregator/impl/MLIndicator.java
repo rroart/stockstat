@@ -43,6 +43,8 @@ import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
+import roart.talib.Ta;
+import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaUtil;
 
 public class MLIndicator extends Aggregator {
@@ -637,9 +639,9 @@ public class MLIndicator extends Aggregator {
     }
 
     @Override
-    public Object calculate(double[] array) {
-        TaUtil tu = new TaUtil();
-        return tu.getMomAndDeltaFull(array, conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
+    public Object calculate(double[][] array) {
+        Ta tu = new TalibMACD();
+        return tu.calculate(array);
     }
 
     @Override
@@ -677,8 +679,12 @@ public class MLIndicator extends Aggregator {
         if (conf.isMACDHistogramDeltaEnabled()) {
             objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "hist";
         }
-        objs[retindex++] = title + Constants.WEBBR + "mom";
+        objs[retindex++] = title + Constants.WEBBR + "macd";
         if (conf.isMACDDeltaEnabled()) {
+            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
+        }
+        objs[retindex++] = title + Constants.WEBBR + "sig";
+        if (conf.isMACDSignalDeltaEnabled()) {
             objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
         }
         retindex = getTitles(retindex, objs);

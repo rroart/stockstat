@@ -8,6 +8,8 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.constants.Constants;
 import roart.ml.common.MLClassifyModel;
 import roart.pipeline.Pipeline;
+import roart.talib.Ta;
+import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaUtil;
 
 public class IndicatorMACD extends Indicator {
@@ -42,11 +44,14 @@ public class IndicatorMACD extends Indicator {
     }
     
     private int fieldSize() {
-        int size = 2;
+        int size = 3;
         if (conf.isMACDDeltaEnabled()) {
             size++;
         }
         if (conf.isMACDHistogramDeltaEnabled()) {
+            size++;
+        }
+        if (conf.isMACDSignalDeltaEnabled()) {
             size++;
         }
         emptyField = new Object[size];
@@ -59,33 +64,33 @@ public class IndicatorMACD extends Indicator {
         if (array.length != 180 && array.length > 0) {
             log.info("180");
         }
-        TaUtil tu = new TaUtil();
-        return tu.getMomAndDeltaFull(array[0], conf.getDays(), conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays());
+        Ta tu = new TalibMACD();
+        return tu.calculate(array);
     }
 
     @Override
     protected Double[] getCalculated(Map<String, Object[]> objectMap, String id) {
         Object[] objs = objectMap.get(id);
         TaUtil tu = new TaUtil();
-        return tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs);
+        return tu.getWithThreeAndDelta(conf.getMACDHistogramDeltaDays(), conf.getMACDDeltaDays(), conf.getMACDSignalDeltaDays(), objs);
     }
 
     @Override
     protected void getFieldResult(Double[] momentum, Object[] fields) {
         TaUtil tu = new TaUtil();
-        tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
+        tu.getWithThreeAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), conf.isMACDSignalDeltaEnabled(), momentum, fields);
     }
 
     @Override
     public Object[] getDayResult(Object[] objs, int offset) {
         TaUtil tu = new TaUtil();
-        return tu.getMomAndDelta(conf.getMACDDeltaDays(), conf.getMACDHistogramDeltaDays(), objs, offset);
+        return tu.getWithThreeAndDelta(conf.getMACDHistogramDeltaDays(), conf.getMACDDeltaDays(), conf.getMACDDeltaDays(), objs, offset);
 
     }
     
     @Override
     public int getResultSize() {
-        return 4;        
+        return 6;        
     }
     
     @Override
@@ -96,9 +101,13 @@ public class IndicatorMACD extends Indicator {
         if (conf.isMACDHistogramDeltaEnabled()) {
             objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "hist";
         }
-        objs[retindex++] = title + Constants.WEBBR + "mom";
+        objs[retindex++] = title + Constants.WEBBR + "macd";
         if (conf.isMACDDeltaEnabled()) {
-            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
+            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "macd";
+        }
+        objs[retindex++] = title + Constants.WEBBR + "sig";
+        if (conf.isMACDSignalDeltaEnabled()) {
+            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "sig";
         }
         log.info("fieldsizet {}", retindex);
         return objs;
