@@ -27,6 +27,10 @@ public class MyMyConfig extends MyConfig {
                 continue;
             }
             Class classType = getType().get(key);
+            if (classType == null) {
+                System.out.println("Null class " + key);
+                continue;
+            }
                     
             //System.out.println("k " + key + " " + value + " " +classType);
             if (value.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
