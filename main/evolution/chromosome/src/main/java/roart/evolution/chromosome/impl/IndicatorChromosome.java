@@ -238,6 +238,7 @@ public class IndicatorChromosome extends AbstractChromosome {
             if (disableList.contains(key) || total == 0) {
                 continue;
             }
+            log.info("Class cast for key {}", key);
             CalcGene anode = (CalcGene) conf.getConfigValueMap().get(key);
             int tmpNum = 0;
             if (anode instanceof CalcComplexGene) {
