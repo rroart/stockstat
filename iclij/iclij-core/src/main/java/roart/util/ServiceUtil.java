@@ -850,6 +850,7 @@ public class ServiceUtil {
                 log.error("No class for {}", config.getId());
                 myclass = String.class;
             }
+            log.info("Trying {} {}", config.getId(), myclass.getName());
             switch (myclass.getName()) {
             case "java.lang.String":
                 break;
