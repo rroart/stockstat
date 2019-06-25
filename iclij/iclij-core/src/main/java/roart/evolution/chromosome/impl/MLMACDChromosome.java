@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -25,6 +26,8 @@ import roart.component.ComponentFactory;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentInput;
 import roart.config.Market;
+import roart.evolution.chromosome.AbstractChromosome;
+import roart.evolution.species.Individual;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
@@ -33,9 +36,29 @@ import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 
 public class MLMACDChromosome extends ConfigMapChromosome {
+
+    public MLMACDChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy) {
+        super(confList, param, profitdata, market, positions, component, buy);
+    }
+
+    @Override
+    public boolean validate() {
+        for (String key : getList()) {
+            Object object = getMap().get(key);
+            if (object != null && object instanceof Boolean) {
+                if ((boolean) object) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
-    public MLMACDChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component) {
-        super(confList, param, profitdata, market, positions, component);
+    @Override
+    public void fixValidation() { 
+        Random rand = new Random();
+        int index = rand.nextInt(getList().size());
+        getMap().put(getList().get(index), true);
     }
 
     @Override
@@ -45,33 +68,47 @@ public class MLMACDChromosome extends ConfigMapChromosome {
         List<String> list = new ArrayList<>();
         list.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
         list.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
-        */
+         */
         return super.getFitness();
         /*
         MyCallable callable = new MyCallable(conf, ml, dataReaders, categories);
         Future<Aggregator> future = MyExecutors.run(callable);
         aggregate = future.get();
-        */
+         */
     }
-     
-    class MyFactoryNot {
-        public List<MemoryItem> myfactory(MyMyConfig conf, String ml) throws Exception {
-            /*
-            ControlService srv = new ControlService();
-            srv.getConfig();            
-            srv.conf.getConfigValueMap().putAll(getMap());
-            */
-            if (ml.equals(PipelineConstants.MLMACD)) {
-                List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(conf.getMarket(), null, null, false, false), getMap());
-                return memories;
-            } 
-            if (ml.equals(PipelineConstants.MLINDICATOR)) {
-                List<MemoryItem> memories = new MLService().doMLIndicator(new ComponentInput(conf.getMarket(), null, null, false, false), getMap());
-                return memories;
-            }
-            return null;
-        }
 
+    private List<String> getList() {
+        List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML);
+        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML);
+        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML);
+        return confList;
     }
     
+    @Override
+    public AbstractChromosome copy() {
+        ComponentData newparam = new ComponentData(param);
+        MLMACDChromosome chromosome = new MLMACDChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
+        return chromosome;
+    }
+    
+    @Override
+    public Individual crossover(AbstractChromosome other) {
+        ComponentData newparam = new ComponentData(param);
+        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
+        Random rand = new Random();
+        for (int conf = 0; conf < confList.size(); conf++) {
+            String confName = confList.get(conf);
+            if (rand.nextBoolean()) {
+                chromosome.getMap().put(confName, this.getMap().get(confName));
+            } else {
+                chromosome.getMap().put(confName, ((ConfigMapChromosome) other).getMap().get(confName));
+            }
+        }
+        if (!chromosome.validate()) {
+            chromosome.fixValidation();
+        }
+        return new Individual(chromosome);
+    }
+
 }

@@ -193,11 +193,11 @@ public class ComponentMLIndicator extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR);
-        loadme(param, chromosome, market, confList);
+        ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy);
+        loadme(param, chromosome, market, confList, buy);
         return improve(param, chromosome);
 /*
         Map<String, String> retMap = new HashMap<>();
@@ -523,6 +523,10 @@ public class ComponentMLIndicator extends ComponentML {
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD);
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASATR);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI);
         list.add(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
         list.add(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
         list.add(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);

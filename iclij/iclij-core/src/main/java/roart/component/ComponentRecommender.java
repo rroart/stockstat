@@ -61,6 +61,24 @@ public class ComponentRecommender extends ComponentNoML {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.TRUE);                
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.TRUE);                
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATR, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCH, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSATR, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCH, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSATRDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSCCIDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDMACDDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDSIGNALDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSIDELTA, Boolean.TRUE);                
     }
 
     @Override
@@ -71,6 +89,24 @@ public class ComponentRecommender extends ComponentNoML {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEX, Boolean.FALSE);                
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACD, Boolean.FALSE);                
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATR, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCH, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSATR, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCH, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSATRDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSCCIDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDMACDDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDSIGNALDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSIDELTA, Boolean.FALSE);                
     }
 
     @Override
@@ -213,6 +249,8 @@ public class ComponentRecommender extends ComponentNoML {
         buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALDELTANODE);
         buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIBUYWEIGHTRSINODE);
         buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIBUYWEIGHTRSIDELTANODE);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUYWEIGHTSTOCHRSINODE);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUYWEIGHTSTOCHRSIDELTANODE);
         return buyList;
     }
     
@@ -226,6 +264,8 @@ public class ComponentRecommender extends ComponentNoML {
         sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALDELTANODE);
         sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSISELLWEIGHTRSINODE);
         sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSISELLWEIGHTRSIDELTANODE);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSINODE);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSIDELTANODE);
         return sellList;
     }
     
@@ -234,16 +274,56 @@ public class ComponentRecommender extends ComponentNoML {
         return getBuy();
     }
     
+    public List<String> getConfListThreeBuy() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRBUYWEIGHTATRNODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRBUYWEIGHTATRDELTANODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCIBUYWEIGHTCCINODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCIBUYWEIGHTCCIDELTANODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHBUYWEIGHTSTOCHNODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHBUYWEIGHTSTOCHDELTANODE);
+        return list;
+    }
+    
+    public List<String> getConfListThreeSell() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRSELLWEIGHTATRNODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRSELLWEIGHTATRDELTANODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCISELLWEIGHTCCINODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCISELLWEIGHTCCIDELTANODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHSELLWEIGHTSTOCHNODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHSELLWEIGHTSTOCHDELTANODE);
+        return list;
+    }
+    
+    private boolean anythingHere(Map<String, List<List<Double>>> listMap2, int size) {
+        for (List<List<Double>> array : listMap2.values()) {
+            if (size == 3 && size != array.get(0).size()) {
+                return false;
+            }
+            for (int i = 0; i < array.get(0).size(); i++) {
+                if (array.get(0).get(i) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
         List<String> confList = getConfList();        
-        
+	Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
+	boolean gotThree = anythingHere(listMap, 3);
+	if (gotThree) {
+	    confList.addAll(getConfListThreeBuy());
+	}
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false);
+            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -251,7 +331,9 @@ public class ComponentRecommender extends ComponentNoML {
             String configStr = (String) map.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
             if (configStr != null) {
                 String[] confArray = JsonUtil.convert(configStr, String[].class);
-                confList = Arrays.asList(confArray);
+                if (confArray != null) {
+                    confList = Arrays.asList(confArray);
+                }
                 //List<String> confList2 = JsonUtil.convert(str, new TypeReference<List<String>>() { });
                 //config = JsonUtil.convert(configStr, new TypeReference<List<String>>() { });
                 //config = JsonUtil.convert(configStr, new TypeReference<String[]>() { });
@@ -261,7 +343,7 @@ public class ComponentRecommender extends ComponentNoML {
             }
         }
 
-        RecommenderChromosome chromosome = new RecommenderChromosome(getConfList(), confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        RecommenderChromosome chromosome = new RecommenderChromosome(getConfList(), confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy);
 
         //chromosome.setConfList(confList);
         
@@ -293,7 +375,7 @@ public class ComponentRecommender extends ComponentNoML {
     @Deprecated
     private ComponentData handleBuySell(ComponentData param, Market market, ProfitData profitdata, Map<Object[], List<MemoryItem>> badListMap, List<String> list) {
         List<String> confList = getConfList();
-        RecommenderChromosome chromosome = new RecommenderChromosome(null, confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        RecommenderChromosome chromosome = new RecommenderChromosome(null, confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null);
         if (true) return improve(param, chromosome);
         Map<String, String> retMap = new HashMap<>();
         List<List<String>> listPerm = getAllPerms(list);
@@ -420,8 +502,8 @@ public class ComponentRecommender extends ComponentNoML {
     public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
         RecommenderData param = (RecommenderData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
-        AbstractScore eval = new ProportionScore();
         for (int i = 0; i < 2; i++) {
+            AbstractScore eval = new ProportionScore(i == 0);
             getMemories(param, memoryList, eval, i);
         }
         return memoryList;

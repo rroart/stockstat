@@ -24,13 +24,15 @@ import roart.evolution.species.Individual;
 import roart.service.model.ProfitData;
 
 public class RecommenderChromosome extends ConfigMapChromosome {
-    private List<List<String>> listPerm = ComponentRecommender.getAllPerms(getBuy());
-    private List<Set<String>> setPerms = makeSet(listPerm);
+    private List<List<String>> listPermBuy = ComponentRecommender.getAllPerms(getBuyList());
+    private List<Set<String>> setPermsBuy = makeSet(listPermBuy);
+    private List<List<String>> listPermSell = ComponentRecommender.getAllPerms(getSellList());
+    private List<Set<String>> setPermsSell = makeSet(listPermSell);
     
     private int listIdx;
     
-    public RecommenderChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component) {
-        super(confList, param, profitdata, market, positions, component);
+    public RecommenderChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy) {
+        super(confList, param, profitdata, market, positions, component, buy);
     }
 
     private List<Set<String>> makeSet(List<List<String>> listPerm) {
@@ -41,12 +43,13 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         return retlist;
     }
 
-    public RecommenderChromosome(List<String> defaultConfList, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component) {
-        super(confList, param, profitdata, market, positions, component);
+    public RecommenderChromosome(List<String> defaultConfList, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy) {
+        super(confList, param, profitdata, market, positions, component, buy);
         Set<String> defaultConfSet = new HashSet<>(defaultConfList);
         Set<String> confSet = new HashSet<>(confList);
         Set<String> disableSet = new HashSet<>(defaultConfSet);
         disableSet.removeAll(confSet);
+        List<Set<String>> setPerms = getBuy() ? setPermsBuy : setPermsSell;
         listIdx = 0;
         for (Set<String> aSet : setPerms) {
             if (disableSet.size() == aSet.size()) {
@@ -62,7 +65,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         }
     }
 
-    public List<String> getBuy() {
+    public List<String> getBuyList() {
         List<String> buyList = new ArrayList<>();
         buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMNODE);
         buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMDELTANODE);
@@ -72,10 +75,12 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALDELTANODE);
         buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIBUYWEIGHTRSINODE);
         buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIBUYWEIGHTRSIDELTANODE);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUYWEIGHTSTOCHRSINODE);
+        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUYWEIGHTSTOCHRSIDELTANODE);
         return buyList;
     }
 
-    public List<String> getSell() {
+    public List<String> getSellList() {
         List<String> sellList = new ArrayList<>();
         sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMNODE);
         sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMDELTANODE);
@@ -85,7 +90,31 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALDELTANODE);
         sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSISELLWEIGHTRSINODE);
         sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSISELLWEIGHTRSIDELTANODE);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSINODE);
+        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSIDELTANODE);
         return sellList;
+    }
+    
+    public List<String> getConfListThreeBuy() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRBUYWEIGHTATRNODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRBUYWEIGHTATRDELTANODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCIBUYWEIGHTCCINODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCIBUYWEIGHTCCIDELTANODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHBUYWEIGHTSTOCHNODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHBUYWEIGHTSTOCHDELTANODE);
+        return list;
+    }
+    
+    public List<String> getConfListThreeSell() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRSELLWEIGHTATRNODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRSELLWEIGHTATRDELTANODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCISELLWEIGHTCCINODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCISELLWEIGHTCCIDELTANODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHSELLWEIGHTSTOCHNODE);
+        list.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHSELLWEIGHTSTOCHDELTANODE);
+        return list;
     }
     
     @Override
@@ -95,6 +124,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         //String string = JsonUtil.convert(config);
         //map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, string);
         //setMap(map);
+        List<List<String>> listPerm = getBuy() ? listPermBuy : listPermSell;
         Set<String> conf = new HashSet<>(confList);
         Set<String> disable = new HashSet<>(listPerm.get(listIdx));
         conf.removeAll(disable);
@@ -107,14 +137,16 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     @Override
     public void getRandom() throws JsonParseException, JsonMappingException, IOException {
         Random random = new Random();
+        List<List<String>> listPerm = getBuy() ? listPermBuy : listPermSell;
         listIdx = random.nextInt(listPerm.size());
     }
     
     @Override
     public void mutate() {
         Random random = new Random();
-        int bit = random.nextInt(getBuy().size());
+        int bit = random.nextInt(getBuyList().size());
         //int bit = random.nextInt(bits);
+        List<List<String>> listPerm = getBuy() ? listPermBuy : listPermSell;
         listIdx = listIdx ^ (1 << bit);
         if (listIdx >= listPerm.size()) {
             listIdx = 0;
@@ -123,7 +155,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     
     @Override
     public Individual crossover(AbstractChromosome other) {
-        RecommenderChromosome chromosome = new RecommenderChromosome(confList, param, profitdata, market, positions, componentName);
+        RecommenderChromosome chromosome = new RecommenderChromosome(confList, param, profitdata, market, positions, componentName, buy);
         int idx = chromosome.listIdx ^ ((RecommenderChromosome) other).listIdx;
         chromosome.listIdx = idx;
         return new Individual(chromosome);
@@ -149,7 +181,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        RecommenderChromosome chromosome = new RecommenderChromosome(confList, newparam, profitdata, market, positions, componentName);
+        RecommenderChromosome chromosome = new RecommenderChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         chromosome.listIdx = listIdx;
         return chromosome;
@@ -158,6 +190,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     @Override
     public String toString() {
         Set<String> conf = new HashSet<>(confList);
+        List<List<String>> listPerm = getBuy() ? listPermBuy : listPermSell;
         Set<String> disable = new HashSet<>(listPerm.get(listIdx));
         conf.removeAll(disable);
         return conf.toString();

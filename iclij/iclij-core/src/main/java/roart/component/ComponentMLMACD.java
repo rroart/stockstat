@@ -251,11 +251,11 @@ public class ComponentMLMACD extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        ConfigMapChromosome chromosome = new MLMACDChromosome(param, profitdata, confList, market, positions, PipelineConstants.MLMACD);
-        loadme(param, chromosome, market, confList);
+        ConfigMapChromosome chromosome = new MLMACDChromosome(param, profitdata, confList, market, positions, PipelineConstants.MLMACD, buy);
+        loadme(param, chromosome, market, confList, buy);
         return improve(param, chromosome);
 
         /*
@@ -291,6 +291,9 @@ public class ComponentMLMACD extends ComponentML {
         List<String> confList = new ArrayList<>();
         confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
         confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
+        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML);
+        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML);
+        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML);
         return confList;
     }
 
