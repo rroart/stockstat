@@ -3,6 +3,8 @@ package roart.aggregatorindicator.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.util.Pair;
+
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.RecommendConstants;
@@ -14,18 +16,18 @@ public class RSIRecommendSimple extends RecommendRSI {
     }
 
     @Override
-    public  List<String> getBuyList() {
-        List<String> buyList = new ArrayList<>();
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIBUYWEIGHTRSI);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIBUYWEIGHTRSIDELTA);
+    public  List<Pair<String, String>> getBuyList() {
+        List<Pair<String, String>> buyList = new ArrayList<>();
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIBUYWEIGHTRSI, ConfigConstants.INDICATORSRSI));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSIBUYWEIGHTRSIDELTA, ConfigConstants.INDICATORSRSIDELTA));
         return buyList;
     }
 
     @Override
-    public  List<String> getSellList() {
-        List<String> sellList = new ArrayList<>();
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSISELLWEIGHTRSI);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSISELLWEIGHTRSIDELTA);
+    public  List<Pair<String, String>> getSellList() {
+        List<Pair<String, String>> sellList = new ArrayList<>();
+        sellList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSISELLWEIGHTRSI, ConfigConstants.INDICATORSRSI));
+        sellList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLERSISELLWEIGHTRSIDELTA, ConfigConstants.INDICATORSRSIDELTA));
         return sellList;
     }
 

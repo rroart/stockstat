@@ -5,16 +5,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.util.Pair;
+
 import roart.aggregatorindicator.AggregatorIndicator;
 import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 
 public abstract class Recommend extends AggregatorIndicator {
     public Recommend(MyMyConfig conf) {
         super(conf);
     }
-    public abstract List<String> getBuyList();
-    public abstract List<String> getSellList();
+    public abstract List<Pair<String, String>> getBuyList();
+    public abstract List<Pair<String, String>> getSellList();
     public abstract String complexity();
     
     public static Map<String, List<Recommend>> getUsedRecommenders(MyMyConfig conf) {
@@ -23,6 +26,10 @@ public abstract class Recommend extends AggregatorIndicator {
         all.add(new MACDRecommendComplex(conf));
         all.add(new RSIRecommendSimple(conf));
         all.add(new RSIRecommendComplex(conf));
+        all.add(new ATRRecommendComplex(conf));
+        all.add(new CCIRecommendComplex(conf));
+        all.add(new STOCHRecommendComplex(conf));
+        all.add(new STOCHRSIRecommendComplex(conf));
         Map<String, List<Recommend>> result = new HashMap<>();
         for (Recommend recommend : all) {
             if (recommend.isEnabled()) {
@@ -37,7 +44,7 @@ public abstract class Recommend extends AggregatorIndicator {
         return result;
     }
     
-    public static Map<String, List<String>[]> getRecommenderKeyMap(Map<String, List<Recommend>> usedRecommenders) {
+    public static Map<String, List<String>[]> getRecommenderKeyMap(Map<String, List<Recommend>> usedRecommenders, Map<String, AbstractIndicator> usedIndicatorMap, MyMyConfig conf) {
         Map<String, List<String>[]> result = new HashMap<>();
         for (String complexity : usedRecommenders.keySet()) {
             List<String>[] recommenders = new ArrayList[2];
@@ -45,10 +52,33 @@ public abstract class Recommend extends AggregatorIndicator {
             List<String> buyList = new ArrayList<>();
             List<String> sellList = new ArrayList<>();
             for (Recommend recommend : recommenderList) {
+                AbstractIndicator indicator = usedIndicatorMap.get(recommend.indicator());
+                Map<String, Object> resultMap = indicator.getLocalResultMap();
+                Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
+                if (objMap != null) { 
+                    List<Pair<String, String>> aBuyList = recommend.getBuyList();
+                    for (Pair<String, String> pair : aBuyList) {
+                        String key = pair.getFirst();
+                        String cnf = pair.getSecond();
+                        if ((boolean) conf.getValueOrDefault(cnf)) {
+                            buyList.add(key);
+                        }
+                    }
+                    List<Pair<String, String>> aSellList = recommend.getSellList();
+                    for (Pair<String, String> pair : aSellList) {
+                        String key = pair.getFirst();
+                        String cnf = pair.getSecond();
+                        if ((boolean) conf.getValueOrDefault(cnf)) {
+                            sellList.add(key);
+                        }
+                    }
+                }
+                /*
                 List<String> aBuyList = recommend.getBuyList();
                 List<String> aSellList = recommend.getSellList();
                 buyList.addAll(aBuyList);
                 sellList.addAll(aSellList);
+                */
             }
             recommenders[0] = buyList;
             recommenders[1] = sellList;
@@ -71,5 +101,7 @@ public abstract class Recommend extends AggregatorIndicator {
     }
     
     public abstract int getFutureDays();
+    
     public abstract int getIntervalDays();
+    
 }

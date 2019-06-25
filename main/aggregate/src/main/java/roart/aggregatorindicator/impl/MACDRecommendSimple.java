@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.util.Pair;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -23,27 +25,27 @@ public class MACDRecommendSimple extends RecommendMACD {
     }
 
     @Override
-    public  List<String> getBuyList() {
-        List<String> buyList = new ArrayList<>();
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTHISTOGRAM);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTHISTOGRAMDELTA);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTMACD);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTMACDDELTA);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTSIGNAL);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTSIGNALDELTA);
+    public  List<Pair<String, String>> getBuyList() {
+        List<Pair<String, String>> buyList = new ArrayList<>();
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTHISTOGRAM, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTHISTOGRAMDELTA, ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTMACD, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTMACDDELTA, ConfigConstants.INDICATORSMACDMACDMACDDELTA));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTSIGNAL, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDBUYWEIGHTSIGNALDELTA, ConfigConstants.INDICATORSMACDMACDSIGNALDELTA));
         return buyList;
     }
 
     @Override
-    public  List<String> getSellList() {
-        List<String> sellList = new ArrayList<>();
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTHISTOGRAM);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTHISTOGRAMDELTA);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTMACD);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTMACDDELTA);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTSIGNAL);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTSIGNALDELTA);
-        return sellList;
+    public  List<Pair<String, String>> getSellList() {
+        List<Pair<String, String>> buyList = new ArrayList<>();
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTHISTOGRAM, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTHISTOGRAMDELTA, ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTMACD, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTMACDDELTA, ConfigConstants.INDICATORSMACDMACDMACDDELTA));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTSIGNAL, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERSIMPLEMACDSELLWEIGHTSIGNALDELTA, ConfigConstants.INDICATORSMACDMACDSIGNALDELTA));
+        return buyList;
     }
 
     @Override

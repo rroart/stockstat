@@ -12,6 +12,7 @@ public abstract class RSIRecommend extends RecommendRSI {
         super(conf);
     }
 
+    /*
     @Override
     public  List<String> getBuyList() {
         List<String> buyList = new ArrayList<>();
@@ -27,7 +28,8 @@ public abstract class RSIRecommend extends RecommendRSI {
         sellList.add(ConfigConstants.INDICATORSRSIRECOMMENDSELLWEIGHTDELTA);
         return sellList;
     }
-
+*/
+    
     @Override
     public boolean isEnabled() {
         return conf.wantRecommenderRSI();

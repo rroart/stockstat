@@ -12,6 +12,7 @@ public abstract class MACDRecommend extends RecommendMACD {
         super(conf);
     }
 
+    /*
     public  List<String> getBuyList() {
         List<String> buyList = new ArrayList<>();
         buyList.add(ConfigConstants.INDICATORSMACDRECOMMENDBUYWEIGHTHISTOGRAM);
@@ -33,6 +34,7 @@ public abstract class MACDRecommend extends RecommendMACD {
         sellList.add(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNALDELTA);
         return sellList;
     }
+*/
 
     @Override
     public boolean isEnabled() {

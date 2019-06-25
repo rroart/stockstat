@@ -1,8 +1,10 @@
 package roart.aggregatorindicator.impl;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +17,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.RecommendConstants;
 import roart.model.StockItem;
 import roart.stockutil.StockDao;
-
+import org.apache.commons.math3.util.Pair;
 public class MACDRecommendComplex extends RecommendMACD {
     
     public MACDRecommendComplex(MyMyConfig conf) {
@@ -23,27 +25,27 @@ public class MACDRecommendComplex extends RecommendMACD {
     }
 
     @Override
-    public  List<String> getBuyList() {
-        List<String> buyList = new ArrayList<>();
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMNODE);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMDELTANODE);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTMACDNODE);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTMACDDELTANODE);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALNODE);
-        buyList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALDELTANODE);
+    public List<Pair<String, String>> getBuyList() {
+        List<Pair<String, String>> buyList = new ArrayList<>();
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMDELTANODE, ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTMACDNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTMACDDELTANODE, ConfigConstants.INDICATORSMACDMACDMACDDELTA));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALDELTANODE, ConfigConstants.INDICATORSMACDMACDSIGNALDELTA));
         return buyList;
     }
 
     @Override
-    public  List<String> getSellList() {
-        List<String> sellList = new ArrayList<>();
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMNODE);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMDELTANODE);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTMACDNODE);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTMACDDELTANODE);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALNODE);
-        sellList.add(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALDELTANODE);
-       return sellList;
+    public List<Pair<String, String>> getSellList() {
+        List<Pair<String, String>> buyList = new ArrayList<>();
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMDELTANODE, ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTMACDNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTMACDDELTANODE, ConfigConstants.INDICATORSMACDMACDMACDDELTA));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALDELTANODE, ConfigConstants.INDICATORSMACDMACDSIGNALDELTA));
+        return buyList;
     }
 
     @Override

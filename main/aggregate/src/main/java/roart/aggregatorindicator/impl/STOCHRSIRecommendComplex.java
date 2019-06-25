@@ -9,31 +9,31 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.RecommendConstants;
 
-public class RSIRecommendComplex extends RecommendRSI {
+public class STOCHRSIRecommendComplex extends RecommendSTOCHRSI {
     
-    public RSIRecommendComplex(MyMyConfig conf) {
+    public STOCHRSIRecommendComplex(MyMyConfig conf) {
         super(conf);
     }
 
     @Override
     public  List<Pair<String, String>> getBuyList() {
         List<Pair<String, String>> buyList = new ArrayList<>();
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIBUYWEIGHTRSINODE, ConfigConstants.INDICATORSRSI));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSIBUYWEIGHTRSIDELTANODE, ConfigConstants.INDICATORSRSIDELTA));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUYWEIGHTSTOCHRSINODE, ConfigConstants.INDICATORSSTOCHRSI));
+        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUYWEIGHTSTOCHRSIDELTANODE, ConfigConstants.INDICATORSSTOCHRSIDELTA));
         return buyList;
     }
 
     @Override
     public  List<Pair<String, String>> getSellList() {
         List<Pair<String, String>> sellList = new ArrayList<>();
-        sellList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSISELLWEIGHTRSINODE, ConfigConstants.INDICATORSRSI));
-        sellList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXRSISELLWEIGHTRSIDELTANODE, ConfigConstants.INDICATORSRSIDELTA));
+        sellList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSINODE, ConfigConstants.INDICATORSSTOCHRSI));
+        sellList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSIDELTANODE, ConfigConstants.INDICATORSSTOCHRSIDELTA));
         return sellList;
     }
 
     @Override
     public boolean isEnabled() {
-        return conf.wantRecommenderComplexRSI();
+        return conf.wantRecommenderComplexSTOCHRSI();
     }
 
     @Override
