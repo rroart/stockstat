@@ -293,10 +293,32 @@ public class ComponentData {
         Map<String, Map<String, Object>> result = getService().getContent();
         this.resultMaps = result;
         try {
-        Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.LIST);
+            Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.LIST);
+            this.setCategoryValueMap(aCategoryValueMap);
+        } catch (Exception e) {
+            int jj = 0;
+        }
+    }
+
+    public void getAndSetWantedCategoryValueMap() {
+        getService().conf.setdate(TimeUtil.convertDate(this.getFutureDate()));
+        Map<String, Object> setValueMap = new HashMap<>();
+        setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
+        setValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        service.conf.setConfigValueMap(new HashMap<>(configValueMap));
+        service.conf.getConfigValueMap().putAll(setValueMap);
+        Map<String, Map<String, Object>> result = getService().getContent();
+        this.resultMaps = result;
+        try {
+            log.info("" + result.keySet());
+            log.info("" + result.get("meta").keySet());
+            Integer cat = (Integer) result.get("meta").get("wantedcat");
+            Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
         this.setCategoryValueMap(aCategoryValueMap);
         } catch (Exception e) {
             int jj = 0;
+            log.error("Ex", e);
         }
     }
 
