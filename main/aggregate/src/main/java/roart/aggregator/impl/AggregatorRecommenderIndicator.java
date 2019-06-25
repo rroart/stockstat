@@ -57,7 +57,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         Map<String, Double[]> list0 = (Map<String, Double[]>) localResultMap.get(localResultMap.keySet().iterator().next()).get(PipelineConstants.LIST);
  
         usedRecommenders = Recommend.getUsedRecommenders(conf);
-        Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
+        Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, usedIndicatorMap, conf);
         Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
         this.category = cat.getPeriod();
         this.title = cat.getTitle();
@@ -88,23 +88,17 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         }
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             String recommender = entry.getKey();
+            List<String>[] buysell = recommendKeyMap.get(recommender);
             List<AbstractIndicator> indicators = Recommend.getIndicators(recommender, usedRecommenders, indicatorMap);
             // We just want the config, any in the list will do
             Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, 0 /*recommend.getFutureDays()*/, 1 /*conf.getTableDays()*/, 1 /*recommend.getIntervalDays()*/, null);
             Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
             result = dayIndicatorMap.get(0);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
-            List<String> buyKeys = new ArrayList<>();
-            List<String> sellKeys = new ArrayList<>();
-            {
-                List<Recommend> recommenders = entry.getValue();
-                for (Recommend recommend : recommenders) {
-                    buyKeys.addAll(recommend.getBuyList());
-                    sellKeys.addAll(recommend.getSellList());
-                }
-                CalcGeneUtils.transformToNode(conf, buyKeys, true, macdrsiMinMax, disableList);
-                CalcGeneUtils.transformToNode(conf, sellKeys, false, macdrsiMinMax, disableList);
-            }
+            List<String> buyKeys = buysell[0];
+            List<String> sellKeys = buysell[1];
+            CalcGeneUtils.transformToNode(conf, buyKeys, true, macdrsiMinMax, disableList);
+            CalcGeneUtils.transformToNode(conf, sellKeys, false, macdrsiMinMax, disableList);
             // find recommendations
             Map<String, Double[]> indicatorResultMap;
             indicatorResultMap = new HashMap<>();
