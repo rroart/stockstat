@@ -682,6 +682,26 @@ public class MyMyConfig extends MyConfig {
                 && wantAggregators();
     }
 
+    public boolean wantRecommenderComplexATR() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATR) 
+                && wantIndicatorRecommenderComplex();
+    }
+
+    public boolean wantRecommenderComplexCCI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXCCI) 
+                && wantIndicatorRecommenderComplex();
+    }
+
+    public boolean wantRecommenderComplexSTOCH() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCH) 
+                && wantIndicatorRecommenderComplex();
+    }
+
+    public boolean wantRecommenderComplexSTOCHRSI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSI) 
+                && wantIndicatorRecommenderComplex();
+    }
+
     public boolean wantAggregatorsIndicatorML() {
         return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOR) &&
                 wantAggregators() &&
