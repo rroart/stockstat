@@ -258,28 +258,31 @@ public class ExtraReader extends Pipeline {
         }
     }
 
-    public static Map<Pair<String, String>, Double[]> getReverseArrSparseFillHoles(MyConfig conf, Map<Pair<String, String>, Double[]> listMap) {
-        Map<Pair<String, String>, Double[]> retMap = /*getReverse*/(listMap);
+    public static Map<Pair<String, String>, Double[]> getReverseArrSparseFillHoles(MyMyConfig conf, Map<Pair<String, String>, Double[]> listMap) {
+        Map<Pair<String, String>, Double[]> retMap = new HashMap<>();
         //System.out.println("carn " + Arrays.asList(listMap.get("F00000NMNP")));
-        for (Pair<String, String> id : listMap.keySet()) {
-            retMap.put(id, ArraysUtil.fixMapHoles(listMap.get(id), null, maxHoleNumber()));
+        for (Entry<Pair<String, String>, Double[]> entry : listMap.entrySet()) {
+            Double[] array = entry.getValue();
+            Double[] newArray = new Double[array.length];
+            retMap.put(entry.getKey(), ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf)));
         }      
         return retMap;
     }
 
-    public static int maxHoleNumber() {
-        return 35;
+    public static int maxHoleNumber(MyMyConfig conf) {
+        return DataReader.maxHoleNumber(conf);
     }
 
     // only dup due to maxholes and lacking parametrization of string/pair
-    public static Map<Pair<String, String>, Double[][]> getReverseArrSparseFillHolesArr(MyConfig conf, Map<Pair<String, String>, Double[][]> listMap) {
-        Map<Pair<String, String>, Double[][]> retMap = /*getReverse*/(listMap);
+    public static Map<Pair<String, String>, Double[][]> getReverseArrSparseFillHolesArr(MyMyConfig conf, Map<Pair<String, String>, Double[][]> listMap) {
+        Map<Pair<String, String>, Double[][]> retMap = new HashMap<>();
         for (Entry<Pair<String, String>, Double[][]> entry : listMap.entrySet()) {
             Pair<String, String> id = entry.getKey();
             Double[][] array = entry.getValue();
             Double[][] newArray = new Double[array.length][];
             for (int i = 0; i < array.length; i ++) {
-                newArray[i] = ArraysUtil.fixMapHoles(array[i], null, maxHoleNumber());
+                newArray[i] = new Double[array[i].length];
+                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf));
             }
             retMap.put(id, newArray);
         }      

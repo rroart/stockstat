@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
@@ -55,7 +57,7 @@ public class DataReader extends Pipeline {
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.LIST, listMap);
-        map.put(PipelineConstants.FILLLIST, listMap);
+        map.put(PipelineConstants.FILLLIST, fillListMap);
         map.put(PipelineConstants.BASE100LIST, base100ListMap);
         map.put(PipelineConstants.BASE100FILLLIST, base100FillListMap);
         map.put(PipelineConstants.TRUNCLIST, truncListMap);
@@ -94,15 +96,23 @@ public class DataReader extends Pipeline {
         this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.nameMap = StockDao.getNameMap(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+        Double[][] e = listMap.get("F00000ZHEV");
+        if (e != null) {
+            int jj = 0;
+        }
         zeroPrice(this.listMap, category);
         this.fillListMap = getReverseArrSparseFillHolesArr(conf, listMap);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
         this.truncFillListMap = ArraysUtil.getTruncListArr(this.fillListMap);
         if (conf.wantPercentizedPriceIndex() && MetaUtil.normalPeriod(marketData, category, categoryTitle)) {
-            this.base100ListMap = getBase100(this.listMap, categoryTitle);
-            this.base100FillListMap = getBase100(this.fillListMap, categoryTitle);
-            this.truncBase100ListMap = getBase100(this.truncListMap, categoryTitle, category);
-            this.truncBase100FillListMap = getBase100(this.truncFillListMap, categoryTitle, category);
+            this.base100ListMap = getBase100D(this.listMap);
+            this.base100FillListMap = getBase100D(this.fillListMap);
+            this.truncBase100ListMap = getBase100(this.truncListMap);
+            this.truncBase100FillListMap = getBase100(this.truncFillListMap);
+        }
+        Double[][] f = listMap.get("F00000ZHEV");
+        if (f != null) {
+            int jj = 0;
         }
     }
 
@@ -122,7 +132,7 @@ public class DataReader extends Pipeline {
         }
     }
 
-    private Map<String, Double[][]> getBase100(Map<String, Double[][]> aListMap, String catTitle) {
+    private Map<String, Double[][]> getBase100D(Map<String, Double[][]> aListMap) {
         Map<String, Double[][]> aMap = new HashMap<>();
         for (Entry<String, Double[][]> entry : aListMap.entrySet()) {
             Double[][] value = entry.getValue();
@@ -137,7 +147,7 @@ public class DataReader extends Pipeline {
         return aMap;
     }
 
-    private Map<String, double[][]> getBase100(Map<String, double[][]> aListMap, String catTitle, int cat) {
+    private Map<String, double[][]> getBase100(Map<String, double[][]> aListMap) {
         Map<String, double[][]> aMap = new HashMap<>();
         for (Entry<String, double[][]> entry : aListMap.entrySet()) {
             double[][] value = entry.getValue();
@@ -158,12 +168,16 @@ public class DataReader extends Pipeline {
     }
 
     public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(MyMyConfig conf, Map<String, Double[][]> listMap) {
-        Map<String, Double[][]> retMap = /*getReverse*/(listMap);
+        Map<String, Double[][]> retMap = new HashMap<>();
         for (Entry<String, Double[][]> entry : listMap.entrySet()) {
             Double[][] array = entry.getValue();
             Double[][] newArray = new Double[array.length][];
+            if ("F00000ZHEV".equals(entry.getKey())) {
+                int jj = 0;
+            }
             for (int i = 0; i < array.length; i ++) {
-                newArray[i] = ArraysUtil.fixMapHoles(array[i], null, maxHoleNumber(conf));
+                newArray[i] = new Double[array[i].length];
+                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf));
             }
             retMap.put(entry.getKey(), newArray);
         }      
@@ -171,9 +185,12 @@ public class DataReader extends Pipeline {
     }
 
     public static Map<String, Double[]> getReverseArrSparseFillHoles(MyMyConfig conf, Map<String, Double[]> listMap) {
-        Map<String, Double[]> retMap = /*getReverse*/(listMap);
+        Map<String, Double[]> retMap = new HashMap<>();
         for (Entry<String, Double[]> entry : listMap.entrySet()) {
-            retMap.put(entry.getKey(), ArraysUtil.fixMapHoles(entry.getValue(), null, maxHoleNumber(conf)));
+            Double[] array = entry.getValue();
+            Double[] newArray = new Double[array.length];
+            newArray = ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf));
+            retMap.put(entry.getKey(), newArray);
         }      
         return retMap;
     }

@@ -453,7 +453,7 @@ public class ArraysUtil {
     public static Map<String, double[]> getTruncList(Map<String, Double[]> listMap) {
         Map<String, double[]> retMap = new HashMap<>();
         for (Entry<String, Double[]> entry : listMap.entrySet()) {
-            retMap.put(entry.getKey(), getNonNull(entry.getValue()));
+            retMap.put(entry.getKey(), getNonNullNew(entry.getValue()));
         }
         return retMap;
     }
@@ -464,7 +464,7 @@ public class ArraysUtil {
             Double[][] array = entry.getValue();
             double[][] newArray = new double[array.length][];
             for (int i = 0; i < array.length; i++) {
-                newArray[i] = getNonNull(array[i]);
+                newArray[i] = getNonNullNew(array[i]);
             }
             retMap.put(entry.getKey(), newArray);
         }
@@ -474,7 +474,7 @@ public class ArraysUtil {
     public static Map<Pair<String, String>, double[]> getTruncList2(Map<Pair<String, String>, Double[]> listMap) {
         Map<Pair<String, String>, double[]> retMap = new HashMap<>();
         for (Entry<Pair<String, String>, Double[]> entry : listMap.entrySet()) {
-            retMap.put(entry.getKey(), getNonNull(entry.getValue()));
+            retMap.put(entry.getKey(), getNonNullNew(entry.getValue()));
         }
         return retMap;
     }
@@ -485,7 +485,7 @@ public class ArraysUtil {
             Double[][] array = entry.getValue();
             double[][] newArray = new double[array.length][];
             for (int i = 0; i < array.length; i++) {
-                newArray[i] = getNonNull(array[i]);
+                newArray[i] = getNonNullNew(array[i]);
             }
             retMap.put(entry.getKey(), newArray);
         }
@@ -494,12 +494,41 @@ public class ArraysUtil {
 
     public static double[] getNonNull(Double[] doubles) {
         int offset = searchForwardNonNull(doubles, 0, doubles.length);
+        if (offset > 0) {
+            int jj = 0;
+        }
         double[] retArray = new double[doubles.length - offset];
         for (int i = 0; i < doubles.length - offset; i++) {
             if (doubles[i + offset] == null) {
                 int jj = 0;
+                continue;
             }
             retArray[i] = doubles[i + offset];
+        }
+        return retArray;
+    }
+
+    public static double[] getNonNullNew(Double[] doubles) {
+        int end = doubles.length - 1;
+        int lastoffset = searchBackwardNonNull(doubles, end);
+        if (lastoffset < 0 || lastoffset != end) {
+            return new double[0];
+        }
+        int nextlastoffset = searchBackwardNull(doubles, lastoffset);
+        if (nextlastoffset < 0) {
+            nextlastoffset = 0;
+        }
+        if (nextlastoffset < 2) {
+            int jj = 0;
+        }
+        System.out.println("" + nextlastoffset);
+        nextlastoffset = searchForwardNonNull(doubles, nextlastoffset, doubles.length);
+        double[] retArray = new double[doubles.length - nextlastoffset];
+        for (int i = nextlastoffset; i < doubles.length; i++) {
+            if (doubles[i] == null) {
+                int jj = 0;
+            }
+            retArray[i - nextlastoffset] = doubles[i];
         }
         return retArray;
     }
