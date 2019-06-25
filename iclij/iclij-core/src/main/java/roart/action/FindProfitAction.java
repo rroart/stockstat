@@ -706,7 +706,7 @@ public class FindProfitAction extends Action {
     }
 
     public void getVerifyProfit(int days, LocalDate date, ControlService srv,
-            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec) {
+            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, int startoffset) {
         log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
@@ -720,12 +720,12 @@ public class FindProfitAction extends Action {
         //Set<String> j2 = resultMaps.get("" + category).keySet();
     
         VerifyProfit verify = new VerifyProfit();
-        verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
-        verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
+        verify.doVerify(listInc, days, true, categoryValueMap, oldDate, startoffset);
+        verify.doVerify(listDec, days, false, categoryValueMap, oldDate, startoffset);
         //return verify.getTrend(days, categoryValueMap);
     }
 
-    public Trend getTrend(int days, LocalDate date, ControlService srv) {
+    public Trend getTrend(int days, LocalDate date, ControlService srv, int startoffset) {
         //log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
@@ -741,7 +741,7 @@ public class FindProfitAction extends Action {
         VerifyProfit verify = new VerifyProfit();
         //verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
         //verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
-        return verify.getTrend(days, categoryValueMap);
+        return verify.getTrend(days, categoryValueMap, startoffset);
     }
 
 
