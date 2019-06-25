@@ -22,6 +22,7 @@ import roart.result.model.ResultItem;
 import roart.result.model.ResultItemBytes;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
+import roart.stockutil.MetaUtil;
 import roart.stockutil.StockUtil;
 import roart.util.SvgUtil;
 
@@ -36,8 +37,12 @@ public class GraphCategoryPeriod extends GraphCategory {
         super(conf, periodText);
         this.marketdatamap = marketdatamap;
         this.periodDataMap = periodDataMap;
-        indicators.add(new GraphIndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, title));
-        indicators.add(new GraphIndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, title));
+        String market = conf.getMarket();
+        MarketData marketData = marketdatamap.get(market);
+        if (MetaUtil.currentYear(marketData, periodText)) {
+            indicators.add(new GraphIndicatorMACD(conf, title + " mom", marketdatamap, periodDataMap, title));
+            indicators.add(new GraphIndicatorRSI(conf, title + " RSI", marketdatamap, periodDataMap, title));
+        }
     }
 
     @Override
