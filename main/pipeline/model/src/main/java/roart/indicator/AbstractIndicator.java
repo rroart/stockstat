@@ -155,6 +155,23 @@ public abstract class AbstractIndicator extends Calculatable {
         return false;
     }
 
+    protected boolean anythingHere3(Map<String, Double[][]> listMap2) {
+        for (Double[][] array : listMap2.values()) {
+            out:
+            for (int i = 0; i < array[0].length; i++) {
+                for (int j = 0; j < array.length; j++) {
+                    if (array[j][i] == null) {
+                        continue out;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected abstract int getAnythingHereRange();
+    
     protected Map<String, Double[]> getCalculatedMap(Map<String, Object[]> objectMap, Map<String, double[][]> truncListMap) {
         Map<String, Double[]> result = new HashMap<>();
         for (String id : truncListMap.keySet()) {

@@ -62,5 +62,10 @@ public class IndicatorMove extends Indicator {
         return null;
     }
 
+    @Override
+    protected int getAnythingHereRange() {
+	return 1;
+    }
+
 }
 

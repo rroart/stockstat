@@ -96,5 +96,15 @@ public class IndicatorSTOCH extends Indicator {
         return objs;
     }
 
+    @Override
+    protected int getAnythingHereRange() {
+	return 3;
+    }
+
+    @Override
+    protected boolean anythingHere(Map<String, Double[][]> listMap) {
+        return anythingHere3(listMap);
+    }
+
 }
 

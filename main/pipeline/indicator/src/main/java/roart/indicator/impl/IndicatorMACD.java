@@ -121,6 +121,11 @@ public class IndicatorMACD extends Indicator {
         map.put(PipelineConstants.INDICATORMACDLIST, listMap);
         return map;
     }
+
+    @Override
+    protected int getAnythingHereRange() {
+	return 1;
+    }
     
 }
 

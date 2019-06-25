@@ -99,5 +99,10 @@ public class IndicatorRSI extends Indicator {
         return map;
     }
 
+    @Override
+    protected int getAnythingHereRange() {
+	return 1;
+    }
+
 }
 

@@ -138,5 +138,8 @@ public class Indicator extends AbstractIndicator {
     @Override
     protected void getFieldResult(Double[] momentum, Object[] fields) {
     }
-
+    
+    protected int getAnythingHereRange() {
+        return 1;
+    }
 }

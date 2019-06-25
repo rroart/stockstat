@@ -74,9 +74,9 @@ public class IndicatorSTOCHRSI extends Indicator {
     
     @Override
     public int getResultSize() {
-        int size = 2;
+        int size = 1;
         if (conf.isSTOCHRSIDeltaEnabled()) {
-            size += 2;
+            size += 1;
         }
         return size;    
     }
@@ -97,5 +97,9 @@ public class IndicatorSTOCHRSI extends Indicator {
         return objs;
     }
 
+    @Override
+    protected int getAnythingHereRange() {
+	return 1;
+    }
 }
 
