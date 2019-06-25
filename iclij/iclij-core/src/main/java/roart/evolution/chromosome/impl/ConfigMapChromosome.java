@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
+import roart.action.VerifyProfit;
 import roart.action.WebData;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
@@ -64,13 +65,16 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     protected String componentName;
 
-    public ConfigMapChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName) {
+    protected Boolean buy;
+    
+    public ConfigMapChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy) {
         this.confList = confList;
         this.param = param;
         this.profitdata = profitdata;
         this.market = market;
         this.positions = positions;
         this.componentName = componentName;
+        this.buy = buy;
     }
 
     public Map<String, Object> getMap() {
@@ -87,6 +91,14 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     public void setConfList(List<String> confList) {
         this.confList = confList;
+    }
+
+    public Boolean getBuy() {
+        return buy;
+    }
+
+    public void setBuy(Boolean buy) {
+        this.buy = buy;
     }
 
     @Override
@@ -130,7 +142,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     @Override
     public Individual crossover(AbstractChromosome other) {
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, param, profitdata, market, positions, componentName);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, param, profitdata, market, positions, componentName, buy);
         Random rand = new Random();
         for (int conf = 0; conf < confList.size(); conf++) {
             String confName = confList.get(conf);
@@ -215,7 +227,12 @@ public class ConfigMapChromosome extends AbstractChromosome {
             List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
             List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
             List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
-            Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
+            Short mystartoffset = market.getConfig().getStartoffset();
+            short startoffset = mystartoffset != null ? mystartoffset : 0;
+            VerifyProfit verify = new VerifyProfit();
+            Trend incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
+            //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
+            //log.info("trendcomp {} {}", trend, incProp);
             if (verificationdays > 0) {
                 try {
                     //param.setFuturedays(verificationdays);
@@ -225,22 +242,30 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }            
-                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
+                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, startoffset);
             }
 
             if (true) {
-                List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
-                long countDec = listDecBoolean.stream().filter(i -> i).count();                            
                 int fitnesses = 0;
                 double fitness = 0;
-                long sizeDec = listDecBoolean.size();
+                long countDec = 0;
+                long sizeDec = 0;
+                if (buy == null || buy == false) {
+                    List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+                    countDec = listDecBoolean.stream().filter(i -> i).count();                            
+                    sizeDec = listDecBoolean.size();
+                }
                 if (sizeDec != 0) {
                     fitness = ((double) countDec) / sizeDec;
                     fitnesses++;
                 }
-                List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
-                long countInc = listIncBoolean.stream().filter(i -> i).count();                            
-                long sizeInc = listIncBoolean.size();
+                long countInc = 0;                            
+                long sizeInc = 0;
+                if (buy == null || buy == true) {
+                    List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+                    countInc = listIncBoolean.stream().filter(i -> i).count();                            
+                    sizeInc = listIncBoolean.size();
+                }
                 double fitness2 = 0;
                 if (sizeInc != 0) {
                     fitness2 = ((double) countInc) / sizeInc;
@@ -316,7 +341,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, newparam, profitdata, market, positions, componentName);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
         chromosome.map = new HashMap<>(this.map);
         return chromosome;
     }
@@ -329,11 +354,6 @@ public class ConfigMapChromosome extends AbstractChromosome {
     @Override
     public String toString() {
         return map.toString();
-    }
-
-    @Override
-    public boolean isAscending() {
-        return true;
     }
 
 }

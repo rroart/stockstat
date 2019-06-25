@@ -188,15 +188,15 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM);
+        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM, buy);
         TensorflowLSTMConfig config = new TensorflowLSTMConfig(5, 5, 5);
         config.full = true;
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false);
+            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

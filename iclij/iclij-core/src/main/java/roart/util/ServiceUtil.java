@@ -168,7 +168,9 @@ public class ServiceUtil {
             srv.conf.setMarket(market.getConfig().getMarket());
             // the market may be incomplete, the exception and skip
             try {
-                Trend trend = new FindProfitAction().getTrend(instance.verificationDays(), date, param.getService());
+                Short mystartoffset = market.getConfig().getStartoffset();
+                short startoffset = mystartoffset != null ? mystartoffset : 0;
+                Trend trend = new FindProfitAction().getTrend(instance.verificationDays(), date, param.getService(), startoffset);
                 trendMap.put(market.getConfig().getMarket(), trend);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -206,7 +208,7 @@ public class ServiceUtil {
             updateMarketMap.put(market.getConfig().getMarket(), new HashMap<>());
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
             for (Component component : componentMap.values()) {
-                Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false);
+                Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false, null);
                 updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
                 updateMap.putAll(anUpdateMap);
             }
@@ -300,11 +302,14 @@ public class ServiceUtil {
         List<String> componentList = getFindProfitComponents(componentInput.getConfig());
         for (Market market : findProfitAction.getMarkets()) {
             updateMarketMap.put(market.getConfig().getMarket(), new HashMap<>());
+            updateMarketMap.put(market.getConfig().getMarket() + " sell", new HashMap<>());
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
             for (Component component : componentMap.values()) {
-                Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false);
+                Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false, true);
                 updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
                 updateMap.putAll(anUpdateMap);
+                Map<String, Object> anUpdateMap2 = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false, false);
+                updateMarketMap.get(market.getConfig().getMarket() + " sell").putAll(anUpdateMap2);
             }
         }
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
@@ -316,6 +321,9 @@ public class ServiceUtil {
             Map<String, Object> anUpdateMap = updateMarketMap.get(marketName);
             IclijServiceList updates = convert(marketName, anUpdateMap);
             lists.add(updates);
+            Map<String, Object> anUpdateMap2 = updateMarketMap.get(marketName + " sell");
+            IclijServiceList updates2 = convert(marketName + " sell", anUpdateMap2);
+            lists.add(updates2);
 
             List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market.getConfig().getMarket());
             List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate(), market.getConfig().getImprovetime());
@@ -463,7 +471,9 @@ public class ServiceUtil {
         List<IncDecItem> listDec = new ArrayList<>(buysells.getSells().values());
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
         Map<String, Object> trendMap = new HashMap<>();
-        Trend trend = findProfitAction.getTrend(param.getInput().getConfig().verificationDays(), param.getFutureDate(), param.getService());
+        Short mystartoffset = market.getConfig().getStartoffset();
+        short startoffset = mystartoffset != null ? mystartoffset : 0;
+        Trend trend = findProfitAction.getTrend(param.getInput().getConfig().verificationDays(), param.getInput().getEnddate(), param.getService(), startoffset);
         trendMap.put(market.getConfig().getMarket(), trend);
         if (verificationdays > 0) {
             try {
@@ -473,7 +483,7 @@ public class ServiceUtil {
             } catch (ParseException e) {
                 log.error(Constants.EXCEPTION, e);
             }            
-            findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec);
+            findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, startoffset);
             /*
             List<MapList> inc = new ArrayList<>();
             List<MapList> dec = new ArrayList<>();
@@ -750,6 +760,15 @@ public class ServiceUtil {
             List<IclijServiceList> subLists = getServiceList(marketName, list);
             lists.addAll(subLists);
         }
+
+        Map<String, Object> timingMap2 = webData.timingMap2;
+        for (Entry<String, Object> entry : timingMap2.entrySet()) {
+            String marketName = entry.getKey();
+            List<TimingItem> list = (List<TimingItem>) entry.getValue();
+            List<IclijServiceList> subLists = getServiceList(marketName + " sell", list);
+            lists.addAll(subLists);
+        }
+
         result.setLists(lists);
         
         updateMap = webData.updateMap;
@@ -758,6 +777,11 @@ public class ServiceUtil {
         result.setMaps(mapmaps);
         IclijServiceList updates = convert(null, updateMap);
         lists.add(updates);
+
+        updateMap = webData.updateMap2;
+        updates = convert(null, updateMap);
+        lists.add(updates);
+
         return result;
         } catch (Exception e) {
             log.error("Ex", e);
@@ -827,7 +851,7 @@ public class ServiceUtil {
         return allMemoryItems;
     }
 
-    public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve) throws Exception {
+    public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve, Boolean buy) throws Exception {
         LocalDate date = param.getInput().getEnddate();
         LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
         List<ConfigItem> filterConfigs = new ArrayList<>();
@@ -836,6 +860,9 @@ public class ServiceUtil {
         currentConfigs = currentConfigs.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         for (ConfigItem config : currentConfigs) {
             if (marketName.equals(config.getMarket()) && action.equals(config.getAction()) && component.equals(config.getComponent())) {
+                if (buy != null && config.getBuy() != null && buy != config.getBuy()) {
+                    continue;
+                }
                 filterConfigs.add(config);
             }
         }

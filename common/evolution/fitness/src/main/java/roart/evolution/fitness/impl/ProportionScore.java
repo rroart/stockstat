@@ -9,6 +9,16 @@ import java.util.stream.Collectors;
 import roart.evolution.fitness.AbstractScore;
 
 public class ProportionScore extends AbstractScore {
+    Boolean incdec;
+    
+    public ProportionScore() {
+        
+    }
+    
+    public ProportionScore(Boolean incdec) {
+        this.incdec = incdec;
+    }
+    
     public double calculateResult(Map<String, List<Double>> resultMap) {
         double result = 0;
         double[] array = calculate(resultMap);
@@ -47,13 +57,26 @@ public class ProportionScore extends AbstractScore {
             Double score = resultList.get(0);
             Double change = resultList.get(1);
             if (score != null) {
-                totalBuy++;
                 //double delta = change / buy * (buyMax / maxChange);
                 //double expectedChange = minChange + diffChange * (score - scoreMin) / diffScore;
                 //log.info("Myexpect " + expectedChange + " " + change + " " + valf + " " + valn + " " + buy + " " + key);
                 //double delta = expectedChange / change;
-                double confidence = 1 - Math.abs((score - scoreMin)/ diffScore - (change - minChange) / diffChange) ;
-                goodBuy += confidence;
+                if (incdec == null) {
+                    totalBuy++;
+                    double confidence = 1 - Math.abs((score - scoreMin)/ diffScore - (change - minChange) / diffChange) ;
+                    goodBuy += confidence;
+                } else {
+                    if (incdec && change > 1) {
+                        totalBuy++;
+                        double confidence = 1 - Math.abs((score - scoreMin)/ diffScore - (change - minChange) / diffChange) ;
+                        goodBuy += confidence;                        
+                    }
+                    if (!incdec && change < 1) {
+                        totalBuy++;
+                        double confidence = 1 - Math.abs((score - scoreMin)/ diffScore - (change - minChange) / diffChange) ;
+                        goodBuy += confidence;                        
+                    }
+                }
                 //log.info("Eval {} {} {}", entry.getKey(), (score - scoreMin)/ diffScore, (change - minChange) / diffChange);
             }
         }      

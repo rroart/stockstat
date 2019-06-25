@@ -25,6 +25,8 @@ public class ConfigItem {
     
     private Double score;
 
+    private Boolean buy;
+    
     public LocalDate getRecord() {
         return record;
     }
@@ -92,6 +94,14 @@ public class ConfigItem {
         this.score = score;
     }
 
+    public Boolean getBuy() {
+        return buy;
+    }
+
+    public void setBuy(Boolean buy) {
+        this.buy = buy;
+    }
+
     @Override
     public String toString() {
         return market + " " + component + " " + action + " " + record + " " + date + " " + id + " " + value + " " + score + "\n"; 
@@ -100,6 +110,7 @@ public class ConfigItem {
     public void save() throws Exception {
         Config config = new Config();
         config.setAction(getAction());
+        config.setBuy(getBuy());
         config.setComponent(getComponent());
         config.setDate(TimeUtil.convertDate(getDate()));
         config.setId(getId());
@@ -133,6 +144,7 @@ public class ConfigItem {
     private static ConfigItem getConfigItem(Config config) {
         ConfigItem configItem = new ConfigItem();
         configItem.setAction(config.getAction());
+        configItem.setBuy(config.getBuy());
         configItem.setDate(TimeUtil.convertDate(config.getDate()));
         configItem.setId(config.getId());
         configItem.setComponent(config.getComponent());

@@ -144,12 +144,12 @@ public class EvolutionService {
             // optimize with constructors, no need for duplicate
             // map from type (complex/simple) to recommender and keysets
             Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
-            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
             Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
             int category = cat;
             Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
             createRecommendIndicatorMap(marketdatamap, datareaders, usedRecommenders, indicatorMap, category,
                     newIndicatorMap);
+            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
     
             findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap);
             List<ResultItem> retlist = new ArrayList<>();
@@ -178,8 +178,9 @@ public class EvolutionService {
     
             for (int i = 0; i < 2; i++) {
                 List<String> scoreList = recommendList[i];
-                IndicatorChromosome indicatorEval0 = new IndicatorChromosome(conf, scoreList, retObj, true, disableList, new ProportionScore());
-    
+                IndicatorChromosome indicatorEval0 = new IndicatorChromosome(conf, scoreList, retObj, true, disableList, new ProportionScore(i == 0));
+                indicatorEval0.setAscending(i == 0);
+                
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
     
                 Individual fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0);
@@ -215,6 +216,7 @@ public class EvolutionService {
         }
     }
 
+    @Deprecated
     public List<ResultItem> getEvolveRecommenderSingle(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
@@ -300,12 +302,12 @@ public class EvolutionService {
             // optimize with constructors, no need for duplicate
             // map from type (complex/simple) to recommender and keysets
             Map<String, List<Recommend>> usedRecommenders = Recommend.getUsedRecommenders(conf);
-            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders);
             Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
             int category = cat;
             Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
             createRecommendIndicatorMap(marketdatamap, datareaders, usedRecommenders, indicatorMap, category,
                     newIndicatorMap);
+            Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
     
             findRecommendSettingsNew(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap);
             List<ResultItem> retlist = new ArrayList<>();

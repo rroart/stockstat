@@ -770,6 +770,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(ConfigItem::getValue).setCaption("Value");
         table.addColumn(ConfigItem::getComponent).setCaption("Component");
         table.addColumn(ConfigItem::getScore).setCaption("Score");
+        table.addColumn(ConfigItem::getBuy).setCaption("Buy");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");
@@ -787,6 +788,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(TimingItem::getComponent).setCaption("Component");
         table.addColumn(TimingItem::getMytime).setCaption("Time");
         table.addColumn(TimingItem::getScore).setCaption("Score");
+        table.addColumn(TimingItem::getBuy).setCaption("Buy");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");

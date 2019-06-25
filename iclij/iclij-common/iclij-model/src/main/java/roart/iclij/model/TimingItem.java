@@ -24,6 +24,8 @@ public class TimingItem {
 
     private Double score;
     
+    private Boolean buy;
+    
     public LocalDate getRecord() {
         return record;
     }
@@ -88,6 +90,14 @@ public class TimingItem {
         this.score = score;
     }
 
+    public Boolean getBuy() {
+        return buy;
+    }
+
+    public void setBuy(Boolean buy) {
+        this.buy = buy;
+    }
+
     @Override
     public String toString() {
         return market + " " + component + " " + action + " " + record + " " + date + " " + evolve + " " + mytime + " " + score + "\n"; 
@@ -96,6 +106,7 @@ public class TimingItem {
     public void save() throws Exception {
         Timing timing = new Timing();
         timing.setAction(getAction());
+        timing.setBuy(getBuy());
         timing.setComponent(getComponent());
         timing.setDate(TimeUtil.convertDate(getDate()));
         timing.setEvolve(isEvolve());
@@ -129,6 +140,7 @@ public class TimingItem {
     private static TimingItem getTimingItem(Timing timing) {
         TimingItem timingItem = new TimingItem();
         timingItem.setAction(timing.getAction());
+        timingItem.setBuy(timing.getBuy());
         timingItem.setComponent(timing.getComponent());
         timingItem.setDate(TimeUtil.convertDate(timing.getDate()));
         timingItem.setEvolve(timing.isEvolve());

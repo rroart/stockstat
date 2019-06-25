@@ -73,7 +73,7 @@ public abstract class Component {
     
     public abstract ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap);
     
-    public abstract ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions);
+    public abstract ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy);
 
     public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) {
         try {
@@ -88,7 +88,7 @@ public abstract class Component {
         Component.disabler(valueMap);
         this.enable(valueMap);
         try {
-            Map<String, Object> loadValues = mlLoads(param, null, market);
+            Map<String, Object> loadValues = mlLoads(param, null, market, null);
             valueMap.putAll(loadValues);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -99,7 +99,7 @@ public abstract class Component {
             long time0 = System.currentTimeMillis();
             evolveMap = handleEvolve(market, pipeline, evolve, param);
             if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-                TimingItem timing = saveTiming(param, evolve, time0, null);
+                TimingItem timing = saveTiming(param, evolve, time0, null, null);
                 param.getTimings().add(timing);
            }
         }
@@ -110,14 +110,15 @@ public abstract class Component {
         param.setCategory(resultMaps);
         param.getAndSetCategoryValueMap();
         if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-            TimingItem timing = saveTiming(param, false, time0, null);
+            TimingItem timing = saveTiming(param, false, time0, null, null);
             param.getTimings().add(timing);
         }
     }
 
-    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score) {
+    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
+        timing.setBuy(buy);
         timing.setMarket(param.getInput().getMarket());
         timing.setEvolve(evolve);
         timing.setComponent(getPipeline());
@@ -164,7 +165,7 @@ public abstract class Component {
 
     public abstract String getPipeline();
     
-    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market) throws Exception;
+    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy) throws Exception;
 
     protected abstract EvolutionConfig getImproveEvolutionConfig(IclijConfig config);
     
@@ -192,7 +193,7 @@ public abstract class Component {
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
             param.setFutureDate(LocalDate.now());
-            TimingItem timing = saveTiming(param, true, time0, score);
+            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy());
             param.getTimings().add(timing);
             if (false) {
                 ConfigItem configItem = new ConfigItem();
@@ -230,12 +231,12 @@ public abstract class Component {
         return param;
     }
 
-    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList) {
+    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList, Boolean buy) {
         List<String> config = new ArrayList<>();
         
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false);
+            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

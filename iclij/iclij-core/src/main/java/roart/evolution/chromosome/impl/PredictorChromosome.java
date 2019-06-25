@@ -30,8 +30,8 @@ public class PredictorChromosome extends ConfigMapChromosome {
 
     private TensorflowLSTMConfig config;
     
-    public PredictorChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component) {
-        super(confList, param, profitdata, market, positions, component);
+    public PredictorChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy) {
+        super(confList, param, profitdata, market, positions, component, buy);
     }
 
     public TensorflowLSTMConfig getConfig() {
@@ -66,7 +66,7 @@ public class PredictorChromosome extends ConfigMapChromosome {
     
     @Override
     public Individual crossover(AbstractChromosome other) {
-        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, componentName);
+        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, componentName, buy);
         TensorflowLSTMConfig otherConfig = ((PredictorChromosome) other).config;
         NeuralNetConfig offspring = config.crossover(otherConfig);
         chromosome.config = (TensorflowLSTMConfig) offspring;
@@ -93,7 +93,7 @@ public class PredictorChromosome extends ConfigMapChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        PredictorChromosome chromosome = new PredictorChromosome(confList, newparam, profitdata, market, positions, componentName);
+        PredictorChromosome chromosome = new PredictorChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         chromosome.config = (TensorflowLSTMConfig) config.copy();
         return chromosome;

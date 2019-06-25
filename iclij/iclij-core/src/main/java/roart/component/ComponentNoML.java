@@ -45,11 +45,11 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy) throws Exception {
         Map<String, Object> map = new HashMap<>();
         String marketName = market.getConfig().getMarket();
         String component = getPipeline();
-        Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false);
+        Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy);
         map.putAll(configMap);
         return map;
     }

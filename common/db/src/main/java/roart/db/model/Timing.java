@@ -53,6 +53,9 @@ public class Timing implements Serializable {
     @Column
     private Date date;
 
+    @Column
+    private Boolean buy;
+    
     public String getMarket() {
         return market;
     }
@@ -116,6 +119,14 @@ public class Timing implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Boolean getBuy() {
+        return buy;
+    }
+
+    public void setBuy(Boolean buy) {
+        this.buy = buy;
     }
 
     @Transient

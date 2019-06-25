@@ -147,12 +147,12 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy) throws Exception {
         Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);
-        return mlLoads(mlConfigMap, param, anUpdateMap, market);
+        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy);
     }
     
-    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market) throws Exception {
+    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy) throws Exception {
         Map<String, Object> map = new HashMap<>();
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
             String key = entry.getKey();
@@ -160,7 +160,7 @@ public abstract class ComponentML extends Component {
             if (config.getLoad()) {
                 String marketName = market.getConfig().getMarket();
                 String component = getPipeline();
-                Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false);
+                Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy);
                 map.putAll(configMap);
             }
         }
