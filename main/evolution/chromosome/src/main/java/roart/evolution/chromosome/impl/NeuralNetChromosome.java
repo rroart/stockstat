@@ -45,8 +45,6 @@ public class NeuralNetChromosome extends AbstractChromosome {
     
     private NeuralNetConfig nnConfig;
     
-    private boolean ascending = true;
-    
     private String catName;
     
     private Integer cat;
@@ -76,10 +74,6 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
     public void setNnConfig(NeuralNetConfig nnConfig) {
         this.nnConfig = nnConfig;
-    }
-
-    public void setAscending(boolean ascending) {
-        this.ascending = ascending;
     }
 
     @Override
@@ -216,8 +210,4 @@ public class NeuralNetChromosome extends AbstractChromosome {
         return key + " " + nnConfig;
     }
 
-    @Override
-    public boolean isAscending() {
-        return ascending;
-    }
 }

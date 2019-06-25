@@ -13,6 +13,12 @@ import roart.evolution.species.Individual;
 public abstract class AbstractChromosome {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     
+    private boolean ascending = true;
+    
+    public void setAscending(boolean ascending) {
+        this.ascending = ascending;
+    }
+
     public abstract double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException;
     
     public abstract void mutate();
@@ -34,7 +40,9 @@ public abstract class AbstractChromosome {
 
     public abstract boolean isEmpty();
     
-    public abstract boolean isAscending();
+    public boolean isAscending() {
+        return ascending;
+    }
     
     public boolean validate() {
         return true;
