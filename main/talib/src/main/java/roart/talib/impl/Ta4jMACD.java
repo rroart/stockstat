@@ -23,9 +23,9 @@ import roart.talib.util.TaConstants;
 import roart.talib.util.TaUtil;
 
 public class Ta4jMACD extends Ta4j {
-    public static final int MACDIDXMACD = 0;
-    private static final int MACDIDXSIGN = 1;
-    public static final int MACDIDXHIST = 2;
+    public static final int MACDIDXHIST = 0;
+    public static final int MACDIDXMACD = 1;
+    private static final int MACDIDXSIGN = 2;
     public static final int MACDIDXBEG = 3;
     public static final int MACDIDXEND = 4;
     private static final int MACDIDXMACDFIXED = 5;

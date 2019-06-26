@@ -1,9 +1,9 @@
 package roart.talib.util;
 
 public class TaConstants {
-    public static final int MACDIDXMACD = 0;
-    public static final int MACDIDXSIGN = 1;
-    public static final int MACDIDXHIST = 2;
+    public static final int MACDIDXHIST = 0;
+    public static final int MACDIDXMACD = 1;
+    public static final int MACDIDXSIGN = 2;
     public static final int MACDIDXBEG = 3;
     public static final int MACDIDXEND = 4;
     public static final int MACDIDXMACDFIXED = 5;
