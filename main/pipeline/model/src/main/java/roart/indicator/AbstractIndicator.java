@@ -157,6 +157,9 @@ public abstract class AbstractIndicator extends Calculatable {
 
     protected boolean anythingHere3(Map<String, Double[][]> listMap2) {
         for (Double[][] array : listMap2.values()) {
+            if (array.length != 3) {
+                return false;
+            }
             out:
             for (int i = 0; i < array[0].length; i++) {
                 for (int j = 0; j < array.length; j++) {
