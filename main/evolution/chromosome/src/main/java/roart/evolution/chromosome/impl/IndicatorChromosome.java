@@ -149,7 +149,12 @@ public class IndicatorChromosome extends AbstractChromosome {
                 }
                 CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
                 double value = momrsi[i];
-                recommend += node.calc(value, 0); // (1 + change); // Math.pow(1 + change, 10);
+                double calc = node.calc(value, 0); // (1 + change); // Math.pow(1 + change, 10);
+                if (Double.isNaN(calc)) {
+                    int jj = 0;
+                } else {
+                    recommend += calc;
+                }
                 count++;
             }
             List<Double> resultList = new ArrayList<>();

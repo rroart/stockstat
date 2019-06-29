@@ -133,7 +133,12 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                         int jj = 0;
                     }
                     double value = mergedResult[i];
-                    buyRecommendValue += node.calc(value, 0);
+                    double calc = node.calc(value, 0);
+                    if (Double.isNaN(calc)) {
+                        int jj = 0;
+                    } else {
+                        buyRecommendValue += calc;
+                    }
                 }
                 aResult[0] = buyRecommendValue;              
                 for (int i = 0; i < sellKeys.size(); i++) {
@@ -151,7 +156,12 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     CalcGene node = (CalcGene) conf.getConfigValueMap().get(key);
                     //node.setDoBuy(useMax);
                     double value = mergedResult[i];
-                    sellRecommendValue += node.calc(value, 0);
+                    double calc = node.calc(value, 0);
+                    if (Double.isNaN(calc)) {
+                        int jj = 0;
+                    } else {
+                        sellRecommendValue += calc;
+                    }
                 }
                 aResult[1] = sellRecommendValue;              
                indicatorResultMap.put(id, aResult);
