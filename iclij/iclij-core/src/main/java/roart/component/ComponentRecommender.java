@@ -541,6 +541,14 @@ public class ComponentRecommender extends ComponentNoML {
             if (vals == null) {
                 continue;
             }
+            if (! (vals.get(position) instanceof Double)) {
+                int jj = 0;
+                Map map = param.getRecommendBuySell();
+                List<String> objs = (List<String>) map.get(key);
+                if ("NaN".equals(objs.get(position))) {
+                    continue;
+                }
+            }
             Double score = vals.get(position);
             List<List<Double>> resultList = param.getCategoryValueMap().get(key);
             List<Double> mainList = resultList.get(0);
