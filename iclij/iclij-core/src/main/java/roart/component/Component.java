@@ -115,6 +115,15 @@ public abstract class Component {
         }
     }
 
+    public void enableDisable(ComponentData param, List<Integer> positions, Map<String, Object> valueMap) {
+        List<String>[] enableDisable = enableDisable(param, positions);
+        List<String> enableML = enableDisable[0];
+        List<String> disableML = enableDisable[1];
+        enableDisable(valueMap, enableML, true);
+        enableDisable(valueMap, disableML, false);
+        log.info("Disable {}", disableML);
+    }
+
     private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
@@ -257,6 +266,14 @@ public abstract class Component {
 
         chromosome.setMap(map);
 
+    }
+    
+    public abstract List<String>[] enableDisable(ComponentData param, List<Integer> positions);
+
+    public void enableDisable(Map<String, Object> map, List<String> list, boolean bool) {
+        for (String key : list) {
+            map.put(key, bool);
+        }
     }
 }
 

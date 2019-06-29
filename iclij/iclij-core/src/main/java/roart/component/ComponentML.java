@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
@@ -100,6 +101,7 @@ public abstract class ComponentML extends Component {
                 log.error(Constants.EXCEPTION, e);
             }
             if (value == null) {
+                log.error("Config value null");
                 continue;
             }
             ConfigItem configItem = new ConfigItem();
@@ -249,6 +251,51 @@ public abstract class ComponentML extends Component {
     @Override
     public boolean wantImproveEvolve() {
         return false;
+    }
+    
+    @Override
+    public List<String>[] enableDisable(ComponentData param, List<Integer> positions) {
+        if (positions == null || positions.isEmpty()) {
+            return new ArrayList[] { new ArrayList<String>(), new ArrayList<String>() };
+        }
+        List[] list = new ArrayList[2];
+        List<String> enable = new ArrayList<>();
+        Map<String, String> map = getMap();
+        ComponentMLData paramML = (ComponentMLData) param;
+        List<ResultMeta> resultMetas = paramML.getResultMeta();
+        int count = 0;
+        if (resultMetas != null) {
+            for (ResultMeta resultMeta : resultMetas) {
+                String name = resultMeta.getModelName();
+                String cnf = map.get(name);
+                if (positions == null || positions.contains(count)) {
+                    if (cnf == null) {
+                        continue;
+                    }
+                    if (!enable.contains(cnf)) {
+                        enable.add(cnf);
+                    }
+                    map.remove(name);
+                }
+                count++;        
+            }
+        } else {
+            int jj = 0;
+        }
+        list[0] = enable;
+        list[1] = new ArrayList<String>(map.values());
+        return list;
+    }
+
+    private Map<String, String> getMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put(MLConstants.MCP, ConfigConstants.MACHINELEARNINGSPARKMLMCP);
+        map.put(MLConstants.LR, ConfigConstants.MACHINELEARNINGSPARKMLLR);
+        map.put(MLConstants.OVR, ConfigConstants.MACHINELEARNINGSPARKMLOVR);
+        map.put(MLConstants.DNN, ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
+        map.put(MLConstants.L, ConfigConstants.MACHINELEARNINGTENSORFLOWL);
+        map.put(MLConstants.LSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
+        return map;
     }
     
 }

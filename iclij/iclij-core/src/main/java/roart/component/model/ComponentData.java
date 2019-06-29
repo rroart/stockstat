@@ -121,7 +121,7 @@ public class ComponentData {
         this.configValueMap = new HashMap<>(service.conf.getConfigValueMap());
     }
 
-    protected Map<String, Object> getConfigValueMap() {
+    public Map<String, Object> getConfigValueMap() {
         return configValueMap;
     }
 

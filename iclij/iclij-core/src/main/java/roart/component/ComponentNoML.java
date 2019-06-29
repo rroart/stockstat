@@ -112,4 +112,9 @@ public abstract class ComponentNoML extends Component {
         return true;
     }
     
+    @Override
+    public List<String>[] enableDisable(ComponentData param, List<Integer> positions) {
+        return new ArrayList[] { new ArrayList<String>(), new ArrayList<String>() };
+    }
+
 }

@@ -564,6 +564,8 @@ public class FindProfitAction extends Action {
             if (component == null) {
                 continue;
             }
+            component.enableDisable(param, positions, param.getConfigValueMap());
+
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
             ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
