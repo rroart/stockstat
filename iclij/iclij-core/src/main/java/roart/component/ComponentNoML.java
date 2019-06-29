@@ -67,6 +67,10 @@ public abstract class ComponentNoML extends Component {
             configItem.setRecord(LocalDate.now());
             String value = JsonUtil.convert(object);
             configItem.setValue(value);
+            if (value == null) {
+                log.error("Config value null");
+                continue;
+            }
             try {
                 configItem.save();
             } catch (Exception e) {
