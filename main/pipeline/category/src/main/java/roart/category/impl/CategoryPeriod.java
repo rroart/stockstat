@@ -6,9 +6,13 @@ import java.util.Map;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.indicator.AbstractIndicator;
+import roart.indicator.impl.IndicatorATR;
+import roart.indicator.impl.IndicatorCCI;
 import roart.indicator.impl.IndicatorMACD;
 import roart.indicator.impl.IndicatorMove;
 import roart.indicator.impl.IndicatorRSI;
+import roart.indicator.impl.IndicatorSTOCH;
+import roart.indicator.impl.IndicatorSTOCHRSI;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -35,6 +39,10 @@ public class CategoryPeriod extends Category {
         if (MetaUtil.currentYear(marketData, periodText)) {
             indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), i, datareaders, false));
             indicators.add(new IndicatorRSI(conf, getTitle() + " RSI", getTitle(), i, datareaders, false));
+            indicators.add(new IndicatorSTOCHRSI(conf, getTitle() + " SRSI", getTitle(), i, datareaders, false));
+            indicators.add(new IndicatorSTOCH(conf, getTitle() + " STOCH", getTitle(), i, datareaders, false));
+            indicators.add(new IndicatorATR(conf, getTitle() + " ATR", getTitle(), i, datareaders, false));
+            indicators.add(new IndicatorCCI(conf, getTitle() + " CCI", getTitle(), i, datareaders, false));
             cy = i;
         }
         createIndicatorMap(periodText);
