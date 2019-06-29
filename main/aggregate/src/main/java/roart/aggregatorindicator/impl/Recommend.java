@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math3.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import roart.aggregatorindicator.AggregatorIndicator;
 import roart.common.config.MyMyConfig;
@@ -13,6 +15,8 @@ import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
 
 public abstract class Recommend extends AggregatorIndicator {
+    protected static Logger log = LoggerFactory.getLogger(AggregatorIndicator.class);
+
     public Recommend(MyMyConfig conf) {
         super(conf);
     }
@@ -53,6 +57,11 @@ public abstract class Recommend extends AggregatorIndicator {
             List<String> sellList = new ArrayList<>();
             for (Recommend recommend : recommenderList) {
                 AbstractIndicator indicator = usedIndicatorMap.get(recommend.indicator());
+                if (indicator == null) {
+                    int jj = 0;
+                    log.error("Indicator null for {} {}", recommend.indicator(), complexity);
+                    continue;
+                }
                 Map<String, Object> resultMap = indicator.getLocalResultMap();
                 Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
                 if (objMap != null) { 
