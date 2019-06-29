@@ -30,7 +30,7 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
         }
         return false;
     }
-    
+
     @Override
     public void fixValidation() { 
         Random rand = new Random();
@@ -42,16 +42,26 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
         List<String> list = new ArrayList<>();
         list.add(ConfigConstants.AGGREGATORSINDICATORMACD);
         list.add(ConfigConstants.AGGREGATORSINDICATORRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASATR);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
+        list.add(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
+        list.add(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
         return list;
     }
-    
+
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
         MLIndicatorChromosome chromosome = new MLIndicatorChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
         return chromosome;
     }
-    
+
     @Override
     public Individual crossover(AbstractChromosome other) {
         ComponentData newparam = new ComponentData(param);

@@ -79,6 +79,8 @@ public class MLMACDChromosome extends ConfigMapChromosome {
 
     private List<String> getList() {
         List<String> confList = new ArrayList<>();
+        confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
+        confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
         confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML);
         confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML);
         confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML);
