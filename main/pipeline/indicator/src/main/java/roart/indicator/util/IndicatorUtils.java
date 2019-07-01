@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
@@ -33,6 +34,7 @@ import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;
 import roart.talib.util.TaUtil;
+import java.util.Objects;
 
 public class IndicatorUtils {
 
@@ -286,11 +288,15 @@ public class IndicatorUtils {
                     result = getExtraIndicatorsResult(extraData.categories, j, result, extraData.pairDateMap, extraData.pairCatMap, extraData.datareaders, allIndicators);
                     // for more extrareader data end
                 }
-                if (result.length == arraySize) {
+                if (result.length == arraySize && Arrays.stream(result).allMatch(i -> !Double.isNaN(i))) {
                     indicatorMap.put(id, result);
                     IndicatorUtils.addToLists(indicatorLists, result);
                     log.info("outid {} {}", id, Arrays.asList(result));
                 } else {
+                    if (result.length == arraySize) {
+                        int jj = 0;
+                    }
+                    int jj = 0;
                     continue;
                 }
                 dayIndicatorMap.put(j, indicatorMap);
