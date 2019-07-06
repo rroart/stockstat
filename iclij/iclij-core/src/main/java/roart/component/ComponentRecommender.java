@@ -315,11 +315,11 @@ public class ComponentRecommender extends ComponentNoML {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
-        List<String> confList = getConfList();        
+        List<String> confList = buy ? getBuy() : getSell();      
 	Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
 	boolean gotThree = anythingHere(listMap, 3);
 	if (gotThree) {
-	    confList.addAll(getConfListThreeBuy());
+	    confList.addAll(buy ? getConfListThreeBuy() : getConfListThreeSell());
 	}
         Map<String, Object> map = null;
         try {
