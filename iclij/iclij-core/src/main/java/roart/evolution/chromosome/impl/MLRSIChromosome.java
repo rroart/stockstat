@@ -43,7 +43,7 @@ public class MLRSIChromosome extends ConfigMapChromosome {
 
     @Override
     public boolean validate() {
-        for (String key : getList()) {
+        for (String key : getValidateList()) {
             Object object = getMap().get(key);
             if (object != null && object instanceof Boolean) {
                 if ((boolean) object) {
@@ -57,8 +57,8 @@ public class MLRSIChromosome extends ConfigMapChromosome {
     @Override
     public void fixValidation() { 
         Random rand = new Random();
-        int index = rand.nextInt(getList().size());
-        getMap().put(getList().get(index), true);
+        int index = rand.nextInt(getValidateList().size());
+        getMap().put(getValidateList().get(index), true);
     }
 
     @Override
@@ -77,12 +77,8 @@ public class MLRSIChromosome extends ConfigMapChromosome {
          */
     }
 
-    private List<String> getList() {
+    private List<String> getValidateList() {
         List<String> confList = new ArrayList<>();
-        confList.add(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLRSIBUYSRSILIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLRSISELLRSILIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT);
         return confList;
     }
     
