@@ -20,6 +20,10 @@ public abstract class AggregatorMLIndicator extends AggregatorIndicator {
         List<AggregatorMLIndicator> all = new ArrayList<>();
         all.add(new AggregatorMLIndicatorMACD(conf));
         all.add(new AggregatorMLIndicatorRSI (conf));
+        all.add(new AggregatorMLIndicatorATR (conf));
+        all.add(new AggregatorMLIndicatorCCI (conf));
+        all.add(new AggregatorMLIndicatorSTOCH (conf));
+        all.add(new AggregatorMLIndicatorSTOCHRSI (conf));
         Map<String, List<AggregatorMLIndicator>> result = new HashMap<>();
         for (AggregatorMLIndicator recommend : all) {
             if (recommend.isEnabled()) {
