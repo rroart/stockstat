@@ -241,7 +241,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASATR, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI, Boolean.class);
-        map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, Integer.class);
@@ -476,7 +476,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASATR, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI, Boolean.FALSE);
-        deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, 10);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, 1);
