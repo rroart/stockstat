@@ -20,42 +20,66 @@ public class ArraysUtil {
     private static Logger log = LoggerFactory.getLogger(ArraysUtil.class);
 
     private int searchBackwardNegative(double[] array, int i) {
-        while (i >= 0 && array[i] >= 0) {
+        return searchBackwardBelowLimit(array, i, 0);
+    }
+    
+    private int searchBackwardBelowLimit(double[] array, int i, double limit) {
+        while (i >= 0 && array[i] >= limit) {
             i--;
         }
         return i;
     }
 
     private static int searchForwardNegative(double[] array, int i) {
-        while (i < array.length && array[i] >= 0) {
+        return searchForwardBelowLimit(array, i, 0);
+    }
+    
+    private static int searchForwardBelowLimit(double[] array, int i, double limit) {
+        while (i < array.length && array[i] >= limit) {
             i++;
         }
         return i;
     }
 
     private static int searchForwardNegative(double[] array, int i, int length) {
-        while (i < length && array[i] >= 0) {
+        return searchForwardBelowLimit(array, i, length, 0);
+    }
+    
+    private static int searchForwardBelowLimit(double[] array, int i, int length, double limit) {
+        while (i < length && array[i] >= limit) {
             i++;
         }
         return i;
     }
 
     private int searchBackwardPositive(double[] array, int i) {
-        while (i >= 0 && array[i] < 0) {
+        return searchBackwardAboveEqualLimit(array, i, 0);
+    }
+    
+    private int searchBackwardAboveEqualLimit(double[] array, int i, double limit) {
+        while (i >= 0 && array[i] < limit) {
             i--;
         }
         return i;
     }
 
     private static int searchForwardPositive(double[] array, int i) {
-        while (i < array.length && array[i] < 0)  {
+        return searchForwardAboveEqualLimit(array, i, 0);
+    }
+    
+    private static int searchForwardAboveEqualLimit(double[] array, int i, double limit) {
+        while (i < array.length && array[i] < limit)  {
             i++;
         }
         return i;
     }
 
     private static int searchForwardPositive(double[] array, int i, int length) {
-        while (i < length && array[i] < 0)  {
+        return searchForwardAboveEqualLimit(array, i, length, 0);
+    }
+    
+    private static int searchForwardAboveEqualLimit(double[] array, int i, int length, double limit) {
+        while (i < length && array[i] < limit)  {
             i++;
         }
         return i;
@@ -69,8 +93,11 @@ public class ArraysUtil {
      * @param array
      * @return a resulting array
      */
-
     public static Map<Integer, Integer>[] searchForward(double[] array, int maxlen) {
+        return searchForwardLimit(array, maxlen, 0);
+    }
+    
+    public static Map<Integer, Integer>[] searchForwardLimit(double[] array, int maxlen, double limit) {
         int length = array.length;
         if (maxlen > 0) {
             length = maxlen;
@@ -82,14 +109,14 @@ public class ArraysUtil {
         int prev = 0;
         for (int i = 0; i < length; i++) {
             if (prevval >= 0) {
-                i = searchForwardNegative(array, i, length);
+                i = searchForwardBelowLimit(array, i, length, limit);
                 retmap[0].put(prev, i - 1);
                 if (i < length) {
                     prevval = array[i];
                 }
                 prev = i;
             } else {
-                i = searchForwardPositive(array, i, length);                       
+                i = searchForwardAboveEqualLimit(array, i, length, limit);                       
                 retmap[1].put(prev, i - 1);
                 if (i < length) {
                     prevval = array[i];
@@ -101,16 +128,20 @@ public class ArraysUtil {
     }
 
     private Map<Integer, Integer>[] searchBackward(double[] array) {
+        return searchBackwardLimit(array, 0);        
+    }
+    
+    private Map<Integer, Integer>[] searchBackwardLimit(double[] array, double limit) {
         Map<Integer, Integer>[] retmap = new HashMap[2];
         retmap[0] = new HashMap<>();
         retmap[1] = new HashMap<>();
         int prev = array.length - 1;
         for (int i = array.length - 1; i >=0; i--) {
             if (prev >= 0) {
-                i = searchBackwardNegative(array, i);
+                i = searchBackwardBelowLimit(array, i, limit);
                 retmap[0].put(prev, i);
             } else {
-                i = searchBackwardPositive(array, i);                       
+                i = searchBackwardAboveEqualLimit(array, i, limit);                       
             }
         }        
         return retmap;
@@ -290,6 +321,17 @@ public class ArraysUtil {
         return retMap;
     }
 
+    public static Map<Integer, Integer> getAcceptedRanges(Map<Integer, Integer> map, int after, int size) {
+        Map<Integer, Integer> retMap = new HashMap<>();
+        for (int start : map.keySet()) {
+            int end = map.get(start);
+            if (end + after < size && end + 1 != size) {
+                retMap.put(start, end);
+            }
+        }
+        return retMap;
+    }
+
     /**
      * Get fresh ranges, with end less than after
      * 
@@ -347,6 +389,15 @@ public class ArraysUtil {
         }
         return retArr;
     }
+
+    public static double[] getSubInclusive(double[] arr, int start, int end) {        
+        double[] retArr = new double[end - start + 1];
+        for (int i = start; i <= end; i++) {
+            retArr[i - start] = arr[i];
+        }
+        return retArr;
+    }
+
     /**
      * Get a sub part of Array
      * 
@@ -357,6 +408,10 @@ public class ArraysUtil {
      */
 
     public static Double[] getSubExclusive(Double[] arr, int start, int end) {
+        return getSubInclusive(arr, start, end - 1);
+    }
+
+    public static double[] getSubExclusive(double[] arr, int start, int end) {
         return getSubInclusive(arr, start, end - 1);
     }
 

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import roart.aggregator.impl.IndicatorAggregator;
 import roart.aggregator.impl.MLMACD;
 
 import static org.junit.Assert.*;
@@ -19,9 +20,9 @@ public class MLMACDTest {
 		assertNotNull(getMap);
 		Map<String, String> getMap2 = MLMACD.mapGetterOrig(map, type);
 		assertEquals(getMap, getMap2);
-		Map<String, String> getMap3 = MLMACD.mapGetter(map, type);
+		Map<String, String> getMap3 = IndicatorAggregator.mapGetter(map, type);
 		assertNotNull(getMap3);
-		Map<String, String> getMap4 = MLMACD.mapGetter(map, type);
+		Map<String, String> getMap4 = IndicatorAggregator.mapGetter(map, type);
 		assertEquals(getMap3, getMap4);
 	}
 }

@@ -42,20 +42,16 @@ import roart.result.model.ResultMeta;
 import roart.model.data.PeriodData;
 import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
-import roart.talib.util.TaUtil;
-import roart.pipeline.common.aggregate.Aggregator;
+import roart.talib.util.TaConstants;
 
-public class MLMACD extends Aggregator {
+public class MLMACD extends IndicatorAggregator {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     Map<String, PeriodData> periodDataMap;
     String key;
-    private Map<String, Double[][]> macdListMap;
-    private Map<String, double[][]> listMap;
     // save and return this map
     // need getters for this and not? buy/sell
-    Map<String, Double[]> momMap;
     Object[] emptyField;
     Map<MLClassifyModel, Long> mapTime = new HashMap<>();
 
@@ -71,14 +67,12 @@ public class MLMACD extends Aggregator {
         return objectMap;
     }
 
-    private Map<String, Double[][]> getListMap() {
-        return macdListMap;
+    @Override
+    protected Map<String, double[][]> getListMap() {
+        return listMap;
     }
 
     private int fieldSize = 0;
-
-    public static final int MULTILAYERPERCEPTRONCLASSIFIER = 1;
-    public static final int LOGISTICREGRESSION = 2;
 
     @Override
     public Map<Integer, List<ResultItemTableRow>> otherTables() {
@@ -114,7 +108,6 @@ public class MLMACD extends Aggregator {
         this.periodDataMap = periodDataMap;
         this.key = title;
         this.idNameMap = idNameMap;
-        makeWantedSubTypes();
         makeMapTypes();
         if (conf.wantML()) {
             if (conf.wantMLSpark()) {
@@ -124,7 +117,6 @@ public class MLMACD extends Aggregator {
                 mldaos.add(new MLClassifyDao("tensorflow", conf));
             }
         }
-        fieldSize = fieldSize();
         if (conf.wantMLTimes()) {
             mlTimesTableRows = new ArrayList<>();
         }
@@ -143,13 +135,21 @@ public class MLMACD extends Aggregator {
         }        
     }
 
-    private interface MacdSubType {
-        public abstract  String getType();
-        public abstract  String getName();
-        public abstract  int getArrIdx();
+    private abstract class MacdSubType extends SubType {
+        public MacdSubType(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+            this.listMap = (Map<String, Double[][]>) list;
+            this.taMap = (Map<String, Object[]>) taObject;
+            this.resultMap = (Map<String, Double[]>) resultObject;
+            this.afterbefore = afterbefore;
+            this.range = range;
+            this.filters = new Filter[] { new Filter(true, 0, pos), new Filter(false, 0, neg) };
+        }
     }
 
-    private class MacdSubTypeHist implements MacdSubType {
+    private class MacdSubTypeHist extends MacdSubType {
+        public MacdSubTypeHist(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+            super(list, taObject, resultObject, afterbefore, range);
+        }
         @Override
         public String getType() {
             return "H";
@@ -164,7 +164,10 @@ public class MLMACD extends Aggregator {
         }
     }
 
-    private class MacdSubTypeMacd implements MacdSubType {
+    private class MacdSubTypeMacd extends MacdSubType {
+        public MacdSubTypeMacd(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+            super(list, taObject, resultObject, afterbefore, range);
+        }
         @Override
         public String getType() {
             return "M";
@@ -179,7 +182,10 @@ public class MLMACD extends Aggregator {
         }
     }
 
-    private class MacdSubTypeSignal implements MacdSubType {
+    private class MacdSubTypeSignal extends MacdSubType {
+        public MacdSubTypeSignal(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
+            super(list, taObject, resultObject, afterbefore, range);
+        }
         @Override
         public String getType() {
             return "S";
@@ -219,28 +225,26 @@ public class MLMACD extends Aggregator {
         mapTypes.put(POSTYPE, POSTYPESTR);
         mapTypes.put(NEGTYPE, NEGTYPESTR);
     }
-    private static final int CMNTYPE = 0;
-    private static final int NEGTYPE = 1;
-    private static final int POSTYPE = 2;
-    private static final String CMNTYPESTR = "cmn";
-    private static final String NEGTYPESTR = "neg";
-    private static final String POSTYPESTR = "pos";
 
-    private List<MacdSubType> wantedSubTypes = new ArrayList<>();
+    private List<SubType> wantedSubTypes = new ArrayList<>();
 
-    private List<MacdSubType> wantedSubTypes() {
+    @Override
+    protected List<SubType> wantedSubTypes() {
         return wantedSubTypes;
     }
 
-    private void makeWantedSubTypes() {
+    private void makeWantedSubTypes(AbstractCategory cat, AfterBeforeLimit afterbefore) {
+        Object list = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
+        Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
+        Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
         if (conf.wantMLHist()) {
-            wantedSubTypes.add(new MacdSubTypeHist());
+            wantedSubTypes.add(new MacdSubTypeHist(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
         }
         if (conf.wantMLMacd()) {
-            wantedSubTypes.add(new MacdSubTypeMacd());
+            wantedSubTypes.add(new MacdSubTypeMacd(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
         }
         if (conf.wantMLSignal()) {
-            wantedSubTypes.add(new MacdSubTypeSignal());
+            wantedSubTypes.add(new MacdSubTypeSignal(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
         }
     }
     // make an oo version of this
@@ -253,11 +257,7 @@ public class MLMACD extends Aggregator {
         log.info("checkthis {}", category == cat.getPeriod());
         log.info("checkthis {}", title.equals(cat.getTitle()));
         log.info("checkthis {}", key.equals(title));
-        Object macd = cat.getResultMap().get(PipelineConstants.INDICATORMACDRESULT);
-        Object list0 = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
-        Object object = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
-        Object mom0 = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
-        momMap = (Map<String, Double[]>) mom0;
+        //Object macd = cat.getResultMap().get(PipelineConstants.INDICATORMACDRESULT);
         //truncListMap = (Map<String, double[][]>) cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.TRUNCBASE100LIST);
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         Pipeline datareader = pipelineMap.get("" + category);
@@ -274,37 +274,35 @@ public class MLMACD extends Aggregator {
         this.truncBase100ListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100LIST);       
         this.truncBase100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);       
 */
+        Map<String, Double[][]> aListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
         Map<String, double[][]> fillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);
-        Map<String, double[][]>  base100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);
+        Map<String, double[][]> base100FillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCBASE100FILLLIST);
         this.listMap = conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap;
         
         long time0 = System.currentTimeMillis();
         // note that there are nulls in the lists with sparse
-        this.macdListMap = (Map<String, Double[][]>) list0;
-        if (!anythingHere(macdListMap)) {
-            log.debug("empty {}", key);
-            return;
-        }
+        //for (SubType subType : wantedSubTypes) {
+            if (!anythingHere(aListMap)) {
+                log.debug("empty {}", key);
+                return;
+            }
+        //}
         log.info("time0 {}", (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
-        otherResultMap = new HashMap<>();
-        objectMap = new HashMap<>();
         probabilityMap = new HashMap<>();
         resultMetaArray = new ArrayList<>();
-        List<Double>[] macdLists = new ArrayList[4];
-        for (int i = 0; i < 4; i ++) {
-            macdLists[i] = new ArrayList<>();
-        }
         long time2 = System.currentTimeMillis();
-        objectMap = (Map<String, Object[]>) object;
+        AfterBeforeLimit afterbefore = new AfterBeforeLimit(conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero());
+        makeWantedSubTypes(cat, afterbefore);
+        fieldSize = fieldSize();
         //log.debug("imap " + objectMap.size());
         log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
-        log.debug("listmap {} {}", macdListMap.size(), macdListMap.keySet());
+        log.debug("listmap {} {}", listMap.size(), listMap.keySet());
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<String, Map<double[], Double>> mapMap = createPosNegMaps(conf);
         // map from h/m to model to posnegcom map<model, results>
-        Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
+        Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
         log.debug("Period {} {}", title, mapMap.keySet());
         String nnconfigString = conf.getMLMACDMLConfig();
         NeuralNetConfigs nnConfigs = null;
@@ -328,14 +326,15 @@ public class MLMACD extends Aggregator {
     }
 
     private void doLearnTestClassify(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
-            Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
+            Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort) {
-        List<MacdSubType> subTypes = wantedSubTypes();
-        Map<String, Map<String, double[]>> mapIdMap = getNewestPosNeg(labelMapShort);
+        List<SubType> subTypes = wantedSubTypes();
+        AfterBeforeLimit afterbefore = new AfterBeforeLimit(conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero());
         // map from h/m + posnegcom to map<model, results>
         int testCount = 0;
         try {
-            for (MacdSubType subType : subTypes) {
+            for (SubType subType : subTypes) {
+                Map<String, Map<String, double[]>> mapIdMap = getNewestPosNeg(labelMapShort, TaConstants.THREERANGE, afterbefore, subType.taMap);
                 Map<String, double[]> offsetMap = mapIdMap.get(subType.getType());
                 Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = new HashMap<>();
                 for (MLClassifyDao mldao : mldaos) {
@@ -410,15 +409,16 @@ public class MLMACD extends Aggregator {
     }
 
     private void doLearnTestClassifyFuture(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
-            Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
+            Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort) {
-        List<MacdSubType> subTypes = wantedSubTypes();
-        Map<String, Map<String, double[]>> mapIdMap = getNewestPosNeg(labelMapShort);
+        List<SubType> subTypes = wantedSubTypes();
+        AfterBeforeLimit afterbefore = new AfterBeforeLimit(conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero());
         // map from h/m + posnegcom to map<model, results>
         List<Future<LearnTestClassifyResult>> futureList = new ArrayList<>();
         Map<Future<LearnTestClassifyResult>, FutureMap> futureMap = new HashMap<>();
         try {
-            for (MacdSubType subType : subTypes) {
+            for (SubType subType : subTypes) {
+                Map<String, Map<String, double[]>> mapIdMap = getNewestPosNeg(labelMapShort, TaConstants.THREERANGE, afterbefore, subType.taMap);
                 Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
                 if (mapResult1 == null) {
                     mapResult1 = new HashMap<>();
@@ -471,14 +471,14 @@ public class MLMACD extends Aggregator {
                             Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, map, model, conf.getMACDDaysBeforeZero(), key, mapName, outcomes, mapTime, map2, labelMapShort);  
                             Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                             futureList.add(future);
-                            futureMap.put(future, new FutureMap(subType, model, mapType, resultMetaArray.size() - 1));
+                            futureMap.put(future, new FutureMap(subType, model, mapType, resultMetaArray.size() - 1, mapIdMap));
                         }
                     }
                 }
             }
             for (Future<LearnTestClassifyResult> future: futureList) {
                 FutureMap futMap = futureMap.get(future);
-                MacdSubType subType = futMap.getSubType();
+                SubType subType = futMap.getSubType();
                 MLClassifyModel model = futMap.getModel();
                 String mapType = futMap.getMapType();
                 int testCount = futMap.getTestCount();
@@ -499,6 +499,7 @@ public class MLMACD extends Aggregator {
                 handleResultMetaAccuracy(testCount, result);
 
                 addEventRow(subType, countMap2);
+                Map<String, Map<String, double[]>> mapIdMap = futMap.mapIdMap;
                 Map<String, double[]> offsetMap = mapIdMap.get(subType.getType());
                 handleResultMeta(testCount, offsetMap, countMap2);
             }
@@ -514,15 +515,17 @@ public class MLMACD extends Aggregator {
         resultMeta.setTestAccuracy(result.getAccuracy());
     }
 
+    @Deprecated
     private void doLearnTestClassifyOld(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
-            Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
+            Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort) {
         try {
             doLearningAndTests(nnconfigs, conf, mapMap, labelMapShort);
         } catch (Exception e) {
             log.error("Exception", e);
         }
-        Map<String, Map<String, double[]>> mapIdMap = getNewestPosNeg(labelMapShort);
+        AfterBeforeLimit afterbefore = new AfterBeforeLimit(conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero());
+        Map<String, Map<String, double[]>> mapIdMap = getNewestPosNeg(labelMapShort, TaConstants.THREERANGE, afterbefore, null);
         doClassifications(conf, mapMap, mapResult, labelMapShort, mapIdMap);
     }
 
@@ -544,8 +547,8 @@ public class MLMACD extends Aggregator {
         // and others done with println
         if (conf.wantOtherStats() && conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();            
-            List<MacdSubType> subTypes = wantedSubTypes();
-            for (MacdSubType subType : subTypes) {
+            List<SubType> subTypes = wantedSubTypes();
+            for (SubType subType : subTypes) {
                 List<Integer> list = new ArrayList<>();
                 list.add(POSTYPE);
                 list.add(NEGTYPE);
@@ -569,15 +572,10 @@ public class MLMACD extends Aggregator {
     }
 
     private void createResultMap(MyMyConfig conf,
-            Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult) {
-        for (String id : macdListMap.keySet()) {
-            Double[] momentum = momMap.get(id);
+            Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult) {
+        for (String id : listMap.keySet()) {
             Object[] fields = new Object[fieldSize];
-            momMap.put(id, momentum);
             resultMap.put(id, fields);
-            if (momentum == null) {
-                log.debug("zero mom for id {}", id);
-            }
             int retindex = 0; //tu.getMomAndDelta(conf.isMACDHistogramDeltaEnabled(), conf.isMACDDeltaEnabled(), momentum, fields);
 
             // make OO of this
@@ -585,8 +583,8 @@ public class MLMACD extends Aggregator {
                 Map<Double, String> labelMapShort2 = createLabelMapShort();
                 //int momidx = 6;
                 Double[] type;
-                List<MacdSubType> subTypes2 = wantedSubTypes();
-                for (MacdSubType subType : subTypes2) {
+                List<SubType> subTypes2 = wantedSubTypes();
+                for (SubType subType : subTypes2) {
                     Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
                     //log.debug("mapget " + subType + " " + mapResult.keySet());
                     for (MLClassifyDao mldao : mldaos) {
@@ -633,38 +631,13 @@ public class MLMACD extends Aggregator {
         }
     }
 
-    private Map<String, Map<String, double[]>> getNewestPosNeg(Map<Double, String> labelMapShort) {
-        // calculate sections and do ML
-        // a map from h/m + com/neg/sub to map<id, values>
-        Map<String, Map<String, double[]>> mapIdMap = new HashMap<>();
-        for (Entry<String, Double[][]> entry : macdListMap.entrySet()) {
-            Double[][] list = entry.getValue();
-            Double[] origMain = Arrays.copyOf(list[0], list[0].length);
-            list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
-            Object[] objs = objectMap.get(entry.getKey());
-            int begOfArray = (int) objs[TalibMACD.MACDIDXBEG];
-            int endOfArray = (int) objs[TalibMACD.MACDIDXEND];
-            Double[] trunclist = ArraysUtil.getSubExclusive(list[0], begOfArray, begOfArray + endOfArray);
-            Double[] trunclistOrig = ArraysUtil.getSubExclusive(origMain, begOfArray, begOfArray + endOfArray);
-            if (endOfArray == 0) {
-                continue;
-            }
-            List<MacdSubType> subTypes = wantedSubTypes();
-            for (MacdSubType subType : subTypes) {
-                double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
-                getMlMappings(subType.getName(), subType.getType(), labelMapShort, mapIdMap, entry.getKey(), aMacdArray, endOfArray, trunclist, trunclistOrig);
-            }
-        }
-        return mapIdMap;
-    }
-
     private void doClassifications(MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
-            Map<MacdSubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
+            Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
             Map<Double, String> labelMapShort, Map<String, Map<String, double[]>> mapIdMap) {
         // map from h/m + posnegcom to map<model, results>
-        List<MacdSubType> subTypes = wantedSubTypes();
+        List<SubType> subTypes = wantedSubTypes();
         int testCount = 0;
-        for (MacdSubType subType : subTypes) {
+        for (SubType subType : subTypes) {
             Map<String, double[]> offsetMap = mapIdMap.get(subType.getType());
             Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = new HashMap<>();
             for (MLClassifyDao mldao : mldaos) {
@@ -695,7 +668,7 @@ public class MLMACD extends Aggregator {
     }
 
     private Map<String, Double[]> doClassifications(MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
-            Map<Double, String> labelMapShort, Map<String, Map<String, double[]>> mapIdMap, MacdSubType subType,
+            Map<Double, String> labelMapShort, Map<String, Map<String, double[]>> mapIdMap, SubType subType,
             MLClassifyDao mldao, Map<String, Map<String, Double[]>> mapResult2, MLClassifyModel model, int mapTypeInt) {
         String mapType = mapTypes.get(mapTypeInt);
         String mapName = subType.getType() + mapType;
@@ -721,7 +694,7 @@ public class MLMACD extends Aggregator {
         resultMeta.setClassifyMap(countMap);
     }
 
-    private void addEventRow(MacdSubType subType, Map<String, Long> countMap) {
+    private void addEventRow(SubType subType, Map<String, Long> countMap) {
         StringBuilder counts = new StringBuilder();
         counts.append("classified ");
         for (Entry<String, Long> entry : countMap.entrySet()) {
@@ -732,8 +705,8 @@ public class MLMACD extends Aggregator {
 
     private void doLearningAndTests(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<String, Map<double[], Double>> mapMap,
             Map<Double, String> labelMapShort) {
-        List<MacdSubType> subTypes = wantedSubTypes();
-        for (MacdSubType subType : subTypes) {
+        List<SubType> subTypes = wantedSubTypes();
+        for (SubType subType : subTypes) {
             for (MLClassifyDao mldao : mldaos) {
                 for (MLClassifyModel model : mldao.getModels()) {
                     for (int mapTypeInt : getMapTypeList()) {
@@ -776,91 +749,8 @@ public class MLMACD extends Aggregator {
         }
     }
 
-    private Map<String, Map<double[], Double>> createPosNegMaps(MyMyConfig conf) {
-        Map<String, Map<double[], Double>> mapMap = new HashMap<>();
-        for (String id : macdListMap.keySet()) {
-            Object[] objs = objectMap.get(id);
-            Double[] momentum = momMap.get(id);
-            if (momentum == null) {
-                log.debug("no macd for id {}", id);
-            }
-            int begOfArray = (int) objs[TalibMACD.MACDIDXBEG];
-            int endOfArray = (int) objs[TalibMACD.MACDIDXEND];
-
-            double[][] list = listMap.get(id);
-            log.debug("t {}", Arrays.toString(list[0]));
-            log.debug("listsize {}", list.length);
-            if (conf.wantPercentizedPriceIndex() && list[0].length > 0) {
-                list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
-            }
-            log.debug("beg end {} {} {}", id, begOfArray, endOfArray);
-            log.debug("list {} {} ", list.length, Arrays.asList(list));
-            double[] trunclist = ArrayUtils.subarray(list[0], begOfArray, begOfArray + endOfArray);
-            log.debug("trunclist {} {}", list.length, Arrays.asList(trunclist));
-            if (conf.wantML()) {
-                if (momentum != null && momentum[0] != null && momentum[1] != null && momentum[2] != null && momentum[3] != null) {
-                    Map<String, Double> labelMap2 = createLabelMap2();
-                    // also macd
-                    if (endOfArray > 0) {
-                        List<MacdSubType> subTypes = wantedSubTypes();
-                        for (MacdSubType subType : subTypes) {
-                            double[] aMacdArray = (double[]) objs[subType.getArrIdx()];
-                            Map<Integer, Integer>[] map = ArraysUtil.searchForward(aMacdArray, endOfArray);
-                            getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, POSTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[0], labelFN, labelTN);
-                            getPosNegMap(mapMap, subType.getType(), CMNTYPESTR, NEGTYPESTR, id, trunclist, labelMap2, aMacdArray, trunclist.length, map[1], labelTP, labelFP);
-                        }
-                    } else {
-                        log.error("error arrayend 0");
-                    }
-                }
-            }
-        }
-        return mapMap;
-    }
-
-    private void getMlMappings(String name, String subType, Map<Double, String> labelMapShort, Map<String, Map<String, double[]>> mapIdMap,
-            String id, double[] array, int endOfArray,
-            Double[] valueList, Double[] valueListOrig) {
-        Map<String, double[]> offsetMap = mapGetter(mapIdMap, subType);
-        Map<String, double[]> commonMap = mapGetter(mapIdMap, subType + CMNTYPESTR);
-        Map<String, double[]> posMap = mapGetter(mapIdMap, subType + POSTYPESTR);
-        Map<String, double[]> negMap = mapGetter(mapIdMap, subType + NEGTYPESTR);
-        Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, endOfArray);
-        Map<Integer, Integer> pos = map[0];
-        Map<Integer, Integer> newPos = ArraysUtil.getFreshRanges(pos, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), valueList.length);
-        Map<Integer, Integer> neg = map[1];
-        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), valueList.length);
-        printSignChange(name, id, newPos, newNeg, endOfArray, conf.getMACDDaysAfterZero(), labelMapShort);
-        if (!newNeg.isEmpty() || !newPos.isEmpty()) {
-            int start = 0;
-            int end = 0;
-            if (!newNeg.isEmpty()) {
-                start = newNeg.keySet().iterator().next();
-                end = newNeg.get(start);
-            }
-            if (!newPos.isEmpty()) {
-                start = newPos.keySet().iterator().next();
-                end = newPos.get(start);
-            }
-            if (end + 1 >= endOfArray) {
-                return;
-            }
-            double[] doubleArray = new double[] { endOfArray - end };
-            offsetMap.put(id, doubleArray);
-            log.debug("t {} {} {}", subType, id, valueListOrig[end]);
-            double[] truncArray = ArraysUtil.getSub(array, start, end);
-            commonMap.put(id, truncArray);
-            if (!newNeg.isEmpty()) {
-                negMap.put(id, truncArray); 
-            }
-            if (!newPos.isEmpty()) {
-                posMap.put(id, truncArray);
-            }
-        }
-    }
-
-    private boolean anythingHere(Map<String, Double[][]> listMap2) {
-        for (Double[][] array : listMap2.values()) {
+    private boolean anythingHere(Map<String, Double[][]> listMap) {
+        for (Double[][] array : listMap.values()) {
             for (int i = 0; i < array.length; i++) {
                 int len = array[i].length;
                 if (array[i][len - 1] != null) {
@@ -874,8 +764,8 @@ public class MLMACD extends Aggregator {
         return false;
     }
 
-    private boolean anythingHere2(Map<String, Double[]> listMap2) {
-        for (Double[] array : listMap2.values()) {
+    private boolean anythingHere2(Map<String, Double[]> listMap) {
+        for (Double[] array : listMap.values()) {
             for (int i = 0; i < array.length; i++) {
                 if (array[i] != null) {
                     return true;
@@ -883,36 +773,6 @@ public class MLMACD extends Aggregator {
             }
         }
         return false;
-    }
-
-    static String labelTP = "TruePositive";
-    static String labelFP = "FalsePositive";
-    static String labelTN = "TrueNegative";
-    static String labelFN = "FalseNegative";
-
-    private void getPosNegMap(Map<String, Map<double[], Double>> mapMap, String subType, String commonType, String posnegType , String id,
-            double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
-            Map<Integer, Integer> posneg, String label, String labelopposite) {
-        Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero(), listsize);
-        for (Entry<Integer, Integer> entry : newPosNeg.entrySet()) {
-            int end = entry.getValue();
-            String textlabel;
-            if (list[end] < list[end + conf.getMACDDaysAfterZero()]) {
-                textlabel = label;
-            } else {
-                textlabel = labelopposite;
-            }
-            log.debug("{}: {} {} at {}", textlabel, id, getName(id), end);
-            printme(textlabel, end, list, array);
-            double[] truncArray = ArraysUtil.getSub(array, entry.getKey(), end);
-            Double doublelabel = labelMap2.get(textlabel);
-            String commonMapName = subType + commonType;
-            String posnegMapName = subType + posnegType;
-            Map<double[], Double> commonMap = mapGetter(mapMap, commonMapName);
-            Map<double[], Double> posnegMap = mapGetter(mapMap, posnegMapName);
-            commonMap.put(truncArray, doublelabel);
-            posnegMap.put(truncArray, doublelabel);
-        }
     }
 
     static <K, V> Map<K, V> mapGetterOrig(Map<String, Map<K, V>> mapMap, String key) {
@@ -924,27 +784,6 @@ public class MLMACD extends Aggregator {
         return map;
     }
 
-    static <K, V> Map<K, V> mapGetter(Map<String, Map<K, V>> mapMap, String key) {
-        return mapMap.computeIfAbsent(key, k -> new HashMap<>());
-    }
-
-    private void printme(String label, int end, double[] values, double[] array) {
-        StringBuilder me1 = new StringBuilder();
-        StringBuilder me2 = new StringBuilder();
-        for (int i = end - 3; i <= end + conf.getMACDDaysAfterZero(); i++) {
-            if ( i < 0 ) {
-                int jj = 0;
-                return;
-            }
-            me1.append(values[i] + " ");
-            me2.append(array[i] + " ");
-        }
-        String m1 = me1.toString();
-        String m2 = me2.toString();
-        log.debug("me1 {}", m1);
-        log.debug("me2 {}", m2);
-    }
-
     public void addEventRow(String text, String name, String id) {
         ResultItemTableRow event = new ResultItemTableRow();
         event.add("MLMACD " + key);
@@ -954,17 +793,20 @@ public class MLMACD extends Aggregator {
         eventTableRows.add(event);
     }
 
-    private void printSignChange(String txt, String id, Map<Integer, Integer> pos, Map<Integer, Integer> neg, int listsize, int daysAfterZero, Map<Double, String> labelMapShort) {
-        if (!pos.isEmpty()) {
-            int posmaxind = Collections.max(pos.keySet());
-            int posmax = pos.get(posmaxind);
-            if (posmax + 1 == listsize) {
+    @Override
+    protected void printSignChange(String txt, String id, Map<Integer, Integer> posneg, boolean positive, int listsize, int daysAfterZero, Map<Double, String> labelMapShort) {
+        String pnString = positive ? "negative" : "positive";
+        if (!posneg.isEmpty()) {
+            int posnegmaxind = Collections.max(posneg.keySet());
+            int posnegmax = posneg.get(posnegmaxind);
+            if (posnegmax + 1 == listsize) {
                 return;
             }
-            if (posmax + daysAfterZero >= listsize) {
-                addEventRow(txt + " sign changed to negative since " + (listsize - posmax), getName(id), id);
+            if (posnegmax + daysAfterZero >= listsize) {
+                addEventRow(txt + " sign changed to " + (pnString) + " since " + (listsize - posnegmax), getName(id), id);
             }
         }
+        /*
         if (!neg.isEmpty()) {
             int negmaxind = Collections.max(neg.keySet());
             int negmax = neg.get(negmaxind);
@@ -975,39 +817,13 @@ public class MLMACD extends Aggregator {
                 addEventRow(txt + " sign changed to positive since " + (listsize - negmax), getName(id), id);
             }
         }
+        */
     }
 
     public static void printout(Double[] type, String id, Map<Double, String> labelMapShort) {
         if (type != null) {
             //log.debug("Type " + labelMapShort.get(type[0]) + " id " + id);
         }
-    }
-
-    private Map<String, Double> createLabelMap2() {
-        Map<String, Double> labelMap2 = new HashMap<>();
-        labelMap2.put(labelTP, 1.0);
-        labelMap2.put(labelFP, 2.0);
-        labelMap2.put(labelTN, 3.0);
-        labelMap2.put(labelFN, 4.0);
-        return labelMap2;
-    }
-
-    private Map<Double, String> createLabelMap1() {
-        Map<Double, String> labelMap1 = new HashMap<>();
-        labelMap1.put(1.0, labelTP);
-        labelMap1.put(2.0, labelFP);
-        labelMap1.put(3.0, labelTN);
-        labelMap1.put(4.0, labelFN);
-        return labelMap1;
-    }
-
-    public static Map<Double, String> createLabelMapShort() {
-        Map<Double, String> labelMap1 = new HashMap<>();
-        labelMap1.put(1.0, Constants.TP);
-        labelMap1.put(2.0, Constants.FP);
-        labelMap1.put(3.0, Constants.TN);
-        labelMap1.put(4.0, Constants.FN);
-        return labelMap1;
     }
 
     @Override
@@ -1063,8 +879,8 @@ public class MLMACD extends Aggregator {
 
     private int getTitles(int retindex, Object[] objs) {
         // make OO of this
-        List<MacdSubType> subTypes = wantedSubTypes();
-        for (MacdSubType subType : subTypes) {
+        List<SubType> subTypes = wantedSubTypes();
+        for (SubType subType : subTypes) {
             for (MLClassifyDao mldao : mldaos) {
                 for (MLClassifyModel model : mldao.getModels()) {
                     List<Integer> typeList = getTypeList();
@@ -1092,8 +908,8 @@ public class MLMACD extends Aggregator {
 
     private int fieldSize() {
         int size = 0;
-        List<MacdSubType> subTypes = wantedSubTypes();
-        for (MacdSubType subType : subTypes) {
+        List<SubType> subTypes = wantedSubTypes();
+        for (SubType subType : subTypes) {
             for (MLClassifyDao mldao : mldaos) {
                 size += mldao.getSizes(this);
             }
@@ -1128,7 +944,7 @@ public class MLMACD extends Aggregator {
     }
 
     private class FutureMap {
-        private MacdSubType subType;
+        private SubType subType;
 
         private MLClassifyModel model;
 
@@ -1136,19 +952,22 @@ public class MLMACD extends Aggregator {
 
         private int testCount;
         
-        public FutureMap(MacdSubType subType, MLClassifyModel model, String mapType, int testCount) {
+        private Map<String, Map<String, double[]>> mapIdMap;
+        
+        public FutureMap(SubType subType, MLClassifyModel model, String mapType, int testCount, Map<String, Map<String, double[]>> mapIdMap) {
             super();
             this.subType = subType;
             this.model = model;
             this.mapType = mapType;
             this.testCount = testCount;
+            this.mapIdMap = mapIdMap;
         }
 
-        public MacdSubType getSubType() {
+        public SubType getSubType() {
             return subType;
         }
 
-        public void setSubType(MacdSubType subType) {
+        public void setSubType(SubType subType) {
             this.subType = subType;
         }
 
