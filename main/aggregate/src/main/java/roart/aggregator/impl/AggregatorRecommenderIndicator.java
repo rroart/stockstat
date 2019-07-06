@@ -76,8 +76,13 @@ public class AggregatorRecommenderIndicator extends Aggregator {
                     }
                 }
                 // fix
-                Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
-                ids.retainAll(aResult.keySet());
+                Map<String, Object> indicatorResultMap = cat.getIndicatorLocalResultMap().get(indicator);
+                if (indicatorResultMap != null) {
+                    Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResultMap.get(PipelineConstants.LIST);
+                    ids.retainAll(aResult.keySet());
+                } else {
+                    int jj = 0;
+                }
             }
         }
         Map<String, Double[]> result = new HashMap<>();
