@@ -231,6 +231,10 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORMACD, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORRSI, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORATR, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORCCI, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORSTOCH, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, String.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, Boolean.class);
@@ -243,6 +247,16 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, Double.class);
         map.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSI, Boolean.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, String.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSIBUY, Object.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT, Integer.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSIBUYSRSILIMIT, Double.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSISELL, Object.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSISELLRSILIMIT, Integer.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, Double.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, Integer.class);
+	map.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, Integer.class);
     }
 
     public static Map<String, Object> deflt = new HashMap();
@@ -452,6 +466,10 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORMACD, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORRSI, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORATR, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORCCI, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORSTOCH, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, 2);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, Boolean.FALSE);
@@ -464,6 +482,13 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, 1);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, 0);
         deflt.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);
+	deflt.put(ConfigConstants.AGGREGATORSMLRSI, Boolean.TRUE);
+	deflt.put(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT, 20);
+	deflt.put(ConfigConstants.AGGREGATORSMLRSIBUYSRSILIMIT, 0.2);
+	deflt.put(ConfigConstants.AGGREGATORSMLRSISELLRSILIMIT, 80);
+	deflt.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, 0.8);
+	deflt.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, 25);
+	deflt.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, 10);
     }
 
     //private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"useMax\":false}";
@@ -674,6 +699,10 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.AGGREGATORSINDICATOR, "ML indicator enable");
         text.put(ConfigConstants.AGGREGATORSINDICATORMACD, "ML indicator MACD enable");
         text.put(ConfigConstants.AGGREGATORSINDICATORRSI, "ML indicator RSI enable");
+        text.put(ConfigConstants.AGGREGATORSINDICATORATR, "ML indicator ATR enable");
+        text.put(ConfigConstants.AGGREGATORSINDICATORCCI, "ML indicator CCI enable");
+        text.put(ConfigConstants.AGGREGATORSINDICATORSTOCH, "ML indicator STOCH enable");
+        text.put(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI, "ML indicator STOCHRSI enable");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "ML indicator extras");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, "ML indicator extras delta days");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, "ML indicator extras use MACD result");
@@ -685,7 +714,18 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, "ML indicator days in the future for threshold");
         text.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, "ML indicator days in the future interval");
         text.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, "ML indicator threshold for classifier");
-        text.put(ConfigConstants.AGGREGATORSMLMACD, "MLMACD aggreagator enable");
+        text.put(ConfigConstants.AGGREGATORSMLMACD, "MLMACD aggregator enable");
+        text.put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, "MLMACD aggregator ML config");
+	text.put(ConfigConstants.AGGREGATORSMLRSI, "MLRSI aggregator enable");
+	text.put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, "RSI aggregator ML config");
+	text.put(ConfigConstants.AGGREGATORSMLRSIBUY, "RSI aggregator buy");
+	text.put(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT, "RSI aggregator buy RSI limit");
+	text.put(ConfigConstants.AGGREGATORSMLRSIBUYSRSILIMIT, "RSI aggregator buy STOCHRSI limit");
+	text.put(ConfigConstants.AGGREGATORSMLRSISELL, "RSI aggregator sell");
+	text.put(ConfigConstants.AGGREGATORSMLRSISELLRSILIMIT, "RSI aggregator sell RSI limit");
+	text.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, "RSI aggregator sell STOCHRSILIMIT");
+	text.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, "Days before limit");
+	text.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, "Days after limit");
 
     }
 
@@ -701,6 +741,12 @@ public class ConfigConstantMaps {
         range.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, new Double[] { 2.0, 25.0 } );
         range.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, new Double[] { 2.0, 15.0 } );
         range.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, new Double[] { 0.0, 1.0 } );
+	range.put(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT, new Double[] { 0.0, 100.0 } );
+	range.put(ConfigConstants.AGGREGATORSMLRSIBUYSRSILIMIT, new Double[] { 0.0, 1.0 } );
+	range.put(ConfigConstants.AGGREGATORSMLRSISELLRSILIMIT, new Double[] { 0.0, 100.0 } );
+	range.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, new Double[] { 0.0, 1.0 } );
+	range.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, new Double[] { 1.0, 50.0 } );
+	range.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, new Double[] { 1.0, 20.0 } );
 
 /*
         range.put(ConfigConstants.PREDICTORSLSTMEPOCHS, new Double[] { 1.0, 10.0 } );
@@ -874,6 +920,10 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, new XMLType(null, null, null));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORMACD, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator MACD enable"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORRSI, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator RSI enable"));
+        mymap.put(ConfigConstants.AGGREGATORSINDICATORATR, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator ATR enable"));
+        mymap.put(ConfigConstants.AGGREGATORSINDICATORCCI, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator CCI enable"));
+        mymap.put(ConfigConstants.AGGREGATORSINDICATORSTOCH, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator STOCH enable"));
+        mymap.put(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator STOCHRSI enable"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, new XMLType( String.class, "", "ML indicator extras"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, new XMLType( Integer.class, 2, "ML indicator extras delta days"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator extras use MACD result"));
@@ -887,6 +937,16 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, new XMLType( Double.class, 0, "ML indicator threshold for classifier"));
         mymap.put(ConfigConstants.AGGREGATORSMLMACD, new XMLType( Boolean.class, Boolean.TRUE, "MLMACD aggreagator enable"));
         mymap.put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, new XMLType(null, null, null));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSI, new XMLType( Boolean.class, Boolean.TRUE, "MLRSI aggregator enable"));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, new XMLType( String.class, null, "RSI aggregator ML config"));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSIBUY, new XMLType( Object.class, null, "RSI aggregator buy"));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT, new XMLType( Integer.class, 20, "RSI aggregator buy RSI limit", new Double[] { 0.0, 100.0 }));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSIBUYSRSILIMIT, new XMLType( Double.class, 0.2, "RSI aggregator buy STOCHRSI limit", new Double[] { 0.0, 1.0 }));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSISELL, new XMLType( Object.class, null, "RSI aggregator sell"));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSISELLRSILIMIT, new XMLType( Integer.class, 80, "RSI aggregator sell RSI limit", new Double[] { 0.0, 100.0 }));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, new XMLType( Double.class, 0.8, "RSI aggregator sell STOCHRSILIMIT", new Double[] { 0.0, 1.0 }));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, new XMLType( Integer.class, 25, "Days before limit", new Double[] { 1.0, 50.0 }));
+	mymap.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, new XMLType( Integer.class, 10, "Days after limit", new Double[] { 1.0, 20.0 }));
     }
 
 }

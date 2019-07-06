@@ -723,6 +723,42 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDMLCONFIG);
     }
 
+    public boolean wantMLRSI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSI) &&
+                wantAggregators() &&
+                isRSIEnabled() &&
+                isSTOCHRSIEnabled() &&
+                wantML();
+    }
+
+    public String getMLRSIMLConfig() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSIMLCONFIG);
+    }
+
+    public int getMLRSIDaysBeforeLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
+    }
+
+    public int getMLRSIDaysAfterLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT);
+    }
+
+    public int getMLRSIBuyRSILimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT);
+    }
+
+    public double getMLRSIBuySRSILimit() {
+        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSIBUYSRSILIMIT);
+    }
+
+    public int getMLRSISellRSILimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSISELLRSILIMIT);
+    }
+
+    public double getMLRSISellSRSILimit() {
+        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT);
+    }
+
     public boolean wantAggregatorsIndicatorMACD() {
         return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORMACD)
                 && wantAggregatorsIndicatorML();
@@ -730,6 +766,26 @@ public class MyMyConfig extends MyConfig {
 
     public boolean wantAggregatorsIndicatorRSI() {
         return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORRSI)
+                && wantAggregatorsIndicatorML();
+    }
+
+    public boolean wantAggregatorsIndicatorATR() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORATR)
+                && wantAggregatorsIndicatorML();
+    }
+
+    public boolean wantAggregatorsIndicatorCCI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORCCI)
+                && wantAggregatorsIndicatorML();
+    }
+
+    public boolean wantAggregatorsIndicatorSTOCH() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORSTOCH)
+                && wantAggregatorsIndicatorML();
+    }
+
+    public boolean wantAggregatorsIndicatorSTOCHRSI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI)
                 && wantAggregatorsIndicatorML();
     }
 
@@ -747,6 +803,22 @@ public class MyMyConfig extends MyConfig {
 
     public Boolean wantAggregatorsIndicatorExtrasRSI() {
         return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI);
+    }
+
+    public Boolean wantAggregatorsIndicatorExtrasATR() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASATR);
+    }
+
+    public Boolean wantAggregatorsIndicatorExtrasCCI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI);
+    }
+
+    public Boolean wantAggregatorsIndicatorExtrasSTOCH() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH);
+    }
+
+    public Boolean wantAggregatorsIndicatorExtrasSTOCHRSI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI);
     }
 
     public int getAggregatorsIndicatorFuturedays() {

@@ -179,15 +179,19 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHSELLWEIGHTSTOCHDELTANODE = "aggregators.indicatorrecommender.complex.stoch.sell.weightstochdeltanode";
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSI = "aggregators.indicatorrecommender.complex.stochrsi[@enable]";
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUY = "aggregators.indicatorrecommender.complex.stochrsi.buy";
-    public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUYWEIGHTSTOCHRSINODE = "aggregators.indicatorrecommender.complex.rsi.buy.weightstochrsinode";
+    public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUYWEIGHTSTOCHRSINODE = "aggregators.indicatorrecommender.complex.stochrsi.buy.weightstochrsinode";
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSIBUYWEIGHTSTOCHRSIDELTANODE = "aggregators.indicatorrecommender.complex.stochrsi.buy.weightstochrsideltanode";
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELL = "aggregators.indicatorrecommender.complex.stochrsi.sell";
-    public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSINODE = "aggregators.indicatorrecommender.complex.rsi.sell.weightstochrsinode";
+    public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSINODE = "aggregators.indicatorrecommender.complex.stochrsi.sell.weightstochrsinode";
     public static final String AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSIDELTANODE = "aggregators.indicatorrecommender.complex.stochrsi.sell.weightstochrsideltanode";
     public static final String AGGREGATORSINDICATOR = "aggregators.indicator[@enable]";
     public static final String AGGREGATORSINDICATORMLCONFIG = "aggregators.indicator.mlconfig";
     public static final String AGGREGATORSINDICATORMACD = "aggregators.indicator.macd[@enable]";
     public static final String AGGREGATORSINDICATORRSI = "aggregators.indicator.rsi[@enable]";
+    public static final String AGGREGATORSINDICATORATR = "aggregators.indicator.atr[@enable]";
+    public static final String AGGREGATORSINDICATORCCI = "aggregators.indicator.cci[@enable]";
+    public static final String AGGREGATORSINDICATORSTOCH = "aggregators.indicator.stoch[@enable]";
+    public static final String AGGREGATORSINDICATORSTOCHRSI = "aggregators.indicator.stochrsi[@enable]";
     public static final String AGGREGATORSINDICATOREXTRAS = "aggregators.indicator.extras";
     public static final String AGGREGATORSINDICATOREXTRASDELTAS = "aggregators.indicator.extrasdeltas";
     public static final String AGGREGATORSINDICATOREXTRASMACD = "aggregators.indicator.extrasmacd[@enable]";
@@ -201,4 +205,14 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATORTHRESHOLD = "aggregators.indicator.threshold";
     public static final String AGGREGATORSMLMACD = "aggregators.mlmacd[@enable]";
     public static final String AGGREGATORSMLMACDMLCONFIG = "aggregators.mlmacd.mlconfig";
+    public static final String AGGREGATORSMLRSI = "aggregators.mlrsi[@enable]";
+    public static final String AGGREGATORSMLRSIMLCONFIG = "aggregators.mlrsi.mlconfig";
+    public static final String AGGREGATORSMLRSIBUY = "aggregators.mlrsi.buy";
+    public static final String AGGREGATORSMLRSIBUYRSILIMIT = "aggregators.mlrsi.buy.rsilimit";
+    public static final String AGGREGATORSMLRSIBUYSRSILIMIT = "aggregators.mlrsi.buy.srsilimit";
+    public static final String AGGREGATORSMLRSISELL = "aggregators.mlrsi.sell";
+    public static final String AGGREGATORSMLRSISELLRSILIMIT = "aggregators.mlrsi.sell.rsilimit";
+    public static final String AGGREGATORSMLRSISELLSRSILIMIT = "aggregators.mlrsi.sell.srsilimit";
+    public static final String AGGREGATORSMLRSIDAYSBEFORELIMIT = "aggregators.mlrsi.daysbeforelimit";
+    public static final String AGGREGATORSMLRSIDAYSAFTERLIMIT = "aggregators.mlrsi.daysafterlimit";
 }

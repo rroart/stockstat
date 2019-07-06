@@ -38,6 +38,18 @@ public class PipelineConstants {
     public static final String INDICATORRSIOBJECT = "indicatorrsiobject";
     public static final String INDICATORRSILIST = "indicatorrsilist";
     public static final String INDICATORRSIRESULT = "indicatorrsiresult";
+    public static final String INDICATORSTOCHRSIOBJECT = "indicatorstochrsiobject";
+    public static final String INDICATORSTOCHRSILIST = "indicatorstochrsilist";
+    public static final String INDICATORSTOCHRSIRESULT = "indicatorstochrsiresult";
+    public static final String INDICATORATROBJECT = "indicatoratrobject";
+    public static final String INDICATORATRILIST = "indicatoratrlist";
+    public static final String INDICATORATRRESULT = "indicatoratrresult";
+    public static final String INDICATORCCIOBJECT = "indicatorcciobject";
+    public static final String INDICATORRCCLIST = "indicatorccilist";
+    public static final String INDICATORCCIRESULT = "indicatorcciresult";
+    public static final String INDICATORSTOCHOBJECT = "indicatorstochobject";
+    public static final String INDICATORSTOCHLIST = "indicatorstochlist";
+    public static final String INDICATORSTOCHRESULT = "indicatorstochresult";
 
     public static final String INDICATORMACD = "indicatormacd";
     public static final String INDICATORRSI = "indicatorrsi";
@@ -51,6 +63,7 @@ public class PipelineConstants {
 
     public static final String MLINDICATOR = "mlindicator";
     public static final String MLMACD = "mlmacd";
+    public static final String MLRSI = "mlrsi";
     public static final String RECOMMENDERRSI = "recommenderrsi";
     public static final String AGGREGATORRECOMMENDERINDICATOR = "aggregatorrecommenderindicator";
     public static final String PREDICTORSLSTM = "predictorslstm";
