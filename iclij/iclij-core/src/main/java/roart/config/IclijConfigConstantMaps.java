@@ -158,10 +158,10 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.FINDPROFITMLINDICATOR, "Enable find profit mlindicator");
         text.put(IclijConfigConstants.FINDPROFITMLINDICATOREVOLUTIONCONFIG, "Find profit mlindicator evolution config");
         text.put(IclijConfigConstants.FINDPROFITMLINDICATORMLCONFIG, "Find profit mlindicator ml enabled");
-        text.put(IclijConfigConstants.FINDPROFITMLMACD, "Enable find profift mlmacd");
+        text.put(IclijConfigConstants.FINDPROFITMLMACD, "Enable find profit mlmacd");
         text.put(IclijConfigConstants.FINDPROFITMLMACDEVOLUTIONCONFIG, "Find profit mlmacd evolution config");
         text.put(IclijConfigConstants.FINDPROFITMLMACDMLCONFIG, "Find profit mlmacd ml enabled");
-        text.put(IclijConfigConstants.FINDPROFITMLRSI, "Enable find profift mlrsi");
+        text.put(IclijConfigConstants.FINDPROFITMLRSI, "Enable find profit mlrsi");
         text.put(IclijConfigConstants.FINDPROFITMLRSIEVOLUTIONCONFIG, "Find profit mlrsi evolution config");
         text.put(IclijConfigConstants.FINDPROFITMLRSIMLCONFIG, "Find profit mlrsi ml enabled");
         text.put(IclijConfigConstants.FINDPROFITRECOMMENDER, "Enable find profit evolution based");
