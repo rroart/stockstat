@@ -3,7 +3,7 @@
 #exec(open("./lib.py").read())
 
 import pandas as pd
-import tensorflow as tf
+#import tensorflow as tf
 import numpy as np
 import psycopg2
 import talib as ta
@@ -897,7 +897,7 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
         periodtexts = getperiodtexts(market)
         #print("days ", days, " " , tableintervaldays)
         dates = MyDates.getdates(listdates, start, end)
-        datedstocklists = getdatedstocklists(listdate, listdates, None, dates, tableintervaldays)
+        datedstocklists = getdatedstocklists(listdate, listdates, dates, None, tableintervaldays)
         days = dates.endindex - dates.startindex
         marketdatamap[market] = [ stocks, periodtexts, datedstocklists ]
     perioddatamap = {}
