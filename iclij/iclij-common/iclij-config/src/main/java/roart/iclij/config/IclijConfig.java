@@ -118,6 +118,10 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLMACD);
     }
 
+    public boolean wantsFindProfitMLRSI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLRSI);
+    }
+
     public boolean wantsFindProfitMLIndicator() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLINDICATOR);
     }
@@ -126,12 +130,20 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLMACDMLCONFIG);
     }
 
+    public String getFindProfitMLRSIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLRSIMLCONFIG);
+    }
+
     public String getFindProfitMLIndicatorMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLINDICATORMLCONFIG);
     }
 
     public String getFindProfitMLMACDEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLMACDEVOLUTIONCONFIG);
+    }
+
+    public String getFindProfitMLRSIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLRSIEVOLUTIONCONFIG);
     }
 
     public String getFindProfitMLIndicatorEvolutionConfig() {
@@ -166,6 +178,10 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLMACD);
     }
 
+    public boolean wantsImproveProfitMLRSI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLRSI);
+    }
+
     public boolean wantsImproveProfitMLIndicator() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLINDICATOR);
     }
@@ -174,12 +190,20 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLMACDMLCONFIG);
     }
 
+    public String getImproveProfitMLRSIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLRSIMLCONFIG);
+    }
+
     public String getImproveProfitMLIndicatorMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLINDICATORMLCONFIG);
     }
 
     public String getImproveProfitMLMACDEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLMACDEVOLUTIONCONFIG);
+    }
+
+    public String getImproveProfitMLRSIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLRSIEVOLUTIONCONFIG);
     }
 
     public String getImproveProfitMLIndicatorEvolutionConfig() {

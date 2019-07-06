@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregator.impl.MLIndicator;
 import roart.aggregator.impl.MLMACD;
+import roart.aggregator.impl.MLRSI;
 import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
@@ -142,6 +143,10 @@ public class NeuralNetChromosome extends AbstractChromosome {
             ObjectMapper mapper = new ObjectMapper();
             String value = mapper.writeValueAsString(nnConfigs);
             PipelineResultData pipelineData = null;
+            if (ml.equals(PipelineConstants.MLRSI)) {
+                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
+                pipelineData = new MLRSI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
+            } 
             if (ml.equals(PipelineConstants.MLMACD)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
                 pipelineData = new MLMACD(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);

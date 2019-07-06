@@ -38,6 +38,9 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.FINDPROFITMLMACD, Boolean.class);
         map.put(IclijConfigConstants.FINDPROFITMLMACDEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.FINDPROFITMLMACDMLCONFIG, String.class);
+        map.put(IclijConfigConstants.FINDPROFITMLRSI, Boolean.class);
+        map.put(IclijConfigConstants.FINDPROFITMLRSIEVOLUTIONCONFIG, String.class);
+        map.put(IclijConfigConstants.FINDPROFITMLRSIMLCONFIG, String.class);
         map.put(IclijConfigConstants.FINDPROFITRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.FINDPROFITPREDICTOR, Boolean.class);
         map.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, String.class);
@@ -50,6 +53,9 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.IMPROVEPROFITMLMACD, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLMACDEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLMACDMLCONFIG, String.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITMLRSI, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITMLRSIEVOLUTIONCONFIG, String.class);
+        map.put(IclijConfigConstants.IMPROVEPROFITMLRSIMLCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG, String.class);
@@ -96,6 +102,9 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.FINDPROFITMLMACD, Boolean.TRUE);
         deflt.put(IclijConfigConstants.FINDPROFITMLMACDEVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.FINDPROFITMLMACDMLCONFIG, MLCONFIG);
+        deflt.put(IclijConfigConstants.FINDPROFITMLRSI, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.FINDPROFITMLRSIEVOLUTIONCONFIG, null);
+        deflt.put(IclijConfigConstants.FINDPROFITMLRSIMLCONFIG, MLCONFIG);
         deflt.put(IclijConfigConstants.FINDPROFITRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.FINDPROFITPREDICTOR, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, null);
@@ -108,6 +117,9 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLMACD, Boolean.TRUE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLMACDEVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLMACDMLCONFIG, MLCONFIG);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITMLRSI, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITMLRSIEVOLUTIONCONFIG, null);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITMLRSIMLCONFIG, MLCONFIG);
         deflt.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG, null);
@@ -149,6 +161,9 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.FINDPROFITMLMACD, "Enable find profift mlmacd");
         text.put(IclijConfigConstants.FINDPROFITMLMACDEVOLUTIONCONFIG, "Find profit mlmacd evolution config");
         text.put(IclijConfigConstants.FINDPROFITMLMACDMLCONFIG, "Find profit mlmacd ml enabled");
+        text.put(IclijConfigConstants.FINDPROFITMLRSI, "Enable find profift mlrsi");
+        text.put(IclijConfigConstants.FINDPROFITMLRSIEVOLUTIONCONFIG, "Find profit mlrsi evolution config");
+        text.put(IclijConfigConstants.FINDPROFITMLRSIMLCONFIG, "Find profit mlrsi ml enabled");
         text.put(IclijConfigConstants.FINDPROFITRECOMMENDER, "Enable find profit evolution based");
         text.put(IclijConfigConstants.FINDPROFITPREDICTOR, "Enable find profit predictor");
         text.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, "Find profit predictor evolution config");
@@ -161,6 +176,9 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.IMPROVEPROFITMLMACD, "Enable improve profit mlmacd");
         text.put(IclijConfigConstants.IMPROVEPROFITMLMACDEVOLUTIONCONFIG, "Improve profit mlmacd evolution config");
         text.put(IclijConfigConstants.IMPROVEPROFITMLMACDMLCONFIG, "Improve profit mlmacd ml enabled");
+        text.put(IclijConfigConstants.IMPROVEPROFITMLRSI, "Enable improve profit mlrsi");
+        text.put(IclijConfigConstants.IMPROVEPROFITMLRSIEVOLUTIONCONFIG, "Improve profit mlrsi evolution config");
+        text.put(IclijConfigConstants.IMPROVEPROFITMLRSIMLCONFIG, "Improve profit mlrsi ml enabled");
         text.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, "Enable improve profit evolution based");
         text.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, "Enable improve profit predictor");
         text.put(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG, "Improve profit predictor evolution config");
@@ -209,6 +227,9 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.FINDPROFITMLMACD, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable find profit mlmacd"));
         mymap.put(IclijConfigConstants.FINDPROFITMLMACDEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Find profit mlmacd evolution config"));
         mymap.put(IclijConfigConstants.FINDPROFITMLMACDMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "Find profit mlmacd ml enable"));
+        mymap.put(IclijConfigConstants.FINDPROFITMLRSI, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable find profit mlrsi"));
+        mymap.put(IclijConfigConstants.FINDPROFITMLRSIEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Find profit mlrsi evolution config"));
+        mymap.put(IclijConfigConstants.FINDPROFITMLRSIMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "Find profit mlrsi ml enable"));
         mymap.put(IclijConfigConstants.FINDPROFITRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable find profit evolution based"));
         mymap.put(IclijConfigConstants.FINDPROFITPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit predictor"));
         mymap.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Find profit predictor evolution config"));
@@ -221,6 +242,9 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLMACD, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlmacd"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLMACDEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve profit mlmacd evolution config"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLMACDMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "Improve profit mlmacd enable"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITMLRSI, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlrsi"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITMLRSIEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve profit mlrsi evolution config"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITMLRSIMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "Improve profit mlrsi enable"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit evolution based"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit predictor"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve profit predictor evolution config"));

@@ -507,6 +507,14 @@ public class EvolutionService {
                 nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
             }
         }
+        if (ml.equals(PipelineConstants.MLRSI)) {
+            nnconfigString = conf.getMLRSIMLConfig();
+            if (nnconfigString != null) {
+                log.info("NNConfig {}", nnconfigString);
+                ObjectMapper mapper = new ObjectMapper();
+                nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
+            }
+        }
         if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
             nnconfigString = conf.getLSTMConfig();
             if (nnconfigString != null) {

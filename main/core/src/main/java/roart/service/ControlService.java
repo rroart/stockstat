@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import roart.aggregator.impl.AggregatorRecommenderIndicator;
 import roart.aggregator.impl.MLIndicator;
 import roart.aggregator.impl.MLMACD;
+import roart.aggregator.impl.MLRSI;
 import roart.aggregator.impl.RecommenderRSI;
 import roart.category.AbstractCategory;
 import roart.category.impl.CategoryIndex;
@@ -357,14 +358,16 @@ public class ControlService {
             String[] periodText,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat) throws Exception {
-        Aggregator[] aggregates = new Aggregator[4];
+        Aggregator[] aggregates = new Aggregator[5];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, catName, stocks, marketdatamap, periodDataMap, categories, datareaders, disableList);
         aggregates[1] = new RecommenderRSI(conf, catName, stocks, marketdatamap, periodDataMap, categories);
         aggregates[2] = new MLMACD(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
-        aggregates[3] = new MLIndicator(conf, catName, marketdatamap, periodDataMap, catName, cat, categories, datareaders);
+        aggregates[3] = new MLRSI(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
+        aggregates[4] = new MLIndicator(conf, catName, marketdatamap, periodDataMap, catName, cat, categories, datareaders);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSMACD));
+        log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSRSI));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORS));
         return aggregates;
     }
