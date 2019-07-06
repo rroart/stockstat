@@ -366,8 +366,9 @@ public class FindProfitAction extends Action {
     
     private void getPicksFiltered(WebData myData, ComponentData param, IclijConfig config, MarketTime marketTime, boolean evolve) {
         log.info("Getting picks for date {}", param.getInput().getEnddate());
+        Map<String, ComponentData> dataMap = new HashMap<>();
         try {
-            List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve);
+            List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve, dataMap);
             myData.memoryItems = newMemories;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -398,7 +399,7 @@ public class FindProfitAction extends Action {
         Map<String, String> nameMap = getNameMap(maps);
         inputdata.setNameMap(nameMap);
         
-        handleComponent(market, profitdata, listComponent, param, componentMap);
+        handleComponent(market, profitdata, listComponent, param, componentMap, dataMap);
                 
         filterBuys(param, market, profitdata, maps);
         if (param.getInput().isDoSave()) {
@@ -556,7 +557,7 @@ public class FindProfitAction extends Action {
         return nameMap;
     }
 
-    private void handleComponent(Market market, ProfitData profitdata, Map<String, List<Integer>> listComponent, ComponentData param, Map<String, Component> componentMap) {
+    private void handleComponent(Market market, ProfitData profitdata, Map<String, List<Integer>> listComponent, ComponentData param, Map<String, Component> componentMap, Map<String, ComponentData> dataMap) {
         for (Entry<String, List<Integer>> entry : listComponent.entrySet()) {
             List<Integer> positions = entry.getValue();
             String componentName = entry.getKey();
@@ -564,7 +565,8 @@ public class FindProfitAction extends Action {
             if (component == null) {
                 continue;
             }
-            //component.enableDisable(param, positions, param.getConfigValueMap());
+            param = dataMap.get(componentName);
+            component.enableDisable(param, positions, param.getConfigValueMap());
 
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
@@ -680,7 +682,7 @@ public class FindProfitAction extends Action {
         return s != null ? "" + s : "";
     }
 
-    public List<MemoryItem> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, MarketTime marketTime, boolean evolve) {
+    public List<MemoryItem> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, MarketTime marketTime, boolean evolve, Map<String, ComponentData> dataMap) {
         List<MemoryItem> allMemories = new ArrayList<>();
         Short startOffset = marketTime.market.getConfig().getStartoffset();
         if (startOffset != null) {
@@ -694,6 +696,7 @@ public class FindProfitAction extends Action {
             //Market market = FindProfitAction.findMarket(componentparam);
             ProfitData profitdata = new ProfitData();
             ComponentData componentData = component.handle(marketTime.market, param, profitdata, new ArrayList<>(), evolve, new HashMap<>());
+            dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;

@@ -221,7 +221,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             inputdata.setNameMap(new HashMap<>());
             List<Integer> positions = listComponent.get(componentName);
 
-            //component.enableDisable(componentData, positions, param.getConfigValueMap());
+            component.enableDisable(componentData, positions, param.getConfigValueMap());
 
             ComponentData componentData2 = component.handle(market, param, profitdata, positions, evolve, map);
             component.calculateIncDec(componentData2, profitdata, positions);
