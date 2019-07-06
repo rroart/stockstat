@@ -1,5 +1,6 @@
 package roart.indicator.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import roart.common.config.MyMyConfig;
@@ -28,6 +29,11 @@ public class IndicatorSTOCHRSI extends Indicator {
     @Override
     public boolean isEnabled() {
         return conf.isSTOCHRSIEnabled();
+    }
+
+    @Override
+    public boolean wantForExtras() {
+        return conf.wantAggregatorsIndicatorExtrasSTOCHRSI();        
     }
 
     @Override
@@ -83,6 +89,7 @@ public class IndicatorSTOCHRSI extends Indicator {
 
     @Override
     public Object[] getResultItemTitle() {
+        /*
     	int size = 2;
     	if (conf.isSTOCHRSIDeltaEnabled()) {
     		size += 2;
@@ -94,7 +101,24 @@ public class IndicatorSTOCHRSI extends Indicator {
     		objs[2] = Constants.DELTA + title;
             objs[3] = Constants.DELTA + title + "2";
     	}
+    	*/
+        Object[] objs = new Object[fieldSize];
+        objs[0] = title;
+        if (conf.isSTOCHRSIDeltaEnabled()) {
+            objs[1] = Constants.DELTA + title;
+        }
+        emptyField = new Double[fieldSize];
+
         return objs;
+    }
+
+    @Override
+    public Map<String, Object> getResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.INDICATORSTOCHRSIRESULT, calculatedMap);
+        map.put(PipelineConstants.INDICATORSTOCHRSILIST, listMap);
+        map.put(PipelineConstants.INDICATORSTOCHRSIOBJECT, objectMap);
+        return map;
     }
 
     @Override

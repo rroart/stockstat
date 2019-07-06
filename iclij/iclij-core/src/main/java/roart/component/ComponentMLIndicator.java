@@ -192,10 +192,29 @@ public class ComponentMLIndicator extends ComponentML {
         }
     }
 
+    private boolean anythingHere(Map<String, List<List<Double>>> listMap2, int size) {
+        for (List<List<Double>> array : listMap2.values()) {
+            if (size == 3 && size != array.get(0).size()) {
+                return false;
+            }
+            for (int i = 0; i < array.get(0).size(); i++) {
+                if (array.get(0).get(i) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
+        Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
+        boolean gotThree = anythingHere(listMap, 3);
+        if (gotThree) {
+            confList.addAll(getThreeConfList());
+        }
         ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy);
         loadme(param, chromosome, market, confList, buy);
         return improve(param, chromosome);
@@ -523,13 +542,22 @@ public class ComponentMLIndicator extends ComponentML {
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD);
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI);
+        list.add(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
+        list.add(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
+        list.add(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
+        return list;
+    }
+    
+    public List<String> getThreeConfList() {
+        List<String> list = new ArrayList<>();
+        list.add(ConfigConstants.AGGREGATORSINDICATORATR);
+        list.add(ConfigConstants.AGGREGATORSINDICATORCCI);
+        list.add(ConfigConstants.AGGREGATORSINDICATORSTOCH);
+        list.add(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI);
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASATR);
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI);
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH);
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI);
-        list.add(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
-        list.add(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
-        list.add(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
         return list;
     }
 }

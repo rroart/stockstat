@@ -25,16 +25,21 @@ public class IndicatorATR extends Indicator {
         }
     }
 
-	@Override
+    @Override
     public boolean isEnabled() {
         return conf.isATREnabled();
+    }
+
+    @Override
+    public boolean wantForExtras() {
+        return conf.wantAggregatorsIndicatorExtrasATR();        
     }
 
     @Override
     public String indicatorName() {
         return PipelineConstants.INDICATORATR;
     }
-    
+
     private int fieldSize() {
         int size = 1;
         if (conf.isATRDeltaEnabled()) {
@@ -43,7 +48,7 @@ public class IndicatorATR extends Indicator {
         emptyField = new Object[size];
         return size;
     }
-    
+
     @Override
     public Object calculate(double[][] array) {
         if (array.length != 180 && array.length > 0) {
@@ -71,7 +76,7 @@ public class IndicatorATR extends Indicator {
         TaUtil tu = new TaUtil();
         return tu.getWithOneAndDelta(conf.getATRDeltaDays(), objs, offset);
     }
-        
+
     @Override
     public int getResultSize() {
         return 2;        
@@ -90,7 +95,7 @@ public class IndicatorATR extends Indicator {
 
     @Override
     protected int getAnythingHereRange() {
-	return 3;
+        return 3;
     }
 
     @Override

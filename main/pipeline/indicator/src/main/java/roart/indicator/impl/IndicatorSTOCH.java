@@ -30,6 +30,11 @@ public class IndicatorSTOCH extends Indicator {
     }
 
     @Override
+    public boolean wantForExtras() {
+        return conf.wantAggregatorsIndicatorExtrasSTOCH();        
+    }
+
+    @Override
     public String indicatorName() {
         return PipelineConstants.INDICATORSTOCH;
     }

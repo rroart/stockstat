@@ -12,7 +12,7 @@ import roart.talib.util.TaUtil;
 
 public class IndicatorCCI extends Indicator {
 
-   public IndicatorCCI(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
+    public IndicatorCCI(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.key = title;
         fieldSize = fieldSize();
@@ -24,16 +24,21 @@ public class IndicatorCCI extends Indicator {
         }
     }
 
-	@Override
+    @Override
     public boolean isEnabled() {
         return conf.isCCIEnabled();
+    }
+
+    @Override
+    public boolean wantForExtras() {
+        return conf.wantAggregatorsIndicatorExtrasCCI();        
     }
 
     @Override
     public String indicatorName() {
         return PipelineConstants.INDICATORCCI;
     }
-    
+
     private int fieldSize() {
         int size = 1;
         if (conf.isCCIDeltaEnabled()) {
@@ -42,7 +47,7 @@ public class IndicatorCCI extends Indicator {
         emptyField = new Object[size];
         return size;
     }
-    
+
     @Override
     public Object calculate(double[][] array) {
         Ta tu = new TalibCCI();
@@ -67,7 +72,7 @@ public class IndicatorCCI extends Indicator {
         TaUtil tu = new TaUtil();
         return tu.getWithOneAndDelta(conf.getCCIDeltaDays(), objs, offset);
     }
-        
+
     @Override
     public int getResultSize() {
         return 2;        
@@ -86,7 +91,7 @@ public class IndicatorCCI extends Indicator {
 
     @Override
     protected int getAnythingHereRange() {
-	return 3;
+        return 3;
     }
 
     @Override

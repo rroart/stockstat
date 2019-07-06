@@ -646,7 +646,7 @@ public class MLIndicator extends Aggregator {
 
     @Override
     public boolean isEnabled() {
-        if (!conf.wantAggregatorsIndicatorMACD() && !conf.wantAggregatorsIndicatorRSI()) {
+        if (!conf.wantAggregatorsIndicatorMACD() && !conf.wantAggregatorsIndicatorRSI() && !conf.wantAggregatorsIndicatorATR() && !conf.wantAggregatorsIndicatorCCI() && !conf.wantAggregatorsIndicatorSTOCH() && !conf.wantAggregatorsIndicatorSTOCHRSI()) {
             return false;
         }
         return conf.wantAggregatorsIndicatorML();

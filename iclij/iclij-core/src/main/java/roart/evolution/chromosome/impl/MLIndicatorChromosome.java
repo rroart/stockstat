@@ -20,7 +20,7 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
 
     @Override
     public boolean validate() {
-        for (String key : getList()) {
+        for (String key : getValidateList()) {
             Object object = getMap().get(key);
             if (object != null && object instanceof Boolean) {
                 if ((boolean) object) {
@@ -34,24 +34,19 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
     @Override
     public void fixValidation() { 
         Random rand = new Random();
-        int index = rand.nextInt(getList().size());
-        getMap().put(getList().get(index), true);
+        int index = rand.nextInt(getValidateList().size());
+        getMap().put(getValidateList().get(index), true);
     }
 
-    public List<String> getList() {
+    private List<String> getValidateList() {
         List<String> list = new ArrayList<>();
         list.add(ConfigConstants.AGGREGATORSINDICATORMACD);
         list.add(ConfigConstants.AGGREGATORSINDICATORRSI);
-        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
-        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD);
-        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI);
-        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASATR);
-        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI);
-        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH);
-        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI);
-        list.add(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
-        list.add(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
-        list.add(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
+        list.add(ConfigConstants.AGGREGATORSINDICATORATR);
+        list.add(ConfigConstants.AGGREGATORSINDICATORCCI);
+        list.add(ConfigConstants.AGGREGATORSINDICATORSTOCH);
+        list.add(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI);
+        list.retainAll(confList);
         return list;
     }
 
