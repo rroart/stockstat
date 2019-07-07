@@ -95,7 +95,7 @@ public class MLMACDChromosome extends ConfigMapChromosome {
     @Override
     public Individual crossover(AbstractChromosome other) {
         ComponentData newparam = new ComponentData(param);
-        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
+        MLMACDChromosome chromosome = new MLMACDChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
         Random rand = new Random();
         for (int conf = 0; conf < confList.size(); conf++) {
             String confName = confList.get(conf);
