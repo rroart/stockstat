@@ -712,6 +712,9 @@ public class ServiceUtil {
         if (config.wantsFindProfitMLMACD()) {
             components.add(PipelineConstants.MLMACD);
         }
+        if (config.wantsFindProfitMLRSI()) {
+            components.add(PipelineConstants.MLRSI);
+        }
         if (config.wantsFindProfitMLIndicator()) {
             components.add(PipelineConstants.MLINDICATOR);
         }
