@@ -229,6 +229,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSINODE, String.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXSTOCHRSISELLWEIGHTSTOCHRSIDELTANODE, String.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, String.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORMACD, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORATR, Boolean.class);
@@ -257,6 +258,16 @@ public class ConfigConstantMaps {
 	map.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, Double.class);
 	map.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, Integer.class);
 	map.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTI, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, String.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTIMACD, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTIRSI, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTIATR, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTICCI, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, Boolean.class);
     }
 
     public static Map<String, Object> deflt = new HashMap();
@@ -489,6 +500,15 @@ public class ConfigConstantMaps {
 	deflt.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, 0.8);
 	deflt.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, 25);
 	deflt.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, 10);
+        deflt.put(ConfigConstants.AGGREGATORSMLMULTI, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT, 25);
+        deflt.put(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT, 10);
+        deflt.put(ConfigConstants.AGGREGATORSMLMULTIMACD, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSMLMULTIRSI, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSMLMULTIATR, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSMLMULTICCI, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, Boolean.FALSE);
     }
 
     //private final static String json = "{\"_class\": \"roart.calculate.CalcMACDNode\", \"className\":\"CalcMacdNode\",\"minMutateThresholdRange\":-5.0,\"maxMutateThresholdRange\":5.0,\"threshold\":-2.476814906438654,\"useminmaxthreshold\":true,\"usethreshold\":false,\"divideminmaxthreshold\":true,\"weight\":31.0,\"changeSignWhole\":false,\"useMax\":false}";
@@ -726,7 +746,15 @@ public class ConfigConstantMaps {
 	text.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, "RSI aggregator sell STOCHRSILIMIT");
 	text.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, "Days before limit");
 	text.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, "Days after limit");
-
+        text.put(ConfigConstants.AGGREGATORSMLMULTI, "ML mlmulti enable");
+        text.put(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT, "ML mlmulti days before limit");
+        text.put(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT, "ML mlmulti days after limit");
+        text.put(ConfigConstants.AGGREGATORSMLMULTIMACD, "ML mlmulti MACD enable");
+        text.put(ConfigConstants.AGGREGATORSMLMULTIRSI, "ML mlmulti RSI enable");
+        text.put(ConfigConstants.AGGREGATORSMLMULTIATR, "ML mlmulti ATR enable");
+        text.put(ConfigConstants.AGGREGATORSMLMULTICCI, "ML mlmulti CCI enable");
+        text.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, "ML mlmulti STOCH enable");
+        text.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, "ML mlmulti STOCHRSI enable");
     }
 
     public static Map<String, Double[]> range = new HashMap();
@@ -747,6 +775,8 @@ public class ConfigConstantMaps {
 	range.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, new Double[] { 0.0, 1.0 } );
 	range.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, new Double[] { 1.0, 50.0 } );
 	range.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, new Double[] { 1.0, 20.0 } );
+	range.put(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT, new Double[] { 1.0, 50.0 } );
+	range.put(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT, new Double[] { 1.0, 20.0 } );
 
 /*
         range.put(ConfigConstants.PREDICTORSLSTMEPOCHS, new Double[] { 1.0, 10.0 } );
@@ -947,6 +977,16 @@ public class ConfigConstantMaps {
 	mymap.put(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT, new XMLType( Double.class, 0.8, "RSI aggregator sell STOCHRSILIMIT", new Double[] { 0.0, 1.0 }));
 	mymap.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, new XMLType( Integer.class, 25, "Days before limit", new Double[] { 1.0, 50.0 }));
 	mymap.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, new XMLType( Integer.class, 10, "Days after limit", new Double[] { 1.0, 20.0 }));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTI, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti enable"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT, new XMLType( Integer.class, 25, "ML mlmulti days before limit"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT, new XMLType( Integer.class, 10, "ML mlmulti days after limit"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, new XMLType(null, null, null));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTIMACD, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti MACD enable"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTIRSI, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti RSI enable"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTIATR, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti ATR enable"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTICCI, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti CCI enable"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti STOCH enable"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti STOCHRSI enable"));
     }
 
 }

@@ -215,4 +215,14 @@ public class ConfigConstants {
     public static final String AGGREGATORSMLRSISELLSRSILIMIT = "aggregators.mlrsi.sell.srsilimit";
     public static final String AGGREGATORSMLRSIDAYSBEFORELIMIT = "aggregators.mlrsi.daysbeforelimit";
     public static final String AGGREGATORSMLRSIDAYSAFTERLIMIT = "aggregators.mlrsi.daysafterlimit";
+    public static final String AGGREGATORSMLMULTI = "aggregators.mlmulti[@enable]";
+    public static final String AGGREGATORSMLMULTIDAYSBEFORELIMIT = "aggregators.mlmulti.daysbeforelimit";
+    public static final String AGGREGATORSMLMULTIDAYSAFTERLIMIT = "aggregators.mlmulti.daysafterlimit";
+    public static final String AGGREGATORSMLMULTIMLCONFIG = "aggregators.mlmulti.mlconfig";
+    public static final String AGGREGATORSMLMULTIMACD = "aggregators.mlmulti.macd[@enable]";
+    public static final String AGGREGATORSMLMULTIRSI = "aggregators.mlmulti.rsi[@enable]";
+    public static final String AGGREGATORSMLMULTIATR = "aggregators.mlmulti.atr[@enable]";
+    public static final String AGGREGATORSMLMULTICCI = "aggregators.mlmulti.cci[@enable]";
+    public static final String AGGREGATORSMLMULTISTOCH = "aggregators.mlmulti.stoch[@enable]";
+    public static final String AGGREGATORSMLMULTISTOCHRSI = "aggregators.mlmulti.stochrsi[@enable]";
 }

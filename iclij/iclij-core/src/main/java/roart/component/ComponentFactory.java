@@ -20,6 +20,8 @@ public class ComponentFactory {
             return new ComponentMLMACD();
         case PipelineConstants.MLRSI:
             return new ComponentMLRSI();
+        case PipelineConstants.MLMULTI:
+            return new ComponentMLMulti();
         case PipelineConstants.MLINDICATOR:
             return new ComponentMLIndicator();
         default:

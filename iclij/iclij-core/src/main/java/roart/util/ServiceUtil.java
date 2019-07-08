@@ -715,6 +715,9 @@ public class ServiceUtil {
         if (config.wantsFindProfitMLRSI()) {
             components.add(PipelineConstants.MLRSI);
         }
+        if (config.wantsFindProfitMLMulti()) {
+            components.add(PipelineConstants.MLMULTI);
+        }
         if (config.wantsFindProfitMLIndicator()) {
             components.add(PipelineConstants.MLINDICATOR);
         }
@@ -806,7 +809,10 @@ public class ServiceUtil {
         if (config.wantsImproveProfitMLRSI()) {
             components.add(PipelineConstants.MLRSI);
         }
-        if (config.wantsImproveProfitMLIndicator()) {
+        if (config.wantsImproveProfitMLMulti()) {
+            components.add(PipelineConstants.MLMULTI);
+        }
+       if (config.wantsImproveProfitMLIndicator()) {
             components.add(PipelineConstants.MLINDICATOR);
         }
         return components;

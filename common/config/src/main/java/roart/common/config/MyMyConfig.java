@@ -833,6 +833,54 @@ public class MyMyConfig extends MyConfig {
         return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
     }
 
+    public boolean wantAggregatorsMlmultiML() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTI) &&
+                wantAggregators() &&
+                wantML ();
+    }
+
+    public String getAggregatorsMLMlmultiMLConfig() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG);
+    }
+
+    public int getMLMultiDaysBeforeLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT);
+    }
+
+    public int getMLMultiDaysAfterLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT);
+    }
+
+    public boolean wantAggregatorsMlmultiMACD() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTIMACD)
+                && wantAggregatorsMlmultiML();
+    }
+
+    public boolean wantAggregatorsMlmultiRSI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTIRSI)
+                && wantAggregatorsMlmultiML();
+    }
+
+    public boolean wantAggregatorsMlmultiATR() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTIATR)
+                && wantAggregatorsMlmultiML();
+    }
+
+    public boolean wantAggregatorsMlmultiCCI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTICCI)
+                && wantAggregatorsMlmultiML();
+    }
+
+    public boolean wantAggregatorsMlmultiSTOCH() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTISTOCH)
+                && wantAggregatorsMlmultiML();
+    }
+
+    public boolean wantAggregatorsMlmultiSTOCHRSI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI)
+                && wantAggregatorsMlmultiML();
+    }
+
     public String getTensorflowServer() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER);              
     }

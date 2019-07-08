@@ -19,6 +19,9 @@ public class IclijConfigConstants {
     public static final String FINDPROFITMLRSI = "findprofit.mlrsi";
     public static final String FINDPROFITMLRSIEVOLUTIONCONFIG = "findprofit.mlrsi.evolutionconfig";
     public static final String FINDPROFITMLRSIMLCONFIG = "findprofit.mlrsi.mlconfig";
+    public static final String FINDPROFITMLMULTI = "findprofit.mlmulti";
+    public static final String FINDPROFITMLMULTIEVOLUTIONCONFIG = "findprofit.mlmulti.evolutionconfig";
+    public static final String FINDPROFITMLMULTIMLCONFIG = "findprofit.mlmulti.mlconfig";
     public static final String FINDPROFITMLINDICATOR = "findprofit.mlindicator";
     public static final String FINDPROFITMLINDICATOREVOLUTIONCONFIG = "findprofit.mlindicator.evolutionconfig";
     public static final String FINDPROFITMLINDICATORMLCONFIG = "findprofit.mlindicator.mlconfig";
@@ -34,6 +37,9 @@ public class IclijConfigConstants {
     public static final String IMPROVEPROFITMLRSI = "improveprofit.mlrsi";
     public static final String IMPROVEPROFITMLRSIEVOLUTIONCONFIG = "improveprofit.mlrsi.evolutionconfig";
     public static final String IMPROVEPROFITMLRSIMLCONFIG = "improveprofit.mlrsi.mlconfig";
+    public static final String IMPROVEPROFITMLMULTI = "improveprofit.mlmulti";
+    public static final String IMPROVEPROFITMLMULTIEVOLUTIONCONFIG = "improveprofit.mlmulti.evolutionconfig";
+    public static final String IMPROVEPROFITMLMULTIMLCONFIG = "improveprofit.mlmulti.mlconfig";
     public static final String IMPROVEPROFITMLINDICATOR = "improveprofit.mlindicator";
     public static final String IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG = "improveprofit.mlindicator.evolutionconfig";
     public static final String IMPROVEPROFITMLINDICATORMLCONFIG = "improveprofit.mlindicator.mlconfig";
