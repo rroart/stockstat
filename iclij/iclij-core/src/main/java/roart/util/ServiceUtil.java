@@ -800,6 +800,9 @@ public class ServiceUtil {
         if (config.wantsImproveProfitMLMACD()) {
             components.add(PipelineConstants.MLMACD);
         }
+        if (config.wantsImproveProfitMLRSI()) {
+            components.add(PipelineConstants.MLRSI);
+        }
         if (config.wantsImproveProfitMLIndicator()) {
             components.add(PipelineConstants.MLINDICATOR);
         }
