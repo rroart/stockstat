@@ -441,14 +441,17 @@ public class MLIndicator extends Aggregator {
 
     private void getMergedLists(AbstractCategory cat, Set<String> ids, List<AbstractIndicator> indicators) {
         Map<String, Object[]> result = new HashMap<>();
+        Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
         for (String id : ids) {
             Object[] arrayResult = new Object[0];
             for (AbstractIndicator indicator : indicators) {
                 String indicatorName = indicator.indicatorName();
-                // fix
-                Map<String, Double[][]> aListMap = (Map<String, Double[][]>) cat.getIndicatorLocalResultMap().get(indicatorName).get(PipelineConstants.LIST);
-                Double[][] aResult = aListMap.get(id);
-                arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
+                Map<String, Object> indicatorResult = localResultMap.get(indicatorName);
+                if (indicatorResult != null) {
+                    Map<String, Double[][]> aListMap = (Map<String, Double[][]>) indicatorResult.get(PipelineConstants.LIST);
+                    Double[][] aResult = aListMap.get(id);
+                    arrayResult = ArrayUtils.addAll(arrayResult, aResult[0]);
+                }
             }
             result.put(id, arrayResult);
         }
@@ -519,6 +522,7 @@ public class MLIndicator extends Aggregator {
             Map<String, AbstractIndicator> newIndicatorMap, Map<String, AbstractIndicator> usedIndicatorMap,
             Map<String, List<AggregatorMLIndicator>> usedIndicators, Set<String> ids) throws Exception {
         Map<String, AbstractIndicator> indicatorMap = new HashMap<>();
+        Map<String, Map<String, Object>> localResultMap = cat.getIndicatorLocalResultMap();
         for (Entry<String, List<AggregatorMLIndicator>> entry : usedIndicators.entrySet()) {
             List<AggregatorMLIndicator> list = entry.getValue();
             for (AggregatorMLIndicator ind : list) {
@@ -526,9 +530,11 @@ public class MLIndicator extends Aggregator {
                 if (indicator != null) {
                     indicatorMap.put(indicator, ind.getIndicator(marketdatamap, category, newIndicatorMap, usedIndicatorMap, datareaders));
                 }
-                // fix
-                Map<String, Object[]> aResult = (Map<String, Object[]>) cat.getIndicatorLocalResultMap().get(indicator).get(PipelineConstants.LIST);
-                ids.retainAll(aResult.keySet());
+                Map<String, Object> indicatorResult = localResultMap.get(indicator);
+                if (indicatorResult != null) {
+                    Map<String, Object[]> aResult = (Map<String, Object[]>) indicatorResult.get(PipelineConstants.LIST);
+                    ids.retainAll(aResult.keySet());
+                }
             }
         }
         return new ArrayList<>(indicatorMap.values());
