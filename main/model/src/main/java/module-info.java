@@ -13,4 +13,5 @@ module model {
     requires commons.math3;
     requires slf4j.api;
     requires common.config;
+    requires org.apache.commons.lang3;
 }

@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.commons.math3.util.Pair;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import roart.component.model.ComponentInput;
 import roart.config.IclijXMLConfig;
@@ -247,7 +249,7 @@ public class RelationUtil {
 
     private void mapPutter(List<IncDecItem> list, Map<Pair<String, String>, IncDecItem> map) {
         for (IncDecItem item : list) {
-            Pair<String, String> pair = new Pair(item.getMarket(), item.getId());
+            Pair<String, String> pair = new ImmutablePair(item.getMarket(), item.getId());
             map.put(pair, item);
         }
     }

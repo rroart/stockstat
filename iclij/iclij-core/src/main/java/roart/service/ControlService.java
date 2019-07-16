@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +142,7 @@ public class ControlService {
     public List getContentGraph(Set<Pair<String, String>> ids) {
     	Set<String> idset = new HashSet<>();
     	for (Pair pair : ids) {
-    		idset.add(pair.getFirst() + "," + pair.getSecond());
+    		idset.add(pair.getLeft() + "," + pair.getRight());
     	}
     	ServiceParam param = new ServiceParam();
         param.setConfig(conf);

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
@@ -42,13 +42,13 @@ public class Indicator extends AbstractIndicator {
         Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
         Map<String, Map<String, double[][]>> marketListMap = new HashMap<>();
         for(Pair<String, String> pair : pairMap.keySet()) {
-            String market = pair.getFirst();
+            String market = pair.getLeft();
             Map<String, double[][]> aListMap = marketListMap.get(market);
             if (aListMap == null) {
                 aListMap = new HashMap<>();
                 marketListMap.put(market, aListMap);
             }
-            String id = pair.getSecond();
+            String id = pair.getRight();
             double[][] truncList = pairTruncListMap.get(pair);
             if (truncList != null) {
                 aListMap.put(id, truncList);

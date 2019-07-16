@@ -14,4 +14,5 @@ module mldao {
     requires ml.tensorflow;
     requires pipeline.model;
     requires slf4j.api;
+    requires org.apache.commons.lang3;
 }

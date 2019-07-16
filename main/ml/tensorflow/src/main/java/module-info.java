@@ -14,4 +14,5 @@ module ml.tensorflow {
     requires slf4j.api;
     requires ml.common;
     requires pipeline.model;
+    requires org.apache.commons.lang3;
 }

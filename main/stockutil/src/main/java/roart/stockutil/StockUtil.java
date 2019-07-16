@@ -13,7 +13,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -394,6 +395,9 @@ public class StockUtil {
      */
 
     public static boolean hasStockValue(List<StockItem> stocks, int i) throws Exception {
+        if (stocks == null) {
+            int jj = 0;
+        }
         for (StockItem s : stocks) {
             if (StockDao.getValue(s, i)[0] != null) {
                 return true;
@@ -646,9 +650,9 @@ public class StockUtil {
 
     public static Integer getPeriodByMarket(String market, Set<Pair<String, Integer>> pairs) {
         for (Pair<String, Integer> pair : pairs) {
-            String tmpMarket = pair.getFirst();
+            String tmpMarket = pair.getLeft();
             if (market.equals(tmpMarket)) {
-                return pair.getSecond();
+                return pair.getRight();
             }
         }
         return null;
@@ -687,7 +691,7 @@ public class StockUtil {
                 }
                 for (int i = 0; i < list.size(); i++) {
                     StockItem stock = list.get(i);
-                    Pair<String, String> pair = new Pair(market, stock.getId());
+                    Pair<String, String> pair = new ImmutablePair(market, stock.getId());
                     if (ids.contains(pair)) {
                         try {
                             Double value = StockDao.getMainValue(stock, period);
@@ -775,7 +779,7 @@ public class StockUtil {
                 }
                 for (int i = 0; i < list.size(); i++) {
                     StockItem stock = list.get(i);
-                    Pair<String, String> pair = new Pair(entry.getKey(), stock.getId());
+                    Pair<String, String> pair = new ImmutablePair(entry.getKey(), stock.getId());
                     if (ids.contains(pair)) {
                         try {
                             Double value = StockDao.getMainSpecial(stock, type);
@@ -792,7 +796,7 @@ public class StockUtil {
                                     set = new HashSet<>();
                                     map.put(stockName, set);
                                 }
-                                set.add(new Pair(value, -j));
+                                set.add(new ImmutablePair(value, -j));
                             }
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
@@ -827,8 +831,8 @@ public class StockUtil {
         for (Integer numOrder : numList) {
             Set<Pair<Double, String>> newSet = newMap.get(numOrder);
             for (Pair<Double, String> newPair : newSet) {
-                Double value = newPair.getFirst();
-                String stockName = newPair.getSecond();
+                Double value = newPair.getLeft();
+                String stockName = newPair.getRight();
                 dataseteq.addValue(value, stockName , numOrder);
             }
         }
@@ -850,10 +854,10 @@ public class StockUtil {
             Double max = maxMap.get(stockName);
             Set<Pair<Double, Integer>> set = entry.getValue();
             for (Pair<Double, Integer> pair : set) {
-                double value = (double) pair.getFirst();
+                double value = (double) pair.getLeft();
                 value = value * 100 / max;
-                Pair<Double, String> newPair = new Pair(value, stockName);
-                Integer numOrder = pair.getSecond();
+                Pair<Double, String> newPair = new ImmutablePair(value, stockName);
+                Integer numOrder = pair.getRight();
                 Set<Pair<Double, String>> newSet = newMap.computeIfAbsent(numOrder, k -> new HashSet<>());
                 newSet.add(newPair);
             }
@@ -877,7 +881,7 @@ public class StockUtil {
             Set<Double> valueSet = new HashSet<>();
             Set<Pair<Double, Integer>> set = entry.getValue();
             for (Pair<Double, Integer> pair : set) {
-                valueSet.add((Double) pair.getFirst());
+                valueSet.add((Double) pair.getLeft());
             }
             Double min = Collections.min(valueSet);
             Double max = Collections.max(valueSet);

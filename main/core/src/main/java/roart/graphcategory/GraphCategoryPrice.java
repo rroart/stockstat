@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -70,7 +72,7 @@ public class GraphCategoryPrice extends GraphCategory {
                 DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.PRICECOLUMN, conf.isGraphEqualize(), dataseteq);
                 if (conf.wantPredictorLSTM()){
                     Pair<String, String> pair2 = ids.iterator().next();
-                    String market = pair2.getFirst();
+                    String market = pair2.getLeft();
                     MarketData marketdata = marketdatamap.get(market);
                     List<StockItem>[] datedstocklists = marketdata.datedstocklists;
                     List<Double> endlist = new ArrayList<>();
@@ -81,7 +83,7 @@ public class GraphCategoryPrice extends GraphCategory {
                         }
                         for (int i = 0; i < list.size(); i++) {
                             StockItem stock = list.get(i);
-                            Pair<String, String> pair = new Pair(market, stock.getId());
+                            Pair<String, String> pair = new ImmutablePair(market, stock.getId());
                             if (ids.contains(pair)) {
                                 try {
                                     Double value = StockDao.getMainSpecial(stock, Constants.PRICECOLUMN);

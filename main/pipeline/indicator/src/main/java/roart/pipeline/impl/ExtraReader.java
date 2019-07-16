@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -64,14 +65,14 @@ public class ExtraReader extends Pipeline {
                 continue;
             }
             System.out.println("mi"+mi+" " + mi.toString());
-            Pair<String, String> pair = new Pair(mi.get("market"), mi.get("id"));
+            Pair<String, String> pair = new ImmutablePair(mi.get("market"), mi.get("id"));
             String cat = (String) mi.get("category");
             pairs.add(pair);
             pairCatMap.put(pair, cat);
         }
 
         for (Pair<String, String> pair : pairs) {
-            String market = pair.getFirst();
+            String market = pair.getLeft();
             List<StockItem> stocks = null;
             try {
                 stocks = DbDao.getAll(market, conf);
@@ -84,7 +85,7 @@ public class ExtraReader extends Pipeline {
             }
             List<StockItem> stocksId = new ArrayList<>();
             for (StockItem stock : stocks) {
-                String id = pair.getSecond();
+                String id = pair.getRight();
                 if (stock.getId().equals(id)) {
                     stocksId.add(stock);
                 }

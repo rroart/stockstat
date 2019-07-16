@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -419,7 +419,7 @@ public class IndicatorUtils {
             Map<Pair<String, String>, String> pairCatMap, Pipeline[] datareaders) throws Exception {
         Set<String> indicatorSet = new HashSet<>();
         for (Entry<Pair<String, String>, String> pairEntry : pairCatMap.entrySet()) {
-            String market = pairEntry.getKey().getFirst();
+            String market = pairEntry.getKey().getLeft();
             String cat = pairEntry.getValue();
             if (market.equals(conf.getMarket())) {
                 for (AbstractCategory category : categories) {
@@ -516,7 +516,7 @@ public class IndicatorUtils {
         }
         Set<Pair<String, Integer>> pairs = periodData.pairs;
         for (Pair<String, Integer> pair : pairs) {
-            int cat = (int) pair.getSecond();
+            int cat = (int) pair.getRight();
             if (StockUtil.hasStockValue(stocks, cat)) {
                 return cat;
             }

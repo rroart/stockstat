@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import roart.category.AbstractCategory;
 import roart.category.impl.CategoryIndex;
@@ -102,7 +103,7 @@ public class ServiceUtil {
     public Set<String> getMarkets(Set<Pair<String, String>> ids) {
         Set<String> markets = new HashSet<>();
         for (Pair<String, String> idpair : ids) {
-            markets.add((String) idpair.getFirst());
+            markets.add((String) idpair.getLeft());
         }
         return markets;
     }
@@ -125,15 +126,15 @@ public class ServiceUtil {
             String[] periodText = marketdatamap.get(market).periodtext;
             for (int i = 0; i < Constants.PERIODS; i++) {
                 String text = periodText[i];
-                Pair<String, Integer> pair = new Pair<String, Integer>(market, i);
+                Pair<String, Integer> pair = new ImmutablePair<String, Integer>(market, i);
                 addPairToPeriodDataMap(periodDataMap, text, pair);
             }
             if (true) {
-                Pair<String, Integer> pair = new Pair<String, Integer>(market, Constants.PRICECOLUMN);
+                Pair<String, Integer> pair = new ImmutablePair<String, Integer>(market, Constants.PRICECOLUMN);
                 addPairToPeriodDataMap(periodDataMap, Constants.PRICE, pair);                
             }
             if (true) {
-                Pair<String, Integer> pair = new Pair<String, Integer>(market, Constants.INDEXVALUECOLUMN);
+                Pair<String, Integer> pair = new ImmutablePair<String, Integer>(market, Constants.INDEXVALUECOLUMN);
                 addPairToPeriodDataMap(periodDataMap, Constants.INDEX, pair);                
             }
         }

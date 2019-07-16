@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.ta4j.core.TimeSeries;
 import org.ta4j.core.indicators.StochasticRSIIndicator;
@@ -36,6 +36,9 @@ public class Ta4jSTOCHRSI extends Ta4j {
         double[] rsi3 = new double[values.length];
         for (int j = 0; j < values.length; j++) {
             rsi3[j] = i.getValue(j).doubleValue();
+            if (Double.isNaN(rsi3[j])) {
+                int jj = 0;
+            }
         }
         objs[0] = rsi3;
         //objs[1] = rsi3;

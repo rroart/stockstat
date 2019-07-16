@@ -3,7 +3,8 @@ package roart.aggregatorindicator.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
@@ -18,16 +19,16 @@ public class ATRRecommendComplex extends RecommendATR {
     @Override
     public  List<Pair<String, String>> getBuyList() {
         List<Pair<String, String>> buyList = new ArrayList<>();
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRBUYWEIGHTATRNODE, ConfigConstants.INDICATORSATR));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRBUYWEIGHTATRDELTANODE, ConfigConstants.INDICATORSATRDELTA));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRBUYWEIGHTATRNODE, ConfigConstants.INDICATORSATR));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRBUYWEIGHTATRDELTANODE, ConfigConstants.INDICATORSATRDELTA));
         return buyList;
     }
 
     @Override
     public  List<Pair<String, String>> getSellList() {
         List<Pair<String, String>> sellList = new ArrayList<>();
-        sellList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRSELLWEIGHTATRNODE, ConfigConstants.INDICATORSATR));
-        sellList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRSELLWEIGHTATRDELTANODE, ConfigConstants.INDICATORSATRDELTA));
+        sellList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRSELLWEIGHTATRNODE, ConfigConstants.INDICATORSATR));
+        sellList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXATRSELLWEIGHTATRDELTANODE, ConfigConstants.INDICATORSATRDELTA));
         return sellList;
     }
 

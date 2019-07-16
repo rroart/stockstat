@@ -10,7 +10,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,7 +210,7 @@ public abstract class AbstractIndicator extends Calculatable {
     public Object[] getResultItem(StockItem stock) {
         String market = conf.getMarket();
         String id = stock.getId();
-        Pair<String, String> pair = new Pair<>(market, id);
+        Pair<String, String> pair = new ImmutablePair<>(market, id);
         Set<Pair<String, String>> ids = new HashSet<>();
         ids.add(pair);
         if (resultMap == null) {

@@ -14,4 +14,5 @@ module ml.common {
     requires pipeline.model;
     requires slf4j.api;
     requires com.fasterxml.jackson.databind;
+    requires org.apache.commons.lang3;
 }

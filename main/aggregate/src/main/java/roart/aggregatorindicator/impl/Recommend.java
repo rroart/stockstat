@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,16 +67,16 @@ public abstract class Recommend extends AggregatorIndicator {
                 if (objMap != null) { 
                     List<Pair<String, String>> aBuyList = recommend.getBuyList();
                     for (Pair<String, String> pair : aBuyList) {
-                        String key = pair.getFirst();
-                        String cnf = pair.getSecond();
+                        String key = pair.getLeft();
+                        String cnf = pair.getRight();
                         if ((boolean) conf.getValueOrDefault(cnf)) {
                             buyList.add(key);
                         }
                     }
                     List<Pair<String, String>> aSellList = recommend.getSellList();
                     for (Pair<String, String> pair : aSellList) {
-                        String key = pair.getFirst();
-                        String cnf = pair.getSecond();
+                        String key = pair.getLeft();
+                        String cnf = pair.getRight();
                         if ((boolean) conf.getValueOrDefault(cnf)) {
                             sellList.add(key);
                         }

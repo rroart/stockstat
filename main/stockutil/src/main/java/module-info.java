@@ -17,4 +17,5 @@ module stockutil {
     requires jfreechart;
     requires model;
     requires slf4j.api;
+    requires org.apache.commons.lang3;
 }

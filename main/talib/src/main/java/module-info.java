@@ -20,4 +20,5 @@ module talib {
     requires model;
     requires stockutil;
     requires ta4j.core;
+    requires org.apache.commons.lang3;
 }

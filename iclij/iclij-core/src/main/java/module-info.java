@@ -44,6 +44,7 @@ module iclij.core {
     requires evolution.gene;
     requires evolution.algorithm;
     requires evolution.config;
+    requires org.apache.commons.lang3;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

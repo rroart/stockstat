@@ -17,7 +17,9 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.RecommendConstants;
 import roart.model.StockItem;
 import roart.stockutil.StockDao;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 public class MACDRecommendComplex extends RecommendMACD {
     
     public MACDRecommendComplex(MyMyConfig conf) {
@@ -27,24 +29,24 @@ public class MACDRecommendComplex extends RecommendMACD {
     @Override
     public List<Pair<String, String>> getBuyList() {
         List<Pair<String, String>> buyList = new ArrayList<>();
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMNODE, ConfigConstants.INDICATORSMACD));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMDELTANODE, ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTMACDNODE, ConfigConstants.INDICATORSMACD));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTMACDDELTANODE, ConfigConstants.INDICATORSMACDMACDMACDDELTA));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALNODE, ConfigConstants.INDICATORSMACD));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALDELTANODE, ConfigConstants.INDICATORSMACDMACDSIGNALDELTA));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTHISTOGRAMDELTANODE, ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTMACDNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTMACDDELTANODE, ConfigConstants.INDICATORSMACDMACDMACDDELTA));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDBUYWEIGHTSIGNALDELTANODE, ConfigConstants.INDICATORSMACDMACDSIGNALDELTA));
         return buyList;
     }
 
     @Override
     public List<Pair<String, String>> getSellList() {
         List<Pair<String, String>> buyList = new ArrayList<>();
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMNODE, ConfigConstants.INDICATORSMACD));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMDELTANODE, ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTMACDNODE, ConfigConstants.INDICATORSMACD));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTMACDDELTANODE, ConfigConstants.INDICATORSMACDMACDMACDDELTA));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALNODE, ConfigConstants.INDICATORSMACD));
-        buyList.add(new Pair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALDELTANODE, ConfigConstants.INDICATORSMACDMACDSIGNALDELTA));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTHISTOGRAMDELTANODE, ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTMACDNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTMACDDELTANODE, ConfigConstants.INDICATORSMACDMACDMACDDELTA));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALNODE, ConfigConstants.INDICATORSMACD));
+        buyList.add(new ImmutablePair(ConfigConstants.AGGREGATORSINDICATORRECOMMENDERCOMPLEXMACDSELLWEIGHTSIGNALDELTANODE, ConfigConstants.INDICATORSMACDMACDSIGNALDELTA));
         return buyList;
     }
 

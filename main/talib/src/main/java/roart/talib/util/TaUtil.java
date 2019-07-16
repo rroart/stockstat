@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ public class TaUtil {
             int period = periodInt;
             grr:  for (int i = 0; i < list.size(); i++) {
                 StockItem stock = list.get(i);
-                Pair<String, String> pair = new Pair(market, stock.getId());
+                Pair<String, String> pair = new ImmutablePair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
                         Double value = StockDao.getMainValue(stock, period);
@@ -93,7 +94,7 @@ public class TaUtil {
             grr:  for (int i = 0; i < list.size(); i++) {
                 StockItem stock = list.get(i);
                 //System.out.print(" " + stock.getId());
-                Pair<String, String> pair = new Pair(market, stock.getId());
+                Pair<String, String> pair = new ImmutablePair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
                         Double[] allValues = StockDao.getValue(stock, period);
@@ -170,7 +171,7 @@ public class TaUtil {
             int period = periodInt;
             for (int i = 0; i < list.size(); i++) {
                 StockItem stock = list.get(i);
-                Pair<String, String> pair = new Pair(market, stock.getId());
+                Pair<String, String> pair = new ImmutablePair(market, stock.getId());
                 if (ids.contains(pair)) {
                     try {
                         Double value = StockDao.getMainPeriod(stock, period);

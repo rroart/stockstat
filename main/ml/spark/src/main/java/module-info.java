@@ -18,4 +18,5 @@ module ml.spark {
     requires ml.common;
     requires pipeline.model;
     requires com.fasterxml.jackson.databind;
+    requires org.apache.commons.lang3;
 }

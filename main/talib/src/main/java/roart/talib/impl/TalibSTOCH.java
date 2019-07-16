@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.tictactec.ta.lib.Core;
@@ -30,7 +30,9 @@ public class TalibSTOCH extends Talib {
         Core core = new Core();
         MInteger beg = new MInteger();
         MInteger end = new MInteger();
+        // slowk, use at 20 80
         double[] rsi = new double[close.length];
+        // slowd
         double[] rsi2 = new double[close.length];
         MAType optInFastD;
         optInFastD = MAType.Sma;
