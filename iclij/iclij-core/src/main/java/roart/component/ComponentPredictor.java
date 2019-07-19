@@ -421,5 +421,10 @@ public class ComponentPredictor extends ComponentML {
         return list;
     }
 
+    @Override
+    public List<String>[] enableDisable(ComponentData param, List<Integer> positions) {
+        List[] list = new ArrayList[2];
+        return list;
+    }
 }
 
