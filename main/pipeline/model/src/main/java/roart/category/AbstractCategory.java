@@ -133,6 +133,10 @@ public abstract class AbstractCategory {
     public void createResultMap(MyMyConfig conf, List<StockItem> stocks) throws Exception {
         resultMap = new HashMap<>();
         dataArraySize = 0;
+        if (stocks == null) {
+            int jj = 0;
+            return;
+        }
         for (StockItem stock : stocks) {
             Double[] value = getData(stock);
             resultMap.put(stock.getId(), value);
