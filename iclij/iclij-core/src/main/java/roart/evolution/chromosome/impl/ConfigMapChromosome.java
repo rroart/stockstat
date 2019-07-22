@@ -127,17 +127,21 @@ public class ConfigMapChromosome extends AbstractChromosome {
         Double[] range = this.param.getService().conf.getRange().get(confName);
         Class type = this.param.getService().conf.getType().get(confName);
         if (type == Boolean.class) {
-            Boolean b = (Boolean) this.param.getService().conf.getValueOrDefault(confName);
-            map.put(confName, !b);
+            Boolean b = rand.nextBoolean();
+            map.put(confName, b);
+            return;
         }
         if (type == Integer.class) {
             Integer i = (range[0].intValue()) + rand.nextInt(range[1].intValue() - range[0].intValue());
             map.put(confName, i);
+            return;
         }
         if (type == Double.class) {
             Double d = (range[0]) + rand.nextDouble() * (range[1] - range[0]);
             map.put(confName, d);
+            return;
         }
+        log.error("Unknown type for {}", confName);
     }
 
     @Override
