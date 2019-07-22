@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
@@ -60,8 +60,8 @@ public abstract class GraphIndicator {
             int topbottom = conf.getTopBottom();
             PeriodData perioddata = periodDataMap.get(periodText);
             for (Pair<String, String> id : ids) {
-                String market = id.getFirst();
-                String stockid = id.getSecond();
+                String market = id.getLeft();
+                String stockid = id.getRight();
                 DefaultCategoryDataset dataset = ta.getChart(days, market, stockid, ids, marketdatamap, perioddata, periodText);
                 if (dataset != null) {
                     JFreeChart c = SvgUtil.getChart(dataset, "Period " + periodText, "Time " + perioddata.date0 + " - " + perioddata.date1, "Value", days, 1);
