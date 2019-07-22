@@ -15,7 +15,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -99,11 +101,15 @@ public class MLIndicator extends Aggregator {
         this.key = title;
         makeMapTypes();
         if (conf.wantML()) {
-            if (conf.wantMLSpark()) {
-                mldaos.add(new MLClassifyDao("spark", conf));
-            }
-            if (conf.wantMLTensorflow()) {
-                mldaos.add(new MLClassifyDao("tensorflow", conf));
+            if (false) {
+                if (conf.wantMLSpark()) {
+                    mldaos.add(new MLClassifyDao("spark", conf));
+                }
+                if (conf.wantMLTensorflow()) {
+                    mldaos.add(new MLClassifyDao("tensorflow", conf));
+                }
+            } else {
+                mldaos.add(new MLClassifyDao("RANDOM", conf));
             }
         }
         fieldSize = fieldSize();
@@ -143,7 +149,7 @@ public class MLIndicator extends Aggregator {
 
     private Map<Integer, String> mapTypes = new HashMap<>();
 
-    public Map<double[], Double> getEvaluations(MyMyConfig conf, int j, Object[] retObj) throws JsonParseException, JsonMappingException, IOException {
+    public Map<String, Pair<double[], Double>> getEvaluations(MyMyConfig conf, int j, Object[] retObj) throws JsonParseException, JsonMappingException, IOException {
         int listlen = conf.getTableDays();
         List<Map<String, Double[][]>> listList = (List<Map<String, Double[][]>>) retObj[2];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
@@ -154,7 +160,7 @@ public class MLIndicator extends Aggregator {
         if (indicatorMap == null) {
             return new HashMap<>();
         }
-        Map<double[], Double> retMap = new HashMap<>();
+        Map<String, Pair<double[], Double>> retMap = new HashMap<>();
         for (String id : indicatorMap.keySet()) {
             int newlistidx = listlen - 1 - j + conf.getAggregatorsIndicatorFuturedays();
             int curlistidx = listlen - 1 - j;
@@ -170,7 +176,7 @@ public class MLIndicator extends Aggregator {
             if (change > conf.getAggregatorsIndicatorThreshold()) {
                 cat = 1.0;
             }
-            retMap.put(merged, cat);
+            retMap.put(id, new ImmutablePair(merged, cat));
         }
         return retMap;
     }
@@ -234,9 +240,9 @@ public class MLIndicator extends Aggregator {
         int tableDays = Math.min(conf.getTableDays(), dateList.size());
         Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, conf.getAggregatorsIndicatorFuturedays(), tableDays, conf.getAggregatorsIndicatorIntervaldays(), extraData);
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj2[0];
-        Map<double[], Double> mergedCatMap = new HashMap<>();
+        Map<String, Pair<double[], Double>> mergedCatMap = new HashMap<>();
         for (int j = conf.getAggregatorsIndicatorFuturedays(); j < macdlen; j += conf.getAggregatorsIndicatorIntervaldays()) {
-            Map<double[], Double> retMap = getEvaluations(conf, j, retObj2);
+            Map<String, Pair<double[], Double>> retMap = getEvaluations(conf, j, retObj2);
             mergedCatMap.putAll(retMap);
         }
 
@@ -255,8 +261,9 @@ public class MLIndicator extends Aggregator {
                 log.info("Merget set empty");
             }
             // add a null check
-            int arrayLength = mergedCatMap.keySet().iterator().next().length;
-            for(double[] array : mergedCatMap.keySet()) {
+            int arrayLength = mergedCatMap.values().iterator().next().getLeft().length;
+            for(Entry<String, Pair<double[], Double>> entry : mergedCatMap.entrySet()) {
+                double[] array = entry.getValue().getLeft();
                 if (array.length != arrayLength) {
                     log.info("Different lengths {} {}", arrayLength, array.length);
                 }
@@ -277,23 +284,23 @@ public class MLIndicator extends Aggregator {
     }
 
     private void doLearnTestClassify(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
-            Map<double[], Double> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
+            Map<String, Pair<double[], Double>> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
             Map<Double, String> labelMapShort) {
         try {
             int testCount = 0;   
             // calculate sections and do ML
             log.info("Indicatormap keys {}", dayIndicatorMap.keySet());
             Map<String, Double[]> indicatorMap2 = dayIndicatorMap.get(conf.getAggregatorsIndicatorFuturedays());
-            Map<String, double[]> indicatorMap3 = new HashMap<>();
+            Map<String, Pair<double[], Double>> indicatorMap3 = new HashMap<>();
             if (indicatorMap2 != null) {
                 for (Entry<String, Double[]> indicatorEntry : indicatorMap2.entrySet()) {
-                    indicatorMap3.put(indicatorEntry.getKey(), ArraysUtil.convert(indicatorEntry.getValue()));
+                    indicatorMap3.put(indicatorEntry.getKey(), new ImmutablePair(ArraysUtil.convert(indicatorEntry.getValue()), null));
                 }
             }
             for (MLClassifyDao mldao1 : mldaos) {
-                Map<double[], Double> map1 = mergedCatMap;
+                Map<String, Pair<double[], Double>> map1 = mergedCatMap;
                 for (MLClassifyModel model1 : mldao1.getModels()) {          
-                    Map<Object, Long> countMap1 = map1.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2), Collectors.counting()));                            
+                    Map<Object, Long> countMap1 = map1.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta1 = new Object[6];
                     meta1[0] = mldao1.getName();
@@ -307,7 +314,7 @@ public class MLIndicator extends Aggregator {
                     resultMeta1.setReturnSize(model1.getReturnSize());
                     resultMeta1.setLearnMap(countMap1);
                     getResultMetas().add(resultMeta1);
-                    Map<String, double[]> map = indicatorMap3;
+                    Map<String, Pair<double[], Double>> map = indicatorMap3;
                     if (map == null || map.isEmpty()) {
                         log.error("map null ");
                         testCount++;
@@ -346,24 +353,24 @@ public class MLIndicator extends Aggregator {
     }
 
     private void doLearnTestClassifyFuture(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
-            Map<double[], Double> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
+            Map<String, Pair<double[], Double>> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
             Map<Double, String> labelMapShort) {
         try {
             // calculate sections and do ML
             log.info("Indicatormap keys {}", dayIndicatorMap.keySet());
             Map<String, Double[]> indicatorMap2 = dayIndicatorMap.get(conf.getAggregatorsIndicatorFuturedays());
-            Map<String, double[]> indicatorMap3 = new HashMap<>();
+            Map<String, Pair<double[], Double>> indicatorMap3 = new HashMap<>();
             if (indicatorMap2 != null) {
                 for (Entry<String, Double[]> indicatorEntry : indicatorMap2.entrySet()) {
-                    indicatorMap3.put(indicatorEntry.getKey(), ArraysUtil.convert(indicatorEntry.getValue()));
+                    indicatorMap3.put(indicatorEntry.getKey(), new ImmutablePair(ArraysUtil.convert(indicatorEntry.getValue()), null));
                 }
             }
             List<Future<LearnTestClassifyResult>> futureList = new ArrayList<>();
             Map<Future<LearnTestClassifyResult>, FutureMap> futureMap = new HashMap<>();
             for (MLClassifyDao mldao : mldaos) {
-                Map<double[], Double> map1 = mergedCatMap;
+                Map<String, Pair<double[], Double>> map1 = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
-                    Map<Object, Long> countMap1 = map1.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2), Collectors.counting()));                            
+                    Map<Object, Long> countMap1 = map1.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta1 = new Object[6];
                     meta1[0] = mldao.getName();
@@ -377,7 +384,7 @@ public class MLIndicator extends Aggregator {
                     resultMeta1.setReturnSize(model.getReturnSize());
                     resultMeta1.setLearnMap(countMap1);
                     getResultMetas().add(resultMeta1);
-                    Map<String, double[]> map = indicatorMap3;
+                    Map<String, Pair<double[], Double>> map = indicatorMap3;
                     if (map == null || map.isEmpty()) {
                         log.error("map null ");
                         continue;
@@ -424,16 +431,16 @@ public class MLIndicator extends Aggregator {
     }
 
     private void doLearnTestClassifyOld(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
-            Map<double[], Double> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
+            Map<String, Pair<double[], Double>> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
             Map<Double, String> labelMapShort) {
         doLearningAndTests(nnconfigs, mergedCatMap, arrayLength, labelMapShort);
         // calculate sections and do ML
         log.info("Indicatormap keys {}", dayIndicatorMap.keySet());
         Map<String, Double[]> indicatorMap2 = dayIndicatorMap.get(conf.getAggregatorsIndicatorFuturedays());
-        Map<String, double[]> indicatorMap3 = new HashMap<>();
+        Map<String, Pair<double[], Double>> indicatorMap3 = new HashMap<>();
         if (indicatorMap2 != null) {
             for (Entry<String, Double[]> indicatorEntry : indicatorMap2.entrySet()) {
-                indicatorMap3.put(indicatorEntry.getKey(), ArraysUtil.convert(indicatorEntry.getValue()));
+                indicatorMap3.put(indicatorEntry.getKey(), new ImmutablePair(ArraysUtil.convert(indicatorEntry.getValue()), null));
             }
         }
         doClassifications(mapResult, arrayLength, labelMapShort, indicatorMap3);
@@ -471,10 +478,10 @@ public class MLIndicator extends Aggregator {
         }
     }
 
-    private void handleOtherStats(MyMyConfig conf, Map<double[], Double> mergedCatMap) {
+    private void handleOtherStats(MyMyConfig conf, Map<String, Pair<double[], Double>> mergedCatMap) {
         if (conf.wantOtherStats() && conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();            
-            Map<Double, Long> countMap = mergedCatMap.values().stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+            Map<Double, Long> countMap = mergedCatMap.values().stream().collect(Collectors.groupingBy(Pair::getRight, Collectors.counting()));
             StringBuilder counts = new StringBuilder();
             for (Entry<Double, Long> countEntry : countMap.entrySet()) {
                 counts.append(labelMapShort.get(countEntry.getKey()) + " : " + countEntry.getValue() + " ");
@@ -541,11 +548,11 @@ public class MLIndicator extends Aggregator {
     }
 
     private void doClassifications(Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
-            Map<Double, String> labelMapShort, Map<String, double[]> indicatorMap3) {
+            Map<Double, String> labelMapShort, Map<String, Pair<double[], Double>> indicatorMap3) {
         int testCount = 0;   
         for (MLClassifyDao mldao : mldaos) {
             for (MLClassifyModel model : mldao.getModels()) {
-                Map<String, double[]> map = indicatorMap3;
+                Map<String, Pair<double[], Double>> map = indicatorMap3;
                 if (map == null) {
                     log.error("map null ");
                     testCount++;
@@ -572,16 +579,16 @@ public class MLIndicator extends Aggregator {
         }
     }
 
-    private void doLearningAndTests(NeuralNetConfigs nnconfigs, Map<double[], Double> mergedCatMap, int arrayLength,
+    private void doLearningAndTests(NeuralNetConfigs nnconfigs, Map<String, Pair<double[], Double>> mergedCatMap, int arrayLength,
             Map<Double, String> labelMapShort) {
         try {
             for (MLClassifyDao mldao : mldaos) {
-                Map<double[], Double> map = mergedCatMap;
+                Map<String, Pair<double[], Double>> map = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
                     Double testAccuracy = mldao.learntest(nnconfigs, this, map, model, arrayLength, key, MYTITLE, 2, mapTime);  
                     probabilityMap.put(mldao.getName() + model.getId(), testAccuracy);
                     IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
-                    Map<Object, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
+                    Map<Object, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta = new Object[6];
                     meta[0] = mldao.getName();
@@ -662,7 +669,7 @@ public class MLIndicator extends Aggregator {
     public Object[] getResultItem(StockItem stock) {
         String market = conf.getMarket();
         String id = stock.getId();
-        Pair<String, String> pair = new Pair<>(market, id);
+        Pair<String, String> pair = new ImmutablePair<>(market, id);
         Set<Pair<String, String>> ids = new HashSet<>();
         ids.add(pair);
         String periodstr = key;
@@ -746,9 +753,9 @@ public class MLIndicator extends Aggregator {
                     } catch (Exception e) {
                         log.error("Exception fix later, refactor", e);
                     }
-                    objs[retindex++] = title + Constants.WEBBR +  model.getName() + mapType + " " + val;
+                    objs[retindex++] = title + " " + "mlind" + Constants.WEBBR +  model.getName() + mapType + " " + val;
                     if (model.getReturnSize() > 1) {
-                        objs[retindex++] = title + Constants.WEBBR +  model.getName() + mapType + " prob ";
+                        objs[retindex++] = title + " " + "mlind" + Constants.WEBBR +  model.getName() + mapType + " prob ";
                     }
                 }
             }
