@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.spark.ContextCleaner;
@@ -16,6 +17,9 @@ import org.apache.spark.ml.linalg.DenseVector;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +71,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         }
     }
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model, int size, String period,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period,
             String mapname, int outcomes) {
         return learntestInner(nnconfigs, map, model, size, period, mapname, outcomes);       
     }
@@ -78,7 +82,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, Map<String, double[]> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
             String period, String mapname, int outcomes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         return classifyInner(map, Integer.valueOf(model.getId()), size, period, mapname, outcomes, shortMap);
@@ -89,8 +93,9 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return models;
     }
 
-    public Map<String, Double[]> classifyInner(Map<String, double[]> map, int modelInt, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap) {
+    public Map<String, Double[]> classifyInner(Map<String, Pair<double[], Double>> newMap, int modelInt, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap) {
         long time0 = System.currentTimeMillis();
+        Map<String, double[]> map = getMap2(newMap);
         Map<String, Double[]> retMap = new HashMap<>();
         Dataset<Row> data = SparkUtil.createDFfromMap2(spark, map);
         try {
@@ -117,6 +122,15 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 retVal[0] = predict;
                 retVal[1] = prob;
                 retMap.put(id, retVal);
+                //MutablePair pair = (MutablePair) newMap.get(id);
+                //pair.setRight(predict);
+                Pair pair = (ImmutablePair) newMap.get(id);
+                if (pair.getRight() != null) {
+                    int jj = 0;
+                }
+                MutablePair mutablePair = new MutablePair(pair.getLeft(), null);
+                mutablePair.setRight(predict);
+                newMap.put(id, mutablePair);
             }
             log.info("classify done");
             return retMap;
@@ -128,12 +142,13 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return null;
     }
 
-    public Double learntestInner(NeuralNetConfigs nnconfigs, Map<double[], Double> map, MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes) {
+    public Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<double[], Double>> newMap, MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes) {
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {
             return null;
         }
+        Map<double[], Double> map = getMap(newMap);
         if (map.isEmpty()) {
             return null;
         }
@@ -172,6 +187,23 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return accuracy;
     }
 
+
+    private Map<String, double[]> getMap2(Map<String, Pair<double[], Double>> newMap) {
+        Map<String, double[]> map = new HashMap<>();
+        for (Entry<String, Pair<double[], Double>> entry : newMap.entrySet()) {
+            map.put(entry.getKey(), entry.getValue().getLeft());
+        }
+        return map;
+    }
+
+    private Map<double[], Double> getMap(Map<String, Pair<double[], Double>> newMap) {
+        Map<double[], Double> map = new HashMap<>();
+        for (Entry<String, Pair<double[], Double>> entry : newMap.entrySet()) {
+            map.put(entry.getValue().getLeft(), entry.getValue().getRight());
+        }
+        return map;
+    }
+
     public Double evalInner(int modelInt, String period, String mapname) {
         return accuracyMap.get(modelInt+period+mapname);
     }
@@ -183,14 +215,15 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, Map<double[], Double> map,
-            MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes, Map<String, double[]> map2,
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, Map<String, Pair<double[], Double>> newMap,
+            MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes, Map<String, Pair<double[], Double>> newMap2,
             Map<Double, String> shortMap) {
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {
             return null;
         }
+        Map<double[], Double> map = getMap(newMap);
         if (map.isEmpty()) {
             return null;
         }
@@ -228,6 +261,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
             accuracyMap.put(mlmodel.getId()+period+mapname, eval);
             accuracy = eval;
             Map<String, Double[]> retMap = new HashMap<>();
+            Map<String, double[]> map2 = getMap2(newMap2);
             Dataset<Row> data2 = SparkUtil.createDFfromMap2(spark, map2);
             int modelInt = Integer.valueOf(mlmodel.getId());
             Dataset<Row> resultDF = model.transform(data2);
@@ -253,11 +287,23 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 retVal[0] = predict;
                 retVal[1] = prob;
                 retMap.put(id, retVal);
+                //MutablePair pair = (MutablePair) newMap2.get(id);
+                //pair.setRight(predict);
+                Pair pair = (ImmutablePair) newMap2.get(id);
+                if (pair.getRight() != null) {
+                    int jj = 0;
+                }
+                MutablePair mutablePair = new MutablePair(pair.getLeft(), null);
+                mutablePair.setRight(predict);
+                newMap2.put(id, mutablePair);
             }
             log.info("classify done");
             LearnTestClassifyResult result2 = new LearnTestClassifyResult();
             result2.setAccuracy(accuracy);
             result2.setCatMap(retMap);
+            if (retMap == null || retMap.isEmpty()) {
+                int jj = 0;
+            }
             return result2;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

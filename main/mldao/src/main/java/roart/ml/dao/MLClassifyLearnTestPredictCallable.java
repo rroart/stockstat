@@ -3,6 +3,7 @@ package roart.ml.dao;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private Aggregator indicator;
     
-    private Map<double[], Double> map;
+    private Map<String, Pair<double[], Double>> map;
     
     private MLClassifyModel model;
     
@@ -32,15 +33,15 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private Map<MLClassifyModel, Long> mapTime;
     
-    private Map<String, double[]> map2;
+    private Map<String, Pair<double[], Double>> map2;
     
     private  Map<Double, String> shortMap;
 
     private MLClassifyDao mldao;
     
-    public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<double[], Double> map, MLClassifyModel model,
+    public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model,
             int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime,
-            Map<String, double[]> map2, Map<Double, String> shortMap) {
+            Map<String, Pair<double[], Double>> map2, Map<Double, String> shortMap) {
         super();
         this.nnconfigs = nnconfigs;
         this.mldao = mldao;
