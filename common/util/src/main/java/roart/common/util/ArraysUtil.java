@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,9 +106,17 @@ public class ArraysUtil {
         retmap[0] = new HashMap<>();
         retmap[1] = new HashMap<>();
         double prevval = array[0];
-        int prev = 0;
+        int start = 0;
         for (int i = 0; i < length; i++) {
-            if (prevval >= 0) {
+            if (!Double.isNaN(array[i])) {
+                prevval = array[i];
+                start = i;
+                break;
+            }
+        }
+        int prev = start;
+        for (int i = start; i < length; i++) {
+            if (prevval >= limit) {
                 i = searchForwardBelowLimit(array, i, length, limit);
                 retmap[0].put(prev, i - 1);
                 if (i < length) {
@@ -304,10 +312,12 @@ public class ArraysUtil {
      * @param before minimum and required number to have before the range end
      * @param after required number for range end before the array end
      * @param size of the array with the ranges
+     * @param endOnly 
      * @return resized accepted ranges
      */
 
-    public static Map<Integer, Integer> getAcceptedRanges(Map<Integer, Integer> map, int before, int after, int size) {
+    @Deprecated
+    public static Map<Integer, Integer> getAcceptedRanges(Map<Integer, Integer> map, int before, int after, int size, boolean endOnly) {
         Map<Integer, Integer> retMap = new HashMap<>();
         for (int start : map.keySet()) {
             int end = map.get(start);
@@ -321,11 +331,13 @@ public class ArraysUtil {
         return retMap;
     }
 
+    @Deprecated
     public static Map<Integer, Integer> getAcceptedRanges(Map<Integer, Integer> map, int after, int size) {
         Map<Integer, Integer> retMap = new HashMap<>();
         for (int start : map.keySet()) {
             int end = map.get(start);
-            if (end + after < size && end + 1 != size) {
+            // + after
+            if (end < size && start == 0 && end + 1 != size) {
                 retMap.put(start, end);
             }
         }
