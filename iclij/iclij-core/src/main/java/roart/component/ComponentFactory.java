@@ -20,6 +20,12 @@ public class ComponentFactory {
             return new ComponentMLMACD();
         case PipelineConstants.MLRSI:
             return new ComponentMLRSI();
+        case PipelineConstants.MLATR:
+            return new ComponentMLATR();
+        case PipelineConstants.MLCCI:
+            return new ComponentMLCCI();
+        case PipelineConstants.MLSTOCH:
+            return new ComponentMLSTOCH();
         case PipelineConstants.MLMULTI:
             return new ComponentMLMulti();
         case PipelineConstants.MLINDICATOR:
