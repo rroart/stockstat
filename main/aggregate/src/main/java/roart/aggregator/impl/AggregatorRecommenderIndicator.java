@@ -48,6 +48,9 @@ public class AggregatorRecommenderIndicator extends Aggregator {
             Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList) throws Exception {
         super(conf, index, 0);
         this.disableList = disableList;
+        if (!isEnabled()) {
+            return;
+        }
         AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
         if (cat == null) {
             return;
@@ -88,9 +91,6 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         Map<String, Double[]> result = new HashMap<>();
         TaUtil tu = new TaUtil();
         resultMap = new HashMap<>();
-        if (!isEnabled()) {
-            return;
-        }
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             String recommender = entry.getKey();
             List<String>[] buysell = recommendKeyMap.get(recommender);

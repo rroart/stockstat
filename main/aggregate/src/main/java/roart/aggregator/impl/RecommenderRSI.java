@@ -31,6 +31,9 @@ public class RecommenderRSI extends Aggregator {
     public RecommenderRSI(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, AbstractCategory[] categories) throws Exception {
         super(conf, index, 0);
+        if (!isEnabled()) {
+            return;
+        }
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
         this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
