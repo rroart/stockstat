@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -80,8 +81,13 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
             Double aprob = random.nextDouble();
             String id = retList.get(j);
             retMap.put(id, new Double[]{ acat, aprob });
-            MutablePair pair = (MutablePair) classifyMap.get(id);
-            pair.setRight(acat);
+            Pair pair = (ImmutablePair) classifyMap.get(id);
+            if (pair.getRight() != null) {
+                int jj = 0;
+            }
+            MutablePair mutablePair = new MutablePair(pair.getLeft(), null);
+            mutablePair.setRight(acat);
+            classifyMap.put(id, mutablePair);
         }
         return retMap;
     }

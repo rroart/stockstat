@@ -30,7 +30,7 @@ public class MLClassifyRandomModel extends MLClassifyModel {
 
     @Override
     public String getName() {
-        return null;
+        return "RND";
     }
 
     @Override
