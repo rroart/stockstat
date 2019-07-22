@@ -42,10 +42,10 @@ public class PipelineConstants {
     public static final String INDICATORSTOCHRSILIST = "indicatorstochrsilist";
     public static final String INDICATORSTOCHRSIRESULT = "indicatorstochrsiresult";
     public static final String INDICATORATROBJECT = "indicatoratrobject";
-    public static final String INDICATORATRILIST = "indicatoratrlist";
+    public static final String INDICATORATRLIST = "indicatoratrlist";
     public static final String INDICATORATRRESULT = "indicatoratrresult";
     public static final String INDICATORCCIOBJECT = "indicatorcciobject";
-    public static final String INDICATORRCCLIST = "indicatorccilist";
+    public static final String INDICATORCCILIST = "indicatorccilist";
     public static final String INDICATORCCIRESULT = "indicatorcciresult";
     public static final String INDICATORSTOCHOBJECT = "indicatorstochobject";
     public static final String INDICATORSTOCHLIST = "indicatorstochlist";
@@ -64,11 +64,15 @@ public class PipelineConstants {
     public static final String MLINDICATOR = "mlindicator";
     public static final String MLMACD = "mlmacd";
     public static final String MLRSI = "mlrsi";
+    public static final String MLMULTI = "mlmulti"; 
+    public static final String MLATR = "mlatr";
+    public static final String MLCCI = "mlcci";
+    public static final String MLSTOCH = "mlstoch";
     public static final String RECOMMENDERRSI = "recommenderrsi";
     public static final String AGGREGATORRECOMMENDERINDICATOR = "aggregatorrecommenderindicator";
     public static final String PREDICTORSLSTM = "predictorslstm";
     public static final String LSTM = "lstm";
     
     public static final String CATEGORY = "category"; 
-    public static final String CATEGORYTITLE = "categorytitle"; 
+    public static final String CATEGORYTITLE = "categorytitle";
 }

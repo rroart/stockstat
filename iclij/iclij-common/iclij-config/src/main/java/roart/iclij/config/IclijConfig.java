@@ -122,6 +122,18 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLRSI);
     }
 
+    public boolean wantsFindProfitMLATR() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLATR);
+    }
+
+    public boolean wantsFindProfitMLCCI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLCCI);
+    }
+
+    public boolean wantsFindProfitMLSTOCH() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLSTOCH);
+    }
+
     public boolean wantsFindProfitMLMulti() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMLMULTI);
     }
@@ -138,6 +150,18 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLRSIMLCONFIG);
     }
 
+    public String getFindProfitMLATRMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLATRMLCONFIG);
+    }
+
+    public String getFindProfitMLCCIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLCCIMLCONFIG);
+    }
+
+    public String getFindProfitMLSTOCHMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLSTOCHMLCONFIG);
+    }
+
     public String getFindProfitMLMultiMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLMULTIMLCONFIG);
     }
@@ -152,6 +176,18 @@ public class IclijConfig {
 
     public String getFindProfitMLRSIEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLRSIEVOLUTIONCONFIG);
+    }
+
+    public String getFindProfitMLATREvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLATREVOLUTIONCONFIG);
+    }
+
+    public String getFindProfitMLCCIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLCCIEVOLUTIONCONFIG);
+    }
+
+    public String getFindProfitMLSTOCHEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITMLSTOCHEVOLUTIONCONFIG);
     }
 
     public String getFindProfitMLMultiEvolutionConfig() {
@@ -194,6 +230,18 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLRSI);
     }
 
+    public boolean wantsImproveProfitMLATR() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLATR);
+    }
+
+    public boolean wantsImproveProfitMLCCI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLCCI);
+    }
+
+    public boolean wantsImproveProfitMLSTOCH() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLSTOCH);
+    }
+
     public boolean wantsImproveProfitMLMulti() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLMULTI);
     }
@@ -210,6 +258,18 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLRSIMLCONFIG);
     }
 
+    public String getImproveProfitMLATRMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLATRMLCONFIG);
+    }
+
+    public String getImproveProfitMLCCIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLCCIMLCONFIG);
+    }
+
+    public String getImproveProfitMLSTOCHMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLSTOCHMLCONFIG);
+    }
+
     public String getImproveProfitMLMultiMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLMULTIMLCONFIG);
     }
@@ -224,6 +284,18 @@ public class IclijConfig {
 
     public String getImproveProfitMLRSIEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLRSIEVOLUTIONCONFIG);
+    }
+
+    public String getImproveProfitMLATREvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLATREVOLUTIONCONFIG);
+    }
+
+    public String getImproveProfitMLCCIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLCCIEVOLUTIONCONFIG);
+    }
+
+    public String getImproveProfitMLSTOCHEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITMLSTOCHEVOLUTIONCONFIG);
     }
 
     public String getImproveProfitMLMultiEvolutionConfig() {

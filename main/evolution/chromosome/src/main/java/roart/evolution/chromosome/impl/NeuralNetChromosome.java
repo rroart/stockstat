@@ -148,6 +148,18 @@ public class NeuralNetChromosome extends AbstractChromosome {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, value);
                 pipelineData = new MLMulti(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
             } 
+            if (ml.equals(PipelineConstants.MLSTOCH)) {
+                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG, value);
+                pipelineData = new MLRSI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
+            } 
+            if (ml.equals(PipelineConstants.MLCCI)) {
+                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLCCIMLCONFIG, value);
+                pipelineData = new MLRSI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
+            } 
+            if (ml.equals(PipelineConstants.MLATR)) {
+                conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLATRMLCONFIG, value);
+                pipelineData = new MLRSI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
+            } 
             if (ml.equals(PipelineConstants.MLRSI)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, value);
                 pipelineData = new MLRSI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);

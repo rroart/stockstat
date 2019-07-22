@@ -740,7 +740,7 @@ public class MyMyConfig extends MyConfig {
     }
 
     public int getMLRSIDaysAfterLimit() {
-        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSIBUYRSILIMIT);
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
     }
 
     public int getMLRSIBuyRSILimit() {
@@ -757,6 +757,87 @@ public class MyMyConfig extends MyConfig {
 
     public double getMLRSISellSRSILimit() {
         return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT);
+    }
+
+    public boolean wantMLATR() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLATR) &&
+                wantAggregators() &&
+                isATREnabled() &&
+                wantML();
+    }
+
+    public String getMLATRMLConfig() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRMLCONFIG);
+    }
+
+    public int getMLATRDaysBeforeLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
+    }
+
+    public int getMLATRDaysAfterLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRBUYLIMIT);
+    }
+
+    public int getMLATRBuyLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRBUYLIMIT);
+    }
+
+    public int getMLATRSellLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRSELLLIMIT);
+    }
+
+    public boolean wantMLCCI() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCI) &&
+                wantAggregators() &&
+                isCCIEnabled() &&
+                wantML();
+    }
+
+    public String getMLCCIMLConfig() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCIMLCONFIG);
+    }
+
+    public int getMLCCIDaysBeforeLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
+    }
+
+    public int getMLCCIDaysAfterLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT);
+    }
+
+    public int getMLCCIBuyLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT);
+    }
+
+    public int getMLCCISellLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCISELLLIMIT);
+    }
+
+    public boolean wantMLSTOCH() {
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCH) &&
+                wantAggregators() &&
+                isSTOCHEnabled() &&
+                wantML();
+    }
+
+    public String getMLSTOCHMLConfig() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG);
+    }
+
+    public int getMLSTOCHDaysBeforeLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
+    }
+
+    public int getMLSTOCHDaysAfterLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHBUYLIMIT);
+    }
+
+    public int getMLSTOCHBuyLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHBUYLIMIT);
+    }
+
+    public int getMLSTOCHSellLimit() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHSELLLIMIT);
     }
 
     public boolean wantAggregatorsIndicatorMACD() {
