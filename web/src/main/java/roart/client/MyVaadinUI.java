@@ -1685,7 +1685,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
                 }
                 Object myid = table.addItem(str.getarr(), i);
                 if (myid == null) {
-                    log.error("addItem failed for" + Arrays.toString(str.getarr()));
+                    log.error("addItem failed for {} {}", str.cols.size(), Arrays.toString(str.getarr()));
                 }
             } catch (Exception e) {
                 log.error("i " + i + " " + str.get().get(0));
