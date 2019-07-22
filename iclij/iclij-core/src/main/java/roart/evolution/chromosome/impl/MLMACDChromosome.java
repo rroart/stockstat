@@ -45,6 +45,9 @@ public class MLMACDChromosome extends ConfigMapChromosome {
     public boolean validate() {
         for (String key : getValidateList()) {
             Object object = getMap().get(key);
+            if (object == null) {
+                int jj = 0;
+            }
             if (object != null && object instanceof Boolean) {
                 if ((boolean) object) {
                     return true;
@@ -89,6 +92,7 @@ public class MLMACDChromosome extends ConfigMapChromosome {
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
         MLMACDChromosome chromosome = new MLMACDChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
+        chromosome.getMap().putAll(getMap());
         return chromosome;
     }
     

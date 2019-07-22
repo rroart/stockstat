@@ -54,6 +54,7 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
         MLIndicatorChromosome chromosome = new MLIndicatorChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
+	chromosome.getMap().putAll(getMap());
         return chromosome;
     }
 

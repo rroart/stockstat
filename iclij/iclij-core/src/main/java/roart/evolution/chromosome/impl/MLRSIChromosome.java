@@ -86,13 +86,14 @@ public class MLRSIChromosome extends ConfigMapChromosome {
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
         MLRSIChromosome chromosome = new MLRSIChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
+	chromosome.getMap().putAll(getMap());
         return chromosome;
     }
     
     @Override
     public Individual crossover(AbstractChromosome other) {
         ComponentData newparam = new ComponentData(param);
-        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
+        MLRSIChromosome chromosome = new MLRSIChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
         Random rand = new Random();
         for (int conf = 0; conf < confList.size(); conf++) {
             String confName = confList.get(conf);
