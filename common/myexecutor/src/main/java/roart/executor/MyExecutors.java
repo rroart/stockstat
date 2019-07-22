@@ -16,6 +16,8 @@ public class MyExecutors {
 
     private static List<ThreadPoolExecutor> /*ExecutorService*/ pools = null;
     
+    private static int threads = 10;
+    
     public static void init(double[] cpus) {
         if (pools != null) {
             return;
@@ -27,12 +29,18 @@ public class MyExecutors {
                 continue;
             }
             int nThreads = (int) (Runtime.getRuntime().availableProcessors() * cpu);
-            if (nThreads <= 10) {
-                nThreads = 10;
+            if (nThreads <= threads) {
+                nThreads = threads;
             }
             log.info("nthreads {}", nThreads);
             ThreadPoolExecutor pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(nThreads);
             pools.add(pool);
+        }
+    }
+    
+    public static void initThreads(boolean dev) {
+        if (dev) {
+            threads = 5;
         }
     }
     

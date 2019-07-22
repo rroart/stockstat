@@ -42,6 +42,7 @@ public class IclijController implements CommandLineRunner {
 	    System.out.println("Using profile " + activeProfile);
 	    EurekaUtil.initEurekaClient(activeProfile);
 	    try {
+	        MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { IclijXMLConfig.getConfigInstance().mpServerCpu() } );
             if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() || IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
                 Action action = new MainAction();
