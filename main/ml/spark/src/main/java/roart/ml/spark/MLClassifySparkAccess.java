@@ -289,7 +289,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 retMap.put(id, retVal);
                 //MutablePair pair = (MutablePair) newMap2.get(id);
                 //pair.setRight(predict);
-                Pair pair = (ImmutablePair) newMap2.get(id);
+                Pair pair = newMap2.get(id);
                 if (pair.getRight() != null) {
                     int jj = 0;
                 }

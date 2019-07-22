@@ -171,7 +171,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             retMap.put(id, new Double[]{ acat, aprob });
             //MutablePair pair = (MutablePair) classifyMap.get(id);
             //pair.setRight(acat);
-            Pair pair = (ImmutablePair) classifyMap.get(id);
+            Pair pair = classifyMap.get(id);
             if (pair.getRight() != null) {
                 int jj = 0;
             }
