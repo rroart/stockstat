@@ -13,10 +13,13 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import roart.aggregator.impl.MLATR;
+import roart.aggregator.impl.MLCCI;
 import roart.aggregator.impl.MLIndicator;
 import roart.aggregator.impl.MLMACD;
 import roart.aggregator.impl.MLMulti;
 import roart.aggregator.impl.MLRSI;
+import roart.aggregator.impl.MLSTOCH;
 import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
@@ -150,15 +153,15 @@ public class NeuralNetChromosome extends AbstractChromosome {
             } 
             if (ml.equals(PipelineConstants.MLSTOCH)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG, value);
-                pipelineData = new MLRSI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
+                pipelineData = new MLSTOCH(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
             } 
             if (ml.equals(PipelineConstants.MLCCI)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLCCIMLCONFIG, value);
-                pipelineData = new MLRSI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
+                pipelineData = new MLCCI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
             } 
             if (ml.equals(PipelineConstants.MLATR)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLATRMLCONFIG, value);
-                pipelineData = new MLRSI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
+                pipelineData = new MLATR(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders);
             } 
             if (ml.equals(PipelineConstants.MLRSI)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, value);
