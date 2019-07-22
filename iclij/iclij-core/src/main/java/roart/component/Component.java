@@ -68,7 +68,7 @@ public abstract class Component {
         valueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
         valueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
     }
     
     public abstract ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap);
@@ -86,6 +86,10 @@ public abstract class Component {
         }
         Map<String, Object> valueMap = new HashMap<>();
         Component.disabler(valueMap);
+        List<Component> allComponents = ComponentFactory.getAllComponents();
+        for (Component component : allComponents) {
+            component.disable(valueMap);
+        }
         this.enable(valueMap);
         try {
             Map<String, Object> loadValues = mlLoads(param, null, market, null);

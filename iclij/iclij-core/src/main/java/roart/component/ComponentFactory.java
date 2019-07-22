@@ -1,5 +1,8 @@
 package roart.component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +58,20 @@ public class ComponentFactory {
             log.error("Non-existing component");
         }
         return serviceAction;
+    }
+
+    public static List<Component> getAllComponents() {
+        List<Component> list = new ArrayList<>();
+        list.add(new ComponentRecommender());
+        list.add(new ComponentPredictor());
+        list.add(new ComponentMLMACD());
+        list.add(new ComponentMLRSI());
+        list.add(new ComponentMLATR());
+        list.add(new ComponentMLCCI());
+        list.add(new ComponentMLSTOCH());
+        list.add(new ComponentMLMulti());
+        list.add(new ComponentMLIndicator());
+        return list;
     }
 
 }
