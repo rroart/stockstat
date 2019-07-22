@@ -3,6 +3,7 @@ package roart.service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,15 +13,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.aggregator.impl.AggregatorRecommenderIndicator;
+import roart.aggregator.impl.MLATR;
+import roart.aggregator.impl.MLCCI;
 import roart.aggregator.impl.MLIndicator;
 import roart.aggregator.impl.MLMACD;
 import roart.aggregator.impl.MLMulti;
 import roart.aggregator.impl.MLRSI;
+import roart.aggregator.impl.MLSTOCH;
 import roart.aggregator.impl.RecommenderRSI;
 import roart.category.AbstractCategory;
 import roart.category.impl.CategoryIndex;
@@ -278,6 +282,20 @@ public class ControlService {
         if (conf.getMarket() == null) {
             return;
         }
+        int cols = table.get(0).cols.size();
+        Set set = new HashSet<>();
+        set.addAll(table.get(0).cols);
+        int cols2 = set.size();
+        List list = table.get(0).cols;
+        /*
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = i+1; j <list.size() ; j++) {
+                if(list.get(i).equals(list.get(j))){
+                    System.out.println(list.get(i));
+                }
+            }
+        }
+        */
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         for (StockItem stock : datedstocks) {
             ResultItemTableRow row = new ResultItemTableRow();
@@ -301,7 +319,11 @@ public class ControlService {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            table.add(row);
+            if (cols == row.cols.size()) {
+                table.add(row);
+            } else {
+                int jj = 0;
+            }
         }
     }
 
@@ -359,13 +381,16 @@ public class ControlService {
             String[] periodText,
             Map<String, MarketData> marketdatamap,
             Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat) throws Exception {
-        Aggregator[] aggregates = new Aggregator[6];
+        Aggregator[] aggregates = new Aggregator[9];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, catName, stocks, marketdatamap, periodDataMap, categories, datareaders, disableList);
         aggregates[1] = new RecommenderRSI(conf, catName, stocks, marketdatamap, periodDataMap, categories);
         aggregates[2] = new MLMACD(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
         aggregates[3] = new MLRSI(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
-        aggregates[3] = new MLMulti(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
-        aggregates[5] = new MLIndicator(conf, catName, marketdatamap, periodDataMap, catName, cat, categories, datareaders);
+        aggregates[4] = new MLATR(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
+        aggregates[5] = new MLCCI(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
+        aggregates[6] = new MLSTOCH(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
+        aggregates[7] = new MLMulti(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
+        aggregates[8] = new MLIndicator(conf, catName, marketdatamap, periodDataMap, catName, cat, categories, datareaders);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSMACD));
