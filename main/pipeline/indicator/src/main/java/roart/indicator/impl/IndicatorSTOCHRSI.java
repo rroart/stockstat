@@ -42,9 +42,9 @@ public class IndicatorSTOCHRSI extends Indicator {
     }
     
     private int fieldSize() {
-        int size = 2;
+        int size = 1;
         if (conf.isSTOCHRSIDeltaEnabled()) {
-            size += 2;
+            size += 1;
         }
         emptyField = new Object[size];
         return size;
