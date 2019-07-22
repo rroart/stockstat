@@ -1,5 +1,6 @@
 package roart.indicator.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import roart.common.config.MyMyConfig;
@@ -102,6 +103,15 @@ public class IndicatorSTOCH extends Indicator {
     }
 
     @Override
+    public Map<String, Object> getResultMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(PipelineConstants.INDICATORSTOCHRESULT, calculatedMap);
+        map.put(PipelineConstants.INDICATORSTOCHOBJECT, objectMap);
+        map.put(PipelineConstants.INDICATORSTOCHLIST, listMap);
+        return map;
+    }
+
+    @Override
     protected int getAnythingHereRange() {
 	return 3;
     }
@@ -109,6 +119,11 @@ public class IndicatorSTOCH extends Indicator {
     @Override
     protected boolean anythingHere(Map<String, Double[][]> listMap) {
         return anythingHere3(listMap);
+    }
+
+    @Override
+    protected Boolean wantPercentizedPriceIndex() {
+        return false;
     }
 
 }
