@@ -151,7 +151,7 @@ public class FindProfitAction extends Action {
             
             List<IncDecItem> currentIncDecs = ServiceUtil.getCurrentIncDecs(olddate, marketIncdecitems, market, market.getConfig().getFindtime());
             if (currentIncDecs == null || currentIncDecs.isEmpty() || timings.isEmpty()) {
-                List<String> componentList = ServiceUtil.getFindProfitComponents(config);
+                List<String> componentList = ServiceUtil.getFindProfitComponents(config, market.getConfig().getMarket());
                 Map<String, Component> componentMap = getComponentMap(componentList, market);
                 List<MarketTime> marketTime = getList(IclijConstants.FINDPROFIT, componentMap, timings, market, param);
                 marketTimes.addAll(marketTime);
@@ -308,7 +308,7 @@ public class FindProfitAction extends Action {
         marketTime.market = foundFilterMarket;
         marketTime.timings = new ArrayList<>();
         IclijConfig config = IclijXMLConfig.getConfigInstance();
-        List<String> componentList = ServiceUtil.getFindProfitComponents(config);
+        List<String> componentList = ServiceUtil.getFindProfitComponents(config, marketTime.market.getConfig().getMarket());
         Map<String, Component> componentMap = getComponentMap(componentList, foundFilterMarket);
 
         List<TimingItem> timingToDo = new ArrayList<>();

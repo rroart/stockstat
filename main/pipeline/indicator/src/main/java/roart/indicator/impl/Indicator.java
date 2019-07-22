@@ -95,10 +95,18 @@ public class Indicator extends AbstractIndicator {
             log.info("empty {}", key);
             return;
         }
-        List<Map> resultList = getMarketCalcResults(dbDao, conf.wantPercentizedPriceIndex() ? truncBase100FillListMap : truncFillListMap);
+        boolean wantPercentizedPriceIndex = conf.wantPercentizedPriceIndex();
+        if (wantPercentizedPriceIndex() != null) {
+            wantPercentizedPriceIndex = wantPercentizedPriceIndex();
+        }
+        List<Map> resultList = getMarketCalcResults(dbDao, wantPercentizedPriceIndex ? truncBase100FillListMap : truncFillListMap);
         objectMap = resultList.get(0);
         calculatedMap = resultList.get(1);
         resultMap = resultList.get(2);
+    }
+
+    protected Boolean wantPercentizedPriceIndex() {
+        return null;
     }
 
     protected List getMarketCalcResults(DbAccess dbDao, Map<String, double[][]> aListMap) {

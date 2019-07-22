@@ -101,7 +101,7 @@ public class UpdateDBAction extends Action {
                 log.error("Marketmemory null for {}", market.getConfig().getMarket());
                 continue;
             }
-            for (String component : ServiceUtil.getFindProfitComponents(instance)) {
+            for (String component : ServiceUtil.getFindProfitComponents(instance, market.getConfig().getMarket())) {
                 List<MemoryItem> marketComponents = marketMemory.stream().filter(m -> component.equals(m.getComponent())).collect(Collectors.toList());
                 Collections.sort(marketComponents, (o1, o2) -> (o2.getRecord().compareTo(o1.getRecord())));
                 if (marketComponents == null || marketComponents.isEmpty()) {

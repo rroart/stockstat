@@ -203,7 +203,7 @@ public class ServiceUtil {
         FindProfitAction findProfitAction = new FindProfitAction();
         //Market market = findProfitAction.findMarket(param);
         //String marketName = market.getConfig().getMarket();
-        List<String> componentList = getFindProfitComponents(componentInput.getConfig());
+        List<String> componentList = getFindProfitComponents(componentInput.getConfig(), componentInput.getMarket());
         for (Market market : findProfitAction.getMarkets()) {
             updateMarketMap.put(market.getConfig().getMarket(), new HashMap<>());
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
@@ -299,7 +299,7 @@ public class ServiceUtil {
         FindProfitAction findProfitAction = new FindProfitAction();
         //Market market = findProfitAction.findMarket(param);
         //String marketName = market.getConfig().getMarket();
-        List<String> componentList = getFindProfitComponents(componentInput.getConfig());
+        List<String> componentList = getFindProfitComponents(componentInput.getConfig(), componentInput.getMarket());
         for (Market market : findProfitAction.getMarkets()) {
             updateMarketMap.put(market.getConfig().getMarket(), new HashMap<>());
             updateMarketMap.put(market.getConfig().getMarket() + " sell", new HashMap<>());
@@ -603,6 +603,44 @@ public class ServiceUtil {
         //param.setDates(days, input.getLoopoffset(), TimeUtil.convertDate2(input.getEnddate()));
         return param;
     }
+
+    private static Map<String, List<List<Double>>> getSimpleContent(String market) throws Exception {
+        ControlService srv = new ControlService();
+        srv.getConfig();
+        if (market != null) {
+            srv.conf.setMarket(market);
+        }
+        Component.disabler(srv.conf.getConfigValueMap());
+        Map<String, Map<String, Object>> result = srv.getContent();
+        Integer cat = (Integer) result.get("meta").get("wantedcat");
+        Map<String, List<List<Double>>> listMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
+        return listMap;
+    }
+
+    private static boolean anythingHere(Map<String, List<List<Double>>> listMap2, int size) {
+        for (List<List<Double>> array : listMap2.values()) {
+            if (size == 3 && size != array.get(0).size()) {
+                return false;
+            }
+            for (int i = 0; i < array.get(0).size(); i++) {
+                if (array.get(0).get(i) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean wantThree(String market) {
+        try {
+            Map<String, List<List<Double>>> listMap = getSimpleContent(market);
+            return anythingHere(listMap, 3);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return false;
+        }
+    }
+    
     /*
     if (config.wantsImproveProfit()) {
         ImproveProfitAction improveProfitAction = new ImproveProfitAction();  
@@ -701,7 +739,7 @@ public class ServiceUtil {
         return result;
     }
 
-    public static List<String> getFindProfitComponents(IclijConfig config) {
+    public static List<String> getFindProfitComponents(IclijConfig config, String market) {
         List<String> components = new ArrayList<>();
         if (config.wantsFindProfitRecommender()) {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
@@ -714,6 +752,17 @@ public class ServiceUtil {
         }
         if (config.wantsFindProfitMLRSI()) {
             components.add(PipelineConstants.MLRSI);
+        }
+        if (wantThree(market)) {
+        if (config.wantsFindProfitMLATR()) {
+            components.add(PipelineConstants.MLATR);
+        }
+        if (config.wantsFindProfitMLCCI()) {
+            components.add(PipelineConstants.MLCCI);
+        }
+        if (config.wantsFindProfitMLSTOCH()) {
+            components.add(PipelineConstants.MLSTOCH);
+        }
         }
         if (config.wantsFindProfitMLMulti()) {
             components.add(PipelineConstants.MLMULTI);
@@ -795,7 +844,7 @@ public class ServiceUtil {
         return null;
     }
 
-    public static List<String> getImproveProfitComponents(IclijConfig config) {
+    public static List<String> getImproveProfitComponents(IclijConfig config, String market) {
         List<String> components = new ArrayList<>();
         if (config.wantsImproveProfitRecommender()) {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
@@ -808,6 +857,17 @@ public class ServiceUtil {
         }
         if (config.wantsImproveProfitMLRSI()) {
             components.add(PipelineConstants.MLRSI);
+        }
+        if (wantThree(market)) {
+        if (config.wantsImproveProfitMLATR()) {
+            components.add(PipelineConstants.MLATR);
+        }
+        if (config.wantsImproveProfitMLCCI()) {
+            components.add(PipelineConstants.MLCCI);
+        }
+        if (config.wantsImproveProfitMLSTOCH()) {
+            components.add(PipelineConstants.MLSTOCH);
+        }
         }
         if (config.wantsImproveProfitMLMulti()) {
             components.add(PipelineConstants.MLMULTI);

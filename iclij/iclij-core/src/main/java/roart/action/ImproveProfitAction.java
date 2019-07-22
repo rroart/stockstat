@@ -124,7 +124,7 @@ public class ImproveProfitAction extends Action {
             List<TimingItem> currentTimings = ServiceUtil.getCurrentTimings(olddate, timings, market, IclijConstants.IMPROVEPROFIT, market.getConfig().getImprovetime());
             List<IncDecItem> currentIncDecs = null; // ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
             if (currentIncDecs == null || currentIncDecs.isEmpty() || timings.isEmpty()) {
-                List<String> componentList = ServiceUtil.getImproveProfitComponents(config);
+                List<String> componentList = ServiceUtil.getImproveProfitComponents(config, marketName);
                 Map<String, Component> componentMap = FindProfitAction.getComponentMap(componentList, market);
                 List<MarketComponentTime> marketTime = getList(IclijConstants.IMPROVEPROFIT, componentMap, timings, market, param, currentTimings);
                 marketTimes.addAll(marketTime);
