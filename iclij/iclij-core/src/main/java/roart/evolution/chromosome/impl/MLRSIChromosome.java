@@ -43,19 +43,24 @@ public class MLRSIChromosome extends ConfigMapChromosome {
 
     @Override
     public boolean validate() {
+	boolean foundbool = false;
         for (String key : getValidateList()) {
             Object object = getMap().get(key);
             if (object != null && object instanceof Boolean) {
+		foundbool = true;
                 if ((boolean) object) {
                     return true;
                 }
             }
         }
-        return false;
+        return !foundbool;
     }
     
     @Override
-    public void fixValidation() { 
+    public void fixValidation() {
+        if (getValidateList().isEmpty()) {
+            return;
+        }
         Random rand = new Random();
         int index = rand.nextInt(getValidateList().size());
         getMap().put(getValidateList().get(index), true);

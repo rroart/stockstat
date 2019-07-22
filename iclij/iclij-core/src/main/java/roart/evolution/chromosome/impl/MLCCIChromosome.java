@@ -43,15 +43,17 @@ public class MLCCIChromosome extends ConfigMapChromosome {
 
     @Override
     public boolean validate() {
+	boolean foundbool = false;
         for (String key : getValidateList()) {
             Object object = getMap().get(key);
             if (object != null && object instanceof Boolean) {
+		foundbool = true;
                 if ((boolean) object) {
                     return true;
                 }
             }
         }
-        return false;
+        return !foundbool;
     }
     
     @Override
