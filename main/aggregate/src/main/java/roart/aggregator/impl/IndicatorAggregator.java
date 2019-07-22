@@ -102,7 +102,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
         makeMapTypes();
         if (conf.wantML()) {
-            if (true) {
+            if (false) {
                 if (conf.wantMLSpark()) {
                     mldaos.add(new MLClassifyDao("spark", conf));
                 }
