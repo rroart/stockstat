@@ -1,6 +1,8 @@
 package roart.controller;
 
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -204,7 +206,7 @@ public class ServiceController implements CommandLineRunner {
             Set<Pair<String,String>> ids = new HashSet<>();
             for (String union : param.getIds()) {
                 String[] idsplit = union.split(",");
-                Pair<String, String> pair = new Pair(idsplit[0], idsplit[1]);
+                Pair<String, String> pair = new ImmutablePair(idsplit[0], idsplit[1]);
                 ids.add(pair);
             }
             result.setList(getInstance().getContentGraph( new MyMyConfig(param.getConfig()), ids, param.getGuiSize()));
@@ -268,7 +270,6 @@ public class ServiceController implements CommandLineRunner {
     public static void main(String[] args) throws Exception {
         //DbDao.instance("hibernate");
         //DbDao.instance("spark");
-        MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
         SpringApplication.run(ServiceController.class, args);
     }
 
@@ -276,6 +277,8 @@ public class ServiceController implements CommandLineRunner {
     public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {        
         System.out.println("Using profile " + activeProfile);
         EurekaUtil.initEurekaClient(activeProfile);
+        MyExecutors.initThreads("dev".equals(activeProfile));
+        MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
     }
     
     @Bean
