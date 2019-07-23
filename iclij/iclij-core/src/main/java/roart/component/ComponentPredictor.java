@@ -102,47 +102,6 @@ public class ComponentPredictor extends ComponentML {
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);
         
         return param;
-        /*
-        String localMl = param.getInput().getConfig().getFindProfitPredictorMLConfig();
-        String ml = param.getInput().getConfig().getEvolveMLMLConfig();
-        MLConfigs marketMlConfig = market.getMlconfig();
-        MLConfigs mlConfig = JsonUtil.convert(ml, MLConfigs.class);
-        MLConfigs localMLConfig = JsonUtil.convert(localMl, MLConfigs.class);
-        //MLConfigs disableLSTM = ComponentMLIndicator.getDisableLSTM();
-        mlConfig.merge(localMLConfig);
-        //mlConfig.merge(disableLSTM);
-        mlConfig.merge(marketMlConfig);
-        Map<String, EvolveMLConfig> mlConfigMap = mlConfig.getAll();
-        if (param.getInput().getConfig().wantEvolveML()) {
-            ComponentMLMACD.setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
-            Map<String, Object> anUpdateMap = param.getService().getEvolveML(true, new ArrayList<>(), PipelineConstants.PREDICTORSLSTM, param.getService().conf);
-            if (param.getInput().getValuemap() != null) {
-                param.getInput().getValuemap().putAll(anUpdateMap); 
-            }
-        }
-        ComponentMLMACD.setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
-        Map predictorMaps = (Map) param.getResultMap(PipelineConstants.PREDICTORSLSTM, new HashMap<>());
-        //resultMaps = srv.getContent();
-        //Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.PREDICTORSLSTM);
-        //System.out.println("mlm " + mlMACDMaps.keySet());
-        //Integer category = (Integer) mlMACDMaps.get(PipelineConstants.CATEGORY);
-        //String categoryTitle = (String) mlMACDMaps.get(PipelineConstants.CATEGORYTITLE);
-        param.setCategory(predictorMaps);
-        Map<String, List<Object>> resultMap = (Map<String, List<Object>>) predictorMaps.get(PipelineConstants.RESULT);
-        if (resultMap == null) {
-            return;
-        }
-        Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) predictorMaps.get(PipelineConstants.PROBABILITY);
-        */
-        /*
-        List<List> resultMetaArray = (List<List>) mlMACDMaps.get(PipelineConstants.RESULTMETAARRAY);
-        //List<ResultMeta> resultMeta = (List<ResultMeta>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
-        List<Object> objectList = (List<Object>) mlMACDMaps.get(PipelineConstants.RESULTMETA);
-        List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
-        */
-        //Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
-        //System.out.println("k2 " + categoryValueMap.keySet());
-        //calculateIncDec(profitdata, param);
     }
     
     @Override
@@ -208,52 +167,6 @@ public class ComponentPredictor extends ComponentML {
         }
         chromosome.setConfig(config);
         return improve(param, chromosome);
-        /*
-        log.info("Component not impl {}", this.getClass().getName());
-        ObjectMapper mapper = new ObjectMapper();
-        EvolutionConfig evolutionConfig = null;
-        try {
-            evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-        */
-        /*
-        List<String> confList = new ArrayList<>();
-        confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
-        confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
-        */
-        /*
-        List<String> keys = new ArrayList<>();
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
-        PredictorChromosome chromosome2 = new PredictorChromosome(conf, keys, param, profitdata, market, positions);
-
-        Map<String, String> retMap = new HashMap<>();
-        try {
-            Individual best = evolution.getFittest(evolutionConfig, chromosome);
-            PredictorChromosome bestChromosome = (PredictorChromosome) best.getEvaluation();
-            //MyMyConfig co = c.getConf();
-            //List<String> k = c.getConfList();
-            Map<String, Object> confMap = bestChromosome.getMap();
-            //Map<String, Object> confMap = null;
-            String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
-            ControlService srv = new ControlService();
-            srv.getConfig();            
-            srv.conf.setMarket(marketName);
-            List<Double> newConfidenceList = new ArrayList<>();
-            srv.conf.getConfigValueMap().putAll(confMap);
-            List<MemoryItem> memories = new PredictorService().doPredict(new ComponentInput(marketName, LocalDate.now(), null, false, false), confMap);
-            for(MemoryItem memory : memories) {
-                newConfidenceList.add(memory.getConfidence());
-            }
-            log.info("New confidences {}", newConfidenceList);
-            retMap.put("key", newConfidenceList.toString());
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return param;
-        */
     }
 
     @Override
