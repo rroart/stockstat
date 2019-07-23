@@ -617,15 +617,19 @@ public class ServiceUtil {
         return listMap;
     }
 
-    private static boolean anythingHere(Map<String, List<List<Double>>> listMap2, int size) {
+    private static boolean anythingHere3(Map<String, List<List<Double>>> listMap2, int size) {
         for (List<List<Double>> array : listMap2.values()) {
-            if (size == 3 && size != array.get(0).size()) {
+            if (size != 3 || size != array.size()) {
                 return false;
             }
+            out:
             for (int i = 0; i < array.get(0).size(); i++) {
-                if (array.get(0).get(i) != null) {
-                    return true;
+                for (int j = 0; j < array.size(); j++) {
+                    if (array.get(j).get(i) == null) {
+                        continue out;
+                    }
                 }
+                return true;
             }
         }
         return false;
@@ -634,7 +638,7 @@ public class ServiceUtil {
     private static boolean wantThree(String market) {
         try {
             Map<String, List<List<Double>>> listMap = getSimpleContent(market);
-            return anythingHere(listMap, 3);
+            return anythingHere3(listMap, 3);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return false;
