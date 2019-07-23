@@ -71,55 +71,13 @@ public class ComponentMLCCI extends ComponentML {
 
         MLCCIData param = new MLCCIData(componentparam);
 
-        int daysafterzero = (int) param.getService().conf.getMACDDaysAfterZero();
+        int daysafterzero = (int) param.getService().conf.getMLCCIDaysAfterLimit();
         param.setFuturedays(daysafterzero);
 
         handle2(market, param, profitdata, positions, evolve, aMap);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         return param;
-        /*
-        int offset = 0;
-        String aDate = "";
-        try {
-            param.setDatesAndOffset(param.getService(), daysafterzero, offset, aDate);
-        } catch (ParseException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-
-        String localMl = param.getInput().getConfig().getFindProfitMLCCIMLConfig();
-        String ml = param.getInput().getConfig().getEvolveMLMLConfig();
-        MLConfigs marketMlConfig = market.getMlconfig();
-        MLConfigs mlConfig = JsonUtil.convert(ml, MLConfigs.class);
-        MLConfigs localMLConfig = JsonUtil.convert(localMl, MLConfigs.class);
-        MLConfigs disableLSTM = ComponentMLIndicator.getDisableLSTM();
-        mlConfig.merge(localMLConfig);
-        mlConfig.merge(marketMlConfig);
-        mlConfig.merge(disableLSTM);
-        Map<String, EvolveMLConfig> mlConfigMap = mlConfig.getAll();
-        if (param.getInput().getConfig().wantEvolveML()) {
-            ComponentMLCCI.setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
-            Map<String, Object> anUpdateMap = param.getService().getEvolveML(true, new ArrayList<>(), PipelineConstants.MLCCI, param.getService().conf);
-            if (param.getInput().getValuemap() != null) {
-                param.getInput().getValuemap().putAll(anUpdateMap); 
-            }
-        }
-        ComponentMLCCI.setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
-        //resultMaps = srv.getContent();
-        Map mlMACDMaps = (Map) param.getResultMap(PipelineConstants.MLCCI, new HashMap<>());
-        //Map mlMACDMaps = (Map) resultMaps.get(PipelineConstants.MLCCI);
-        param.setCategory(mlMACDMaps);
-        Map<String, List<Object>> resultMap = (Map<String, List<Object>>) mlMACDMaps.get(PipelineConstants.RESULT);
-        if (resultMap == null) {
-            return;
-        }
-        handleMLMeta(param, mlMACDMaps);
-        param.getAndSetCategoryValueMap();
-        //Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + param.getCategory()).get(PipelineConstants.LIST);
-        //System.out.println("k2 " + categoryValueMap.keySet());
-         */
-
-        //calculateIncDec(param.getService(), positions, profitdata, param);
     }
 
     @Override
@@ -257,43 +215,15 @@ public class ComponentMLCCI extends ComponentML {
         ConfigMapChromosome chromosome = new MLCCIChromosome(param, profitdata, confList, market, positions, PipelineConstants.MLCCI, buy);
         loadme(param, chromosome, market, confList, buy);
         return improve(param, chromosome);
-
-        /*
-        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
-        OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-
-        Map<String, String> retMap = new HashMap<>();
-        try {
-            Individual best = evolution.getFittest(evolutionConfig, chromosome);
-            ConfigMapChromosome bestChromosome = (ConfigMapChromosome) best.getEvaluation();
-            Map<String, Object> confMap = bestChromosome.getMap();
-            //Map<String, Object> confMap = null;
-            String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
-            //ControlService srv = new ControlService();
-            //srv.getConfig();            
-            List<Double> newConfidenceList = new ArrayList<>();
-            //srv.conf.getConfigValueMap().putAll(confMap);
-            List<MemoryItem> memories = new MLService().doMLCCI(new ComponentInput(marketName, null, null, false, false), confMap);
-            for(MemoryItem memory : memories) {
-                newConfidenceList.add(memory.getConfidence());
-            }
-            log.info("New confidences {}", newConfidenceList);
-            retMap.put("key", newConfidenceList.toString());
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return new HashMap<>();
-         */
     }
 
     @Override
     protected List<String> getConfList() {
         List<String> confList = new ArrayList<>();
-        confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
-        confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
-        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML);
-        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML);
-        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML);
+        confList.add(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLCCISELLLIMIT);
         return confList;
     }
 
