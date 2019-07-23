@@ -218,45 +218,6 @@ public class ComponentMLIndicator extends ComponentML {
         ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy);
         loadme(param, chromosome, market, confList, buy);
         return improve(param, chromosome);
-        /*
-        Map<String, String> retMap = new HashMap<>();
-        List<String> permList = new ArrayList<>();
-        String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
-        //ControlService srv = new ControlService();
-        //srv.getConfig();            
-        permList.add(ConfigConstants.AGGREGATORSINDICATORMACD);
-        permList.add(ConfigConstants.AGGREGATORSINDICATORRSI);
-        Map<String, Object> confMap = new HashMap<>();
-        int size = permList.size();
-        int bitsize = (1 << size) - 1;
-        for (int i = 1; i < bitsize; i++) {
-            String key = "";
-            for (int j = 0; j < size; j++) {
-                log.info("Doing {} {}", i, j);
-                if ((i & (1 << j)) != 0) {
-                    confMap.put(permList.get(j), Boolean.TRUE);
-                    key = key + permList.get(j);
-                } else {
-                    confMap.put(permList.get(j), Boolean.FALSE);
-                }
-            }
-            try {
-                List<Double> newConfidenceList = new ArrayList<>();
-                List<MemoryItem> memories = new MLService().doMLIndicator(new ComponentInput(marketName, null, null, false, false), confMap);
-                {
-
-                }
-                for(MemoryItem memory : memories) {
-                    newConfidenceList.add(memory.getConfidence());
-                }
-                log.info("New confidences {}", newConfidenceList);
-                retMap.put(key, newConfidenceList.toString());
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-        }
-        return retMap;
-         */
     }
 
     public Map<String, String> improveNot(ComponentData param, Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {
