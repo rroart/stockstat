@@ -56,12 +56,14 @@ public class ComponentMLMACD extends ComponentML {
         valueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);        
         valueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.TRUE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);                
     }
 
     @Override
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORSMLMACD, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);                
     }
 
     @Override

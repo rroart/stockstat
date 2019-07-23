@@ -56,12 +56,16 @@ public class ComponentMLRSI extends ComponentML {
         valueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);        
         valueMap.put(ConfigConstants.AGGREGATORSMLRSI, Boolean.TRUE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.TRUE);                
     }
 
     @Override
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORSMLRSI, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.FALSE);                
     }
 
     @Override

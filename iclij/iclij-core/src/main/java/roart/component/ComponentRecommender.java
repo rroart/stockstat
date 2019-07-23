@@ -79,6 +79,7 @@ public class ComponentRecommender extends ComponentNoML {
         valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA, Boolean.TRUE);                
         valueMap.put(ConfigConstants.INDICATORSSTOCHRSIDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.TRUE);
     }
 
     @Override

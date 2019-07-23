@@ -56,12 +56,24 @@ public class ComponentMLMulti extends ComponentML {
         valueMap.put(ConfigConstants.AGGREGATORS, Boolean.TRUE);        
         valueMap.put(ConfigConstants.AGGREGATORSMLMULTI, Boolean.TRUE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.INDICATORSATR, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCH, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.TRUE);                
     }
 
     @Override
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORSMLMULTI, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.INDICATORSATR, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCH, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.FALSE);                
     }
 
     @Override
