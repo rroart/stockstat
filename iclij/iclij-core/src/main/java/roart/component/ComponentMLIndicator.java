@@ -54,6 +54,7 @@ public class ComponentMLIndicator extends ComponentML {
 
     @Override
     public void disable(Map<String, Object> valueMap) {
+        valueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);        
         valueMap.put(PipelineConstants.MLINDICATOR, Boolean.FALSE);        
     }
 
