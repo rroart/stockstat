@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
@@ -280,7 +281,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     for (MLClassifyModel model : mldao.getModels()) {
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
-                            Map<String, List<Pair<double[], Pair<double[], Double>>>> offsetMap = mapMap.get(subType).get(mapType);
+                            Map<String, List<Pair<double[], Pair<double[], Double>>>> offsetMap = mapMap.get(subType).get("offset");
                             String mapName = subType.getType() + mapType;
                             Map<String, List<Pair<double[], Pair<double[], Double>>>> learnMap = mapMap.get(subType).get(mapType);
                             Map<String, Long> countMap = null;
@@ -465,7 +466,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 handleResultMetaAccuracy(testCount, result);
 
                 addEventRow(subType, countMap2);
-                Map<String, List<Pair<double[], Pair<double[], Double>>>> offsetMap = mapMap.get(subType).get(mapType);
+                Map<String, List<Pair<double[], Pair<double[], Double>>>> offsetMap = mapMap.get(subType).get("offset");
                 handleResultMeta(testCount, offsetMap, countMap2);
             }
         } catch (Exception e) {
@@ -558,7 +559,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 for (MLClassifyModel model : mldao.getModels()) {
                     for (int mapTypeInt : getMapTypeList()) {
                         String mapType = mapTypes.get(mapTypeInt);
-                        Map<String, List<Pair<double[], Pair<double[], Double>>>> offsetMap = mapMap.get(subType).get(mapType);
+                        Map<String, List<Pair<double[], Pair<double[], Double>>>> offsetMap = mapMap.get(subType).get("offset");
                         Map<String, Double[]> classifyResult = doClassifications(conf, mapMap, labelMapShort,
                                 subType, mldao, mapResult2, model, mapTypeInt);                        
                         Map<String, Long> countMap = null;
@@ -1804,6 +1805,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                     // for all pos neg cmn
                     // for all stock ids
                     // use per subtype one result per
+                }
+                if (!Arrays.stream(arrays).allMatch(Objects::nonNull)) {
+                    continue;
                 }
                 if (triggerSubType != null) {
                     SubType subType = triggerSubType;
