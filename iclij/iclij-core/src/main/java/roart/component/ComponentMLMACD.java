@@ -291,11 +291,11 @@ public class ComponentMLMACD extends ComponentML {
     @Override
     protected List<String> getConfList() {
         List<String> confList = new ArrayList<>();
-        confList.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
-        confList.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
-        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML);
-        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML);
-        confList.add(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDMACDML);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDSIGNALML);
         return confList;
     }
 

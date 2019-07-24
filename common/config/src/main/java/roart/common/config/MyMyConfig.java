@@ -336,7 +336,7 @@ public class MyMyConfig extends MyConfig {
      * @return
      */
     public int getMACDDaysBeforeZero() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
     }
 
     /**
@@ -344,7 +344,7 @@ public class MyMyConfig extends MyConfig {
      * @return
      */
     public int getMACDDaysAfterZero() {
-        return (Integer) getValueOrDefault(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
     }
 
     public  boolean wantMACDScore() {
@@ -501,15 +501,15 @@ public class MyMyConfig extends MyConfig {
     }
 
     public  boolean wantMLHist() {
-        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML);
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML);
     }
 
     public  boolean wantMLMacd() {
-        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML);
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDMACDML);
     }
 
     public  boolean wantMLSignal() {
-        return (Boolean) getValueOrDefault(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML);
+        return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDSIGNALML);
     }
 
     public boolean wantMLTimes() {

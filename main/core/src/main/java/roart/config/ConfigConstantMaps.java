@@ -80,11 +80,11 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNAL, Integer.class);
         map.put(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNALDELTA, Integer.class);
         map.put(ConfigConstants.INDICATORSMACDMACHINELEARNING, Boolean.class);
-        map.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML, Boolean.class);
-        map.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML, Boolean.class);
-        map.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML, Boolean.class);
-        map.put(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO, Integer.class);
-        map.put(ConfigConstants.INDICATORSMACDDAYSAFTERZERO, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSMLMACDSIGNALML, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSMLMACDMACDML, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO, Integer.class);
+        map.put(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO, Integer.class);
         map.put(ConfigConstants.INDICATORSRSI, Boolean.class);
         map.put(ConfigConstants.INDICATORSRSIDELTA, Boolean.class);
         map.put(ConfigConstants.INDICATORSRSIDELTADAYS, Integer.class);
@@ -344,11 +344,11 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNAL, 20);
         deflt.put(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNALDELTA, 20);
         deflt.put(ConfigConstants.INDICATORSMACDMACHINELEARNING, Boolean.TRUE);
-        deflt.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML, Boolean.TRUE);
-        deflt.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML, Boolean.TRUE);
-        deflt.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML, Boolean.TRUE);
-        deflt.put(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO, 25);
-        deflt.put(ConfigConstants.INDICATORSMACDDAYSAFTERZERO, 10);
+        deflt.put(ConfigConstants.AGGREGATORSMLMACDSIGNALML, Boolean.TRUE);
+        deflt.put(ConfigConstants.AGGREGATORSMLMACDMACDML, Boolean.TRUE);
+        deflt.put(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML, Boolean.TRUE);
+        deflt.put(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO, 25);
+        deflt.put(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO, 10);
         deflt.put(ConfigConstants.INDICATORSRSI, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSRSIDELTA, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSRSIDELTADAYS, 3);
@@ -605,11 +605,11 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNAL, "Sell weight signal");
         text.put(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNALDELTA, "Sell weight signal delta");
         text.put(ConfigConstants.INDICATORSMACDMACHINELEARNING, "Enable indicator MACD machine learning");
-        text.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML, "Enable indicator MACD signal machine learning");
-        text.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML, "Enable indicator MACD macd machine learning");
-        text.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML, "Enable indicator MACD histogram machine learning");
-        text.put(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO, "Days before zero");
-        text.put(ConfigConstants.INDICATORSMACDDAYSAFTERZERO, "Days after zero");
+        text.put(ConfigConstants.AGGREGATORSMLMACDSIGNALML, "Enable indicator MACD signal machine learning");
+        text.put(ConfigConstants.AGGREGATORSMLMACDMACDML, "Enable indicator MACD macd machine learning");
+        text.put(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML, "Enable indicator MACD histogram machine learning");
+        text.put(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO, "Days before zero");
+        text.put(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO, "Days after zero");
         text.put(ConfigConstants.INDICATORSRSI, "Enable indicator RSI");
         text.put(ConfigConstants.INDICATORSRSIDELTA, "Enable indicator RSI delta");
         text.put(ConfigConstants.INDICATORSRSIDELTADAYS, "RSI delta days");
@@ -814,8 +814,8 @@ public class ConfigConstantMaps {
         if (!range.isEmpty()) {
             return;
         }
-        range.put(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO, new Double[] { 1.0, 50.0 } );
-        range.put(ConfigConstants.INDICATORSMACDDAYSAFTERZERO, new Double[] { 1.0, 20.0 } );
+        range.put(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO, new Double[] { 1.0, 50.0 } );
+        range.put(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO, new Double[] { 1.0, 20.0 } );
         range.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, new Double[] { 2.0, 5.0 } );
         range.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, new Double[] { 2.0, 25.0 } );
         range.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, new Double[] { 2.0, 15.0 } );
@@ -907,11 +907,11 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNAL, new XMLType( Integer.class, 20, "Sell weight signal"));
         mymap.put(ConfigConstants.INDICATORSMACDRECOMMENDSELLWEIGHTSIGNALDELTA, new XMLType( Integer.class, 20, "Sell weight signal delta"));
         mymap.put(ConfigConstants.INDICATORSMACDMACHINELEARNING, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD machine learning"));
-        mymap.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGSIGNALML, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD signal machine learning"));
-        mymap.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGMACDML, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD macd machine learning"));
-        mymap.put(ConfigConstants.INDICATORSMACDMACHINELEARNINGHISTOGRAMML, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD histogram machine learning"));
-        mymap.put(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO, new XMLType( Integer.class, 25, "Days before zero", new Double[] { 1.0, 50.0 } ));
-        mymap.put(ConfigConstants.INDICATORSMACDDAYSAFTERZERO, new XMLType( Integer.class, 10, "Days after zero", new Double[] { 1.0, 20.0 } ));
+        mymap.put(ConfigConstants.AGGREGATORSMLMACDSIGNALML, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD signal machine learning"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMACDMACDML, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD macd machine learning"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator MACD histogram machine learning"));
+        mymap.put(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO, new XMLType( Integer.class, 25, "Days before zero", new Double[] { 1.0, 50.0 } ));
+        mymap.put(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO, new XMLType( Integer.class, 10, "Days after zero", new Double[] { 1.0, 20.0 } ));
         mymap.put(ConfigConstants.INDICATORSRSI, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator RSI"));
         mymap.put(ConfigConstants.INDICATORSRSIDELTA, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator RSI delta"));
         mymap.put(ConfigConstants.INDICATORSRSIDELTADAYS, new XMLType( Integer.class, 3, "RSI delta days"));

@@ -254,8 +254,8 @@ public class ComponentMLMulti extends ComponentML {
         list.add(ConfigConstants.AGGREGATORSMLMULTIMACD);
         list.add(ConfigConstants.AGGREGATORSMLMULTIRSI);
         list.add(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI);
-        list.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
-        list.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
+        list.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
+        list.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
         list.add(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
         list.add(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
         return list;

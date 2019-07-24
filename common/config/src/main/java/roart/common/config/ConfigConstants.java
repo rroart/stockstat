@@ -59,11 +59,11 @@ public class ConfigConstants {
     public static final String INDICATORSMACDRECOMMENDSELLWEIGHTSIGNAL = "indicators.macd.recommend.sell.weightsignal";
     public static final String INDICATORSMACDRECOMMENDSELLWEIGHTSIGNALDELTA = "indicators.macd.recommend.sell.weightsignaldelta";
     public static final String INDICATORSMACDMACHINELEARNING = "indicators.macd.machinelearning[@enable]";
-    public static final String INDICATORSMACDMACHINELEARNINGSIGNALML = "indicators.macd.machinelearning.signalml[@enable]";
-    public static final String INDICATORSMACDMACHINELEARNINGMACDML = "indicators.macd.machinelearning.macdml[@enable]";
-    public static final String INDICATORSMACDMACHINELEARNINGHISTOGRAMML = "indicators.macd.machinelearning.histogramml[@enable]";
-    public static final String INDICATORSMACDDAYSBEFOREZERO ="indicators.macd.daysbeforezero";
-    public static final String INDICATORSMACDDAYSAFTERZERO = "indicators.macd.daysafterzero";
+    public static final String AGGREGATORSMLMACDSIGNALML = "aggregators.mlmacd.signalml[@enable]";
+    public static final String AGGREGATORSMLMACDMACDML = "aggregators.mlmacd.macdml[@enable]";
+    public static final String AGGREGATORSMLMACDHISTOGRAMML = "aggregators.mlmacd.histogramml[@enable]";
+    public static final String AGGREGATORSMLMACDDAYSBEFOREZERO ="aggregators.mlmacd.daysbeforezero";
+    public static final String AGGREGATORSMLMACDDAYSAFTERZERO = "aggregators.mlmacd.daysafterzero";
     public static final String INDICATORSRSI = "indicators.rsi[@enable]";
     public static final String INDICATORSRSIDELTA = "indicators.rsi.rsidelta[@enable]";
     public static final String INDICATORSRSIDELTADAYS = "indicators.rsi.rsideltadays";
