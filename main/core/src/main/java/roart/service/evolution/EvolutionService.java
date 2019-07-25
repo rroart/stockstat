@@ -572,6 +572,21 @@ public class EvolutionService {
         if (ml.equals(PipelineConstants.MLMACD)) {
             myKey = ConfigConstants.AGGREGATORSMLMACDMLCONFIG;
         }
+        if (ml.equals(PipelineConstants.MLRSI)) {
+            myKey = ConfigConstants.AGGREGATORSMLRSIMLCONFIG;
+        }
+        if (ml.equals(PipelineConstants.MLMULTI)) {
+            myKey = ConfigConstants.AGGREGATORSMLMULTIMLCONFIG;
+        }
+        if (ml.equals(PipelineConstants.MLATR)) {
+            myKey = ConfigConstants.AGGREGATORSMLATRMLCONFIG;
+        }
+        if (ml.equals(PipelineConstants.MLCCI)) {
+            myKey = ConfigConstants.AGGREGATORSMLCCIMLCONFIG;
+        }
+        if (ml.equals(PipelineConstants.MLSTOCH)) {
+            myKey = ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG;
+        }
         if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
             myKey = ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG;
             newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowLSTMConfig());
