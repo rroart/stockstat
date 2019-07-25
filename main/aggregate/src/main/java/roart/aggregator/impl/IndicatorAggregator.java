@@ -1046,10 +1046,10 @@ public abstract class IndicatorAggregator extends Aggregator {
             //Map<String, Object[]> taMap = subType.taMap;
             //Object[] aMaps = taMap.get(id);
             //double[] arr = (double[]) aMaps[subType.getArrIdx()];
-            double[] truncArray2 = ArraysUtil.getSub(array, start, end);
-            double[] truncArray3 = Arrays.copyOfRange(array, start, end + 1);
-            log.info("g2 {}", Arrays.toString(truncArray2));
-            log.info("g3 {}", Arrays.toString(truncArray3));
+            //double[] truncArray2 = ArraysUtil.getSub(array, start, end);
+            //double[] truncArray3 = Arrays.copyOfRange(array, start, end + 1);
+            //log.info("g2 {}", Arrays.toString(truncArray2));
+            //log.info("g3 {}", Arrays.toString(truncArray3));
 
             List<Triple<Integer, Integer, String>> triples = getRangeLabel(list, listsize, labels, startlabels, afterbefore,
                     start, end);
