@@ -97,7 +97,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             for (int j = 0; j < key.length; j ++) {
                 obj[j] = key[j];
             }
-            cat[i] = entry.getValue();
+            Pair<double[], Double> pair = entry.getValue();
+            cat[i] = pair.getRight();
             objobj[i++] = obj;
         }
     }
