@@ -319,7 +319,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                             log.debug("Outcomes {}", outcomes);
                             Map<String, Pair<double[], Double>> learnMLMap = transformLearnClassifyMap(learnMap, true);
                             Map<String, Pair<double[], Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false);
-                            LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, afterbefore.before, key, mapName, outcomes, mapTime, classifyMLMap, labelMapShort);  
+                            int size = getValidateSize(learnMLMap);
+                            LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, key, mapName, outcomes, mapTime, classifyMLMap, labelMapShort);  
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
 
@@ -435,7 +436,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                             log.debug("Outcomes {}", outcomes);
                             Map<String, Pair<double[], Double>> learnMLMap = transformLearnClassifyMap(learnMap, true);
                             Map<String, Pair<double[], Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false);
-                            Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, afterbefore.before, key, mapName, outcomes, mapTime, classifyMLMap, labelMapShort);  
+                            int size = getValidateSize(learnMLMap);
+                            Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, size, key, mapName, outcomes, mapTime, classifyMLMap, labelMapShort);  
                             Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                             futureList.add(future);
                             futureMap.put(future, new FutureMap(subType, model, mapType, resultMetaArray.size() - 1, mapMap));
@@ -472,6 +474,20 @@ public abstract class IndicatorAggregator extends Aggregator {
         } catch (Exception e) {
             log.error("Exception", e);
         }
+    }
+
+    private int getValidateSize(Map<String, Pair<double[], Double>> map) {
+        int size = -1;
+        for (Entry<String, Pair<double[], Double>> entry : map.entrySet()) {
+            Pair<double[], Double> value = entry.getValue();
+            if (size < 0) {
+                size = value.getLeft().length;
+            }
+            if (size != value.getLeft().length) {
+                return -1;
+            }
+        }
+        return size;
     }
 
     private void handleResultMetaAccuracy(int testCount, LearnTestClassifyResult result) {
@@ -659,7 +675,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                         int outcomes = (int) map.values().stream().distinct().count();
                         outcomes = 4;
                         log.debug("Outcomes {}", outcomes);
-                        Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, afterbefore.before, key, mapName, outcomes, mapTime);  
+                        int size = getValidateSize(map);
+                        Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, size, key, mapName, outcomes, mapTime);  
                         probabilityMap.put("" + model . getId() + key + subType + mapType, testaccuracy);
                         IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                         Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
@@ -1092,7 +1109,6 @@ public abstract class IndicatorAggregator extends Aggregator {
             SubType subType, String commonType, String posnegType, String id, double[] list,
             Map<String, Double> labelMap2, double[][] arrays, int listsize, Map<Integer, Integer> posneg, String[] labels,
             Object object, AfterBeforeLimit afterbefore, SubType[] subs) {
-        double[] array = new double[0];
         Object[] objs = subType.taMap.get(id);
         int begOfArray = (int) objs[subType.range[0]];
         int endOfArray = (int) objs[subType.range[1]];
@@ -1118,6 +1134,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 textlabel = (String) triple.getRight();
                 log.debug("{}: {} at {}", textlabel, id, end);
                 //printme(textlabel, end, list, array, afterbefore);
+                double[] array = new double[0];
                 for (int i = 0; i < arrays.length; i++) {
                     double[] anArray = arrays[i];
                     double[] aTruncArray = ArraysUtil.getSub(anArray, start, end);
