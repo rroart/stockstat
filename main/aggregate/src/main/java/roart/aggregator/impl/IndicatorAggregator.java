@@ -171,8 +171,8 @@ public abstract class IndicatorAggregator extends Aggregator {
         long time1 = System.currentTimeMillis();
         log.debug("listmap {} {}", listMap.size(), listMap.keySet());
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
-        Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> mapMap = createPosNegMapsNew(conf);
-        doMergeLearnNew(conf, mapMap, cat, afterbefore);
+        Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> mapMap = createPosNegMaps(conf);
+        doMergeLearn(conf, mapMap, cat, afterbefore);
         usedSubTypes = new ArrayList<>(mapMap.keySet());
         fieldSize = fieldSize();
         // map from h/m to model to posnegcom map<model, results>
@@ -645,7 +645,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         addEventRow(counts.toString(), subType.getName(), "");
     }
 
-    protected void addEventRow(String text, String name, String id) {
+    private void addEventRow(String text, String name, String id) {
         ResultItemTableRow event = new ResultItemTableRow();
         event.add(getName() + " " + key);
         event.add(text);
@@ -876,178 +876,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return labelMap1;
     }
 
-    /**
-     * 
-     * @param labelMapShort
-     * @param range
-     * @param afterbefore
-     * @return a complex map
-     * 
-     * return the recent ones who need classification
-     * offsetmap, a map from subtype to map with stock id to single value array
-     * a map from subtype posnegcmn to map with stock id to value array
-     * 
-     */
-
-    protected Map<String, Map<String, double[]>> getNewestPosNeg(Map<Double, String> labelMapShort, int[] range, AfterBeforeLimit afterbefore, Map<String, Object[]> taMap) {
-        // calculate sections and do ML
-        // a map from h/m + com/neg/sub to map<id, values>
-        Map<String, Map<String, double[]>> mapMap = new HashMap<>();
-        for (Entry<String, double[][]> entry : getListMap().entrySet()) {
-            double[][] list = entry.getValue();
-            //Double[] origMain = Arrays.copyOf(list[0], list[0].length);
-            //list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
-            Object[] objs = taMap.get(entry.getKey());
-            int begOfArray = (int) objs[range[0]];
-            int endOfArray = (int) objs[range[1]];
-            double[] trunclist = ArraysUtil.getSubExclusive(list[0], begOfArray, begOfArray + endOfArray);
-            //Double[] trunclistOrig = ArraysUtil.getSubExclusive(origMain, begOfArray, begOfArray + endOfArray);
-            if (endOfArray == 0) {
-                continue;
-            }
-            List<SubType> subTypes = wantedSubTypes();
-            for (SubType subType : subTypes) {
-                double[] anArray = (double[]) objs[subType.getArrIdx()];
-                getMlMappings(subType.getName(), subType, labelMapShort, mapMap, entry.getKey(), anArray, endOfArray, trunclist, afterbefore);
-            }
-        }
-        return mapMap;
-    }
-
-    /**
-     * 
-     * @param labelMapShort
-     * @param range
-     * @param afterbefore
-     * @return a complex map
-     * 
-     * return 
-     * a map from stockid to map with Pair(subtype posnegcmn) to map with range to classification array
-     * 
-     */
-
-    @Deprecated
-    protected Map<String, Map<String, double[]>> getNewestPosNeg2(Map<Double, String> labelMapShort, int[] range, AfterBeforeLimit afterbefore, Map<String, Object[]> taMap) {
-        // calculate sections and do ML
-        // a map from h/m + com/neg/sub to map<id, values>
-        Map<String, Map<String, double[]>> mapMap = new HashMap<>();
-        for (Entry<String, double[][]> entry : getListMap().entrySet()) {
-            double[][] list = entry.getValue();
-            //Double[] origMain = Arrays.copyOf(list[0], list[0].length);
-            //list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
-            Object[] objs = taMap.get(entry.getKey());
-            int begOfArray = (int) objs[range[0]];
-            int endOfArray = (int) objs[range[1]];
-            double[] trunclist = ArraysUtil.getSubExclusive(list[0], begOfArray, begOfArray + endOfArray);
-            //Double[] trunclistOrig = ArraysUtil.getSubExclusive(origMain, begOfArray, begOfArray + endOfArray);
-            if (endOfArray == 0) {
-                continue;
-            }
-            List<SubType> subTypes = wantedSubTypes();
-            for (SubType subType : subTypes) {
-                double[] anArray = (double[]) objs[subType.getArrIdx()];
-                getMlMappings(subType.getName(), subType, labelMapShort, mapMap, entry.getKey(), anArray, endOfArray, trunclist, afterbefore);
-            }
-        }
-        return mapMap;
-    }
-
-    /**
-     * 
-     * @param labelMapShort
-     * @param range
-     * @param afterbefore
-     * @return a complex map
-     * 
-     * return 
-     * a map from stockid to map with Pair(subtype posnegcmn) to map with range to classification array
-     * 
-     */
-
-    protected Map<String, Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>>> getPosNeg(Map<Double, String> labelMapShort, AfterBeforeLimit afterbefore) {
-        // calculate sections and do ML
-        // a map from h/m + com/neg/sub to map<id, values>
-        Map<String, Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>>> mapMap = new HashMap<>();
-        for (Entry<String, double[][]> entry : getListMap().entrySet()) {
-            double[][] list = entry.getValue();
-            //Double[] origMain = Arrays.copyOf(list[0], list[0].length);
-            //list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
-            Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>> mapMap2 = mapGetter(mapMap, entry.getKey());
-            List<SubType> subTypes = wantedSubTypes();
-            for (SubType subType : subTypes) {
-                Object[] objs = subType.taMap.get(entry.getKey());
-                int begOfArray = (int) objs[subType.range[0]];
-                int endOfArray = (int) objs[subType.range[1]];
-                double[] trunclist = ArraysUtil.getSubExclusive(list[0], begOfArray, begOfArray + endOfArray);
-                //Double[] trunclistOrig = ArraysUtil.getSubExclusive(origMain, begOfArray, begOfArray + endOfArray);
-                if (endOfArray == 0) {
-                    continue;
-                }
-                double[] anArray = (double[]) objs[subType.getArrIdx()];
-                getMlMappings(subType.getName(), subType, labelMapShort, mapMap2, entry.getKey(), anArray, trunclist, afterbefore);
-            }
-        }
-        return mapMap;
-    }
-
-    /**
-     * 
-     * @param mapMap
-     * @param subType
-     * @param commonType
-     * @param posnegType
-     * @param id
-     * @param list
-     * @param labelMap2
-     * @param array
-     * @param listsize
-     * @param posneg
-     * @param labels
-     * @param afterbefore
-     * 
-     * returns 
-     * 
-     */
-
-    protected void getPosNegMap2(Map<String, Map<double[], Double>> mapMap, SubType subType, String commonType, String posnegType , String id,
-            double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
-            Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore) {
-        boolean endOnly = subType.filters[0].limit == subType.filters[1].limit;
-        //Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, afterbefore.before, afterbefore.after, listsize, endOnly);
-        for (Entry<Integer, Integer> entry : posneg.entrySet()) {
-            String textlabel;
-            int start = entry.getKey();
-            int end = entry.getValue();
-
-            Map<String, Object[]> taMap = subType.taMap;
-            Object[] aMaps = taMap.get(id);
-            double[] arr = (double[]) aMaps[subType.getArrIdx()];
-            double[] truncArray2 = ArraysUtil.getSub(array, start, end);
-            double[] truncArray3 = Arrays.copyOfRange(array, start, end + 1);
-            log.info("g2 {}", Arrays.toString(truncArray2));
-            log.info("g3 {}", Arrays.toString(truncArray3));
-
-            List<Triple<Integer, Integer, String>> triples = getRangeLabel(list, listsize, labels, startlabels, afterbefore,
-                    start, end);
-            for (Triple<Integer, Integer, String> triple : triples) {
-                start = (int) triple.getLeft();
-                end = (int) triple.getMiddle();
-                textlabel = (String) triple.getRight();
-                log.debug("{}: {} at {}", textlabel, id, end);
-                //printme(textlabel, end, list, array, afterbefore);
-                double[] truncArray = ArraysUtil.getSub(array, start, end);
-                Double doublelabel = labelMap2.get(textlabel);
-                String commonMapName = subType.getType() + commonType;
-                String posnegMapName = subType.getType() + posnegType;
-                Map<double[], Double> commonMap = mapGetter(mapMap, commonMapName);
-                Map<double[], Double> posnegMap = mapGetter(mapMap, posnegMapName);
-                commonMap.put(truncArray, doublelabel);
-                posnegMap.put(truncArray, doublelabel);
-            }
-        }
-    }
-
-    protected void getPosNegMap3(Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> mapMap, SubType subType, String commonType, String posnegType , String id,
+    private void getPosNegMap3(Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> mapMap, SubType subType, String commonType, String posnegType , String id,
             double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore) {
         //boolean endOnly = subType.filters[0].limit == subType.filters[1].limit;
@@ -1269,7 +1098,7 @@ public abstract class IndicatorAggregator extends Aggregator {
      * 
      */
 
-    protected void getPosNegMap(Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>> mapMap, SubType subType, String commonType, String posnegType , String id,
+    private void getPosNegMap(Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>> mapMap, SubType subType, String commonType, String posnegType , String id,
             double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
             Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore) {
         //Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, afterbefore.after, listsize);
@@ -1313,79 +1142,12 @@ public abstract class IndicatorAggregator extends Aggregator {
      * maps for learning
      * a map from the id subtype short name + posnegcmn to a map of a value list to labels
      *
-     * next: a map from the id subtype short name + posnegcmn to a map from stock id to pair of value array and label
-     * a similar without label, to be classified
-     * 
-     */
-
-    protected Map<String, Map<double[], Double>> createPosNegMaps(MyMyConfig conf) {
-        Map<String, Map<double[], Double>> mapMap = new HashMap<>();
-        for (String id : getListMap().keySet()) {
-
-            double[][] list = getListMap().get(id);
-            log.debug("t {}", Arrays.toString(list[0]));
-            log.debug("listsize {}", list.length);
-            /*
-            if (conf.wantPercentizedPriceIndex() && list[0].length > 0) {
-                list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
-            }
-             */
-            log.debug("list {} {} ", list.length, Arrays.asList(list));
-            if (conf.wantML()) {
-                Map<String, Double> labelMap2 = createShortLabelMap2();
-                // also macd
-                List<SubType> subTypes = wantedSubTypes();
-                for (SubType subType : subTypes) {
-                    Map<String, Double[]> anOtherResultMap = subType.resultMap;
-                    Double[] curResult = anOtherResultMap.get(id);
-                    if (curResult == null) {
-                        log.debug("no macd for id {}", id);
-                    }
-                    if (curResult == null || !Arrays.stream(curResult).allMatch(i -> i != null)) {
-                        continue;
-                    }
-                    Map<String, Object[]> taObjectMap = subType.taMap;
-                    Object[] taObject = taObjectMap.get(id);
-                    int begOfArray = (int) taObject[subType.range[0]];
-                    int endOfArray = (int) taObject[subType.range[1]];
-                    log.debug("beg end {} {} {}", id, begOfArray, endOfArray);
-                    if (endOfArray <= 0) {
-                        log.error("error arrayend 0");
-                        continue;
-                    }
-                    double[] trunclist = ArrayUtils.subarray(list[0], begOfArray, begOfArray + endOfArray);
-                    log.debug("trunclist {} {}", list.length, Arrays.asList(trunclist));
-
-                    double[] anArray = (double[]) taObject[subType.getArrIdx()];
-                    for (int i = 0; i < posneg.length; i++) {
-                        Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit);
-                        // instead of posneg, take from filter
-                        getPosNegMap2(mapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, anArray, trunclist.length, map[i], subType.filters[i].texts, null, subType.afterbefore);
-                    }
-                }
-            }
-        }
-        return mapMap;
-    }
-
-    /**
-     * 
-     * @param conf
-     * @param range
-     * @param afterbefore
-     * @param objectMaps
-     * @param otherResultMaps
-     * @return a complex map
-     * 
-     * maps for learning
-     * a map from the id subtype short name + posnegcmn to a map of a value list to labels
-     *
      * next: a map from subtype to a map with posnegcmn to a map from stock id to list of (pair (range, pair of value array and eventual label))
      * a similar without label, to be classified
      * 
      */
 
-    protected Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> createPosNegMapsNew(MyMyConfig conf) {
+    private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> createPosNegMaps(MyMyConfig conf) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> mapMap = new HashMap<>();
         for (String id : getListMap().keySet()) {
 
@@ -1438,56 +1200,6 @@ public abstract class IndicatorAggregator extends Aggregator {
         return mapMap;
     }
 
-    protected Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> createPosNegMapsNewNew(MyMyConfig conf) {
-        Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> mapMap = new HashMap<>();
-        if (conf.wantML()) {
-            Map<String, Double> labelMap2 = createShortLabelMap2();
-            // also macd
-            List<SubType> subTypes = wantedSubTypes();
-            for (SubType subType : subTypes) {
-                Map<String, Double[]> anOtherResultMap = subType.resultMap;
-                for (String id : getListMap().keySet()) {
-
-                    double[][] list = getListMap().get(id);
-                    log.debug("t {}", Arrays.toString(list[0]));
-                    log.debug("listsize {}", list.length);
-                    /*
-                        if (conf.wantPercentizedPriceIndex() && list[0].length > 0) {
-                            list[0] = ArraysUtil.getPercentizedPriceIndex(list[0]);
-                        }
-                     */
-                    log.debug("list {} {} ", list.length, Arrays.asList(list));
-                    Double[] curResult = anOtherResultMap.get(id);
-                    if (curResult == null) {
-                        log.debug("no macd for id {}", id);
-                    }
-                    if (curResult == null || !Arrays.stream(curResult).allMatch(i -> i != null)) {
-                        continue;
-                    }
-                    Map<String, Object[]> taObjectMap = subType.taMap;
-                    Object[] taObject = taObjectMap.get(id);
-                    int begOfArray = (int) taObject[subType.range[0]];
-                    int endOfArray = (int) taObject[subType.range[1]];
-                    log.debug("beg end {} {} {}", id, begOfArray, endOfArray);
-                    if (endOfArray <= 0) {
-                        log.error("error arrayend 0");
-                        continue;
-                    }
-                    double[] trunclist = ArrayUtils.subarray(list[0], begOfArray, begOfArray + endOfArray);
-                    log.debug("trunclist {} {}", list.length, Arrays.asList(trunclist));
-
-                    double[] anArray = (double[]) taObject[subType.getArrIdx()];
-                    for (int i = 0; i < posneg.length; i++) {
-                        Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit);
-                        // instead of posneg, take from filter
-                        getPosNegMap3(mapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, anArray, trunclist.length, map[i], subType.filters[i].texts, null, subType.afterbefore);
-                    }
-                }
-            }
-        }
-        return mapMap;
-    }
-
     protected void printme(String label, int end, double[] values, double[] array, AfterBeforeLimit afterbefore) {
         StringBuilder me1 = new StringBuilder();
         StringBuilder me2 = new StringBuilder();
@@ -1506,85 +1218,6 @@ public abstract class IndicatorAggregator extends Aggregator {
         String m2 = me2.toString();
         log.debug("me1 {}", m1);
         log.debug("me2 {}", m2);
-    }
-
-    private void getMlMappings(String name, SubType subType, Map<Double, String> labelMapShort, Map<String, Map<String, double[]>> mapMap,
-            String id, double[] array, int endOfArray,
-            double[] valueList, AfterBeforeLimit afterbefore) {
-        String subNameShort = subType.getType();
-        Map<String, double[]> offsetMap = IndicatorAggregator.mapGetter(mapMap, subNameShort);
-        Map<String, double[]> commonMap = IndicatorAggregator.mapGetter(mapMap, subNameShort + CMNTYPESTR);
-        Map<String, double[]> posMap = IndicatorAggregator.mapGetter(mapMap, subNameShort + POSTYPESTR);
-        Map<String, double[]> negMap = IndicatorAggregator.mapGetter(mapMap, subNameShort + NEGTYPESTR);
-        Map<Integer, Integer>[] map = ArraysUtil.searchForward(array, endOfArray);
-        boolean endOnly = true; // subType.filters[0].limit == subType.filters[1].limit;
-        for (int i = 0; i < map.length; i++) {
-            Map<Integer, Integer> posneg = map[0];
-            Map<Integer, Integer> newPosneg = ArraysUtil.getFreshRanges(posneg, afterbefore.before, afterbefore.after, valueList.length);
-
-            /*
-        Map<Integer, Integer> neg = map[1];
-        Map<Integer, Integer> newNeg = ArraysUtil.getFreshRanges(neg, afterbefore.before, afterbefore.after, valueList.length);
-             */
-            printSignChange(name, id, newPosneg, i == 0, endOfArray, afterbefore.after, labelMapShort);
-            //printSignChange(name, id, newNeg, false, endOfArray, afterbefore.after, labelMapShort);
-            if (/*!newNeg.isEmpty() ||*/ !newPosneg.isEmpty()) {
-                int start = 0;
-                int end = 0;
-                /*
-            if (!newNeg.isEmpty()) {
-                start = newNeg.keySet().iterator().next();
-                end = newNeg.get(start);
-            }
-                 */
-                if (!newPosneg.isEmpty()) {
-                    start = newPosneg.keySet().iterator().next();
-                    end = newPosneg.get(start);
-                }
-                if (end + 1 >= endOfArray) {
-                    continue;
-                }
-                double[] doubleArray = new double[] { endOfArray - end };
-                offsetMap.put(id, doubleArray);
-                log.debug("t {} {} {}", subNameShort, id, valueList[end]);
-                double[] truncArray = ArraysUtil.getSub(array, start, end);
-                commonMap.put(id, truncArray);
-                /*
-            if (!newNeg.isEmpty()) {
-                negMap.put(id, truncArray); 
-            }
-                 */
-                Map<String, double[]> aMap = i == 0 ? posMap : negMap;
-                if (!newPosneg.isEmpty()) {
-                    aMap.put(id, truncArray);
-                }
-            }
-        }
-    }
-
-    private void getMlMappings(String name, SubType subType, Map<Double, String> labelMapShort, Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>> mapMap,
-            String id, double[] array,
-            double[] valueList, AfterBeforeLimit afterbefore) {
-        Map<String, Object[]> taObjectMap = subType.taMap;
-        Object[] taObject = taObjectMap.get(id);
-        int begOfArray = (int) taObject[subType.range[0]];
-        int endOfArray = (int) taObject[subType.range[1]];
-
-        //Map<Pair<Integer, Integer>, Double> posMap = IndicatorAggregator.mapGetter(mapMap, new ImmutablePair(subType, POSTYPESTR));
-        //Map<Pair<Integer, Integer>, Double> negMap = IndicatorAggregator.mapGetter(mapMap, new ImmutablePair(subType, NEGTYPESTR));
-        for (int i = 0; i < 2; i++) {
-            //Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(array, endOfArray);
-            Map<Integer, Integer>[] maps = ArraysUtil.searchForwardLimit(array, endOfArray, subType.filters[i].limit);
-            //for (int i = 0; i < 2; i++) {
-            //Map<Integer, Integer> posnegm = maps[i];
-            //Map<Integer, Integer> newPosneg = ArraysUtil.getFreshRanges(posnegm, afterbefore.before, afterbefore.after, valueList.length);
-
-            double[] trunclist = valueList;
-            Map<String, Double> labelMap2 = createShortLabelMap2();
-            double[] anArray = (double[]) taObject[subType.getArrIdx()];
-            getPosNegMap(mapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, anArray, trunclist.length, maps[i], subType.filters[i].texts, null, subType.afterbefore);
-            //}
-        }
     }
 
     @Override
@@ -1613,110 +1246,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return result;
     }
 
-    protected void doMergeLearn(MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> mapMap,
-            Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult2,
-            AfterBeforeLimit afterbefore) {
-        Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> newMapMap = new HashMap<>();
-        Map<String, Double> labelMap2 = createShortLabelMap2();
-        List<SubType> mergelist = wantedMergeSubTypes();
-        // for each wanted merge trigger
-        for (SubType mergeSubType : mergelist) {
-            //for (String mapType : mapTypes.values()) {
-            Map<String, Pair<double[], Double>> resultMap = new HashMap<>();
-            int wantedSize = 0;
-            for (int i = 0; i < wantedSubTypes.size(); i++) {
-                SubType aSubType = wantedSubTypes.get(i);
-                if (aSubType.useMerged) {
-                    wantedSize += getAfterBefore().before;
-                }
-            }
-            //Map<String, Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>>> m = getPosNeg(labelMapShort, afterbefore);
-            Map<Double, String> reverseClassification = createLabelMapShort();
-            // map from h/m + posnegcom to map<model, results>
-            // for each its subtype
-            for (Entry<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> entry : mapMap.entrySet()) {
-                SubType subType = entry.getKey();
-		if (mergeSubType.mySubType != subType.mySubType) {
-		    continue;
-		}
-                Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>> subTypeMaps = entry.getValue();
-                // for all pos neg cmn
-                // cmn enough?
-                Map<String, List<Pair<double[], Pair<double[], Double>>>> subTypeMapEntry = subTypeMaps.get(CMNTYPESTR);
-                /*
-                for (Entry<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>> subTypeMapEntry : subTypeMaps.entrySet()) {
-                String posnegcmn = subTypeMapEntry.getKey();
-                if ("offset".equals(posnegcmn)) {
-                    continue;
-                }
-                //Pair<SubType, String> pair = subTypeMapEntry.getKey();
-                //String posnegcmn = pair.getRight();
-                Map<String, List<Pair<double[], Pair<double[], Double>>>> myMap = subTypeMapEntry.getValue();
-                */
-                Map<String, List<Pair<double[], Pair<double[], Double>>>> myMap = subTypeMapEntry;
-                // for all stock ids
-                for (Entry<String, List<Pair<double[], Pair<double[], Double>>>> myMapEntry : myMap.entrySet()) {
-                    String id = myMapEntry.getKey();
-                    // for all elements in the list (of the stock id)
-		    // for each range
-                    for(Pair<double[], Pair<double[], Double>> elem : myMapEntry.getValue()) {
-                        double[] range = elem.getLeft();
-                        int start = (int) range[0];
-                        if (range.length == 1) {
-                            int jj = 0;
-                        }
-                        int end = (int) range[1];
-                        Double cls = elem.getRight().getRight();
-                        //String tfpn = reverseClassification.get(cls);
-                        //double[][] array = new double[wantedSubTypes.size()][];
-                        double[][] list = getListMap().get(id);
-                        double[] array = new double[0];
-                        // for all subtypes
-                        for (int i = 0; i < wantedSubTypes.size(); i++) {
-                            SubType aSubType = wantedSubTypes.get(i);
-                            /*
-                            if (!aSubType.useMergeLimitTrigger) {
-                                continue;
-                            }
-                            */
-                            if (!aSubType.useMerged) {
-                                continue;
-                            }
-                            Map<String, Object[]> taObjectMap = aSubType.taMap;
-                            Object[] taObject = taObjectMap.get(id);
-                            double[] anArray = (double[]) taObject[aSubType.getArrIdx()];
-                            int begOfArray = (int) taObject[aSubType.range[0]];
-                            int endOfArray = (int) taObject[aSubType.range[1]];
-                            //array[i] = Arrays.copyOfRange(anArray, start, end + 1);;
-                            double[] arr = Arrays.copyOfRange(anArray, start, end + 1);
-                            array = (double[]) ArrayUtils.addAll(array, arr);
-                        }
-                        // use per subtype one result per
-                        /*
-                        double[] trunclist = ArrayUtils.subarray(list[0], begOfArray, begOfArray + endOfArray);
-                        for (int j = 0; j < posneg.length; j++) {
-                            //Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[j].limit);
-                            // instead of posneg, take from filter                  
-                            Map<Integer, Integer> map = new HashMap<>();
-                            map.put(start, end);
-                            getPosNegMap3(newMapMap, subType, CMNTYPESTR, posneg[j], id, trunclist, labelMap2, array, trunclist.length, map[j], subType.filters[j].texts, null, mergeSubType.afterbefore);
-                        }
-                        for (Entry<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> sub : newMapMap.entrySet()) {
-                            //mapMa
-                        }
-                        */
-                    }
-                    //resultMap.put(id, new ImmutablePair(array, cls));
-                }
-                //}
-            }
-            //mapMap.put(subMerge, resultMap);
-            //}
-        }
-        mapMap.putAll(newMapMap);
-    }
-
-    protected void doMergeLearnNew(MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> mapMap,
+    private void doMergeLearn(MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> mapMap,
             AbstractCategory cat,
             AfterBeforeLimit afterbefore) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>>> newMapMap = new HashMap<>();
@@ -1871,7 +1401,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return mapMap.computeIfAbsent(key, k -> new ArrayList<>());
     }
 
-    protected int getTitles(int retindex, Object[] objs) {
+    private int getTitles(int retindex, Object[] objs) {
         // make OO of this
         List<SubType> subTypes = usedSubTypes();
         if (subTypes == null || subTypes.isEmpty()) {
