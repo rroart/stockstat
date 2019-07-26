@@ -110,6 +110,8 @@ public class MLMACD extends IndicatorAggregator {
         public MacdSubTypeMacd(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(list, taObject, resultObject, afterbefore, range);
             this.mySubType = MySubType.MACDMACD;
+            this.useDirectly = false;
+            this.useMergeLimitTrigger = false;
        }
         
         public MacdSubTypeMacd() {
@@ -133,6 +135,8 @@ public class MLMACD extends IndicatorAggregator {
         public MacdSubTypeSignal(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range) {
             super(list, taObject, resultObject, afterbefore, range);
             this.mySubType = MySubType.MACDSIG;
+            this.useDirectly = false;
+            this.useMergeLimitTrigger = false;
         }
         
         public MacdSubTypeSignal() {
