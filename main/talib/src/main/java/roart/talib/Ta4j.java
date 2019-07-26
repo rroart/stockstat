@@ -53,18 +53,18 @@ public abstract class Ta4j extends Ta {
         return series;
     }
 
-    protected TimeSeries getThreeSeries(double[] values, double low[], double high[], int size) {
+    protected TimeSeries getThreeSeries(double[] close, double low[], double high[], int size) {
         LocalDate date = LocalDate.now();
         TimeSeries series = new BaseTimeSeries();
         for (int i = 0; i < size; i++) {
-            Num open = null;
-            Num high = PrecisionNum.valueOf(high[i]);
-            Num low = PrecisionNum.valueOf(low[i]);
-            Num close = PrecisionNum.valueOf(values[i]);
-            Num volume = null;
+            Num openNum = null;
+            Num highNum = PrecisionNum.valueOf(high[i]);
+            Num lowNum = PrecisionNum.valueOf(low[i]);
+            Num closeNum = PrecisionNum.valueOf(close[i]);
+            Num volumeNum = null;
             LocalDate aDate = date.minusDays(size - 1 - i);
             ZonedDateTime endTime = aDate.atStartOfDay(ZoneOffset.UTC);
-            series.addBar(endTime, open, high, low, close, volume);
+            series.addBar(endTime, openNum, highNum, lowNum, closeNum, volumeNum);
         }
         return series;
     }
