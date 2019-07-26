@@ -35,51 +35,19 @@ import roart.service.MLService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 
-public class MLMultiChromosome extends ConfigMapChromosome {
+public class MLMultiChromosome extends MLAggregatorChromosome {
 
     public MLMultiChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy) {
-        super(confList, param, profitdata, market, positions, component, buy);
+        super(param, profitdata, confList, market, positions, component, buy);
     }
 
     @Override
-    public boolean validate() {
-	boolean foundbool = false;
-        for (String key : getValidateList()) {
-            Object object = getMap().get(key);
-            if (object != null && object instanceof Boolean) {
-		foundbool = true;
-                if ((boolean) object) {
-                    return true;
-                }
-            }
-        }
-        return !foundbool;
-    }
-    
-    @Override
-    public void fixValidation() { 
-        Random rand = new Random();
-        int index = rand.nextInt(getValidateList().size());
-        getMap().put(getValidateList().get(index), true);
+    protected MLAggregatorChromosome getNewChromosome(ComponentData newparam) {
+        return new MLATRChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
     }
 
     @Override
-    public double getFitness()
-            throws JsonParseException, JsonMappingException, IOException {
-        /*
-        List<String> list = new ArrayList<>();
-        list.add(ConfigConstants.INDICATORSMACDDAYSBEFOREZERO);
-        list.add(ConfigConstants.INDICATORSMACDDAYSAFTERZERO);
-         */
-        return super.getFitness();
-        /*
-        MyCallable callable = new MyCallable(conf, ml, dataReaders, categories);
-        Future<Aggregator> future = MyExecutors.run(callable);
-        aggregate = future.get();
-         */
-    }
-
-    private List<String> getValidateList() {
+    protected List<String> getValidateList() {
         List<String> list = new ArrayList<>();
         list.add(ConfigConstants.AGGREGATORSMLMULTIMACD);
         list.add(ConfigConstants.AGGREGATORSMLMULTIRSI);
@@ -91,31 +59,4 @@ public class MLMultiChromosome extends ConfigMapChromosome {
         return list;
     }
     
-    @Override
-    public AbstractChromosome copy() {
-        ComponentData newparam = new ComponentData(param);
-        MLMultiChromosome chromosome = new MLMultiChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
-	chromosome.getMap().putAll(getMap());
-        return chromosome;
-    }
-    
-    @Override
-    public Individual crossover(AbstractChromosome other) {
-        ComponentData newparam = new ComponentData(param);
-        MLMultiChromosome chromosome = new MLMultiChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
-        Random rand = new Random();
-        for (int conf = 0; conf < confList.size(); conf++) {
-            String confName = confList.get(conf);
-            if (rand.nextBoolean()) {
-                chromosome.getMap().put(confName, this.getMap().get(confName));
-            } else {
-                chromosome.getMap().put(confName, ((ConfigMapChromosome) other).getMap().get(confName));
-            }
-        }
-        if (!chromosome.validate()) {
-            chromosome.fixValidation();
-        }
-        return new Individual(chromosome);
-    }
-
 }
