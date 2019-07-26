@@ -512,6 +512,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                 List<SubType> subTypes2 = usedSubTypes();
                 for (SubType subType : subTypes2) {
                     Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
+                    if (mapResult1 == null) {
+                        int jj = 0;
+                        continue;
+                    }
                     //log.debug("mapget " + subType + " " + mapResult.keySet());
                     for (MLClassifyDao mldao : mldaos) {
                         for (MLClassifyModel model : mldao.getModels()) {
