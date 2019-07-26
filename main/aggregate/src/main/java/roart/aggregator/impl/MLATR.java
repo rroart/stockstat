@@ -1,48 +1,21 @@
 package roart.aggregator.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
-import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.util.ArraysUtil;
-import roart.db.dao.DbDao;
-import roart.executor.MyExecutors;
-import roart.pipeline.Pipeline;
-import roart.indicator.util.IndicatorUtils;
-import roart.common.constants.Constants;
 import roart.ml.dao.MLClassifyDao;
-import roart.ml.dao.MLClassifyLearnTestPredictCallable;
-import roart.ml.model.LearnTestClassifyResult;
-import roart.ml.common.MLClassifyModel;
 import roart.model.StockItem;
-import roart.result.model.ResultItemTable;
-import roart.result.model.ResultItemTableRow;
-import roart.result.model.ResultMeta;
 import roart.model.data.PeriodData;
-import roart.talib.Ta;
-import roart.talib.impl.TalibATR;
-import roart.talib.impl.TalibMACD;
+import roart.pipeline.Pipeline;
 import roart.talib.util.TaConstants;
 
 public class MLATR extends IndicatorAggregator {
@@ -117,15 +90,6 @@ public class MLATR extends IndicatorAggregator {
         return conf.getMLATRMLConfig();
     }
     
-    static <K, V> Map<K, V> mapGetterOrig(Map<String, Map<K, V>> mapMap, String key) {
-        Map<K, V> map = mapMap.get(key);
-        if (map == null) {
-            map = new HashMap<>();
-            mapMap.put(key, map);
-        }
-        return map;
-    }
-
     @Override
     protected void printSignChange(String txt, String id, Map<Integer, Integer> posneg, boolean positive, int listsize, int daysAfterZero, Map<Double, String> labelMapShort) {
         String pnString = positive ? "negative" : "positive";
@@ -165,29 +129,10 @@ public class MLATR extends IndicatorAggregator {
     }
 
     @Override
-    public Object calculate(double[][] array) {
-        Ta tu = new TalibATR();
-        return tu.calculate(array);
-    }
-
-    @Override
     protected AfterBeforeLimit getAfterBefore() {
         return new AfterBeforeLimit(conf.getMLATRDaysBeforeLimit(), conf.getMLATRDaysAfterLimit());
     }
     
-    @Override
-    public Object[] getResultItemTitle() {
-        Object[] objs = new Object[fieldSize];
-        int retindex = 0;
-        objs[retindex++] = title + Constants.WEBBR + "hist";
-        if (conf.isMACDHistogramDeltaEnabled()) {
-            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "hist";
-        }
-        retindex = getTitles(retindex, objs);
-        log.debug("fieldsizet {}", retindex);
-        return objs;
-    }
-
     @Override
     protected int fieldSize() {
         int size = 0;

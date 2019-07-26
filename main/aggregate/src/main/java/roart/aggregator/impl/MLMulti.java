@@ -7,10 +7,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.aggregator.impl.IndicatorAggregator.AfterBeforeLimit;
-import roart.aggregator.impl.IndicatorAggregator.Filter;
-import roart.aggregator.impl.IndicatorAggregator.MergeSubType;
-import roart.aggregator.impl.IndicatorAggregator.SubType;
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
@@ -18,7 +14,6 @@ import roart.ml.dao.MLClassifyDao;
 import roart.model.StockItem;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
-import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaConstants;
 
 public class MLMulti extends IndicatorAggregator {

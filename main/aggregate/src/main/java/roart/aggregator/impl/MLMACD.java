@@ -187,15 +187,6 @@ public class MLMACD extends IndicatorAggregator {
         return conf.getMLMACDMLConfig();
     }
     
-    static <K, V> Map<K, V> mapGetterOrig(Map<String, Map<K, V>> mapMap, String key) {
-        Map<K, V> map = mapMap.get(key);
-        if (map == null) {
-            map = new HashMap<>();
-            mapMap.put(key, map);
-        }
-        return map;
-    }
-
     @Override
     protected void printSignChange(String txt, String id, Map<Integer, Integer> posneg, boolean positive, int listsize, int daysAfterZero, Map<Double, String> labelMapShort) {
         String pnString = positive ? "negative" : "positive";
@@ -235,37 +226,10 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     @Override
-    public Object calculate(double[][] array) {
-        Ta tu = new TalibMACD();
-        return tu.calculate(array);
-    }
-
-    @Override
     protected AfterBeforeLimit getAfterBefore() {
         return new AfterBeforeLimit(conf.getMACDDaysBeforeZero(), conf.getMACDDaysAfterZero());
     }
     
-    @Override
-    public Object[] getResultItemTitle() {
-        Object[] objs = new Object[fieldSize];
-        int retindex = 0;
-        objs[retindex++] = title + Constants.WEBBR + "hist";
-        if (conf.isMACDHistogramDeltaEnabled()) {
-            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "hist";
-        }
-        objs[retindex++] = title + Constants.WEBBR + "macd";
-        if (conf.isMACDDeltaEnabled()) {
-            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
-        }
-        objs[retindex++] = title + Constants.WEBBR + "sig";
-        if (conf.isMACDSignalDeltaEnabled()) {
-            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
-        }
-        retindex = getTitles(retindex, objs);
-        log.debug("fieldsizet {}", retindex);
-        return objs;
-    }
-
     @Override
     protected int fieldSize() {
         int size = 0;

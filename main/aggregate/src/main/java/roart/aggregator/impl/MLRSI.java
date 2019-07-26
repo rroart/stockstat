@@ -1,49 +1,20 @@
 package roart.aggregator.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import roart.aggregator.impl.IndicatorAggregator.AfterBeforeLimit;
-import roart.aggregator.impl.IndicatorAggregator.Filter;
-import roart.aggregator.impl.IndicatorAggregator.SubType;
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
-import roart.common.constants.Constants;
-import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
-import roart.common.util.ArraysUtil;
-import roart.executor.MyExecutors;
-import roart.indicator.util.IndicatorUtils;
-import roart.ml.common.MLClassifyModel;
 import roart.ml.dao.MLClassifyDao;
-import roart.ml.dao.MLClassifyLearnTestPredictCallable;
-import roart.ml.model.LearnTestClassifyResult;
 import roart.model.StockItem;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
-import roart.pipeline.common.aggregate.Aggregator;
-import roart.result.model.ResultItemTable;
-import roart.result.model.ResultItemTableRow;
-import roart.result.model.ResultMeta;
-import roart.talib.Ta;
-import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaConstants;
 
 public class MLRSI extends IndicatorAggregator {
@@ -183,19 +154,6 @@ public class MLRSI extends IndicatorAggregator {
         return new AfterBeforeLimit(conf.getMLRSIDaysBeforeLimit(), conf.getMLRSIDaysAfterLimit());
     }
     
-    static <K, V> Map<K, V> mapGetterOrig(Map<String, Map<K, V>> mapMap, String key) {
-        Map<K, V> map = mapMap.get(key);
-        if (map == null) {
-            map = new HashMap<>();
-            mapMap.put(key, map);
-        }
-        return map;
-    }
-
-    static <K, V> Map<K, V> mapGetterNot(Map<String, Map<K, V>> mapMap, String key) {
-        return mapMap.computeIfAbsent(key, k -> new HashMap<>());
-    }
-
     public static void printout(Double[] type, String id, Map<Double, String> labelMapShort) {
         if (type != null) {
             //log.debug("Type " + labelMapShort.get(type[0]) + " id " + id);
@@ -203,35 +161,8 @@ public class MLRSI extends IndicatorAggregator {
     }
 
     @Override
-    public Object calculate(double[][] array) {
-        Ta tu = new TalibMACD();
-        return tu.calculate(array);
-    }
-
-    @Override
     public boolean isEnabled() {
         return conf.wantMLRSI();
-    }
-
-    @Override
-    public Object[] getResultItemTitle() {
-        Object[] objs = new Object[fieldSize];
-        int retindex = 0;
-        objs[retindex++] = title + Constants.WEBBR + "hist";
-        if (conf.isMACDHistogramDeltaEnabled()) {
-            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "hist";
-        }
-        objs[retindex++] = title + Constants.WEBBR + "macd";
-        if (conf.isMACDDeltaEnabled()) {
-            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
-        }
-        objs[retindex++] = title + Constants.WEBBR + "sig";
-        if (conf.isMACDSignalDeltaEnabled()) {
-            objs[retindex++] = title + Constants.WEBBR + Constants.DELTA + "mom";
-        }
-        retindex = getTitles(retindex, objs);
-        log.debug("fieldsizet {}", retindex);
-        return objs;
     }
 
     @Override
