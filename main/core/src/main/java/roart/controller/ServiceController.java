@@ -31,7 +31,6 @@ import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
-import roart.common.util.JsonUtil;
 import roart.config.MyXMLConfig;
 import roart.db.dao.DbDao;
 import roart.eureka.util.EurekaUtil;
@@ -162,8 +161,6 @@ public class ServiceController implements CommandLineRunner {
                 disableList = new ArrayList<>();
             }
             result.setList(getInstance().getContent( new MyMyConfig(param.getConfig()), maps, disableList));
-            //System.out.println("xxx" + maps.keySet());
-            log.info("myjson {}", JsonUtil.convert(result));
             result.setMaps(maps);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -237,7 +234,6 @@ public class ServiceController implements CommandLineRunner {
             result.setList(new EvolutionService().getEvolveRecommender( aConfig, disableList, updateMap));
             result.setMaps(maps);
             result.setConfig(aConfig);
-            log.info("myjson {}", JsonUtil.convert(result));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -264,7 +260,6 @@ public class ServiceController implements CommandLineRunner {
             result.setList(new EvolutionService().getEvolveML( aConfig, disableList, updateMap, ml));
             result.setMaps(maps);
             result.setConfig(aConfig);
-            log.info("myjson {}", JsonUtil.convert(result));
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
