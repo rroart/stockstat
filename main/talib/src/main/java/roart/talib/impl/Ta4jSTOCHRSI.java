@@ -33,15 +33,12 @@ public class Ta4jSTOCHRSI extends Ta4j {
         }
         TimeSeries series = getClosedSeries(values, size);
         StochasticRSIIndicator i = new StochasticRSIIndicator(series, 14);
-        double[] rsi3 = new double[values.length];
         for (int j = 0; j < values.length; j++) {
-            rsi3[j] = i.getValue(j).doubleValue();
-            if (Double.isNaN(rsi3[j])) {
+            rsi[j] = i.getValue(j).doubleValue();
+            if (Double.isNaN(rsi[j])) {
                 int jj = 0;
             }
         }
-        objs[0] = rsi3;
-        //objs[1] = rsi3;
         return objs;
     }
 
