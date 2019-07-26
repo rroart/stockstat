@@ -636,7 +636,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return map;
     }
 
-    private void addEventRow(SubType subType, Map<String, Long> countMap) {
+    protected void addEventRow(SubType subType, Map<String, Long> countMap) {
         StringBuilder counts = new StringBuilder();
         counts.append("classified ");
         for (Entry<String, Long> entry : countMap.entrySet()) {
@@ -645,7 +645,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         addEventRow(counts.toString(), subType.getName(), "");
     }
 
-    private void addEventRow(String text, String name, String id) {
+    protected void addEventRow(String text, String name, String id) {
         ResultItemTableRow event = new ResultItemTableRow();
         event.add(getName() + " " + key);
         event.add(text);
