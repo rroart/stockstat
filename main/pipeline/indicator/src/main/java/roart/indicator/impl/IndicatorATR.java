@@ -17,7 +17,6 @@ public class IndicatorATR extends Indicator {
     public IndicatorATR(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.key = title;
-        fieldSize = fieldSize();
         if (isEnabled() && !onlyExtra) {
             calculateAll(category, datareaders);
         }
@@ -41,7 +40,8 @@ public class IndicatorATR extends Indicator {
         return PipelineConstants.INDICATORATR;
     }
 
-    private int fieldSize() {
+    @Override
+    protected int fieldSize() {
         int size = 1;
         if (conf.isATRDeltaEnabled()) {
             size++;
@@ -52,9 +52,6 @@ public class IndicatorATR extends Indicator {
 
     @Override
     public Object calculate(double[][] array) {
-        if (array.length != 180 && array.length > 0) {
-            log.info("180");
-        }
         Ta tu = new TalibATR();
         return tu.calculate(array);
     }

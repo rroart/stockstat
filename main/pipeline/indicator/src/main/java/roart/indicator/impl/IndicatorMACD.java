@@ -18,8 +18,7 @@ public class IndicatorMACD extends Indicator {
     
     public IndicatorMACD(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
-       this.key = title;
-        fieldSize = fieldSize();
+        this.key = title;
         if (isEnabled() && !onlyExtra) {
             calculateAll(category, datareaders);
         }
@@ -43,7 +42,8 @@ public class IndicatorMACD extends Indicator {
         return PipelineConstants.INDICATORMACD;
     }
     
-    private int fieldSize() {
+    @Override
+    protected int fieldSize() {
         int size = 3;
         if (conf.isMACDDeltaEnabled()) {
             size++;

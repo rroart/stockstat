@@ -31,7 +31,7 @@ public abstract class AbstractIndicator extends Calculatable {
     protected String title;
     protected MyMyConfig conf;
     protected String key;
-    protected int fieldSize = 0;
+    public int fieldSize = 0;
     protected Object[] emptyField;
 
     protected Map<String, Double[][]> listMap;

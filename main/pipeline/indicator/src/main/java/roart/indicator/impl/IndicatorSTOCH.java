@@ -16,7 +16,6 @@ public class IndicatorSTOCH extends Indicator {
     public IndicatorSTOCH(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.key = title;
-        fieldSize = fieldSize();
         if (isEnabled() && !onlyExtra) {
             calculateAll(category, datareaders);
         }
@@ -40,7 +39,8 @@ public class IndicatorSTOCH extends Indicator {
         return PipelineConstants.INDICATORSTOCH;
     }
     
-    private int fieldSize() {
+    @Override
+    protected int fieldSize() {
         int size = 2;
         if (conf.isSTOCHDeltaEnabled()) {
             size += 2;
@@ -51,9 +51,6 @@ public class IndicatorSTOCH extends Indicator {
     
     @Override
     public Object calculate(double[][] array) {
-        if (array.length != 180 && array.length > 0) {
-            log.info("180");
-        }
         Ta tu = new TalibSTOCH();
         return tu.calculate(array);
     }

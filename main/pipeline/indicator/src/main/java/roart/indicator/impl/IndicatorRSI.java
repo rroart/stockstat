@@ -16,7 +16,6 @@ public class IndicatorRSI extends Indicator {
     public IndicatorRSI(MyMyConfig conf, String string, String title, int category, Pipeline[] datareaders, boolean onlyExtra) throws Exception {
         super(conf, string, category);
         this.key = title;
-        fieldSize = fieldSize();
         if (isEnabled() && !onlyExtra) {
             calculateAll(category, datareaders);
         }
@@ -40,7 +39,8 @@ public class IndicatorRSI extends Indicator {
         return PipelineConstants.INDICATORRSI;
     }
 
-    private int fieldSize() {
+    @Override
+    protected int fieldSize() {
         int size = 1;
         if (conf.isRSIDeltaEnabled()) {
             size++;

@@ -57,7 +57,7 @@ public class CategoryPrice extends Category {
                 }
                 r.add("Currency");
                 for (AbstractIndicator indicator : indicators) {
-                    if (indicator.isEnabled()) {
+                    if (indicator.isEnabled() && indicator.fieldSize > 0) {
                         r.addarr(indicator.getResultItemTitle());
                     }
                 }

@@ -36,7 +36,8 @@ public class IndicatorMove extends Indicator {
         return PipelineConstants.INDICATORMOVE;
     }
 
-    private int fieldSize() {
+    @Override
+    protected int fieldSize() {
         int size = 1;
         return size;
     }

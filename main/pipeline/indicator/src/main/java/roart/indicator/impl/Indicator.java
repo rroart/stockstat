@@ -95,6 +95,7 @@ public class Indicator extends AbstractIndicator {
             log.info("empty {}", key);
             return;
         }
+        fieldSize = fieldSize();
         boolean wantPercentizedPriceIndex = conf.wantPercentizedPriceIndex();
         if (wantPercentizedPriceIndex() != null) {
             wantPercentizedPriceIndex = wantPercentizedPriceIndex();
@@ -132,7 +133,11 @@ public class Indicator extends AbstractIndicator {
         resultList.add(myResultMap);
         return resultList;
     }
-
+    
+    protected int fieldSize() {
+        return 0;
+    }
+    
     @Override
     public boolean isEnabled() {
         return false;

@@ -57,7 +57,7 @@ public class CategoryIndex extends Category {
                     r.add(getTitle() + " h");
                 }
                 for (AbstractIndicator indicator : indicators) {
-                    if (indicator.isEnabled()) {
+                    if (indicator.isEnabled() && indicator.fieldSize > 0) {
                         r.addarr(indicator.getResultItemTitle());
                     }
                 }
