@@ -50,12 +50,41 @@ public class ComponentMLIndicator extends ComponentML {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.TRUE);        
         valueMap.put(PipelineConstants.MLINDICATOR, Boolean.TRUE);                
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
+        valueMap.put(ConfigConstants.INDICATORSATR, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCH, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSATRDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSCCIDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDMACDDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDSIGNALDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSRSIDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSIDELTA, Boolean.TRUE);                
     }
 
     @Override
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);        
         valueMap.put(PipelineConstants.MLINDICATOR, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.INDICATORSATR, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSMACD, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCH, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSI, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSATRDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSCCIDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDHISTOGRAMDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDMACDDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSMACDMACDSIGNALDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSRSIDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.INDICATORSSTOCHRSIDELTA, Boolean.FALSE);                
     }
 
     public static MLConfigs getDisableLSTM() {
