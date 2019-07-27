@@ -70,7 +70,7 @@ public class CategoryPeriod extends Category {
             if (StockUtil.hasStockPeriod(stocks, period)) {
                 r.addarr(resultMap.get(stock.getId()));
                 for (AbstractIndicator indicator : indicators) {
-                    if (indicator.isEnabled()) {
+                    if (indicator.isEnabled() && indicator.fieldSize > 0) {
                         r.addarr(indicator.getResultItem(stock));
                     }
                 }

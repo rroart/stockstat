@@ -74,7 +74,7 @@ public class CategoryIndex extends Category {
                 Object[] array = resultMap.get(stock.getId());
                 r.addarr(Arrays.copyOfRange(array, 0, dataArraySize));
                 for (AbstractIndicator indicator : indicators) {
-                    if (indicator.isEnabled()) {
+                    if (indicator.isEnabled() && indicator.fieldSize > 0) {
                         r.addarr(indicator.getResultItem(stock));
                     }
                 }

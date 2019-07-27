@@ -75,7 +75,7 @@ public class CategoryPrice extends Category {
                 r.addarr(Arrays.copyOfRange(array, 0, dataArraySize));
                 r.add(stock.getCurrency());
                 for (AbstractIndicator indicator : indicators) {
-                    if (indicator.isEnabled()) {
+                    if (indicator.isEnabled() && indicator.fieldSize > 0) {
                         r.addarr(indicator.getResultItem(stock));
                     }
                 }
