@@ -1412,6 +1412,9 @@ public abstract class IndicatorAggregator extends Aggregator {
             subTypes = wantedSubTypes();
         }
         for (SubType subType : subTypes) {
+            if (!subType.useDirectly) {
+                continue;
+            }
             for (MLClassifyDao mldao : mldaos) {
                 for (MLClassifyModel model : mldao.getModels()) {
                     List<Integer> typeList = getTypeList();

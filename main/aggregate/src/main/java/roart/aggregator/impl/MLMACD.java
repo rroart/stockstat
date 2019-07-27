@@ -239,6 +239,9 @@ public class MLMACD extends IndicatorAggregator {
         int size = 0;
         List<SubType> subTypes = usedSubTypes();
         for (SubType subType : subTypes) {
+            if (!subType.useDirectly) {
+                continue;
+            }
             for (MLClassifyDao mldao : mldaos) {
                 size += mldao.getSizes(this);
             }
