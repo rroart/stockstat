@@ -43,7 +43,7 @@ public class TalibSTOCHRSI extends Talib {
 
     @Override
     protected String[] getTitles() {
-	return new String[] { "srsi", "srsi2" };
+	return new String[] { "srsik", "srsid" };
     }
 
     @Override

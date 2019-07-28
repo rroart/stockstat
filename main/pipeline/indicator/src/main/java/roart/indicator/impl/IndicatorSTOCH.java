@@ -90,11 +90,11 @@ public class IndicatorSTOCH extends Indicator {
             size += 2;
         }
         Object[] objs = new Object[size];
-        objs[0] = title;
-        objs[1] = title + "2";
+        objs[0] = title + "k";
+        objs[1] = title + "d";
         if (conf.isSTOCHDeltaEnabled()) {
-            objs[2] = Constants.DELTA + title;
-            objs[3] = Constants.DELTA + title + "2";
+            objs[2] = Constants.DELTA + title + "k";
+            objs[3] = Constants.DELTA + title + "d";
         }
         return objs;
     }

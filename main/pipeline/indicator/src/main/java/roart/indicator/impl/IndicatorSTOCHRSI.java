@@ -103,9 +103,9 @@ public class IndicatorSTOCHRSI extends Indicator {
     	}
     	*/
         Object[] objs = new Object[fieldSize];
-        objs[0] = title;
+        objs[0] = title + "k";
         if (conf.isSTOCHRSIDeltaEnabled()) {
-            objs[1] = Constants.DELTA + title;
+            objs[1] = Constants.DELTA + title + "k";
         }
         emptyField = new Double[fieldSize];
 

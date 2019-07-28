@@ -44,7 +44,7 @@ public class Ta4jSTOCHRSI extends Ta4j {
 
     @Override
     protected String[] getTitles() {
-        return new String[] { "srsi" };
+        return new String[] { "srsik" };
     }
 
     @Override

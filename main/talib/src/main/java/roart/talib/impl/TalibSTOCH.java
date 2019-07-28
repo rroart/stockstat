@@ -53,7 +53,7 @@ public class TalibSTOCH extends Talib {
 
     @Override
     protected String[] getTitles() {
-	return new String[] { "stoch", "stoch2" };
+	return new String[] { "stochk", "stochd" };
     }
 
     @Override
