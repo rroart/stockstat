@@ -1,23 +1,11 @@
 package roart.talib.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.ta4j.core.TimeSeries;
 import org.ta4j.core.indicators.StochasticOscillatorDIndicator;
 import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
-import org.ta4j.core.indicators.StochasticRSIIndicator;
 
-import roart.model.StockItem;
-import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
-import roart.stockutil.StockUtil;
 import roart.talib.Ta4j;
 import roart.talib.util.TaConstants;
-import roart.talib.util.TaUtil;
 
 public class Ta4jSTOCH extends Ta4j {
     @Override
@@ -50,7 +38,7 @@ public class Ta4jSTOCH extends Ta4j {
 
     @Override
     protected String[] getTitles() {
-        return new String[] { "stoch" };
+        return new String[] { "stochk", "stochd" };
     }
 
     @Override
