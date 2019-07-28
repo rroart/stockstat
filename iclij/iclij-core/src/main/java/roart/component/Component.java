@@ -69,6 +69,7 @@ public abstract class Component {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
         valueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        valueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
     }
     
     public abstract ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap);

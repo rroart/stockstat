@@ -285,9 +285,11 @@ public class ComponentData {
     public void getAndSetCategoryValueMap() {
         getService().conf.setdate(TimeUtil.convertDate(this.getFutureDate()));
         Map<String, Object> setValueMap = new HashMap<>();
+        setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
         setValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
@@ -303,9 +305,11 @@ public class ComponentData {
     public void getAndSetWantedCategoryValueMap() {
         getService().conf.setdate(TimeUtil.convertDate(this.getFutureDate()));
         Map<String, Object> setValueMap = new HashMap<>();
+        setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
         setValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
+        setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
