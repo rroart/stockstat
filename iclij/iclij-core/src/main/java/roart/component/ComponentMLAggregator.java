@@ -384,7 +384,9 @@ public abstract class ComponentMLAggregator extends ComponentML {
             map.put(key, val);
         }
         val.setScore(val.getScore() + add);
-        val.setDescription(val.getDescription() + memory.getSubcomponent() + ", ");
+        String component = memory.getComponent();
+        component = component != null ? component.substring(0, 3) : component;
+        val.setDescription(val.getDescription() + component + " " + memory.getSubcomponent() + ", ");
         return val;
     }
 
