@@ -43,7 +43,7 @@ public class MLMultiChromosome extends MLAggregatorChromosome {
 
     @Override
     protected MLAggregatorChromosome getNewChromosome(ComponentData newparam) {
-        return new MLATRChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
+        return new MLMultiChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
     }
 
     @Override

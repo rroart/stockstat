@@ -104,7 +104,7 @@ public class ComponentMLRSI extends ComponentMLAggregator {
     @Override
     protected ConfigMapChromosome getNewChromosome(Market market, ProfitData profitdata, List<Integer> positions,
             Boolean buy, ComponentData param, List<String> confList) {
-        return new MLMultiChromosome(param, profitdata, confList, market, positions, getPipeline(), buy);
+        return new MLRSIChromosome(param, profitdata, confList, market, positions, getPipeline(), buy);
     }
 
     @Override
