@@ -961,6 +961,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
             List<Triple<Integer, Integer, String>> triples = getRangeLabel(list, listsize, labels, null, afterbefore,
                     start, end);
+            out:
             for (Triple<Integer, Integer, String> triple : triples) {
                 start = (int) triple.getLeft();
                 end = (int) triple.getMiddle();
@@ -971,6 +972,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                 for (int i = 0; i < arrays.length; i++) {
                     double[] anArray = arrays[i];
                     double[] aTruncArray = ArraysUtil.getSub(anArray, start, end);
+                    if (!Arrays.stream(aTruncArray).allMatch(e -> !Double.isNaN(e))) {
+                        int jj = 0;
+                        continue out;
+                    }
                     array = (double[]) ArrayUtils.addAll(array, aTruncArray);                    
                 }
                 double[] truncArray = array;
