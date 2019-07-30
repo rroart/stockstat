@@ -155,6 +155,13 @@ public class ArraysUtil {
         return retmap;
     }
 
+    public static Double[] getPercentizedPriceIndex(Double[] list) {
+        if (list.length == 0) {
+            return list;
+        }
+        return getPercentizedPriceIndex(list, list[0]);
+    }
+
     /**
      * Pick the first non-null element in the array, and find the
      * increases/decreases since that. ( * 100 / first)
@@ -163,13 +170,12 @@ public class ArraysUtil {
      * @return new array
      */
 
-    public static Double[] getPercentizedPriceIndex(Double[] list) {
+    public static Double[] getPercentizedPriceIndex(Double[] list, Double first) {
         if (list == null) {
             return list;
         }
         Double[] retlist = new Double[list.length]; 
         int i = 0;
-        double first = 0;
         for (i = 0; i < list.length; i ++) {
             if (list[i] != null) {
                 first = list[i];

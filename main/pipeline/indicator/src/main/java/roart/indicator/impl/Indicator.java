@@ -98,7 +98,7 @@ public class Indicator extends AbstractIndicator {
         fieldSize = fieldSize();
         boolean wantPercentizedPriceIndex = conf.wantPercentizedPriceIndex();
         if (wantPercentizedPriceIndex() != null) {
-            wantPercentizedPriceIndex = wantPercentizedPriceIndex();
+            //wantPercentizedPriceIndex = wantPercentizedPriceIndex();
         }
         List<Map> resultList = getMarketCalcResults(dbDao, wantPercentizedPriceIndex ? truncBase100FillListMap : truncFillListMap);
         objectMap = resultList.get(0);

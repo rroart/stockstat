@@ -36,7 +36,7 @@ public class Ta4jMACD extends Ta4j {
     protected Object[] getInner(double[][] arrarr, int size) {
         double[] values = arrarr[0];
         long time0 = System.currentTimeMillis();
-        values = ArraysUtil.getPercentizedPriceIndex(values);
+        //values = ArraysUtil.getPercentizedPriceIndex(values);
         Object[] objs = new Object[8];
         double[] macd = new double[values.length];
         double[] sig = new double[values.length];
