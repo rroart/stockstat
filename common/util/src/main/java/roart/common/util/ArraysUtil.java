@@ -159,7 +159,7 @@ public class ArraysUtil {
         if (list.length == 0) {
             return list;
         }
-        return getPercentizedPriceIndex(list, list[0]);
+        return getPercentizedPriceIndex(list, list);
     }
 
     /**
@@ -170,15 +170,16 @@ public class ArraysUtil {
      * @return new array
      */
 
-    public static Double[] getPercentizedPriceIndex(Double[] list, Double first) {
+    public static Double[] getPercentizedPriceIndex(Double[] list, Double[] firstlist) {
         if (list == null) {
             return list;
         }
         Double[] retlist = new Double[list.length]; 
         int i = 0;
-        for (i = 0; i < list.length; i ++) {
-            if (list[i] != null) {
-                first = list[i];
+        double first = 0;
+        for (i = 0; i < firstlist.length; i ++) {
+            if (firstlist[i] != null) {
+                first = firstlist[i];
                 break;
             }
         }

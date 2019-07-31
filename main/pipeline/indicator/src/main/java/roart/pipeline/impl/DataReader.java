@@ -138,8 +138,8 @@ public class DataReader extends Pipeline {
             Double[][] value = entry.getValue();
             if (value != null) {
                 Double[][] newValue = new Double[value.length][];
-                for (int i = 0; i < value.length; i++) {
-                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i], value[0][0]);
+                for (int i = value.length - 1; i >= 0; i--) {
+                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i], value[0]);
                 }
                 aMap.put(entry.getKey(), newValue);
             }
@@ -153,8 +153,9 @@ public class DataReader extends Pipeline {
             double[][] value = entry.getValue();
             if (value != null) {
                 double[][] newValue = new double[value.length][];
+                double first = value.length > 0 && value[0].length > 0 ? value[0][0] : 0;
                 for (int i = 0; i < value.length; i++) {
-                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i], value[0][0]);
+                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i], first);
                 }
                 aMap.put(entry.getKey(), newValue);
             }
