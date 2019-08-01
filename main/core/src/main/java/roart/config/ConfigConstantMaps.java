@@ -524,7 +524,7 @@ public class ConfigConstantMaps {
 	deflt.put(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT, 25);
 	deflt.put(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT, 10);
 	deflt.put(ConfigConstants.AGGREGATORSMLCCI, Boolean.TRUE);
-	deflt.put(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT, 20);
+	deflt.put(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT, -80);
 	deflt.put(ConfigConstants.AGGREGATORSMLCCISELLLIMIT, 80);
 	deflt.put(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT, 25);
 	deflt.put(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT, 10);
@@ -832,7 +832,7 @@ public class ConfigConstantMaps {
         range.put(ConfigConstants.AGGREGATORSMLATRSELLLIMIT, new Double[] { 0.0, 100.0 } );
         range.put(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT, new Double[] { 1.0, 50.0 } );
         range.put(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT, new Double[] { 1.0, 20.0 } );
-        range.put(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT, new Double[] { 0.0, 100.0 } );
+        range.put(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT, new Double[] { -100.0, 0.0 } );
         range.put(ConfigConstants.AGGREGATORSMLCCISELLLIMIT, new Double[] { 0.0, 100.0 } );
         range.put(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT, new Double[] { 1.0, 50.0 } );
         range.put(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT, new Double[] { 1.0, 20.0 } );
