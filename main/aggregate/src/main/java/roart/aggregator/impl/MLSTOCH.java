@@ -43,7 +43,7 @@ public class MLSTOCH extends IndicatorAggregator {
             this.resultMap = (Map<String, Double[]>) resultObject;
             this.afterbefore = afterbefore;
             this.range = range;
-            this.filters = new Filter[] { new Filter(true, 0, shortpos), new Filter(false, 0, shortneg) };
+            this.filters = new Filter[] { new Filter(true, conf.getMLSTOCHBuyLimit(), shortpos), new Filter(false, conf.getMLSTOCHSellLimit(), shortneg) };
         }
     }
 

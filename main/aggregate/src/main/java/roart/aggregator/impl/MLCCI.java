@@ -9,6 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.aggregator.impl.IndicatorAggregator.Filter;
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
@@ -43,7 +44,7 @@ public class MLCCI extends IndicatorAggregator {
             this.resultMap = (Map<String, Double[]>) resultObject;
             this.afterbefore = afterbefore;
             this.range = range;
-            this.filters = new Filter[] { new Filter(true, 0, shortpos), new Filter(false, 0, shortneg) };
+            this.filters = new Filter[] { new Filter(true, conf.getMLCCIBuyLimit(), shortpos), new Filter(false, conf.getMLCCISellLimit(), shortneg) };
         }
     }
 
