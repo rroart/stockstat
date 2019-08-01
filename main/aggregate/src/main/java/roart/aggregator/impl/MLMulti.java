@@ -58,7 +58,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
-                Filter[] filter = new Filter[] { new Filter(true, 0, shortpos), new Filter(false, 0, shortneg) };
+                Filter[] filter = new Filter[] { new Filter(true, 0, shortneg), new Filter(false, 0, shortpos) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE, conf, filter, "macd"));
                 }
@@ -76,7 +76,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORATRLIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORATROBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORATR).get(PipelineConstants.RESULT);
-                Filter[] filter = new Filter[] { new Filter(true, 0, shortpos), new Filter(false, 0, shortneg) };
+                Filter[] filter = new Filter[] { new Filter(true, conf.getMLATRBuyLimit(), shortpos), new Filter(false, conf.getMLATRSellLimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "atr"));
                 }
@@ -85,7 +85,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORCCILIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORCCIOBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORCCI).get(PipelineConstants.RESULT);
-                Filter[] filter = new Filter[] { new Filter(true, 0, shortpos), new Filter(false, 0, shortneg) };
+                Filter[] filter = new Filter[] { new Filter(true, conf.getMLCCIBuyLimit(), shortpos), new Filter(false, conf.getMLCCISellLimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "cci"));
                 }
@@ -94,7 +94,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHLIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHOBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORSTOCH).get(PipelineConstants.RESULT);
-                Filter[] filter = new Filter[] { new Filter(true, 0, shortpos), new Filter(false, 0, shortneg) };
+                Filter[] filter = new Filter[] { new Filter(true, conf.getMLSTOCHBuyLimit(), shortpos), new Filter(false, conf.getMLSTOCHSellLimit(), shortneg) };
                 if (taObject != null) {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE, conf, filter, "stoch"));
                 }
