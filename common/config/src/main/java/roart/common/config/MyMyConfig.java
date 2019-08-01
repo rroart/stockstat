@@ -775,7 +775,7 @@ public class MyMyConfig extends MyConfig {
     }
 
     public int getMLATRDaysAfterLimit() {
-        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRBUYLIMIT);
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT);
     }
 
     public int getMLATRBuyLimit() {
@@ -802,7 +802,7 @@ public class MyMyConfig extends MyConfig {
     }
 
     public int getMLCCIDaysAfterLimit() {
-        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT);
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
     }
 
     public int getMLCCIBuyLimit() {
@@ -829,7 +829,7 @@ public class MyMyConfig extends MyConfig {
     }
 
     public int getMLSTOCHDaysAfterLimit() {
-        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHBUYLIMIT);
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT);
     }
 
     public int getMLSTOCHBuyLimit() {
