@@ -27,13 +27,13 @@ public class Ta4jRSI extends Ta4j {
         Object[] objs = new Object[4];
         objs[0] = rsi;
         objs[1] = 0; // beg;
-        objs[2] = values.length; // end;
+        objs[2] = size; // end;
         if (size == 0) {
             return objs;
         }
         TimeSeries series = getClosedSeries(values, size);
         RSIIndicator i = new RSIIndicator(new ClosePriceIndicator(series), 14);
-        for (int j = 0; j < values.length; j++) {
+        for (int j = 0; j < size; j++) {
             rsi[j] = i.getValue(j).doubleValue();
             if (Double.isNaN(rsi[j])) {
                 int jj = 0;

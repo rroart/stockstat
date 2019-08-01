@@ -46,7 +46,7 @@ public class Ta4jMACD extends Ta4j {
         objs[MACDIDXSIGN] = sig;
         objs[MACDIDXHIST] = hist;
         objs[MACDIDXBEG] = 0;
-        objs[MACDIDXEND] = values.length;
+        objs[MACDIDXEND] = size;
         objs[MACDIDXMACDFIXED] = ArraysUtil.makeFixed(macd, 0, values.length, values.length);
         objs[MACDIDXSIGFIXED] = ArraysUtil.makeFixed(sig, 0, values.length, values.length);
         objs[MACDIDXHISTFIXED] = ArraysUtil.makeFixed(hist, 0, values.length, values.length);
@@ -67,7 +67,7 @@ public class Ta4jMACD extends Ta4j {
         signal = emaMacd;
         DifferenceIndicator macdIndicator2 = new DifferenceIndicator(shortEma, longEma);
         DifferenceIndicator macdIndicator = new DifferenceIndicator(macdI, signal);
-        for (int j = 0; j < values.length; j++) {
+        for (int j = 0; j < size; j++) {
             log.info(""+j      );
             sig[j] = signal.getValue(j).doubleValue();
             macd[j] = macdI.getValue(j).doubleValue();

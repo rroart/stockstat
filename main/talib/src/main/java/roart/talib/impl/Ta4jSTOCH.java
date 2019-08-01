@@ -19,14 +19,14 @@ public class Ta4jSTOCH extends Ta4j {
         objs[0] = stochk;
         objs[1] = stochd;
         objs[2] = 0; // beg;
-        objs[3] = close.length; // end;
+        objs[3] = size; // end;
         if (size == 0) {
             return objs;
         }
         TimeSeries series = getThreeSeries(close, low, high, size);
         StochasticOscillatorKIndicator kIndicator = new StochasticOscillatorKIndicator(series, 14);
         StochasticOscillatorDIndicator dIndicator = new StochasticOscillatorDIndicator(kIndicator);
-        for (int j = 0; j < close.length; j++) {
+        for (int j = 0; j < size; j++) {
             stochk[j] = kIndicator.getValue(j).doubleValue();
             stochd[j] = dIndicator.getValue(j).doubleValue();
             if (Double.isNaN(stochk[j])) {

@@ -28,13 +28,13 @@ public class Ta4jATR extends Ta4j {
         Object[] objs = new Object[3];
         objs[0] = atr;
         objs[1] = 0; // beg;
-        objs[2] = close.length; // end;
+        objs[2] = size; // end;
         if (size == 0) {
             return objs;
         }
         TimeSeries series = getThreeSeries(close, low, high, size);
         ATRIndicator i = new ATRIndicator(series, 14);
-        for (int j = 0; j < close.length; j++) {
+        for (int j = 0; j < size; j++) {
             atr[j] = i.getValue(j).doubleValue();
             if (Double.isNaN(atr[j])) {
                 int jj = 0;
