@@ -54,7 +54,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         System.out.println("b " + param.getCategoryValueMap().keySet());
         System.out.println("d " + profitdata.getInputdata().getConfMap().keySet());
         for (Object[] key : profitdata.getInputdata().getConfMap().keySet()) {
-            System.out.println("e " + ((String)key[0]) + " " + ((int)key[1]));
+            System.out.println("e " + ((String)key[0]) + " " + (key[1]));
         }
         int resultIndex = 0;
         int count = 0;
