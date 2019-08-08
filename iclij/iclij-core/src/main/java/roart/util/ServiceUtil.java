@@ -34,6 +34,7 @@ import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
+import roart.component.ComponentMLMACD;
 import roart.component.model.ComponentInput;
 import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
@@ -385,6 +386,9 @@ public class ServiceUtil {
     static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
             List<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
+        listInc = mergeList(listInc);
+        listDec = mergeList(listDec);
+        listIncDec = mergeList(listIncDec);
         if (!listInc.isEmpty()) {
             List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listIncBoolean.stream().filter(i -> i).count();                            
@@ -409,6 +413,20 @@ public class ServiceUtil {
             subLists.add(incDec);
         }
         return subLists;
+    }
+
+    private static List<IncDecItem> mergeList(List<IncDecItem> itemList) {
+        Map<String, IncDecItem> map = new HashMap<>();
+        for (IncDecItem item : itemList) {
+            IncDecItem getItem = map.get(item.getId());
+            if (getItem == null) {
+                map.put(item.getId(), item);
+            } else {
+                getItem.setScore(getItem.getScore() + item.getScore());
+                getItem.setDescription(getItem.getDescription() + ", " + item.getDescription());
+            }
+        }
+        return new ArrayList<>(map.values());
     }
 
     public static List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec) {
@@ -467,8 +485,8 @@ public class ServiceUtil {
         updateMap = myData.updateMap;
         allMemoryItems.addAll(myData.memoryItems);
         
-        List<IncDecItem> listInc = new ArrayList<>(buysells.getBuys().values());
-        List<IncDecItem> listDec = new ArrayList<>(buysells.getSells().values());
+        List<IncDecItem> listInc = new ArrayList<>(myData.incs);
+        List<IncDecItem> listDec = new ArrayList<>(myData.decs);
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
         Map<String, Object> trendMap = new HashMap<>();
         Short mystartoffset = market.getConfig().getStartoffset();
@@ -518,8 +536,8 @@ public class ServiceUtil {
         IclijServiceList trends = convert(trendMap);
         retLists.add(trends);
 
-        List<IncDecItem> listIncDecs = new ArrayList<>(buysells.getBuys().values());
-        listIncDecs.addAll(buysells.getSells().values());
+        List<IncDecItem> listIncDecs = new ArrayList<>(myData.incs);
+        listIncDecs.addAll(myData.decs);
         
         addRelations(componentInput, retLists, listIncDecs);
 
