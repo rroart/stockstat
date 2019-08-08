@@ -519,8 +519,8 @@ public class ConfigConstantMaps {
 	deflt.put(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT, 25);
 	deflt.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, 10);
 	deflt.put(ConfigConstants.AGGREGATORSMLATR, Boolean.TRUE);
-	deflt.put(ConfigConstants.AGGREGATORSMLATRBUYLIMIT, 20);
-	deflt.put(ConfigConstants.AGGREGATORSMLATRSELLLIMIT, 80);
+	deflt.put(ConfigConstants.AGGREGATORSMLATRBUYLIMIT, 2);
+	deflt.put(ConfigConstants.AGGREGATORSMLATRSELLLIMIT, 2);
 	deflt.put(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT, 25);
 	deflt.put(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT, 10);
 	deflt.put(ConfigConstants.AGGREGATORSMLCCI, Boolean.TRUE);
@@ -828,8 +828,8 @@ public class ConfigConstantMaps {
 	range.put(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT, new Double[] { 1.0, 20.0 } );
 	range.put(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT, new Double[] { 1.0, 50.0 } );
 	range.put(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT, new Double[] { 1.0, 20.0 } );
-        range.put(ConfigConstants.AGGREGATORSMLATRBUYLIMIT, new Double[] { 0.0, 100.0 } );
-        range.put(ConfigConstants.AGGREGATORSMLATRSELLLIMIT, new Double[] { 0.0, 100.0 } );
+        range.put(ConfigConstants.AGGREGATORSMLATRBUYLIMIT, new Double[] { 0.0, 5.0 } );
+        range.put(ConfigConstants.AGGREGATORSMLATRSELLLIMIT, new Double[] { 0.0, 5.0 } );
         range.put(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT, new Double[] { 1.0, 50.0 } );
         range.put(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT, new Double[] { 1.0, 20.0 } );
         range.put(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT, new Double[] { -100.0, 0.0 } );
@@ -1046,8 +1046,8 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, new XMLType(null, null, null));
 	mymap.put(ConfigConstants.AGGREGATORSMLATR, new XMLType(Boolean.class, Boolean.TRUE, "MLATR aggregator enable"));
 	mymap.put(ConfigConstants.AGGREGATORSMLATRMLCONFIG, new XMLType(String.class, null, "MLATR aggregator ml config"));
-	mymap.put(ConfigConstants.AGGREGATORSMLATRBUYLIMIT, new XMLType(Integer.class, 20, "ATR aggregator buy limit"));
-	mymap.put(ConfigConstants.AGGREGATORSMLATRSELLLIMIT, new XMLType(Integer.class, 80, "ATR aggregator sell limit"));
+	mymap.put(ConfigConstants.AGGREGATORSMLATRBUYLIMIT, new XMLType(Integer.class, 2, "ATR aggregator buy limit"));
+	mymap.put(ConfigConstants.AGGREGATORSMLATRSELLLIMIT, new XMLType(Integer.class, 2, "ATR aggregator sell limit"));
 	mymap.put(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT, new XMLType(Integer.class, 25, "Days before limit"));
 	mymap.put(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT, new XMLType(Integer.class, 10, "Days after limit"));
 	mymap.put(ConfigConstants.AGGREGATORSMLCCI, new XMLType(Boolean.class, Boolean.TRUE, "MLCCI aggregator enable"));
