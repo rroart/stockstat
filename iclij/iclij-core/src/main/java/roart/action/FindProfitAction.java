@@ -152,16 +152,19 @@ public class FindProfitAction extends Action {
             List<IncDecItem> marketIncdecitems = incdecitems.stream().filter(m -> marketName.equals(m.getMarket())).collect(Collectors.toList());
             
             List<IncDecItem> currentIncDecs = ServiceUtil.getCurrentIncDecs(olddate, marketIncdecitems, market, market.getConfig().getFindtime());
-            if (currentIncDecs == null || currentIncDecs.isEmpty() || timings.isEmpty()) {
+            if (true || currentIncDecs == null || currentIncDecs.isEmpty() || timings.isEmpty()) {
                 List<String> componentList = ServiceUtil.getFindProfitComponents(config, market.getConfig().getMarket());
                 Map<String, Component> componentMap = getComponentMap(componentList, market);
-                List<MarketComponentTime> marketTime = getList2(IclijConstants.FINDPROFIT, componentMap, timings, market, param);
+                List<MarketComponentTime> marketTime = getList(IclijConstants.FINDPROFIT, componentMap, timings, market, param, currentTimings);
                 marketTimes.addAll(marketTime);
             } else {
                 int jj = 0;
             }
         }
         Collections.sort(marketTimes, (o1, o2) -> (Double.valueOf(o2.time).compareTo(Double.valueOf(o1.time))));
+        List<MarketComponentTime> run = marketTimes.stream().filter(m -> m.haverun).collect(Collectors.toList());
+        List<MarketComponentTime> notrun = marketTimes.stream().filter(m -> !m.haverun).collect(Collectors.toList());
+
         for (MarketComponentTime marketTime : marketTimes) {
             log.info("MarketTime {}", marketTime);
         }
@@ -170,13 +173,32 @@ public class FindProfitAction extends Action {
             myData.timingMap.put(marketTime.market.getConfig().getMarket(), marketTime.timings);
         }
         */
-        for (MarketComponentTime marketTime : marketTimes) {
+        for (MarketComponentTime marketTime : notrun) {
             if (marketTime.time == 0.0) {
                 ComponentData param = componentDataMap.get(marketTime.market.getConfig().getMarket());
                 getPicksFiltered(myData, param, config, marketTime, evolve);                
             }
         }
-        for (MarketComponentTime marketTime : marketTimes) {
+        for (MarketComponentTime marketTime : notrun) {
+            if (marketTime.time > 0.0) {
+                if (config.serverShutdownHour() != null) {
+                    int shutdown = config.serverShutdownHour();
+                    shutdown --;
+                    LocalTime now = LocalTime.now();
+                    int minutes = 60 * now.getHour() + now.getMinute();
+                    minutes += marketTime.time / 60;
+                    if (minutes >= shutdown * 60) {
+                        continue;
+                    }
+                }
+                ComponentData param = componentDataMap.get(marketTime.market.getConfig().getMarket());
+                getPicksFiltered(myData, param, config, marketTime, evolve);                
+            }            
+        }       
+        for (MarketComponentTime marketTime : run) {
+            if (marketTime.time == 0.0) {
+                log.error("should not be here");
+            }
             if (marketTime.time > 0.0) {
                 if (config.serverShutdownHour() != null) {
                     int shutdown = config.serverShutdownHour();
@@ -236,28 +258,32 @@ public class FindProfitAction extends Action {
         return marketTimes;
     }
 
-    private List<MarketComponentTime> getList2(String action, Map<String, Component> componentMap, List<TimingItem> timings, Market market, ComponentData param) {
+    private List<MarketComponentTime> getList(String action, Map<String, Component> componentMap, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings) {
         List<MarketComponentTime> marketTimes = new ArrayList<>();
         String marketName = market.getConfig().getMarket();
-        List<TimingItem> timingToDo = new ArrayList<>();
+        //List<TimingItem> timingToDo = new ArrayList<>();
         //= ServiceUtil.getFindProfitComponents(config);
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             String componentName = entry.getKey();
             Component component = entry.getValue();
             boolean evolve = component.wantEvolve(param.getInput().getConfig());
+            List<TimingItem> currentTimingFiltered = currentTimings.stream().filter(m -> m != null && componentName.equals(m.getComponent())).collect(Collectors.toList());
+            if (!currentTimingFiltered.isEmpty()) {
+                continue;
+            }
             List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true);
-	    MarketComponentTime marketTime = new MarketComponentTime();
+            MarketComponentTime marketTime = new MarketComponentTime();
 	    marketTime.market = market;
 	    marketTime.componentName = componentName;
             marketTime.component = component;
-            marketTime.timings = timingToDo;
+            //marketTime.timings = timingToDo;
 	    //marketTime.buy = buy;
 
             if (evolve) {
-                handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate());               
+                handleFilterTimings(action, market, marketTime, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate(), timings);               
             }
             List<TimingItem> filterTimings = getMyTimings(timings, marketName, action, componentName, false);
-            handleFilterTimings(action, market, marketTime, timingToDo, componentName, filterTimings, evolve, param.getInput().getEnddate());
+            handleFilterTimings(action, market, marketTime, componentName, filterTimings, evolve, param.getInput().getEnddate(), timings);
 	    marketTimes.add(marketTime);
         }
         return marketTimes;
@@ -305,44 +331,42 @@ public class FindProfitAction extends Action {
     }
 
     private void handleFilterTimings(String action, Market market, MarketComponentTime marketTime,
-            List<TimingItem> timingToDo, String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date) {
-        String marketName = market.getConfig().getMarket();
+            String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date, List<TimingItem> timings) {
         if (!filterTimings.isEmpty()) {
-            Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
             LocalDate olddate = date.minusDays(((long) AVERAGE_SIZE) * market.getConfig().getFindtime());
-            int size = Math.min(AVERAGE_SIZE, filterTimings.size());
-            OptionalDouble average = filterTimings
-                    .subList(0, size)
-                    .stream()
-                    .mapToDouble(TimingItem::getMytime)
-                    .average();
+            OptionalDouble average = getAverage(filterTimings);
 
             if (olddate.isBefore(filterTimings.get(0).getDate())) {
                 // no recent enough is found
-                marketTime.time += average.getAsDouble();
+                marketTime.time += average.orElse(0);
                 if (!evolve) {
-                    marketTime.time += average.getAsDouble();
+                    marketTime.time += average.orElse(0);
                 }
-                TimingItem timing = new TimingItem();
-                timing.setMarket(marketName);
-                timing.setAction(action);
-                timing.setComponent(component);
-                timing.setEvolve(evolve);
-                timing.setMytime(average.getAsDouble());
-                timingToDo.add(timing);
+                marketTime.haverun = true;
             } else {
                 // recent enough is found
                 // nothing to do
-            }
+                log.error("should not be here");
+           }
         } else {
-            TimingItem timing = new TimingItem();
-            timing.setMarket(marketName);
-            timing.setAction(action);
-            timing.setComponent(component);
-            timing.setEvolve(evolve);
-            timing.setMytime(Double.valueOf(0));
-            timingToDo.add(timing);
+            List<TimingItem> filterTimingsEvolution = getMyTimings(timings, action, component);
+            OptionalDouble average = getAverage(filterTimingsEvolution);
+            marketTime.time += average.getAsDouble();
+            if (!evolve) {
+                marketTime.time += average.getAsDouble();
+            }
+            marketTime.haverun = false;
         }
+    }
+
+    private OptionalDouble getAverage(List<TimingItem> timings) {
+        Collections.sort(timings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
+        int size = Math.min(AVERAGE_SIZE, timings.size());
+        return timings
+                .subList(0, size)
+                .stream()
+                .mapToDouble(TimingItem::getMytime)
+                .average();
     }
 
     public class MarketTime {
@@ -362,12 +386,13 @@ public class FindProfitAction extends Action {
         Component component;
         Market market;
         double time;
-        List<TimingItem> timings;
+        boolean haverun;
+        //List<TimingItem> timings;
         //Boolean buy;
         
         @Override
         public String toString() {
-            return market.getConfig().getMarket() + " " + componentName + " " + /*buy + " "*/ + time;
+            return market.getConfig().getMarket() + " " + componentName + " " + /*buy + " "*/ + time + " " + haverun;
         }
     }
     
@@ -375,6 +400,16 @@ public class FindProfitAction extends Action {
         List<TimingItem> filterTimings = new ArrayList<>();
         for (TimingItem timing : timings) {
             if (market.equals(timing.getMarket()) && action.equals(timing.getAction()) && component.equals(timing.getComponent()) && evolve == timing.isEvolve()) {
+                filterTimings.add(timing);
+            }
+        }
+        return filterTimings;
+    }
+
+    private List<TimingItem> getMyTimings(List<TimingItem> timings, String action, String component) {
+        List<TimingItem> filterTimings = new ArrayList<>();
+        for (TimingItem timing : timings) {
+            if (action.equals(timing.getAction()) && component.equals(timing.getComponent())) {
                 filterTimings.add(timing);
             }
         }
