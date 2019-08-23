@@ -910,6 +910,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                 log.debug("{}: {} at {}", textlabel, id, end);
                 //printme(textlabel, end, list, array, afterbefore);
                 double[] truncArray = ArraysUtil.getSub(array, start, end);
+		if (!Arrays.stream(truncArray).allMatch(e -> !Double.isNaN(e))) {
+		    continue;
+		}
                 Double doublelabel = labelMap2.get(textlabel);
                 Map<String, Map<String, List<Pair<double[], Pair<double[], Double>>>>> subtypeMap = mapGetter3(mapMap, subType);
                 if (textlabel != null) {
