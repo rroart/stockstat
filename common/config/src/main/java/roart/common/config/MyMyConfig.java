@@ -396,6 +396,11 @@ public class MyMyConfig extends MyConfig {
                 && wantMLSpark();
     }
 
+    public  boolean wantLSVC() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLSVC)
+                && wantMLSpark();
+    }
+
     public  boolean wantDNN() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN)
                 && wantMLTensorflow();
@@ -426,6 +431,10 @@ public class MyMyConfig extends MyConfig {
 
     public String getOVRConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG);
+    }
+
+    public String getLSVCConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG);
     }
 
     public String getDNNConfig() {

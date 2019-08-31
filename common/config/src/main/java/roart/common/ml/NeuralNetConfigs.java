@@ -9,18 +9,21 @@ public class NeuralNetConfigs {
 
     private SparkOVRConfig sparkOVRConfig;
 
+    private SparkLSVCConfig sparkLSVCConfig;
+
     private TensorflowDNNConfig tensorflowDNNConfig;
 
     private TensorflowLConfig tensorflowLConfig;
 
     private TensorflowLSTMConfig tensorflowLSTMConfig;
 
-    public NeuralNetConfigs(SparkLRConfig sparkLRConfig, SparkMCPConfig sparkMCPConfig, SparkOVRConfig sparkOVRConfig,
+    public NeuralNetConfigs(SparkLRConfig sparkLRConfig, SparkMCPConfig sparkMCPConfig, SparkOVRConfig sparkOVRConfig, SparkLSVCConfig sparkLSVCConfig,
             TensorflowDNNConfig tensorflowDNNConfig, TensorflowLConfig tensorflowLConfig, TensorflowLSTMConfig tensorflowLSTMConfig) {
         super();
         this.sparkLRConfig = sparkLRConfig;
         this.sparkMCPConfig = sparkMCPConfig;
         this.sparkOVRConfig = sparkOVRConfig;
+        this.sparkLSVCConfig = sparkLSVCConfig;
         this.tensorflowDNNConfig = tensorflowDNNConfig;
         this.tensorflowLConfig = tensorflowLConfig;
         this.tensorflowLSTMConfig = tensorflowLSTMConfig;
@@ -52,6 +55,14 @@ public class NeuralNetConfigs {
 
     public void setSparkOVRConfig(SparkOVRConfig sparkOVRConfig) {
         this.sparkOVRConfig = sparkOVRConfig;
+    }
+
+    public SparkLSVCConfig getSparkLSVCConfig() {
+        return sparkLSVCConfig;
+    }
+
+    public void setSparkLSVCConfig(SparkLSVCConfig sparkLSVCConfig) {
+        this.sparkLSVCConfig = sparkLSVCConfig;
     }
 
     public TensorflowDNNConfig getTensorflowDNNConfig() {
@@ -89,6 +100,9 @@ public class NeuralNetConfigs {
         case ConfigConstants.MACHINELEARNINGSPARKMLOVR:
             sparkOVRConfig = (SparkOVRConfig) conf;
             break;
+        case ConfigConstants.MACHINELEARNINGSPARKMLLSVC:
+            sparkLSVCConfig = (SparkLSVCConfig) conf;
+            break;
         case ConfigConstants.MACHINELEARNINGTENSORFLOWDNN:
             tensorflowDNNConfig = (TensorflowDNNConfig) conf;
             break;
@@ -118,6 +132,11 @@ public class NeuralNetConfigs {
                 sparkOVRConfig = new SparkOVRConfig();
             }
             return sparkOVRConfig;
+        case ConfigConstants.MACHINELEARNINGSPARKMLLSVC:
+            if (sparkLSVCConfig == null) {
+                sparkLSVCConfig = new SparkLSVCConfig();
+            }
+            return sparkLSVCConfig;
         case ConfigConstants.MACHINELEARNINGTENSORFLOWDNN:
             if (tensorflowDNNConfig == null) {
                 tensorflowDNNConfig = new TensorflowDNNConfig();

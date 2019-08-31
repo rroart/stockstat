@@ -533,6 +533,7 @@ public class EvolutionService {
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLR);
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLMCP);
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLOVR);
+        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWL);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);

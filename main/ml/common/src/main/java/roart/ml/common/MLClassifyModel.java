@@ -99,5 +99,9 @@ public abstract class MLClassifyModel {
             return null;
         }
     }
+    
+    public boolean isBinary() {
+        return false;
+    }
 
 }

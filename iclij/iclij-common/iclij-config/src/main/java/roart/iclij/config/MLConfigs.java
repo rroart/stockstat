@@ -13,6 +13,8 @@ public class MLConfigs {
     
     private EvolveMLConfig ovr;
     
+    private EvolveMLConfig lsvc;
+    
     private EvolveMLConfig dnn;
     
     private EvolveMLConfig dnnl;
@@ -43,6 +45,14 @@ public class MLConfigs {
 
     public void setOvr(EvolveMLConfig ovr) {
         this.ovr = ovr;
+    }
+
+    public EvolveMLConfig getLsvc() {
+        return lsvc;
+    }
+
+    public void setLsvc(EvolveMLConfig lsvc) {
+        this.lsvc = lsvc;
     }
 
     public EvolveMLConfig getDnn() {
@@ -92,6 +102,7 @@ public class MLConfigs {
         mcp.merge(mlConfigs.mcp);
         lr.merge(mlConfigs.lr);
         ovr.merge(mlConfigs.ovr);
+        lsvc.merge(mlConfigs.lsvc);
         dnn.merge(mlConfigs.dnn);
         l.merge(mlConfigs.l);
         lstm.merge(mlConfigs.lstm);
@@ -102,6 +113,7 @@ public class MLConfigs {
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, mcp);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, lr);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, ovr);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, lsvc);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, dnn);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, l);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, lstm);

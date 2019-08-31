@@ -292,6 +292,7 @@ public abstract class ComponentML extends Component {
         map.put(MLConstants.MCP, ConfigConstants.MACHINELEARNINGSPARKMLMCP);
         map.put(MLConstants.LR, ConfigConstants.MACHINELEARNINGSPARKMLLR);
         map.put(MLConstants.OVR, ConfigConstants.MACHINELEARNINGSPARKMLOVR);
+        map.put(MLConstants.LSVC, ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
         map.put(MLConstants.DNN, ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
         map.put(MLConstants.L, ConfigConstants.MACHINELEARNINGTENSORFLOWL);
         map.put(MLConstants.LSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);

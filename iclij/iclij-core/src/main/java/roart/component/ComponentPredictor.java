@@ -56,6 +56,7 @@ public class ComponentPredictor extends ComponentML {
         valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.FALSE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, Boolean.FALSE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, Boolean.FALSE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, Boolean.TRUE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.FALSE);                

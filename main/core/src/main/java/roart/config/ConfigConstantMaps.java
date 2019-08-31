@@ -23,6 +23,8 @@ public class ConfigConstantMaps {
 
     private static final String CONFIG_OVR = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : false }";
 
+    private static final String CONFIG_LSVC = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : false }";
+
     public static Map<String, Class> map = new HashMap();
 
     public static void makeTypeMap() {
@@ -45,6 +47,8 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, String.class);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, String.class);
@@ -308,6 +312,8 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, CONFIG_LR);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, CONFIG_OVR);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG, CONFIG_LSVC);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, CONFIG_DNN);
@@ -569,6 +575,8 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, "Config for Spark ML LR");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, "Enable Spark ML OVR");
         text.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, "Config for Spark ML OVR");
+        text.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, "Enable Spark ML Linear SVC");
+        text.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG, "Config for Spark ML Linear SVC");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, "Enable Tensorflow");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, "Enable Tensorflow DNN");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, "Config for Tensorflow DNN");
@@ -872,6 +880,8 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG, new XMLType( String.class, CONFIG_LR, "Config for Spark ML LR"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML OVR"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, new XMLType( String.class, CONFIG_OVR, "Config for Spark ML OVR"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML Linear SVC"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG, new XMLType( String.class, CONFIG_LSVC, "Config for Spark ML Linear SVC"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow DNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, new XMLType( String.class, CONFIG_DNN, "Config for Tensorflow DNN"));

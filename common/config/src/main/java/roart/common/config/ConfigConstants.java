@@ -24,6 +24,8 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGSPARKMLLRCONFIG = "machinelearning.sparkml.lr.config";
     public static final String MACHINELEARNINGSPARKMLOVR = "machinelearning.sparkml.ovr[@enable]";
     public static final String MACHINELEARNINGSPARKMLOVRCONFIG = "machinelearning.sparkml.ovr.config";
+    public static final String MACHINELEARNINGSPARKMLLSVC = "machinelearning.sparkml.lsvc[@enable]";
+    public static final String MACHINELEARNINGSPARKMLLSVCCONFIG = "machinelearning.sparkml.lsvc.config";
     public static final String MACHINELEARNINGTENSORFLOW = "machinelearning.tensorflow[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWDNN = "machinelearning.tensorflow.dnn[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWDNNCONFIG = "machinelearning.tensorflow.dnn.config";
