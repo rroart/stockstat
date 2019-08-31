@@ -23,13 +23,17 @@ public class LearnTestClassify {
 
     private int modelInt;
     
-    private int size;
+    private String modelName;
     
-    private String period;
+    private String filename;
+    
+    private String path;
+    
+    private int size;
     
     private String mapname;
     
-    private int outcomes;
+    private int classes;
     
     private Double accuracy;
 
@@ -109,20 +113,36 @@ public class LearnTestClassify {
         this.modelInt = modelInt;
     }
 
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public int getSize() {
         return size;
     }
 
     public void setSize(int size) {
         this.size = size;
-    }
-
-    public String getPeriod() {
-        return period;
-    }
-
-    public void setPeriod(String period) {
-        this.period = period;
     }
 
     public String getMapname() {
@@ -133,12 +153,12 @@ public class LearnTestClassify {
         this.mapname = mapname;
     }
 
-    public int getOutcomes() {
-        return outcomes;
+    public int getClasses() {
+        return classes;
     }
 
-    public void setOutcomes(int outcomes) {
-        this.outcomes = outcomes;
+    public void setClasses(int classes) {
+        this.classes = classes;
     }
 
     public Double getAccuracy() {

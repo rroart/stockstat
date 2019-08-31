@@ -57,9 +57,9 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period, String mapname,
-            int outcomes) {
-        return learntestInner(nnconfigs, map, size, period, mapname, outcomes, model);
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+            int classes, String filename) {
+        return learntestInner(nnconfigs, map, size, classes, model);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return models;
     }
 
-    private Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<double[], Double>> map, int size, String period, String mapname, int outcomes,
+    private Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<double[], Double>> map, int size, int classes,
             MLClassifyModel model) {
         // not used?
         //List<List<Object>> listlist = getListList(map);
@@ -81,10 +81,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.setTrainingcatarray(cat);
         param.setModelInt(model.getId());
         param.setSize(size);
-        param.setPeriod(period);
-        param.setMapname(mapname);
-        param.setOutcomes(outcomes);
-        log.info("evalin {} {} {}", param.getModelInt(), period, mapname);
+        param.setClasses(classes);
+        log.info("evalin {} {} {}", param.getModelInt());
         LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntest");
         return test.getAccuracy();
     }
@@ -116,28 +114,26 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double eval(int modelInt, String period, String mapname) {
+    public Double eval(int modelInt) {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
-        param.setPeriod(period);
-        param.setMapname(mapname);
-        log.info("evalout {} {} {}", modelInt, period, mapname);
+        log.info("evalout {}", modelInt);
         LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/eval");
         return test.getAccuracy();
     }
 
     @Override
     public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
-            String period, String mapname, int outcomes, Map<Double, String> shortMap) {
+            int classes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         if (map.isEmpty()) {
             return new HashMap<>();
         }
-        return classifyInner(map, model, size, period, mapname, outcomes);
+        return classifyInner(map, model, size, classes);
     }
 
-    private Map<String, Double[]> classifyInner(Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period,
-            String mapname, int outcomes) {
+    private Map<String, Double[]> classifyInner(Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+            int classes) {
         LearnTestClassify param = new LearnTestClassify();
         List<String> retList = new ArrayList<>();
         Object[][] objobj = new Object[map.size()][];
@@ -145,9 +141,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.setClassifyarray(objobj);
         param.setModelInt(model.getId());
         param.setSize(size);
-        param.setPeriod(period);
-        param.setMapname(mapname);
-        param.setOutcomes(outcomes);
+        param.setClasses(classes);
         for(Object[] obj : objobj) {
             log.info("inner {}", Arrays.asList(obj));
         }
@@ -203,8 +197,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnMap,
-            MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<String, Pair<double[], Double>> classifyMap,
-            Map<Double, String> shortMap) {
+            MLClassifyModel model, int size, int classes, Map<String, Pair<double[], Double>> classifyMap,
+            Map<Double, String> shortMap, String path, String filename) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (classifyMap == null || classifyMap.isEmpty()) {
             result.setCatMap(new HashMap<>());
@@ -236,9 +230,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.setTrainingcatarray(trainingCatArray);
         param.setModelInt(model.getId());
         param.setSize(size);
-        param.setPeriod(period);
-        param.setMapname(mapname);
-        param.setOutcomes(outcomes);
+        param.setClasses(classes);
         List<String> retList = new ArrayList<>();
         Object[][] classifyArray = new Object[classifyMap.size()][];
         getClassifyArray(classifyMap, retList, classifyArray);

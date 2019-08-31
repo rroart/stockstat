@@ -323,7 +323,7 @@ public class MLIndicator extends Aggregator {
                         log.info("keyset {}", map.keySet());
                     }
                     log.info("len {}", arrayLength);
-                    LearnTestClassifyResult result = mldao1.learntestclassify(nnconfigs, this, map1, model1, arrayLength, key, MYTITLE, 2, mapTime, map, labelMapShort);  
+                    LearnTestClassifyResult result = mldao1.learntestclassify(nnconfigs, this, map1, model1, arrayLength, 2, mapTime, map, labelMapShort, null, null);  
                     Map<String, Double[]> classifyResult = result.getCatMap();
                     probabilityMap.put(mldao1.getName() + model1.getId(), result.getAccuracy());
                     meta1[4] = result.getAccuracy();
@@ -393,7 +393,7 @@ public class MLIndicator extends Aggregator {
                     }
                     log.info("len {}", arrayLength);
                     //LearnTestClassifyResult result = mldao.learntestclassify(this, map1, model, arrayLength, key, MYTITLE, 2, mapTime, map, labelMapShort);  
-                    Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, map1, model, arrayLength, key, MYTITLE, 4, mapTime, map, labelMapShort);  
+                    Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, map1, model, arrayLength, 4, mapTime, map, labelMapShort, null, null);  
                     Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                     futureList.add(future);
                     futureMap.put(future, new FutureMap(mldao, model, resultMetaArray.size() - 1));
@@ -561,7 +561,7 @@ public class MLIndicator extends Aggregator {
                     log.info("keyset {}", map.keySet());
                 }
                 log.info("len {}", arrayLength);
-                Map<String, Double[]> classifyResult = mldao.classify(this, map, model, arrayLength, key, MYTITLE, 2, labelMapShort, mapTime);
+                Map<String, Double[]> classifyResult = mldao.classify(this, map, model, arrayLength, 2, labelMapShort, mapTime);
                 mapResult.put(model, classifyResult);
                 IndicatorUtils.filterNonExistingClassifications(labelMapShort, classifyResult);
                 Map<String, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
@@ -585,7 +585,7 @@ public class MLIndicator extends Aggregator {
             for (MLClassifyDao mldao : mldaos) {
                 Map<String, Pair<double[], Double>> map = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
-                    Double testAccuracy = mldao.learntest(nnconfigs, this, map, model, arrayLength, key, MYTITLE, 2, mapTime);  
+                    Double testAccuracy = mldao.learntest(nnconfigs, this, map, model, arrayLength, 2, mapTime, null);  
                     probabilityMap.put(mldao.getName() + model.getId(), testAccuracy);
                     IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                     Map<Object, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getRight()), Collectors.counting()));                            

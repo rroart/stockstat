@@ -41,8 +41,8 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period, String mapname,
-            int outcomes) {
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+            int outcomes, String filename) {
         return random.nextDouble();
     }
 
@@ -52,7 +52,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double eval(int modelInt, String period, String mapname) {
+    public Double eval(int modelInt) {
         return random.nextDouble();
     }
 
@@ -70,7 +70,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
 
     @Override
     public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
-            String period, String mapname, int outcomes, Map<Double, String> shortMap) {
+            int outcomes, Map<Double, String> shortMap) {
         return new HashMap<>();
     }
 
@@ -112,8 +112,8 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
 
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnMap,
-            MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<String, Pair<double[], Double>> classifyMap,
-            Map<Double, String> shortMap) {
+            MLClassifyModel model, int size, int outcomes, Map<String, Pair<double[], Double>> classifyMap,
+            Map<Double, String> shortMap, String path, String filename) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (classifyMap == null || classifyMap.isEmpty()) {
             result.setCatMap(new HashMap<>());

@@ -39,9 +39,13 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
 
     private MLClassifyDao mldao;
     
+    private String path;
+    
+    private String filename;
+    
     public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model,
-            int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime,
-            Map<String, Pair<double[], Double>> map2, Map<Double, String> shortMap) {
+            int size, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, Pair<double[], Double>> map2, Map<Double, String> shortMap,
+            String path, String filename) {
         super();
         this.nnconfigs = nnconfigs;
         this.mldao = mldao;
@@ -49,18 +53,18 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
         this.map = map;
         this.model = model;
         this.size = size;
-        this.period = period;
-        this.mapname = mapname;
         this.outcomes = outcomes;
         this.mapTime = mapTime;
         this.map2 = map2;
         this.shortMap = shortMap;
+        this.path = path;
+        this.filename = filename;
     }
 
     @Override
     public LearnTestClassifyResult call() throws Exception {
         log.info("call1");
-        return mldao.learntestclassify(nnconfigs, indicator, map, model, size, period, mapname, 4, mapTime, map2, shortMap);  
+        return mldao.learntestclassify(nnconfigs, indicator, map, model, size, 4, mapTime, map2, shortMap, path, filename);  
     }
     
 }

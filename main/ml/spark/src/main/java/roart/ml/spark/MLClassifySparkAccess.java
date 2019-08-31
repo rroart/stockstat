@@ -2,10 +2,13 @@ package roart.ml.spark;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.spark.ContextCleaner;
@@ -69,23 +72,27 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
             MLClassifyModel model = new MLClassifySparkOVRModel(conf);
             models.add(model);
         }
+        if (conf.wantLSVC()) {
+            MLClassifyModel model = new MLClassifySparkLSVCModel(conf);
+            models.add(model);
+        }
     }
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period,
-            String mapname, int outcomes) {
-        return learntestInner(nnconfigs, map, model, size, period, mapname, outcomes);       
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+            int outcomes, String filename) {
+        return learntestInner(nnconfigs, map, model, size, outcomes, filename);       
     }
 
     @Override
-    public Double eval(int modelInt, String period, String mapname) {
-        return evalInner(modelInt, period, mapname);
+    public Double eval(int modelInt) {
+        return evalInner(modelInt);
     }
 
     @Override
     public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
-            String period, String mapname, int outcomes, Map<Double, String> shortMap) {
+            int outcomes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
-        return classifyInner(map, Integer.valueOf(model.getId()), size, period, mapname, outcomes, shortMap);
+        return classifyInner(map, Integer.valueOf(model.getId()), size, outcomes, shortMap);
     }
 
     @Override
@@ -93,13 +100,13 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return models;
     }
 
-    public Map<String, Double[]> classifyInner(Map<String, Pair<double[], Double>> newMap, int modelInt, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap) {
+    public Map<String, Double[]> classifyInner(Map<String, Pair<double[], Double>> newMap, int modelInt, int size, int outcomes, Map<Double, String> shortMap) {
         long time0 = System.currentTimeMillis();
         Map<String, double[]> map = getMap2(newMap);
         Map<String, Double[]> retMap = new HashMap<>();
         Dataset<Row> data = SparkUtil.createDFfromMap2(spark, map);
         try {
-            Model model = modelMap.get(modelInt+period+mapname);
+            Model model = modelMap.get(modelInt);
             if (model == null) {
                 return retMap;
             }
@@ -137,12 +144,12 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         } finally {
-            log.info("time classify model {} {} {} {}", modelInt, period, map.size(), (System.currentTimeMillis() - time0));            
+            log.info("time classify model {} {} {}", modelInt, map.size(), (System.currentTimeMillis() - time0));            
         }
         return null;
     }
 
-    public Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<double[], Double>> newMap, MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes) {
+    public Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<double[], Double>> newMap, MLClassifyModel mlmodel, int size, int classes, String filename) {
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {
@@ -166,23 +173,23 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 test = data;
             }
             MLClassifySparkModel sparkModel = (MLClassifySparkModel) mlmodel;
-            Model model = sparkModel.getModel(nnconfigs, train, size, outcomes);
+            Model model = sparkModel.getModel(nnconfigs, train, size, classes);
 
-            modelMap.put(mlmodel.getId()+period+mapname, model);
+            modelMap.put(filename, model);
             // compute accuracy on the test set                                         
             Dataset<Row> result = model.transform(test);
             Dataset<Row> predictionAndLabels = result.select("prediction", "label");
             MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
                     .setMetricName("accuracy");
             double eval = evaluator.evaluate(predictionAndLabels);
-            log.info("Test set accuracy for {} {} {} = {}", mapname, mlmodel.getId(), period, eval);
-            accuracyMap.put(mlmodel.getId()+period+mapname, eval);
+            log.info("Test set accuracy for {} = {}", mlmodel.getId(), eval);
+            accuracyMap.put(filename, eval);
             accuracy = eval;
 
         } catch (Exception e) {
             log.error("Exception", e);
         } finally {
-            log.info("time learn test model {} {} {} {}",mlmodel.getName(), period, map.size(),(System.currentTimeMillis() - time0));
+            log.info("time learn test model {} {} {}",mlmodel.getName(), map.size(),(System.currentTimeMillis() - time0));
         }
         return accuracy;
     }
@@ -204,8 +211,8 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return map;
     }
 
-    public Double evalInner(int modelInt, String period, String mapname) {
-        return accuracyMap.get(modelInt+period+mapname);
+    public Double evalInner(int modelInt) {
+        return accuracyMap.get(modelInt);
     }
 
     @Override
@@ -216,14 +223,17 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, Map<String, Pair<double[], Double>> newMap,
-            MLClassifyModel mlmodel, int size, String period, String mapname, int outcomes, Map<String, Pair<double[], Double>> newMap2,
-            Map<Double, String> shortMap) {
+            MLClassifyModel mlmodel, int size, int classes, Map<String, Pair<double[], Double>> newMap2,
+            Map<Double, String> shortMap, String path, String filename) {
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {
             return null;
         }
         Map<double[], Double> map = getMap(newMap);
+        Map<Double, Double> zeroMap = new HashMap<>();
+        Map<Double, Double> revZeroMap = new HashMap<>();
+        map = getZeroMap(map, zeroMap, revZeroMap);
         if (map.isEmpty()) {
             return null;
         }
@@ -249,7 +259,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 log.info(" e " + l.size() + " " + l);
             }
             MLClassifySparkModel sparkModel = (MLClassifySparkModel) mlmodel;
-            Model model = sparkModel.getModel(nnconfig, train, size, outcomes);
+            Model model = sparkModel.getModel(nnconfig, train, size, classes);
 
             // compute accuracy on the test set                                         
             Dataset<Row> result = model.transform(test);
@@ -257,8 +267,8 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
             MulticlassClassificationEvaluator evaluator = new MulticlassClassificationEvaluator()
                     .setMetricName("accuracy");
             double eval = evaluator.evaluate(predictionAndLabels);
-            log.info("Test set accuracy for {} {} {} = {}", mapname, mlmodel.getId(), period, eval);
-            accuracyMap.put(mlmodel.getId()+period+mapname, eval);
+            log.info("Test set accuracy for {} = {}", mlmodel.getId(), eval);
+            accuracyMap.put(filename, eval);
             accuracy = eval;
             Map<String, Double[]> retMap = new HashMap<>();
             Map<String, double[]> map2 = getMap2(newMap2);
@@ -284,7 +294,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                     }
                 }
                 Double[] retVal = new Double[2];
-                retVal[0] = predict;
+                retVal[0] = revZeroMap.get(predict);
                 retVal[1] = prob;
                 retMap.put(id, retVal);
                 //MutablePair pair = (MutablePair) newMap2.get(id);
@@ -308,10 +318,28 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         } finally {
-            log.info("time learn test classify model {} {} {} {}", Integer.valueOf(mlmodel.getId()), period, map.size(), (System.currentTimeMillis() - time0));            
+            log.info("time learn test classify model {} {} {}", Integer.valueOf(mlmodel.getId()), map.size(), (System.currentTimeMillis() - time0));            
         }
         return null;
     }
+
+    private Map<double[], Double> getZeroMap(Map<double[], Double> map, Map<Double, Double> zeroMap,
+            Map<Double, Double> revZeroMap) {
+        Map<double[], Double> newMap = new HashMap<>();
+        Set<Double> values = new HashSet<>(map.values());
+        int i = 0;
+        for (Double value : values) {
+            revZeroMap.put((double) i, value);
+            zeroMap.put(value, (double) i);
+            i++;
+        }
+        for (Entry<double[], Double> entry : map.entrySet()) {
+            Double value = entry.getValue();
+            newMap.put(entry.getKey(), zeroMap.get(value));
+        }
+        return newMap;
+    }
+
 
     @Override
     public void clean() {

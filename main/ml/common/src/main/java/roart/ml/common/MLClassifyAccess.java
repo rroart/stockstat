@@ -17,13 +17,13 @@ public abstract class MLClassifyAccess {
 
     protected List<MLClassifyModel> models;
     
-    public abstract Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period, String mapname, int outcomes);
+    public abstract Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, int outcomes, String filename);
 
-    public abstract Double eval(int modelInt, String period, String mapname);
+    public abstract Double eval(int modelInt);
 
-    public abstract Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap);
+    public abstract Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, int outcomes, Map<Double, String> shortMap);
 
-    public abstract LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<String, Pair<double[], Double>> map2, Map<Double, String> shortMap);
+    public abstract LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnTestMap, MLClassifyModel model, int size, int outcomes, Map<String, Pair<double[], Double>> classifyMap, Map<Double, String> shortMap, String path, String filename);
 
     public abstract List<MLClassifyModel> getModels();
 

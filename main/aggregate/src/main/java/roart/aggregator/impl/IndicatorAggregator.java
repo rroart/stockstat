@@ -308,6 +308,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setLearnMap(countMap);
                             getResultMetas().add(resultMeta);
 
+                            if (!isBinary(mapTypeInt) && model.isBinary()) {
+                                continue;
+                            }
+                            
                             Map<String, List<Pair<double[], Pair<double[], Double>>>> classifyMap = mapMap.get(subType).get("fresh");
                             log.debug("map name {}", mapName);
                             if (learnMap == null || classifyMap == null || classifyMap.isEmpty()) {
@@ -320,7 +324,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             Map<String, Pair<double[], Double>> learnMLMap = transformLearnClassifyMap(learnMap, true);
                             Map<String, Pair<double[], Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false);
                             int size = getValidateSize(learnMLMap);
-                            LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, key, mapName, outcomes, mapTime, classifyMLMap, labelMapShort);  
+                            LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, null, null);  
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
 
@@ -425,6 +429,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setLearnMap(countMap);
                             getResultMetas().add(resultMeta);
 
+                            if (!isBinary(mapTypeInt) && model.isBinary()) {
+                                continue;
+                            }
+                            
                             Map<String, List<Pair<double[], Pair<double[], Double>>>> classifyMap = mapMap.get(subType).get("fresh");
                             log.debug("map name {}", mapName);
                             if (learnMap == null || classifyMap == null || classifyMap.isEmpty()) {
@@ -437,7 +445,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             Map<String, Pair<double[], Double>> learnMLMap = transformLearnClassifyMap(learnMap, true);
                             Map<String, Pair<double[], Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false);
                             int size = getValidateSize(learnMLMap);
-                            Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, size, key, mapName, outcomes, mapTime, classifyMLMap, labelMapShort);  
+                            Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, null, null);  
                             Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                             futureList.add(future);
                             futureMap.put(future, new FutureMap(subType, model, mapType, resultMetaArray.size() - 1, mapMap));
@@ -619,7 +627,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         log.debug("Outcomes {}", outcomes);
         Map<String, List<Pair<double[], Pair<double[], Double>>>> learnMap = mapMap.get(subType).get(mapType);
         Map<String, Pair<double[], Double>> classifyMLMap = transformLearnClassifyMap(learnMap, true);
-        Map<String, Double[]> classifyResult = mldao.classify(this, classifyMLMap, model, afterbefore.before, key, mapName, outcomes, labelMapShort, mapTime);
+        Map<String, Double[]> classifyResult = mldao.classify(this, classifyMLMap, model, afterbefore.before, outcomes, labelMapShort, mapTime);
         mapResult2.put(mapType, classifyResult);
         return classifyResult;
     }
@@ -680,7 +688,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                         outcomes = 4;
                         log.debug("Outcomes {}", outcomes);
                         int size = getValidateSize(map);
-                        Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, size, key, mapName, outcomes, mapTime);  
+                        Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, size, outcomes, mapTime, null);  
                         probabilityMap.put("" + model . getId() + key + subType + mapType, testaccuracy);
                         IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                         Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
@@ -719,6 +727,10 @@ public abstract class IndicatorAggregator extends Aggregator {
         return retList;
     }
 
+    private boolean isBinary(int mapType) {
+        return mapType != CMNTYPE;
+    }
+    
     protected Map<String, double[][]> getListMap() {
         return listMap;
     }

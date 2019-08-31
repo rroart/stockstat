@@ -46,34 +46,34 @@ public class MLClassifyDao {
         }
     }
 
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, Pair<double[], Double>> map2, Map<Double, String> shortMap) {
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnTestMap, MLClassifyModel model, int size, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, Pair<double[], Double>> classifyMap, Map<Double, String> shortMap, String path, String filename) {
         long time1 = System.currentTimeMillis();
-        LearnTestClassifyResult result = access.learntestclassify(nnconfigs, indicator, map, model, size, period, mapname, outcomes, map2, shortMap);
+        LearnTestClassifyResult result = access.learntestclassify(nnconfigs, indicator, learnTestMap, model, size, outcomes, classifyMap, shortMap, path, filename);
         long time = (System.currentTimeMillis() - time1);
-        log.info("time {} {} {} {}", model, period, mapname, time);
+        log.info("time {} {}", model, time);
         MLClassifyModel.mapAdder(mapTime, model, time);
         return result;
     }
 
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<MLClassifyModel, Long> mapTime) {
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, int outcomes, Map<MLClassifyModel, Long> mapTime, String filename) {
         long time1 = System.currentTimeMillis();
-        Double prob = access.learntest(nnconfigs, indicator, map, model, size, period, mapname, outcomes);
+        Double prob = access.learntest(nnconfigs, indicator, map, model, size, outcomes, filename);
         long time = (System.currentTimeMillis() - time1);
-        log.info("time {} {} {} {}", model, period, mapname, time);
+        log.info("time {} {}", model, time);
         MLClassifyModel.mapAdder(mapTime, model, time);
         return prob;
     }
 
     @Deprecated
-    public Double eval(int modelInt, String period, String mapname) {
-        return access.eval(modelInt, period, mapname);
+    public Double eval(int modelInt) {
+        return access.eval(modelInt);
     }
 
-    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, String period, String mapname, int outcomes, Map<Double, String> shortMap, Map<MLClassifyModel, Long> mapTime) {
+    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size, int outcomes, Map<Double, String> shortMap, Map<MLClassifyModel, Long> mapTime) {
         long time1 = System.currentTimeMillis();
-        Map<String, Double[]> resultAccess = access.classify(indicator, map, model, size, period, mapname, outcomes, shortMap);
+        Map<String, Double[]> resultAccess = access.classify(indicator, map, model, size, outcomes, shortMap);
         long time = (System.currentTimeMillis() - time1);
-        log.info("time {} {} {} {}", model, period, mapname, time);
+        log.info("time {} {}", model, time);
         MLClassifyModel.mapAdder(mapTime, model, time);
         return resultAccess;
     }
