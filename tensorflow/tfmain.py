@@ -30,10 +30,10 @@ class LearnTest:
         vars(self).update(size)
     def __init__(self, period):
         vars(self).update(period)
-    def __init__(self, mapname):
-        vars(self).update(mapname)
-    def __init__(self, outcomes):
-        vars(self).update(outcomes)
+    def __init__(self, modelname):
+        vars(self).update(modelname)
+    def __init__(self, classes):
+        vars(self).update(classes)
 
 class HttpService:
     name = "http_service"
@@ -42,8 +42,8 @@ class HttpService:
         global dicteval
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=LearnTest)
-        print("geteval" + str(myobj.modelInt) + myobj.period + myobj.mapname)
-        accuracy_score = dicteval[str(myobj.modelInt) + myobj.period + myobj.mapname]
+        print("geteval" + str(myobj.modelInt) + myobj.period + myobj.modelname)
+        accuracy_score = dicteval[str(myobj.modelInt) + myobj.period + myobj.modelname]
         return Response(json.dumps({"prob": accuracy_score}), mimetype='application/json')
     @http('POST', '/classify')
     def do_classify(self, request):
@@ -53,7 +53,7 @@ class HttpService:
         myobj = json.loads(request.get_data(as_text=True), object_hook=LearnTest)
         array = np.array(myobj.array, dtype='f')
         global dictclass
-        classifier = dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname]
+        classifier = dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname]
         def get_classifier_inputs():
             x = tf.constant(array)
             return x
@@ -101,15 +101,15 @@ class HttpService:
             #print("mod1")
             classifier = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns,
                                                         hidden_units=[10, 20, 10],
-                                                        n_classes=myobj.outcomes,
-                                                        model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+                                                        n_classes=myobj.classes,
+                                                        model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.modelname + str(count))
         if myobj.modelInt == 2:
             #print("mod2")
             classifier = tf.contrib.learn.LinearClassifier(
                 feature_columns=feature_columns,
-                model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+                model_dir="/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.modelname + str(count))
         global dictclass
-        dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname] = classifier
+        dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
         def get_train_inputs():
             x = tf.constant(train)
             y = tf.constant(traincat)
@@ -126,8 +126,8 @@ class HttpService:
 
         print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
         global dicteval
-        dicteval[str(myobj.modelInt) + myobj.period + myobj.mapname] = float(accuracy_score)
-        print("seteval" + str(myobj.modelInt) + myobj.period + myobj.mapname)
+        dicteval[str(myobj.modelInt) + myobj.period + myobj.modelname] = float(accuracy_score)
+        print("seteval" + str(myobj.modelInt) + myobj.period + myobj.modelname)
         
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)

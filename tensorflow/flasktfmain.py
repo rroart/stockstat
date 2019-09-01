@@ -6,8 +6,6 @@ import sys
 from multiprocessing import Process, Queue
 
 def classifyrunner2(queue, request):
-    import classify
-    cl = classify.Classify()
     cl.do_learntestclassify(queue, request)
 
 def predictrunner(queue, request):
@@ -27,10 +25,24 @@ def do_eval():
 
 @app.route('/classify', methods=['POST'])
 def do_classify():
+    import classify
+    cl = classify.Classify()
     return cl.do_classify(request)
 
 @app.route('/learntest', methods=['POST'])
 def do_learntest():
+    def classifyrunner(queue, request):
+        import classify
+        cl = classify.Classify()
+        cl.do_learntest(queue, request)
+    queue = Queue()
+    process = Process(target=classifyrunner, args=(queue, request))
+    process.start()
+    process.join()
+    result = queue.get()
+    return result
+    import classify
+    cl = classify.Classify()
     return cl.do_learntest(request)
 
 @app.route('/learntestclassify', methods=['POST'])
@@ -63,6 +75,22 @@ def do_learntestpredict():
     process.join()
     result = queue.get()
     return result
+
+@app.route('/dataset', methods=['POST'])
+def do_dataset():
+    def classifyrunner(queue, request):
+        import classify
+        cl = classify.Classify()
+        cl.do_dataset(queue, request)
+    queue = Queue()
+    process = Process(target=classifyrunner, args=(queue, request))
+    process.start()
+    process.join()
+    result = queue.get()
+    return result
+    import classify
+    cl = classify.Classify()
+    return cl.do_learntest(request)
 
 if __name__ == '__main__':
     queue = Queue()
