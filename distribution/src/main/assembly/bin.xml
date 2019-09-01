@@ -67,23 +67,7 @@
     <fileSet>
       <directory>${project.basedir}/../tensorflow</directory>
       <includes>
-	<include>tfmain.py</include>
-	<include>kemain.py</include>
-	<include>flasktfmain.py</include>
-	<include>namekomain.py</include>
-	<include>classify.py</include>
-	<include>predict.py</include>
-	<include>learntest.py</include>
-	<include>learntestpredict.py</include>
-	<include>device.py</include>
-	<include>dnnconfig.py</include>
-	<include>lconfig.py</include>
-	<include>fd.py</include>
-	<include>flasktf.sh</include>
-	<include>nameko.sh</include>
-	<include>run-tf.sh</include>
-	<include>run-ke.sh</include>
-	<include>config2.yaml</include>
+	<include>**</include>
       </includes>
       <outputDirectory>tensorflow</outputDirectory>
     </fileSet>
