@@ -15,8 +15,8 @@ class LearnTest:
         vars(self).update(size)
     def __init__(self, period):
         vars(self).update(period)
-    def __init__(self, mapname):
-        vars(self).update(mapname)
-    def __init__(self, outcomes):
-        vars(self).update(outcomes)
+    def __init__(self, modelname):
+        vars(self).update(modelname)
+    def __init__(self, classes):
+        vars(self).update(classes)
 

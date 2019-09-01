@@ -14,6 +14,8 @@ from multiprocessing import Queue
 
 import importlib
 
+import mydatasets
+
 global dicteval
 dicteval = {}
 global dictclass
@@ -26,8 +28,8 @@ class Classify:
         global dicteval
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
-        print("geteval" + str(myobj.modelInt) + myobj.period + myobj.mapname)
-        accuracy_score = dicteval[str(myobj.modelInt) + myobj.period + myobj.mapname]
+        print("geteval" + str(myobj.modelInt) + myobj.period + myobj.modelname)
+        accuracy_score = dicteval[str(myobj.modelInt) + myobj.period + myobj.modelname]
         return Response(json.dumps({"accuracy": accuracy_score}), mimetype='application/json')
 
     def do_classify(self, request):
@@ -36,8 +38,8 @@ class Classify:
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         global dictclass
-        classifier = dictclass[myobj.mapname]
-        del dictclass[myobj.mapname]
+        classifier = dictclass[myobj.modelname]
+        del dictclass[myobj.modelname]
         (intlist, problist) = self.do_classifyinner(myobj, classifier)
         print(len(intlist))
         print(intlist)
@@ -72,9 +74,13 @@ class Classify:
         #for prediction in clf:
         #    intlist.append(int(prediction[0]))
         #    problist.append(int(prediction[0]))
-        #shutil.rmtree("/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.mapname + str(count))
+        #shutil.rmtree("/tmp/tf" + str(myobj.modelInt) + myobj.period + myobj.modelname + str(count))
         del predictions
         del model
+        if not self.zero(myobj):
+            intlist = np.array(intlist)
+            intlist = intlist + 1
+            intlist = intlist.tolist()
         return intlist, problist
 
     def do_learntest(self, request):
@@ -82,15 +88,17 @@ class Classify:
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
-        (modelname, config) = self.getModel(myobj)
+        (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        model = Model.Net(myobj, config)
-        accuracy_score = self.do_learntestinner(myobj, model, config)
+        model = Model.Net(myobj, config, True)
+        (train, traincat, test, testcat) = self.gettraintest(myobj, config)
+        #testcat = torch.LongTensor(testcat)
+        accuracy_score = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, True)
         global dictclass
-        #dictclass[str(myobj.modelInt) + myobj.period + myobj.mapname] = model
+        #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = model
         global dicteval
-        #dicteval[myobj.mapname] = float(accuracy_score)
-        #print("seteval" + myobj.mapname)
+        #dicteval[myobj.modelname] = float(accuracy_score)
+        #print("seteval" + myobj.modelname)
         
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
@@ -98,9 +106,6 @@ class Classify:
 
     def mytrain(self, model, inputs, labels, myobj, config):
         labels = labels.long()
-        if myobj.modelInt == 2 and not hasattr(myobj, 'trainingcatarray'):
-            (inputs, labels) = self.getSlide(inputs, labels, myobj, config)
-        t = 0
         v_x = inputs
         v_y = labels
         for i in range(model.config.steps):
@@ -142,9 +147,11 @@ class Classify:
     def getSlide(self, inputs, labels, myobj, config):
         #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
         #inputs = torch.from_numpy(inputs)
+        inputs = torch.FloatTensor(inputs)
         size = inputs.size()
         sliding_window_stride = config.slide_stride
         sliding_window_width = myobj.size
+        print(type(size))
         mysize = size[0]
         minibatch = size[1]
         sequence_length = size[2]
@@ -153,23 +160,30 @@ class Classify:
         #print(size2)
         #minibatch2 = size2[1]
         #length = size2[2]
-        arange = int((sequence_length - (sliding_window_width) - myobj.outcomes) / sliding_window_stride) + 1
+        arange = int((sequence_length - (sliding_window_width) - myobj.classes) / sliding_window_stride) + 1
         print("arange", arange)
-        splitInput = torch.autograd.Variable(torch.zeros(mysize, arange * minibatch, sliding_window_width))
-        splitTarget = torch.autograd.Variable(torch.zeros(mysize, arange * minibatch, myobj.outcomes))
+        splitInput = torch.autograd.Variable(torch.zeros(arange * mysize, minibatch, sliding_window_width))
+        splitTarget = torch.autograd.Variable(torch.zeros(arange * mysize, minibatch, myobj.classes))
+        #was:
+        #splitInput = torch.autograd.Variable(torch.zeros(mysize, arange * minibatch, sliding_window_width))
+        #splitTarget = torch.autograd.Variable(torch.zeros(mysize, arange * minibatch, myobj.classes))
         print(inputs.size())
         print(splitInput.size())
         print(splitTarget.size())
+        # [seq_length, batch_size, features],
         for i in range(mysize):
             for j in range(minibatch):
                 for k in range(arange):
-                    print(i, j*arange + k, j, k*sliding_window_stride, k*sliding_window_stride+sliding_window_width)
+                    #print(i, j*arange + k, j, k*sliding_window_stride, k*sliding_window_stride+sliding_window_width)
                     #print(splitInput[j * arange + i].size())
                     #print(inputs[j, :, i * sliding_window_stride : (i * sliding_window_stride + sliding_window_width)].size())
-                    splitInput[i, j * arange + k] = inputs[i, j, k * sliding_window_stride : (k * sliding_window_stride + sliding_window_width)]
                     #print(splitTarget[i, j * arange].size())
                     #print(labels[j, :, :].size())
-                    splitTarget[i, j * arange + k] = inputs[i, j, k * sliding_window_stride + sliding_window_width : (k * sliding_window_stride + sliding_window_width + myobj.outcomes)]
+                    splitInput[i * arange + k, j] = inputs[i, j, k * sliding_window_stride : (k * sliding_window_stride + sliding_window_width)]
+                    splitTarget[i * arange + k, j] = inputs[i, j, k * sliding_window_stride + sliding_window_width : (k * sliding_window_stride + sliding_window_width + myobj.classes)]
+                    #was:
+                    #splitInput[i, j * arange + k] = inputs[i, j, k * sliding_window_stride : (k * sliding_window_stride + sliding_window_width)]
+                    #splitTarget[i, j * arange + k] = inputs[i, j, k * sliding_window_stride + sliding_window_width : (k * sliding_window_stride + sliding_window_width + myobj.classes)]
         inputs = splitInput
         labels = splitTarget
         print(inputs)
@@ -213,19 +227,26 @@ class Classify:
 
             # print statistics
             running_loss += loss.item()
+
+    # non-zero is default
+    def zero(self, myobj):
+        return hasattr(myobj, 'zero') and myobj.zero == True
             
-    def do_learntestinner(self, myobj, model, config):
+    def gettraintest(self, myobj, config):
         array = np.array(myobj.trainingarray, dtype='f')
         cat = np.array([], dtype='i')
         if hasattr(myobj, 'trainingcatarray'):
             cat = np.array(myobj.trainingcatarray, dtype='i')
         # NOTE class range 1 - 4 will be changed to 0 - 3
         # to avoid risk of being classified as 0 later
-        if not hasattr(myobj, 'zero') or myobj.zero == False:
+        if not self.zero(myobj):
             cat = cat - 1
         #print(len(cat))
         #print(array)
         #print(cat)
+        if myobj.modelInt == 2 and not hasattr(myobj, 'trainingcatarray'):
+            (inputs, labels) = self.getSlide(array, cat, myobj, config)
+            return inputs, labels, inputs, labels.long()
         if hasattr(myobj, 'testarray') and hasattr(myobj, 'testcatarray'):
             test = np.array(myobj.testarray, dtype='f')
             testcat = np.array(myobj.testcatarray, dtype='i')
@@ -233,7 +254,7 @@ class Classify:
             traincat = cat
             # NOTE class range 1 - 4 will be changed to 0 - 3
             # to avoid risk of being classified as 0 later
-            if not hasattr(myobj, 'zero') or myobj.zero == False:
+            if not self.zero(myobj):
                 testcat = testcat - 1
         else:
             (lenrow, lencol) = array.shape
@@ -247,8 +268,10 @@ class Classify:
                 test = array
                 traincat = cat
                 testcat = cat
-        print("outcomes")
-        print(myobj.outcomes)
+
+        return train, traincat, test, testcat
+        #print("classes")
+        #print(myobj.classes)
         #print("cwd")
         #print(os.getcwd())
         #np.random.seed(0)
@@ -256,35 +279,52 @@ class Classify:
         #X, Y = make_moons(500, noise=0.2)
         #X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25, random_state=73)
         #net = model.network(train, traincat)
+        
+    def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify):
         print(model)
 
         #net.train()
 
         v_x = torch.FloatTensor(train)
-        v_y = torch.LongTensor(traincat).reshape(-1, 1)
+        #v_y = torch.LongTensor(traincat).reshape(-1, 1)
         v_y = torch.FloatTensor(traincat)
         #.reshape(-1, 1)
         #print(traincat)
         #print(v_y)
+        print(v_x.size(), v_y.size())
         self.mytrain(model, v_x, v_y, myobj, config)
         model.eval()
-        
+
+        if not classify:
+            tv_x = torch.FloatTensor(test)
+            y_hat = model(tv_x)
+            loss = model.bce(y_hat, testcat)
+            tv_y = torch.FloatTensor(testcat)
+            print("losss", loss.item())
+            print(tv_y.size(), tv_y)
+            print(y_hat.size(),y_hat)
+            return loss.item()
+            
         test_loss = 0
         accuracy_score = 0
 
-        print("test", test)
+        print("test", len(test), len(testcat), testcat.shape, test)
         tv_x = torch.FloatTensor(test)
+        print(type(testcat), testcat.shape)
+        #tv_y = testcat
         tv_y = torch.LongTensor(testcat)
-
+        
         y_hat = model(tv_x)
+        print(len(tv_x),len(tv_y),len(y_hat),y_hat)
         (max_vals, arg_maxs) = torch.max(y_hat.data, dim=1)
+        print("max", max_vals.size(), max_vals);
         print(arg_maxs.size(), arg_maxs)
         print(tv_y.size(), tv_y)
-        # arg_maxs is tensor of indices [0, 1, 0, 2, 1, 1 . . ]                 
+        # arg_maxs is tensor of indices [0, 1, 0, 2, 1, 1 . . ]
         num_correct = torch.sum(tv_y==arg_maxs)
-        acc = float(num_correct) / len(testcat)
-        #y_hat_class = np.where(y_hat.detach().numpy()<0.5, 0, 1)               
-        #accuracy = np.sum(tv_y.reshape(-1,1) == y_hat_class) / len(testcat)    
+        acc = float(num_correct) / len(tv_y)
+        #y_hat_class = np.where(y_hat.detach().numpy()<0.5, 0, 1)
+        #accuracy = np.sum(tv_y.reshape(-1,1) == y_hat_class) / len(testcat)
         accuracy_score = acc
  
         #y_hat_class = np.where(y_hat.detach().numpy()<0.5, 0, 1)
@@ -307,19 +347,21 @@ class Classify:
         if myobj.modelInt == 2:
             modelname = 'rnn'
             config = myobj.pytorchRNNConfig
-        return modelname, config
+        return config, modelname
     
-    def do_learntestclassify(self, queue, request):
+    def do_learntestclassify(self, queue, request, classify):
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
         #myobj = json.loads(request, object_hook=lt.LearnTest)
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
-        (modelname, config) = self.getModel(myobj)
+        (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        model = Model.Net(myobj, config)
-        #myobj.size, myobj.outcomes, dim, layers)
-        accuracy_score = self.do_learntestinner(myobj, model, config)
+        model = Model.Net(myobj, config, classify)
+        #myobj.size, myobj.classes, dim, layers)
+        (train, traincat, test, testcat) = self.gettraintest(myobj, config)
+        #testcat = torch.LongTensor(testcat)
+        accuracy_score = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
         (intlist, problist) = self.do_classifyinner(myobj, model)
         print(len(intlist))
         print(intlist)
@@ -327,3 +369,22 @@ class Classify:
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": float(accuracy_score)}), mimetype='application/json'))
+
+    def do_dataset(self, queue, request):
+        dt = datetime.now()
+        timestamp = dt.timestamp()
+        #print(request.get_data(as_text=True))
+        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        (config, modelname) = self.getModel(myobj)
+        Model = importlib.import_module('model.' + modelname)
+        (train, traincat, test, testcat, size, classes, classify) = mydatasets.getdataset(myobj, config, self)
+        myobj.size = size
+        myobj.classes = classes
+        model = Model.Net(myobj, config, classify)
+        classifier = model
+        print("mod", modelname)
+        accuracy_score = self.do_learntestinner(myobj, classifier, model, train, traincat, test, testcat, classify)
+        dt = datetime.now()
+        print ("millis ", (dt.timestamp() - timestamp)*1000)
+        queue.put(Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json'))
+        #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')

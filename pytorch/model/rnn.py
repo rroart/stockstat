@@ -3,26 +3,29 @@ import torch
 
 class Net(nn.Module):
     #def __init__(self, input_size, output_size, hidden_dim, n_layers):
-    def __init__(self, myobj, config):
+    def __init__(self, myobj, config, classify):
         super(Net, self).__init__()
 
         # Defining some parameters
         self.myobj = myobj
         self.config = config
-
+        self.classify = classify
+        
         #Defining the layers
         # RNN Layer
         self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)   
         # Fully connected layer
-        self.fc = nn.Linear(self.config.hidden, self.myobj.outcomes)
+        self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
     
         # setup optimizer
         self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
 
         # setup losses
         self.bce = torch.nn.BCELoss()
-        self.bce = torch.nn.CrossEntropyLoss()
-        self.bce = torch.nn.MSELoss()
+        if classify:
+            self.bce = torch.nn.CrossEntropyLoss()
+        else:
+            self.bce = torch.nn.MSELoss()
 
     def forward(self, x):
         
@@ -40,7 +43,10 @@ class Net(nn.Module):
         # Reshaping the outputs such that it can be fit into the fully connected layer
         #out = out.contiguous().view(-1, self.config.hidden)
         #print("outs", out.size())
-        out = self.fc(out)
+        if self.classify:
+            out = self.fc(out[:, -1, :])
+        else:
+            out = self.fc(out)
         #print("outs", out.size())
         
         return out
@@ -54,7 +60,10 @@ class Net(nn.Module):
 
 
     def observe(self, x, y):
-        y = y.float()
+        if self.classify:
+            y = y
+        else:
+            y = y.float()
         self.train()
         self.zero_grad()
         #print("sz",self(x).size(),  y.size())
