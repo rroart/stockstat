@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source config.sh
+
 OUTCOMES=3
 SIZE=4
 
@@ -7,40 +9,28 @@ PORT=8008
 
 if [ "$1" = "t" ]; then
     PORT=8008
-    MODELS=3
-    CONFIG[1]="\"tensorflowDNNConfig\": { \"name\":\"DNN\",\"steps\": 100, \"hiddenunits\" : [10,20,10], \"hiddenlayers\":3 }"
-    CONFIG[2]="\"tensorflowLConfig\": { \"steps\": 100 }"
-    CONFIG[3]="\"tensorflowMLPConfig\": { \"name\":\"MLP\",\"steps\": 100, \"hiddenunits\" : 20, \"hiddenlayers\":3 }"
+    MODELS=`seq 1 9`
+    CONFIG=( "" "${TENSORFLOWCONFIG[@]}" )
 fi
 
 if [ "$1" = "p" ]; then
     PORT=8018
-    MODELS=2
-    CONFIG[1]="\"pytorchMLPConfig\": { \"name\":\"MLP\",\"steps\": 1000, \"hiddenunits\" : 20, \"hiddenlayers\":3, \"lr\": 0.1 }"
-    CONFIG[2]="\"pytorchRNNConfig\": { \"name\": \"RNN\", \"steps\": 1000, \"hidden\": 100, \"layers\": 2, \"lr\": 0.1 }"
+    MODELS="2"
+    CONFIG=( "" "${PYTORCHCONFIG[@]}" )
     TIMEMODELS=2
-    TIMECONFIG[2]="\"pytorchRNNConfig\": { \"name\": \"RNN\", \"steps\": 1000, \"hidden\": 100, \"layers\": 2, \"slide_stride\": 2, \"lr\": 0.01 }"
+    TIMECONFIG[2]="\"pytorchRNNConfig\" : { \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"slide_stride\" : 2, \"lr\" : 0.01 }"
 fi
 
 if [[ "$1" =~ ^g ]]; then
     PORT=8028
-    MODELS=5
-    CONFIG[1]="\"gemSConfig\": { \"steps\": 100, \"n_layers\": 2, \"n_hiddens\": 100, \"lr\": 0.1, \"data_file\": \"\" }"
-    CONFIG[2]="\"gemIConfig\": { \"steps\": 100, \"n_layers\": 2, \"n_hiddens\": 100, \"lr\": 0.1, \"finetune\": false, \"cuda\": false, \"data_file\": \"\" }"
-    CONFIG[3]="\"gemMConfig\": { \"steps\": 100, \"n_layers\": 1, \"n_hiddens\": 100, \"lr\": 0.1, \"data_file\": \"\" }"
-    CONFIG[4]="\"gemEWCConfig\": { \"steps\": 100, \"n_layers\": 2, \"n_hiddens\": 100, \"lr\": 0.1, \"n_memories\": 10, \"memory_strength\": 1, \"data_file\": \"\" }"
-    CONFIG[5]="\"gemGEMConfig\": { \"steps\": 100, \"n_layers\": 2, \"n_hiddens\": 100, \"lr\": 0.1, \"n_memories\": 256, \"memory_strength\": 0.5, \"cuda\": false, \"data_file\": \"\" }"
-    CONFIG[6]="\"gemiCaRLConfig\": { \"steps\": 100, \"n_layers\": 2, \"n_hiddens\": 100, \"lr\": 1.0, \"n_memories\": 1280, \"memory_strength\": 1, \"samples_per_task\" : 10, \"data_file\": \"\" }"
-    FILENAME[1]=\"s\"
-    FILENAME[2]=\"i\"
-    FILENAME[3]=\"m\"
-    FILENAME[4]=\"e\"
-    FILENAME[5]=\"g\"
-    FILENAME[6]=\"c\"
+    MODELS=`seq 1 5`
+    CONFIG=( "" "${GEMCONFIG[@]}" )
 fi
 
 DATASETARR[1]=\"mnist\"
 DATASETARRLEN=${#DATASETARR[@]}
+
+OUTCOMESARR[1]=10
 
 TIMEDATASETARR[1]=\"dailymintemperatures\"
 TIMEDATASETARRLEN=${#TIMEDATASETARR[@]}
@@ -48,28 +38,28 @@ TIMEDATASETARRLEN=${#TIMEDATASETARR[@]}
 mkdir -p /tmp/datasets
 
 if [[ ! "$1" =~ ^g ]]; then
-    for I in `seq 1 $MODELS`; do
+    for I in $MODELS; do
 	for J in `seq 1 $DATASETARRLEN`; do
 	    echo
 	    echo "Model" $I
-	    curl -i -d "{ \"dataset\": ${DATASETARR[J]}, \"modelInt\": $I, \"classes\": $OUTCOMES, ${CONFIG[I]}, \"size\": $SIZE, \"zero\": true }" localhost:$PORT/dataset
+	    curl -i -d "{ \"dataset\" : ${DATASETARR[J]}, \"modelInt\" : $I, \"classes\" : ${OUTCOMESARR[J]}, ${CONFIG[I]}, \"size\" : $SIZE, \"zero\" : true }" localhost:$PORT/dataset
 	done
     done
     for I in $TIMEMODELS; do
 	for J in `seq 1 $TIMEDATASETARRLEN`; do
 	    echo
 	    echo "Model" $I
-	    curl -i -d "{ \"dataset\": ${TIMEDATASETARR[J]}, \"modelInt\": $I, \"classes\": $OUTCOMES, ${TIMECONFIG[I]}, \"size\": $SIZE, \"zero\": true }" localhost:$PORT/dataset
+	    curl -i -d "{ \"dataset\" : ${TIMEDATASETARR[J]}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${TIMECONFIG[I]}, \"size\" : $SIZE, \"zero\" : true }" localhost:$PORT/dataset
 	done
     done
 fi
 
 if [ "$1" = "g" ]; then
-    for I in `seq 1 $MODELS`; do
+    for I in $MODELS; do
 	for J in `seq 1 $DATASETARRLEN`; do
 	    echo
 	    echo "Model" $I
-	    curl -i -d "{ \"dataset\": ${DATASETARR[J]}, \"modelInt\": $I, \"classes\": $OUTCOMES, ${CONFIG[I]}, \"size\": $SIZE, \"zero\": true, \"filename\": ${FILENAME[I]}, \"save\": false }" localhost:$PORT/dataset
+	    curl -i -d "{ \"dataset\" : ${DATASETARR[J]}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${CONFIG[I]}, \"size\" : $SIZE, \"zero\" : true, \"filename\" : ${FILENAME[I]}, \"save\" : false }" localhost:$PORT/dataset
 	done
     done
 fi
