@@ -8,6 +8,7 @@
 module evolution.gene {
     exports roart.gene;
     exports roart.gene.impl;
+    exports roart.gene.ml.impl;
 
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
