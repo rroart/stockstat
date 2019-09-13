@@ -193,7 +193,7 @@ public class ControlService {
 
     public void resetML(String ml) {
         if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
-            conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, null);
+            conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG, null);
         }
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
             conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, null);

@@ -18,10 +18,11 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.category.AbstractCategory;
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.indicator.util.IndicatorUtils;
@@ -93,10 +94,10 @@ public class PredictorLSTM extends AbstractPredictor {
         makeMapTypes();
         if (conf.wantML()) {
             if (false && conf.wantMLSpark()) {
-                mldaos.add(new MLPredictDao("spark", conf));
+                mldaos.add(new MLPredictDao(MLConstants.SPARK, conf));
             }
             if (conf.wantMLTensorflow()) {
-                mldaos.add(new MLPredictDao("tensorflow", conf));
+                mldaos.add(new MLPredictDao(MLConstants.TENSORFLOW, conf));
                 if (mldaos.get(0).getModels().isEmpty()) {
                     int jj = 0;
                 }
@@ -223,11 +224,11 @@ public class PredictorLSTM extends AbstractPredictor {
         probabilityMap = new HashMap<>();
 
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
-        String nnconfigString = conf.getLSTMConfig();
+        String nnconfigString = conf.getTensorflowPredictorLSTMConfig();
         if (nnconfigString != null) {
             ObjectMapper mapper = new ObjectMapper();
-            TensorflowLSTMConfig lstmConfig = mapper.readValue(nnconfigString, TensorflowLSTMConfig.class);
-            nnConfigs.setTensorflowLSTMConfig(lstmConfig);
+            TensorflowPredictorLSTMConfig lstmConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
+            nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(lstmConfig);
         }
 
         long time2 = System.currentTimeMillis();

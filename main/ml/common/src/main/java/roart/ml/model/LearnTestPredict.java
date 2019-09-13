@@ -3,8 +3,8 @@ package roart.ml.model;
 import java.util.List;
 
 import roart.common.ml.TensorflowDNNConfig;
-import roart.common.ml.TensorflowLConfig;
-import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowLICConfig;
+import roart.common.ml.TensorflowPredictorLSTMConfig;
 
 public class LearnTestPredict {
     public List<Double[]> slides;
@@ -20,13 +20,13 @@ public class LearnTestPredict {
     public int outcomes;
     public Double prob;
 
-    private TensorflowLSTMConfig tensorflowLSTMConfig;
+    private TensorflowPredictorLSTMConfig tensorflowLSTMConfig;
 
-    public TensorflowLSTMConfig getTensorflowLSTMConfig() {
+    public TensorflowPredictorLSTMConfig getTensorflowLSTMConfig() {
         return tensorflowLSTMConfig;
     }
 
-    public void setTensorflowLSTMConfig(TensorflowLSTMConfig tensorflowLSTMConfig) {
+    public void setTensorflowPredictorLSTMConfig(TensorflowPredictorLSTMConfig tensorflowLSTMConfig) {
         this.tensorflowLSTMConfig = tensorflowLSTMConfig;
     }
 }
