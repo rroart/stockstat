@@ -31,6 +31,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.gene.NeuralNetConfigGene;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorLSTM;
@@ -48,19 +49,19 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
     private String key;
     
-    private NeuralNetConfig nnConfig;
+    private NeuralNetConfigGene nnConfigGene;
     
     private String catName;
     
     private Integer cat;
     
-    public NeuralNetChromosome(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NeuralNetConfig nnConfig, String catName, Integer cat) {
+    public NeuralNetChromosome(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, NeuralNetConfigGene nnConfigGene, String catName, Integer cat) {
         this.conf = conf.copy();
         this.ml = ml;
         this.dataReaders = dataReaders;
         this.categories = categories;
         this.key = key;
-        this.nnConfig = nnConfig;
+        this.nnConfigGene = nnConfigGene;
         this.catName = catName;
         this.cat = cat;
     }
@@ -73,12 +74,12 @@ public class NeuralNetChromosome extends AbstractChromosome {
         this.conf = conf;
     }
 
-    public NeuralNetConfig getNnConfig() {
-        return nnConfig;
+    public NeuralNetConfigGene getNnConfig() {
+        return nnConfigGene;
     }
 
-    public void setNnConfig(NeuralNetConfig nnConfig) {
-        this.nnConfig = nnConfig;
+    public void setNnConfig(NeuralNetConfigGene nnConfig) {
+        this.nnConfigGene = nnConfig;
     }
 
     @Override
@@ -88,13 +89,13 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
     @Override
     public void mutate() {
-        nnConfig.mutate();
+        nnConfigGene.mutate();
     }
 
     @Override
     public void getRandom()
             throws JsonParseException, JsonMappingException, IOException {
-        nnConfig.randomize();
+        nnConfigGene.randomize();
     }
 
     @Override
@@ -143,7 +144,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
     class MyFactory {
         public PipelineResultData myfactory(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat) throws Exception {
             NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
-            nnConfigs.set(key, nnConfig);
+            nnConfigs.set(key, nnConfigGene.getConfig());
             ObjectMapper mapper = new ObjectMapper();
             String value = mapper.writeValueAsString(nnConfigs);
             PipelineResultData pipelineData = null;
@@ -176,8 +177,8 @@ public class NeuralNetChromosome extends AbstractChromosome {
                 pipelineData = new MLIndicator(conf, catName, null, null, catName, cat, categories, dataReaders);
             }
             if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
-                value = mapper.writeValueAsString(nnConfigs.getTensorflowLSTMConfig());
-                conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, value);
+                value = mapper.writeValueAsString(nnConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
+                conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG, value);
                 pipelineData = new PredictorLSTM(conf, catName, null, null, catName, cat, categories, dataReaders);
                 ((AbstractPredictor) pipelineData).calculate();
             }
@@ -211,28 +212,29 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
     @Override
     public Individual crossover(AbstractChromosome evaluation) {
-        NeuralNetConfig newNNConfig =  nnConfig.crossover(((NeuralNetChromosome) evaluation).nnConfig);
+        NeuralNetConfigGene newNNConfig =  (NeuralNetConfigGene) nnConfigGene.crossover(((NeuralNetChromosome) evaluation).nnConfigGene);
         NeuralNetChromosome eval = new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat);
         return new Individual(eval);
     }
 
     @Override
     public AbstractChromosome copy() {
-        NeuralNetConfig newNNConfig = null;
-        if (nnConfig != null) {
-            newNNConfig = (NeuralNetConfig) (nnConfig.copy());
+        NeuralNetConfigGene newNNConfig = null;
+        //this.
+        if (nnConfigGene != null) {
+            newNNConfig = (NeuralNetConfigGene) (nnConfigGene);
         }
         return new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat);
     }
     
     @Override
     public boolean isEmpty() {
-        return nnConfig == null || nnConfig.empty();
+        return nnConfigGene == null || nnConfigGene.getConfig() == null || nnConfigGene.getConfig().empty();
     }
     
     @Override
     public String toString() {
-        return key + " " + nnConfig;
+        return key + " " + nnConfigGene;
     }
 
 }
