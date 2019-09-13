@@ -12,4 +12,10 @@ java -jar stockstat-iclij-web-0.5-SNAPSHOT.jar 2>&1 | tee /tmp/iclijweb.out > /d
 java -jar stockstat-web-0.5-SNAPSHOT.jar 2>&1 | tee /tmp/web.out > /dev/null 2>&1 &
 
 cd ../tensorflow
-./flasktf.sh 2>&1 | tee /tmp/flask.out &
+./flasktf.sh 2>&1 | tee /tmp/flasktf.out &
+
+cd ../pt
+./flaskpt.sh 2>&1 | tee /tmp/flaskpt.out &
+
+cd ../gem
+./flaskgem.sh 2>&1 | tee /tmp/flaskgem.out &

@@ -12,7 +12,13 @@ xterm -e "java -jar stockstat-iclij-web-0.5-SNAPSHOT.jar 2>&1 | tee /tmp/iclijwe
 xterm -e "java -jar stockstat-web-0.5-SNAPSHOT.jar 2>&1 | tee /tmp/web.out" &
 
 cd ../tensorflow
-xterm -e "./flasktf.sh 2>&1 | tee /tmp/flask.out" &
+xterm -e "./flasktf.sh 2>&1 | tee /tmp/flasktf.out" &
+
+cd ../pytorch
+xterm -e "./flaskpt.sh 2>&1 | tee /tmp/flaskpt.out" &
+
+cd ../gem
+xterm -e "./flaskgem.sh 2>&1 | tee /tmp/flaskgem.out" &
 
 #cd ../python/pd
 #xterm -e ./flaskpd.sh &

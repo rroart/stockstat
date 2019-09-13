@@ -16,7 +16,13 @@ xterm -e "java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=18002,susp
 xterm -e "java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=18003,suspend=n -jar stockstat-web-0.5-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/webdev.out" &
 
 cd ../tensorflow
-xterm -e "./flasktf.sh dev 2>&1 | tee /tmp/flaskdev.out" &
+xterm -e "./flasktf.sh dev 2>&1 | tee /tmp/flasktfdev.out" &
+
+cd ../pytorch
+xterm -e "./flaskpt.sh dev 2>&1 | tee /tmp/flaskptdev.out" &
+
+cd ../gem
+xterm -e "./flaskgem.sh dev 2>&1 | tee /tmp/flaskgemdev.out" &
 
 #cd ../python/pd
 #xterm -e ./flaskpd.sh &

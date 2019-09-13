@@ -72,6 +72,20 @@
       <outputDirectory>tensorflow</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>${project.basedir}/../pytorch</directory>
+      <includes>
+	<include>**</include>
+      </includes>
+      <outputDirectory>tensorflow</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../gem</directory>
+      <includes>
+	<include>**</include>
+      </includes>
+      <outputDirectory>tensorflow</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/../python/pd</directory>
       <includes>
 	<include>flaskpdmain.py</include>
