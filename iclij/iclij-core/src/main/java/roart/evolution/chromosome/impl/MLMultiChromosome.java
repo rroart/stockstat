@@ -37,13 +37,13 @@ import roart.util.ServiceUtil;
 
 public class MLMultiChromosome extends MLAggregatorChromosome {
 
-    public MLMultiChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy) {
-        super(param, profitdata, confList, market, positions, component, buy);
+    public MLMultiChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
+        super(param, profitdata, confList, market, positions, component, buy, subcomponent);
     }
 
     @Override
     protected MLAggregatorChromosome getNewChromosome(ComponentData newparam) {
-        return new MLMultiChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
+        return new MLMultiChromosome(newparam, profitdata, confList, market, positions, componentName, buy, subcomponent);
     }
 
     @Override

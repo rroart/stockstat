@@ -769,6 +769,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(ConfigItem::getId).setCaption("Id");
         table.addColumn(ConfigItem::getValue).setCaption("Value");
         table.addColumn(ConfigItem::getComponent).setCaption("Component");
+        table.addColumn(ConfigItem::getSubcomponent).setCaption("Subcomponent");
         table.addColumn(ConfigItem::getScore).setCaption("Score");
         table.addColumn(ConfigItem::getBuy).setCaption("Buy");
         table.setWidth("90%");
@@ -786,6 +787,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(TimingItem::getAction).setCaption("Action");
         table.addColumn(TimingItem::isEvolve).setCaption("Evolve");
         table.addColumn(TimingItem::getComponent).setCaption("Component");
+        table.addColumn(TimingItem::getSubcomponent).setCaption("Subcomponent");
         table.addColumn(TimingItem::getMytime).setCaption("Time");
         table.addColumn(TimingItem::getScore).setCaption("Score");
         table.addColumn(TimingItem::getBuy).setCaption("Buy");

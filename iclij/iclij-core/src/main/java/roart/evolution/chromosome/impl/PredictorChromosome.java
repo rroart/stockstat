@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfig;
-import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
@@ -21,6 +21,8 @@ import roart.component.model.ComponentInput;
 import roart.config.Market;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.gene.AbstractGene;
+import roart.gene.ml.impl.TensorflowPredictorLSTMConfigGene;
 import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
 import roart.service.PredictorService;
@@ -28,27 +30,27 @@ import roart.service.model.ProfitData;
 
 public class PredictorChromosome extends ConfigMapChromosome {
 
-    private TensorflowLSTMConfig config;
+    private TensorflowPredictorLSTMConfigGene config;
     
-    public PredictorChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy) {
-        super(confList, param, profitdata, market, positions, component, buy);
+    public PredictorChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
+        super(confList, param, profitdata, market, positions, component, buy, subcomponent);
     }
 
-    public TensorflowLSTMConfig getConfig() {
+    public TensorflowPredictorLSTMConfigGene getConfig() {
         return config;
     }
 
-    public void setConfig(TensorflowLSTMConfig config) {
+    public void setConfig(TensorflowPredictorLSTMConfigGene config) {
         this.config = config;
     }
 
     @Override
     public double getFitness()
             throws JsonParseException, JsonMappingException, IOException {
-        config.full = true;
+        ((TensorflowPredictorLSTMConfig) config.getConfig()).full = true;
         Map<String, Object> map = new HashMap<>();
         String string = JsonUtil.convert(config);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, string);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG, string);
         param.getService().conf.getConfigValueMap().putAll(map);
         setMap(map);
         return super.getFitness();
@@ -66,10 +68,10 @@ public class PredictorChromosome extends ConfigMapChromosome {
     
     @Override
     public Individual crossover(AbstractChromosome other) {
-        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, componentName, buy);
-        TensorflowLSTMConfig otherConfig = ((PredictorChromosome) other).config;
-        NeuralNetConfig offspring = config.crossover(otherConfig);
-        chromosome.config = (TensorflowLSTMConfig) offspring;
+        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, componentName, buy, subcomponent);
+        TensorflowPredictorLSTMConfigGene otherConfig = ((PredictorChromosome) other).config;
+        AbstractGene offspring = config.crossover(otherConfig);
+        chromosome.config = (TensorflowPredictorLSTMConfigGene) offspring;
         return new Individual(chromosome);
     }
     
@@ -93,9 +95,9 @@ public class PredictorChromosome extends ConfigMapChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        PredictorChromosome chromosome = new PredictorChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
+        PredictorChromosome chromosome = new PredictorChromosome(confList, newparam, profitdata, market, positions, componentName, buy, subcomponent);
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
-        chromosome.config = (TensorflowLSTMConfig) config.copy();
+        //chromosome.config = (TensorflowPredictorLSTMConfigGene) config.copy();
         return chromosome;
     }
     
@@ -142,12 +144,12 @@ public class PredictorChromosome extends ConfigMapChromosome {
    
     @Override
     public boolean validate() {
-        return config.full == true;
+        return ((TensorflowPredictorLSTMConfig) config.getConfig()).full == true;
     }
     
     @Override
     public void fixValidation() { 
-        config.full = true;
+        ((TensorflowPredictorLSTMConfig) config.getConfig()).full = true;
         log.error("Config full was false");
     }
 

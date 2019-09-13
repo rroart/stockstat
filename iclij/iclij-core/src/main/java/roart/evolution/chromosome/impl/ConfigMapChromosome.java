@@ -65,15 +65,18 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     protected String componentName;
 
+    protected String subcomponent;
+
     protected Boolean buy;
     
-    public ConfigMapChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy) {
+    public ConfigMapChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent) {
         this.confList = confList;
         this.param = param;
         this.profitdata = profitdata;
         this.market = market;
         this.positions = positions;
         this.componentName = componentName;
+        this.subcomponent = subcomponent;
         this.buy = buy;
     }
 
@@ -146,7 +149,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     @Override
     public Individual crossover(AbstractChromosome other) {
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, param, profitdata, market, positions, componentName, buy);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, param, profitdata, market, positions, componentName, buy, subcomponent);
         Random rand = new Random();
         for (int conf = 0; conf < confList.size(); conf++) {
             String confName = confList.get(conf);
@@ -334,6 +337,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             configItem.setId(key);
             configItem.setMarket(param.getMarket());
             configItem.setRecord(LocalDate.now());
+            configItem.setSubcomponent(subcomponent);
             String value = JsonUtil.convert(object);
             configItem.setValue(value);
             try {
@@ -347,7 +351,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, newparam, profitdata, market, positions, componentName, buy);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, newparam, profitdata, market, positions, componentName, buy, subcomponent);
         chromosome.map = new HashMap<>(this.map);
         return chromosome;
     }

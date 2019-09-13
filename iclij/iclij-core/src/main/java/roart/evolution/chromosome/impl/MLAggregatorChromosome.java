@@ -15,8 +15,8 @@ import roart.evolution.species.Individual;
 import roart.service.model.ProfitData;
 
 public abstract class MLAggregatorChromosome extends ConfigMapChromosome {
-    public MLAggregatorChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy) {
-        super(confList, param, profitdata, market, positions, component, buy);
+    public MLAggregatorChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
+        super(confList, param, profitdata, market, positions, component, buy, subcomponent);
     }
 
     protected abstract MLAggregatorChromosome getNewChromosome(ComponentData newparam);

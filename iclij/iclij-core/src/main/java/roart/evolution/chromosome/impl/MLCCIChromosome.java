@@ -8,13 +8,13 @@ import roart.service.model.ProfitData;
 
 public class MLCCIChromosome extends MLAggregatorChromosome {
 
-    public MLCCIChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy) {
-        super(param, profitdata, confList, market, positions, component, buy);
+    public MLCCIChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
+        super(param, profitdata, confList, market, positions, component, buy, subcomponent);
     }
 
     @Override
     protected MLAggregatorChromosome getNewChromosome(ComponentData newparam) {
-        return new MLCCIChromosome(newparam, profitdata, confList, market, positions, componentName, buy);
+        return new MLCCIChromosome(newparam, profitdata, confList, market, positions, componentName, buy, subcomponent);
     }
     
 }
