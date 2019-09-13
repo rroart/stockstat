@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
@@ -140,7 +141,7 @@ public class GraphCategoryPrice extends GraphCategory {
     }
 
     Double[] predictme(Double[] list) {
-        MLPredictDao mldao = new MLPredictDao("tensorflow", conf);
+        MLPredictDao mldao = new MLPredictDao(MLConstants.TENSORFLOW, conf);
 /*
         int horizon = conf.getPredictorLSTMHorizon();
         int windowsize = conf.getPredictorLSTMWindowsize();
