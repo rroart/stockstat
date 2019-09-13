@@ -42,6 +42,9 @@ public class Timing implements Serializable {
     private String component;
     
     @Column
+    private String subcomponent;
+    
+    @Column
     private Double time;
 
     @Column
@@ -87,6 +90,14 @@ public class Timing implements Serializable {
 
     public void setComponent(String component) {
         this.component = component;
+    }
+
+    public String getSubcomponent() {
+        return subcomponent;
+    }
+
+    public void setSubcomponent(String subcomponent) {
+        this.subcomponent = subcomponent;
     }
 
     public Double getTime() {

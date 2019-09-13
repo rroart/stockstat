@@ -20,6 +20,8 @@ public class TimingItem {
     
     private String component;
     
+    private String subcomponent;
+    
     private Double mytime;
 
     private Double score;
@@ -74,6 +76,14 @@ public class TimingItem {
         this.component = component;
     }
 
+    public String getSubcomponent() {
+        return subcomponent;
+    }
+
+    public void setSubcomponent(String subcomponent) {
+        this.subcomponent = subcomponent;
+    }
+
     public Double getMytime() {
         return mytime;
     }
@@ -100,7 +110,7 @@ public class TimingItem {
 
     @Override
     public String toString() {
-        return market + " " + component + " " + action + " " + record + " " + date + " " + evolve + " " + mytime + " " + score + "\n"; 
+        return market + " " + component + " " + subcomponent + " " + action + " " + record + " " + date + " " + evolve + " " + mytime + " " + score + "\n"; 
     }
     
     public void save() throws Exception {
@@ -114,6 +124,7 @@ public class TimingItem {
         timing.setRecord(TimeUtil.convertDate(getRecord()));
         timing.setTime(getMytime());
         timing.setScore(getScore());
+        timing.setSubcomponent(getSubcomponent());
         timing.save();
     }
     
@@ -148,6 +159,7 @@ public class TimingItem {
         timingItem.setRecord(TimeUtil.convertDate(timing.getRecord()));
         timingItem.setMytime(timing.getTime());
         timingItem.setScore(timing.getScore());
+        timingItem.setSubcomponent(timing.getSubcomponent());
         return timingItem;
     }
 

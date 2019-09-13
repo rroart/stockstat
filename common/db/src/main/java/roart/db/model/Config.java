@@ -39,6 +39,9 @@ public class Config implements Serializable {
     private String component;
 
     @Column
+    private String subcomponent;
+
+    @Column
     private String id;
 
     @Column(length = 511)
@@ -78,6 +81,14 @@ public class Config implements Serializable {
 
     public void setComponent(String component) {
         this.component = component;
+    }
+
+    public String getSubcomponent() {
+        return subcomponent;
+    }
+
+    public void setSubcomponent(String subcomponent) {
+        this.subcomponent = subcomponent;
     }
 
     public String getId() {

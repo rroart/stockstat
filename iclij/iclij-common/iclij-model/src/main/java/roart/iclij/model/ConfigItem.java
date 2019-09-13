@@ -17,12 +17,15 @@ public class ConfigItem {
 
     private String component;
 
+    private String subcomponent;
+
     private String action;
     
     private String id;
     
     private String value;
     
+    @Deprecated
     private Double score;
 
     private Boolean buy;
@@ -57,6 +60,14 @@ public class ConfigItem {
 
     public void setComponent(String component) {
         this.component = component;
+    }
+
+    public String getSubcomponent() {
+        return subcomponent;
+    }
+
+    public void setSubcomponent(String subcomponent) {
+        this.subcomponent = subcomponent;
     }
 
     public String getAction() {
@@ -104,7 +115,7 @@ public class ConfigItem {
 
     @Override
     public String toString() {
-        return market + " " + component + " " + action + " " + record + " " + date + " " + id + " " + value + " " + score + "\n"; 
+        return market + " " + component + " " + subcomponent + " " + action + " " + record + " " + date + " " + id + " " + value + " " + score + "\n"; 
     }
     
     public void save() throws Exception {
@@ -117,6 +128,7 @@ public class ConfigItem {
         config.setMarket(getMarket());
         config.setRecord(TimeUtil.convertDate(getRecord()));
         config.setScore(getScore());
+        config.setSubcomponent(getSubcomponent());
         config.setValue(JsonUtil.strip(getValue()));
         config.save();
     }
@@ -151,6 +163,7 @@ public class ConfigItem {
         configItem.setMarket(config.getMarket());
         configItem.setRecord(TimeUtil.convertDate(config.getRecord()));
         configItem.setScore(config.getScore());
+        configItem.setSubcomponent(config.getSubcomponent());
         configItem.setValue(JsonUtil.strip(config.getValue()));
         return configItem;
     }
