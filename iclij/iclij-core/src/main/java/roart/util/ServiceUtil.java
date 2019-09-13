@@ -209,9 +209,12 @@ public class ServiceUtil {
             updateMarketMap.put(market.getConfig().getMarket(), new HashMap<>());
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
             for (Component component : componentMap.values()) {
-                Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false, null);
-                updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
-                updateMap.putAll(anUpdateMap);
+                List<String> subcomponents = component.getSubComponents(market, param);
+                for (String subcomponent : subcomponents) {
+                    Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false, null, subcomponent);
+                    updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
+                    updateMap.putAll(anUpdateMap);
+                }
             }
         }
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
@@ -224,7 +227,7 @@ public class ServiceUtil {
             IclijServiceList updates = convert(marketName, anUpdateMap);
             lists.add(updates);
 
-            List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market.getConfig().getMarket());
+            List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market);
             List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate(), market.getConfig().getFindtime());
             
             IclijServiceList memories = new IclijServiceList();
@@ -306,11 +309,14 @@ public class ServiceUtil {
             updateMarketMap.put(market.getConfig().getMarket() + " sell", new HashMap<>());
             Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
             for (Component component : componentMap.values()) {
-                Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false, true);
-                updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
-                updateMap.putAll(anUpdateMap);
-                Map<String, Object> anUpdateMap2 = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false, false);
-                updateMarketMap.get(market.getConfig().getMarket() + " sell").putAll(anUpdateMap2);
+                List<String> subcomponents = component.getSubComponents(market, param);
+                for (String subcomponent : subcomponents) {
+                    Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false, true, subcomponent);
+                    updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
+                    updateMap.putAll(anUpdateMap);
+                    Map<String, Object> anUpdateMap2 = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false, false, subcomponent);
+                    updateMarketMap.get(market.getConfig().getMarket() + " sell").putAll(anUpdateMap2);
+                }
             }
         }
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
@@ -326,7 +332,7 @@ public class ServiceUtil {
             IclijServiceList updates2 = convert(marketName + " sell", anUpdateMap2);
             lists.add(updates2);
 
-            List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market.getConfig().getMarket());
+            List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market);
             List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate(), market.getConfig().getImprovetime());
             
             IclijServiceList memories = new IclijServiceList();
@@ -820,7 +826,7 @@ public class ServiceUtil {
         //memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
         Market market = improveProfitAction.findMarket(param);
-        WebData webData = improveProfitAction.getMarket(null, param, market);        
+        WebData webData = improveProfitAction.getMarket(null, param, market, null);        
         List<MapList> mapList = improveProfitAction.getList(webData.updateMap);
         IclijServiceList resultMap = new IclijServiceList();
         resultMap.setTitle("Improve Profit Info");
@@ -945,7 +951,7 @@ public class ServiceUtil {
         return allMemoryItems;
     }
 
-    public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve, Boolean buy) throws Exception {
+    public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve, Boolean buy, String subcomponent) throws Exception {
         LocalDate date = param.getInput().getEnddate();
         LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
         List<ConfigItem> filterConfigs = new ArrayList<>();
@@ -953,7 +959,7 @@ public class ServiceUtil {
         List<ConfigItem> currentConfigs = configs.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
         currentConfigs = currentConfigs.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         for (ConfigItem config : currentConfigs) {
-            if (marketName.equals(config.getMarket()) && action.equals(config.getAction()) && component.equals(config.getComponent())) {
+            if (marketName.equals(config.getMarket()) && action.equals(config.getAction()) && component.equals(config.getComponent()) && (subcomponent == null || subcomponent.equals(config.getSubcomponent()))) {
                 if (buy != null && config.getBuy() != null && buy != config.getBuy()) {
                     continue;
                 }
