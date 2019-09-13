@@ -48,46 +48,13 @@ public class RecommenderService {
 
     public List<MemoryItem> doRecommender(ComponentData componentparam, List<String> disableList) throws Exception {
         long time0 = System.currentTimeMillis();
-        Market market = FindProfitAction.findMarket(componentparam);
+        Market market = new FindProfitAction().findMarket(componentparam);
         ProfitData profitdata = new ProfitData();
 
         Component component = new ComponentRecommender();
         ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
         return component.calculateMemory(componentData);
-
-        /*
-        RecommenderData param = new RecommenderData(componentparam);
-        int futuredays = (int) param.getService().conf.getTestIndicatorRecommenderComplexFutureDays();
-        param.setFuturedays(futuredays);
-        param.setDates(param.getService(), futuredays, param.getLoopoffset(), TimeUtil.convertDate2(param.getFutureDate()));
-    
-        param.getService().conf.setdate(TimeUtil.convertDate(param.getBaseDate()));
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        if (instance.wantEvolveRecommender()) {
-            param.getService().getEvolveRecommender(true, disableList);
-        }
-        Map<String, Object> setValueMap = new HashMap<>();
-        setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        setValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
-        setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
-        Map recommendMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, setValueMap);
-        if (recommendMaps == null) {
-            return null;
-        }
-        param.setCategory(recommendMaps);
-        Map<String, Map<String, List<Double>>> resultMap = (Map<String, Map<String, List<Double>>>) recommendMaps.get(PipelineConstants.RESULT);
-        //System.out.println("m4 " + resultMap.keySet());
-        if (resultMap == null) {
-            return null;
-        }
-        Map<String, List<Double>> recommendBuySell = resultMap.get(RecommendConstants.COMPLEX);
-        param.setRecommendBuySell(recommendBuySell);
-        
-        param.getAndSetCategoryValueMap();
-        //System.out.println("k2 " + categoryValueMap.keySet());
-        param.setUsedsec(time0);
-        */
     }
 
 }
