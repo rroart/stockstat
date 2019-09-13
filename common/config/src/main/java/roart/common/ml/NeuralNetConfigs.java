@@ -3,156 +3,260 @@ package roart.common.ml;
 import roart.common.config.ConfigConstants;
 
 public class NeuralNetConfigs {
-    private SparkLRConfig sparkLRConfig;
-
-    private SparkMCPConfig sparkMCPConfig;
-
-    private SparkOVRConfig sparkOVRConfig;
-
-    private SparkLSVCConfig sparkLSVCConfig;
-
-    private TensorflowDNNConfig tensorflowDNNConfig;
-
-    private TensorflowLConfig tensorflowLConfig;
-
-    private TensorflowLSTMConfig tensorflowLSTMConfig;
-
-    public NeuralNetConfigs(SparkLRConfig sparkLRConfig, SparkMCPConfig sparkMCPConfig, SparkOVRConfig sparkOVRConfig, SparkLSVCConfig sparkLSVCConfig,
-            TensorflowDNNConfig tensorflowDNNConfig, TensorflowLConfig tensorflowLConfig, TensorflowLSTMConfig tensorflowLSTMConfig) {
+    private NeuralNetSparkConfig sparkConfig;
+    
+    private NeuralNetTensorflowConfig tensorflowConfig;
+    
+    private NeuralNetPytorchConfig pytorchConfig;
+    
+    private NeuralNetGemConfig gemConfig;
+    
+    public NeuralNetConfigs(NeuralNetSparkConfig sparkConfig, NeuralNetTensorflowConfig tensorflowConfig,
+            NeuralNetPytorchConfig pytorchConfig, NeuralNetGemConfig gemConfig) {
         super();
-        this.sparkLRConfig = sparkLRConfig;
-        this.sparkMCPConfig = sparkMCPConfig;
-        this.sparkOVRConfig = sparkOVRConfig;
-        this.sparkLSVCConfig = sparkLSVCConfig;
-        this.tensorflowDNNConfig = tensorflowDNNConfig;
-        this.tensorflowLConfig = tensorflowLConfig;
-        this.tensorflowLSTMConfig = tensorflowLSTMConfig;
+        this.sparkConfig = sparkConfig;
+        this.tensorflowConfig = tensorflowConfig;
+        this.pytorchConfig = pytorchConfig;
+        this.gemConfig = gemConfig;
     }
-
+    
     public NeuralNetConfigs() {
         super();
     }
 
-    public SparkLRConfig getSparkLRConfig() {
-        return sparkLRConfig;
+    public NeuralNetSparkConfig getSparkConfig() {
+        return sparkConfig;
     }
 
-    public void setSparkLRConfig(SparkLRConfig sparkLRConfig) {
-        this.sparkLRConfig = sparkLRConfig;
+    public void setSparkConfig(NeuralNetSparkConfig sparkConfig) {
+        this.sparkConfig = sparkConfig;
     }
 
-    public SparkMCPConfig getSparkMCPConfig() {
-        return sparkMCPConfig;
+    public NeuralNetTensorflowConfig getTensorflowConfig() {
+        return tensorflowConfig;
     }
 
-    public void setSparkMCPConfig(SparkMCPConfig sparkMCPConfig) {
-        this.sparkMCPConfig = sparkMCPConfig;
+    public void setTensorflowConfig(NeuralNetTensorflowConfig tensorflowConfig) {
+        this.tensorflowConfig = tensorflowConfig;
     }
 
-    public SparkOVRConfig getSparkOVRConfig() {
-        return sparkOVRConfig;
+    public NeuralNetPytorchConfig getPytorchConfig() {
+        return pytorchConfig;
     }
 
-    public void setSparkOVRConfig(SparkOVRConfig sparkOVRConfig) {
-        this.sparkOVRConfig = sparkOVRConfig;
+    public void setPytorchConfig(NeuralNetPytorchConfig pytorchConfig) {
+        this.pytorchConfig = pytorchConfig;
     }
 
-    public SparkLSVCConfig getSparkLSVCConfig() {
-        return sparkLSVCConfig;
+    public NeuralNetGemConfig getGemConfig() {
+        return gemConfig;
     }
 
-    public void setSparkLSVCConfig(SparkLSVCConfig sparkLSVCConfig) {
-        this.sparkLSVCConfig = sparkLSVCConfig;
-    }
-
-    public TensorflowDNNConfig getTensorflowDNNConfig() {
-        return tensorflowDNNConfig;
-    }
-
-    public void setTensorflowDNNConfig(TensorflowDNNConfig tensorflowDNNConfig) {
-        this.tensorflowDNNConfig = tensorflowDNNConfig;
-    }
-
-    public TensorflowLConfig getTensorflowLConfig() {
-        return tensorflowLConfig;
-    }
-
-    public void setTensorflowLConfig(TensorflowLConfig tensorflowLConfig) {
-        this.tensorflowLConfig = tensorflowLConfig;
-    }
-
-    public TensorflowLSTMConfig getTensorflowLSTMConfig() {
-        return tensorflowLSTMConfig;
-    }
-
-    public void setTensorflowLSTMConfig(TensorflowLSTMConfig tensorflowLSTMConfig) {
-        this.tensorflowLSTMConfig = tensorflowLSTMConfig;
+    public void setGemConfig(NeuralNetGemConfig gemConfig) {
+        this.gemConfig = gemConfig;
     }
 
     public void set(String key, NeuralNetConfig conf) {
         switch (key) {
-        case ConfigConstants.MACHINELEARNINGSPARKMLLR:
-            sparkLRConfig = (SparkLRConfig) conf;
+        case ConfigConstants.MACHINELEARNINGSPARKMLLOR:
+            sparkConfig.setSparkLORConfig((SparkLORConfig) conf);
             break;
-        case ConfigConstants.MACHINELEARNINGSPARKMLMCP:
-            sparkMCPConfig = (SparkMCPConfig) conf;
+        case ConfigConstants.MACHINELEARNINGSPARKMLMLPC:
+            sparkConfig.setSparkMLPCConfig((SparkMLPCConfig) conf);
             break;
         case ConfigConstants.MACHINELEARNINGSPARKMLOVR:
-            sparkOVRConfig = (SparkOVRConfig) conf;
+            sparkConfig.setSparkOVRConfig((SparkOVRConfig) conf);
             break;
         case ConfigConstants.MACHINELEARNINGSPARKMLLSVC:
-            sparkLSVCConfig = (SparkLSVCConfig) conf;
+            sparkConfig.setSparkLSVCConfig((SparkLSVCConfig) conf);
             break;
         case ConfigConstants.MACHINELEARNINGTENSORFLOWDNN:
-            tensorflowDNNConfig = (TensorflowDNNConfig) conf;
+            tensorflowConfig.setTensorflowDNNConfig((TensorflowDNNConfig) conf);
             break;
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWL:
-            tensorflowLConfig = (TensorflowLConfig) conf;
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWLIC:
+            tensorflowConfig.setTensorflowLICConfig((TensorflowLICConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWLIR:
+            tensorflowConfig.setTensorflowLIRConfig((TensorflowLIRConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN:
+            tensorflowConfig.setTensorflowCNNConfig((TensorflowCNNConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWRNN:
+            tensorflowConfig.setTensorflowRNNConfig((TensorflowRNNConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWGRU:
+            tensorflowConfig.setTensorflowGRUConfig((TensorflowGRUConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWMLP:
+            tensorflowConfig.setTensorflowMLPConfig((TensorflowMLPConfig) conf);
             break; 
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
-            tensorflowLSTMConfig = (TensorflowLSTMConfig) conf;
+            tensorflowConfig.setTensorflowLSTMConfig((TensorflowLSTMConfig) conf);
             break; 
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM:
+            tensorflowConfig.setTensorflowPredictorLSTMConfig((TensorflowPredictorLSTMConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGPYTORCHCNN:
+            pytorchConfig.setPytorchCNNConfig((PytorchCNNConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGPYTORCHRNN:
+            pytorchConfig.setPytorchRNNConfig((PytorchRNNConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGPYTORCHGRU:
+            pytorchConfig.setPytorchGRUConfig((PytorchGRUConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
+            pytorchConfig.setPytorchMLPConfig((PytorchMLPConfig) conf);
+            break; 
+        case ConfigConstants.MACHINELEARNINGPYTORCHLSTM:
+            pytorchConfig.setPytorchLSTMConfig((PytorchLSTMConfig) conf);
+            break;
+	case ConfigConstants.MACHINELEARNINGGEMEWC:
+	    gemConfig.setGemEWCConfig((GemEWCConfig) conf);
+	    break;
+	case ConfigConstants.MACHINELEARNINGGEMGEM:
+	    gemConfig.setGemGEMConfig((GemGEMConfig) conf);
+	    break;
+	case ConfigConstants.MACHINELEARNINGGEMICARL:
+	    gemConfig.setGemIcarlConfig((GemIcarlConfig) conf);
+	    break;
+	case ConfigConstants.MACHINELEARNINGGEMINDEPENDENT:
+	    gemConfig.setGemIConfig((GemIConfig) conf);
+	    break;
+	case ConfigConstants.MACHINELEARNINGGEMMULTIMODAL:
+	    gemConfig.setGemMMConfig((GemMMConfig) conf);
+	    break;
+	case ConfigConstants.MACHINELEARNINGGEMSINGLE:
+	    gemConfig.setGemSConfig((GemSConfig) conf);
+	    break;
         }
     }
 
     public NeuralNetConfig get(String key) {
         switch (key) {
-        case ConfigConstants.MACHINELEARNINGSPARKMLLR:
-            if (sparkLRConfig == null) {
-                sparkLRConfig = new SparkLRConfig();
+        case ConfigConstants.MACHINELEARNINGSPARKMLLOR:
+            if (sparkConfig.getSparkLORConfig() == null) {
+                //sparkConfig.setSparkLRConfig(new SparkLORConfig());
             }
-            return sparkLRConfig;
-        case ConfigConstants.MACHINELEARNINGSPARKMLMCP:
-            if (sparkMCPConfig == null) {
-                sparkMCPConfig = new SparkMCPConfig();
+            return sparkConfig.getSparkLORConfig();
+        case ConfigConstants.MACHINELEARNINGSPARKMLMLPC:
+            if (sparkConfig.getSparkMLPCConfig() == null) {
+                //sparkConfig.setSparkMLPCConfig(new SparkMLPCConfig());
             }
-            return sparkMCPConfig;
+            return sparkConfig.getSparkMLPCConfig();
         case ConfigConstants.MACHINELEARNINGSPARKMLOVR:
-            if (sparkOVRConfig == null) {
-                sparkOVRConfig = new SparkOVRConfig();
+            if (sparkConfig.getSparkOVRConfig() == null) {
+                //sparkConfig.setSparkOVRConfig(new SparkOVRConfig());
             }
-            return sparkOVRConfig;
+            return sparkConfig.getSparkOVRConfig();
         case ConfigConstants.MACHINELEARNINGSPARKMLLSVC:
-            if (sparkLSVCConfig == null) {
-                sparkLSVCConfig = new SparkLSVCConfig();
+            if (sparkConfig.getSparkLSVCConfig() == null) {
+                //sparkConfig.setSparkLSVCConfig(new SparkLSVCConfig());
             }
-            return sparkLSVCConfig;
+            return sparkConfig.getSparkLSVCConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWDNN:
-            if (tensorflowDNNConfig == null) {
-                tensorflowDNNConfig = new TensorflowDNNConfig();
+            if (tensorflowConfig.getTensorflowDNNConfig() == null) {
+                //tensorflowConfig.setTensorflowDNNConfig(new TensorflowDNNConfig());
             }
-            return tensorflowDNNConfig;
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWL:
-            if (tensorflowLConfig == null) {
-                tensorflowLConfig = new TensorflowLConfig();
+            return tensorflowConfig.getTensorflowDNNConfig();
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWLIC:
+            if (tensorflowConfig.getTensorflowLICConfig() == null) {
+                //tensorflowConfig.setTensorflowLConfig(new TensorflowLICConfig());
             }
-            return tensorflowLConfig;
+            return tensorflowConfig.getTensorflowLICConfig();
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWLIR:
+            if (tensorflowConfig.getTensorflowLIRConfig() == null) {
+                //tensorflowConfig.setTensorflowLConfig(new TensorflowLICConfig());
+            }
+            return tensorflowConfig.getTensorflowLIRConfig();
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWMLP:
+            if (tensorflowConfig.getTensorflowMLPConfig() == null) {
+                //tensorflowConfig.setTensorflowMLPConfig(new TensorflowMLPConfig());
+            }
+            return tensorflowConfig.getTensorflowMLPConfig();
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN:
+            if (tensorflowConfig.getTensorflowCNNConfig() == null) {
+                //tensorflowConfig.setTensorflowCNNConfig(new TensorflowCNNConfig());
+            }
+            return tensorflowConfig.getTensorflowCNNConfig();
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWRNN:
+            if (tensorflowConfig.getTensorflowRNNConfig() == null) {
+                //tensorflowConfig.setTensorflowRNNConfig(new TensorflowRNNConfig());
+            }
+            return tensorflowConfig.getTensorflowRNNConfig();
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWGRU:
+            if (tensorflowConfig.getTensorflowGRUConfig() == null) {
+                //tensorflowConfig.setTensorflowGRUConfig(new TensorflowGRUConfig());
+            }
+            return tensorflowConfig.getTensorflowGRUConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
-            if (tensorflowLSTMConfig == null) {
-                tensorflowLSTMConfig = new TensorflowLSTMConfig();
+            if (tensorflowConfig.getTensorflowLSTMConfig() == null) {
+                //tensorflowConfig.setTensorflowLSTMConfig(new TensorflowLSTMConfig());
             }
-            return tensorflowLSTMConfig;
+            return tensorflowConfig.getTensorflowLSTMConfig();
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM:
+            if (tensorflowConfig.getTensorflowLSTMConfig() == null) {
+                //tensorflowConfig.setTensorflowLSTMConfig(new TensorflowPredictorLSTMConfig());
+            }
+            return tensorflowConfig.getTensorflowLSTMConfig();
+        case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
+            if (pytorchConfig.getPytorchMLPConfig() == null) {
+                //pytorchConfig.setPytorchMLPConfig(new PytorchMLPConfig());
+            }
+            return pytorchConfig.getPytorchMLPConfig();
+        case ConfigConstants.MACHINELEARNINGPYTORCHCNN:
+            if (pytorchConfig.getPytorchCNNConfig() == null) {
+                //pytorchConfig.setPytorchCNNConfig(new PytorchCNNConfig());
+            }
+            return pytorchConfig.getPytorchCNNConfig();
+        case ConfigConstants.MACHINELEARNINGPYTORCHRNN:
+            if (pytorchConfig.getPytorchRNNConfig() == null) {
+                //pytorchConfig.setPytorchRNNConfig(new PytorchRNNConfig());
+            }
+            return pytorchConfig.getPytorchRNNConfig();
+        case ConfigConstants.MACHINELEARNINGPYTORCHGRU:
+            if (pytorchConfig.getPytorchGRUConfig() == null) {
+                //pytorchConfig.setPytorchGRUConfig(new PytorchGRUConfig());
+            }
+            return pytorchConfig.getPytorchGRUConfig();
+        case ConfigConstants.MACHINELEARNINGPYTORCHLSTM:
+            if (pytorchConfig.getPytorchLSTMConfig() == null) {
+                //pytorchConfig.setPytorchLSTMConfig(new PytorchLSTMConfig());
+            }
+            return pytorchConfig.getPytorchLSTMConfig();
+        case ConfigConstants.MACHINELEARNINGGEMEWC:
+            if (gemConfig.getGemEWCConfig() == null) {
+                //gemConfig.setGemEWCConfig(new GemEWCConfig());
+            }
+            return gemConfig.getGemEWCConfig();
+        case ConfigConstants.MACHINELEARNINGGEMGEM:
+            if (gemConfig.getGemGEMConfig() == null) {
+                //gemConfig.setGemGEMConfig(new GemGEMConfig());
+            }
+            return gemConfig.getGemGEMConfig();
+        case ConfigConstants.MACHINELEARNINGGEMICARL:
+            if (gemConfig.getGemIcarlConfig() == null) {
+                //gemConfig.setGemIcarlConfig(new GemIcarlConfig());
+            }
+            return gemConfig.getGemIcarlConfig();
+        case ConfigConstants.MACHINELEARNINGGEMINDEPENDENT:
+            if (gemConfig.getGemIConfig() == null) {
+                //gemConfig.setGemIConfig(new GemIConfig());
+            }
+            return gemConfig.getGemIConfig();
+        case ConfigConstants.MACHINELEARNINGGEMMULTIMODAL:
+            if (gemConfig.getGemMMConfig() == null) {
+                //gemConfig.setGemMMConfig(new GemMMConfig());
+            }
+            return gemConfig.getGemMMConfig();
+        case ConfigConstants.MACHINELEARNINGGEMSINGLE:
+            if (gemConfig.getGemSConfig() == null) {
+                //gemConfig.setGemSConfig(new GemSConfig());
+            }
+            return gemConfig.getGemSConfig();
         }
         return null;
     }
+
 }
