@@ -26,7 +26,7 @@ import roart.iclij.config.MLConfigs;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.RecommendConstants;
-import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentInput;
@@ -112,14 +112,14 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) {
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
     
         RecommenderData param = new RecommenderData(componentparam);        
         
         int futuredays = (int) param.getService().conf.getTestIndicatorRecommenderComplexFutureDays();
         param.setFuturedays(futuredays);
 
-        handle2(market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap);
+        handle2(market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap, subcomponent);
 
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
@@ -313,7 +313,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
@@ -325,7 +325,7 @@ public class ComponentRecommender extends ComponentNoML {
 	}
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy);
+            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -345,7 +345,7 @@ public class ComponentRecommender extends ComponentNoML {
             }
         }
 
-        RecommenderChromosome chromosome = new RecommenderChromosome(getConfList(), confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy);
+        RecommenderChromosome chromosome = new RecommenderChromosome(getConfList(), confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent);
 
         //chromosome.setConfList(confList);
         
@@ -374,116 +374,6 @@ public class ComponentRecommender extends ComponentNoML {
         return listPerm;
     }
     
-    @Deprecated
-    private ComponentData handleBuySell(ComponentData param, Market market, ProfitData profitdata, Map<Object[], List<MemoryItem>> badListMap, List<String> list) {
-        List<String> confList = getConfList();
-        RecommenderChromosome chromosome = new RecommenderChromosome(null, confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, null);
-        if (true) return improve(param, chromosome);
-        Map<String, String> retMap = new HashMap<>();
-        List<List<String>> listPerm = getAllPerms(list);
-        //List<List<String>> listPerm = disableAllButOne(list);
-        String marketName = badListMap.values().iterator().next().get(0).getMarket();
-        ControlService srv = new ControlService();
-        srv.getConfig();            
-        srv.conf.setMarket(marketName);
-        // plus testrecommendfactor
-        int factor = 100;
-        log.info("market {}", market);
-        //log.info("factor {}", factor);
-        //srv.conf.getConfigValueMap().put(ConfigConstants.TESTRECOMMENDFACTOR, factor);
-        int index = 0;
-        Map<Future<List<MemoryItem>>, List<String>> futureMap = new HashMap<>();
-        List<Future<List<MemoryItem>>> futureList = new ArrayList<>();
-        for (List<String> aList : listPerm) {
-            log.info("For disable {}", Integer.toHexString(index++));
-            try {
-                //List<MemoryItem> memories = ServiceUtil.doRecommender(srv, market, 0, null, false, aList, false);
-                Callable callable = new RecommenderCallable(srv, new ComponentInput(marketName, LocalDate.now(), 0, false, false), aList);  
-                Future<List<MemoryItem>> future = MyExecutors.run(callable, 0);
-                futureList.add(future);
-                futureMap.put(future, aList);
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-            {
-                boolean evolve = param.getInput().getConfig().wantEvolveRecommender();
-                handle(market, param, profitdata, null, evolve, new HashMap());
-            }
-        }
-        for (Future<List<MemoryItem>> future : futureList) {
-            try {
-                List<String> aList = futureMap.get(future);
-                List<MemoryItem> memories = future.get();
-                if (memories == null) {
-                    log.info("No memories in {}", market);
-                    continue;
-                }
-                List<Double> newConfidenceList = new ArrayList<>();
-                for(MemoryItem memory : memories) {
-                    newConfidenceList.add(memory.getConfidence());
-                }
-                log.info("New confidences {}", newConfidenceList);
-                retMap.put(aList.toString(), newConfidenceList.toString());
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-        }
-        return param;
-    }
-
-    private Map<String, String> handleBuySellNot(ComponentData param, Market market, ProfitData profitdata, MyMyConfig conf, Map<Object[], List<MemoryItem>> badListMap, List<String> list) {
-        Map<String, String> retMap = new HashMap<>();
-        List<List<String>> listPerm = getAllPerms(list);
-        //List<List<String>> listPerm = disableAllButOne(list);
-        String marketName = badListMap.values().iterator().next().get(0).getMarket();
-        ControlService srv = new ControlService();
-        srv.getConfig();            
-        srv.conf.setMarket(marketName);
-        // plus testrecommendfactor
-        int factor = 100;
-        log.info("market {}", market);
-        //log.info("factor {}", factor);
-        //srv.conf.getConfigValueMap().put(ConfigConstants.TESTRECOMMENDFACTOR, factor);
-        int index = 0;
-        Map<Future<List<MemoryItem>>, List<String>> futureMap = new HashMap<>();
-        List<Future<List<MemoryItem>>> futureList = new ArrayList<>();
-        for (List<String> aList : listPerm) {
-            log.info("For disable {}", Integer.toHexString(index++));
-            try {
-                //List<MemoryItem> memories = ServiceUtil.doRecommender(srv, market, 0, null, false, aList, false);
-                Callable callable = new RecommenderCallable(srv, new ComponentInput(marketName, LocalDate.now(), 0, false, false), aList);  
-                Future<List<MemoryItem>> future = MyExecutors.run(callable, 0);
-                futureList.add(future);
-                futureMap.put(future, aList);
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-            {
-                boolean evolve = param.getInput().getConfig().wantEvolveRecommender();
-                handle(market, param, profitdata, null, evolve, new HashMap<>());
-            }
-        }
-        for (Future<List<MemoryItem>> future : futureList) {
-            try {
-                List<String> aList = futureMap.get(future);
-                List<MemoryItem> memories = future.get();
-                if (memories == null) {
-                    log.info("No memories in {}", market);
-                    continue;
-                }
-                List<Double> newConfidenceList = new ArrayList<>();
-                for(MemoryItem memory : memories) {
-                    newConfidenceList.add(memory.getConfidence());
-                }
-                log.info("New confidences {}", newConfidenceList);
-                retMap.put(aList.toString(), newConfidenceList.toString());
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-        }
-        return retMap;
-    }
-
     public static List<List<String>> getAllPerms(List<String> list) {
         List<List<String>> listPerm = new ArrayList<>();
         int size = list.size();

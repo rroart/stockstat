@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import roart.action.FindProfitAction;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
@@ -23,24 +23,24 @@ import roart.util.ServiceUtilConstants;
 public abstract class ComponentMLAggregator extends ComponentML {
 
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) {
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
         MLAggregatorData param = new MLAggregatorData(componentparam);
 
         int daysafterzero = getDaysAfterLimit(componentparam);
         param.setFuturedays(daysafterzero);
 
-        handle2(market, param, profitdata, positions, evolve, aMap);
+        handle2(market, param, profitdata, positions, evolve, aMap, subcomponent);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         return param;
     }
 
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        ConfigMapChromosome chromosome = getNewChromosome(market, profitdata, positions, buy, param, confList);
-        loadme(param, chromosome, market, confList, buy);
+        ConfigMapChromosome chromosome = getNewChromosome(market, profitdata, positions, buy, param, confList, subcomponent);
+        loadme(param, chromosome, market, confList, buy, subcomponent);
         return improve(param, chromosome);
     }
 
@@ -87,12 +87,12 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     Set<Object[]> keyset = profitdata.getInputdata().getConfMap().keySet();
                     keys = getRealKeys(keys, keyset);
                     //System.out.println(okListMap.keySet());
-                    if (tfpn.equals(FindProfitAction.TP) || tfpn.equals(FindProfitAction.FN)) {
+                    if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
                         increase = true;
                         IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getConfMap().get(keys), profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
-                    if (tfpn.equals(FindProfitAction.TN) || tfpn.equals(FindProfitAction.FP)) {
+                    if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
                         increase = false;
                         IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getConfMap().get(keys), profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
@@ -343,7 +343,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
     
     protected abstract ConfigMapChromosome getNewChromosome(Market market, ProfitData profitdata, List<Integer> positions,
-            Boolean buy, ComponentData param, List<String> confList);
+            Boolean buy, ComponentData param, List<String> confList, String subcomponent);
 
     protected abstract int getDaysAfterLimit(ComponentData componentparam);
     

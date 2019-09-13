@@ -102,7 +102,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         nns.add(IclijConfigConstants.EVOLVEMLDNNL);
         nns.add(IclijConfigConstants.EVOLVEMLL);
         nns.add(IclijConfigConstants.EVOLVEMLLR);
-        nns.add(IclijConfigConstants.EVOLVEMLMCP);
+        nns.add(IclijConfigConstants.EVOLVEMLMLPC);
         nns.add(IclijConfigConstants.EVOLVEMLOVR);
          */
         return nns;
@@ -123,7 +123,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
     }
 
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
@@ -131,15 +131,15 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         if (gotThree) {
             confList.addAll(getThreeConfList());
         }
-        ConfigMapChromosome chromosome = new MLMultiChromosome(param, profitdata, confList, market, positions, PipelineConstants.MLMULTI, buy);
-        loadme(param, chromosome, market, confList, buy);
+        ConfigMapChromosome chromosome = new MLMultiChromosome(param, profitdata, confList, market, positions, PipelineConstants.MLMULTI, buy, subcomponent);
+        loadme(param, chromosome, market, confList, buy, subcomponent);
         return improve(param, chromosome);
     }
 
     @Override
     protected ConfigMapChromosome getNewChromosome(Market market, ProfitData profitdata, List<Integer> positions,
-            Boolean buy, ComponentData param, List<String> confList) {
-        return new MLMultiChromosome(param, profitdata, confList, market, positions, getPipeline(), buy);
+            Boolean buy, ComponentData param, List<String> confList, String subcomponent) {
+        return new MLMultiChromosome(param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent);
     }
 
     @Override

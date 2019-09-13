@@ -92,7 +92,7 @@ public class ComponentMLIndicator extends ComponentML {
         config.setEnable(false);
         config.setEvolve(false);
         MLConfigs configs = new MLConfigs();
-        configs.setLstm(config);
+        configs.getTensorflow().setLstm(config);
         return configs;
     }
 
@@ -148,7 +148,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
 
         MLIndicatorData param = new MLIndicatorData(componentparam);
 
@@ -157,7 +157,7 @@ public class ComponentMLIndicator extends ComponentML {
         double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
         param.setThreshold(threshold);
 
-        handle2(market, param, profitdata, positions, evolve, aMap);
+        handle2(market, param, profitdata, positions, evolve, aMap, subcomponent);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
@@ -237,7 +237,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
@@ -245,8 +245,8 @@ public class ComponentMLIndicator extends ComponentML {
         if (gotThree) {
             confList.addAll(getThreeConfList());
         }
-        ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy);
-        loadme(param, chromosome, market, confList, buy);
+        ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent);
+        loadme(param, chromosome, market, confList, buy, subcomponent);
         return improve(param, chromosome);
     }
 

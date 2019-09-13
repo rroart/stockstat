@@ -95,7 +95,7 @@ public class ComponentMLRSI extends ComponentMLAggregator {
         nns.add(IclijConfigConstants.EVOLVEMLDNNL);
         nns.add(IclijConfigConstants.EVOLVEMLL);
         nns.add(IclijConfigConstants.EVOLVEMLLR);
-        nns.add(IclijConfigConstants.EVOLVEMLMCP);
+        nns.add(IclijConfigConstants.EVOLVEMLMLPC);
         nns.add(IclijConfigConstants.EVOLVEMLOVR);
          */
         return nns;
@@ -103,8 +103,8 @@ public class ComponentMLRSI extends ComponentMLAggregator {
 
     @Override
     protected ConfigMapChromosome getNewChromosome(Market market, ProfitData profitdata, List<Integer> positions,
-            Boolean buy, ComponentData param, List<String> confList) {
-        return new MLRSIChromosome(param, profitdata, confList, market, positions, getPipeline(), buy);
+            Boolean buy, ComponentData param, List<String> confList, String subcomponent) {
+        return new MLRSIChromosome(param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent);
     }
 
     @Override

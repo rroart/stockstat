@@ -72,11 +72,11 @@ public abstract class Component {
         valueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
     }
     
-    public abstract ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap);
+    public abstract ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent);
     
-    public abstract ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy);
+    public abstract ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent);
 
-    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) {
+    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
         try {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
         } catch (ParseException e) {
@@ -91,9 +91,11 @@ public abstract class Component {
         for (Component component : allComponents) {
             component.disable(valueMap);
         }
+        this.subdisable(valueMap, subcomponent);
         this.enable(valueMap);
+        this.subenable(valueMap, subcomponent);
         try {
-            Map<String, Object> loadValues = mlLoads(param, null, market, null);
+            Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent);
             valueMap.putAll(loadValues);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -102,7 +104,7 @@ public abstract class Component {
         param.getService().conf.getConfigValueMap().putAll(valueMap);
         if (evolve) {   
             long time0 = System.currentTimeMillis();
-            evolveMap = handleEvolve(market, pipeline, evolve, param);
+            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent);
             if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
                 TimingItem timing = saveTiming(param, evolve, time0, null, null);
                 param.getTimings().add(timing);
@@ -118,6 +120,12 @@ public abstract class Component {
             TimingItem timing = saveTiming(param, false, time0, null, null);
             param.getTimings().add(timing);
         }
+    }
+
+    protected void subenable(Map<String, Object> valueMap, String subcomponent) {
+    }
+
+    protected void subdisable(Map<String, Object> valueMap, String subcomponent) {        
     }
 
     public void enableDisable(ComponentData param, List<Integer> positions, Map<String, Object> valueMap) {
@@ -149,7 +157,7 @@ public abstract class Component {
         return null;
     }
     
-    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param);
+    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent);
 
     public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata);
     
@@ -179,7 +187,7 @@ public abstract class Component {
 
     public abstract String getPipeline();
     
-    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy) throws Exception;
+    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent) throws Exception;
 
     protected abstract EvolutionConfig getImproveEvolutionConfig(IclijConfig config);
     
@@ -245,12 +253,12 @@ public abstract class Component {
         return param;
     }
 
-    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList, Boolean buy) {
+    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList, Boolean buy, String subcomponent) {
         List<String> config = new ArrayList<>();
         
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy);
+            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -280,5 +288,17 @@ public abstract class Component {
             map.put(key, bool);
         }
     }
+    
+    public abstract List<String> getSubComponents(Market market, ComponentData componentData);
+
+    public ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) throws Exception {
+        List<String> subComponents = getSubComponents(market, param);
+        for(String subComponent : subComponents) {
+            ComponentData componentData = handle(market, param, profitdata, new ArrayList<>(), false, new HashMap<>(), subComponent);
+            calculateMemory(componentData);
+        }
+        return null;
+    }
+    
 }
 

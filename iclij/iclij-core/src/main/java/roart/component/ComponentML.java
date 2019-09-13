@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,7 +18,7 @@ import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
@@ -35,7 +38,7 @@ import roart.util.ServiceUtil;
 public abstract class ComponentML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
         Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);
@@ -50,7 +53,7 @@ public abstract class ComponentML extends Component {
             param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
             List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap);
-            mlSaves(mlConfigMap, param, anUpdateMap);
+            mlSaves(mlConfigMap, param, anUpdateMap, subcomponent);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
             }
@@ -60,7 +63,7 @@ public abstract class ComponentML extends Component {
         //Map<String, Object> i = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
     }
 
-    private void mlSaves(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap) {
+    private void mlSaves(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
         for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = entry.getKey();
             String nnconfigString = (String) entry.getValue();
@@ -70,8 +73,8 @@ public abstract class ComponentML extends Component {
                 if (getPipeline().equals(PipelineConstants.PREDICTORSLSTM)) {
                     nnConfigs = new NeuralNetConfigs();
                     ObjectMapper mapper = new ObjectMapper();
-                    TensorflowLSTMConfig nnConfig = mapper.readValue(nnconfigString, TensorflowLSTMConfig.class);
-                    nnConfigs.setTensorflowLSTMConfig(nnConfig);                
+                    TensorflowPredictorLSTMConfig nnConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
+                    nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(nnConfig);                
                 } else {
                     ObjectMapper mapper = new ObjectMapper();
                     nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
@@ -92,7 +95,7 @@ public abstract class ComponentML extends Component {
             String value = null;
             try {
                 if (getPipeline().equals(PipelineConstants.PREDICTORSLSTM)) {
-                    TensorflowLSTMConfig nnConfig = nnConfigs.getTensorflowLSTMConfig();
+                    TensorflowPredictorLSTMConfig nnConfig = nnConfigs.getTensorflowConfig().getTensorflowPredictorLSTMConfig();
                     value = JsonUtil.convert(nnConfig);
                 } else {
                     value = JsonUtil.convert(nnConfigs);
@@ -111,6 +114,7 @@ public abstract class ComponentML extends Component {
             configItem.setId(key);
             configItem.setMarket(param.getMarket());
             configItem.setRecord(LocalDate.now());
+            configItem.setSubcomponent(subcomponent);
             configItem.setValue(value);
             try {
                 configItem.save();
@@ -120,41 +124,13 @@ public abstract class ComponentML extends Component {
         }
     }
 
-    private void mlSavesNot(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap) {
-        Map<String, String> mapToConfig = MLConfigs.getMapToConfig();
-        for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
-            String key = entry.getKey();
-            EvolveMLConfig config = entry.getValue();
-            if (config.getSave()) {
-                ConfigItem configItem = new ConfigItem();
-                configItem.setAction(param.getAction());
-                configItem.setComponent(getPipeline());
-                configItem.setDate(param.getBaseDate());
-                configItem.setId(key);
-                configItem.setMarket(param.getMarket());
-                configItem.setRecord(LocalDate.now());
-                String configKey = mapToConfig.get(key);
-                String value = JsonUtil.convert(anUpdateMap.get(configKey));
-                if (value == null) {
-                    continue;
-                }
-                configItem.setValue(value);
-                try {
-                    configItem.save();
-                } catch (Exception e) {
-                    log.info(Constants.EXCEPTION, e);
-                }
-            }
-        }
-    }
-
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent) throws Exception {
         Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);
-        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy);
+        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent);
     }
     
-    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy) throws Exception {
+    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent) throws Exception {
         Map<String, Object> map = new HashMap<>();
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
             String key = entry.getKey();
@@ -162,7 +138,7 @@ public abstract class ComponentML extends Component {
             if (config.getLoad()) {
                 String marketName = market.getConfig().getMarket();
                 String component = getPipeline();
-                Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy);
+                Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent);
                 map.putAll(configMap);
             }
         }
@@ -260,14 +236,16 @@ public abstract class ComponentML extends Component {
         }
         List[] list = new ArrayList[2];
         List<String> enable = new ArrayList<>();
-        Map<String, String> map = getMap();
+        Map<Pair<String, String>, String> map = getMap();
         ComponentMLData paramML = (ComponentMLData) param;
         List<ResultMeta> resultMetas = paramML.getResultMeta();
         int count = 0;
         if (resultMetas != null) {
             for (ResultMeta resultMeta : resultMetas) {
+                String mlname = resultMeta.getMlName();
                 String name = resultMeta.getModelName();
-                String cnf = map.get(name);
+                Pair<String, String> pair = new ImmutablePair(mlname, name);
+                String cnf = map.get(pair);
                 if (positions == null || positions.contains(count)) {
                     if (cnf == null) {
                         continue;
@@ -287,16 +265,88 @@ public abstract class ComponentML extends Component {
         return list;
     }
 
-    private Map<String, String> getMap() {
+    @Deprecated
+    private Map<String, String> getMapOld() {
         Map<String, String> map = new HashMap<>();
-        map.put(MLConstants.MCP, ConfigConstants.MACHINELEARNINGSPARKMLMCP);
-        map.put(MLConstants.LR, ConfigConstants.MACHINELEARNINGSPARKMLLR);
+        map.put(MLConstants.MLPC, ConfigConstants.MACHINELEARNINGSPARKMLMLPC);
+        map.put(MLConstants.LIR, ConfigConstants.MACHINELEARNINGSPARKMLLOR);
         map.put(MLConstants.OVR, ConfigConstants.MACHINELEARNINGSPARKMLOVR);
         map.put(MLConstants.LSVC, ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
         map.put(MLConstants.DNN, ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
-        map.put(MLConstants.L, ConfigConstants.MACHINELEARNINGTENSORFLOWL);
-        map.put(MLConstants.LSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
+        map.put(MLConstants.LIC, ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
+        map.put(MLConstants.LSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM);
+        return map;
+    }
+
+    private Map<Pair<String, String>, String> getMap() {
+        Map<Pair <String, String>, String> map = new HashMap<>();
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.MLPC), ConfigConstants.MACHINELEARNINGSPARKMLMLPC);
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LIR), ConfigConstants.MACHINELEARNINGSPARKMLLOR);
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.OVR), ConfigConstants.MACHINELEARNINGSPARKMLOVR);
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LSVC), ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.DNN), ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIC), ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM);
         return map;
     }
     
+    private Map<String, Pair<String, String>> getMapRev() {
+        Map<Pair<String, String>, String> aMap = getMap();
+        Map<String, Pair<String, String>> retMap = new HashMap<>();
+        for (Entry<Pair<String, String>, String> entry : aMap.entrySet()) {
+            retMap.put(entry.getValue(), entry.getKey());
+        }
+        return retMap;
+    }
+
+    private Map<String, String> getMlMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put(MLConstants.SPARK, ConfigConstants.MACHINELEARNINGSPARKML);
+        map.put(MLConstants.TENSORFLOW, ConfigConstants.MACHINELEARNINGTENSORFLOW);
+        return map;
+    }
+    
+    @Override
+    public List<String> getSubComponents(Market market, ComponentData componentData) {
+        List<String> subComponents = new ArrayList<>();
+        Map<String, Pair<String, String>> revMap = getMapRev();
+        Map<String, EvolveMLConfig> mlConfigs = getMLConfig(market, componentData);
+        for (Entry<String, EvolveMLConfig> entry : mlConfigs.entrySet()) {
+            EvolveMLConfig mlConfig = entry.getValue();
+            if (mlConfig.getEnable()) {
+                String key = entry.getKey();
+                Pair<String, String> subComponent = revMap.get(key);
+                subComponents.add(subComponent.getLeft() + " " + subComponent.getRight());
+            }
+        }
+        return subComponents;
+    }
+
+    protected void subenable(Map<String, Object> valueMap, String subcomponent) {
+        String[] pairArray = subcomponent.split(" ");
+        Pair<String, String> pair = new ImmutablePair(pairArray[0], pairArray[1]);
+        Map<Pair<String, String>, String> map = getMap();
+        String key = map.get(pair);
+        if (!map.containsKey(key)) {
+            log.error("Key not found {}", key);
+            return;
+        }
+        valueMap.put(key, Boolean.TRUE);
+    }
+
+    protected void subdisable(Map<String, Object> valueMap, String subcomponent) {
+        String[] pair = subcomponent.split(" ");
+        String ml = pair[0];
+        Map<String, String> map = getMlMap();
+        if (!map.containsKey(ml)) {
+            log.error("Key not found {}", ml);
+            return;
+        }
+        map.remove(ml);
+        for (Entry<String, String> entry : map.entrySet()) {
+            String disableKey = entry.getValue();
+            valueMap.put(disableKey, Boolean.FALSE);
+        }
+    }
+
 }

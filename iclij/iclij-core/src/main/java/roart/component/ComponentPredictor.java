@@ -20,7 +20,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
-import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -35,6 +35,7 @@ import roart.evolution.chromosome.impl.MLMACDChromosome;
 import roart.evolution.chromosome.impl.PredictorChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
+import roart.gene.ml.impl.TensorflowPredictorLSTMConfigGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.ControlService;
@@ -53,14 +54,14 @@ public class ComponentPredictor extends ComponentML {
         valueMap.put(ConfigConstants.PREDICTORSLSTM, Boolean.TRUE);                
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPC, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLOR, Boolean.FALSE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.FALSE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, Boolean.FALSE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, Boolean.TRUE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, Boolean.TRUE);                
         valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, Boolean.FALSE);                
     }
 
     @Override
@@ -73,31 +74,32 @@ public class ComponentPredictor extends ComponentML {
         config.setEnable(false);
         config.setEvolve(false);
         MLConfigs configs = new MLConfigs();
-        configs.setL(config);
-        configs.setLr(config);
-        configs.setDnn(config);
-        configs.setMcp(config);
-        configs.setOvr(config);
-        return configs;
+        configs.getTensorflow().setLic(config);
+        configs.getTensorflow().setDnn(config);
+        configs.getSpark().setLor(config);
+        configs.getSpark().setMlpc(config);
+        configs.getSpark().setOvr(config);
+        configs.getSpark().setLsvc(config);
+            return configs;
     }
     
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) {
+    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
         //log.info("Component not impl {}", this.getClass().getName());
         
         PredictorData param = new PredictorData(componentparam);
         
-        String lstmConf = param.getService().conf.getLSTMConfig();
+        String lstmConf = param.getService().conf.getTensorflowPredictorLSTMConfig();
         int futuredays = 0;
         try { 
-            TensorflowLSTMConfig lstm = new ObjectMapper().readValue(lstmConf, TensorflowLSTMConfig.class);
+            TensorflowPredictorLSTMConfig lstm = new ObjectMapper().readValue(lstmConf, TensorflowPredictorLSTMConfig.class);
             futuredays = lstm.getHorizon();
         } catch (Exception e) {
             log.error("Exception", e);
         }
         param.setFuturedays(futuredays);
 
-        handle2(market, param, profitdata, positions, evolve, aMap);
+        handle2(market, param, profitdata, positions, evolve, aMap, subcomponent);
         
         Map<String, Object> maps = param.getResultMap();
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);
@@ -148,25 +150,26 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy) {
+    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM, buy);
-        TensorflowLSTMConfig config = new TensorflowLSTMConfig(5, 5, 5);
+        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM, buy, subcomponent);
+        TensorflowPredictorLSTMConfig config = new TensorflowPredictorLSTMConfig(5, 5, 5);
         config.full = true;
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy);
+            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         if (map != null) {
-            String configStr = (String) map.get(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+            String configStr = (String) map.get(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG);
             if (configStr != null) {
-                config = JsonUtil.convert(configStr, TensorflowLSTMConfig.class);
+                config = JsonUtil.convert(configStr, TensorflowPredictorLSTMConfig.class);
             }
         }
-        chromosome.setConfig(config);
+        TensorflowPredictorLSTMConfigGene gene = new TensorflowPredictorLSTMConfigGene(config);
+        chromosome.setConfig(gene);
         return improve(param, chromosome);
     }
 
@@ -331,7 +334,7 @@ public class ComponentPredictor extends ComponentML {
     @Override
     public List<String> getConfList() {
         List<String> list = new ArrayList<>();
-        list.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+        list.add(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG);
         return list;
     }
 
