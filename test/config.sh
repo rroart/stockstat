@@ -19,7 +19,7 @@
     
     TENSORFLOWCONFIG[1]="\"tensorflowDNNConfig\" : { \"name\" : \"dnn\", \"steps\" : 100, \"hiddenneurons\" : 20, \"hiddenlayers\":3 }"
     TENSORFLOWCONFIG[2]="\"tensorflowLICConfig\" : { \"name\" : \"lic\", \"steps\" : 100 }"
-    TENSORFLOWCONFIG[3]="\"tensorflowMLPConfig\" : { \"name\" : \"mlp\", \"steps\" : 1000, \"hiddenneurons\" : 20, \"hiddenlayers\":3 }"
+    TENSORFLOWCONFIG[3]="\"tensorflowMLPConfig\" : { \"name\" : \"mlp\", \"steps\" : 1000, \"hiddenneurons\" : 20, \"hiddenlayers\" : 3, \"lr\" : 0.1 }"
     TENSORFLOWCONFIG[4]="\"tensorflowRNNConfig\" : { \"name\" : \"rnn\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001 }"
     TENSORFLOWCONFIG[5]="\"tensorflowCNNConfig\" : { \"name\" : \"cnn\", \"steps\" : 100, \"stride\" : 1, \"kernelsize\" : 4 }"
     TENSORFLOWCONFIG[6]="\"tensorflowLSTMConfig\" : { \"name\" : \"lstm\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001 }"
