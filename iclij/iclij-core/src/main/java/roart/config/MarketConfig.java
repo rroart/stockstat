@@ -7,6 +7,10 @@ public class MarketConfig {
     
     private Short improvetime;
     
+    private Short persisttime;
+
+    private Short continuoustime;
+
     private String id;
 
     private Short startoffset;
@@ -37,6 +41,22 @@ public class MarketConfig {
 
     public void setImprovetime(Short improvetime) {
         this.improvetime = improvetime;
+    }
+
+    public Short getPersisttime() {
+        return persisttime;
+    }
+
+    public void setPersisttime(Short persisttime) {
+        this.persisttime = persisttime;
+    }
+
+    public Short getContinuoustime() {
+        return continuoustime;
+    }
+
+    public void setContinuoustime(Short continuoustime) {
+        this.continuoustime = continuoustime;
     }
 
     public String getId() {
