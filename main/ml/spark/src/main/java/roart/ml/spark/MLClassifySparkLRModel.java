@@ -15,7 +15,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.SparkLRConfig;
+import roart.common.ml.SparkLORConfig;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public class MLClassifySparkLRModel  extends MLClassifySparkModel {
@@ -30,12 +30,12 @@ public class MLClassifySparkLRModel  extends MLClassifySparkModel {
     
     @Override
     public String getName() {
-        return MLConstants.LR;
+        return MLConstants.LIR;
     }
 
     @Override
     public String getKey() {
-        return ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG;
+        return ConfigConstants.MACHINELEARNINGSPARKMLLORCONFIG;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MLClassifySparkLRModel  extends MLClassifySparkModel {
 
     @Override
     public Model getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
-        SparkLRConfig modelConf = (SparkLRConfig) getModel(conf);
+        SparkLORConfig modelConf = (SparkLORConfig) getModel(conf);
         LogisticRegression reg = new LogisticRegression();
         reg.setMaxIter(modelConf.getMaxiter());
         reg.setTol(modelConf.getTol());
@@ -66,14 +66,14 @@ public class MLClassifySparkLRModel  extends MLClassifySparkModel {
 
     @Override
     public NeuralNetConfig getModel(NeuralNetConfigs conf) {
-        SparkLRConfig modelConf = null;
+        SparkLORConfig modelConf = null;
         if (conf != null) {
-            modelConf = conf.getSparkLRConfig();
+            modelConf = conf.getSparkConfig().getSparkLORConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(SparkLRConfig.class);
+            modelConf = convert(SparkLORConfig.class);
             if (modelConf == null) {
-                modelConf = getDefault(SparkLRConfig.class);
+                modelConf = getDefault(SparkLORConfig.class);
             }
         }
         return modelConf;

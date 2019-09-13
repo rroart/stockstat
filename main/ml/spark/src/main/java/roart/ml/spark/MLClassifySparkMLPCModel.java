@@ -13,11 +13,11 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.SparkLRConfig;
-import roart.common.ml.SparkMCPConfig;
+import roart.common.ml.SparkLORConfig;
+import roart.common.ml.SparkMLPCConfig;
 
-public  class MLClassifySparkMCPModel  extends MLClassifySparkModel {
-    public MLClassifySparkMCPModel(MyMyConfig conf) {
+public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
+    public MLClassifySparkMLPCModel(MyMyConfig conf) {
         super(conf);
     }
     
@@ -28,22 +28,23 @@ public  class MLClassifySparkMCPModel  extends MLClassifySparkModel {
     
     @Override
     public String getName() {
-        return MLConstants.MCP;
+        return MLConstants.MLPC;
     }
 
     @Override
     public String getKey() {
-        return ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG;
+        return ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG;
     }
 
     @Override
     public Model getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
-        SparkMCPConfig modelConf = getModel(conf, outcomes);
+        SparkMLPCConfig modelConf = getModel(conf, outcomes);
         int layer = modelConf.getLayers();
-        int[] nn = modelConf.getNn();
+        int hidden = modelConf.getHidden();
+        //int[] nn = modelConf.getNn();
         int[] layers = new int[layer + 2];
         for (int i = 1; i <= layer; i++) {
-            layers[i] = nn[i - 1];
+            layers[i] = hidden;
         }
         layers[0] = size;
         layers[layers.length - 1] = outcomes + 1;
@@ -51,6 +52,7 @@ public  class MLClassifySparkMCPModel  extends MLClassifySparkModel {
         MultilayerPerceptronClassifier trainer = new MultilayerPerceptronClassifier()
                 .setLayers(layers)
                 .setTol(modelConf.getTol())
+                //.setLearningRate(0.03)
                 //.setSeed(1234L)
                 .setMaxIter(modelConf.getMaxiter());
         MultilayerPerceptronClassifier dummy = new MultilayerPerceptronClassifier();
@@ -63,23 +65,25 @@ public  class MLClassifySparkMCPModel  extends MLClassifySparkModel {
         return null;
     }
     
-    private SparkMCPConfig getModel(NeuralNetConfigs conf, int outcomes) {
-        SparkMCPConfig modelConf = null;
+    private SparkMLPCConfig getModel(NeuralNetConfigs conf, int outcomes) {
+        SparkMLPCConfig modelConf = null;
         if (conf != null) {
-            modelConf = conf.getSparkMCPConfig();
+            modelConf = conf.getSparkConfig().getSparkMLPCConfig();
         }
         if (modelConf == null) {
-            modelConf = convert(SparkMCPConfig.class);
+            modelConf = convert(SparkMLPCConfig.class);
             if (modelConf == null) {
-                modelConf = getDefault(SparkMCPConfig.class);
+                modelConf = getDefault(SparkMLPCConfig.class);
+                /*
                 int[] layers = modelConf.getNn();
                 layers[0] += outcomes;
                 layers[1] += outcomes;
                 modelConf.setNn(layers);
+                */
             }
                     //new int[]{outcomes + 1, outcomes + 1};
             // 2 hidden layers
-            //modelConf = new SparkMCPConfig(100, 2, 1E-6);
+            //modelConf = new SparkMLPCConfig(100, 2, 1E-6);
         }
         return modelConf;
     }

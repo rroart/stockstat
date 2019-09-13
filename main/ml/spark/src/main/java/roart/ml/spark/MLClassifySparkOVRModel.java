@@ -21,7 +21,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.SparkLRConfig;
+import roart.common.ml.SparkLORConfig;
 import roart.common.ml.SparkOVRConfig;
 import roart.ml.common.MLClassifyModel;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -73,7 +73,7 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
     public NeuralNetConfig getModel(NeuralNetConfigs conf) {
         SparkOVRConfig modelConf = null;
         if (conf != null) {
-            modelConf = conf.getSparkOVRConfig();
+            modelConf = conf.getSparkConfig().getSparkOVRConfig();
         }
         if (modelConf == null) {
             //modelConf = convert(getKey(), SparkOVRConfig.class);

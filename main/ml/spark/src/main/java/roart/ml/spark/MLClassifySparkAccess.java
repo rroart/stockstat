@@ -26,7 +26,6 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
@@ -60,19 +59,19 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
     private void findModels() {
         models = new ArrayList<>();
-        if (conf.wantMCP()) {
-            MLClassifyModel model = new MLClassifySparkMCPModel(conf);
+        if (conf.wantSparkMLPC()) {
+            MLClassifyModel model = new MLClassifySparkMLPCModel(conf);
             models.add(model);
         }
-        if (conf.wantLR()) {
+        if (conf.wantSparkLOR()) {
             MLClassifyModel model = new MLClassifySparkLRModel(conf);
             models.add(model);
         }
-        if (conf.wantOVR()) {
+        if (conf.wantSparkOVR()) {
             MLClassifyModel model = new MLClassifySparkOVRModel(conf);
             models.add(model);
         }
-        if (conf.wantLSVC()) {
+        if (conf.wantSparkLSVC()) {
             MLClassifyModel model = new MLClassifySparkLSVCModel(conf);
             models.add(model);
         }
@@ -217,7 +216,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
     @Override
     public String getName() {
-        return ConfigConstants.SPARK;
+        return MLConstants.SPARK;
     }
 
 

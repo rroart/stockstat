@@ -6,6 +6,7 @@ import org.apache.spark.sql.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -20,7 +21,7 @@ public abstract class MLClassifySparkModel extends MLClassifyModel {
     }
 
     public String getEngineName() {
-        return "Spark ML";
+        return MLConstants.SPARK;
     }
 
     public abstract Model getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes);
