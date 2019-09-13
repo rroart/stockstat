@@ -3,88 +3,50 @@ package roart.iclij.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import roart.common.config.ConfigConstants;
 
 public class MLConfigs {
 
-    private EvolveMLConfig mcp;
+    private EvolveMLSparkConfig spark;
     
-    private EvolveMLConfig lr;
+    private EvolveMLTensorflowConfig tensorflow;
     
-    private EvolveMLConfig ovr;
+    private EvolveMLPytorchConfig pytorch;
     
-    private EvolveMLConfig lsvc;
+    private EvolveMLGemConfig gem;
     
-    private EvolveMLConfig dnn;
-    
-    private EvolveMLConfig dnnl;
-    
-    private EvolveMLConfig l;
-
-    private EvolveMLConfig lstm;
-
-    public EvolveMLConfig getMcp() {
-        return mcp;
+    public EvolveMLSparkConfig getSpark() {
+        return spark;
     }
 
-    public void setMcp(EvolveMLConfig mcp) {
-        this.mcp = mcp;
+    public void setSpark(EvolveMLSparkConfig spark) {
+        this.spark = spark;
     }
 
-    public EvolveMLConfig getLr() {
-        return lr;
+    public EvolveMLTensorflowConfig getTensorflow() {
+        return tensorflow;
     }
 
-    public void setLr(EvolveMLConfig lr) {
-        this.lr = lr;
+    public void setTensorflow(EvolveMLTensorflowConfig tensorflow) {
+        this.tensorflow = tensorflow;
     }
 
-    public EvolveMLConfig getOvr() {
-        return ovr;
+    public EvolveMLPytorchConfig getPytorch() {
+        return pytorch;
     }
 
-    public void setOvr(EvolveMLConfig ovr) {
-        this.ovr = ovr;
+    public void setPytorch(EvolveMLPytorchConfig pytorch) {
+        this.pytorch = pytorch;
     }
 
-    public EvolveMLConfig getLsvc() {
-        return lsvc;
+    public EvolveMLGemConfig getGem() {
+        return gem;
     }
 
-    public void setLsvc(EvolveMLConfig lsvc) {
-        this.lsvc = lsvc;
-    }
-
-    public EvolveMLConfig getDnn() {
-        return dnn;
-    }
-
-    public void setDnn(EvolveMLConfig dnn) {
-        this.dnn = dnn;
-    }
-
-    public EvolveMLConfig getDnnl() {
-        return dnnl;
-    }
-
-    public void setDnnl(EvolveMLConfig dnnl) {
-        this.dnnl = dnnl;
-    }
-
-    public EvolveMLConfig getL() {
-        return l;
-    }
-
-    public void setL(EvolveMLConfig l) {
-        this.l = l;
-    }
-
-    public EvolveMLConfig getLstm() {
-        return lstm;
-    }
-
-    public void setLstm(EvolveMLConfig lstm) {
-        this.lstm = lstm;
+    public void setGem(EvolveMLGemConfig gem) {
+        this.gem = gem;
     }
 
     /**
@@ -99,36 +61,20 @@ public class MLConfigs {
         if (mlConfigs == null) {
             return;
         }
-        mcp.merge(mlConfigs.mcp);
-        lr.merge(mlConfigs.lr);
-        ovr.merge(mlConfigs.ovr);
-        lsvc.merge(mlConfigs.lsvc);
-        dnn.merge(mlConfigs.dnn);
-        l.merge(mlConfigs.l);
-        lstm.merge(mlConfigs.lstm);
+        spark.merge(mlConfigs.spark);
+        tensorflow.merge(mlConfigs.tensorflow);
+        pytorch.merge(mlConfigs.pytorch);
+        gem.merge(mlConfigs.gem);
+        
     }
 
+    @JsonIgnore
     public Map<String, EvolveMLConfig> getAll() {
         Map<String, EvolveMLConfig> map = new HashMap<>();
-        map.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, mcp);
-        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, lr);
-        map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, ovr);
-        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, lsvc);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, dnn);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, l);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, lstm);
-        return map;
-    }
-
-    @Deprecated
-    public static Map<String, String> getMapToConfig() {
-        Map<String, String> map = new HashMap<>();
-        map.put(ConfigConstants.MACHINELEARNINGSPARKMLMCP, ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG);
-        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLR, ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG);
-        map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWL, ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+        map.putAll(spark.getAll());
+        map.putAll(tensorflow.getAll());
+        map.putAll(pytorch.getAll());
+        map.putAll(gem.getAll());
         return map;
     }
 }
