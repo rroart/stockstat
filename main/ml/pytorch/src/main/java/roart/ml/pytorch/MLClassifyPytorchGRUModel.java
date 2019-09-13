@@ -1,0 +1,47 @@
+package roart.ml.pytorch;
+
+import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
+import roart.common.config.MyMyConfig;
+import roart.common.ml.NeuralNetConfig;
+import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.PytorchGRUConfig;
+import roart.ml.model.LearnTestClassify;
+
+public class MLClassifyPytorchGRUModel  extends MLClassifyPytorchModel {
+    public MLClassifyPytorchGRUModel(MyMyConfig conf) {
+        super(conf);
+    }
+
+    @Override
+    public int getId() {
+        return 4;
+    }
+
+    @Override
+    public String getName() {
+        return MLConstants.GRU;
+    }
+    
+    @Override
+    public String getKey() {
+        return ConfigConstants.MACHINELEARNINGPYTORCHGRUCONFIG;
+    }
+
+    @Override
+    public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
+        PytorchGRUConfig modelConf = null;
+        if (conf != null) {
+            modelConf = conf.getPytorchConfig().getPytorchGRUConfig();
+        }    
+        if (modelConf == null) {
+            modelConf = convert(PytorchGRUConfig.class);
+            if (modelConf == null) {
+                modelConf = getDefault(PytorchGRUConfig.class);
+            }
+        }
+        param.setPytorchGRUConfig(modelConf);
+        return modelConf;
+    }
+
+}
