@@ -16,13 +16,20 @@ public abstract class NeuralNetConfig {
         this.name = name;
     }
     
+    /*
     public abstract void randomize();
     
     public abstract void mutate();
     
     public abstract NeuralNetConfig crossover(NeuralNetConfig other);
-
+    */
+    
     public abstract NeuralNetConfig copy();
-
+    
     public abstract boolean empty();
+    
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

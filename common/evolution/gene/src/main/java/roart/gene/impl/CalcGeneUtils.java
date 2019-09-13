@@ -10,12 +10,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.common.config.MLConstants;
 import roart.common.config.MyConfig;
 import roart.common.ml.NeuralNetConfig;
-import roart.common.ml.SparkLRConfig;
-import roart.common.ml.SparkMCPConfig;
+import roart.common.ml.SparkLORConfig;
+import roart.common.ml.SparkMLPCConfig;
 import roart.common.ml.SparkOVRConfig;
 import roart.common.ml.TensorflowDNNConfig;
-import roart.common.ml.TensorflowDNNLConfig;
-import roart.common.ml.TensorflowLConfig;
+import roart.common.ml.TensorflowLICConfig;
 import roart.gene.CalcGene;
 
 public class CalcGeneUtils {
@@ -72,11 +71,11 @@ public class CalcGeneUtils {
                 Class classs = NeuralNetConfig.class;
                 NeuralNetConfig anode = mapper.readValue((String) value, NeuralNetConfig.class);
                 switch (anode.getName()) {
-                case MLConstants.MCP:
-                    classs = SparkMCPConfig.class;
+                case MLConstants.MLPC:
+                    classs = SparkMLPCConfig.class;
                     break;
-                case MLConstants.LR:
-                    classs = SparkLRConfig.class;
+                case MLConstants.LIR:
+                    classs = SparkLORConfig.class;
                     break;
                 case MLConstants.OVR:
                     classs = SparkOVRConfig.class;
@@ -84,11 +83,8 @@ public class CalcGeneUtils {
                 case MLConstants.DNN:
                     classs = TensorflowDNNConfig.class;
                     break;
-                case MLConstants.DNNL:
-                    classs = TensorflowDNNLConfig.class;
-                    break;
-                case MLConstants.L:
-                    classs = TensorflowLConfig.class;
+                case MLConstants.LIC:
+                    classs = TensorflowLICConfig.class;
                     break;
                         
                 }

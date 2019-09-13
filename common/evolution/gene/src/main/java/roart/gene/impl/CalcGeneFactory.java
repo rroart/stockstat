@@ -47,6 +47,9 @@ public class CalcGeneFactory {
         if (macdrsiMinMax == null) {
             int jj = 0;
         }
+        if (index >= macdrsiMinMax.length) {
+            int jj = 0;
+        }
         List<Double> minmax = macdrsiMinMax[index];
         if (minmax == null || minmax.isEmpty()) {
             int jj = 0;

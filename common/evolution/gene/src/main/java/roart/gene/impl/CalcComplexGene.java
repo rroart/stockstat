@@ -158,6 +158,9 @@ public class CalcComplexGene extends CalcGene {
         }
         */
         threshold = minMutateThresholdRange + rand.nextDouble() * (maxMutateThresholdRange - minMutateThresholdRange);
+        if (Double.isNaN(threshold)) {
+            int jj = 0;
+        }
     }
 
     private void getWeight(Random rand) {
