@@ -367,7 +367,7 @@ class Classify:
           config = myobj.pytorchRNNConfig
         if myobj.modelName == 'lstm':
           config = myobj.pytorchLSTMConfig
-        if myobj.modelName == 'cnn':
+        if myobj.modelName == 'gru':
           config = myobj.pytorchGRUConfig
         return config, myobj.modelName
     
