@@ -7,13 +7,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLClassifyRandomAccess;
+import roart.ml.gem.MLClassifyGemAccess;
 import roart.ml.model.LearnTestClassifyResult;
+import roart.ml.pytorch.MLClassifyPytorchAccess;
 import roart.ml.spark.MLClassifySparkAccess;
 import roart.ml.tensorflow.MLClassifyTensorflowAccess;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -34,11 +36,17 @@ public class MLClassifyDao {
         }
         // temp fix
         if (true || access == null) {
-            if (type.equals(ConfigConstants.SPARK)) {
+            if (type.equals(MLConstants.SPARK)) {
                 access = new MLClassifySparkAccess(conf);
             }
-            if (type.equals(ConfigConstants.TENSORFLOW)) {
+            if (type.equals(MLConstants.TENSORFLOW)) {
                 access = new MLClassifyTensorflowAccess(conf);
+            }
+            if (type.equals(MLConstants.PYTORCH)) {
+                access = new MLClassifyPytorchAccess(conf);
+            }
+            if (type.equals(MLConstants.GEM)) {
+                access = new MLClassifyGemAccess(conf);
             }
             if (type.equals("RANDOM")) {
                 access = new MLClassifyRandomAccess(conf);

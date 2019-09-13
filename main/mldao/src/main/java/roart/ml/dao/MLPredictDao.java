@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.HashSet;
 
-import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestPredictResult;
@@ -37,10 +37,10 @@ public class MLPredictDao {
         }
         // temp fix
         if (true || access == null) {
-            if (type.equals(ConfigConstants.SPARK)) {
+            if (type.equals(MLConstants.SPARK)) {
                 access = new MLPredictSparkAccess(conf);
             }
-            if (type.equals(ConfigConstants.TENSORFLOW)) {
+            if (type.equals(MLConstants.TENSORFLOW)) {
                 access = new MLPredictTensorflowAccess(conf);
             }
         }
