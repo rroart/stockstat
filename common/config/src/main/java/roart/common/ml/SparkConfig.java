@@ -1,22 +1,45 @@
 package roart.common.ml;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 public abstract class SparkConfig extends NeuralNetConfig {
 
-    public static final int MAX_ITER = 200;
-    public static final int MAX_LAYERS = 5;
-    public static final int MIN_NODE = 3;
-    public static final int MAX_NODE = 50;
-    public static final int MIN_TOL = 1;
-    public static final int MAX_TOL = 8;
-    
-    public SparkConfig(String name) {
-        super(name);
+    private int maxiter;
+
+    private double tol;
+        
+    public int getMaxiter() {
+        return maxiter;
     }
 
-    public Double generateTol() {
-	return Math.pow(0.1, ThreadLocalRandom.current().nextInt(MIN_TOL, MAX_TOL + 1));
+    public void setMaxiter(int maxiter) {
+        this.maxiter = maxiter;
+    }
+
+    public double getTol() {
+        return tol;
+    }
+
+    public void setTol(double tol) {
+        this.tol = tol;
+    }
+
+    public SparkConfig(String name, int maxiter, double tol) {
+        super(name);
+        this.maxiter = maxiter;
+        this.tol = tol;
+    }
+
+    @Override
+    public NeuralNetConfig copy() {
+        return this;
     }
     
+    @Override
+    public boolean empty() {
+        return maxiter == 0;
+    }
+
+    @Override
+    public String toString() {
+        return getName() + " " + maxiter + " " + tol;
+    }
 }
