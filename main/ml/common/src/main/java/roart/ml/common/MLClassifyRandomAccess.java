@@ -15,7 +15,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestClassifyResult;
@@ -107,7 +107,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
 
     @Override
     public String getName() {
-        return ConfigConstants.TENSORFLOW;
+        return MLConstants.TENSORFLOW;
     }
 
     @Override

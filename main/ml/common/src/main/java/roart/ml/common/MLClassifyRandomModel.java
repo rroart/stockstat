@@ -1,5 +1,6 @@
 package roart.ml.common;
 
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.pipeline.common.aggregate.Aggregator;
 
@@ -10,7 +11,7 @@ public class MLClassifyRandomModel extends MLClassifyModel {
 
     @Override
     public String getEngineName() {
-        return "Random";
+        return MLConstants.RANDOM;
     }
     
     @Override
