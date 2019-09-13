@@ -9,10 +9,33 @@ class Net(nn.Module):
         self.myobj = myobj
         self.config = config
         self.classify = classify
-        
+
+        #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
+        self.layer1 = nn.Sequential(
+            nn.Conv1d(1, 16, kernel_size = config.kernelsize, stride = config.stride, padding=(kernel_size // 2)),
+            nn.BatchNorm1d(16),
+            nn.ReLU())
+            #nn.MaxPool2d(kernel_size=2, stride=2))
+        self.layer2 = nn.Sequential(
+            nn.Conv1d(16, 32, kernel_size = config.kernelsize, stride = config.stride, padding=(kernel_size // 2)),
+            nn.BatchNorm1d(32),
+            nn.ReLU())
+            #nn.MaxPool2d(kernel_size=2, stride=2))
+        self.nlayer1 = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=5, stride=1, padding=2),
+            nn.BatchNorm2d(16),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))
+        self.nlayer2 = nn.Sequential(
+            nn.Conv2d(16, 32, kernel_size=5, stride=1, padding=2),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2))
+        self.fc = nn.Linear(7*7*32, num_classes)
+
         #Defining the layers
         # RNN Layer
-        self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)
+        self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)   
         # Fully connected layer
         self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
     

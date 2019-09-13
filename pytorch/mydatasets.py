@@ -43,7 +43,7 @@ def getmnist(config):
     #loaders['train'] = train_dl
     #loaders['valid'] = valid_dl
     mydim = 784
-    if config.name == "RNN":
+    if config.name == "rnn":
         x_train = x_train.view(-1, 1, 784)
         x_valid = x_valid.view(-1, 1, 784)
         #y_train = y_train.view(1, y_train.size()[0])

@@ -341,13 +341,35 @@ class Classify:
         return accuracy_score
 
     def getModel(self, myobj):
+      if hasattr(myobj, 'modelInt'):  
         if myobj.modelInt == 1:
             modelname = 'mlp'
             config = myobj.pytorchMLPConfig
         if myobj.modelInt == 2:
             modelname = 'rnn'
             config = myobj.pytorchRNNConfig
+        if myobj.modelInt == 3:
+            modelname = 'lstm'
+            config = myobj.pytorchLSTMConfig
+        if myobj.modelInt == 4:
+            modelname = 'gru'
+            config = myobj.pytorchGRUConfig
+        if myobj.modelInt == 5:
+            modelname = 'cnn'
+            config = myobj.pytorchCNNConfig
         return config, modelname
+      if hasattr(myobj, 'modelName'):
+        if myobj.modelName == 'mlp':
+          config = myobj.pytorchMLPConfig
+        if myobj.modelName == 'cnn':
+          config = myobj.pytorchCNNConfig
+        if myobj.modelName == 'rnn':
+          config = myobj.pytorchRNNConfig
+        if myobj.modelName == 'lstm':
+          config = myobj.pytorchLSTMConfig
+        if myobj.modelName == 'cnn':
+          config = myobj.pytorchGRUConfig
+        return config, myobj.modelName
     
     def do_learntestclassify(self, queue, request, classify):
         dt = datetime.now()
