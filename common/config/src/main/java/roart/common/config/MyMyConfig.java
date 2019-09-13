@@ -381,76 +381,326 @@ public class MyMyConfig extends MyConfig {
                 && wantML();
     }
 
-    public  boolean wantMCP() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMCP)
+    public  boolean wantMLPytorch() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCH)
+                && wantML();
+    }
+
+    public  boolean wantMLGem() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEM)
+                && wantML();
+    }
+
+    public  boolean wantSparkMLPC() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMLPC)
                 && wantMLSpark();
     }
 
-    public  boolean wantLR() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLR)
+    public  boolean wantSparkLOR() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLOR)
                 && wantMLSpark();
     }
 
-    public  boolean wantOVR() {
+    public  boolean wantSparkOVR() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLOVR)
                 && wantMLSpark();
     }
 
-    public  boolean wantLSVC() {
+    public  boolean wantSparkLSVC() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLSVC)
                 && wantMLSpark();
     }
 
-    public  boolean wantDNN() {
+    public  boolean wantTensorflowDNN() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN)
                 && wantMLTensorflow();
     }
 
-    public  boolean wantDNNL() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNL)
+    public  boolean wantTensorflowLIC() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC)
                 && wantMLTensorflow();
     }
 
-    public  boolean wantL() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWL)
+    public  boolean wantTensorflowLIR() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR)
                 && wantMLTensorflow();
     }
 
-    public  boolean wantLSTM() {
+    public  boolean wantTensorflowMLP() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP)
+                && wantMLTensorflow();
+    }
+
+    public  boolean wantTensorflowCNN() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN)
+                && wantMLTensorflow();
+    }
+
+    public  boolean wantTensorflowRNN() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN)
+                && wantMLTensorflow();
+    }
+
+    public  boolean wantTensorflowLSTM() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM)
                 && wantMLTensorflow();
     }
 
-    public String getMCPConfig() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMCPCONFIG);
+    public  boolean wantTensorflowGRU() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU)
+                && wantMLTensorflow();
     }
 
-    public String getLRConfig() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLRCONFIG);
+    public  boolean wantTensorflowPredictorLSTM() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM)
+                && wantMLTensorflow();
     }
 
-    public String getOVRConfig() {
+    public  boolean wantPytorchMLP() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHMLP)
+                && wantMLPytorch();
+    }
+
+    public  boolean wantPytorchCNN() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNN)
+                && wantMLPytorch();
+    }
+
+    public  boolean wantPytorchRNN() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHRNN)
+                && wantMLPytorch();
+    }
+
+    public  boolean wantPytorchLSTM() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHLSTM)
+                && wantMLPytorch();
+    }
+
+    public  boolean wantPytorchGRU() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHGRU)
+                && wantMLPytorch();
+    }
+
+    public  boolean wantGemEWC() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMEWC)
+                && wantMLGem();
+    }
+
+    public  boolean wantGemGEM() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMGEM)
+                && wantMLGem();
+    }
+
+    public  boolean wantGemIcarl() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMICARL)
+                && wantMLGem();
+    }
+
+    public  boolean wantGemIndependent() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT)
+                && wantMLGem();
+    }
+
+    public  boolean wantGemMultiModal() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL)
+                && wantMLGem();
+    }
+
+    public  boolean wantGemSingle() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMSINGLE)
+                && wantMLGem();
+    }
+
+    public String getSparkMLPCConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG);
+    }
+
+    public String getSparkLORConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLORCONFIG);
+    }
+
+    public String getSparkOVRConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG);
     }
 
-    public String getLSVCConfig() {
+    public String getSparkLSVCConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG);
     }
 
-    public String getDNNConfig() {
+    public String getTensorflowDNNConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG);
     }
 
-    public String getDNNLConfig() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNLCONFIG);
+    public String getTensorflowLICConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLICCONFIG);
     }
 
-    public String getLConfig() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLCONFIG);
+    public String getTensorflowLIRConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRCONFIG);
     }
 
-    public String getLSTMConfig() {
+    public String getTensorflowMLPConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG);
+    }
+
+    public String getTensorflowCNNConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG);
+    }
+
+    public String getTensorflowRNNConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG);
+    }
+
+    public String getTensorflowLSTMConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+    }
+
+    public String getTensorflowGRUConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUCONFIG);
+    }
+
+    public String getTensorflowPredictorLSTMConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG);
+    }
+
+    public String getPytorchMLPConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHMLPCONFIG);
+    }
+
+    public String getPytorchCNNConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG);
+    }
+
+    public String getPytorchRNNConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG);
+    }
+
+    public String getPytorchLSTMConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHLSTMCONFIG);
+    }
+
+    public String getPytorchGRUConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHGRUCONFIG);
+    }
+
+    public String getGemEWCConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMEWCCONFIG);
+    }
+
+    public String getGemGEMConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMGEMCONFIG);
+    }
+
+    public String getGemIcarlConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMICARLCONFIG);
+    }
+
+    public String getGemIndependentConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTCONFIG);
+    }
+
+    public String getGemMultiModalConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMMULTIMODALCONFIG);
+    }
+
+    public String getGemSingleConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG);
+    }
+
+    public String getSparkMLPCPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMLPCPERSIST);
+    }
+
+    public String getSparkLORPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLORPERSIST);
+    }
+
+    public String getSparkOVRPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLOVRPERSIST);
+    }
+
+    public String getSparkLSVCPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLSVCPERSIST);
+    }
+
+    public String getTensorflowDNNPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNPERSIST);
+    }
+
+    public String getTensorflowLICPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLICPERSIST);
+    }
+
+    public String getTensorflowLIRPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRPERSIST);
+    }
+
+    public String getTensorflowMLPPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPPERSIST);
+    }
+
+    public String getTensorflowCNNPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST);
+    }
+
+    public String getTensorflowRNNPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST);
+    }
+
+    public String getTensorflowLSTMPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMPERSIST);
+    }
+
+    public String getTensorflowGRUPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUPERSIST);
+    }
+
+    public String getTensorflowPredictorLSTMPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMPERSIST);
+    }
+
+    public String getPytorchMLPPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHMLPPERSIST);
+    }
+
+    public String getPytorchCNNPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST);
+    }
+
+    public String getPytorchRNNPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST);
+    }
+
+    public String getPytorchLSTMPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHLSTMPERSIST);
+    }
+
+    public String getPytorchGRUPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHGRUPERSIST);
+    }
+
+    public String getGemEWCPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMEWCPERSIST);
+    }
+
+    public String getGemGEMPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMGEMPERSIST);
+    }
+
+    public String getGemIcarlPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMICARLPERSIST);
+    }
+
+    public String getGemIndependentPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTPERSIST);
+    }
+
+    public String getGemMultiModalPersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMMULTIMODALPERSIST);
+    }
+
+    public String getGemSinglePersist() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMSINGLEPERSIST);
     }
 
     public  int weightBuyHist() {
@@ -571,7 +821,7 @@ public class MyMyConfig extends MyConfig {
 
     public boolean wantPredictorLSTM() {
         return (Boolean) getValueOrDefault(ConfigConstants.PREDICTORSLSTM) 
-                && wantLSTM()
+                && wantTensorflowPredictorLSTM()
                 && wantPredictors() 
                 && wantMLTensorflow();
     }
@@ -975,7 +1225,31 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER);              
     }
 
-    public Object getValueOrDefault(String key) {
+    public String getPytorchServer() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHSERVER);              
+    }
+
+    public String getGEMServer() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMSERVER);              
+    }
+
+    public String getSparkMLPath() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLPATH);              
+    }
+
+    public String getTensorflowPath() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWPATH);              
+    }
+
+    public String getPytorchPath() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHPATH);              
+    }
+
+    public String getGEMPath() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMPATH);              
+    }
+
+     public Object getValueOrDefault(String key) {
         Object retVal = getConfigValueMap().get(key);
         if (retVal != null) {
             String cl = retVal.getClass().getName();
