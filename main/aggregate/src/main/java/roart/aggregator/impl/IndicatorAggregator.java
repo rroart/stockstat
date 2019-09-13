@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.aggregator.impl.IndicatorAggregator.AfterBeforeLimit;
 import roart.aggregator.impl.IndicatorAggregator.SubType;
 import roart.category.AbstractCategory;
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
@@ -105,13 +106,19 @@ public abstract class IndicatorAggregator extends Aggregator {
         if (conf.wantML()) {
             if (true) {
                 if (conf.wantMLSpark()) {
-                    mldaos.add(new MLClassifyDao("spark", conf));
+                    mldaos.add(new MLClassifyDao(MLConstants.SPARK, conf));
                 }
                 if (conf.wantMLTensorflow()) {
-                    mldaos.add(new MLClassifyDao("tensorflow", conf));
+                    mldaos.add(new MLClassifyDao(MLConstants.TENSORFLOW, conf));
+                }
+                if (conf.wantMLPytorch()) {
+                    mldaos.add(new MLClassifyDao(MLConstants.PYTORCH, conf));
+                }
+                if (conf.wantMLGem()) {
+                    mldaos.add(new MLClassifyDao(MLConstants.GEM, conf));
                 }
             } else {
-                mldaos.add(new MLClassifyDao("RANDOM", conf));
+                mldaos.add(new MLClassifyDao(MLConstants.RANDOM, conf));
             }
         }
         if (conf.wantMLTimes()) {
