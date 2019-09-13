@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.db.common.DbAccess;
 import roart.db.hibernate.DbHibernateAccess;
@@ -28,7 +29,7 @@ public class DbDao {
             return;
         }
         if (true || access == null) {
-            if (type.equals(ConfigConstants.SPARK)) {
+            if (type.equals(MLConstants.SPARK)) {
                 access = new DbSparkAccess();
                 new DbSpark(conf);
             }
