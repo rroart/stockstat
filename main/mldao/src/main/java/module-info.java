@@ -15,4 +15,6 @@ module mldao {
     requires pipeline.model;
     requires slf4j.api;
     requires org.apache.commons.lang3;
+    requires ml.pytorch;
+    requires ml.gem;
 }
