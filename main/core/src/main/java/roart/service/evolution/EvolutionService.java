@@ -24,7 +24,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
@@ -35,6 +35,8 @@ import roart.evolution.chromosome.impl.NeuralNetChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.evolution.species.Individual;
+import roart.gene.NeuralNetConfigGene;
+import roart.gene.NeuralNetConfigGeneFactory;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.model.StockItem;
@@ -516,13 +518,13 @@ public class EvolutionService {
             }
         }
         if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
-            nnconfigString = conf.getLSTMConfig();
+            nnconfigString = conf.getTensorflowPredictorLSTMConfig();
             if (nnconfigString != null) {
                 nnConfigs = new NeuralNetConfigs();
                 log.info("NNConfig {}", nnconfigString);
                 ObjectMapper mapper = new ObjectMapper();
-                TensorflowLSTMConfig nnConfig = mapper.readValue(nnconfigString, TensorflowLSTMConfig.class);
-                nnConfigs.setTensorflowLSTMConfig(nnConfig);
+                TensorflowPredictorLSTMConfig nnConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
+                nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(nnConfig);
             }
         }
         if (nnConfigs == null) {
@@ -530,14 +532,31 @@ public class EvolutionService {
         }
         NeuralNetConfigs newNNConfigs = new NeuralNetConfigs();
         List<String> keys = new ArrayList<>();
-        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLR);
-        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLMCP);
+        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLOR);
+        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLMLPC);
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLOVR);
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWL);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
-   
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHRNN);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHGRU);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHLSTM);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMEWC);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMGEM);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMICARL);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMSINGLE);
+        
         for (String key : keys) {
             System.out.println(conf.getValueOrDefault(key));
             if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(key))) {
@@ -551,7 +570,8 @@ public class EvolutionService {
                 workingConf.getConfigValueMap().put(tmpkey, sameKey);
             }
             NeuralNetConfig nnconfig = nnConfigs.get(key);
-            NeuralNetChromosome chromosome = new NeuralNetChromosome(workingConf, ml, dataReaders, categories, key, nnconfig, catName, cat);
+            NeuralNetConfigGene nnconfigGene = NeuralNetConfigGeneFactory.get(nnconfig, key);
+            NeuralNetChromosome chromosome = new NeuralNetChromosome(workingConf, ml, dataReaders, categories, key, nnconfigGene, catName, cat);
             if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
                 chromosome.setAscending(false);
             }
@@ -561,7 +581,8 @@ public class EvolutionService {
             Individual best = evolution.getFittest(evolutionConfig, chromosome);
     
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
-            NeuralNetConfig newnnconf = bestEval2.getNnConfig();
+            NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
+            NeuralNetConfig newnnconf = newnnconfgene.getConfig();
             newNNConfigs.set(key, newnnconf);
         }
         ObjectMapper mapper = new ObjectMapper();
@@ -589,8 +610,8 @@ public class EvolutionService {
             myKey = ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG;
         }
         if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
-            myKey = ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG;
-            newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowLSTMConfig());
+            myKey = ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG;
+            newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
         }
         updateMap.put(myKey, newNNConfigstring);
         ResultItemTableRow row = new ResultItemTableRow();
