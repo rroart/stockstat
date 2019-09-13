@@ -120,7 +120,7 @@ public class ServiceController {
     public void getFindProfit()
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        new FindProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()));
+        new FindProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null);
     }
 
     @RequestMapping(value = "/improveprofit",
@@ -129,7 +129,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //new ImproveProfitAction().goal(null, null);
-        new ImproveProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()));
+        new ImproveProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null);
     }
 
     @RequestMapping(value = "/findprofit",
