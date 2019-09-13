@@ -143,6 +143,7 @@ class Classify:
         test_loss, accuracy_score = classifier.evaluate(test, testcat)
         if isinstance(classifier, tf.keras.Model):
             print(classifier.metrics_names)
+            print(classifier.summary())
         print("test_loss")
         print(test_loss)
         print(accuracy_score)
@@ -151,16 +152,51 @@ class Classify:
         return accuracy_score
 
     def getModel(self, myobj):
+      print(tf.__version__)
+      if hasattr(myobj, 'modelInt'):
         if myobj.modelInt == 1:
-            modelname = 'estimator_dnn'
+            modelname = 'dnn'
             config = myobj.tensorflowDNNConfig
         if myobj.modelInt == 2:
-            modelname = 'estimator_l'
-            config = myobj.tensorflowLConfig
+            modelname = 'lic'
+            config = myobj.tensorflowLICConfig
         if myobj.modelInt == 3:
             modelname = 'mlp'
             config = myobj.tensorflowMLPConfig
+        if myobj.modelInt == 4:
+            modelname = 'rnn'
+            config = myobj.tensorflowRNNConfig
+        if myobj.modelInt == 5:
+            modelname = 'cnn'
+            config = myobj.tensorflowCNNConfig
+        if myobj.modelInt == 6:
+            modelname = 'lstm'
+            config = myobj.tensorflowLSTMConfig
+        if myobj.modelInt == 7:
+            modelname = 'gru'
+            config = myobj.tensorflowGRUConfig
+        if myobj.modelInt == 8:
+            modelname = 'lir'
+            config = myobj.tensorflowLIRConfig
         return config, modelname
+      if hasattr(myobj, 'modelName'):
+        if myobj.modelName == 'dnn':
+            config = myobj.tensorflowDNNConfig
+        if myobj.modelName == 'lic':
+            config = myobj.tensorflowLICConfig
+        if myobj.modelName == 'lir':
+            config = myobj.tensorflowLIRConfig
+        if myobj.modelName == 'mlp':
+            config = myobj.tensorflowMLPConfig
+        if myobj.modelName == 'rnn':
+            config = myobj.tensorflowRNNConfig
+        if myobj.modelName == 'lstm':
+            config = myobj.tensorflowLSTMConfig
+        if myobj.modelName == 'gru':
+            config = myobj.tensorflowGRUConfig
+        if myobj.modelName == 'cnn':
+            config = myobj.tensorflowCNNConfig
+        return config, myobj.modelName
 
     def do_learntestclassify(self, queue, request):
         #tf.logging.set_verbosity(tf.logging.FATAL)
@@ -193,7 +229,7 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        (train, traincat, test, testcat, size, classes) = mydatasets.getdataset(myobj)
+        (train, traincat, test, testcat, size, classes) = mydatasets.getdataset(myobj, config)
         myobj.size = size
         myobj.classes = classes
         model = Model.Model(myobj, config)

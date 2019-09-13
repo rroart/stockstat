@@ -36,7 +36,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
 
     private void findModels() {
         models = new ArrayList<>();
-        if (conf.wantLSTM()) {
+        if (conf.wantTensorflowPredictorLSTM()) {
             MLPredictModel model = new MLPredictTensorflowLSTMModel(conf);
             models.add(model);
         }
@@ -111,7 +111,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
         }
         param.arraylist = objobj;
         log.info("evalin {} {}", param.modelInt, size);
-        log.info("Used ML config {}", nnconfigs.getTensorflowLSTMConfig());
+        log.info("Used ML config {}", nnconfigs.getTensorflowConfig().getTensorflowLSTMConfig());
         LearnTestPredictResult ret = EurekaUtil.sendMe(LearnTestPredictResult.class, param, tensorflowServer + "/predict");
         List<Double[]> arraylist = ret.predictedlist;
         List<Double> accuracylist = ret.accuracylist;

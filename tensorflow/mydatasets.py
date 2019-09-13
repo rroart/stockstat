@@ -2,13 +2,13 @@ import tensorflow as tf
 import numpy as np
 #import pandas as pd 
 
-def getdataset(myobj):
+def getdataset(myobj, config):
     if myobj.dataset == 'mnist':
-        return getmnist()
+        return getmnist(config)
     if myobj.dataset == 'dailymintemperatures':
         return getdailymintemperatures(myobj)
 
-def getmnist():
+def getmnist(config):
     #load mnist data
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data("/tmp/datasets/mnist.npz")
     def create_mnist_dataset(data, labels, batch_size):
@@ -23,13 +23,24 @@ def getmnist():
     print(type(x_train))
     print(type(y_train))
     print(type(train_dataset))
-    x_train = x_train.reshape((x_train.shape[0], 784))
-    x_test = x_test.reshape((x_test.shape[0], 784))
-    y_train = np.int32(y_train)
-    y_test = np.int32(y_test)
+    print(x_train.shape)
+    print(x_train.shape, x_train.shape[2])
+    print(type(y_train.shape))
+    mydim = (x_train.shape[1], x_train.shape[2])
+    if not config.name == "cnn":
+        if config.name == "rnn" or config.name == "lstm" or config.name == "gru":
+            print("here")
+            #x_train = x_train.reshape(1, x_train.shape[0], x_train.shape[1])
+            #x_test = x_test.reshape(1, x_test.shape[0], x_test.shape[1])
+        else:
+            x_train = x_train.reshape((x_train.shape[0], 784))
+            x_test = x_test.reshape((x_test.shape[0], 784))
+            mydim = 784
+        y_train = np.int32(y_train)
+        y_test = np.int32(y_test)
     print(x_train.shape)
     print(y_train.shape)
-    return x_train, y_train, x_test, y_test, 784, 10
+    return x_train, y_train, x_test, y_test, mydim, 10
 
 def getdailymintemperatures(myobj):
     url = 'https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv'

@@ -4,7 +4,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.ml.model.LearnTestPredict;
 
 public class MLPredictTensorflowLSTMModel extends MLPredictTensorflowModel {
@@ -24,22 +24,22 @@ public class MLPredictTensorflowLSTMModel extends MLPredictTensorflowModel {
     
     @Override
     public String getKey() {
-        return ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG;
+        return ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG;
     }
 
    @Override
     public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestPredict param) {
-        TensorflowLSTMConfig modelConf = null;
+        TensorflowPredictorLSTMConfig modelConf = null;
         if (conf != null) {
-            modelConf = conf.getTensorflowLSTMConfig();
+            modelConf = conf.getTensorflowConfig().getTensorflowPredictorLSTMConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(TensorflowLSTMConfig.class);
+            modelConf = convert(TensorflowPredictorLSTMConfig.class);
             if (modelConf == null) {
-                modelConf = getDefault(TensorflowLSTMConfig.class);
+                modelConf = getDefault(TensorflowPredictorLSTMConfig.class);
             }
         }
-        param.setTensorflowLSTMConfig(modelConf);
+        param.setTensorflowPredictorLSTMConfig(modelConf);
         return modelConf;
     }
 

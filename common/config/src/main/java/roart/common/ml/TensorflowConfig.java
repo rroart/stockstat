@@ -2,15 +2,33 @@ package roart.common.ml;
 
 public abstract class TensorflowConfig extends NeuralNetConfig {
 
-    public static final int MAX_STEPS = 200;
-    public static final int MAX_HIDDENLAYERS = 4;
-    public static final int MIN_NODE = 3;
-    public static final int MAX_NODE = 50;
-    public static final int MIN_TOL = 1;
-    public static final int MAX_TOL = 8;
+    protected int steps;
 
-    public TensorflowConfig(String name) {
-        super(name);
+    public int getSteps() {
+        return steps;
     }
 
+    public void setSteps(int steps) {
+        this.steps = steps;
+    }
+
+    public TensorflowConfig(String name, int steps) {
+        super(name);
+        this.steps = steps;
+    }
+    
+    @Override
+    public boolean empty() {
+        return steps == 0;
+    }
+
+    @Override
+    public TensorflowConfig copy() {
+        return this;
+    }
+    
+    @Override
+    public String toString() {
+        return super.toString() + " " + steps;
+    }
 }

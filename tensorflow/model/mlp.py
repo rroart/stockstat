@@ -13,10 +13,10 @@ class Model(MyModel):
     super(Model, self).__init__(config, name='my_model')
     # Define your layers here.
     amodel=tf.keras.Sequential()
-    amodel.add(tf.keras.layers.Dense(config.hiddenunits, activation='relu', input_shape=(myobj.size,)))
+    amodel.add(tf.keras.layers.Dense(config.hiddenneurons, activation='relu', input_shape=(myobj.size,)))
     for i in range(0, config.hiddenlayers):
       print("Adding hidden layer", i)
-      amodel.add(tf.keras.layers.Dense(config.hiddenunits, activation='relu'))
+      amodel.add(tf.keras.layers.Dense(config.hiddenneurons, activation='relu'))
     amodel.add(tf.keras.layers.Dense(myobj.classes, activation='softmax'))
     self.model = amodel
     self.dense_1 = Dense(32, activation='relu', input_shape=(myobj.size,))
@@ -25,7 +25,8 @@ class Model(MyModel):
     #self.dense_4 = Dense(myobj.classes, activation='sigmoid')
     self.dense_4 = Dense(myobj.classes, activation='softmax')
     #adam = tf.keras.optimizers.Adam(lr=1)
-    self.model.compile(optimizer='adam',
+    optimizer = Adam(lr = config.lr)
+    self.model.compile(optimizer = optimizer
                        loss='sparse_categorical_crossentropy',
                        metrics=['accuracy'])
 

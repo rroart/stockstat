@@ -13,12 +13,18 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.TensorflowCNNConfig;
 import roart.common.ml.TensorflowDNNConfig;
-import roart.common.ml.TensorflowLConfig;
+import roart.common.ml.TensorflowGRUConfig;
+import roart.common.ml.TensorflowLICConfig;
+import roart.common.ml.TensorflowLIRConfig;
+import roart.common.ml.TensorflowLSTMConfig;
+import roart.common.ml.TensorflowMLPConfig;
+import roart.common.ml.TensorflowRNNConfig;
 import roart.eureka.util.EurekaUtil;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
@@ -42,18 +48,38 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     private void findModels() {
         models = new ArrayList<>();
-        if (conf.wantDNN()) {
+        if (conf.wantTensorflowDNN()) {
             MLClassifyModel model = new MLClassifyTensorflowDNNModel(conf);
             models.add(model);
         }
-        if (conf.wantDNNL()) {
-            MLClassifyModel model = new MLClassifyTensorflowDNNLModel(conf);
-            models.add(model);
-        }
-        if (conf.wantL()) {
-            MLClassifyModel model = new MLClassifyTensorflowLModel(conf);
+        if (conf.wantTensorflowLIC()) {
+            MLClassifyModel model = new MLClassifyTensorflowLICModel(conf);
             models.add(model);
         }	    
+        if (conf.wantTensorflowLIR()) {
+            MLClassifyModel model = new MLClassifyTensorflowLIRModel(conf);
+            models.add(model);
+        }           
+        if (conf.wantTensorflowMLP()) {
+            MLClassifyModel model = new MLClassifyTensorflowMLPModel(conf);
+            models.add(model);
+        }           
+        if (conf.wantTensorflowCNN()) {
+            MLClassifyModel model = new MLClassifyTensorflowCNNModel(conf);
+            models.add(model);
+        }           
+        if (conf.wantTensorflowRNN()) {
+            MLClassifyModel model = new MLClassifyTensorflowRNNModel(conf);
+            models.add(model);
+        }           
+        if (conf.wantTensorflowGRU()) {
+            MLClassifyModel model = new MLClassifyTensorflowGRUModel(conf);
+            models.add(model);
+        }           
+        if (conf.wantTensorflowLSTM()) {
+            MLClassifyModel model = new MLClassifyTensorflowLSTMModel(conf);
+            models.add(model);
+        }           
     }
 
     @Override
@@ -75,8 +101,14 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         Object[] cat = new Object[map.size()];
         getTrainingSet(map, objobj, cat);
         LearnTestClassify param = new LearnTestClassify();
-        param.setTensorflowDNNConfig(nnconfigs.getTensorflowDNNConfig());
-        param.setTensorflowLConfig(nnconfigs.getTensorflowLConfig());
+        param.setTensorflowDNNConfig(nnconfigs.getTensorflowConfig().getTensorflowDNNConfig());
+        param.setTensorflowLICConfig(nnconfigs.getTensorflowConfig().getTensorflowLICConfig());
+        param.setTensorflowLIRConfig(nnconfigs.getTensorflowConfig().getTensorflowLIRConfig());
+        param.setTensorflowMLPConfig(nnconfigs.getTensorflowConfig().getTensorflowMLPConfig());
+        param.setTensorflowCNNConfig(nnconfigs.getTensorflowConfig().getTensorflowCNNConfig());
+        param.setTensorflowRNNConfig(nnconfigs.getTensorflowConfig().getTensorflowRNNConfig());
+        param.setTensorflowGRUConfig(nnconfigs.getTensorflowConfig().getTensorflowGRUConfig());
+        param.setTensorflowLSTMConfig(nnconfigs.getTensorflowConfig().getTensorflowLSTMConfig());
         param.setTrainingarray(objobj);
         param.setTrainingcatarray(cat);
         param.setModelInt(model.getId());
@@ -192,7 +224,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     @Override
     public String getName() {
-        return ConfigConstants.TENSORFLOW;
+        return MLConstants.TENSORFLOW;
     }
 
     @Override
@@ -209,22 +241,59 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
         LearnTestClassify param = new LearnTestClassify();
         TensorflowDNNConfig dnnConfig = null;
-        TensorflowLConfig lconfig = null;
+        TensorflowLICConfig licconfig = null;
+        TensorflowLIRConfig lirconfig = null;
+        TensorflowMLPConfig mlpconfig = null;
+        TensorflowCNNConfig cnnconfig = null;
+        TensorflowRNNConfig rnnconfig = null;
+        TensorflowGRUConfig gruconfig = null;
+        TensorflowLSTMConfig lstmconfig = null;
         if (nnconfigs != null) {
-            dnnConfig = nnconfigs.getTensorflowDNNConfig();
-            lconfig = nnconfigs.getTensorflowLConfig();
-        }
-        if (dnnConfig == null && lconfig == null) {
+            dnnConfig = nnconfigs.getTensorflowConfig().getTensorflowDNNConfig();
+            licconfig = nnconfigs.getTensorflowConfig().getTensorflowLICConfig();
+            lirconfig = nnconfigs.getTensorflowConfig().getTensorflowLIRConfig();
+            mlpconfig = nnconfigs.getTensorflowConfig().getTensorflowMLPConfig();
+            cnnconfig = nnconfigs.getTensorflowConfig().getTensorflowCNNConfig();
+            rnnconfig = nnconfigs.getTensorflowConfig().getTensorflowRNNConfig();
+            gruconfig = nnconfigs.getTensorflowConfig().getTensorflowGRUConfig();
+            lstmconfig = nnconfigs.getTensorflowConfig().getTensorflowLSTMConfig();
+       }
+        if (dnnConfig == null && licconfig == null) {
             int jj = 0;
         }
         if (dnnConfig == null) {
-            dnnConfig = new TensorflowDNNConfig(2000, 3);
-            dnnConfig.setHiddenunits(new Integer[] { 10, 20, 10});
+            dnnConfig = new TensorflowDNNConfig(100, 3, 20);
+            //dnnConfig = getDefault(TensorflowDNNConfig.class);
         }
-        if (lconfig == null) {
-            lconfig = new TensorflowLConfig(2000);
+        if (licconfig == null) {
+            licconfig = new TensorflowLICConfig(100);
+        }
+        if (lirconfig == null) {
+            lirconfig = new TensorflowLIRConfig(100);
+        }
+        if (mlpconfig == null) {
+            mlpconfig = new TensorflowMLPConfig(1000, 3, 20, 0.1);
+        }
+        if (cnnconfig == null) {
+            cnnconfig = new TensorflowCNNConfig(1000, 4, 1);
+        }
+        if (rnnconfig == null) {
+            rnnconfig = new TensorflowRNNConfig(100, 2, 100, 0.001, 1);
+        }
+        if (gruconfig == null) {
+            gruconfig = new TensorflowGRUConfig(100, 2, 100, 0.001, 1);
+        }
+        if (lstmconfig == null) {
+            lstmconfig = new TensorflowLSTMConfig(100, 2, 100, 0.001, 1);
         }
         param.setTensorflowDNNConfig(dnnConfig);
+        param.setTensorflowLICConfig(licconfig);
+        param.setTensorflowLIRConfig(lirconfig);
+        param.setTensorflowMLPConfig(mlpconfig);
+        param.setTensorflowCNNConfig(cnnconfig);
+        param.setTensorflowRNNConfig(rnnconfig);
+        param.setTensorflowGRUConfig(gruconfig);
+        param.setTensorflowLSTMConfig(lstmconfig);
         NeuralNetConfig m = ((MLClassifyTensorflowModel) model).getModelAndSet(nnconfigs, param);
         param.setTrainingarray(trainingArray);
         param.setTrainingcatarray(trainingCatArray);
@@ -242,7 +311,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         if (model.getId() == 1) {
             log.info("Used ML config {}", dnnConfig);
         } else {
-            log.info("Used ML config {}", lconfig);
+            log.info("Used ML config {}", licconfig);
         }
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");

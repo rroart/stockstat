@@ -5,43 +5,42 @@ import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.common.ml.TensorflowDNNConfig;
-import roart.common.ml.TensorflowLICConfig;
+import roart.common.ml.TensorflowMLPConfig;
 import roart.ml.model.LearnTestClassify;
 
-public class MLClassifyTensorflowDNNModel  extends MLClassifyTensorflowModel {
-    public MLClassifyTensorflowDNNModel(MyMyConfig conf) {
+public class MLClassifyTensorflowMLPModel  extends MLClassifyTensorflowModel {
+    public MLClassifyTensorflowMLPModel(MyMyConfig conf) {
         super(conf);
     }
-
+    
     @Override
     public int getId() {
-        return 1;
+        return 3;
     }
-
+    
     @Override
     public String getName() {
-        return MLConstants.DNN;
+        return MLConstants.MLP;
     }
     
     @Override
     public String getKey() {
-        return ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG;
+        return ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG;
     }
-
+    
     @Override
     public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param) {
-        TensorflowDNNConfig modelConf = null;
+        TensorflowMLPConfig modelConf = null;
         if (conf != null) {
-            modelConf = conf.getTensorflowConfig().getTensorflowDNNConfig();
+            modelConf = conf.getTensorflowConfig().getTensorflowMLPConfig();
         }    
         if (modelConf == null) {
-            modelConf = convert(TensorflowDNNConfig.class);
+            modelConf = convert(TensorflowMLPConfig.class);
             if (modelConf == null) {
-                modelConf = getDefault(TensorflowDNNConfig.class);
+                modelConf = getDefault(TensorflowMLPConfig.class);
             }
         }
-        param.setTensorflowDNNConfig(modelConf);
+        param.setTensorflowMLPConfig(modelConf);
         return modelConf;
     }
 

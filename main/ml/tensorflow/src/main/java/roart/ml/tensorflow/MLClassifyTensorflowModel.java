@@ -1,5 +1,6 @@
 package roart.ml.tensorflow;
 
+import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -14,7 +15,7 @@ public abstract class MLClassifyTensorflowModel extends MLClassifyModel {
 
     @Override
     public String getEngineName() {
-        return "Tensorflow";
+        return MLConstants.TENSORFLOW;
     }
     
     @Override
