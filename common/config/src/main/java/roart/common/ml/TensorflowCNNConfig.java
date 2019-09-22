@@ -8,6 +8,8 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
     
     private int stride;
 
+    private double dropout;
+    
     public int getKernelsize() {
         return kernelsize;
     }
@@ -24,10 +26,19 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
         this.stride = stride;
     }
 
-    public TensorflowCNNConfig(int steps, int kernelsize, int stride) {
+    public double getDropout() {
+        return dropout;
+    }
+
+    public void setDropout(double dropout) {
+        this.dropout = dropout;
+    }
+
+    public TensorflowCNNConfig(int steps, int kernelsize, int stride, double dropout) {
         super(MLConstants.CNN, steps);
         this.kernelsize = kernelsize;
         this.stride = stride;
+        this.dropout = dropout;
     }
  
 }

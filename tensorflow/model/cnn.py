@@ -31,14 +31,14 @@ class Model(MyModel):
                         padding='same'))
     modelm.add(BatchNormalization())
     modelm.add(LeakyReLU())
-    modelm.add(Dropout(0.5))
+    modelm.add(Dropout(config.dropout))
     modelm.add(Convolution1D(filters=8,
                         kernel_size = config.kernelsize,
                         strides = config.stride,
                         padding='same'))
     modelm.add(BatchNormalization())
     modelm.add(LeakyReLU())
-    modelm.add(Dropout(0.5))
+    modelm.add(Dropout(config.dropout))
     modelm.add(Flatten())
     modelm.add(Dense(64))
     modelm.add(BatchNormalization())

@@ -11,12 +11,13 @@ class Model(MyModel):
     super(Model, self).__init__(config, name='my_model')
     # Define your layers here.
     amodel=Sequential()
-    amodel.add(LSTM(config.hiddenneurons, input_shape = myobj.size, return_sequences = True, time_major = False))
-    amodel.add(Dropout(0.2))
+    amodel.add(Dropout(config.dropoutin, input_shape = myobj.size)
+    amodel.add(LSTM(config.hiddenneurons, return_sequences = True, time_major = False))
+    amodel.add(Dropout(config.dropout))
     for i in range(1, config.hiddenlayers):
       print("Adding hidden layer", i)
       amodel.add(LSTM(config.hiddenneurons, return_sequences = i != config.hiddenlayers - 1, time_major = False))
-      amodel.add(Dropout(0.2))
+      amodel.add(Dropout(config.dropout))
     amodel.add(Dense(myobj.classes))
     self.model = amodel
     optimizer = Adam(lr = config.lr)

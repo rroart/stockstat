@@ -16,12 +16,13 @@ public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
         TensorflowCNNConfig myconfig = (TensorflowCNNConfig) getConfig();
         myconfig.setKernelsize(generateKernelsize());
         myconfig.setStride(generateStride());
+        myconfig.setDropout(generateDropout());
     }
     
     @Override
     public void mutate() {
         TensorflowCNNConfig myconfig = (TensorflowCNNConfig) getConfig();
-        int task = random.nextInt(RANDOMS + 2);
+        int task = random.nextInt(RANDOMS + 3);
         if (task < RANDOMS) {
             super.mutate(task);
             return;
@@ -32,6 +33,9 @@ public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
             break;
         case 1:
             myconfig.setStride(generateStride());
+            break;
+        case 2:
+            myconfig.setDropout(generateDropout());
             break;
         default:
         }
@@ -49,6 +53,9 @@ public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
         }
         if (random.nextBoolean()) {
             myconfig.setStride(otherconfig.getStride());
+        }
+        if (random.nextBoolean()) {
+            myconfig.setDropout(otherconfig.getDropout());
         }
         return offspring;
     }
