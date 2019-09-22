@@ -487,6 +487,114 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLMLCONFIG);
     }
 
+    public boolean wantsEvolveAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEAUTORUN);
+    }
+
+    public int getEvolveFitnessMinimum() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.EVOLVEFITNESSMINIMUM);
+    }
+
+    public boolean wantsEvolveMLMACD() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEMLMACD);
+    }
+
+    public boolean wantsEvolveMLRSI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEMLRSI);
+    }
+
+    public boolean wantsEvolveMLATR() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEMLATR);
+    }
+
+    public boolean wantsEvolveMLCCI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEMLCCI);
+    }
+
+    public boolean wantsEvolveMLSTOCH() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEMLSTOCH);
+    }
+
+    public boolean wantsEvolveMLMulti() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEMLMULTI);
+    }
+
+    public boolean wantsEvolveMLIndicator() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEMLINDICATOR);
+    }
+
+    public String getEvolveMLMACDMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLMACDMLCONFIG);
+    }
+
+    public String getEvolveMLRSIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLRSIMLCONFIG);
+    }
+
+    public String getEvolveMLATRMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLATRMLCONFIG);
+    }
+
+    public String getEvolveMLCCIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLCCIMLCONFIG);
+    }
+
+    public String getEvolveMLSTOCHMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLSTOCHMLCONFIG);
+    }
+
+    public String getEvolveMLMultiMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLMULTIMLCONFIG);
+    }
+
+    public String getEvolveMLIndicatorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLINDICATORMLCONFIG);
+    }
+
+    public String getEvolveMLMACDEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLMACDEVOLUTIONCONFIG);
+    }
+
+    public String getEvolveMLRSIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLRSIEVOLUTIONCONFIG);
+    }
+
+    public String getEvolveMLATREvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLATREVOLUTIONCONFIG);
+    }
+
+    public String getEvolveMLCCIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLCCIEVOLUTIONCONFIG);
+    }
+
+    public String getEvolveMLSTOCHEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLSTOCHEVOLUTIONCONFIG);
+    }
+
+    public String getEvolveMLMultiEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLMULTIEVOLUTIONCONFIG);
+    }
+
+    public String getEvolveMLIndicatorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEMLINDICATOREVOLUTIONCONFIG);
+    }
+
+   public boolean wantsEvolveRecommender() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVERECOMMENDER);
+    }
+
+    public boolean wantsEvolvePredictor() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEPREDICTOR);
+    }
+
+    public String getEvolvePredictorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEPREDICTORMLCONFIG);
+    }
+
+    public String getEvolvePredictorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEPREDICTOREVOLUTIONCONFIG);
+    }
+
     public Object getValueOrDefault(String key) {
         // jackson messes around here...
         if (configValueMap == null) {
