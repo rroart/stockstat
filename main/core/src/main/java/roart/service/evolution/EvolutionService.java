@@ -517,6 +517,38 @@ public class EvolutionService {
                 nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
             }
         }
+        if (ml.equals(PipelineConstants.MLMULTI)) {
+            nnconfigString = conf.getAggregatorsMLMlmultiMLConfig();
+            if (nnconfigString != null) {
+                log.info("NNConfig {}", nnconfigString);
+                ObjectMapper mapper = new ObjectMapper();
+                nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
+            }
+        }
+        if (ml.equals(PipelineConstants.MLATR)) {
+            nnconfigString = conf.getMLATRMLConfig();
+            if (nnconfigString != null) {
+                log.info("NNConfig {}", nnconfigString);
+                ObjectMapper mapper = new ObjectMapper();
+                nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
+            }
+        }
+        if (ml.equals(PipelineConstants.MLCCI)) {
+            nnconfigString = conf.getMLCCIMLConfig();
+            if (nnconfigString != null) {
+                log.info("NNConfig {}", nnconfigString);
+                ObjectMapper mapper = new ObjectMapper();
+                nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
+            }
+        }
+        if (ml.equals(PipelineConstants.MLSTOCH)) {
+            nnconfigString = conf.getMLSTOCHMLConfig();
+            if (nnconfigString != null) {
+                log.info("NNConfig {}", nnconfigString);
+                ObjectMapper mapper = new ObjectMapper();
+                nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
+            }
+        }
         if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
             nnconfigString = conf.getTensorflowPredictorLSTMConfig();
             if (nnconfigString != null) {
