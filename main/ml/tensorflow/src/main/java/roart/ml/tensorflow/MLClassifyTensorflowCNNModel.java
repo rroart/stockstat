@@ -45,4 +45,8 @@ public class MLClassifyTensorflowCNNModel  extends MLClassifyTensorflowModel {
         return modelConf;
     }
 
+    public boolean isOneDimensional() {
+        return false;
+    }
+
 }

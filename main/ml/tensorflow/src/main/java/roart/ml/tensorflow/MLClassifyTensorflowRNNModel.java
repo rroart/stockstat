@@ -8,7 +8,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.TensorflowRNNConfig;
 import roart.ml.model.LearnTestClassify;
 
-public class MLClassifyTensorflowRNNModel  extends MLClassifyTensorflowModel {
+public class MLClassifyTensorflowRNNModel  extends MLClassifyTensorflowRecurrentModel {
     public MLClassifyTensorflowRNNModel(MyMyConfig conf) {
         super(conf);
     }
