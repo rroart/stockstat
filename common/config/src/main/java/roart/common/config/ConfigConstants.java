@@ -97,6 +97,7 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGGEMSINGLECONFIG = "machinelearning.gem.single.config";
     public static final String MACHINELEARNINGGEMPATH = "machinelearning.gem.path";
     public static final String MACHINELEARNINGGEMSERVER = "machinelearning.gem.server";
+    public static final String MACHINELEARNINGMLDYNAMIC = "machinelearning.mldynamic";
     public static final String INDICATORS = "indicators[@enable]";
     public static final String INDICATORSMOVE = "indicators.move[@enable]";
     public static final String INDICATORSMACD = "indicators.macd[@enable]";

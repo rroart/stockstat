@@ -371,6 +371,11 @@ public class MyMyConfig extends MyConfig {
         return (Double) getValueOrDefault(ConfigConstants.MACHINELEARNINGMPCPU);
     }
 
+    public  boolean wantMLDynamic() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGMLDYNAMIC)
+                && wantML();
+    }
+
     public  boolean wantMLSpark() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKML)
                 && wantML();
