@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.component.Component;
+import roart.component.ComponentFactory;
 import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
@@ -158,5 +159,11 @@ public class ImproveProfitAction extends MarketAction {
     protected void setValMap(ComponentData param) {
         param.getAndSetWantedCategoryValueMap();
     }
+    
+    @Override
+    protected ComponentFactory getComponentFactory() {
+        return new ImproveProfitComponentFactory();
+    }
+
 }
 

@@ -310,7 +310,8 @@ public class ComponentPredictor extends ComponentML {
             return value;
         }
     }
-    
+
+    @Override
     public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
         String localEvolve = componentdata.getInput().getConfig().getFindProfitPredictorEvolutionConfig();
         return JsonUtil.convert(localEvolve, EvolutionConfig.class);

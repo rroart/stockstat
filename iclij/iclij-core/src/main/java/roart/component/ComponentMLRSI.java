@@ -51,7 +51,7 @@ import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 import roart.util.ServiceUtilConstants;
 
-public class ComponentMLRSI extends ComponentMLAggregator {
+public abstract class ComponentMLRSI extends ComponentMLAggregator {
     private Logger log = LoggerFactory.getLogger(ComponentMLRSI.class);
     @Override
     public void enable(Map<String, Object> valueMap) {
@@ -117,16 +117,6 @@ public class ComponentMLRSI extends ComponentMLAggregator {
         confList.add(ConfigConstants.AGGREGATORSMLRSISELLRSILIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT);
         return confList;
-    }
-
-    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
-        String localEvolve = componentdata.getInput().getConfig().getFindProfitMLRSIEvolutionConfig();
-        return JsonUtil.convert(localEvolve, EvolutionConfig.class);
-    }
-
-    @Override
-    public String getLocalMLConfig(ComponentData componentdata) {
-        return componentdata.getInput().getConfig().getFindProfitMLRSIMLConfig();
     }
 
     @Override

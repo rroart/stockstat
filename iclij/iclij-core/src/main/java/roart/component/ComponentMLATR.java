@@ -50,7 +50,7 @@ import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 import roart.util.ServiceUtilConstants;
 
-public class ComponentMLATR extends ComponentMLAggregator {
+public abstract class ComponentMLATR extends ComponentMLAggregator {
     private Logger log = LoggerFactory.getLogger(ComponentMLATR.class);
     @Override
     public void enable(Map<String, Object> valueMap) {
@@ -112,16 +112,6 @@ public class ComponentMLATR extends ComponentMLAggregator {
     protected ConfigMapChromosome getNewChromosome(Market market, ProfitData profitdata, List<Integer> positions,
             Boolean buy, ComponentData param, List<String> confList, String subcomponent) {
         return new MLATRChromosome(param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent);
-    }
-
-    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
-        String localEvolve = componentdata.getInput().getConfig().getFindProfitMLATREvolutionConfig();
-        return JsonUtil.convert(localEvolve, EvolutionConfig.class);
-    }
-
-    @Override
-    public String getLocalMLConfig(ComponentData componentdata) {
-        return componentdata.getInput().getConfig().getFindProfitMLATRMLConfig();
     }
 
     @Override

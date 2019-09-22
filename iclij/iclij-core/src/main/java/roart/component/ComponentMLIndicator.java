@@ -38,7 +38,7 @@ import roart.service.MLService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtilConstants;
 
-public class ComponentMLIndicator extends ComponentML {
+public abstract class ComponentMLIndicator extends ComponentML {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String INC = "Inc";
@@ -503,16 +503,6 @@ public class ComponentMLIndicator extends ComponentML {
         }
          */
         //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
-    }
-
-    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
-        String localEvolve = componentdata.getInput().getConfig().getFindProfitMLIndicatorEvolutionConfig();
-        return JsonUtil.convert(localEvolve, EvolutionConfig.class);
-    }
-
-    @Override
-    public String getLocalMLConfig(ComponentData componentdata) {
-        return componentdata.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
     }
 
     @Override

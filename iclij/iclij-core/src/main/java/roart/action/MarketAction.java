@@ -62,6 +62,9 @@ public abstract class MarketAction extends Action {
     protected abstract LocalDate getPrevDate(ComponentData param, Market market);
 
     protected abstract void setValMap(ComponentData param);
+    
+    protected abstract ComponentFactory getComponentFactory();
+    
     public void goal(Action parent, ComponentData param) {
         getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null);
     }
@@ -578,10 +581,10 @@ public abstract class MarketAction extends Action {
         return retList;
     }
 
-    public static Map<String, Component> getComponentMap(Collection<String> listComponent, Market market) {
+    public Map<String, Component> getComponentMap(Collection<String> listComponent, Market market) {
         Map<String, Component> componentMap = new HashMap<>();
         for (String componentName : listComponent) {
-            Component component = ComponentFactory.factory(componentName);
+            Component component = getComponentFactory().factory(componentName);
             if (market != null && componentName.equals(PipelineConstants.PREDICTORSLSTM)) {
                 MLConfigs mlConfigs = market.getMlconfig();
                 if (mlConfigs != null) {

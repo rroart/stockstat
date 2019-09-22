@@ -51,7 +51,7 @@ import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 import roart.util.ServiceUtilConstants;
 
-public class ComponentMLSTOCH extends ComponentMLAggregator {
+public abstract class ComponentMLSTOCH extends ComponentMLAggregator {
     private Logger log = LoggerFactory.getLogger(ComponentMLSTOCH.class);
     @Override
     public void enable(Map<String, Object> valueMap) {
@@ -113,16 +113,6 @@ public class ComponentMLSTOCH extends ComponentMLAggregator {
         confList.add(ConfigConstants.AGGREGATORSMLSTOCHBUYLIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLSTOCHSELLLIMIT);
         return confList;
-    }
-
-    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
-        String localEvolve = componentdata.getInput().getConfig().getFindProfitMLSTOCHEvolutionConfig();
-        return JsonUtil.convert(localEvolve, EvolutionConfig.class);
-    }
-
-    @Override
-    public String getLocalMLConfig(ComponentData componentdata) {
-        return componentdata.getInput().getConfig().getFindProfitMLSTOCHMLConfig();
     }
 
     @Override

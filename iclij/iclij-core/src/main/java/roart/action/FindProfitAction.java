@@ -16,6 +16,7 @@ import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
+import roart.component.ComponentFactory;
 import roart.component.model.ComponentData;
 import roart.config.Market;
 import roart.constants.IclijConstants;
@@ -233,6 +234,11 @@ public class FindProfitAction extends MarketAction {
     @Override
     protected void setValMap(ComponentData param) {
         param.getAndSetCategoryValueMap();
+    }
+
+    @Override
+    protected ComponentFactory getComponentFactory() {
+        return new FindProfitComponentFactory();
     }
 
 }
