@@ -44,4 +44,8 @@ public class MLClassifyPytorchCNNModel  extends MLClassifyPytorchModel {
         return modelConf;
     }
 
+    public boolean isOneDimensional() {
+        return false;
+    }
+
 }

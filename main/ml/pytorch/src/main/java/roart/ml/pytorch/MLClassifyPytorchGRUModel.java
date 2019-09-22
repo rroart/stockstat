@@ -8,7 +8,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.PytorchGRUConfig;
 import roart.ml.model.LearnTestClassify;
 
-public class MLClassifyPytorchGRUModel  extends MLClassifyPytorchModel {
+public class MLClassifyPytorchGRUModel  extends MLClassifyPytorchRecurrentModel {
     public MLClassifyPytorchGRUModel(MyMyConfig conf) {
         super(conf);
     }
