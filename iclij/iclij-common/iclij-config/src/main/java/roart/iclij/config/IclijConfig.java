@@ -326,103 +326,103 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG);
     }
 
-    public boolean wantsMachinelearningAutorun() {
+    public boolean wantsMachineLearningAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGAUTORUN);
     }
 
-    public boolean wantsMachinelearningMLMACD() {
+    public boolean wantsMachineLearningMLMACD() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLMACD);
     }
 
-    public boolean wantsMachinelearningMLRSI() {
+    public boolean wantsMachineLearningMLRSI() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLRSI);
     }
 
-    public boolean wantsMachinelearningMLATR() {
+    public boolean wantsMachineLearningMLATR() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLATR);
     }
 
-    public boolean wantsMachinelearningMLCCI() {
+    public boolean wantsMachineLearningMLCCI() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLCCI);
     }
 
-    public boolean wantsMachinelearningMLSTOCH() {
+    public boolean wantsMachineLearningMLSTOCH() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLSTOCH);
     }
 
-    public boolean wantsMachinelearningMLMulti() {
+    public boolean wantsMachineLearningMLMulti() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLMULTI);
     }
 
-    public boolean wantsMachinelearningMLIndicator() {
+    public boolean wantsMachineLearningMLIndicator() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLINDICATOR);
     }
 
-    public String getMachinelearningMLMACDMLConfig() {
+    public String getMachineLearningMLMACDMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLMACDMLCONFIG);
     }
 
-    public String getMachinelearningMLRSIMLConfig() {
+    public String getMachineLearningMLRSIMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLRSIMLCONFIG);
     }
 
-    public String getMachinelearningMLATRMLConfig() {
+    public String getMachineLearningMLATRMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLATRMLCONFIG);
     }
 
-    public String getMachinelearningMLCCIMLConfig() {
+    public String getMachineLearningMLCCIMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLCCIMLCONFIG);
     }
 
-    public String getMachinelearningMLSTOCHMLConfig() {
+    public String getMachineLearningMLSTOCHMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLSTOCHMLCONFIG);
     }
 
-    public String getMachinelearningMLMultiMLConfig() {
+    public String getMachineLearningMLMultiMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLMULTIMLCONFIG);
     }
 
-    public String getMachinelearningMLIndicatorMLConfig() {
+    public String getMachineLearningMLIndicatorMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLINDICATORMLCONFIG);
     }
 
-    public String getMachinelearningMLMACDEvolutionConfig() {
+    public String getMachineLearningMLMACDEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLMACDEVOLUTIONCONFIG);
     }
 
-    public String getMachinelearningMLRSIEvolutionConfig() {
+    public String getMachineLearningMLRSIEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLRSIEVOLUTIONCONFIG);
     }
 
-    public String getMachinelearningMLATREvolutionConfig() {
+    public String getMachineLearningMLATREvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLATREVOLUTIONCONFIG);
     }
 
-    public String getMachinelearningMLCCIEvolutionConfig() {
+    public String getMachineLearningMLCCIEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLCCIEVOLUTIONCONFIG);
     }
 
-    public String getMachinelearningMLSTOCHEvolutionConfig() {
+    public String getMachineLearningMLSTOCHEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLSTOCHEVOLUTIONCONFIG);
     }
 
-    public String getMachinelearningMLMultiEvolutionConfig() {
+    public String getMachineLearningMLMultiEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLMULTIEVOLUTIONCONFIG);
     }
 
-    public String getMachinelearningMLIndicatorEvolutionConfig() {
+    public String getMachineLearningMLIndicatorEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG);
     }
 
-    public boolean wantsMachinelearningPredictor() {
+    public boolean wantsMachineLearningPredictor() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGPREDICTOR);
     }
 
-    public String getMachinelearningPredictorMLConfig() {
+    public String getMachineLearningPredictorMLConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG);
     }
 
-    public String getMachinelearningPredictorEvolutionConfig() {
+    public String getMachineLearningPredictorEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG);
     }
 
