@@ -30,4 +30,8 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
         this.stride = stride;
     }
     
+    @Override
+    public String toString() {
+        return super.toString() + " " + kernelsize + " " + stride;
+    }
 }

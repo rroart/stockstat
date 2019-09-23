@@ -47,4 +47,8 @@ public class GemIcarlConfig extends GemConfig {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " " + memories + " " + memorystrength + " " + samplespertask;
+    }
 }

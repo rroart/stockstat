@@ -39,4 +39,8 @@ public abstract class PytorchFeedConfig extends PytorchConfig {
         this.lr = lr;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " " + layers + " " + hidden + " " + lr;
+    }
 }

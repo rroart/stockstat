@@ -36,4 +36,8 @@ public class GemEWCConfig extends GemConfig {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " " + memories + " " + memorystrength;
+    }
 }

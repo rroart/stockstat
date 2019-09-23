@@ -41,4 +41,8 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
         this.dropout = dropout;
     }
  
+    @Override
+    public String toString() {
+        return super.toString() + " " + kernelsize + " " + stride + " " + dropout;
+    }
 }

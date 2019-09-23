@@ -42,4 +42,8 @@ public class GemIConfig extends GemConfig {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " " + finetune + " " + cuda;
+    }
 }
