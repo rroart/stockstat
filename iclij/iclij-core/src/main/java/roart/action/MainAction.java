@@ -65,8 +65,14 @@ public class MainAction extends Action {
     }
 
     private void addGoals() {
+        if (IclijXMLConfig.getConfigInstance().wantsMachineLearningAutorun() ) {        
+            getGoals().add(new MachineLearningAction());
+        }
         if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() ) {        
             getGoals().add(new FindProfitAction());
+        }
+        if (IclijXMLConfig.getConfigInstance().wantsEvolveAutorun() ) {        
+            getGoals().add(new EvolveAction());
         }
         if (IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
             getGoals().add(new ImproveProfitAction());
