@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import roart.action.MarketAction;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
@@ -23,25 +24,25 @@ import roart.util.ServiceUtilConstants;
 public abstract class ComponentMLAggregator extends ComponentML {
 
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
         MLAggregatorData param = new MLAggregatorData(componentparam);
 
         int daysafterzero = getDaysAfterLimit(componentparam);
         param.setFuturedays(daysafterzero);
 
-        handle2(market, param, profitdata, positions, evolve, aMap, subcomponent);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         return param;
     }
 
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        ConfigMapChromosome chromosome = getNewChromosome(market, profitdata, positions, buy, param, confList, subcomponent);
+        ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, confList, subcomponent);
         loadme(param, chromosome, market, confList, buy, subcomponent);
-        return improve(param, chromosome);
+        return improve(action, param, chromosome);
     }
 
     @Override
@@ -342,8 +343,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
         return memoryList;
     }
     
-    protected abstract ConfigMapChromosome getNewChromosome(Market market, ProfitData profitdata, List<Integer> positions,
-            Boolean buy, ComponentData param, List<String> confList, String subcomponent);
+    protected abstract ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
+            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent);
 
     protected abstract int getDaysAfterLimit(ComponentData componentparam);
     

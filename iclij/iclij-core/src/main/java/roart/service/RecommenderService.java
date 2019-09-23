@@ -52,7 +52,7 @@ public class RecommenderService {
         ProfitData profitdata = new ProfitData();
 
         Component component = new ComponentRecommender();
-        ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
+        ComponentData componentData = component.handle(new FindProfitAction(), market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
         return component.calculateMemory(componentData);
     }

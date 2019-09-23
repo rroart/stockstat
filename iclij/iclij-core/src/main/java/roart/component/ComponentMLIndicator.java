@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.MLConfig;
@@ -148,7 +149,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
 
         MLIndicatorData param = new MLIndicatorData(componentparam);
 
@@ -157,7 +158,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
         double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
         param.setThreshold(threshold);
 
-        handle2(market, param, profitdata, positions, evolve, aMap, subcomponent);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
         Map resultMaps = param.getResultMap();
         handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
@@ -237,7 +238,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
@@ -245,9 +246,9 @@ public abstract class ComponentMLIndicator extends ComponentML {
         if (gotThree) {
             confList.addAll(getThreeConfList());
         }
-        ConfigMapChromosome chromosome = new MLIndicatorChromosome(confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent);
+        ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent);
         loadme(param, chromosome, market, confList, buy, subcomponent);
-        return improve(param, chromosome);
+        return improve(action, param, chromosome);
     }
 
     public Map<String, String> improveNot(ComponentData param, Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {

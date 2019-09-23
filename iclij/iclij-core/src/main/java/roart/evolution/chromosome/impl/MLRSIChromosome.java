@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.action.FindProfitAction;
+import roart.action.MarketAction;
 import roart.action.WebData;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
@@ -37,13 +38,13 @@ import roart.util.ServiceUtil;
 
 public class MLRSIChromosome extends MLAggregatorChromosome {
 
-    public MLRSIChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(param, profitdata, confList, market, positions, component, buy, subcomponent);
+    public MLRSIChromosome(MarketAction action, ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
+        super(action, param, profitdata, confList, market, positions, component, buy, subcomponent);
     }
 
     @Override
     protected MLAggregatorChromosome getNewChromosome(ComponentData newparam) {
-        return new MLRSIChromosome(newparam, profitdata, confList, market, positions, componentName, buy, subcomponent);
+        return new MLRSIChromosome(action, newparam, profitdata, confList, market, positions, componentName, buy, subcomponent);
     }
     
 

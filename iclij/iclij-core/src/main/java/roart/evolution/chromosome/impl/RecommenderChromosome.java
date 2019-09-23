@@ -12,6 +12,7 @@ import java.util.Set;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
@@ -31,8 +32,8 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     
     private int listIdx;
     
-    public RecommenderChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(confList, param, profitdata, market, positions, component, buy, subcomponent);
+    public RecommenderChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
+        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent);
     }
 
     private List<Set<String>> makeSet(List<List<String>> listPerm) {
@@ -43,8 +44,8 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         return retlist;
     }
 
-    public RecommenderChromosome(List<String> defaultConfList, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(confList, param, profitdata, market, positions, component, buy, subcomponent);
+    public RecommenderChromosome(MarketAction action, List<String> defaultConfList, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
+        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent);
         Set<String> defaultConfSet = new HashSet<>(defaultConfList);
         Set<String> confSet = new HashSet<>(confList);
         Set<String> disableSet = new HashSet<>(defaultConfSet);
@@ -155,7 +156,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     
     @Override
     public Individual crossover(AbstractChromosome other) {
-        RecommenderChromosome chromosome = new RecommenderChromosome(confList, param, profitdata, market, positions, componentName, buy, subcomponent);
+        RecommenderChromosome chromosome = new RecommenderChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent);
         int idx = chromosome.listIdx ^ ((RecommenderChromosome) other).listIdx;
         chromosome.listIdx = idx;
         return new Individual(chromosome);
@@ -181,7 +182,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        RecommenderChromosome chromosome = new RecommenderChromosome(confList, newparam, profitdata, market, positions, componentName, buy, subcomponent);
+        RecommenderChromosome chromosome = new RecommenderChromosome(action, confList, newparam, profitdata, market, positions, componentName, buy, subcomponent);
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         chromosome.listIdx = listIdx;
         return chromosome;

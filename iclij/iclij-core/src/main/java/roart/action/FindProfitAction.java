@@ -17,6 +17,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
+import roart.component.FindProfitComponentFactory;
 import roart.component.model.ComponentData;
 import roart.config.Market;
 import roart.constants.IclijConstants;
@@ -59,7 +60,7 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData) {
         for (Entry<String, List<Integer>> entry : listComponent.entrySet()) {
             List<Integer> positions = entry.getValue();
             String componentName = entry.getKey();
@@ -72,7 +73,7 @@ public class FindProfitAction extends MarketAction {
 
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
-            ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>(), subcomponent);
+            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, new HashMap<>(), subcomponent);
             component.calculateIncDec(componentData, profitdata, positions);
             if (param.getInput().isDoSave()) {
                 IncDecItem myitem = null;
@@ -112,7 +113,7 @@ public class FindProfitAction extends MarketAction {
             long time0 = System.currentTimeMillis();
             //Market market = FindProfitAction.findMarket(componentparam);
             ProfitData profitdata = new ProfitData();
-            ComponentData componentData = component.handle(marketTime.market, param, profitdata, new ArrayList<>(), evolve, new HashMap<>(), marketTime.subcomponent);
+            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, new HashMap<>(), marketTime.subcomponent);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
@@ -237,7 +238,7 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    protected ComponentFactory getComponentFactory() {
+    public ComponentFactory getComponentFactory() {
         return new FindProfitComponentFactory();
     }
 

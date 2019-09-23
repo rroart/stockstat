@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
@@ -72,11 +73,11 @@ public abstract class Component {
         valueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
     }
     
-    public abstract ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent);
+    public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent);
     
-    public abstract ComponentData improve(ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent);
+    public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent);
 
-    public void handle2(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
+    public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
         try {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
         } catch (ParseException e) {
@@ -87,7 +88,7 @@ public abstract class Component {
         }
         Map<String, Object> valueMap = new HashMap<>();
         Component.disabler(valueMap);
-        List<Component> allComponents = ComponentFactory.getAllComponents();
+        List<Component> allComponents = action.getComponentFactory().getAllComponents();
         for (Component component : allComponents) {
             component.disable(valueMap);
         }
@@ -197,7 +198,7 @@ public abstract class Component {
     
     public abstract boolean wantImproveEvolve();
     
-    public ComponentData improve(ComponentData param, ConfigMapChromosome chromosome) {
+    public ComponentData improve(MarketAction action, ComponentData param, ConfigMapChromosome chromosome) {
         long time0 = System.currentTimeMillis();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
@@ -291,10 +292,10 @@ public abstract class Component {
     
     public abstract List<String> getSubComponents(Market market, ComponentData componentData);
 
-    public ComponentData handle(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) throws Exception {
+    public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) throws Exception {
         List<String> subComponents = getSubComponents(market, param);
         for(String subComponent : subComponents) {
-            ComponentData componentData = handle(market, param, profitdata, new ArrayList<>(), false, new HashMap<>(), subComponent);
+            ComponentData componentData = handle(action, market, param, profitdata, new ArrayList<>(), false, new HashMap<>(), subComponent);
             calculateMemory(componentData);
         }
         return null;

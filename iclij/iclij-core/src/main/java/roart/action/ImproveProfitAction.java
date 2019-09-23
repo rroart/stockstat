@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.constants.Constants;
 import roart.component.Component;
 import roart.component.ComponentFactory;
+import roart.component.ImproveProfitComponentFactory;
 import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
@@ -81,7 +82,7 @@ public class ImproveProfitAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -93,7 +94,7 @@ public class ImproveProfitAction extends MarketAction {
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
-            ComponentData componentData = component.improve(param, market, profitdata, null, buy, subcomponent);
+            ComponentData componentData = component.improve(action, param, market, profitdata, null, buy, subcomponent);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -161,7 +162,7 @@ public class ImproveProfitAction extends MarketAction {
     }
     
     @Override
-    protected ComponentFactory getComponentFactory() {
+    public ComponentFactory getComponentFactory() {
         return new ImproveProfitComponentFactory();
     }
 

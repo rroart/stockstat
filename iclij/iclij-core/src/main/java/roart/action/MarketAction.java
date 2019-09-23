@@ -63,7 +63,7 @@ public abstract class MarketAction extends Action {
 
     protected abstract void setValMap(ComponentData param);
     
-    protected abstract ComponentFactory getComponentFactory();
+    public abstract ComponentFactory getComponentFactory();
     
     public void goal(Action parent, ComponentData param) {
         getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null);
@@ -368,7 +368,7 @@ public abstract class MarketAction extends Action {
 
         param.setTimings(new ArrayList<>());
         
-        handleComponent(market, profitdata, param, listComponent, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData);
+        handleComponent(this, market, profitdata, param, listComponent, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData);
                 
         filterBuys(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
@@ -480,7 +480,7 @@ public abstract class MarketAction extends Action {
         return nameMap;
     }
     
-    protected abstract void handleComponent(Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData);
+    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData);
 
     public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days) {
         LocalDate olddate = date.minusDays(days);

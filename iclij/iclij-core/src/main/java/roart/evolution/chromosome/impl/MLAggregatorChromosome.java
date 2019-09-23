@@ -8,6 +8,7 @@ import java.util.Random;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import roart.action.MarketAction;
 import roart.component.model.ComponentData;
 import roart.config.Market;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -15,8 +16,8 @@ import roart.evolution.species.Individual;
 import roart.service.model.ProfitData;
 
 public abstract class MLAggregatorChromosome extends ConfigMapChromosome {
-    public MLAggregatorChromosome(ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(confList, param, profitdata, market, positions, component, buy, subcomponent);
+    public MLAggregatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
+        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent);
     }
 
     protected abstract MLAggregatorChromosome getNewChromosome(ComponentData newparam);

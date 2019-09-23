@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
@@ -112,14 +113,14 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
     
         RecommenderData param = new RecommenderData(componentparam);        
         
         int futuredays = (int) param.getService().conf.getTestIndicatorRecommenderComplexFutureDays();
         param.setFuturedays(futuredays);
 
-        handle2(market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap, subcomponent);
+        handle2(action, market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap, subcomponent);
 
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
@@ -313,7 +314,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
@@ -345,11 +346,11 @@ public class ComponentRecommender extends ComponentNoML {
             }
         }
 
-        RecommenderChromosome chromosome = new RecommenderChromosome(getConfList(), confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent);
+        RecommenderChromosome chromosome = new RecommenderChromosome(action, getConfList(), confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent);
 
         //chromosome.setConfList(confList);
         
-        return improve(param, chromosome);
+        return improve(action, param, chromosome);
         //return handleBuySell(param, market, profitdata, profitdata.getInputdata().getListMap(), list);
         //list = getSell();
         //retMap.putAll(handleBuySell(param, market, profitdata, conf, profitdata.getInputdata().getListMap(), list));

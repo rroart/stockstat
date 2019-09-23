@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
+import roart.action.MarketAction;
 import roart.action.VerifyProfit;
 import roart.action.WebData;
 import roart.common.config.MyMyConfig;
@@ -32,6 +33,7 @@ import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
+import roart.component.ImproveProfitComponentFactory;
 import roart.component.model.ComponentData;
 import roart.config.Market;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -53,6 +55,8 @@ import roart.util.ServiceUtil;
 public class ConfigMapChromosome extends AbstractChromosome {
     private Map<String, Object> map = new HashMap<>();
 
+    protected MarketAction action;
+    
     protected List<String> confList;
 
     protected ComponentData param;
@@ -69,7 +73,8 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     protected Boolean buy;
     
-    public ConfigMapChromosome(List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent) {
+    public ConfigMapChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent) {
+        this.action = action;
         this.confList = confList;
         this.param = param;
         this.profitdata = profitdata;
@@ -149,7 +154,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     @Override
     public Individual crossover(AbstractChromosome other) {
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, param, profitdata, market, positions, componentName, buy, subcomponent);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent);
         Random rand = new Random();
         for (int conf = 0; conf < confList.size(); conf++) {
             String confName = confList.get(conf);
@@ -197,7 +202,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
             boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
-            Component component = ComponentFactory.factory(componentName);
+            Component component =  action.getComponentFactory().factory(componentName);
             boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
             //ProfitData profitdata = new ProfitData();
             myData.profitData = profitdata;
@@ -205,7 +210,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             if (!param.getService().conf.wantIndicatorRecommender()) {
                 int jj = 0;
             }
-            ComponentData componentData = component.handle(market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map);
+            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map);
             //componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
@@ -230,7 +235,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
             component.enableDisable(componentData, positions, param.getConfigValueMap());
 
-            ComponentData componentData2 = component.handle(market, param, profitdata, positions, evolve, map);
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map);
             component.calculateIncDec(componentData2, profitdata, positions);
 
             List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
@@ -351,7 +356,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(confList, newparam, profitdata, market, positions, componentName, buy, subcomponent);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, confList, newparam, profitdata, market, positions, componentName, buy, subcomponent);
         chromosome.map = new HashMap<>(this.map);
         return chromosome;
     }

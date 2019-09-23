@@ -22,6 +22,8 @@ import roart.component.Component;
 import roart.component.ComponentMLIndicator;
 import roart.component.ComponentMLMACD;
 import roart.component.ComponentRecommender;
+import roart.component.FindProfitComponentMLIndicator;
+import roart.component.FindProfitComponentMLMACD;
 import roart.component.model.ComponentInput;
 import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
@@ -57,8 +59,8 @@ public class MLService {
         Market market = new FindProfitAction().findMarket(componentparam);
         ProfitData profitdata = new ProfitData();
         
-        Component component = new ComponentMLMACD();
-        ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
+        Component component = new FindProfitComponentMLMACD();
+        ComponentData componentData = component.handle(new FindProfitAction(), market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
         return component.calculateMemory(componentData);
 
@@ -86,8 +88,8 @@ public class MLService {
         Market market = new FindProfitAction().findMarket(componentparam);
         ProfitData profitdata = new ProfitData();
 
-        Component component = new ComponentMLIndicator();
-        ComponentData componentData = component.handle(market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
+        Component component = new FindProfitComponentMLIndicator();
+        ComponentData componentData = component.handle(new FindProfitAction(), market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
         return component.calculateMemory(componentData);
     }

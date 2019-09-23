@@ -16,6 +16,7 @@ import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.ComponentFactory;
+import roart.component.FindProfitComponentFactory;
 import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
@@ -57,7 +58,7 @@ public class UpdateDBAction extends Action {
             String market = memoryItem.getMarket();
             log.info("Will update {} {} from {} with time spent {}", market, memoryItem.getComponent(), memoryItem.getRecord(), memoryItem.getUsedsec());
             String component = memoryItem.getComponent();
-            Action serviceAction = new ComponentFactory().factory(market, component);
+            Action serviceAction = new FindProfitComponentFactory().factory(market, component);
             if (serviceAction != null) {
                 ((ServiceAction) serviceAction).setDays(0);
                 ((ServiceAction) serviceAction).setSave(true);
@@ -142,7 +143,7 @@ public class UpdateDBAction extends Action {
                 days += startOffset;
             }
             for (String component : components) {
-                ServiceAction serviceAction = new ComponentFactory().factory(market.getConfig().getMarket(), component);
+                ServiceAction serviceAction = new FindProfitComponentFactory().factory(market.getConfig().getMarket(), component);
                 if (serviceAction != null) {
                     serviceAction.setDate(param.getFutureDate());
                     serviceAction.setDays(days);

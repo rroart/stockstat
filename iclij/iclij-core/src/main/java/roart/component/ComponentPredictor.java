@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
@@ -84,7 +85,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData handle(Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
         //log.info("Component not impl {}", this.getClass().getName());
         
         PredictorData param = new PredictorData(componentparam);
@@ -99,7 +100,7 @@ public class ComponentPredictor extends ComponentML {
         }
         param.setFuturedays(futuredays);
 
-        handle2(market, param, profitdata, positions, evolve, aMap, subcomponent);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
         
         Map<String, Object> maps = param.getResultMap();
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);
@@ -150,10 +151,10 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        PredictorChromosome chromosome = new PredictorChromosome(confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM, buy, subcomponent);
+        PredictorChromosome chromosome = new PredictorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM, buy, subcomponent);
         TensorflowPredictorLSTMConfig config = new TensorflowPredictorLSTMConfig(5, 5, 5);
         config.full = true;
         Map<String, Object> map = null;
@@ -170,7 +171,7 @@ public class ComponentPredictor extends ComponentML {
         }
         TensorflowPredictorLSTMConfigGene gene = new TensorflowPredictorLSTMConfigGene(config);
         chromosome.setConfig(gene);
-        return improve(param, chromosome);
+        return improve(action, param, chromosome);
     }
 
     @Override

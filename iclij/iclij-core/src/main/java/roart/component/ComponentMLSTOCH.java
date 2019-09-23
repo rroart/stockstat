@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.action.FindProfitAction;
+import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
@@ -100,9 +101,9 @@ public abstract class ComponentMLSTOCH extends ComponentMLAggregator {
     }
 
     @Override
-    protected ConfigMapChromosome getNewChromosome(Market market, ProfitData profitdata, List<Integer> positions,
-            Boolean buy, ComponentData param, List<String> confList, String subcomponent) {
-        return new MLSTOCHChromosome(param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent);
+    protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
+            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent) {
+        return new MLSTOCHChromosome(action, param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent);
     }
 
     @Override
