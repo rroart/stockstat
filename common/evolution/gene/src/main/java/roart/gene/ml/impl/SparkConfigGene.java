@@ -3,6 +3,7 @@ package roart.gene.ml.impl;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.SparkConfig;
 import roart.gene.NeuralNetConfigGene;
+import roart.common.constants.Constants;
 
 public abstract class SparkConfigGene extends NeuralNetConfigGene {
 
@@ -29,6 +30,7 @@ public abstract class SparkConfigGene extends NeuralNetConfigGene {
             myconfig.setTol(generateTol());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
      }
 

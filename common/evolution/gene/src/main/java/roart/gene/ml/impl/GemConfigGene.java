@@ -4,6 +4,7 @@ import roart.common.ml.GemConfig;
 import roart.common.ml.GemGEMConfig;
 import roart.common.util.RandomUtil;
 import roart.gene.NeuralNetConfigGene;
+import roart.common.constants.Constants;
 
 public abstract class GemConfigGene extends NeuralNetConfigGene {
     
@@ -38,6 +39,7 @@ public abstract class GemConfigGene extends NeuralNetConfigGene {
             myconfig.setSteps(generateSteps());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
     }
 

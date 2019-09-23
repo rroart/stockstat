@@ -2,6 +2,7 @@ package roart.gene.ml.impl;
 
 import roart.common.ml.SparkMLPCConfig;
 import roart.gene.AbstractGene;
+import roart.common.constants.Constants;
 
 public class SparkMLPCConfigGene extends SparkConfigGene {
     
@@ -34,6 +35,7 @@ public class SparkMLPCConfigGene extends SparkConfigGene {
             myconfig.setLayers(generateLayers());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
     }
 

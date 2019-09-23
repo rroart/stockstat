@@ -4,6 +4,7 @@ import roart.common.ml.TensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.gene.AbstractGene;
 import roart.gene.NeuralNetConfigGene;
+import roart.common.constants.Constants;
 
 public class TensorflowPredictorLSTMConfigGene extends NeuralNetConfigGene {
     
@@ -24,6 +25,7 @@ public class TensorflowPredictorLSTMConfigGene extends NeuralNetConfigGene {
             myconfig.setSteps(generateSteps());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
     }
 
@@ -69,6 +71,8 @@ public class TensorflowPredictorLSTMConfigGene extends NeuralNetConfigGene {
         case 2:
             generateHorizon();
             break;
+	default:
+	    log.error(Constants.NOTFOUND, task);
         }
     }
 

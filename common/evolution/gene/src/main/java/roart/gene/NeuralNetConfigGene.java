@@ -1,11 +1,14 @@
 package roart.gene;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import roart.common.ml.NeuralNetConfig;
 import roart.common.util.RandomUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class NeuralNetConfigGene extends AbstractGene {
+
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     private NeuralNetConfig config;
     

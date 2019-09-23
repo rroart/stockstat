@@ -3,6 +3,7 @@ package roart.gene.ml.impl;
 import roart.common.ml.TensorflowCNNConfig;
 import roart.common.ml.TensorflowConfig;
 import roart.gene.AbstractGene;
+import roart.common.constants.Constants;
 
 public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
 
@@ -38,6 +39,7 @@ public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
             myconfig.setDropout(generateDropout());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
      }
 

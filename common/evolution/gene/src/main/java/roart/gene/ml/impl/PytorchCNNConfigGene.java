@@ -3,6 +3,7 @@ package roart.gene.ml.impl;
 import roart.common.ml.PytorchConfig;
 import roart.gene.AbstractGene;
 import roart.common.ml.PytorchCNNConfig;
+import roart.common.constants.Constants;
 
 public class PytorchCNNConfigGene extends PytorchPreFeedConfigGene {
 
@@ -34,6 +35,7 @@ public class PytorchCNNConfigGene extends PytorchPreFeedConfigGene {
             myconfig.setStride(generateStride());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
      }
 

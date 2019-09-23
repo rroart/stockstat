@@ -3,6 +3,7 @@ package roart.gene.ml.impl;
 import roart.common.ml.TensorflowConfig;
 import roart.common.ml.TensorflowDNNConfig;
 import roart.gene.AbstractGene;
+import roart.common.constants.Constants;
 
 public class TensorflowDNNConfigGene extends TensorflowEstimatorConfigGene {
 
@@ -36,6 +37,7 @@ public class TensorflowDNNConfigGene extends TensorflowEstimatorConfigGene {
             myconfig.setLayers(generateLayers());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
     }
 

@@ -2,6 +2,7 @@ package roart.gene.ml.impl;
 
 import roart.common.ml.PytorchConfig;
 import roart.common.ml.PytorchFeedConfig;
+import roart.common.constants.Constants;
 
 public abstract class PytorchFeedConfigGene extends PytorchConfigGene {
     public PytorchFeedConfigGene(PytorchConfig config) {
@@ -35,6 +36,7 @@ public abstract class PytorchFeedConfigGene extends PytorchConfigGene {
             myconfig.setLr(generateLr());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
      }
 

@@ -3,6 +3,7 @@ package roart.gene.ml.impl;
 import roart.common.ml.TensorflowConfig;
 import roart.common.ml.TensorflowFeedConfig;
 import roart.gene.NeuralNetConfigGene;
+import roart.common.constants.Constants;
 
 public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     
@@ -25,6 +26,7 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
             myconfig.setSteps(generateSteps());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
     }
 

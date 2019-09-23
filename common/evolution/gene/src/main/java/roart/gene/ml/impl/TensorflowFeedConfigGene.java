@@ -2,6 +2,7 @@ package roart.gene.ml.impl;
 
 import roart.common.ml.TensorflowConfig;
 import roart.common.ml.TensorflowFeedConfig;
+import roart.common.constants.Constants;
 
 public abstract class TensorflowFeedConfigGene extends TensorflowConfigGene {
 
@@ -38,6 +39,7 @@ public abstract class TensorflowFeedConfigGene extends TensorflowConfigGene {
             myconfig.setLr(generateLr());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
      }
 

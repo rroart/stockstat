@@ -16,4 +16,6 @@ module evolution.gene {
     requires jackson.annotations;
     requires evolution.model;
     requires common.util;
+    requires slf4j.api;
+    requires common.constants;
 }

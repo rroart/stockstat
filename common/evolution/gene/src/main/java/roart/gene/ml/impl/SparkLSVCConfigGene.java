@@ -3,6 +3,7 @@ package roart.gene.ml.impl;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.SparkLSVCConfig;
 import roart.gene.AbstractGene;
+import roart.common.constants.Constants;
 
 public class SparkLSVCConfigGene extends SparkConfigGene {
 
@@ -31,6 +32,7 @@ public class SparkLSVCConfigGene extends SparkConfigGene {
             myconfig.setFitintercept(generateFitintercept());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }              
     }
 

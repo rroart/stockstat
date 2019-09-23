@@ -4,6 +4,7 @@ import roart.common.ml.PytorchConfig;
 import roart.common.ml.PytorchFeedConfig;
 import roart.common.util.RandomUtil;
 import roart.gene.NeuralNetConfigGene;
+import roart.common.constants.Constants;
 
 public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     
@@ -38,6 +39,7 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
             myconfig.setSteps(generateSteps());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
     }
 

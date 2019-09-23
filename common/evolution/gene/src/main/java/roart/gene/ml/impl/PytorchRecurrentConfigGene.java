@@ -2,6 +2,7 @@ package roart.gene.ml.impl;
 
 import roart.common.ml.PytorchConfig;
 import roart.common.ml.PytorchRecurrentConfig;
+import roart.common.constants.Constants;
 
 public abstract class PytorchRecurrentConfigGene extends PytorchFeedConfigGene {
 
@@ -29,6 +30,7 @@ public abstract class PytorchRecurrentConfigGene extends PytorchFeedConfigGene {
             myconfig.setSlide(generateStride());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
     }
 

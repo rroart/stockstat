@@ -2,6 +2,7 @@ package roart.gene.ml.impl;
 
 import roart.common.ml.TensorflowConfig;
 import roart.common.ml.TensorflowRecurrentConfig;
+import roart.common.constants.Constants;
 
 public abstract class TensorflowRecurrentConfigGene extends TensorflowFeedConfigGene {
 
@@ -37,6 +38,7 @@ public abstract class TensorflowRecurrentConfigGene extends TensorflowFeedConfig
             myconfig.setDropoutin(generateDropoutIn());
             break;
         default:
+	    log.error(Constants.NOTFOUND, task);
         }
      }
 
