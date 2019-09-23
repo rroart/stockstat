@@ -134,7 +134,6 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.MACHINELEARNINGMLMULTI, Boolean.class);
         map.put(IclijConfigConstants.MACHINELEARNINGMLMULTIEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.MACHINELEARNINGMLMULTIMLCONFIG, String.class);
-        map.put(IclijConfigConstants.MACHINELEARNINGRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.MACHINELEARNINGPREDICTOR, Boolean.class);
         map.put(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, String.class);
@@ -276,7 +275,6 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLMULTI, Boolean.TRUE);
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLMULTIEVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLMULTIMLCONFIG, MLCONFIG);
-        deflt.put(IclijConfigConstants.MACHINELEARNINGRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.MACHINELEARNINGPREDICTOR, Boolean.FALSE);
         deflt.put(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, MLCONFIGLSTM);
@@ -413,7 +411,6 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MACHINELEARNINGMLMULTI, "Enable machine learning mlmulti");
         text.put(IclijConfigConstants.MACHINELEARNINGMLMULTIEVOLUTIONCONFIG, "machine learning mlmulti evolution config");
         text.put(IclijConfigConstants.MACHINELEARNINGMLMULTIMLCONFIG, "machine learning mlmulti ml enabled");
-        text.put(IclijConfigConstants.MACHINELEARNINGRECOMMENDER, "Enable machine learning evolution based");
         text.put(IclijConfigConstants.MACHINELEARNINGPREDICTOR, "Enable machine learning predictor");
         text.put(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG, "machine learning predictor evolution config");
         text.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, "machine learning predictor ml enabled");
@@ -557,7 +554,6 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLMULTI, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable machine learning mlmulti"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLMULTIEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "machine learning mlmulti evolution config"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLMULTIMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "machine learning mlmulti ml enable"));
-        mymap.put(IclijConfigConstants.MACHINELEARNINGRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable machine learning evolution based"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable machine learning predictor"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "machine learning predictor evolution config"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGLSTM, "machine learning predictor ml enable"));
