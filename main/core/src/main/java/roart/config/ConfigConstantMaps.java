@@ -49,13 +49,13 @@ public class ConfigConstantMaps {
 
     private static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hiddenneurons\" : 20, \"hiddenlayers\" : 3, \"lr\" : 0.1 }";
 
-    private static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001 }";
+    private static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
 
-    private static final String TENSORFLOWCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 100, \"stride\" : 1, \"kernelsize\" : 4 }";
+    private static final String TENSORFLOWCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 100, \"stride\" : 1, \"kernelsize\" : 4, \"dropout\" : 0.5 }";
 
-    private static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001 }";
+    private static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
 
-    private static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001 }";
+    private static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
 
     private static final String TENSORFLOWLIRCONFIG = "{ \"name\" : \"lir\", \"steps\" : 100 }";
     
