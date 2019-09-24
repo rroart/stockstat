@@ -230,16 +230,28 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnMap,
             MLClassifyModel model, int size, int classes, Map<String, Pair<double[], Double>> classifyMap,
-            Map<Double, String> shortMap, String path, String filename) {
+            Map<Double, String> shortMap, String path, String filename, boolean mldynamic) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (classifyMap == null || classifyMap.isEmpty()) {
             result.setCatMap(new HashMap<>());
             return result;
         }
+        LearnTestClassify param = new LearnTestClassify();
+        param.setPath(path);
+        param.setFilename(filename);
+        try {
+            LearnTestClassify ret = null;
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/filename");
+            boolean exists = ret.getExists();
+            if (!exists && !mldynamic) {
+                return result;
+            }
+        } catch (Exception e) {
+            log.error("Exception", e);
+        }
         Object[][] trainingArray = new Object[learnMap.size()][];
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
-        LearnTestClassify param = new LearnTestClassify();
         TensorflowDNNConfig dnnConfig = null;
         TensorflowLICConfig licconfig = null;
         TensorflowLIRConfig lirconfig = null;
@@ -275,16 +287,16 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             mlpconfig = new TensorflowMLPConfig(1000, 3, 20, 0.1);
         }
         if (cnnconfig == null) {
-            cnnconfig = new TensorflowCNNConfig(1000, 4, 1);
+            cnnconfig = new TensorflowCNNConfig(1000, 4, 1, 0.5);
         }
         if (rnnconfig == null) {
-            rnnconfig = new TensorflowRNNConfig(100, 2, 100, 0.001, 1);
+            rnnconfig = new TensorflowRNNConfig(100, 2, 100, 0.001, 1, 0, 0);
         }
         if (gruconfig == null) {
-            gruconfig = new TensorflowGRUConfig(100, 2, 100, 0.001, 1);
+            gruconfig = new TensorflowGRUConfig(100, 2, 100, 0.001, 1, 0, 0);
         }
         if (lstmconfig == null) {
-            lstmconfig = new TensorflowLSTMConfig(100, 2, 100, 0.001, 1);
+            lstmconfig = new TensorflowLSTMConfig(100, 2, 100, 0.001, 1, 0, 0);
         }
         param.setTensorflowDNNConfig(dnnConfig);
         param.setTensorflowLICConfig(licconfig);
