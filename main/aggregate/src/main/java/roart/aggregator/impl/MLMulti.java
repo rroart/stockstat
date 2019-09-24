@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.ml.dao.MLClassifyDao;
 import roart.model.StockItem;
@@ -54,7 +55,7 @@ public class MLMulti extends IndicatorAggregator {
     protected List<SubType> getWantedSubTypes(AbstractCategory cat, AfterBeforeLimit afterbefore) {
         List<SubType> wantedSubTypesList = new ArrayList<>();
         if (conf.wantAggregatorsMlmultiML()) {
-            if (conf.isMACDEnabled()) {
+            if (conf.wantAggregatorsMlmultiMACD()) {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORMACDLIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORMACDOBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
@@ -63,7 +64,7 @@ public class MLMulti extends IndicatorAggregator {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE, conf, filter, "macd"));
                 }
             }
-            if (conf.isRSIEnabled()) {
+            if (conf.wantAggregatorsMlmultiRSI()) {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORRSILIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORRSIOBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
@@ -72,7 +73,7 @@ public class MLMulti extends IndicatorAggregator {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "rsi"));
                 }
             }
-            if (conf.isATREnabled()) {
+            if (conf.wantAggregatorsMlmultiATR()) {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORATRLIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORATROBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORATR).get(PipelineConstants.RESULT);
@@ -81,7 +82,7 @@ public class MLMulti extends IndicatorAggregator {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "atr"));
                 }
             }
-            if (conf.isCCIEnabled()) {
+            if (conf.wantAggregatorsMlmultiCCI()) {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORCCILIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORCCIOBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORCCI).get(PipelineConstants.RESULT);
@@ -90,7 +91,7 @@ public class MLMulti extends IndicatorAggregator {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "cci"));
                 }
             }
-            if (conf.isSTOCHEnabled()) {
+            if (conf.wantAggregatorsMlmultiSTOCH()) {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHLIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHOBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORSTOCH).get(PipelineConstants.RESULT);
@@ -99,7 +100,7 @@ public class MLMulti extends IndicatorAggregator {
                     wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE, conf, filter, "stoch"));
                 }
             }
-            if (conf.isSTOCHRSIEnabled()) {
+            if (conf.wantAggregatorsMlmultiSTOCHRSI()) {
                 Object list = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHRSILIST);
                 Object taObject = cat.getResultMap().get(PipelineConstants.INDICATORSTOCHRSIOBJECT);
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORSTOCHRSI).get(PipelineConstants.RESULT);
@@ -161,6 +162,30 @@ public class MLMulti extends IndicatorAggregator {
         }
         emptyField = new Object[size];
         return size;
+    }
+
+    @Override
+    public String getFilenamePart() {
+        String ret = "MULTI" + "_";
+        if (conf.wantAggregatorsMlmultiMACD()) {
+            ret = ret + Constants.MACD + "_";
+        }
+        if (conf.wantAggregatorsMlmultiRSI()) {
+            ret = ret + Constants.RSI + "_";
+        }
+        if (conf.wantAggregatorsMlmultiATR()) {
+            ret = ret + Constants.ATR + "_";
+        }
+        if (conf.wantAggregatorsMlmultiCCI()) {
+            ret = ret + Constants.CCI + "_";
+        }
+        if (conf.wantAggregatorsMlmultiSTOCH()) {
+            ret = ret + Constants.STOCH + "_" ;
+        }
+        if (conf.wantAggregatorsMlmultiSTOCHRSI()) {
+            ret = ret + Constants.STOCHRSI + "_" ;
+        }
+        return ret;
     }
 
     /*
