@@ -21,8 +21,12 @@ import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.AbstractIndicator;
+import roart.indicator.impl.IndicatorATR;
+import roart.indicator.impl.IndicatorCCI;
 import roart.indicator.impl.IndicatorMACD;
 import roart.indicator.impl.IndicatorRSI;
+import roart.indicator.impl.IndicatorSTOCH;
+import roart.indicator.impl.IndicatorSTOCHRSI;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.model.MetaItem;
@@ -443,6 +447,18 @@ public class IndicatorUtils {
         }
         if (indicatorSet.add(PipelineConstants.INDICATORRSI) && conf.wantAggregatorsIndicatorExtrasRSI()) {
             allIndicators.add(new IndicatorRSI(conf, null, null, 42, datareaders, true));       
+        }
+        if (indicatorSet.add(PipelineConstants.INDICATORATR) && conf.wantAggregatorsIndicatorExtrasATR()) {
+            allIndicators.add(new IndicatorATR(conf, null, null, 42, datareaders, true));       
+        }
+        if (indicatorSet.add(PipelineConstants.INDICATORCCI) && conf.wantAggregatorsIndicatorExtrasCCI()) {
+            allIndicators.add(new IndicatorCCI(conf, null, null, 42, datareaders, true));       
+        }
+        if (indicatorSet.add(PipelineConstants.INDICATORSTOCH) && conf.wantAggregatorsIndicatorExtrasSTOCH()) {
+            allIndicators.add(new IndicatorSTOCH(conf, null, null, 42, datareaders, true));       
+        }
+        if (indicatorSet.add(PipelineConstants.INDICATORSTOCHRSI) && conf.wantAggregatorsIndicatorExtrasSTOCHRSI()) {
+            allIndicators.add(new IndicatorSTOCHRSI(conf, null, null, 42, datareaders, true));       
         }
     }
 
