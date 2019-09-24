@@ -123,5 +123,10 @@ public class IndicatorSTOCH extends Indicator {
         return false;
     }
 
+    @Override
+    public String getName() {
+        return Constants.STOCH;
+    }
+    
 }
 

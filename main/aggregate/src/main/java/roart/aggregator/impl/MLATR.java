@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import roart.aggregator.impl.IndicatorAggregator.Filter;
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.ml.dao.MLClassifyDao;
 import roart.model.StockItem;
@@ -157,5 +158,10 @@ public class MLATR extends IndicatorAggregator {
         return anythingHere3(listMap);
     }
 
+    @Override
+    public String getFilenamePart() {
+        return Constants.ATR + "_" + getAfterBefore().getFilePart();
+    }
+    
 }
 

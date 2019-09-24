@@ -38,5 +38,10 @@ public class MLClassifyRandomModel extends MLClassifyModel {
     public String getKey() {
         return "Random";
     }
+
+    @Override
+    public String getPath() {
+        return null;
+    }
     
 }

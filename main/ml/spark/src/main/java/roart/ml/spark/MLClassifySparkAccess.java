@@ -223,7 +223,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, Map<String, Pair<double[], Double>> newMap,
             MLClassifyModel mlmodel, int size, int classes, Map<String, Pair<double[], Double>> newMap2,
-            Map<Double, String> shortMap, String path, String filename) {
+            Map<Double, String> shortMap, String path, String filename, boolean mldynamic) {
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {

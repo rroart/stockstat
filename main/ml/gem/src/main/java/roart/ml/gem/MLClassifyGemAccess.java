@@ -215,7 +215,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnMap,
             MLClassifyModel model, int size, int classes, Map<String, Pair<double[], Double>> classifyMap,
-            Map<Double, String> shortMap, String path, String filename) {
+            Map<Double, String> shortMap, String path, String filename, boolean mldynamic) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (classifyMap == null || classifyMap.isEmpty()) {
             result.setCatMap(new HashMap<>());

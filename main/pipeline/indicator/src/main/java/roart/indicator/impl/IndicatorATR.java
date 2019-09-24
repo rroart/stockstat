@@ -115,5 +115,10 @@ public class IndicatorATR extends Indicator {
         return false;
     }
 
+    @Override
+    public String getName() {
+        return Constants.ATR;
+    }
+    
 }
 

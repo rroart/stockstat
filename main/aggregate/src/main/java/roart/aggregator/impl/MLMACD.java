@@ -253,6 +253,22 @@ public class MLMACD extends IndicatorAggregator {
         return PipelineConstants.MLMACD;
     }
 
+    @Override
+    public String getFilenamePart() {
+        String ret = "";
+        if (conf.wantMLHist()) {
+            ret = ret + Constants.HIST + "_";
+        }
+        if (conf.wantMLMacd()) {
+            ret = ret + Constants.MACD + "_";
+        }
+        if (conf.wantMLSignal()) {
+            ret = ret + Constants.SIGNAL + "_";
+        }
+        ret = ret + "_" + getAfterBefore().getFilePart();
+        return ret;
+    }
+
     /*
     @Override
     protected List<SubType> wantedMergeSubTypes() {

@@ -18,6 +18,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.web.client.HttpClientErrorException.Conflict;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -277,9 +278,9 @@ public class MLIndicator extends Aggregator {
             }
             Map<Double, String> labelMapShort = createLabelMapShort();
             if (conf.wantMLMP()) {
-                doLearnTestClassifyFuture(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort);
+                doLearnTestClassifyFuture(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators);
             } else {
-                doLearnTestClassify(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort);
+                doLearnTestClassify(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators);
            }
         }
         createResultMap(conf, mapResult);
@@ -292,7 +293,7 @@ public class MLIndicator extends Aggregator {
 
     private void doLearnTestClassify(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
             Map<String, Pair<double[], Double>> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
-            Map<Double, String> labelMapShort) {
+            Map<Double, String> labelMapShort, List<AbstractIndicator> indicators) {
         try {
             int testCount = 0;   
             // calculate sections and do ML
@@ -330,7 +331,10 @@ public class MLIndicator extends Aggregator {
                         log.info("keyset {}", map.keySet());
                     }
                     log.info("len {}", arrayLength);
-                    LearnTestClassifyResult result = mldao1.learntestclassify(nnconfigs, this, map1, model1, arrayLength, 2, mapTime, map, labelMapShort, null, null);  
+                    String filename = getFilename(mldao1, model1, "" + arrayLength, "2", conf.getMarket(), indicators);
+                    String path = model1.getPath();
+                    boolean mldynamic = conf.wantMLDynamic();
+                    LearnTestClassifyResult result = mldao1.learntestclassify(nnconfigs, this, map1, model1, arrayLength, 2, mapTime, map, labelMapShort, path, filename, mldynamic);  
                     Map<String, Double[]> classifyResult = result.getCatMap();
                     probabilityMap.put(mldao1.getName() + model1.getId(), result.getAccuracy());
                     meta1[4] = result.getAccuracy();
@@ -361,7 +365,7 @@ public class MLIndicator extends Aggregator {
 
     private void doLearnTestClassifyFuture(NeuralNetConfigs nnconfigs, MyMyConfig conf, Map<Integer, Map<String, Double[]>> dayIndicatorMap,
             Map<String, Pair<double[], Double>> mergedCatMap, Map<MLClassifyModel, Map<String, Double[]>> mapResult, int arrayLength,
-            Map<Double, String> labelMapShort) {
+            Map<Double, String> labelMapShort, List<AbstractIndicator> indicators) {
         try {
             // calculate sections and do ML
             log.info("Indicatormap keys {}", dayIndicatorMap.keySet());
@@ -399,8 +403,12 @@ public class MLIndicator extends Aggregator {
                         log.info("keyset {}", map.keySet());
                     }
                     log.info("len {}", arrayLength);
-                    //LearnTestClassifyResult result = mldao.learntestclassify(this, map1, model, arrayLength, key, MYTITLE, 2, mapTime, map, labelMapShort);  
-                    Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, map1, model, arrayLength, 4, mapTime, map, labelMapShort, null, null);  
+                    //LearnTestClassifyResult result = mldao.learntestclassify(this, map1, model, arrayLength, key, MYTITLE, 2, mapTime, map, labelMapShort);
+                    boolean conv2d = true;
+                    String filename = getFilename(mldao, model, "" + arrayLength, "4", conf.getMarket(), indicators);
+                    String path = model.getPath();
+                    boolean mldynamic = conf.wantMLDynamic();
+                    Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, map1, model, arrayLength, 4, mapTime, map, labelMapShort, path, filename, mldynamic);  
                     Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                     futureList.add(future);
                     futureMap.put(future, new FutureMap(mldao, model, resultMetaArray.size() - 1));
@@ -812,6 +820,46 @@ public class MLIndicator extends Aggregator {
         public void setTestCount(int testCount) {
             this.testCount = testCount;
         }
+    }
+    
+    public String getFilenamePart(List<AbstractIndicator> indicators) {
+        String ret = "";
+        for (AbstractIndicator indicator : indicators) {
+            ret = ret + indicator.getName() + " ";
+            if (indicator.wantForExtras()) {
+                ret = ret + "d" + "_";
+            }
+        }
+        return ret;
+    }
+    
+    //@Override
+    public String getFilenamePartNot() {
+        String ret = "";
+        if (conf.wantAggregatorsIndicatorMACD()) {
+            ret = ret + Constants.MACD + " ";
+        }
+        if (conf.wantAggregatorsIndicatorRSI()) { 
+            ret = ret + Constants.RSI + " ";
+        } 
+        if (conf.wantAggregatorsIndicatorATR()) { 
+            ret = ret + Constants.ATR + " ";
+        } 
+        if (conf.wantAggregatorsIndicatorCCI()) { 
+            ret = ret + Constants.CCI + " ";
+        } 
+        if (conf.wantAggregatorsIndicatorSTOCH()) {
+            ret = ret + Constants.STOCH + " " ;
+        }
+        if (conf.wantAggregatorsIndicatorSTOCHRSI()) {
+            ret = ret + Constants.STOCHRSI + " " ;
+        }
+        //ret;
+        return ret;
+    }
+    
+    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators) {
+        return market + "_" + getName() + "_" + dao.getName() + "_" + model.getEngineName() + "_" + model.getName() + "_" + in + "_" + out + "_" + getFilenamePart(indicators);
     }
 }
 

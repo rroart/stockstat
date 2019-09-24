@@ -28,4 +28,8 @@ public abstract class MLClassifySparkModel extends MLClassifyModel {
     
     public abstract NeuralNetConfig getModel(NeuralNetConfigs conf);
     
+    @Override
+    public String getPath() {
+        return getConf().getSparkMLPath();
+    }
 }

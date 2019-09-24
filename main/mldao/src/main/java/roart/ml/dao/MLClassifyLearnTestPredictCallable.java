@@ -43,9 +43,11 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private String filename;
     
+    private boolean mldynamic;
+    
     public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model,
             int size, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, Pair<double[], Double>> map2, Map<Double, String> shortMap,
-            String path, String filename) {
+            String path, String filename, boolean mldynamic) {
         super();
         this.nnconfigs = nnconfigs;
         this.mldao = mldao;
@@ -59,12 +61,13 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
         this.shortMap = shortMap;
         this.path = path;
         this.filename = filename;
+        this.mldynamic = mldynamic;
     }
 
     @Override
     public LearnTestClassifyResult call() throws Exception {
         log.info("call1");
-        return mldao.learntestclassify(nnconfigs, indicator, map, model, size, 4, mapTime, map2, shortMap, path, filename);  
+        return mldao.learntestclassify(nnconfigs, indicator, map, model, size, 4, mapTime, map2, shortMap, path, filename, mldynamic);  
     }
     
 }

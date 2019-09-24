@@ -30,4 +30,8 @@ public abstract class MLClassifyGemModel extends MLClassifyModel {
     
     public abstract NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestClassify param);
     
+    @Override
+    public String getPath() {
+        return getConf().getGEMPath();
+    }
 }

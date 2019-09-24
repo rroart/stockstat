@@ -66,6 +66,8 @@ public abstract class AbstractIndicator extends Calculatable {
     protected abstract Double[] getCalculated(Map<String, Object[]> objectMap, String id);
     protected abstract void getFieldResult(Double[] momentum, Object[] fields);
 
+    public abstract String getName();
+
     public Object[] getResultItemTitle() {
         Object[] titleArray = new Object[1];
         titleArray[0] = title;

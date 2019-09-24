@@ -114,5 +114,10 @@ public class IndicatorCCI extends Indicator {
         return false;
     }
 
+    @Override
+    public String getName() {
+        return Constants.CCI;
+    }
+    
 }
 

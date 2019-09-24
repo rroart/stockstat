@@ -125,5 +125,11 @@ public class IndicatorSTOCHRSI extends Indicator {
     protected int getAnythingHereRange() {
 	return 1;
     }
+    
+    @Override
+    public String getName() {
+        return Constants.STOCHRSI;
+    }
+    
 }
 

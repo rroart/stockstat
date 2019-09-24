@@ -35,6 +35,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.executor.MyExecutors;
+import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.dao.MLClassifyDao;
@@ -331,7 +332,12 @@ public abstract class IndicatorAggregator extends Aggregator {
                             Map<String, Pair<double[], Double>> learnMLMap = transformLearnClassifyMap(learnMap, true);
                             Map<String, Pair<double[], Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false);
                             int size = getValidateSize(learnMLMap);
-                            LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, null, null);  
+                            List<AbstractIndicator> indicators = new ArrayList<>();
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators);
+                            String path = model.getPath();
+                            boolean mldynamic = conf.wantMLDynamic();
+                            //indicators.add(this);
+                            LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, mldynamic);  
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
 
@@ -452,7 +458,11 @@ public abstract class IndicatorAggregator extends Aggregator {
                             Map<String, Pair<double[], Double>> learnMLMap = transformLearnClassifyMap(learnMap, true);
                             Map<String, Pair<double[], Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false);
                             int size = getValidateSize(learnMLMap);
-                            Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, null, null);  
+                            List<AbstractIndicator> indicators = new ArrayList<>();
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators);
+                            String path = model.getPath();
+                            boolean mldynamic = conf.wantMLDynamic();
+                            Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, mldynamic);  
                             Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                             futureList.add(future);
                             futureMap.put(future, new FutureMap(subType, model, mapType, resultMetaArray.size() - 1, mapMap));
@@ -1486,6 +1496,10 @@ public abstract class IndicatorAggregator extends Aggregator {
             this.before = before;
             this.after = after;
         }
+        
+        public String getFilePart() {
+            return "" + before + "_" + after + "_";
+        }
     }
 
     class Filter {
@@ -1598,4 +1612,9 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     }
 
+    public abstract String getFilenamePart();
+    
+    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators) {
+        return market + "_" + getName() + "_" + dao.getName() + "_" + model.getEngineName() + "_" + model.getName() + "_" + in + "_" + out + "_" + getFilenamePart();
+    }
 }

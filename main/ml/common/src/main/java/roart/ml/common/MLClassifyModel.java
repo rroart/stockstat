@@ -104,4 +104,17 @@ public abstract class MLClassifyModel {
         return false;
     }
 
+    public boolean isClassifier() {
+        return true;
+    }
+
+    public boolean isPredictor() {
+        return false;
+    }
+
+    public boolean isOneDimensional() {
+        return true;
+    }
+
+    public abstract String getPath();
 }

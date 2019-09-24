@@ -54,9 +54,9 @@ public class MLClassifyDao {
         }
     }
 
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnTestMap, MLClassifyModel model, int size, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, Pair<double[], Double>> classifyMap, Map<Double, String> shortMap, String path, String filename) {
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnTestMap, MLClassifyModel model, int size, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, Pair<double[], Double>> classifyMap, Map<Double, String> shortMap, String path, String filename, boolean mldynamic) {
         long time1 = System.currentTimeMillis();
-        LearnTestClassifyResult result = access.learntestclassify(nnconfigs, indicator, learnTestMap, model, size, outcomes, classifyMap, shortMap, path, filename);
+        LearnTestClassifyResult result = access.learntestclassify(nnconfigs, indicator, learnTestMap, model, size, outcomes, classifyMap, shortMap, path, filename, mldynamic);
         long time = (System.currentTimeMillis() - time1);
         log.info("time {} {}", model, time);
         MLClassifyModel.mapAdder(mapTime, model, time);

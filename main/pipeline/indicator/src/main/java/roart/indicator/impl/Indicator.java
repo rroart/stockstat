@@ -18,7 +18,7 @@ import roart.indicator.util.IndicatorUtils;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 
-public class Indicator extends AbstractIndicator {
+public abstract class Indicator extends AbstractIndicator {
 
     public Indicator(MyMyConfig conf, String string, int category) {
         super(conf, string, category);

@@ -127,5 +127,10 @@ public class IndicatorMACD extends Indicator {
 	return 1;
     }
     
+    @Override
+    public String getName() {
+        return Constants.MACD;
+    }
+    
 }
 

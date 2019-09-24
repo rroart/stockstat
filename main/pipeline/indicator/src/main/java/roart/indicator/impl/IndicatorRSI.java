@@ -104,5 +104,10 @@ public class IndicatorRSI extends Indicator {
 	return 1;
     }
 
+    @Override
+    public String getName() {
+        return Constants.RSI;
+    }
+    
 }
 

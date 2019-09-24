@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.ml.dao.MLClassifyDao;
 import roart.model.StockItem;
@@ -183,6 +184,19 @@ public class MLRSI extends IndicatorAggregator {
         return PipelineConstants.MLRSI;
     }
 
+    @Override
+    public String getFilenamePart() {
+        String ret = "";
+        if (conf.isRSIEnabled()) {
+            ret = ret + Constants.RSI + "_";
+        }
+        if (conf.isSTOCHRSIEnabled()) {
+            ret = ret + Constants.STOCHRSI + "_";
+        }
+        ret = ret + getAfterBefore().getFilePart();
+        return ret;
+    }
+    
     /*
     @Override
     protected List<SubType> wantedMergeSubTypes() {
