@@ -11,6 +11,7 @@ export type ServiceParam = {
     wantMaps: boolean,
     confList: string[],
     webpath: string,
+    guiSize: GuiSize,
 }
 
 export type ServiceResult = {
@@ -30,4 +31,9 @@ export type MyConfig = {
     type: Map,
     date: object,
     market: string,
+}
+
+export type GuiSize = {
+    x: int;
+    y: int;
 }

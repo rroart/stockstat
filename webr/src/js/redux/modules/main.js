@@ -27,6 +27,7 @@ const SETCONFIGVALUE = 'app/main/SETCONFIGVALUE';
 const SETCONFIGVALUEMAP = 'app/main/SETCONFIGVALUEMAP';
 const GETCONFIG = 'app/main/GETCONFIG';
 const GETCONTENT = 'app/main/GETCONTENT';
+const GETCONTENTGRAPH = 'app/main/GETCONTENTGRAPH';
 const GETEVOLVERECOMMENDER = 'app/main/GETEVOLVERECOMMENDER';
 const GETEVOLVENN = 'app/main/GETEVOLVENN';
 const GETEVOLVE = 'app/main/GETEVOLVE';
@@ -54,6 +55,7 @@ export const constants = {
     SETCONFIGVALUEMAP,
     GETCONFIG,
     GETCONTENT,
+    GETCONTENTGRAPH,
     GETEVOLVERECOMMENDER,
     GETEVOLVENN,
     GETEVOLVE,
@@ -84,7 +86,8 @@ export const setconfig = createAction(SETCONFIG, (config) => ( { config } ) );
 export const setconfigvalue = createAction(SETCONFIGVALUE, ( array ) => ( array ) );
 export const setconfigvaluemap = createAction(SETCONFIGVALUEMAP, ( array ) => ( array ) );
 export const getConfig = createAction(GETCONFIG, () => ( {} ) );
-export const getcontent = createAction(GETCONTENT, (config) => ( { config } ) );
+export const getcontent = createAction(GETCONTENT, (config, market, props) => ( { config, market, props } ) );
+export const getcontentgraph = createAction(GETCONTENTGRAPH, (config, value, props) => ( { config, value, props } ) );
 export const getevolverecommender = createAction(GETEVOLVERECOMMENDER, () => ( {} ) );
 export const getevolvenn = createAction(GETEVOLVENN, () => ( {} ) );
 export const getevolve = createAction(GETEVOLVE, (array) => ( { array } ) );
@@ -112,6 +115,7 @@ export const actions = {
     getConfig,
     getMarkets,
     getcontent,
+    getcontentgraph,
     getevolverecommender,
     getevolvenn,
     getevolve,

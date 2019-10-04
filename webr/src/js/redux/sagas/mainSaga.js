@@ -3,7 +3,7 @@ import { delay } from 'redux-saga';
 import { constants as mainConstants, actions as mainActions } from '../modules/main';
 import { Tabs, Tab } from 'react-bootstrap';
 
-import type { mainType, MyConfig } from '../../common/types/main'
+import type { mainType, MyConfig, GuiSize } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
 import { ServiceParam, ServiceResult } from '../../common/types/main'
@@ -49,6 +49,7 @@ export function* fetchContent(action) {
     var serviceparam = new ServiceParam();
     console.log(action);
     const config = action.payload.config;
+    const props = action.payload.props;
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
@@ -58,10 +59,41 @@ export function* fetchContent(action) {
     let result = yield call(Client.fetchApi.search, "/getcontent", serviceparam);
     console.log("herecontent2");
     console.log(result);
+    console.log(action);
     const config2 = result;
     console.log(config2);
     const list = result.list;
-    const tab = MyTable.getTab(result.list, Date.now());
+    const tab = MyTable.getTab(result.list, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
+export function* fetchContentGraph(action) {
+    var serviceparam = new ServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const id = action.payload.value;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    const ids = new Set([serviceparam.market + "," + id]);
+    serviceparam.ids = ids;
+    console.log(serviceparam.market);
+    var guisize = new GuiSize();
+    guisize.x=600;
+    guisize.y=400;
+    serviceparam.guiSize = guisize;
+    serviceparam.config = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    console.log(serviceparam);
+    let result = yield call(Client.fetchApi.search, "/getcontentgraph2", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    const config2 = result;
+    console.log(config2);
+    const list = result.list;
+    const tab = MyTable.getTab(result.list, Date.now(), props);
+    console.log(tab);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -92,6 +124,7 @@ export function* fetchEvolveNN() {
 export function* fetchEvolve(action) {
     console.log(action);
     const array = action.payload.array;
+    const props = action.payload.props;
     const webpath = array[0];
     const set = array[1];
     const config = array[2];
@@ -119,7 +152,7 @@ export function* fetchEvolve(action) {
 	}
     }
     const list = result.list;
-    const tab = MyTable.getTab(result.list);
+    const tab = MyTable.getTab(result.list, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
@@ -212,6 +245,11 @@ function* watchGetContent() {
     yield takeEvery(mainConstants.GETCONTENT, fetchContent);
 }
 
+function* watchGetContentGraph() {
+    console.log("watchgetcontent");
+    yield takeEvery(mainConstants.GETCONTENTGRAPH, fetchContentGraph);
+}
+
 function* watchGetEvolveRecommender() {
     console.log("watchgetrecommender");
   yield takeEvery(mainConstants.GETEVOLVERECOMMENDER, fetchEvolveRecommender);
@@ -250,6 +288,7 @@ export const mainSaga = [
     fork(watchGetMarkets),
     fork(watchGetConfig),
     fork(watchGetContent),
+    fork(watchGetContentGraph),
     fork(watchGetEvolveRecommender),
     fork(watchGetEvolveNN),
     fork(watchGetEvolve),

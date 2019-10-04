@@ -5,16 +5,35 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 
-function convert(resultitemtable, date) {
+function handleButtonClick(props, e, value) {
+    console.log("hhaha");
+    console.log(e);
+    console.log(value);
+    console.log(props);
+    props.getcontentgraph(props.main.config, value, props);
+}
+
+function convert(resultitemtable, date, props) {
     console.log("here");
+    console.log(resultitemtable);
     const array = resultitemtable.rows;
     console.log(array);
+    if (array.length == 0) {
+	return (
+	    <ReactTable key={date} data={ [] } columns={ [] } />
+	);
+    }
     const head = array[0];
     const rest = array.slice(1);
     const columns = [];
     const result = [];
     for(var i = 0; i < head.cols.length; i++) {
-	columns.push({ accessor: head.cols[i], Header: head.cols[i], sort: true });
+	if (head.cols[i] == "Img") {
+	    //columns.push({ accessor: head.cols[i], Header: head.cols[i], sort: true, id: 'button', Cell: ({value}) => (<a onClick={console.log('clicked value', value)}>Button</a>) });
+	    columns.push({ accessor: head.cols[i], Header: head.cols[i], sort: true, id: 'button', Cell: ({value}) => (<a onClick={(e) => handleButtonClick(props, e, value)}>{value}</a>) });
+	} else {
+	    columns.push({ accessor: head.cols[i], Header: head.cols[i], sort: true });
+	}
     }
     console.log(columns);
     console.log(head);
@@ -28,6 +47,11 @@ function convert(resultitemtable, date) {
 	for(var i = 0; i < head.cols.length; i++) {
 	    newrow[head.cols[i]] = row.cols[i];
 	}
+	/*
+	if (head.cols[0] == "Img") {
+	    newrow[head.cols[0]] = "bla";
+	}
+	*/
 	result.push(newrow);
     }
     console.log(result);
@@ -127,15 +151,36 @@ function convert2bs(array) {
   );
 }
 
-function getTable(resultitemtable, date) {
-  return convert(resultitemtable, date);
+function getTable(resultitemtable, date, props) {
+    return convert(resultitemtable, date, props);
 }
-function getTab(list, date) {
+
+function image(data, i) {
+    const Example = ({ data }) => <img src={`data:image/svg+xml;base64,${data}`} width="1000" height="800"/>;
+    return (
+	<Example key={i} data={data} />
+    );
+}
+
+function getTab(list, date, props) {
     const tables = [];
     for(var i = 0; i < list.length; i++) {
-	const resultitemtable = list[i];
-	const table = getTable(resultitemtable, date + i);
-	tables.push(table)
+	console.log(list[i])
+	if (list[i]._class == "roart.model.ResultItemTable") {
+	    const resultitemtable = list[i];
+	    const table = getTable(resultitemtable, date + i, props);
+	    tables.push(table);
+	    console.log(table);
+	}
+	if (list[i]._class == "roart.model.ResultItemStream") {
+	    const stream = list[i];
+	    //let buff = new Buffer(stream.bytes, 'base64');
+	    //let text = buff.toString('ascii');
+	    //console.log(text);
+	    const example = image(stream.bytes, i);
+	    tables.push(example);
+	    console.log(example);
+	}
     }
     return(
     <div>

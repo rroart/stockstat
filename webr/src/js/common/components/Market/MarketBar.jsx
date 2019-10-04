@@ -71,7 +71,7 @@ handleYearChange = (e) => {
     console.log(event);
     console.log(props);
     console.log(props.main.market);
-    props.getcontent(props.main.config, props.main.market);
+    props.getcontent(props.main.config, props.main.market, props);
   }
   
   render() {
