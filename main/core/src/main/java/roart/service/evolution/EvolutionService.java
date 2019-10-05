@@ -22,6 +22,7 @@ import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
@@ -367,7 +368,7 @@ public class EvolutionService {
         }
     }
 
-    public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml) throws JsonParseException, JsonMappingException, IOException {
+    public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         ObjectMapper mapper = new ObjectMapper();
@@ -461,8 +462,8 @@ public class EvolutionService {
                     periodText, marketdatamap, periodDataMap, datedstocklists, datareaders, categories);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
-    
-            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, catName, cat);
+
+             findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, catName, cat, neuralnetcommand);
     
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
@@ -488,7 +489,7 @@ public class EvolutionService {
     }
 
     private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat) throws Exception {
+            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
@@ -603,7 +604,7 @@ public class EvolutionService {
             }
             NeuralNetConfig nnconfig = nnConfigs.get(key);
             NeuralNetConfigGene nnconfigGene = NeuralNetConfigGeneFactory.get(nnconfig, key);
-            NeuralNetChromosome chromosome = new NeuralNetChromosome(workingConf, ml, dataReaders, categories, key, nnconfigGene, catName, cat);
+            NeuralNetChromosome chromosome = new NeuralNetChromosome(workingConf, ml, dataReaders, categories, key, nnconfigGene, catName, cat, neuralnetcommand);
             if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
                 chromosome.setAscending(false);
             }

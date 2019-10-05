@@ -34,6 +34,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
@@ -97,11 +98,11 @@ public class ControlService {
     /**
      * Create result lists
      * @param maps 
-     * 
+     * @param neuralnetcommand TODO
      * @return the tabular result lists
      */
 
-    public List<ResultItem> getContent(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList) {
+    public List<ResultItem> getContent(MyMyConfig conf, Map<String, Map<String, Object>> maps, List<String> disableList, NeuralNetCommand neuralnetcommand) {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
@@ -130,6 +131,9 @@ public class ControlService {
             Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
             if (conf.getdate() == null) {
                 new ServiceUtil().getCurrentDate(conf, stockdatemap);
+            }
+            if (days == 0) {
+                days = stockdatemap.keySet().size();
             }
 
             Map<String, MarketData> marketdatamap = null;
@@ -176,7 +180,7 @@ public class ControlService {
             new ServiceUtil().calculatePredictors(predictors);
             
             Aggregator[] aggregates = getAggregates(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, categories, datareaders, disableList, idNameMap, catName, cat);
+                    periodText, marketdatamap, periodDataMap, categories, datareaders, disableList, idNameMap, catName, cat, neuralnetcommand);
 
             ResultItemTableRow headrow = createHeadRow(categories, predictors, aggregates);
             table.add(headrow);
@@ -380,17 +384,17 @@ public class ControlService {
     private Aggregator[] getAggregates(MyMyConfig conf, List<StockItem> stocks,
             String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat) throws Exception {
+            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         Aggregator[] aggregates = new Aggregator[9];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, catName, stocks, marketdatamap, periodDataMap, categories, datareaders, disableList);
         aggregates[1] = new RecommenderRSI(conf, catName, stocks, marketdatamap, periodDataMap, categories);
-        aggregates[2] = new MLMACD(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
-        aggregates[3] = new MLRSI(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
-        aggregates[4] = new MLATR(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
-        aggregates[5] = new MLCCI(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
-        aggregates[6] = new MLSTOCH(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
-        aggregates[7] = new MLMulti(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders);
-        aggregates[8] = new MLIndicator(conf, catName, marketdatamap, periodDataMap, catName, cat, categories, datareaders);
+        aggregates[2] = new MLMACD(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[3] = new MLRSI(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[4] = new MLATR(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[5] = new MLCCI(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[6] = new MLSTOCH(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[7] = new MLMulti(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[8] = new MLIndicator(conf, catName, marketdatamap, periodDataMap, catName, cat, categories, datareaders, neuralnetcommand);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSMACD));

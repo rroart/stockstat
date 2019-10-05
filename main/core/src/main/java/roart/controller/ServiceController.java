@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +30,7 @@ import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.config.MyXMLConfig;
@@ -46,7 +48,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@CrossOrigin
 @RestController
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -160,7 +164,8 @@ public class ServiceController implements CommandLineRunner {
             if (disableList == null) {
                 disableList = new ArrayList<>();
             }
-            result.setList(getInstance().getContent( new MyMyConfig(param.getConfig()), maps, disableList));
+            NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
+            result.setList(getInstance().getContent( new MyMyConfig(param.getConfig()), maps, disableList, neuralnetcommand));
             result.setMaps(maps);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -257,7 +262,8 @@ public class ServiceController implements CommandLineRunner {
             Map<String, Map<String, Object>> maps = new HashMap<>();
             Map<String, Object> updateMap = new HashMap<>();
             maps.put("update", updateMap);
-            result.setList(new EvolutionService().getEvolveML( aConfig, disableList, updateMap, ml));
+            NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
+            result.setList(new EvolutionService().getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand));
             result.setMaps(maps);
             result.setConfig(aConfig);
         } catch (Exception e) {
@@ -279,93 +285,6 @@ public class ServiceController implements CommandLineRunner {
         EurekaUtil.initEurekaClient(activeProfile);
         MyExecutors.initThreads("dev".equals(activeProfile));
         MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
-    }
-    
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/" + EurekaConstants.GETMARKETS).allowedOrigins("http://localhost:19000");
-                registry.addMapping("/" + EurekaConstants.GETMARKETS).allowedOrigins("http://localhost:3082");
-                registry.addMapping("/" + EurekaConstants.GETMARKETS).allowedOrigins("http://localhost:4242");
-            }
-        };
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer2() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/" + EurekaConstants.GETCONFIG).allowedOrigins("http://localhost:19000");
-                registry.addMapping("/" + EurekaConstants.GETCONFIG).allowedOrigins("http://localhost:3082");
-                registry.addMapping("/" + EurekaConstants.GETCONFIG).allowedOrigins("http://localhost:4242");
-            }
-        };
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer3() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/" + EurekaConstants.SETCONFIG).allowedOrigins("http://localhost:19000");
-                registry.addMapping("/" + EurekaConstants.SETCONFIG).allowedOrigins("http://localhost:3082");
-                registry.addMapping("/" + EurekaConstants.SETCONFIG).allowedOrigins("http://localhost:4242");
-            }
-        };
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer4() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/" + EurekaConstants.GETCONTENT).allowedOrigins("http://localhost:19000");
-                registry.addMapping("/" + EurekaConstants.GETCONTENT).allowedOrigins("http://localhost:3082");
-                registry.addMapping("/" + EurekaConstants.GETCONTENT).allowedOrigins("http://localhost:4242");
-            }
-        };
-    }
-    
-    @Bean
-    public WebMvcConfigurer corsConfigurer5() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/" + EurekaConstants.GETEVOLVERECOMMENDER).allowedOrigins("http://localhost:19000");
-                registry.addMapping("/" + EurekaConstants.GETEVOLVERECOMMENDER).allowedOrigins("http://localhost:3082");
-                registry.addMapping("/" + EurekaConstants.GETEVOLVERECOMMENDER).allowedOrigins("http://localhost:4242");
-            }
-        };
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer6() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/" + EurekaConstants.GETEVOLVENN).allowedOrigins("http://localhost:19000");
-                registry.addMapping("/" + EurekaConstants.GETEVOLVENN).allowedOrigins("http://localhost:3082");
-                registry.addMapping("/" + EurekaConstants.GETEVOLVENN).allowedOrigins("http://localhost:4242");
-            }
-        };
-    }
-
-    //Enable Global CORS support for the application
-    @Bean
-    public WebMvcConfigurer corsConfigurer0() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3082", "http://localhost:4242", "http://localhost:19000")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
-                        .allowedHeaders("header1", "header2") //What is this for?
-                        .allowCredentials(true);
-            }
-        };
     }
     
 }
