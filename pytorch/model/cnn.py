@@ -11,33 +11,38 @@ class Net(nn.Module):
         self.classify = classify
 
         #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
+        print("MO",myobj.size)
         self.layer1 = nn.Sequential(
-            nn.Conv1d(1, 16, kernel_size = config.kernelsize, stride = config.stride, padding=(kernel_size // 2)),
+            nn.Conv1d(myobj.size, 16, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)),
             nn.BatchNorm1d(16),
             nn.ReLU())
             #nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer2 = nn.Sequential(
-            nn.Conv1d(16, 32, kernel_size = config.kernelsize, stride = config.stride, padding=(kernel_size // 2)),
+            nn.Conv1d(16, 32, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)),
             nn.BatchNorm1d(32),
             nn.ReLU())
+        #self.l1 = nn.Conv1d(myobj.size, 16, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2))
             #nn.MaxPool2d(kernel_size=2, stride=2))
-        self.nlayer1 = nn.Sequential(
-            nn.Conv2d(1, 16, kernel_size=5, stride=1, padding=2),
-            nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.nlayer2 = nn.Sequential(
-            nn.Conv2d(16, 32, kernel_size=5, stride=1, padding=2),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.fc = nn.Linear(7*7*32, num_classes)
+        #self.l2 = nn.Conv1d(16, 32, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2))
+            #nn.MaxPool2d(kernel_size=2, stride=2))
+        # self.nlayer1 = nn.Sequential(
+        #     nn.Conv2d(1, 16, kernel_size=5, stride=1, padding=2),
+        #     nn.BatchNorm2d(16),
+        #     nn.ReLU(),
+        #     nn.MaxPool2d(kernel_size=2, stride=2))
+        # self.nlayer2 = nn.Sequential(
+        #     nn.Conv2d(16, 32, kernel_size=5, stride=1, padding=2),
+        #     nn.BatchNorm2d(32),
+        #     nn.ReLU(),
+        #     nn.MaxPool2d(kernel_size=2, stride=2))
+        self.fc1 = nn.Linear(960, 64)
+        self.fc2 = nn.Linear(64, myobj.classes)
 
         #Defining the layers
         # RNN Layer
-        self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)   
+        #self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)   
         # Fully connected layer
-        self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
+        #self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
     
         # setup optimizer
         self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
@@ -54,19 +59,48 @@ class Net(nn.Module):
         batch_size = x.size(0)
 
         # Initializing hidden state for first input using method defined below
-        hidden = self.init_hidden(batch_size)
+        #hidden = self.init_hidden(batch_size)
         #print("hidden", hidden.size(), batch_size)
 
         # Passing in the input and hidden state into the model and obtaining outputs
-        out, hidden = self.rnn(x, hidden)
+        #out, hidden = self.rnn(x, hidden)
         #print("outs", out.size())
         #print("hidden", hidden.size(), batch_size)
         
         # Reshaping the outputs such that it can be fit into the fully connected layer
         #out = out.contiguous().view(-1, self.config.hidden)
         #print("outs", out.size())
+        out = self.layer1(x)
+        out = self.layer2(out)
+        
+        #r2 = nn.ReLU()
+        #out = self.l1(x)
+        #bn1 = nn.BatchNorm1d(16)
+        #out = bn1(out)
+        #out = r1(out)
+        #out = self.l2(out)
+        #bn2 = nn.BatchNorm1d(32)
+        #out = bn2(out)
+        #out = r2(out)
+        r1 = nn.ReLU()
+        print("oo", out.shape)
+        b1 = nn.BatchNorm1d(64)
+
+        print("oo", out.shape)
+        out = out.view(out.size(0), -1)
+        print("oo", out.shape)
+        out = out.view(out.size(0), -1)
+        print("oo", out.shape)
+        out = self.fc1(out)
+        print("oo", out.shape)
+        out = b1(out)
+        print("oo", out.shape)
+        out = r1(out)
+        
+        print("oo", out.shape)
         if self.classify:
-            out = self.fc(out[:, -1, :])
+            #out = self.fc(out[:, :, -1])
+            out = self.fc2(out)
         else:
             out = self.fc(out)
         #print("outs", out.size())

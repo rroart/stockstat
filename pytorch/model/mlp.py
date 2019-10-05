@@ -10,7 +10,7 @@ class Net(nn.Module):
         self.myobj = myobj
         self.config = config
 
-        sizearr = [myobj.size] + [config.hiddenneurons] * config.hiddenlayers + [myobj.classes]
+        sizearr = [myobj.size] + [config.hidden] * config.layers + [myobj.classes]
         mylayers = []
         for i in range(0, len(sizearr) - 1):
             print("sizearr", sizearr[i], sizearr[i+1])

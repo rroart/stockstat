@@ -370,7 +370,30 @@ class Classify:
         if myobj.modelName == 'gru':
           config = myobj.pytorchGRUConfig
         return config, myobj.modelName
+
+    def wantDynamic(self, myobj):
+        hasit = hasattr(myobj, 'neuralnetcommand')
+        if not hasit or (hasit and myobj.neuralnetcommand.mldynamic):
+            return True
+        return False
     
+    def wantLearn(self, myobj):
+        hasit = hasattr(myobj, 'neuralnetcommand')
+        if not hasit or (hasit and myobj.neuralnetcommand.mllearn):
+            return True
+        return False
+    
+    def wantClassify(self, myobj):
+        hasit = hasattr(myobj, 'neuralnetcommand')
+        if not hasit or (hasit and myobj.neuralnetcommand.mlclassify):
+            return True
+        return False
+
+    def exists(self, myobj):
+        if not hasattr(myobj, 'filename'):
+            return False
+        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".pt")
+
     def do_learntestclassify(self, queue, request, classify):
         dt = datetime.now()
         timestamp = dt.timestamp()
@@ -379,18 +402,31 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        model = Model.Net(myobj, config, classify)
+        exists = self.exists(myobj)
+        if exists and not self.wantDynamic(myobj) and not self.wantLearn(myobj):
+            checkpoint = torch.load(self.getpath(myobj) + myobj.filename + ".pt")
+            model = checkpoint['model']
+        else:
+            model = Model.Net(myobj, config, classify)
         #myobj.size, myobj.classes, dim, layers)
         (train, traincat, test, testcat) = self.gettraintest(myobj, config)
         #testcat = torch.LongTensor(testcat)
-        accuracy_score = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
-        (intlist, problist) = self.do_classifyinner(myobj, model)
-        print(len(intlist))
+        accuracy_score = None
+        if self.wantLearn(myobj):
+            accuracy_score = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
+        if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+            torch.save({'model': model }, self.getpath(myobj) + myobj.filename + ".pt")
+        (intlist, problist) = (None, None)
+        if self.wantClassify(myobj):
+            (intlist, problist) = self.do_classifyinner(myobj, model)
+        #print(len(intlist))
         print(intlist)
         print(problist)
         dt = datetime.now()
+        if not accuracy_score is None:
+            accuracy_score = float(accuracy_score)
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": float(accuracy_score)}), mimetype='application/json'))
+        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score}), mimetype='application/json'))
 
     def do_dataset(self, queue, request):
         dt = datetime.now()
@@ -410,3 +446,13 @@ class Classify:
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put(Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
+        
+    def getpath(self, myobj):
+        if hasattr(myobj, 'path'):
+            return myobj.path + '/'
+        return '/tmp/'
+
+    def do_filename(self, request):
+        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        exists = self.exists(myobj)
+        return Response(json.dumps({"exists": exists}), mimetype='application/json')

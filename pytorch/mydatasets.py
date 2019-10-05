@@ -19,7 +19,10 @@ def getmnist(config):
 
     tensor = dl.dataset.data
     tensor = tensor.to(dtype=torch.float32)
-    tr = tensor.reshape(tensor.size(0), -1) 
+    print("tt", tensor.shape)
+    tr = tensor
+    #.reshape(tensor.size(0), -1) 
+    print("tt", tr.shape)
     tr = tr/128
     targets = dl.dataset.targets
     targets = targets.to(dtype=torch.float)
@@ -42,17 +45,27 @@ def getmnist(config):
     #loaders={}
     #loaders['train'] = train_dl
     #loaders['valid'] = valid_dl
-    mydim = 784
-    if config.name == "rnn":
-        x_train = x_train.view(-1, 1, 784)
-        x_valid = x_valid.view(-1, 1, 784)
+    print("X", x_train.shape)
+    mydim = (x_train.shape[1], x_train.shape[2])
+    if not config.name == "cnn":
+      if config.name == "rnn" or config.name == "lstm" or config.name == "gru":
+        #x_train = x_train.view(-1, 1, 784)
+        #x_valid = x_valid.view(-1, 1, 784)
         #y_train = y_train.view(1, y_train.size()[0])
         #y_valid = y_valid.view(1, y_valid.size()[0])
         #x_train = x_train.view(-1, 28, 28)
         #x_valid = x_valid.view(-1, 28, 28)
-        #mydim = 28
+        mydim = 28
+        print("here")
+      else:
+        x_train = x_train.reshape(x_train.size(0), -1)
+        x_valid = x_valid.reshape(x_valid.size(0), -1)
+        mydim = 784
+    else:
+      mydim = 28    
     print(type(x_train), x_train.shape)
     print(type(y_train), y_train.shape)
+    print("mydim", mydim)
     return x_train, y_train, x_valid, y_valid, mydim, 10, True
 
 def getdailymintemperatures(myobj, config, classifier):

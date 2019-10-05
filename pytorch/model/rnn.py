@@ -12,6 +12,10 @@ class Net(nn.Module):
         
         #Defining the layers
         # RNN Layer
+        #print("sz",self.myobj.size)
+        #print("sz",type(self.myobj.size[0]))
+        #print("sz",type(self.myobj.size[1]))
+        #print("sz",self.myobj.size)
         self.rnn = nn.RNN(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)
         # Fully connected layer
         self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
