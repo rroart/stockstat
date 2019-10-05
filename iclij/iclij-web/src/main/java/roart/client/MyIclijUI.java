@@ -251,6 +251,36 @@ public class MyIclijUI extends UI implements ViewDisplay {
         return button;
     }
 
+    private Button getMarketEvolve() {
+        Button button = new Button("Get market evolve data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayEvolveResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getMarketMachineLearning() {
+        Button button = new Button("Get market machine learning data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayMachineLearningResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
     private Button getSingleMarket() {
         Button button = new Button("Run and get single market data");
         button.addClickListener(new Button.ClickListener() {
@@ -487,6 +517,8 @@ public class MyIclijUI extends UI implements ViewDisplay {
         HorizontalLayout horOther2 = new HorizontalLayout();
         horOther2.addComponent(getImproveProfit());
         horOther2.addComponent(getMarketImprove());
+        horOther2.addComponent(getMarketEvolve());
+        horOther2.addComponent(getMarketMachineLearning());
         //horStat.addComponent(getStat());
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
@@ -593,6 +625,14 @@ public class MyIclijUI extends UI implements ViewDisplay {
 
     private void displayImproveResults() {
         controlService.getContentImprove(this);
+    }
+    
+    private void displayEvolveResults() {
+        controlService.getContentEvolve(this);
+    }
+    
+    private void displayMachineLearningResults() {
+        controlService.getContentMachineLearning(this);
     }
     
     private void displaySingleMarket() {

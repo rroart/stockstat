@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +44,7 @@ import roart.service.PredictorService;
 import roart.service.RecommenderService;
 import roart.util.ServiceUtil;
 
+@CrossOrigin
 @RestController
 @SpringBootApplication
 @EnableDiscoveryClient
@@ -78,6 +80,20 @@ public class ServiceController {
     public IclijServiceResult getContentImprove(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
             throws Exception {
         return ServiceUtil.getContentImprove(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
+    @RequestMapping(value = "/" + EurekaConstants.GETCONTENTEVOLVE,
+            method = RequestMethod.POST)
+    public IclijServiceResult getContentEvolve(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getContentEvolve(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
+    @RequestMapping(value = "/" + EurekaConstants.GETCONTENTMACHINELEARNING,
+            method = RequestMethod.POST)
+    public IclijServiceResult getContentMachineLearning(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getContentMachineLearning(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,
