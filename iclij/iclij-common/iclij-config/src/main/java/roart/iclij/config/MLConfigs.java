@@ -17,6 +17,14 @@ public class MLConfigs {
     
     private EvolveMLGemConfig gem;
     
+    public MLConfigs() {
+        super();
+        this.spark = new EvolveMLSparkConfig();
+        this.tensorflow = new EvolveMLTensorflowConfig();
+        this.pytorch = new EvolveMLPytorchConfig();
+        this.gem = new EvolveMLGemConfig();
+    }
+
     public EvolveMLSparkConfig getSpark() {
         return spark;
     }
