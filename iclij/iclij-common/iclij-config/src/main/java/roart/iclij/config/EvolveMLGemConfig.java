@@ -43,12 +43,12 @@ public class EvolveMLGemConfig {
         this.i = i;
     }
 
-    public EvolveMLConfig getIcarld() {
+    public EvolveMLConfig getIcarl() {
         return icarl;
     }
 
-    public void setIcarld(EvolveMLConfig icarld) {
-        this.icarl = icarld;
+    public void setIcarl(EvolveMLConfig icarl) {
+        this.icarl = icarl;
     }
 
     public EvolveMLConfig getMm() {
@@ -68,6 +68,9 @@ public class EvolveMLGemConfig {
     }
 
     public void merge(EvolveMLGemConfig gem) {
+        if (gem == null) {
+            return;
+        }
         ewc.merge(gem.ewc);
         this.gem.merge(gem.gem);
         i.merge(gem.i);
