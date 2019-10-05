@@ -8,9 +8,6 @@ public class MLConfig {
     // enable evolve or use
     private Boolean enable;
 
-    // ml persistence
-    private Boolean persistml;
-    
     public Boolean getLoad() {
         return load;
     }
@@ -25,14 +22,6 @@ public class MLConfig {
 
     public void setEnable(Boolean enable) {
         this.enable = enable;
-    }
-
-    public Boolean getPersistml() {
-        return persistml;
-    }
-
-    public void setPersistml(Boolean persistml) {
-        this.persistml = persistml;
     }
 
     public void merge(MLConfig other) {
