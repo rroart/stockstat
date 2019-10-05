@@ -69,7 +69,7 @@ public class MyMyConfig extends MyConfig {
     	}
      */
     public int getTableDays() {
-        return (Integer) getValueOrDefault(ConfigConstants.MISCMYTBLEDAYS);
+        return (Integer) getValueOrDefault(ConfigConstants.MISCMYTABLEDAYS);
     }
 
     /*
@@ -516,6 +516,16 @@ public class MyMyConfig extends MyConfig {
                 && wantMLGem();
     }
 
+    public boolean wantMLLearn() {
+        Boolean value = (Boolean) getValue(ConfigConstants.MACHINELEARNINGMLLEARN);
+        return value != null ? value : false;
+    }
+
+    public boolean wantMLClassify() {
+        Boolean value =  (Boolean) getValue(ConfigConstants.MACHINELEARNINGMLCLASSIFY);
+        return value != null ? value : false;
+    }
+
     public String getSparkMLPCConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG);
     }
@@ -612,100 +622,100 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG);
     }
 
-    public String getSparkMLPCPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMLPCPERSIST);
+    public boolean wantSparkMLPCPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMLPCPERSIST);
     }
 
-    public String getSparkLORPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLORPERSIST);
+    public boolean wantSparkLORPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLORPERSIST);
     }
 
-    public String getSparkOVRPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLOVRPERSIST);
+    public boolean wantSparkOVRPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLOVRPERSIST);
     }
 
-    public String getSparkLSVCPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLSVCPERSIST);
+    public boolean wantSparkLSVCPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLLSVCPERSIST);
     }
 
-    public String getTensorflowDNNPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNPERSIST);
+    public boolean wantTensorflowDNNPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNPERSIST);
     }
 
-    public String getTensorflowLICPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLICPERSIST);
+    public boolean wantTensorflowLICPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLICPERSIST);
     }
 
-    public String getTensorflowLIRPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRPERSIST);
+    public boolean wantTensorflowLIRPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRPERSIST);
     }
 
-    public String getTensorflowMLPPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPPERSIST);
+    public boolean wantTensorflowMLPPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPPERSIST);
     }
 
-    public String getTensorflowCNNPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST);
+    public boolean wantTensorflowCNNPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST);
     }
 
-    public String getTensorflowRNNPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST);
+    public boolean wantTensorflowRNNPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST);
     }
 
-    public String getTensorflowLSTMPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMPERSIST);
+    public boolean wantTensorflowLSTMPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMPERSIST);
     }
 
-    public String getTensorflowGRUPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUPERSIST);
+    public boolean wantTensorflowGRUPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUPERSIST);
     }
 
-    public String getTensorflowPredictorLSTMPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMPERSIST);
+    public boolean wantTensorflowPredictorLSTMPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMPERSIST);
     }
 
-    public String getPytorchMLPPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHMLPPERSIST);
+    public boolean wantPytorchMLPPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHMLPPERSIST);
     }
 
-    public String getPytorchCNNPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST);
+    public boolean wantPytorchCNNPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST);
     }
 
-    public String getPytorchRNNPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST);
+    public boolean wantPytorchRNNPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST);
     }
 
-    public String getPytorchLSTMPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHLSTMPERSIST);
+    public boolean wantPytorchLSTMPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHLSTMPERSIST);
     }
 
-    public String getPytorchGRUPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHGRUPERSIST);
+    public boolean wantPytorchGRUPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHGRUPERSIST);
     }
 
-    public String getGemEWCPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMEWCPERSIST);
+    public boolean wantGemEWCPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMEWCPERSIST);
     }
 
-    public String getGemGEMPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMGEMPERSIST);
+    public boolean wantGemGEMPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMGEMPERSIST);
     }
 
-    public String getGemIcarlPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMICARLPERSIST);
+    public boolean wantGemIcarlPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMICARLPERSIST);
     }
 
-    public String getGemIndependentPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTPERSIST);
+    public boolean wantGemIndependentPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTPERSIST);
     }
 
-    public String getGemMultiModalPersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMMULTIMODALPERSIST);
+    public boolean wantGemMultiModalPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMMULTIMODALPERSIST);
     }
 
-    public String getGemSinglePersist() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMSINGLEPERSIST);
+    public boolean wantGemSinglePersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMSINGLEPERSIST);
     }
 
     public  int weightBuyHist() {
@@ -1254,6 +1264,10 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMPATH);              
     }
 
+    public Object getValue(String key) {
+        return getConfigValueMap().get(key);
+    }
+    
      public Object getValueOrDefault(String key) {
         Object retVal = getConfigValueMap().get(key);
         if (retVal != null) {
