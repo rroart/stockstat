@@ -32,6 +32,7 @@
 	<mapping class="roart.db.model.Config"/>
 	<mapping class="roart.db.model.Timing"/>
 	<mapping class="roart.db.model.Relation"/>
+	<mapping class="roart.db.model.Cont"/>
 
     </session-factory>
 
