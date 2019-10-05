@@ -2,7 +2,8 @@ import tensorflow as tf
 import shutil
 
 class MyEstimator():
-    def __init__(self, config, name):
+    def __init__(self, myobj, config, name):
+        self.myobj = myobj
         self.config = config
         self.classifier = None
   
@@ -55,6 +56,32 @@ class MyEstimator():
             problist.append(probability)
         return intlist, problist
 
+    def wantDynamic(self):
+        hasit = hasattr(self.myobj, 'neuralnetcommand')
+        if not hasit or (hasit and self.myobj.neuralnetcommand.mldynamic):
+            return True
+        return False
+
     def tidy(self):
-        shutil.rmtree(self.classifier.model_dir)
+        if self.wantDynamic():
+            shutil.rmtree(self.classifier.model_dir)
         del self.classifier
+
+    def localsave(self):
+        return False
+
+    def wantDynamic(self):
+        hasit = hasattr(self.myobj, 'neuralnetcommand')
+        if not hasit or (hasit and self.myobj.neuralnetcommand.mldynamic):
+            return True
+        return False
+
+    def getpath(self):
+        if hasattr(self.myobj, 'path'):
+            return self.myobj.path + '/'
+        return '/tmp/'
+    
+    def getModelDir(self):
+        if self.wantDynamic():
+            return None
+        return self.getpath() + self.myobj.filename

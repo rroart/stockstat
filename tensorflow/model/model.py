@@ -34,3 +34,6 @@ class MyModel():
         
     def tidy(self):
         return None
+
+    def localsave(self):
+        return True

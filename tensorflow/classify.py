@@ -198,7 +198,32 @@ class Classify:
             config = myobj.tensorflowCNNConfig
         return config, myobj.modelName
 
+    def wantDynamic(self, myobj):
+        hasit = hasattr(myobj, 'neuralnetcommand')
+        if not hasit or (hasit and myobj.neuralnetcommand.mldynamic):
+            return True
+        return False
+
+    def wantLearn(self, myobj):
+        hasit = hasattr(myobj, 'neuralnetcommand')
+        if not hasit or (hasit and myobj.neuralnetcommand.mllearn):
+            return True
+        return False
+
+    def wantClassify(self, myobj):
+        hasit = hasattr(myobj, 'neuralnetcommand')
+        if not hasit or (hasit and myobj.neuralnetcommand.mlclassify):
+            return True
+        return False
+
+    def exists(self, myobj):
+        if not hasattr(myobj, 'filename'):
+            return False
+        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".ckpt")
+    
     def do_learntestclassify(self, queue, request):
+      with tf.Session() as sess:
+      #with tf.compat.v1.get_default_session() as sess:
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
         timestamp = dt.timestamp()
@@ -207,20 +232,46 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
-        model = Model.Model(myobj, config)
+        exists = self.exists(myobj)
+        if exists and not self.wantDynamic(myobj) and not self.wantLearn(myobj):
+            #with tf.get_default_session() as sess:
+            if isinstance(Model, tf.keras.Model):
+                saver = tf.compat.v1.train.Saver()
+                saver.restore(sess, self.getpath(myobj) + myobj.filename + ".ckpt")
+        else:
+            model = Model.Model(myobj, config)
         classifier = model
         (train, traincat, test, testcat) = self.gettraintest(myobj)
-        accuracy_score = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat)
+        if config.name == "rnnnot":
+            train = np.transpose(train, [1, 0, 2])
+            test = np.transpose(test, [1, 0, 2])
+            
+        accuracy_score = None
+        print("hhhhhh", self.wantLearn(myobj)       )
+        if self.wantLearn(myobj):
+            print("hhhhhh")
+            accuracy_score = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat)
         #print(type(classifier))
-        (intlist, problist) = self.do_classifyinner(myobj, classifier)
+        
+        if not self.wantDynamic(myobj) and self.wantLearn(myobj):
+            #with tf.compat.v1.get_default_session() as sess:
+            if isinstance(Model, tf.keras.Model):
+                saver = tf.compat.v1.train.Saver()
+                save_path = saver.save(sess, self.getpath(myobj) + myobj.filename + ".ckpt")
+
+        (intlist, problist) = (None, None)
+        if self.wantClassify(myobj):
+            (intlist, problist) = self.do_classifyinner(myobj, classifier)
         #print(len(intlist))
         print(intlist)
         print(problist)
         classifier.tidy()
         del classifier
         dt = datetime.now()
+        if not accuracy_score is None:
+            accuracy_score = float(accuracy_score)
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": float(accuracy_score)}), mimetype='application/json'))
+        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score}), mimetype='application/json'))
 
     def do_dataset(self, queue, request):
         dt = datetime.now()
@@ -248,3 +299,12 @@ class Classify:
         queue.put(Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
+    def getpath(self, myobj):
+        if hasattr(myobj, 'path'):
+            return myobj.path + '/'
+        return '/tmp/'
+
+    def do_filename(self, request):
+        myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
+        exists = self.exists(myobj)
+        return Response(json.dumps({"exists": exists}), mimetype='application/json')

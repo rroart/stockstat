@@ -30,6 +30,11 @@ def getmnist(config):
     if not config.name == "cnn":
         if config.name == "rnn" or config.name == "lstm" or config.name == "gru":
             print("here")
+            if config.name == "rnnnot":
+                print(x_train.shape)
+                x_train = np.transpose(x_train, [1, 0, 2])
+                print(x_train.shape)
+                x_test = np.transpose(x_test, [1, 0, 2])
             #x_train = x_train.reshape(1, x_train.shape[0], x_train.shape[1])
             #x_test = x_test.reshape(1, x_test.shape[0], x_test.shape[1])
         else:

@@ -11,7 +11,7 @@ class Model(MyModel):
     super(Model, self).__init__(config, name='my_model')
     # Define your layers here.
     amodel=Sequential()
-    amodel.add(Dropout(config.dropoutin, input_shape = myobj.size)
+    amodel.add(Dropout(config.dropoutin, input_shape = myobj.size))
     amodel.add(LSTM(config.hiddenneurons, return_sequences = True, time_major = False))
     amodel.add(Dropout(config.dropout))
     for i in range(1, config.hiddenlayers):

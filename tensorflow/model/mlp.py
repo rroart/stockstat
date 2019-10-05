@@ -3,6 +3,7 @@ import keras
 #from tensorflow.keras import layers
 from keras.layers import Dense, Activation, Dropout
 #from keras.models import Sequential
+from tensorflow.keras.optimizers import Adam
 
 #from .mymodelseq import MyModelSeq
 from .model import MyModel
@@ -26,7 +27,7 @@ class Model(MyModel):
     self.dense_4 = Dense(myobj.classes, activation='softmax')
     #adam = tf.keras.optimizers.Adam(lr=1)
     optimizer = Adam(lr = config.lr)
-    self.model.compile(optimizer = optimizer
+    self.model.compile(optimizer = optimizer,
                        loss='sparse_categorical_crossentropy',
                        metrics=['accuracy'])
 

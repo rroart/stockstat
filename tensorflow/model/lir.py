@@ -5,11 +5,12 @@ from .myestimator import MyEstimator
 class Model(MyEstimator):
 
   def __init__(self, myobj, config):
-    super(Model, self).__init__(config, name='my_model')
+    super(Model, self).__init__(myobj, config, name='my_model')
     feature_columns = [ tf.feature_column.numeric_column("features", shape=[myobj.size] ) ]
     pu = '/cpu:0'
     with tf.device(pu):
         self.classifier = tf.estimator.LinearRegressor(
+            model_dir = self.getModelDir(),
             feature_columns = feature_columns)
 
   def call(self, inputs):

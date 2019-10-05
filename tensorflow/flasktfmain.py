@@ -92,6 +92,12 @@ def do_dataset():
     cl = classify.Classify()
     return cl.do_learntest(request)
 
+@app.route('/filename', methods=['POST'])
+def do_filename():
+    import classify
+    cl = classify.Classify()
+    return cl.do_filename(request)
+
 if __name__ == '__main__':
     queue = Queue()
     process = Process(target=hasgpurunner, args=(queue, None))
