@@ -19,4 +19,6 @@ public class EurekaConstants {
     public static final String GETEVOLVERECOMMENDER = "getevolverecommender";
     public static final String GETEVOLVENN = "getevolvenn";
     public static final String GETCONTENTIMPROVE = "getcontentimprove";
+    public static final String GETCONTENTEVOLVE = "getcontentevolve";
+    public static final String GETCONTENTMACHINELEARNING = "getcontentmachinelearning";
 }
