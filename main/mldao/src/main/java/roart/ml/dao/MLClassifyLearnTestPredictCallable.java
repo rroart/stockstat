@@ -8,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.pipeline.common.aggregate.Aggregator;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyModel;
+import roart.ml.common.MLMeta;
 import roart.ml.model.LearnTestClassifyResult;
 
 public class MLClassifyLearnTestPredictCallable implements Callable {
@@ -19,7 +21,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private Aggregator indicator;
     
-    private Map<String, Pair<double[], Double>> map;
+    private Map<String, Pair<Object, Double>> learnmap;
     
     private MLClassifyModel model;
     
@@ -33,7 +35,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private Map<MLClassifyModel, Long> mapTime;
     
-    private Map<String, Pair<double[], Double>> map2;
+    private Map<String, Pair<Object, Double>> classifymap;
     
     private  Map<Double, String> shortMap;
 
@@ -43,31 +45,34 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private String filename;
     
-    private boolean mldynamic;
+    private NeuralNetCommand neuralnetcommand;
     
-    public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model,
-            int size, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, Pair<double[], Double>> map2, Map<Double, String> shortMap,
-            String path, String filename, boolean mldynamic) {
+    private MLMeta mlmeta;
+    
+    public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<String, Pair<Object, Double>> learnmap, MLClassifyModel model,
+            int size, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, Pair<Object, Double>> classifymap, Map<Double, String> shortMap,
+            String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
         super();
         this.nnconfigs = nnconfigs;
         this.mldao = mldao;
         this.indicator = indicator;
-        this.map = map;
+        this.learnmap = learnmap;
         this.model = model;
         this.size = size;
         this.outcomes = outcomes;
         this.mapTime = mapTime;
-        this.map2 = map2;
+        this.classifymap = classifymap;
         this.shortMap = shortMap;
         this.path = path;
         this.filename = filename;
-        this.mldynamic = mldynamic;
+        this.neuralnetcommand = neuralnetcommand;
+        this.mlmeta = mlmeta;
     }
 
     @Override
     public LearnTestClassifyResult call() throws Exception {
         log.info("call1");
-        return mldao.learntestclassify(nnconfigs, indicator, map, model, size, 4, mapTime, map2, shortMap, path, filename, mldynamic);  
+        return mldao.learntestclassify(nnconfigs, indicator, learnmap, model, size, 4, mapTime, classifymap, shortMap, path, filename, neuralnetcommand, mlmeta);  
     }
     
 }

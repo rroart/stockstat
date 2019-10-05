@@ -44,4 +44,9 @@ public class MLClassifyTensorflowLICModel  extends MLClassifyTensorflowModel {
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantTensorflowLICPersist();
+    }
+
 }

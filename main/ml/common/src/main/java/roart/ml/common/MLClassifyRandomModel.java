@@ -43,5 +43,10 @@ public class MLClassifyRandomModel extends MLClassifyModel {
     public String getPath() {
         return null;
     }
+
+    @Override
+    public boolean wantPersist() {
+        return false;
+    }
     
 }

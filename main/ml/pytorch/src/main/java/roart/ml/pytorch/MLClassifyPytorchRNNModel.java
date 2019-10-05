@@ -44,4 +44,9 @@ public class MLClassifyPytorchRNNModel  extends MLClassifyPytorchRecurrentModel 
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantPytorchRNNPersist();
+    }
+
 }

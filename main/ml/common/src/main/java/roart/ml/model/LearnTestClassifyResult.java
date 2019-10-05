@@ -5,7 +5,11 @@ import java.util.Map;
 public class LearnTestClassifyResult {
     private Double accuracy;
 
+    private Double loss;
+
     private Map<String, Double[]> catMap;
+    
+    private Boolean exists;
     
     public LearnTestClassifyResult() {
         super();
@@ -19,12 +23,28 @@ public class LearnTestClassifyResult {
         this.accuracy = accuracy;
     }
 
+    public Double getLoss() {
+        return loss;
+    }
+
+    public void setLoss(Double loss) {
+        this.loss = loss;
+    }
+
     public Map<String, Double[]> getCatMap() {
         return catMap;
     }
 
-    public void setCatMap(Map<String, Double[]> retMap) {
-        this.catMap = retMap;
+    public void setCatMap(Map<String, Double[]> catMap) {
+        this.catMap = catMap;
+    }
+
+    public Boolean isExists() {
+        return exists;
+    }
+
+    public void setExists(Boolean exists) {
+        this.exists = exists;
     }
 
 }

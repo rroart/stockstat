@@ -8,12 +8,18 @@ public abstract class MLClassifyTensorflowRecurrentModel extends MLClassifyTenso
         super(conf);
     }
 
-    public boolean isPredictor() {
+    public boolean isPredictorOnly() {
         return true;
     }
 
-    public boolean isOneDimensional() {
+    @Override
+    public boolean isTwoDimensional() {
         return false;
+    }
+
+    @Override
+    public boolean isThreeDimensional() {
+        return true;
     }
 
 }

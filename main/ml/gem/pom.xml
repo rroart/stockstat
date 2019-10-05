@@ -14,6 +14,11 @@
   <dependencies>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-model</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-ml-common</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
@@ -31,6 +36,11 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons.lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons.codec}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

@@ -44,4 +44,9 @@ public class MLClassifyTensorflowRNNModel  extends MLClassifyTensorflowRecurrent
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantTensorflowRNNPersist();
+    }
+
 }

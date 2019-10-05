@@ -15,4 +15,7 @@ module ml.gem {
     requires ml.common;
     requires pipeline.model;
     requires org.apache.commons.lang3;
+    requires model;
+    requires common.constants;
+    requires org.apache.commons.codec;
 }

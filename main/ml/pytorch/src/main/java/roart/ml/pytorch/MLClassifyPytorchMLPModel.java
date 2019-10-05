@@ -6,6 +6,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.PytorchMLPConfig;
+import roart.ml.common.MLMeta;
 import roart.ml.model.LearnTestClassify;
 
 public class MLClassifyPytorchMLPModel  extends MLClassifyPytorchModel {
@@ -42,6 +43,11 @@ public class MLClassifyPytorchMLPModel  extends MLClassifyPytorchModel {
         }
         param.setPytorchMLPConfig(modelConf);
         return modelConf;
+    }
+
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantPytorchMLPPersist();
     }
 
 }

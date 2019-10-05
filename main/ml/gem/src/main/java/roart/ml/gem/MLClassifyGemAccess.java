@@ -1,18 +1,24 @@
 package roart.ml.gem;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.constants.Constants;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
@@ -22,13 +28,16 @@ import roart.common.ml.GemIConfig;
 import roart.common.ml.GemIcarlConfig;
 import roart.common.ml.GemMMConfig;
 import roart.common.ml.GemSConfig;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.eureka.util.EurekaUtil;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
+import roart.ml.common.MLMeta;
 import roart.ml.model.LearnTestClassify;
 import roart.ml.model.LearnTestClassifyResult;
+import roart.model.ContItem;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public class MLClassifyGemAccess extends MLClassifyAccess {
@@ -37,12 +46,12 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
 
     private MyMyConfig conf;
 
-    private String tensorflowServer;
+    private String gemServer;
 
     public MLClassifyGemAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();
-        tensorflowServer = conf.getGEMServer();
+        gemServer = conf.getGEMServer();
     }
 
     private void findModels() {
@@ -74,7 +83,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int classes, String filename) {
         return learntestInner(nnconfigs, map, size, classes, model);
     }
@@ -84,7 +93,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         return models;
     }
 
-    private Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<double[], Double>> map, int size, int classes,
+    private Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<Object, Double>> map, int size, int classes,
             MLClassifyModel model) {
         // not used?
         //List<List<Object>> listlist = getListList(map);
@@ -100,19 +109,19 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntest");
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntest");
         return test.getAccuracy();
     }
 
-    private void getTrainingSet(Map<String, Pair<double[], Double>> map, Object[][] objobj, Object[] cat) {
+    private void getTrainingSet(Map<String, Pair<Object, Double>> map, Object[][] objobj, Object[] cat) {
         int i = 0;
-        for (Entry<String, Pair<double[], Double>> entry : map.entrySet()) {
-            double[] key = entry.getValue().getLeft();
+        for (Entry<String, Pair<Object, Double>> entry : map.entrySet()) {
+            double[] key = (double[]) entry.getValue().getLeft();
             Object[] obj = new Object[key.length/* + 1*/];
             for (int j = 0; j < key.length; j ++) {
                 obj[j] = key[j];
             }
-            Pair<double[], Double> pair = entry.getValue();
+            Pair<Object, Double> pair = entry.getValue();
             cat[i] = pair.getRight();
             objobj[i++] = obj;
         }
@@ -135,12 +144,12 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/eval");
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/eval");
         return test.getAccuracy();
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int classes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         if (map.isEmpty()) {
@@ -149,7 +158,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         return classifyInner(map, model, size, classes);
     }
 
-    private Map<String, Double[]> classifyInner(Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    private Map<String, Double[]> classifyInner(Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int classes) {
         LearnTestClassify param = new LearnTestClassify();
         List<String> retList = new ArrayList<>();
@@ -164,7 +173,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/classify");
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -172,7 +181,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         return retMap;
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, Map<String, Pair<double[], Double>> classifyMap, LearnTestClassify ret) {
+    private Map<String, Double[]> getCatMap(List<String> retList, Map<String, Pair<Object, Double>> classifyMap, LearnTestClassify ret) {
         Object[] cat = ret.getClassifycatarray();
         Object[] prob = ret.getClassifyprobarray();
         Map<String, Double[]> retMap = new HashMap<>();
@@ -194,10 +203,10 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         return retMap;
     }
 
-    private void getClassifyArray(Map<String, Pair<double[], Double>> map2, List<String> retList, Object[][] objobj) {
+    private void getClassifyArray(Map<String, Pair<Object, Double>> map2, List<String> retList, Object[][] objobj) {
         int i = 0;
-        for (Entry<String, Pair<double[], Double>> entry : map2.entrySet()) {
-            double[] value = entry.getValue().getLeft();
+        for (Entry<String, Pair<Object, Double>> entry : map2.entrySet()) {
+            double[] value = (double[]) entry.getValue().getLeft();
             Object[] obj = new Object[value.length/* + 1*/];
             for (int j = 0; j < value.length; j ++) {
                 obj[j] = value[j];
@@ -213,18 +222,43 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnMap,
-            MLClassifyModel model, int size, int classes, Map<String, Pair<double[], Double>> classifyMap,
-            Map<Double, String> shortMap, String path, String filename, boolean mldynamic) {
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> learnMap,
+            MLClassifyModel model, int size, int classes, Map<String, Pair<Object, Double>> classifyMap,
+            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
-        if (classifyMap == null || classifyMap.isEmpty()) {
+        if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
             result.setCatMap(new HashMap<>());
             return result;
         }
+        boolean persist = model.wantPersist();
+        if (!neuralnetcommand.isMldynamic() != persist) {
+            return result;
+        }
+        LearnTestClassify param = new LearnTestClassify();
+        param.setPath(path);
+        param.setFilename(filename);
+        param.setNeuralnetcommand(neuralnetcommand);
+        try {
+            LearnTestClassify ret = null;
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/filename");
+            boolean exists = ret.getExists();
+            if (neuralnetcommand.isMldynamic() == true) {
+                return result;
+            }
+            if (!exists && !neuralnetcommand.isMldynamic()) {
+                //return result;
+            }
+        } catch (Exception e) {
+            log.error("Exception", e);
+        }
         Object[][] trainingArray = new Object[learnMap.size()][];
+        List<ContItem> newConts = new ArrayList<>();
+        trainingArray = filter(trainingArray, filename, newConts);
+        if (newConts.size() < 1000) {
+            return result;
+        }
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
-        LearnTestClassify param = new LearnTestClassify();
         GemSConfig sconfig = null;
         GemIConfig iconfig = null;
         GemMMConfig mconfig = null;
@@ -278,14 +312,61 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntestclassify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
+        saveme(newConts);
         result.setAccuracy(ret.getAccuracy());
         Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret);
         result.setCatMap(retMap);
         return result;
+    }
+
+    private void saveme(List<ContItem> newConts) {
+        long millis0 = System.currentTimeMillis();
+        for (ContItem cont : newConts) {
+            try {
+                cont.save();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        log.info("Time spent {}", (System.currentTimeMillis() - millis0) / 1000);
+    }
+
+    private synchronized Object[][] filter(Object[][] trainingArray, String filename, List<ContItem> newConts ) {
+        long millis0 = System.currentTimeMillis();
+        List<ContItem> conts = null;
+        try {
+             conts = ContItem.getAll();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        Set<String> md5s = new HashSet<>();
+        for (ContItem cont : conts) {
+            if (filename.equals(cont.getMd5())) {
+                md5s.add(cont.getMd5());
+            }
+        }
+        List<Object[]> filtered = new ArrayList<>();
+        for (Object[] anArray : trainingArray) {
+            String str = Arrays.toString(anArray);
+            log.info("md5str {}", str);
+            String md5 = DigestUtils.md5Hex(str);
+            if (md5s.contains(md5)) {
+                continue;
+            }
+            filtered.add(anArray);
+            ContItem cont = new ContItem();
+            cont.setMd5(md5);
+            cont.setFilename(filename);
+            cont.setDate(LocalDate.now());
+            newConts.add(cont);
+        }
+        Object[][] newfiltered = (Object[][]) filtered.toArray();
+        log.info("Time spent {}", (System.currentTimeMillis() - millis0) / 1000);
+        return newfiltered;
     }
 
     @Override

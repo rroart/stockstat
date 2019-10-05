@@ -6,6 +6,9 @@ import org.apache.spark.ml.Model;
 import org.apache.spark.ml.classification.MultilayerPerceptronClassifier;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.ml.PipelineModel;
+import org.apache.spark.ml.Pipeline;
+import org.apache.spark.ml.PipelineStage;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
@@ -37,7 +40,7 @@ public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public Model getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
+    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
         SparkMLPCConfig modelConf = getModel(conf, outcomes);
         int layer = modelConf.getLayers();
         int hidden = modelConf.getHidden();
@@ -57,7 +60,8 @@ public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
                 .setMaxIter(modelConf.getMaxiter());
         MultilayerPerceptronClassifier dummy = new MultilayerPerceptronClassifier();
         log.info("dymmy " + dummy.getBlockSize() + " " + dummy.getMaxIter() + " " + dummy.getSeed() + " " + dummy.getStepSize() + " " + dummy.getTol());
-        return trainer.fit(train);
+        Pipeline pipeline = new Pipeline().setStages(new PipelineStage[] { trainer } );
+        return pipeline.fit(train);
     }
 
     @Override
@@ -86,5 +90,10 @@ public class MLClassifySparkMLPCModel  extends MLClassifySparkModel {
             //modelConf = new SparkMLPCConfig(100, 2, 1E-6);
         }
         return modelConf;
+    }
+
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantSparkMLPCPersist();
     }
 }

@@ -44,4 +44,14 @@ public class MLClassifyTensorflowLIRModel  extends MLClassifyTensorflowModel {
         return modelConf;
     }
 
+    @Override
+    public boolean isPredictorOnly() {
+        return true;
+    }
+
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantTensorflowLIRPersist();
+    }
+
 }

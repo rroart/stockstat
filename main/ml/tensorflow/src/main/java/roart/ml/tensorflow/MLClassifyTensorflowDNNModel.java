@@ -45,4 +45,9 @@ public class MLClassifyTensorflowDNNModel  extends MLClassifyTensorflowModel {
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantTensorflowDNNPersist();
+    }
+
 }

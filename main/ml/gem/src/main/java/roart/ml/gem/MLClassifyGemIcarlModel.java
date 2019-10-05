@@ -44,4 +44,9 @@ public class MLClassifyGemIcarlModel  extends MLClassifyGemModel {
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantGemIcarlPersist();
+    }
+
 }

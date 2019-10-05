@@ -609,14 +609,14 @@ public class IndicatorUtils {
         }
     }
 
-    public static void filterNonExistingClassifications3(Map<Double, String> labelMapShort, Map<String, List<Pair<double[], Pair<double[], Double>>>> map) {
-        log.info("Values " + map.values());
+    public static void filterNonExistingClassifications3(Map<Double, String> labelMapShort, Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap) {
+        log.info("Values " + learnMap.values());
         // due to tensorflow l classifying to 3rd (not inc dec)
-        for (Entry<String, List<Pair<double[], Pair<double[], Double>>>> entry : map.entrySet()) {
+        for (Entry<String, List<Pair<double[], Pair<Object, Double>>>> entry : learnMap.entrySet()) {
             String key = entry.getKey();
             List<Object> filterNonExistingClassifications = new ArrayList<>();
-            List<Pair<double[], Pair<double[], Double>>> list = entry.getValue();
-            for (Pair<double[], Pair<double[], Double>> elem : list) {
+            List<Pair<double[], Pair<Object, Double>>> list = entry.getValue();
+            for (Pair<double[], Pair<Object, Double>> elem : list) {
                 Double value = elem.getRight().getRight();
                 if (labelMapShort.get(value) == null) {
                     filterNonExistingClassifications.add(elem);

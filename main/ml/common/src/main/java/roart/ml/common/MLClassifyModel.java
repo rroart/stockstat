@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,13 +109,39 @@ public abstract class MLClassifyModel {
         return true;
     }
 
-    public boolean isPredictor() {
+    public boolean isPredictorOnly() {
         return false;
     }
 
-    public boolean isOneDimensional() {
+    public boolean isTwoDimensional() {
         return true;
     }
 
+    public boolean isThreeDimensional() {
+        return false;
+    }
+
     public abstract String getPath();
+
+    public Object transform(Object array, MLMeta mlmeta) {
+        if (mlmeta == null) {
+            log.error("No ML Meta");
+            return array;
+        }
+        if (mlmeta.dim2 != null && isTwoDimensional()) {
+            double[] newarray = new double[0];
+            double[][] arrays = (double[][]) array;
+            for (int i = 0; i < mlmeta.dim2; i++) {
+                newarray = (double[]) ArrayUtils.addAll(newarray, arrays[i]);
+            }
+            return newarray;
+        }
+        if (isThreeDimensional()) {
+            
+        }
+        return array;
+    }
+
+    public abstract boolean wantPersist();
+
 }

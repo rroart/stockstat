@@ -44,4 +44,8 @@ public class MLClassifyPytorchGRUModel  extends MLClassifyPytorchRecurrentModel 
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantPytorchGRUPersist();
+    }
 }

@@ -97,6 +97,7 @@
     <commons.version>2.1.1</commons.version>
     <commons.math3.version>3.6.1</commons.math3.version>
     <commons.lang3.version>3.8.1</commons.lang3.version>
+    <commons.codec>1.13</commons.codec>
     <httpclient.version>4.5.6</httpclient.version>
     <jaxb.version>2.3.0</jaxb.version>
     <stanfordcorenlp.version>3.9.1</stanfordcorenlp.version>

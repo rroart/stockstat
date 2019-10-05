@@ -44,4 +44,9 @@ public class MLClassifyGemMultimodalModel  extends MLClassifyGemModel {
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantGemMultiModalPersist();
+    }
+
 }

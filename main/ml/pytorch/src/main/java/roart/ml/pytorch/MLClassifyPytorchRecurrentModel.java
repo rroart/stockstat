@@ -11,12 +11,17 @@ public abstract class MLClassifyPytorchRecurrentModel extends MLClassifyPytorchM
         super(conf);
     }
 
-    public boolean isPredictor() {
+    public boolean isPredictorOnly() {
         return true;
     }
 
-    public boolean isOneDimensional() {
+    @Override
+    public boolean isTwoDimensional() {
         return false;
     }
 
+    @Override
+    public boolean isThreeDimensional() {
+        return true;
+    }
 }

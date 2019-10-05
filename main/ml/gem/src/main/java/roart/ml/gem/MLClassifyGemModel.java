@@ -5,6 +5,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyModel;
+import roart.ml.common.MLMeta;
 import roart.ml.model.LearnTestClassify;
 import roart.pipeline.common.aggregate.Aggregator;
 
@@ -34,4 +35,5 @@ public abstract class MLClassifyGemModel extends MLClassifyModel {
     public String getPath() {
         return getConf().getGEMPath();
     }
+
 }

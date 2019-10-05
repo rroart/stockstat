@@ -8,6 +8,9 @@ import org.apache.spark.ml.Model;
 import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.ml.PipelineModel;
+import org.apache.spark.ml.Pipeline;
+import org.apache.spark.ml.PipelineStage;
 
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
@@ -18,8 +21,8 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.SparkLORConfig;
 import roart.pipeline.common.aggregate.Aggregator;
 
-public class MLClassifySparkLRModel  extends MLClassifySparkModel {
-    public MLClassifySparkLRModel(MyMyConfig conf) {
+public class MLClassifySparkLORModel  extends MLClassifySparkModel {
+    public MLClassifySparkLORModel(MyMyConfig conf) {
         super(conf);
     }
     
@@ -30,7 +33,7 @@ public class MLClassifySparkLRModel  extends MLClassifySparkModel {
     
     @Override
     public String getName() {
-        return MLConstants.LIR;
+        return MLConstants.LOR;
     }
 
     @Override
@@ -49,7 +52,7 @@ public class MLClassifySparkLRModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public Model getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
+    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
         SparkLORConfig modelConf = (SparkLORConfig) getModel(conf);
         LogisticRegression reg = new LogisticRegression();
         reg.setMaxIter(modelConf.getMaxiter());
@@ -61,7 +64,8 @@ public class MLClassifySparkLRModel  extends MLClassifySparkModel {
         log.info("Used ML config {}", modelConf);
         LogisticRegression dummy = new LogisticRegression();
         log.info("dymmy " + dummy.getElasticNetParam() + " " + dummy.getMaxIter() + " " + dummy.getRegParam() + " " + dummy.getThreshold() + " " + dummy.getTol() + " " + dummy.getStandardization() + " " + dummy.getFitIntercept());
-        return reg.fit(train);
+        Pipeline pipeline = new Pipeline().setStages(new PipelineStage[] { reg } );
+        return pipeline.fit(train);
     }
 
     @Override
@@ -77,6 +81,11 @@ public class MLClassifySparkLRModel  extends MLClassifySparkModel {
             }
         }
         return modelConf;
+    }
+
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantSparkLORPersist();
     }
 
 }

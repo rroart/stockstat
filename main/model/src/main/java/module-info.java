@@ -14,4 +14,5 @@ module model {
     requires slf4j.api;
     requires common.config;
     requires org.apache.commons.lang3;
+    requires db;
 }

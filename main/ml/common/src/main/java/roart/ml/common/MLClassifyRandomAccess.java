@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -41,7 +42,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int outcomes, String filename) {
         return random.nextDouble();
     }
@@ -56,10 +57,10 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
         return random.nextDouble();
     }
 
-    private List<List<Object>> getListList(Map<double[], Double> map) {
+    private List<List<Object>> getListList(Map<Object, Double> map) {
         List<List<Object>> listlist = new ArrayList<>();
-        for (Entry<double[], Double> entry : map.entrySet()) {
-            double[] key = entry.getKey();
+        for (Entry<Object, Double> entry : map.entrySet()) {
+            Object key = entry.getKey();
             List<Object> list = new ArrayList<>();
             list.addAll(Arrays.asList(key));
             list.add(entry.getValue());
@@ -69,12 +70,12 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int outcomes, Map<Double, String> shortMap) {
         return new HashMap<>();
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, Map<String, Pair<double[], Double>> classifyMap, Object[] list) {
+    private Map<String, Double[]> getCatMap(List<String> retList, Map<String, Pair<Object, Double>> classifyMap, Object[] list) {
         Map<String, Double[]> retMap = new HashMap<>();
         for (int j = 0; j < retList.size(); j ++) {
             Double acat = (Double) list[random.nextInt(list.length)];
@@ -92,10 +93,10 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
         return retMap;
     }
 
-    private void getClassifyArray(Map<String, Pair<double[], Double>> map2, List<String> retList, Object[][] objobj) {
+    private void getClassifyArray(Map<String, Pair<Object, Double>> map2, List<String> retList, Object[][] objobj) {
         int i = 0;
-        for (Entry<String, Pair<double[], Double>> entry : map2.entrySet()) {
-            double[] value = entry.getValue().getLeft();
+        for (Entry<String, Pair<Object, Double>> entry : map2.entrySet()) {
+            double[] value = (double[]) entry.getValue().getLeft();
             Object[] obj = new Object[value.length/* + 1*/];
             for (int j = 0; j < value.length; j ++) {
                 obj[j] = value[j];
@@ -111,9 +112,9 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnMap,
-            MLClassifyModel model, int size, int outcomes, Map<String, Pair<double[], Double>> classifyMap,
-            Map<Double, String> shortMap, String path, String filename, boolean mldynamic) {
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> learnMap,
+            MLClassifyModel model, int size, int outcomes, Map<String, Pair<Object, Double>> classifyMap,
+            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (classifyMap == null || classifyMap.isEmpty()) {
             result.setCatMap(new HashMap<>());

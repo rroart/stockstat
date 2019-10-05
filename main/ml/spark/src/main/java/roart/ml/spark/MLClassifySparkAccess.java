@@ -1,5 +1,6 @@
 package roart.ml.spark;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import org.apache.spark.ml.linalg.DenseVector;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.ml.PipelineModel;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -29,9 +31,11 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
+import roart.ml.common.MLMeta;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.ml.spark.util.SparkUtil;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -64,7 +68,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
             models.add(model);
         }
         if (conf.wantSparkLOR()) {
-            MLClassifyModel model = new MLClassifySparkLRModel(conf);
+            MLClassifyModel model = new MLClassifySparkLORModel(conf);
             models.add(model);
         }
         if (conf.wantSparkOVR()) {
@@ -77,7 +81,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         }
     }
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int outcomes, String filename) {
         return learntestInner(nnconfigs, map, model, size, outcomes, filename);       
     }
@@ -88,7 +92,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int outcomes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         return classifyInner(map, Integer.valueOf(model.getId()), size, outcomes, shortMap);
@@ -99,7 +103,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return models;
     }
 
-    public Map<String, Double[]> classifyInner(Map<String, Pair<double[], Double>> newMap, int modelInt, int size, int outcomes, Map<Double, String> shortMap) {
+    public Map<String, Double[]> classifyInner(Map<String, Pair<Object, Double>> newMap, int modelInt, int size, int outcomes, Map<Double, String> shortMap) {
         long time0 = System.currentTimeMillis();
         Map<String, double[]> map = getMap2(newMap);
         Map<String, Double[]> retMap = new HashMap<>();
@@ -148,7 +152,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         return null;
     }
 
-    public Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<double[], Double>> newMap, MLClassifyModel mlmodel, int size, int classes, String filename) {
+    public Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<Object, Double>> newMap, MLClassifyModel mlmodel, int size, int classes, String filename) {
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {
@@ -194,18 +198,18 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     }
 
 
-    private Map<String, double[]> getMap2(Map<String, Pair<double[], Double>> newMap) {
+    private Map<String, double[]> getMap2(Map<String, Pair<Object, Double>> newMap) {
         Map<String, double[]> map = new HashMap<>();
-        for (Entry<String, Pair<double[], Double>> entry : newMap.entrySet()) {
-            map.put(entry.getKey(), entry.getValue().getLeft());
+        for (Entry<String, Pair<Object, Double>> entry : newMap.entrySet()) {
+            map.put(entry.getKey(), (double[]) entry.getValue().getLeft());
         }
         return map;
     }
 
-    private Map<double[], Double> getMap(Map<String, Pair<double[], Double>> newMap) {
+    private Map<double[], Double> getMap(Map<String, Pair<Object, Double>> newMap) {
         Map<double[], Double> map = new HashMap<>();
-        for (Entry<String, Pair<double[], Double>> entry : newMap.entrySet()) {
-            map.put(entry.getValue().getLeft(), entry.getValue().getRight());
+        for (Entry<String, Pair<Object, Double>> entry : newMap.entrySet()) {
+            map.put((double[]) entry.getValue().getLeft(), entry.getValue().getRight());
         }
         return map;
     }
@@ -221,15 +225,34 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, Map<String, Pair<double[], Double>> newMap,
-            MLClassifyModel mlmodel, int size, int classes, Map<String, Pair<double[], Double>> newMap2,
-            Map<Double, String> shortMap, String path, String filename, boolean mldynamic) {
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, Map<String, Pair<Object, Double>> learnMap,
+            MLClassifyModel mlmodel, int size, int classes, Map<String, Pair<Object, Double>> classifyMap,
+            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
+        LearnTestClassifyResult result2 = new LearnTestClassifyResult();
+        if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
+            result2.setCatMap(new HashMap<>());
+            return result2;
+        }
         Double accuracy = null;
         long time0 = System.currentTimeMillis();
         if (spark == null) {
             return null;
         }
-        Map<double[], Double> map = getMap(newMap);
+        boolean persist = mlmodel.wantPersist();
+        if (!neuralnetcommand.isMldynamic() != persist) {
+            return null;
+        }
+        boolean exists = false;
+        try {
+            File file = new File(path + "/" + filename);
+            exists = file.exists();
+            if (!exists && (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMlclassify())) {
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("Exception", e);
+        }
+        Map<double[], Double> map = getMap(learnMap);
         Map<Double, Double> zeroMap = new HashMap<>();
         Map<Double, Double> revZeroMap = new HashMap<>();
         map = getZeroMap(map, zeroMap, revZeroMap);
@@ -258,8 +281,16 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 log.info(" e " + l.size() + " " + l);
             }
             MLClassifySparkModel sparkModel = (MLClassifySparkModel) mlmodel;
-            Model model = sparkModel.getModel(nnconfig, train, size, classes);
-
+            PipelineModel model = null;
+            if (!exists || neuralnetcommand.isMldynamic() || neuralnetcommand.isMllearn()) {
+                model = sparkModel.getModel(nnconfig, train, size, classes);
+            } else {
+                model = PipelineModel.load(path + "/" + filename);
+            }
+            if (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMllearn()) {
+                model.write().overwrite().save(path + "/" + filename);
+                //model = model.write.overwrite().save(path + "/" + filename);
+            }
             // compute accuracy on the test set                                         
             Dataset<Row> result = model.transform(test);
             Dataset<Row> predictionAndLabels = result.select("prediction", "label");
@@ -270,7 +301,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
             accuracyMap.put(filename, eval);
             accuracy = eval;
             Map<String, Double[]> retMap = new HashMap<>();
-            Map<String, double[]> map2 = getMap2(newMap2);
+            Map<String, double[]> map2 = getMap2(classifyMap);
             Dataset<Row> data2 = SparkUtil.createDFfromMap2(spark, map2);
             int modelInt = Integer.valueOf(mlmodel.getId());
             Dataset<Row> resultDF = model.transform(data2);
@@ -298,16 +329,15 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 retMap.put(id, retVal);
                 //MutablePair pair = (MutablePair) newMap2.get(id);
                 //pair.setRight(predict);
-                Pair pair = newMap2.get(id);
+                Pair pair = classifyMap.get(id);
                 if (pair.getRight() != null) {
                     int jj = 0;
                 }
                 MutablePair mutablePair = new MutablePair(pair.getLeft(), null);
                 mutablePair.setRight(predict);
-                newMap2.put(id, mutablePair);
+                classifyMap.put(id, mutablePair);
             }
             log.info("classify done");
-            LearnTestClassifyResult result2 = new LearnTestClassifyResult();
             result2.setAccuracy(accuracy);
             result2.setCatMap(retMap);
             if (retMap == null || retMap.isEmpty()) {

@@ -3,6 +3,7 @@ package roart.ml.spark;
 import org.apache.spark.ml.Model;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.ml.PipelineModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.ml.common.MLClassifyModel;
+import roart.ml.common.MLMeta;
 
 public abstract class MLClassifySparkModel extends MLClassifyModel {
 
@@ -24,7 +26,7 @@ public abstract class MLClassifySparkModel extends MLClassifyModel {
         return MLConstants.SPARK;
     }
 
-    public abstract Model getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes);
+    public abstract PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes);
     
     public abstract NeuralNetConfig getModel(NeuralNetConfigs conf);
     
@@ -32,4 +34,5 @@ public abstract class MLClassifySparkModel extends MLClassifyModel {
     public String getPath() {
         return getConf().getSparkMLPath();
     }
+    
 }

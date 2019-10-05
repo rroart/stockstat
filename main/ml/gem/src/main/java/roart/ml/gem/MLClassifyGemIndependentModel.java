@@ -44,4 +44,9 @@ public class MLClassifyGemIndependentModel  extends MLClassifyGemModel {
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantGemIndependentPersist();
+    }
+
 }

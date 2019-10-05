@@ -10,6 +10,9 @@ import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.ml.classification.OneVsRest;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.ml.PipelineModel;
+import org.apache.spark.ml.Pipeline;
+import org.apache.spark.ml.PipelineStage;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -57,7 +60,7 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
     }
 
     @Override
-    public Model getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
+    public PipelineModel getModel(NeuralNetConfigs conf, Dataset<Row> train, int size, int outcomes) {
         SparkOVRConfig modelConf = (SparkOVRConfig) getModel(conf);
         LogisticRegression lr = new LogisticRegression()
                 .setMaxIter(modelConf.getMaxiter())
@@ -67,7 +70,8 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
 
         log.info("Used ML config {}", modelConf);
         // train the multiclass model.
-        return ovr.fit(train);
+        Pipeline pipeline = new Pipeline().setStages(new PipelineStage[] { ovr } );
+        return pipeline.fit(train);
     }
 
     public NeuralNetConfig getModel(NeuralNetConfigs conf) {
@@ -83,6 +87,11 @@ public class MLClassifySparkOVRModel  extends MLClassifySparkModel {
             }
         }
         return modelConf;
+    }
+
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantSparkOVRPersist();
     }
 
 }

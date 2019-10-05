@@ -44,4 +44,9 @@ public class MLClassifyTensorflowGRUModel  extends MLClassifyTensorflowRecurrent
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantTensorflowGRUPersist();
+    }
+
 }

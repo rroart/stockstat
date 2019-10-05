@@ -44,4 +44,9 @@ public class MLClassifyPytorchLSTMModel  extends MLClassifyPytorchRecurrentModel
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantPytorchLSTMPersist();
+    }
+
 }

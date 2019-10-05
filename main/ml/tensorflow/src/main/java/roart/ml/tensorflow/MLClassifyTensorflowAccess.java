@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.TensorflowCNNConfig;
@@ -28,6 +29,7 @@ import roart.common.ml.TensorflowRNNConfig;
 import roart.eureka.util.EurekaUtil;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
+import roart.ml.common.MLMeta;
 import roart.ml.model.LearnTestClassify;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -83,7 +85,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int classes, String filename) {
         return learntestInner(nnconfigs, map, size, classes, model);
     }
@@ -93,7 +95,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return models;
     }
 
-    private Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<double[], Double>> map, int size, int classes,
+    private Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<Object, Double>> map, int size, int classes,
             MLClassifyModel model) {
         // not used?
         //List<List<Object>> listlist = getListList(map);
@@ -119,15 +121,15 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return test.getAccuracy();
     }
 
-    private void getTrainingSet(Map<String, Pair<double[], Double>> map, Object[][] objobj, Object[] cat) {
+    private void getTrainingSet(Map<String, Pair<Object, Double>> map, Object[][] objobj, Object[] cat) {
         int i = 0;
-        for (Entry<String, Pair<double[], Double>> entry : map.entrySet()) {
-            double[] key = entry.getValue().getLeft();
+        for (Entry<String, Pair<Object, Double>> entry : map.entrySet()) {
+            double[] key = (double[]) entry.getValue().getLeft();
             Object[] obj = new Object[key.length/* + 1*/];
             for (int j = 0; j < key.length; j ++) {
                 obj[j] = key[j];
             }
-            Pair<double[], Double> pair = entry.getValue();
+            Pair<Object, Double> pair = entry.getValue();
             cat[i] = pair.getRight();
             objobj[i++] = obj;
         }
@@ -155,7 +157,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int classes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         if (map.isEmpty()) {
@@ -164,7 +166,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return classifyInner(map, model, size, classes);
     }
 
-    private Map<String, Double[]> classifyInner(Map<String, Pair<double[], Double>> map, MLClassifyModel model, int size,
+    private Map<String, Double[]> classifyInner(Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
             int classes) {
         LearnTestClassify param = new LearnTestClassify();
         List<String> retList = new ArrayList<>();
@@ -187,7 +189,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return retMap;
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, Map<String, Pair<double[], Double>> classifyMap, LearnTestClassify ret) {
+    private Map<String, Double[]> getCatMap(List<String> retList, Map<String, Pair<Object, Double>> classifyMap, LearnTestClassify ret) {
         Object[] cat = ret.getClassifycatarray();
         Object[] prob = ret.getClassifyprobarray();
         Map<String, Double[]> retMap = new HashMap<>();
@@ -209,10 +211,10 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return retMap;
     }
 
-    private void getClassifyArray(Map<String, Pair<double[], Double>> map2, List<String> retList, Object[][] objobj) {
+    private void getClassifyArray(Map<String, Pair<Object, Double>> map2, List<String> retList, Object[][] objobj) {
         int i = 0;
-        for (Entry<String, Pair<double[], Double>> entry : map2.entrySet()) {
-            double[] value = entry.getValue().getLeft();
+        for (Entry<String, Pair<Object, Double>> entry : map2.entrySet()) {
+            double[] value = (double[]) entry.getValue().getLeft();
             Object[] obj = new Object[value.length/* + 1*/];
             for (int j = 0; j < value.length; j ++) {
                 obj[j] = value[j];
@@ -228,22 +230,27 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<double[], Double>> learnMap,
-            MLClassifyModel model, int size, int classes, Map<String, Pair<double[], Double>> classifyMap,
-            Map<Double, String> shortMap, String path, String filename, boolean mldynamic) {
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> learnMap,
+            MLClassifyModel model, int size, int classes, Map<String, Pair<Object, Double>> classifyMap,
+            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
-        if (classifyMap == null || classifyMap.isEmpty()) {
+        if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
             result.setCatMap(new HashMap<>());
+            return result;
+        }
+        boolean persist = model.wantPersist();
+        if (!neuralnetcommand.isMldynamic() != persist) {
             return result;
         }
         LearnTestClassify param = new LearnTestClassify();
         param.setPath(path);
         param.setFilename(filename);
+        param.setNeuralnetcommand(neuralnetcommand);
         try {
             LearnTestClassify ret = null;
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/filename");
             boolean exists = ret.getExists();
-            if (!exists && !mldynamic) {
+            if (!exists && (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMlclassify())) {
                 return result;
             }
         } catch (Exception e) {

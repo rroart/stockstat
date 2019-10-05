@@ -45,8 +45,19 @@ public class MLClassifyTensorflowCNNModel  extends MLClassifyTensorflowModel {
         return modelConf;
     }
 
-    public boolean isOneDimensional() {
+    @Override
+    public boolean isTwoDimensional() {
         return false;
+    }
+
+    @Override
+    public boolean isThreeDimensional() {
+        return true;
+    }
+
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantTensorflowCNNPersist();
     }
 
 }

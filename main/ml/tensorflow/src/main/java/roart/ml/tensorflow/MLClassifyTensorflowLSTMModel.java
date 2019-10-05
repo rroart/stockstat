@@ -44,4 +44,9 @@ public class MLClassifyTensorflowLSTMModel  extends MLClassifyTensorflowRecurren
         return modelConf;
     }
 
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantTensorflowLSTMPersist();
+    }
+
 }

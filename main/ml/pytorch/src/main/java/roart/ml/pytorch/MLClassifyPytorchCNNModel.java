@@ -44,8 +44,19 @@ public class MLClassifyPytorchCNNModel  extends MLClassifyPytorchModel {
         return modelConf;
     }
 
-    public boolean isOneDimensional() {
+    @Override
+    public boolean isTwoDimensional() {
         return false;
+    }
+
+    @Override
+    public boolean isThreeDimensional() {
+        return true;
+    }
+
+    @Override
+    public boolean wantPersist() {
+        return getConf().wantPytorchCNNPersist();
     }
 
 }

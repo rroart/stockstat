@@ -6,6 +6,7 @@ import roart.common.ml.GemIConfig;
 import roart.common.ml.GemIcarlConfig;
 import roart.common.ml.GemMMConfig;
 import roart.common.ml.GemSConfig;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.PytorchCNNConfig;
 import roart.common.ml.PytorchGRUConfig;
 import roart.common.ml.PytorchLSTMConfig;
@@ -81,6 +82,8 @@ public class LearnTestClassify {
     
     private String path;
     
+    private NeuralNetCommand neuralnetcommand;
+    
     private int size;
     
     private String mapname;
@@ -89,6 +92,10 @@ public class LearnTestClassify {
     
     private Double accuracy;
 
+    private Double loss;
+    
+    private Boolean exists;
+    
     public TensorflowDNNConfig getTensorflowDNNConfig() {
         return tensorflowDNNConfig;
     }
@@ -325,6 +332,14 @@ public class LearnTestClassify {
         this.path = path;
     }
 
+    public NeuralNetCommand getNeuralnetcommand() {
+        return neuralnetcommand;
+    }
+
+    public void setNeuralnetcommand(NeuralNetCommand neuralnetcommand) {
+        this.neuralnetcommand = neuralnetcommand;
+    }
+
     public int getSize() {
         return size;
     }
@@ -355,6 +370,22 @@ public class LearnTestClassify {
 
     public void setAccuracy(Double accuracy) {
         this.accuracy = accuracy;
+    }
+
+    public Double getLoss() {
+        return loss;
+    }
+
+    public void setLoss(Double loss) {
+        this.loss = loss;
+    }
+
+    public Boolean getExists() {
+        return exists;
+    }
+
+    public void setExists(Boolean exists) {
+        this.exists = exists;
     }
 
 }
