@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import roart.common.config.MyConfig;
+import roart.common.ml.NeuralNetCommand;
 import roart.result.model.GUISize;
 
 public class ServiceParam {
@@ -21,6 +22,8 @@ public class ServiceParam {
     
     private String webpath;
 
+    private NeuralNetCommand neuralnetcommand;
+    
     public ServiceParam() {
         super();
     }
@@ -79,6 +82,14 @@ public class ServiceParam {
 
     public void setWebpath(String webpath) {
         this.webpath = webpath;
+    }
+
+    public NeuralNetCommand getNeuralnetcommand() {
+        return neuralnetcommand;
+    }
+
+    public void setNeuralnetcommand(NeuralNetCommand neuralnetcommand) {
+        this.neuralnetcommand = neuralnetcommand;
     }
 
 }
