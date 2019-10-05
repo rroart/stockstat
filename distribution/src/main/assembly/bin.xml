@@ -76,14 +76,14 @@
       <includes>
 	<include>**</include>
       </includes>
-      <outputDirectory>tensorflow</outputDirectory>
+      <outputDirectory>pytorch</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${project.basedir}/../gem</directory>
+      <directory>${project.basedir}/../gemservice</directory>
       <includes>
 	<include>**</include>
       </includes>
-      <outputDirectory>tensorflow</outputDirectory>
+      <outputDirectory>gem</outputDirectory>
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/../python/pd</directory>
