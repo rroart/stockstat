@@ -33,7 +33,7 @@ public class ConfigConstantMaps {
 
     private static final String GEMICARLCONFIG = "{ \"name\" : \"iCaRL\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 1.0, \"n_memories\" : 1280, \"memory_strength\" : 1, \"samples_per_task\" : 10, \"data_file\" : \"\" }";
 
-    private static final String PYTORCHMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hiddenneurons\" : 20, \"hiddenlayers\":3, \"lr\" : 0.1 }";
+    private static final String PYTORCHMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 20, \"layers\":3, \"lr\" : 0.1 }";
     
     private static final String PYTORCHRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.1 }";
     
@@ -41,7 +41,7 @@ public class ConfigConstantMaps {
     
     private static final String PYTORCHGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.1 }";
     
-    private static final String PYTORCHCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 4 }";
+    private static final String PYTORCHCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 4, \"lr\" : 0.1 }";
     
     private static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\", \"steps\" : 100, \"hiddenneurons\" : 20, \"hiddenlayers\":3 }";
 
@@ -156,7 +156,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGGEMSINGLEPERSIST, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGGEMPATH, String.class);
-        map.put(ConfigConstants.MACHINELEARNINGGEMSERVER, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGGEMSERVER, String.class);
         map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.class);
 
         map.put(ConfigConstants.INDICATORS, Boolean.class);
@@ -224,7 +224,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCOTHERSTATS, Boolean.class);
         map.put(ConfigConstants.MISCMYDAYS, Integer.class);
         map.put(ConfigConstants.MISCMYTOPBOTTOM, Integer.class);
-        map.put(ConfigConstants.MISCMYTBLEDAYS, Integer.class);
+        map.put(ConfigConstants.MISCMYTABLEDAYS, Integer.class);
         map.put(ConfigConstants.MISCMYTABLEMOVEINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.MISCMYTABLEINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.MISCMYEQUALIZE, Boolean.class);
@@ -488,7 +488,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGGEMSINGLEPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG, GEMSINGLECONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMPATH, "");
-        deflt.put(ConfigConstants.MACHINELEARNINGGEMSERVER, "");
+        deflt.put(ConfigConstants.MACHINELEARNINGGEMSERVER, "http://localhost:8020/");
         deflt.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);
         deflt.put(ConfigConstants.INDICATORS, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMOVE, Boolean.TRUE);
@@ -556,7 +556,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCOTHERSTATS, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCMYDAYS, 180);
         deflt.put(ConfigConstants.MISCMYTOPBOTTOM, 10);
-        deflt.put(ConfigConstants.MISCMYTBLEDAYS, 180);
+        deflt.put(ConfigConstants.MISCMYTABLEDAYS, 180);
         deflt.put(ConfigConstants.MISCMYTABLEMOVEINTERVALDAYS, 5);
         deflt.put(ConfigConstants.MISCMYTABLEINTERVALDAYS, 1);
         deflt.put(ConfigConstants.MISCMYEQUALIZE, Boolean.TRUE);
@@ -884,7 +884,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCOTHERSTATS, "Enable other stat pages");
         text.put(ConfigConstants.MISCMYDAYS, "Number of days to display");
         text.put(ConfigConstants.MISCMYTOPBOTTOM, "Number of items to display");
-        text.put(ConfigConstants.MISCMYTBLEDAYS, "Table days");
+        text.put(ConfigConstants.MISCMYTABLEDAYS, "Table days");
         text.put(ConfigConstants.MISCMYTABLEMOVEINTERVALDAYS, "Interval days for table move");
         text.put(ConfigConstants.MISCMYTABLEINTERVALDAYS, "Table interval days");
         text.put(ConfigConstants.MISCMYEQUALIZE, "Enable equalizing");
@@ -1165,7 +1165,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHGRUPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch GRU persist"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHGRUCONFIG, new XMLType(String.class, PYTORCHGRUCONFIG, "Config for Pytorch GRU"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHPATH, new XMLType(String.class, "/tmp", "Pytorch path"));
-        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHSERVER, new XMLType(String.class, "http://localhost:8010/", "Pytorch path"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHSERVER, new XMLType(String.class, "http://localhost:8010/", "Pytorch server"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEM, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMEWC, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM EWC"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMEWCPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM EWC persist"));
@@ -1253,7 +1253,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCOTHERSTATS, new XMLType( Boolean.class, Boolean.TRUE, "Enable other stat pages"));
         mymap.put(ConfigConstants.MISCMYDAYS, new XMLType( Integer.class, 180, "Number of days to display"));
         mymap.put(ConfigConstants.MISCMYTOPBOTTOM, new XMLType( Integer.class, 10, "Number of items to display"));
-        mymap.put(ConfigConstants.MISCMYTBLEDAYS, new XMLType( Integer.class, 180, "Table days"));
+        mymap.put(ConfigConstants.MISCMYTABLEDAYS, new XMLType( Integer.class, 180, "Table days"));
         mymap.put(ConfigConstants.MISCMYTABLEMOVEINTERVALDAYS, new XMLType( Integer.class, 5, "Interval days for table move"));
         mymap.put(ConfigConstants.MISCMYTABLEINTERVALDAYS, new XMLType( Integer.class, 1, "Table interval days"));
         mymap.put(ConfigConstants.MISCMYEQUALIZE, new XMLType( Boolean.class, Boolean.TRUE, "Enable equalizing"));
