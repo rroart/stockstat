@@ -8,9 +8,10 @@ import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLType;
 
 public class IclijConfigConstantMaps {
-    private static final String MLCONFIG = "{ \"spark\" : { \"mlpc\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }, \"lr\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }, \"ovr\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }, \"lsvc\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true } }, \"tensorflow\" : { \"dnn\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true },  \"l\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }, \"lstm\" : { \"load\" : true, \"save\" : true, \"enable\" : false, \"evolve\" : false } } }";
+    private static final String ACONFIG = "{ \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }";
+    private static final String MLCONFIG = "{ \"spark\" : { \"mlpc\" : " + ACONFIG + ", \"lor\" : " + ACONFIG + ", \"ovr\" : " + ACONFIG + ", \"lsvc\" : " + ACONFIG + " }, \"tensorflow\" : { \"dnn\" : " + ACONFIG + ",  \"lic\" : " + ACONFIG + ", \"lir\" : " + ACONFIG + ", \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + ", \"predictorlstm\" : { \"load\" : true, \"save\" : true, \"enable\" : false, \"evolve\" : false } }, \"pytorch\" : { \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + " }, \"gem\" : { \"ewc\" : " + ACONFIG + ", \"gem\" : " + ACONFIG + ", \"i\" : " + ACONFIG + ", \"icarl\" : " + ACONFIG + ", \"mm\" : " + ACONFIG + ", \"s\" : " + ACONFIG + " } }";
 
-    private static final String MLCONFIGLSTM = "{ \"lstm\" : { \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true } }";
+    private static final String MLCONFIGLSTM = "{ \"lstm\" : " + ACONFIG + " }";
 
     private static final String RECOMMENDEVOLUTIONCONFIG = "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }";
 
