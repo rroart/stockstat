@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.ml.dao.MLClassifyDao;
 import roart.model.StockItem;
@@ -33,8 +34,8 @@ public class MLSTOCH extends IndicatorAggregator {
     }
 
     public MLSTOCH(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, PeriodData> periodDataMap, 
-            String title, int category, AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders) throws Exception {
-        super(conf, string, category, title, idNameMap, categories, datareaders);
+            String title, int category, AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
     }
 
     private abstract class STOCHSubType extends SubType {

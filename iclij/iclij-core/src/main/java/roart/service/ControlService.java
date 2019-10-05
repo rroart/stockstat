@@ -3,6 +3,7 @@ package roart.service;
 import roart.common.config.ConfigTreeMap;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.EurekaConstants;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
@@ -101,6 +102,11 @@ public class ControlService {
         param.setConfig(conf);
         param.setWantMaps(true);
         param.setConfList(disableList);
+        NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
+        neuralnetcommand.setMllearn(conf.wantMLLearn());
+        neuralnetcommand.setMlclassify(conf.wantMLClassify());
+        neuralnetcommand.setMldynamic(conf.wantMLDynamic());
+        param.setNeuralnetcommand(neuralnetcommand);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
         return result.getMaps();
         //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
@@ -196,6 +202,11 @@ public class ControlService {
         param.setIds(ids);
         param.setConfList(disableList);
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVENN);
+        NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
+        neuralnetcommand.setMllearn(true);
+        neuralnetcommand.setMlclassify(true);
+        neuralnetcommand.setMldynamic(conf.wantMLDynamic());
+        param.setNeuralnetcommand(neuralnetcommand);
         if (doSet) {
             updateMap.putAll(result.getMaps().get("update"));
             //Map<String, Object> updateMap = result.getMaps().get("update");

@@ -26,6 +26,7 @@ import roart.aggregator.impl.IndicatorAggregator.MySubType;
 import roart.aggregator.impl.IndicatorAggregator.SubType;
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
@@ -61,8 +62,8 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     public MLMACD(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, PeriodData> periodDataMap, 
-            String title, int category, AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders) throws Exception {
-        super(conf, string, category, title, idNameMap, categories, datareaders);
+            String title, int category, AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
     }
 
     private abstract class MacdSubType extends MergeSubType {

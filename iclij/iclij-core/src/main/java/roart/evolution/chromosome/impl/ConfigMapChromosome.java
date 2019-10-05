@@ -26,6 +26,7 @@ import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
 import roart.action.VerifyProfit;
 import roart.action.WebData;
+import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
@@ -210,6 +211,9 @@ public class ConfigMapChromosome extends AbstractChromosome {
             if (!param.getService().conf.wantIndicatorRecommender()) {
                 int jj = 0;
             }
+            map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
+            map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
+            map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
             ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map);
             //componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
