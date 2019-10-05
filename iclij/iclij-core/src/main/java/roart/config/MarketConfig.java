@@ -11,6 +11,8 @@ public class MarketConfig {
 
     private Short continuoustime;
 
+    private Short evolvetime;
+
     private String id;
 
     private Short startoffset;
@@ -57,6 +59,14 @@ public class MarketConfig {
 
     public void setContinuoustime(Short continuoustime) {
         this.continuoustime = continuoustime;
+    }
+
+    public Short getEvolvetime() {
+        return evolvetime;
+    }
+
+    public void setEvolvetime(Short evolvetime) {
+        this.evolvetime = evolvetime;
     }
 
     public String getId() {
