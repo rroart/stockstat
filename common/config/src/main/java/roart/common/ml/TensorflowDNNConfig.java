@@ -2,6 +2,9 @@ package roart.common.ml;
 
 import java.util.Arrays;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class TensorflowDNNConfig extends TensorflowEstimatorConfig {
@@ -26,10 +29,18 @@ public class TensorflowDNNConfig extends TensorflowEstimatorConfig {
         this.hidden = hidden;
     }
 
-    public TensorflowDNNConfig(int steps, int layers, int hidden) {
+    @JsonCreator
+    public TensorflowDNNConfig(
+            @JsonProperty("steps") int steps, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden) {
         super(MLConstants.DNN, steps);
         this.layers = layers;
         this.hidden = hidden;
+    }
+
+    public TensorflowDNNConfig() {
+        super(MLConstants.DNN);
     }
 
     @Override

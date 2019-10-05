@@ -2,6 +2,9 @@ package roart.common.ml;
 
 import java.util.Random;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class TensorflowPredictorLSTMConfig extends NeuralNetConfig {
@@ -44,23 +47,31 @@ public class TensorflowPredictorLSTMConfig extends NeuralNetConfig {
         this.horizon = horizon;
     }
 
-    public TensorflowPredictorLSTMConfig(Integer epochs, Integer windowsize, Integer horizon) {
-        super(MLConstants.LSTM);
+    @JsonCreator
+    public TensorflowPredictorLSTMConfig(
+            @JsonProperty("epochs") Integer epochs, 
+            @JsonProperty("windowsize") Integer windowsize, 
+            @JsonProperty("horizon") Integer horizon) {
+        super(MLConstants.PREDICTORLSTM);
         this.epochs = epochs;
         this.windowsize = windowsize;
         this.horizon = horizon;
     }
 
     public TensorflowPredictorLSTMConfig() {
-        super(MLConstants.LSTM);
+        super(MLConstants.PREDICTORLSTM);
     }
 
     public TensorflowPredictorLSTMConfig(Integer epochs, Integer windowsize, Integer horizon, boolean full) {
-        super(MLConstants.LSTM);
+        super(MLConstants.PREDICTORLSTM);
         this.epochs = epochs;
         this.windowsize = windowsize;
         this.horizon = horizon;
         this.full = full;
+    }
+
+    public TensorflowPredictorLSTMConfig(String name) {
+        super(name);
     }
 
     @Override

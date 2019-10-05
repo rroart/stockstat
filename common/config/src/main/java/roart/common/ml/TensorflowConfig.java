@@ -17,6 +17,10 @@ public abstract class TensorflowConfig extends NeuralNetConfig {
         this.steps = steps;
     }
     
+    public TensorflowConfig(String name) {
+        super(name);
+    }
+
     @Override
     public boolean empty() {
         return steps == 0;

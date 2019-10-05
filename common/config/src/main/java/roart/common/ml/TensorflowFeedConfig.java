@@ -39,6 +39,10 @@ public abstract class TensorflowFeedConfig extends TensorflowConfig {
         this.lr = lr;        
     }
 
+    public TensorflowFeedConfig(String name) {
+        super(name);
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + layers + " " + hidden + " " + " " + lr;

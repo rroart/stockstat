@@ -8,4 +8,5 @@
 module common.config {
     exports roart.common.config;
     exports roart.common.ml;
+    requires com.fasterxml.jackson.annotation;
 }

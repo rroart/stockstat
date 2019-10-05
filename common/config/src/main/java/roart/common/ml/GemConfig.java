@@ -20,6 +20,10 @@ public abstract class GemConfig extends NeuralNetConfig {
         this.lr = lr;
     }
 
+    public GemConfig(String name) {
+        super(name);
+    }
+
     public int getSteps() {
         return steps;
     }
@@ -62,4 +66,10 @@ public abstract class GemConfig extends NeuralNetConfig {
     public NeuralNetConfig copy() {
         return this;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + " " + steps + " " + layers + " " + hidden + " " + lr;
+    }
+
 }

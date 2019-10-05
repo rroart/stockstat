@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 
@@ -13,10 +16,19 @@ public class SparkMLPCConfig extends SparkConfig {
 
     private int hidden;
 
-    public SparkMLPCConfig(Integer maxiter, double tol, int layers, int hidden) {
+    @JsonCreator
+    public SparkMLPCConfig(
+            @JsonProperty("maxiter") Integer maxiter, 
+            @JsonProperty("tol") double tol, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden) {
         super(MLConstants.MLPC, maxiter, tol);
         this.layers = layers;
         this.hidden = hidden;
+    }
+
+    public SparkMLPCConfig(String name) {
+        super(name);
     }
 
     public Integer getLayers() {

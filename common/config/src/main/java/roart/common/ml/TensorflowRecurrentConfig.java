@@ -39,6 +39,10 @@ public abstract class TensorflowRecurrentConfig extends TensorflowFeedConfig {
         this.dropoutin = dropoutin;
     }
 
+    public TensorflowRecurrentConfig(String name) {
+        super(name);
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + slide + " " + dropout + " " + dropoutin;

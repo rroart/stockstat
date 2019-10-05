@@ -1,5 +1,8 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
@@ -34,13 +37,22 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
         this.dropout = dropout;
     }
 
-    public TensorflowCNNConfig(int steps, int kernelsize, int stride, double dropout) {
+    @JsonCreator
+    public TensorflowCNNConfig(
+            @JsonProperty("steps") int steps, 
+            @JsonProperty("kernelsize") int kernelsize, 
+            @JsonProperty("stride") int stride, 
+            @JsonProperty("dropout") double dropout) {
         super(MLConstants.CNN, steps);
         this.kernelsize = kernelsize;
         this.stride = stride;
         this.dropout = dropout;
     }
  
+    public TensorflowCNNConfig(String name) {
+        super(name);
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + kernelsize + " " + stride + " " + dropout;

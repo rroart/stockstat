@@ -1,11 +1,26 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import roart.common.config.MLConstants;
 
 public class TensorflowGRUConfig extends TensorflowRecurrentConfig {
 
-    public TensorflowGRUConfig(int steps, int layers, int hidden, double lr, int slide, double dropout, double dropoutin) {
+    @JsonCreator
+    public TensorflowGRUConfig(
+            @JsonProperty("steps") int steps, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden, 
+            @JsonProperty("lr") double lr, 
+            @JsonProperty("slide") int slide, 
+            @JsonProperty("dropout") double dropout, 
+            @JsonProperty("dropoutin") double dropoutin) {
         super(MLConstants.GRU, steps, layers, hidden, lr, slide, dropout, dropoutin);
+    }
+
+    public TensorflowGRUConfig(String name) {
+        super(name);
     }
 
 }

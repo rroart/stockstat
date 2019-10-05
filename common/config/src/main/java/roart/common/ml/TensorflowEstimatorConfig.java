@@ -6,4 +6,8 @@ public abstract class TensorflowEstimatorConfig extends TensorflowConfig {
         super(name, steps);
     }
 
+    public TensorflowEstimatorConfig(String name) {
+        super(name);
+    }
+
 }

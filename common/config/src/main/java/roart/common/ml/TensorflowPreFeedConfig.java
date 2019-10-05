@@ -6,4 +6,8 @@ public abstract class TensorflowPreFeedConfig extends TensorflowConfig {
         super(name, steps);
     }
 
+    public TensorflowPreFeedConfig(String name) {
+        super(name);
+    }
+
 }

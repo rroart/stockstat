@@ -1,5 +1,8 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class SparkLORConfig extends SparkConfig {
@@ -8,10 +11,17 @@ public class SparkLORConfig extends SparkConfig {
     
     //private Double elasticnet;
 
-    public SparkLORConfig(int maxiter, double tol) {
+    @JsonCreator
+    public SparkLORConfig(
+            @JsonProperty("maxiter") int maxiter, 
+            @JsonProperty("tol") double tol) {
         super(MLConstants.LOR, maxiter, tol);
         //this.reg = reg;
         //this.elasticnet = elasticnet;
+    }
+
+    public SparkLORConfig(String name) {
+        super(name);
     }
 
     /*

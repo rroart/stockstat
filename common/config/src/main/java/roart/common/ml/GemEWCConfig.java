@@ -1,5 +1,8 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class GemEWCConfig extends GemConfig {
@@ -8,10 +11,21 @@ public class GemEWCConfig extends GemConfig {
     
     private double memorystrength;
 
-    public GemEWCConfig(int steps, int layers, int hidden, double lr, int memories, double memorystrength) {
+    @JsonCreator
+    public GemEWCConfig(
+            @JsonProperty("steps") int steps, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden, 
+            @JsonProperty("lr") double lr, 
+            @JsonProperty("memories") int memories, 
+            @JsonProperty("memorystrength") double memorystrength) {
         super(MLConstants.EWC, steps, layers, hidden, lr);
         this.memories = memories;
         this.memorystrength = memorystrength;
+    }
+
+    public GemEWCConfig(String name) {
+        super(name);
     }
 
     public int getMemories() {

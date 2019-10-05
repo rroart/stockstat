@@ -9,6 +9,10 @@ public abstract class PytorchConfig extends NeuralNetConfig {
         this.steps = steps;
     }
 
+    public PytorchConfig(String name) {
+        super(name);
+    }
+
     public int getSteps() {
         return steps;
     }
@@ -25,5 +29,10 @@ public abstract class PytorchConfig extends NeuralNetConfig {
     @Override
     public PytorchConfig copy() {
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " " + steps;
     }
 }

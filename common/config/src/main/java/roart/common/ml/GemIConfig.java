@@ -1,5 +1,8 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import roart.common.config.MLConstants;
 
 public class GemIConfig extends GemConfig {
@@ -8,10 +11,21 @@ public class GemIConfig extends GemConfig {
     
     private boolean cuda;    
 
-    public GemIConfig(int steps, int layers, int hidden, double lr, boolean finetune, boolean cuda) {
+    @JsonCreator
+    public GemIConfig(
+            @JsonProperty("steps") int steps, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden, 
+            @JsonProperty("lr") double lr, 
+            @JsonProperty("finetune") boolean finetune, 
+            @JsonProperty("cuda") boolean cuda) {
         super(MLConstants.I, steps, layers, hidden, lr);
         this.finetune = finetune;
         this.cuda = cuda;
+    }
+
+    public GemIConfig(String name) {
+        super(name);
     }
 
     public boolean isFinetune() {

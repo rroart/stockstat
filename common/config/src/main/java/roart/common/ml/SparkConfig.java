@@ -28,6 +28,10 @@ public abstract class SparkConfig extends NeuralNetConfig {
         this.tol = tol;
     }
 
+    public SparkConfig(String name) {
+        super(name);
+    }
+
     @Override
     public NeuralNetConfig copy() {
         return this;

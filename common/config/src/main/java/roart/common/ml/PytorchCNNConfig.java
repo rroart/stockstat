@@ -1,5 +1,8 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class PytorchCNNConfig extends PytorchPreFeedConfig {
@@ -7,6 +10,8 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
     private int kernelsize;
     
     private int stride;
+    
+    private double lr;
     
     public int getKernelsize() {
         return kernelsize;
@@ -24,12 +29,30 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
         this.stride = stride;
     }
 
-    public PytorchCNNConfig(int steps, int kernelsize, int stride) {
+    public double getLr() {
+        return lr;
+    }
+
+    public void setLr(double lr) {
+        this.lr = lr;
+    }
+
+    @JsonCreator
+    public PytorchCNNConfig(
+            @JsonProperty("steps") int steps, 
+            @JsonProperty("kernelsize") int kernelsize, 
+            @JsonProperty("stride") int stride, 
+            @JsonProperty("lr") double lr) {
         super(MLConstants.CNN, steps);
         this.kernelsize = kernelsize;
         this.stride = stride;
+        this.lr = lr;
     }
     
+    public PytorchCNNConfig(String name) {
+        super(name);
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + kernelsize + " " + stride;

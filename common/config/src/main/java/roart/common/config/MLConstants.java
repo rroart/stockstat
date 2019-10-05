@@ -23,6 +23,7 @@ public class MLConstants {
     public static final String DNNLIR = "dnnlir";
     public static final String LIC = "lic";
     public static final String LSTM = "lstm";
+    public static final String PREDICTORLSTM = "predictorlstm";
     
     public static final String SINGLE = "single";
     public static final String EWC = "ewc";

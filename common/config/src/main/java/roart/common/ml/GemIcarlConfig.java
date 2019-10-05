@@ -1,5 +1,8 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class GemIcarlConfig extends GemConfig {
@@ -10,11 +13,23 @@ public class GemIcarlConfig extends GemConfig {
 
     private int samplespertask;
     
-    public GemIcarlConfig(int steps, int layers, int hidden, double lr, int memories, double memorystrength, int samplespertask) {
+    @JsonCreator
+    public GemIcarlConfig(
+            @JsonProperty("steps") int steps, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden, 
+            @JsonProperty("lr") double lr, 
+            @JsonProperty("memories") int memories, 
+            @JsonProperty("memorystrength") double memorystrength, 
+            @JsonProperty("samplespertask") int samplespertask) {
         super(MLConstants.GEM, steps, layers, hidden, lr);
         this.memories = memories;
         this.memorystrength = memorystrength;
         this.samplespertask = samplespertask;
+    }
+
+    public GemIcarlConfig(String name) {
+        super(name);
     }
 
     public int getMemories() {

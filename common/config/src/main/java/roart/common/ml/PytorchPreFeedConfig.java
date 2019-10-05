@@ -6,4 +6,8 @@ public abstract class PytorchPreFeedConfig extends PytorchConfig {
         super(name, steps);
     }
 
+    public PytorchPreFeedConfig(String name) {
+        super(name);
+    }
+
 }

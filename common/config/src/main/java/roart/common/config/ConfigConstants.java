@@ -98,6 +98,9 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGGEMPATH = "machinelearning.gem.path";
     public static final String MACHINELEARNINGGEMSERVER = "machinelearning.gem.server";
     public static final String MACHINELEARNINGMLDYNAMIC = "machinelearning.mldynamic";
+    // special two, fix
+    public static final String MACHINELEARNINGMLLEARN = "machinelearning.mllearn";
+    public static final String MACHINELEARNINGMLCLASSIFY = "machinelearning.mlclassify";
     public static final String INDICATORS = "indicators[@enable]";
     public static final String INDICATORSMOVE = "indicators.move[@enable]";
     public static final String INDICATORSMACD = "indicators.macd[@enable]";
@@ -158,7 +161,7 @@ public class ConfigConstants {
     public static final String MISCOTHERSTATS = "misc.otherstats[@enable]";
     public static final String MISCMYDAYS = "misc.mydays";
     public static final String MISCMYTOPBOTTOM = "misc.mytopbottom";
-    public static final String MISCMYTBLEDAYS = "misc.mytabledays";
+    public static final String MISCMYTABLEDAYS = "misc.mytabledays";
     public static final String MISCMYTABLEMOVEINTERVALDAYS = "misc.mytablemoveintervaldays";
     public static final String MISCMYTABLEINTERVALDAYS = "misc.mytableintervaldays";
     public static final String MISCMYEQUALIZE = "misc.myequalize[@enable]";

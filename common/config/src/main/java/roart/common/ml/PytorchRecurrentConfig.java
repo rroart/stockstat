@@ -17,6 +17,10 @@ public abstract class PytorchRecurrentConfig extends PytorchFeedConfig {
         this.slide = slide;
     }
     
+    public PytorchRecurrentConfig(String name) {
+        super(name);
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + slide;

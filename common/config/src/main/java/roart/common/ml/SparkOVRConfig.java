@@ -1,5 +1,8 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class SparkOVRConfig extends SparkConfig {
@@ -14,9 +17,17 @@ public class SparkOVRConfig extends SparkConfig {
         this.fitintercept = fitintercept;
     }
     
-    public SparkOVRConfig(Integer maxiter, Double tol, Boolean fitintercept) {
+    @JsonCreator
+    public SparkOVRConfig(
+            @JsonProperty("maxiter") Integer maxiter, 
+            @JsonProperty("tol") Double tol, 
+            @JsonProperty("fitintercept") Boolean fitintercept) {
         super(MLConstants.OVR, maxiter, tol);
         this.fitintercept = fitintercept;
+    }
+
+    public SparkOVRConfig(String name) {
+        super(name);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class GemGEMConfig extends GemConfig {
@@ -8,10 +11,21 @@ public class GemGEMConfig extends GemConfig {
     
     private double memorystrength;
 
-    public GemGEMConfig(int steps, int layers, int hidden, double lr, int memories, double memorystrength) {
+    @JsonCreator
+    public GemGEMConfig(
+            @JsonProperty("steps") int steps, 
+            @JsonProperty("layers") int layers, 
+            @JsonProperty("hidden") int hidden, 
+            @JsonProperty("lr") double lr, 
+            @JsonProperty("memories") int memories, 
+            @JsonProperty("memorystrength") double memorystrength) {
         super(MLConstants.GEM, steps, layers, hidden, lr);
         this.memories = memories;
         this.memorystrength = memorystrength;
+    }
+
+    public GemGEMConfig(String name) {
+        super(name);
     }
 
     public int getMemories() {
@@ -36,4 +50,8 @@ public class GemGEMConfig extends GemConfig {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " " + memories + " " + memorystrength;
+    }
 }

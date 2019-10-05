@@ -1,14 +1,25 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import roart.common.config.MLConstants;
 
 public class SparkLSVCConfig extends SparkConfig {
 
     private Boolean fitintercept;
 
-    public SparkLSVCConfig(Integer maxiter, Double tol, Boolean fitintercept) {
+    @JsonCreator
+    public SparkLSVCConfig(
+            @JsonProperty("maxiter") Integer maxiter, 
+            @JsonProperty("tol") Double tol, 
+            @JsonProperty("fitintercept") Boolean fitintercept) {
         super(MLConstants.LSVC, maxiter, tol);
 	this.fitintercept = fitintercept;
+    }
+
+    public SparkLSVCConfig(String name) {
+        super(name);
     }
 
     public Boolean getFitintercept() {
