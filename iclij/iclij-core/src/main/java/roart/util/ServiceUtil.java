@@ -24,8 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.action.Action;
+import roart.action.EvolveAction;
 import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
+import roart.action.MachineLearningAction;
+import roart.action.MarketAction;
 import roart.action.WebData;
 import roart.action.UpdateDBAction;
 import roart.iclij.config.IclijConfig;
@@ -183,12 +186,6 @@ public class ServiceUtil {
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
             lists.addAll(subLists);
         }
-        List<TimingItem> listAllTimings = TimingItem.getAll();
-        for (Market market : markets) {
-            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.FINDPROFIT, market.getConfig().getFindtime());
-            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
-            lists.addAll(subLists);
-        }
         result.setLists(lists);
 
         ComponentData param = null; 
@@ -199,43 +196,15 @@ public class ServiceUtil {
             return result;
         }
         
+        FindProfitAction findProfitAction = new FindProfitAction();
+        getContentTimings(date, lists, markets, findProfitAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
-        FindProfitAction findProfitAction = new FindProfitAction();
-        //Market market = findProfitAction.findMarket(param);
-        //String marketName = market.getConfig().getMarket();
-        List<String> componentList = getFindProfitComponents(componentInput.getConfig(), componentInput.getMarket());
-        for (Market market : findProfitAction.getMarkets()) {
-            updateMarketMap.put(market.getConfig().getMarket(), new HashMap<>());
-            Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
-            for (Component component : componentMap.values()) {
-                List<String> subcomponents = component.getSubComponents(market, param);
-                for (String subcomponent : subcomponents) {
-                    Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.FINDPROFIT, component.getPipeline(), false, null, subcomponent);
-                    updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
-                    updateMap.putAll(anUpdateMap);
-                }
-            }
-        }
+        getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, findProfitAction);
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
-        for (Market market : findProfitAction.getMarkets()) {
-        //for (Entry<String, Map<String, Object>> entry : updateMarketMap.entrySet()) {
-            String marketName = market.getConfig().getMarket();
-            Map<String, Object> anUpdateMap = updateMarketMap.get(marketName);
-            IclijServiceList updates = convert(marketName, anUpdateMap);
-            lists.add(updates);
-
-            List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market);
-            List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate(), market.getConfig().getFindtime());
-            
-            IclijServiceList memories = new IclijServiceList();
-            memories.setTitle("Memories " + marketName);
-            memories.setList(currentList);
-            lists.add(memories);
-
-        }
+        getContentMemoriesUpdates(componentInput, lists, updateMarketMap, findProfitAction);
 
         IclijServiceList trends = convert(trendMap);
         lists.add(trends);
@@ -271,22 +240,6 @@ public class ServiceUtil {
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
-        /*
-        for (Market market : markets) {
-            List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market);
-            List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
-            List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
-            List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
-            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
-            lists.addAll(subLists);
-        }
-        */
-        List<TimingItem> listAllTimings = TimingItem.getAll();
-        for (Market market : markets) {
-            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, IclijConstants.IMPROVEPROFIT, market.getConfig().getImprovetime());
-            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
-            lists.addAll(subLists);
-        }
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
@@ -298,53 +251,139 @@ public class ServiceUtil {
             return result;
         }
         
+        ImproveProfitAction improveProfitAction = new ImproveProfitAction();
+        getContentTimings(date, lists, markets, improveProfitAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
-        FindProfitAction findProfitAction = new FindProfitAction();
-        //Market market = findProfitAction.findMarket(param);
-        //String marketName = market.getConfig().getMarket();
-        List<String> componentList = getFindProfitComponents(componentInput.getConfig(), componentInput.getMarket());
-        for (Market market : findProfitAction.getMarkets()) {
-            updateMarketMap.put(market.getConfig().getMarket(), new HashMap<>());
-            updateMarketMap.put(market.getConfig().getMarket() + " sell", new HashMap<>());
-            Map<String, Component> componentMap = findProfitAction.getComponentMap(componentList, null);
-            for (Component component : componentMap.values()) {
-                List<String> subcomponents = component.getSubComponents(market, param);
-                for (String subcomponent : subcomponents) {
-                    Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false, true, subcomponent);
-                    updateMarketMap.get(market.getConfig().getMarket()).putAll(anUpdateMap);
-                    updateMap.putAll(anUpdateMap);
-                    Map<String, Object> anUpdateMap2 = loadConfig(param, market, market.getConfig().getMarket(), IclijConstants.IMPROVEPROFIT, component.getPipeline(), false, false, subcomponent);
-                    updateMarketMap.get(market.getConfig().getMarket() + " sell").putAll(anUpdateMap2);
-                }
-            }
-        }
+        getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, improveProfitAction);
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
-        for (Market market : findProfitAction.getMarkets()) {
+        getContentMemoriesUpdates(componentInput, lists, updateMarketMap, improveProfitAction);
+        print(result);
+        return result;
+    }
+
+    private static void getContentTimings(LocalDate date, List<IclijServiceList> lists, List<Market> markets, MarketAction action)
+            throws Exception {
+        List<TimingItem> listAllTimings = TimingItem.getAll();
+        for (Market market : markets) {
+            List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, action.getName(), action.getTime(market));
+            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
+            lists.addAll(subLists);
+        }
+    }
+
+    private static void getUpdateMarkets(ComponentInput componentInput, ComponentData param,
+            Map<String, Map<String, Object>> updateMarketMap, Map<String, Object> updateMap, MarketAction action)
+            throws Exception {
+        //Market market = findProfitAction.findMarket(param);
+        //String marketName = market.getConfig().getMarket();
+        List<String> componentList = getFindProfitComponents(componentInput.getConfig(), componentInput.getMarket());
+        for (Market market : action.getMarkets()) {
+            Map<Boolean, String> booleanTexts = action.getBooleanTexts();
+            Boolean[] booleans = action.getBooleans();
+            for (Boolean bool : booleans) {
+                updateMarketMap.put(market.getConfig().getMarket() + booleanTexts.get(bool), new HashMap<>());
+                Map<String, Component> componentMap = action.getComponentMap(componentList, null);
+                for (Component component : componentMap.values()) {
+                    List<String> subcomponents = component.getSubComponents(market, param);
+                    for (String subcomponent : subcomponents) {
+                        Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), action.getName(), component.getPipeline(), false, bool, subcomponent);
+                        updateMarketMap.get(market.getConfig().getMarket() + " " + booleanTexts.get(bool)).putAll(anUpdateMap);
+                        updateMap.putAll(anUpdateMap);
+                    }
+                }
+            }
+        }
+    }
+
+    public static IclijServiceResult getContentEvolve(ComponentInput componentInput) throws Exception {
+        LocalDate date = componentInput.getEnddate();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+
+         List<IclijServiceList> lists = new ArrayList<>();
+        lists.add(getHeader("Content"));
+        List<Market> markets = conf.getMarkets(instance);
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(lists);
+
+        ComponentData param = null; 
+        try {
+            param = getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+        
+        EvolveAction evolveAction = new EvolveAction();
+        getContentTimings(date, lists, markets, evolveAction);
+        Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
+        Map<String, Object> updateMap = new HashMap<>();
+        getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, evolveAction);
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        getContentMemoriesUpdates(componentInput, lists, updateMarketMap, evolveAction);
+        print(result);
+        return result;
+    }
+
+    private static void getContentMemoriesUpdates(ComponentInput componentInput, List<IclijServiceList> lists,
+            Map<String, Map<String, Object>> updateMarketMap, MarketAction action) {
+        for (Market market : action.getMarkets()) {
         //for (Entry<String, Map<String, Object>> entry : updateMarketMap.entrySet()) {
             String marketName = market.getConfig().getMarket();
-            Map<String, Object> anUpdateMap = updateMarketMap.get(marketName);
-            IclijServiceList updates = convert(marketName, anUpdateMap);
-            lists.add(updates);
-            Map<String, Object> anUpdateMap2 = updateMarketMap.get(marketName + " sell");
-            IclijServiceList updates2 = convert(marketName + " sell", anUpdateMap2);
-            lists.add(updates2);
-
-            List<MemoryItem> marketMemory = findProfitAction.getMarketMemory(market);
-            List<MemoryItem> currentList = findProfitAction.filterKeepRecent(marketMemory, componentInput.getEnddate(), market.getConfig().getImprovetime());
+            Map<Boolean, String> booleanTexts = action.getBooleanTexts();
+            Boolean[] booleans = action.getBooleans();
+            for (Boolean bool : booleans) {
+                Map<String, Object> anUpdateMap = updateMarketMap.get(marketName + booleanTexts.get(bool));
+                IclijServiceList updates = convert(marketName + " " + booleanTexts.get(bool), anUpdateMap);
+                lists.add(updates);
+            }
+            List<MemoryItem> marketMemory = action.getMarketMemory(market);
+            List<MemoryItem> currentList = action.filterKeepRecent(marketMemory, componentInput.getEnddate(), action.getTime(market));
             
             IclijServiceList memories = new IclijServiceList();
             memories.setTitle("Memories " + marketName);
             memories.setList(currentList);
             lists.add(memories);
-
         }
-        print(result);
-        return result;
     }
 
+    public static IclijServiceResult getContentMachineLearning(ComponentInput componentInput) throws Exception {
+        LocalDate date = componentInput.getEnddate();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+
+         List<IclijServiceList> lists = new ArrayList<>();
+        lists.add(getHeader("Content"));
+        List<Market> markets = conf.getMarkets(instance);
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(lists);
+
+        ComponentData param = null; 
+        try {
+            param = getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+        
+        MachineLearningAction mlAction = new MachineLearningAction();
+        getContentTimings(date, lists, markets, mlAction);
+        Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
+        Map<String, Object> updateMap = new HashMap<>();
+        getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, mlAction);
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        getContentMemoriesUpdates(componentInput, lists, updateMarketMap, mlAction);
+        print(result);
+        return result;
+   }
+    
     public static List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action, int days) {
         if (date == null) {
             date = LocalDate.now();
@@ -997,6 +1036,71 @@ public class ServiceUtil {
             updateMap.put(config.getId(), value);
         }
         return updateMap;
+    }
+
+    public static List<String> getEvolveComponents(IclijConfig config, String market) {
+        List<String> components = new ArrayList<>();
+        if (config.wantsEvolveRecommender()) {
+            components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        }
+        if (config.wantsEvolvePredictor()) {
+            components.add(PipelineConstants.PREDICTORSLSTM);
+        }
+        if (config.wantsEvolveMLMACD()) {
+            components.add(PipelineConstants.MLMACD);
+        }
+        if (config.wantsEvolveMLRSI()) {
+            components.add(PipelineConstants.MLRSI);
+        }
+        if (wantThree(market)) {
+        if (config.wantsEvolveMLATR()) {
+            components.add(PipelineConstants.MLATR);
+        }
+        if (config.wantsEvolveMLCCI()) {
+            components.add(PipelineConstants.MLCCI);
+        }
+        if (config.wantsEvolveMLSTOCH()) {
+            components.add(PipelineConstants.MLSTOCH);
+        }
+        }
+        if (config.wantsEvolveMLMulti()) {
+            components.add(PipelineConstants.MLMULTI);
+        }
+        if (config.wantsEvolveMLIndicator()) {
+            components.add(PipelineConstants.MLINDICATOR);
+        }
+        return components;
+    }
+
+    public static List<String> getMachineLearningComponents(IclijConfig config, String market) {
+        List<String> components = new ArrayList<>();
+        if (config.wantsMachineLearningPredictor()) {
+            components.add(PipelineConstants.PREDICTORSLSTM);
+        }
+        if (config.wantsMachineLearningMLMACD()) {
+            components.add(PipelineConstants.MLMACD);
+        }
+        if (config.wantsMachineLearningMLRSI()) {
+            components.add(PipelineConstants.MLRSI);
+        }
+        if (wantThree(market)) {
+        if (config.wantsMachineLearningMLATR()) {
+            components.add(PipelineConstants.MLATR);
+        }
+        if (config.wantsMachineLearningMLCCI()) {
+            components.add(PipelineConstants.MLCCI);
+        }
+        if (config.wantsMachineLearningMLSTOCH()) {
+            components.add(PipelineConstants.MLSTOCH);
+        }
+        }
+        if (config.wantsMachineLearningMLMulti()) {
+            components.add(PipelineConstants.MLMULTI);
+        }
+        if (config.wantsMachineLearningMLIndicator()) {
+            components.add(PipelineConstants.MLINDICATOR);
+        }
+        return components;
     }
     
 }

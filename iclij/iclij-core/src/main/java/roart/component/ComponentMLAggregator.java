@@ -31,8 +31,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
         param.setFuturedays(daysafterzero);
 
         handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
-        Map resultMaps = param.getResultMap();
-        handleMLMeta(param, resultMaps);
+        //Map resultMaps = param.getResultMap();
+        //handleMLMeta(param, resultMaps);
         return param;
     }
 
@@ -42,7 +42,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         List<String> confList = getConfList();
         ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, confList, subcomponent);
         loadme(param, chromosome, market, confList, buy, subcomponent);
-        return improve(action, param, chromosome);
+        return improve(action, param, chromosome, subcomponent);
     }
 
     @Override

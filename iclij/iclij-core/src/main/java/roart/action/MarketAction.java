@@ -6,17 +6,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.OptionalDouble;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.JsonUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -47,13 +52,13 @@ public abstract class MarketAction extends Action {
 
     protected abstract Boolean getBool();
 
-    protected abstract String getName();
+    public abstract String getName();
     
     protected abstract List<String> getProfitComponents(IclijConfig config, String marketName);
 
-    protected abstract Short getTime(Market market);
+    public abstract Short getTime(Market market);
     
-    protected abstract Boolean[] getBooleans();
+    public abstract Boolean[] getBooleans();
     
     protected abstract boolean getEvolve(Component component, ComponentData param);
 
@@ -293,7 +298,7 @@ public abstract class MarketAction extends Action {
         
         @Override
         public String toString() {
-            return market.getConfig().getMarket() + " " + componentName + " " + buy + " " + time + " " + haverun;
+            return market.getConfig().getMarket() + " " + componentName + " " + subcomponent + " " + buy + " " + time + " " + haverun;
         }
     }
     
@@ -368,7 +373,7 @@ public abstract class MarketAction extends Action {
 
         param.setTimings(new ArrayList<>());
         
-        handleComponent(this, market, profitdata, param, listComponent, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData);
+        handleComponent(this, market, profitdata, param, listComponent, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config);
                 
         filterBuys(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
@@ -480,7 +485,7 @@ public abstract class MarketAction extends Action {
         return nameMap;
     }
     
-    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData);
+    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config);
 
     public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days) {
         LocalDate olddate = date.minusDays(days);
@@ -599,6 +604,14 @@ public abstract class MarketAction extends Action {
             componentMap.put(componentName, component);
         }
         return componentMap;
+    }
+    
+    public Map<Boolean, String> getBooleanTexts() {
+        Map<Boolean, String> map = new HashMap<>();
+        map.put(null, "");
+        map.put(false, "down");
+        map.put(true, "up");
+        return map;
     }
 
 }

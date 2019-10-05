@@ -22,6 +22,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
+import roart.component.model.ComponentMLData;
 import roart.component.model.MLIndicatorData;
 import roart.component.model.PredictorData;
 import roart.config.Market;
@@ -71,11 +72,17 @@ public abstract class Component {
         valueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         valueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
+        valueMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, Boolean.FALSE);
+        valueMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, Boolean.FALSE);
+        valueMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);
     }
     
     public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent);
     
     public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent);
+
+    protected void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps) {        
+    }
 
     public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
         try {
@@ -107,7 +114,7 @@ public abstract class Component {
             long time0 = System.currentTimeMillis();
             evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent);
             if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-                TimingItem timing = saveTiming(param, evolve, time0, null, null);
+                TimingItem timing = saveTiming(param, evolve, time0, null, null, subcomponent);
                 param.getTimings().add(timing);
            }
         }
@@ -117,8 +124,18 @@ public abstract class Component {
         Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
         param.setCategory(resultMaps);
         param.getAndSetCategoryValueMap();
+        Map resultMaps2 = param.getResultMap();
+        handleMLMeta(param, resultMaps2);
         if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-            TimingItem timing = saveTiming(param, false, time0, null, null);
+            Double score = null;
+            if (!IclijConstants.FINDPROFIT.equals(param.getAction()) ) {
+                try {
+                    score = calculateAccuracy(param);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent);
             param.getTimings().add(timing);
         }
     }
@@ -138,7 +155,7 @@ public abstract class Component {
         log.info("Disable {}", disableML);
     }
 
-    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy) {
+    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setBuy(buy);
@@ -149,6 +166,7 @@ public abstract class Component {
         timing.setRecord(LocalDate.now());
         timing.setDate(param.getFutureDate());
         timing.setScore(score);
+        timing.setSubcomponent(subcomponent);
         try {
             timing.save();
             return timing;
@@ -198,7 +216,7 @@ public abstract class Component {
     
     public abstract boolean wantImproveEvolve();
     
-    public ComponentData improve(MarketAction action, ComponentData param, ConfigMapChromosome chromosome) {
+    public ComponentData improve(MarketAction action, ComponentData param, ConfigMapChromosome chromosome, String subcomponent) {
         long time0 = System.currentTimeMillis();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
@@ -216,7 +234,7 @@ public abstract class Component {
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
             param.setFutureDate(LocalDate.now());
-            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy());
+            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent);
             param.getTimings().add(timing);
             if (false) {
                 ConfigItem configItem = new ConfigItem();
@@ -301,5 +319,19 @@ public abstract class Component {
         return null;
     }
     
+    public Double calculateAccuracy(ComponentData componentparam) throws Exception {
+        ComponentMLData param = (ComponentMLData) componentparam;
+        List<Double> testAccuracies = new ArrayList<>();
+        for (ResultMeta meta : param.getResultMeta()) {
+            Double testaccuracy = meta.getTestAccuracy();
+            testAccuracies.add(testaccuracy);
+        }
+        return testAccuracies
+                .stream()
+                .mapToDouble(e -> e)
+                .average()
+                .orElse(0);
+    }
+
 }
 

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.component.Component;
 import roart.component.ComponentFactory;
@@ -82,7 +83,7 @@ public class ImproveProfitAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -94,6 +95,10 @@ public class ImproveProfitAction extends MarketAction {
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
+            Map<String, Object> aMap = new HashMap<>();
+            aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
+            aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
+            aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             ComponentData componentData = component.improve(action, param, market, profitdata, null, buy, subcomponent);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
@@ -120,8 +125,8 @@ public class ImproveProfitAction extends MarketAction {
         return null;
     }
     
-    @Override 
-    protected String getName() {
+    @Override
+    public String getName() {
         return IclijConstants.IMPROVEPROFIT;
     }
     
@@ -131,12 +136,12 @@ public class ImproveProfitAction extends MarketAction {
     }
 
     @Override
-    protected Short getTime(Market market) {
+    public Short getTime(Market market) {
         return market.getConfig().getImprovetime();
     }
     
     @Override
-    protected Boolean[] getBooleans() {
+    public Boolean[] getBooleans() {
         return new Boolean[] { false, true };
     }
     

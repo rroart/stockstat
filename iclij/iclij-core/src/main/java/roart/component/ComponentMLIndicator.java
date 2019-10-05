@@ -93,7 +93,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
         config.setEnable(false);
         config.setEvolve(false);
         MLConfigs configs = new MLConfigs();
-        configs.getTensorflow().setLstm(config);
+        configs.getTensorflow().setPredictorlstm(config);
         return configs;
     }
 
@@ -159,8 +159,8 @@ public abstract class ComponentMLIndicator extends ComponentML {
         param.setThreshold(threshold);
 
         handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
-        Map resultMaps = param.getResultMap();
-        handleMLMeta(param, resultMaps);
+        //Map resultMaps = param.getResultMap();
+        //handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
         return param;
         //calculateIncDec(positions, profitdata, resultMap, param);
@@ -248,7 +248,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
         }
         ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent);
         loadme(param, chromosome, market, confList, buy, subcomponent);
-        return improve(action, param, chromosome);
+        return improve(action, param, chromosome, subcomponent);
     }
 
     public Map<String, String> improveNot(ComponentData param, Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {

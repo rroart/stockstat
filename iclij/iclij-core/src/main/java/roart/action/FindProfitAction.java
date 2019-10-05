@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
@@ -60,7 +61,7 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config) {
         for (Entry<String, List<Integer>> entry : listComponent.entrySet()) {
             List<Integer> positions = entry.getValue();
             String componentName = entry.getKey();
@@ -73,7 +74,12 @@ public class FindProfitAction extends MarketAction {
 
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
-            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, new HashMap<>(), subcomponent);
+            Map<String, Object> aMap = new HashMap<>();
+            aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, config.wantsFindProfitMLDynamic());
+            aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
+            aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
+            
+            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent);
             component.calculateIncDec(componentData, profitdata, positions);
             if (param.getInput().isDoSave()) {
                 IncDecItem myitem = null;
@@ -188,8 +194,8 @@ public class FindProfitAction extends MarketAction {
         return true;
     }
     
-    @Override 
-    protected String getName() {
+    @Override
+    public String getName() {
         return IclijConstants.FINDPROFIT;
     }
 
@@ -199,12 +205,12 @@ public class FindProfitAction extends MarketAction {
     }
     
     @Override
-    protected Short getTime(Market market) {
+    public Short getTime(Market market) {
         return market.getConfig().getFindtime();
     }
     
     @Override
-    protected Boolean[] getBooleans() {
+    public Boolean[] getBooleans() {
         return new Boolean[] { null };
     }
     

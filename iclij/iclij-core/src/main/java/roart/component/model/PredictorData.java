@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
@@ -23,6 +24,9 @@ public class PredictorData extends ComponentData {
     public Map<String, Object> getResultMap(String mapName, Map<String, Object> setValueMap) {
         getService().conf.setConfigValueMap(new HashMap<>(getConfigValueMap()));
         getService().conf.getConfigValueMap().putAll(setValueMap);
+        getService().conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.TRUE);
+        getService().conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGMLLEARN, Boolean.TRUE);
+        getService().conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, Boolean.TRUE);
         if (getUpdateMap() != null) {
             getService().conf.getConfigValueMap().putAll(getUpdateMap());
         }

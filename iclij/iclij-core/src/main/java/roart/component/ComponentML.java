@@ -48,7 +48,7 @@ public abstract class ComponentML extends Component {
             EvolutionConfig evolveConfig = getEvolutionConfig(param);
             String newConfStr = JsonUtil.convert(evolveConfig);
             param.getService().conf.getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
-             
+
             Map<String, Object> evolveMap = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
             param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
@@ -129,7 +129,7 @@ public abstract class ComponentML extends Component {
         Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);
         return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent);
     }
-    
+
     protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent) throws Exception {
         Map<String, Object> map = new HashMap<>();
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
@@ -203,7 +203,7 @@ public abstract class ComponentML extends Component {
         }
         return returnmap;
     }
-    
+
     @Override
     protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
         /*
@@ -214,21 +214,21 @@ public abstract class ComponentML extends Component {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        */
+         */
         String evolveString = config.getEvolveMLEvolutionConfig();
         return JsonUtil.convert(evolveString, EvolutionConfig.class);
     }
-    
+
     @Override
     public boolean wantEvolve(IclijConfig config) {
         return config.wantEvolveML();
     }
-    
+
     @Override
     public boolean wantImproveEvolve() {
         return false;
     }
-    
+
     @Override
     public List<String>[] enableDisable(ComponentData param, List<Integer> positions) {
         if (positions == null || positions.isEmpty()) {
@@ -237,6 +237,7 @@ public abstract class ComponentML extends Component {
         List[] list = new ArrayList[2];
         List<String> enable = new ArrayList<>();
         Map<Pair<String, String>, String> map = getMap();
+        Map<Pair<String, String>, String> mapPersist = getMapPersist();
         ComponentMLData paramML = (ComponentMLData) param;
         List<ResultMeta> resultMetas = paramML.getResultMeta();
         int count = 0;
@@ -246,12 +247,16 @@ public abstract class ComponentML extends Component {
                 String name = resultMeta.getModelName();
                 Pair<String, String> pair = new ImmutablePair(mlname, name);
                 String cnf = map.get(pair);
+                String cnfPersist = mapPersist.get(pair);
                 if (positions == null || positions.contains(count)) {
                     if (cnf == null) {
                         continue;
                     }
                     if (!enable.contains(cnf)) {
                         enable.add(cnf);
+                    }
+                    if (!enable.contains(cnfPersist)) {
+                        enable.add(cnfPersist);
                     }
                     map.remove(name);
                 }
@@ -286,10 +291,56 @@ public abstract class ComponentML extends Component {
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LSVC), ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.DNN), ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIC), ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGTENSORFLOWLIR);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.MLP), ConfigConstants.MACHINELEARNINGTENSORFLOWMLP);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.CNN), ConfigConstants.MACHINELEARNINGTENSORFLOWCNN);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.RNN), ConfigConstants.MACHINELEARNINGTENSORFLOWRNN);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.GRU), ConfigConstants.MACHINELEARNINGTENSORFLOWGRU);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.PREDICTORLSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPYTORCHMLP);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.CNN), ConfigConstants.MACHINELEARNINGPYTORCHCNN);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPYTORCHRNN);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPYTORCHLSTM);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPYTORCHGRU);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.EWC), ConfigConstants.MACHINELEARNINGGEMEWC);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.GEM), ConfigConstants.MACHINELEARNINGGEMGEM);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.I), ConfigConstants.MACHINELEARNINGGEMINDEPENDENT);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.ICARL), ConfigConstants.MACHINELEARNINGGEMICARL);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.MM), ConfigConstants.MACHINELEARNINGGEMMULTIMODAL);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.S), ConfigConstants.MACHINELEARNINGGEMSINGLE);
         return map;
     }
-    
+
+    private Map<Pair<String, String>, String> getMapPersist() {
+        Map<Pair <String, String>, String> map = new HashMap<>();
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.MLPC), ConfigConstants.MACHINELEARNINGSPARKMLMLPCPERSIST);
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LIR), ConfigConstants.MACHINELEARNINGSPARKMLLORPERSIST);
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.OVR), ConfigConstants.MACHINELEARNINGSPARKMLOVRPERSIST);
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LSVC), ConfigConstants.MACHINELEARNINGSPARKMLLSVCPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.DNN), ConfigConstants.MACHINELEARNINGTENSORFLOWDNNPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIC), ConfigConstants.MACHINELEARNINGTENSORFLOWLICPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGTENSORFLOWLIRPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.MLP), ConfigConstants.MACHINELEARNINGTENSORFLOWMLPPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.CNN), ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.RNN), ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.GRU), ConfigConstants.MACHINELEARNINGTENSORFLOWGRUPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.PREDICTORLSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMPERSIST);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPYTORCHMLPPERSIST);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.CNN), ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPYTORCHLSTMPERSIST);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPYTORCHGRUPERSIST);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.EWC), ConfigConstants.MACHINELEARNINGGEMEWCPERSIST);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.GEM), ConfigConstants.MACHINELEARNINGGEMGEMPERSIST);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.I), ConfigConstants.MACHINELEARNINGGEMINDEPENDENTPERSIST);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.ICARL), ConfigConstants.MACHINELEARNINGGEMICARLPERSIST);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.MM), ConfigConstants.MACHINELEARNINGGEMMULTIMODALPERSIST);
+        map.put(new ImmutablePair(MLConstants.GEM, MLConstants.S), ConfigConstants.MACHINELEARNINGGEMSINGLEPERSIST);
+        return map;
+    }
+
     private Map<String, Pair<String, String>> getMapRev() {
         Map<Pair<String, String>, String> aMap = getMap();
         Map<String, Pair<String, String>> retMap = new HashMap<>();
@@ -303,9 +354,11 @@ public abstract class ComponentML extends Component {
         Map<String, String> map = new HashMap<>();
         map.put(MLConstants.SPARK, ConfigConstants.MACHINELEARNINGSPARKML);
         map.put(MLConstants.TENSORFLOW, ConfigConstants.MACHINELEARNINGTENSORFLOW);
+        map.put(MLConstants.PYTORCH, ConfigConstants.MACHINELEARNINGPYTORCH);
+        map.put(MLConstants.GEM, ConfigConstants.MACHINELEARNINGGEM);
         return map;
     }
-    
+
     @Override
     public List<String> getSubComponents(Market market, ComponentData componentData) {
         List<String> subComponents = new ArrayList<>();

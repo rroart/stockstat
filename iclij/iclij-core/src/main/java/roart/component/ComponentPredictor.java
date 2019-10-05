@@ -68,6 +68,7 @@ public class ComponentPredictor extends ComponentML {
     @Override
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);        
     }
 
     public static MLConfigs getDisableNonLSTM() {
@@ -75,13 +76,29 @@ public class ComponentPredictor extends ComponentML {
         config.setEnable(false);
         config.setEvolve(false);
         MLConfigs configs = new MLConfigs();
+        configs.getTensorflow().setLir(config);
         configs.getTensorflow().setLic(config);
         configs.getTensorflow().setDnn(config);
+        configs.getTensorflow().setMlp(config);
+        configs.getTensorflow().setCnn(config);
+        configs.getTensorflow().setRnn(config);
+        configs.getTensorflow().setLstm(config);
+        configs.getTensorflow().setGru(config);
         configs.getSpark().setLor(config);
         configs.getSpark().setMlpc(config);
         configs.getSpark().setOvr(config);
         configs.getSpark().setLsvc(config);
-            return configs;
+        configs.getPytorch().setMlp(config);
+        configs.getPytorch().setCnn(config);
+        configs.getPytorch().setRnn(config);
+        configs.getPytorch().setLstm(config);
+        configs.getPytorch().setGru(config);
+        configs.getGem().setS(config);
+        configs.getGem().setI(config);
+        configs.getGem().setEwc(config);
+        configs.getGem().setGem(config);
+        configs.getGem().setMm(config);
+        return configs;
     }
     
     @Override
@@ -171,7 +188,7 @@ public class ComponentPredictor extends ComponentML {
         }
         TensorflowPredictorLSTMConfigGene gene = new TensorflowPredictorLSTMConfigGene(config);
         chromosome.setConfig(gene);
-        return improve(action, param, chromosome);
+        return improve(action, param, chromosome, subcomponent);
     }
 
     @Override
