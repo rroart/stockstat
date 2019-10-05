@@ -10,6 +10,7 @@ import roart.common.config.ConfigTreeMap;
 import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.EurekaConstants;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
@@ -96,6 +97,12 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setWebpath(EurekaConstants.GETCONTENT);
+        MyMyConfig aConf = new MyMyConfig(conf);
+        NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
+        neuralnetcommand.setMllearn(true);
+        neuralnetcommand.setMlclassify(true);
+        neuralnetcommand.setMldynamic(aConf.wantMLDynamic());
+        param.setNeuralnetcommand(neuralnetcommand);
         new CoreThread(ui, param).start();
         //Queues.clientQueue.add(param);
         //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
@@ -188,6 +195,11 @@ public class ControlService {
         ids.add(ml);
         param.setIds(ids);
         param.setWebpath(EurekaConstants.GETEVOLVENN);
+        NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
+        neuralnetcommand.setMllearn(true);
+        neuralnetcommand.setMlclassify(true);
+        neuralnetcommand.setMldynamic(false);
+        param.setNeuralnetcommand(neuralnetcommand);
         new EvolveCoreThread(ui, param, doSet).start();
     }
 
