@@ -9,13 +9,13 @@ PORT=8008
 
 if [ "$1" = "t" ]; then
     PORT=8008
-    MODELS=`seq 1 9`
+    MODELS=`seq 1 7`
     CONFIG=( "" "${TENSORFLOWCONFIG[@]}" )
 fi
 
 if [ "$1" = "p" ]; then
     PORT=8018
-    MODELS="2"
+    MODELS=`seq 1 5`
     CONFIG=( "" "${PYTORCHCONFIG[@]}" )
     TIMEMODELS=2
     TIMECONFIG[2]="\"pytorchRNNConfig\" : { \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"slide_stride\" : 2, \"lr\" : 0.01 }"
@@ -25,6 +25,10 @@ if [[ "$1" =~ ^g ]]; then
     PORT=8028
     MODELS=`seq 1 5`
     CONFIG=( "" "${GEMCONFIG[@]}" )
+fi
+
+if [ -n "$2" ]; then
+    MODELS=$2
 fi
 
 DATASETARR[1]=\"mnist\"

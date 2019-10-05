@@ -11,28 +11,39 @@ PORT=8008
 
 if [ "$1" = "t" ]; then
     PORT=8008
-    MODELS='8'
+    MODELS=`seq 1 3`
     CONFIG=( "" "${TENSORFLOWCONFIG[@]}" )
 fi
 
 if [ "$1" = "p" ]; then
     PORT=8018
-    MODELS=1
+    MODELS=`seq 1 1`
     CONFIG=( "" "${PYTORCHCONFIG[@]}" )
 fi
 
 if [[ "$1" =~ ^g ]]; then
     PORT=8028
-    MODELS=5
+    MODELS=`seq 1 5`
     CONFIG=( "" "${GEMCONFIG[@]}" )
+fi
+
+if [ -n "$2" ]; then
+    MODELS=$2
 fi
 
 if [[ ! "$1" =~ ^g ]]; then
     for I in $MODELS; do
 	echo
 	echo "Model" $I
-	curl -i -d "{ \"trainingarray\" : $IRIS, \"trainingcatarray\" : ${IRISLABELS}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${CONFIG[I]}, \"size\" : $SIZE, \"testarray\" : $IRISTEST, \"testcatarray\" : $IRISTESTLABELS, \"zero\" : true }" localhost:$PORT/learntest
-	curl -i -d "{ \"trainingarray\" : $IRIS, \"trainingcatarray\" : ${IRISLABELS}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${CONFIG[I]}, \"size\" : $SIZE, \"testarray\" : $IRISTEST, \"testcatarray\" : $IRISTESTLABELS, \"classifyarray\" : $IRISTEST, \"zero\" : true }" localhost:$PORT/learntestclassify
+	if [ "$3" = "s" ]; then
+	    EXTRA1=", \"filename\" : \"$I\", \"neuralnetcommand\" : { \"mldynamic\" : false, \"mllearn\" : true, \"mlclassify\" : false }"
+	    EXTRA2=", \"filename\" : \"$I\", \"neuralnetcommand\" : { \"mldynamic\" : false, \"mllearn\" : false, \"mlclassify\" : true }"
+	    curl -i -d "{ \"trainingarray\" : $IRIS, \"trainingcatarray\" : ${IRISLABELS}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${CONFIG[I]}, \"size\" : $SIZE, \"testarray\" : $IRISTEST, \"testcatarray\" : $IRISTESTLABELS, \"zero\" : true $EXTRA1 }" localhost:$PORT/learntestclassify
+	    curl -i -d "{ \"trainingarray\" : $IRIS, \"trainingcatarray\" : ${IRISLABELS}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${CONFIG[I]}, \"size\" : $SIZE, \"testarray\" : $IRISTEST, \"testcatarray\" : $IRISTESTLABELS, \"classifyarray\" : $IRISTEST, \"zero\" : true $EXTRA2 }" localhost:$PORT/learntestclassify
+	else
+	    curl -i -d "{ \"trainingarray\" : $IRIS, \"trainingcatarray\" : ${IRISLABELS}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${CONFIG[I]}, \"size\" : $SIZE, \"testarray\" : $IRISTEST, \"testcatarray\" : $IRISTESTLABELS, \"zero\" : true }" localhost:$PORT/learntest
+	    curl -i -d "{ \"trainingarray\" : $IRIS, \"trainingcatarray\" : ${IRISLABELS}, \"modelInt\" : $I, \"classes\" : $OUTCOMES, ${CONFIG[I]}, \"size\" : $SIZE, \"testarray\" : $IRISTEST, \"testcatarray\" : $IRISTESTLABELS, \"classifyarray\" : $IRISTEST, \"zero\" : true }" localhost:$PORT/learntestclassify
+	fi
     done
 fi
 
