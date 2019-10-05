@@ -13,7 +13,6 @@ module evolution.gene {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires common.config;
-    requires jackson.annotations;
     requires evolution.model;
     requires common.util;
     requires slf4j.api;
