@@ -48,6 +48,9 @@ public class EvolveMLPytorchConfig {
         this.lstm = lstm;
     }
     public void merge(EvolveMLPytorchConfig pytorch) {
+        if (pytorch == null) {
+            return;
+        }
         mlp.merge(pytorch.mlp);
         cnn.merge(pytorch.cnn);
         rnn.merge(pytorch.rnn);
