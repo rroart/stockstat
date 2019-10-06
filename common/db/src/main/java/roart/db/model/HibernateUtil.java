@@ -106,6 +106,43 @@ public class HibernateUtil {
         return session;
     }
 
+    public static Session getMyHibernateSessionPrivate() throws /*MappingException,*/ HibernateException, Exception {
+        Session mysession = null;
+        if (factory == null) {
+                /*
+            AnnotationConfiguration configuration = new AnnotationConfiguration();
+            factory = configuration.configure().buildSessionFactory();*/
+                /*
+                Configuration configuration = new Configuration().configure();
+                StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
+                                applySettings(configuration.getProperties());
+                factory = configuration.buildSessionFactory(builder.build());
+                */
+            Configuration configuration = new Configuration().configure();
+            String connectionUrl = System.getProperty("connection.url");
+            if (connectionUrl != null) {
+                configuration.setProperty("connection.url", connectionUrl);
+                configuration.setProperty("hibernate.connection.url", connectionUrl);
+            }
+            factory = configuration.buildSessionFactory();
+                //factory = new Configuration().configure().buildSessionFactory();
+            //Object o = new net.sf.ehcache.hibernate.EhCacheRegionFactory();
+        }
+
+        if (mysession == null) {
+            //Session sess = factory.openSession();
+            mysession = factory.getCurrentSession();
+        }
+
+        if (mysession != null) {
+            if (!mysession.isOpen()) {
+                mysession = factory.openSession();
+            }
+        }
+
+        return mysession;
+    }
+
     public static void commit() throws /*MappingException,*/ HibernateException, Exception {
 	log.info("Doing hibernate commit");
 	if (transaction != null) {

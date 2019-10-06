@@ -68,9 +68,9 @@ public class Cont {
         List<Cont> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
         synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
+        //Transaction transaction = session.beginTransaction();
         list = session.createQuery("from Cont").list();
-        transaction.commit();
+        //transaction.commit();
         }
         return list;
     }
@@ -81,9 +81,9 @@ public class Cont {
         List<Cont> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
         synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
+        //Transaction transaction = session.beginTransaction();
         list = session.createQuery("from Cont where market = :mymarket").setParameter("mymarket",  mymarket).list();
-        transaction.commit();
+        //transaction.commit();
         }
         return list;
     }
@@ -91,7 +91,7 @@ public class Cont {
     @Transient
     @Transactional
     public void save() throws Exception {
-        Session session = HibernateUtil.getMyHibernateSession();
+        Session session = HibernateUtil.getMyHibernateSessionPrivate();
         synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
         session.save(this);
