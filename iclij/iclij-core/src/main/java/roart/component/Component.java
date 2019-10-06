@@ -322,6 +322,9 @@ public abstract class Component {
     public Double calculateAccuracy(ComponentData componentparam) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
         List<Double> testAccuracies = new ArrayList<>();
+        if (param.getResultMeta() == null) {
+            return null;
+        }
         for (ResultMeta meta : param.getResultMeta()) {
             Double testaccuracy = meta.getTestAccuracy();
             testAccuracies.add(testaccuracy);
