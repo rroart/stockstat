@@ -248,7 +248,7 @@ public class LearnTestClassify {
         this.gemGEMConfig = gemGEMConfig;
     }
 
-    public GemIcarlConfig getGemICarlConfig() {
+    public GemIcarlConfig getGemIcarlConfig() {
         return gemIcarlConfig;
     }
 
