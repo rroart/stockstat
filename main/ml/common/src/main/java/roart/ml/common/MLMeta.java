@@ -18,6 +18,6 @@ public class MLMeta {
     public Boolean also1d;
  
     public String dimString() {
-        return dim1 + "_" + (dim2 != null ? dim2 : "");
+        return dim1 + "_" + (dim2 != null ? dim2 + "_" : "");
     }
 }
