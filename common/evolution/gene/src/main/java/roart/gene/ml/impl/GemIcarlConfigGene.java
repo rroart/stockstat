@@ -49,30 +49,30 @@ public class GemIcarlConfigGene extends GemConfigGene {
 
         ((GemConfigGene) offspring).crossover(otherNN);
         if (random.nextBoolean()) {
-            offspringconfig.setMemories(otherconfig.getMemories());
+            offspringconfig.setN_memories(otherconfig.getN_memories());
         }
         if (random.nextBoolean()) {
-            offspringconfig.setMemorystrength(otherconfig.getMemorystrength());
+            offspringconfig.setMemory_strength(otherconfig.getMemory_strength());
         }
         if (random.nextBoolean()) {
-            offspringconfig.setSamplespertask(otherconfig.getSamplespertask());
+            offspringconfig.setSamples_per_task(otherconfig.getSamples_per_task());
         }
         return offspring;
     }
 
     private void generateMemories() {
         GemIcarlConfig myconfig = (GemIcarlConfig) getConfig();
-        myconfig.setMemories(getMemories());
+        myconfig.setN_memories(getMemories());
     }
 
     private void generateMemorystrength() {
         GemIcarlConfig myconfig = (GemIcarlConfig) getConfig();
-        myconfig.setMemorystrength(getMemorystrength());
+        myconfig.setMemory_strength(getMemorystrength());
     }
 
     private void generateSamplespertask() {
         GemIcarlConfig myconfig = (GemIcarlConfig) getConfig();
-        myconfig.setSamplespertask(RandomUtil.random(random, 5, 5, 10));
+        myconfig.setSamples_per_task(RandomUtil.random(random, 5, 5, 10));
     }
 
 }

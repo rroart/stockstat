@@ -44,22 +44,22 @@ public class GemGEMConfigGene extends GemConfigGene {
 
         ((GemConfigGene) offspring).crossover(otherNN);
         if (random.nextBoolean()) {
-            offspringconfig.setMemories(otherconfig.getMemories());
+            offspringconfig.setN_memories(otherconfig.getN_memories());
         }
         if (random.nextBoolean()) {
-            offspringconfig.setMemorystrength(otherconfig.getMemorystrength());
+            offspringconfig.setMemory_strength(otherconfig.getMemory_strength());
         }
         return offspring;
     }
 
     private void generateMemories() {
         GemGEMConfig myconfig = (GemGEMConfig) getConfig();
-        myconfig.setMemories(getMemories());
+        myconfig.setN_memories(getMemories());
     }
 
     private void generateMemorystrength() {
         GemGEMConfig myconfig = (GemGEMConfig) getConfig();
-        myconfig.setMemorystrength(getMemorystrength());
+        myconfig.setMemory_strength(getMemorystrength());
     }
 
 }

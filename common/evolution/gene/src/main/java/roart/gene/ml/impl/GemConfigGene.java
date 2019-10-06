@@ -17,8 +17,8 @@ public abstract class GemConfigGene extends NeuralNetConfigGene {
     @Override
     public void randomize() {
         GemConfig myconfig = (GemConfig) getConfig();
-        myconfig.setHidden(generateHidden());
-        myconfig.setLayers(generateLayers());
+        myconfig.setN_hiddens(generateHidden());
+        myconfig.setN_layers(generateLayers());
         myconfig.setLr(generateLr());
         myconfig.setSteps(generateSteps());
     }
@@ -27,10 +27,10 @@ public abstract class GemConfigGene extends NeuralNetConfigGene {
         GemConfig myconfig = (GemConfig) getConfig();
         switch (task) {
         case 0:
-            myconfig.setHidden(generateHidden());
+            myconfig.setN_hiddens(generateHidden());
             break;
         case 1:
-            myconfig.setLayers(generateLayers());
+            myconfig.setN_layers(generateLayers());
             break;
         case 2:
             myconfig.setLr(generateLr());
@@ -47,10 +47,10 @@ public abstract class GemConfigGene extends NeuralNetConfigGene {
         GemConfig myconfig = (GemConfig) getConfig();
         GemConfig otherconfig = (GemConfig) other.getConfig();
         if (random.nextBoolean()) {
-            myconfig.setHidden(otherconfig.getHidden());
+            myconfig.setN_hiddens(otherconfig.getN_hiddens());
         }
         if (random.nextBoolean()) {
-            myconfig.setLayers(otherconfig.getLayers());
+            myconfig.setN_layers(otherconfig.getN_layers());
         }
         if (random.nextBoolean()) {
             myconfig.setSteps(otherconfig.getSteps());

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import roart.common.config.MLConstants;
 
+@SuppressWarnings("squid:S00117")
 public class GemIConfig extends GemConfig {
 
     private boolean finetune;
@@ -14,12 +15,12 @@ public class GemIConfig extends GemConfig {
     @JsonCreator
     public GemIConfig(
             @JsonProperty("steps") int steps, 
-            @JsonProperty("layers") int layers, 
-            @JsonProperty("hidden") int hidden, 
+            @JsonProperty("n_layers") int n_layers, 
+            @JsonProperty("n_hiddens") int n_hiddens, 
             @JsonProperty("lr") double lr, 
             @JsonProperty("finetune") boolean finetune, 
             @JsonProperty("cuda") boolean cuda) {
-        super(MLConstants.I, steps, layers, hidden, lr);
+        super(MLConstants.I, steps, n_layers, n_hiddens, lr);
         this.finetune = finetune;
         this.cuda = cuda;
     }

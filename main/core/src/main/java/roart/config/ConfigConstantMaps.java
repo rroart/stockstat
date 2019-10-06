@@ -13,7 +13,7 @@ public class ConfigConstantMaps {
 
     private static final String SPARKLORCONFIG = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6 }";
 
-    private static final String SPARKMLPCCONFIG = "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"nn\" : [ 1, 1 ] }";
+    private static final String SPARKMLPCCONFIG = "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"hidden\" : 20 }";
 
     private static final String SPARKOVRCONFIG = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : false }";
 
@@ -21,7 +21,7 @@ public class ConfigConstantMaps {
 
     private static final String TENSORFLOWPREDICTORLSTMCONFIG = "{ \"epochs\": 5, \"windowsize\": 3, \"horizon\": 5 }";
 
-    private static final String GEMSINGLECONFIG = "{ \"name\" : \"single\", ,\"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.1, \"data_file\" : \"\" }";
+    private static final String GEMSINGLECONFIG = "{ \"name\" : \"single\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.1, \"data_file\" : \"\" }";
     
     private static final String GEMINDEPENDENTCONFIG = "{ \"name\" : \"independent\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.1, \"finetune\" : false, \"cuda\" : false, \"data_file\" : \"\" }";
     
@@ -31,7 +31,7 @@ public class ConfigConstantMaps {
     
     private static final String GEMGEMCONFIG = "{ \"name\" : \"GEM\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.1, \"n_memories\" : 256, \"memory_strength\" : 0.5, \"cuda\" : false, \"data_file\" : \"\" }";
 
-    private static final String GEMICARLCONFIG = "{ \"name\" : \"iCaRL\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 1.0, \"n_memories\" : 1280, \"memory_strength\" : 1, \"samples_per_task\" : 10, \"data_file\" : \"\" }";
+    private static final String GEMICARLCONFIG = "{ \"name\" : \"iCaRL\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 1.0, \"n_memories\" : 1280, \"memory_strength\" : 1, \"samples_per_task\" : 10, \"cuda\" : false, \"data_file\" : \"\" }";
 
     private static final String PYTORCHMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 20, \"layers\":3, \"lr\" : 0.1 }";
     
@@ -43,19 +43,19 @@ public class ConfigConstantMaps {
     
     private static final String PYTORCHCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 4, \"lr\" : 0.1 }";
     
-    private static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\", \"steps\" : 100, \"hiddenneurons\" : 20, \"hiddenlayers\":3 }";
+    private static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\", \"steps\" : 100, \"hidden\" : 20, \"layers\":3 }";
 
     private static final String TENSORFLOWLICCONFIG = "{ \"name\" : \"lic\", \"steps\" : 100 }";
 
-    private static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hiddenneurons\" : 20, \"hiddenlayers\" : 3, \"lr\" : 0.1 }";
+    private static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 20, \"layers\" : 3, \"lr\" : 0.1 }";
 
-    private static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
+    private static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
 
     private static final String TENSORFLOWCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 100, \"stride\" : 1, \"kernelsize\" : 4, \"dropout\" : 0.5 }";
 
-    private static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
+    private static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
 
-    private static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 100, \"hiddenneurons\" : 100, \"hiddenlayers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
+    private static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
 
     private static final String TENSORFLOWLIRCONFIG = "{ \"name\" : \"lir\", \"steps\" : 100 }";
     
@@ -475,7 +475,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGGEMGEM, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMGEMPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMGEMCONFIG, GEMGEMCONFIG);
-        deflt.put(ConfigConstants.MACHINELEARNINGGEMICARL, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGGEMICARL, Boolean.FALSE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMICARLPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMICARLCONFIG, GEMICARLCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT, Boolean.TRUE);
@@ -1173,7 +1173,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGGEMGEM, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM GEM"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMGEMPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM GEM persist"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMGEMCONFIG, new XMLType(String.class, GEMGEMCONFIG, "Config for GEM GEM"));
-        mymap.put(ConfigConstants.MACHINELEARNINGGEMICARL, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM iCaRL"));
+        mymap.put(ConfigConstants.MACHINELEARNINGGEMICARL, new XMLType(Boolean.class, Boolean.FALSE, "Enable GEM iCaRL"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMICARLPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM iCaRL persist"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMICARLCONFIG, new XMLType(String.class, GEMICARLCONFIG, "Config for GEM iCaRL"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM independent"));

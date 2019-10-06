@@ -1,22 +1,23 @@
 package roart.common.ml;
 
-import java.util.Random;
-
+@SuppressWarnings("squid:S00117")
 public abstract class GemConfig extends NeuralNetConfig {
 
     protected int steps;
     
-    protected int layers;
+    protected int n_layers;
     
-    protected int hidden;
+    protected int n_hiddens;
     
     protected double lr;
     
-    public GemConfig(String name, int steps, int layers, int hidden, double lr) {
+    protected String data_file = "";
+    
+    public GemConfig(String name, int steps, int n_layers, int n_hiddens, double lr) {
         super(name);
         this.steps = steps;
-        this.layers = layers;
-        this.hidden = hidden;
+        this.n_layers = n_layers;
+        this.n_hiddens = n_hiddens;
         this.lr = lr;
     }
 
@@ -32,20 +33,20 @@ public abstract class GemConfig extends NeuralNetConfig {
         this.steps = steps;
     }
 
-    public int getLayers() {
-        return layers;
+    public int getN_layers() {
+        return n_layers;
     }
 
-    public void setLayers(int layers) {
-        this.layers = layers;
+    public void setN_layers(int n_layers) {
+        this.n_layers = n_layers;
     }
 
-    public int getHidden() {
-        return hidden;
+    public int getN_hiddens() {
+        return n_hiddens;
     }
 
-    public void setHidden(int hidden) {
-        this.hidden = hidden;
+    public void setN_hiddens(int n_hiddens) {
+        this.n_hiddens = n_hiddens;
     }
 
     public double getLr() {
@@ -56,11 +57,13 @@ public abstract class GemConfig extends NeuralNetConfig {
         this.lr = lr;
     }
 
-    /*
-    private void generateSteps(Random rand) {
-        steps = 1 + rand.nextInt(MAX_STEPS);
+    public String getData_file() {
+        return data_file;
     }
-    */
+
+    public void setData_file(String data_file) {
+        this.data_file = data_file;
+    }
 
     @Override
     public NeuralNetConfig copy() {
@@ -69,7 +72,7 @@ public abstract class GemConfig extends NeuralNetConfig {
 
     @Override
     public String toString() {
-        return super.toString() + " " + steps + " " + layers + " " + hidden + " " + lr;
+        return super.toString() + " " + steps + " " + n_layers + " " + n_hiddens + " " + lr;
     }
 
 }

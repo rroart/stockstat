@@ -54,6 +54,8 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         gemServer = conf.getGEMServer();
     }
 
+    private static final int LIMIT = 100;
+    
     private void findModels() {
         models = new ArrayList<>();
         if (conf.wantGemSingle()) {
@@ -252,13 +254,15 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
             log.error("Exception", e);
         }
         Object[][] trainingArray = new Object[learnMap.size()][];
-        List<ContItem> newConts = new ArrayList<>();
-        trainingArray = filter(trainingArray, filename, newConts);
-        if (newConts.size() < 1000) {
-            return result;
-        }
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
+        List<ContItem> newConts = new ArrayList<>();
+        log.info("First training array size {}", trainingArray.length);
+        trainingArray = filter(trainingArray, filename, newConts);
+        log.info("Filtered training array size {}, limit {}", trainingArray.length, LIMIT);        
+        if (newConts.size() < LIMIT) {
+            return result;
+        }
         GemSConfig sconfig = null;
         GemIConfig iconfig = null;
         GemMMConfig mconfig = null;
@@ -283,13 +287,13 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
             mconfig = new GemMMConfig(1000, 2, 2, 0.1);
         }
         if (icarlconfig == null) {
-            icarlconfig = new GemIcarlConfig(1000, 2, 2, 0.1, 10, 1, 10);
+            icarlconfig = new GemIcarlConfig(1000, 2, 2, 0.1, 10, 1, 10, false);
         }
         if (ewcconfig == null) {
             ewcconfig = new GemEWCConfig(1000, 2, 2, 0.1, 10, 1);
         }
         if (gemconfig == null) {
-            gemconfig = new GemGEMConfig(1000, 2, 2, 0.1, 256, 0.5);
+            gemconfig = new GemGEMConfig(1000, 2, 2, 0.1, 256, 0.5, false);
         }
         param.setGemSConfig(sconfig);
         param.setGemIConfig(iconfig);
@@ -315,11 +319,14 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntestclassify");
         } catch (Exception e) {
             log.error("Exception", e);
+            return result;
         }
         saveme(newConts);
         result.setAccuracy(ret.getAccuracy());
-        Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret);
-        result.setCatMap(retMap);
+        if (ret.getClassifycatarray() != null) {
+            Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret);
+            result.setCatMap(retMap);
+        }
         return result;
     }
 
@@ -364,7 +371,10 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
             cont.setDate(LocalDate.now());
             newConts.add(cont);
         }
-        Object[][] newfiltered = (Object[][]) filtered.toArray();
+        Object[][] newfiltered = new Object[filtered.size()][];
+        for (int i = 0; i < filtered.size(); i++) {
+            newfiltered[i] = filtered.get(i);
+        }
         log.info("Time spent {}", (System.currentTimeMillis() - millis0) / 1000);
         return newfiltered;
     }
