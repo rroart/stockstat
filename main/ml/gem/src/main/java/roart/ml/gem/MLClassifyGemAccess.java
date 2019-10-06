@@ -318,7 +318,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntestclassify");
         } catch (Exception e) {
-            log.error("Exception", e);
+            log.error(Constants.EXCEPTION, e);
             return result;
         }
         saveme(newConts);
