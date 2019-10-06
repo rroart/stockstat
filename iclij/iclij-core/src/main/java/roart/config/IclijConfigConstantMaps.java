@@ -9,7 +9,10 @@ import roart.iclij.config.IclijXMLType;
 
 public class IclijConfigConstantMaps {
     private static final String ACONFIG = "{ \"load\" : true, \"save\" : true, \"enable\" : true, \"evolve\" : true }";
-    private static final String MLCONFIG = "{ \"spark\" : { \"mlpc\" : " + ACONFIG + ", \"lor\" : " + ACONFIG + ", \"ovr\" : " + ACONFIG + ", \"lsvc\" : " + ACONFIG + " }, \"tensorflow\" : { \"dnn\" : " + ACONFIG + ",  \"lic\" : " + ACONFIG + ", \"lir\" : " + ACONFIG + ", \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + ", \"predictorlstm\" : { \"load\" : true, \"save\" : true, \"enable\" : false, \"evolve\" : false } }, \"pytorch\" : { \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + " }, \"gem\" : { \"ewc\" : " + ACONFIG + ", \"gem\" : " + ACONFIG + ", \"i\" : " + ACONFIG + ", \"icarl\" : " + ACONFIG + ", \"mm\" : " + ACONFIG + ", \"s\" : " + ACONFIG + " } }";
+    
+    private static final String DISABLECONFIG = "{ \"load\" : true, \"save\" : true, \"enable\" : false, \"evolve\" : true }";
+
+    private static final String MLCONFIG = "{ \"spark\" : { \"mlpc\" : " + ACONFIG + ", \"lor\" : " + ACONFIG + ", \"ovr\" : " + ACONFIG + ", \"lsvc\" : " + ACONFIG + " }, \"tensorflow\" : { \"dnn\" : " + ACONFIG + ",  \"lic\" : " + ACONFIG + ", \"lir\" : " + ACONFIG + ", \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + ", \"predictorlstm\" : { \"load\" : true, \"save\" : true, \"enable\" : false, \"evolve\" : false } }, \"pytorch\" : { \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + " }, \"gem\" : { \"ewc\" : " + ACONFIG + ", \"gem\" : " + ACONFIG + ", \"i\" : " + ACONFIG + ", \"icarl\" : " + DISABLECONFIG + ", \"mm\" : " + ACONFIG + ", \"s\" : " + ACONFIG + " } }";
 
     private static final String MLCONFIGLSTM = "{ \"lstm\" : " + ACONFIG + " }";
 
