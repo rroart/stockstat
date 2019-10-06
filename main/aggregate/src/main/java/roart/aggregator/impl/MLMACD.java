@@ -266,7 +266,7 @@ public class MLMACD extends IndicatorAggregator {
         if (conf.wantMLSignal()) {
             ret = ret + Constants.SIGNAL + "_";
         }
-        ret = ret + "_" + getAfterBefore().getFilePart();
+        ret = ret + getAfterBefore().getFilePart();
         return ret;
     }
 

@@ -294,12 +294,12 @@ public abstract class IndicatorAggregator extends Aggregator {
                     for (MLClassifyModel model : mldao.getModels()) {
                         for (int mapTypeInt : getMapTypeList()) {
                             String mapType = mapTypes.get(mapTypeInt);
-                            Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
                             String mapName = subType.getType() + mapType;
+                            Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap = mapMap.get(subType).get(mapType);
                             Map<String, Long> countMap = null;
                             if (learnMap != null) {
-                                IndicatorUtils.filterNonExistingClassifications2(labelMapShort, learnMap);
+                                IndicatorUtils.filterNonExistingClassifications3(labelMapShort, learnMap);
                                 countMap = getCountMap(labelMapShort, learnMap);
                                 //countMap = learnMap.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getRight().getRight()), Collectors.counting()));                            
                             }
@@ -342,10 +342,11 @@ public abstract class IndicatorAggregator extends Aggregator {
                             Map<String, Pair<Object, Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
-                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType);
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType, mlmeta);
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             //indicators.add(this);
+                            log.info("Filename {}", filename);
                             LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
@@ -438,6 +439,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 IndicatorUtils.filterNonExistingClassifications3(labelMapShort, learnMap);
                                 countMap = getCountMap(labelMapShort, learnMap);
                             }
+                            if (model.isPredictorOnly()) {
+                                continue;
+                            }
                             // make OO of this, create object
                             Object[] meta = new Object[9];
                             meta[0] = mldao.getName();
@@ -474,7 +478,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             Map<String, Pair<Object, Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
-                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType);
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType, mlmeta);
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
@@ -518,12 +522,11 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private int getValidateSize(Map<String, Pair<Object, Double>> map, MLMeta mlmeta) {
         int size = -1;
-        if (true) {
-            return mlmeta.dim1;
-        }
         for (Entry<String, Pair<Object, Double>> entry : map.entrySet()) {
             Pair<Object, Double> value = entry.getValue();
-            if (mlmeta.dim2 == null) {
+            Object myarray = value.getLeft();
+            int dim = myarray.getClass().getName().indexOf("D");
+            if (dim == 1) {
                 double[] myvalue = (double[]) value.getLeft();
                 if (size < 0) {
                     size = myvalue.length;
@@ -1715,7 +1718,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     public abstract String getFilenamePart();
     
-    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators, String subType, String mapType) {
-        return market + "_" + getName() + "_" + dao.getName() + "_" + model.getEngineName() + "_" + model.getName() + "_" + getFilenamePart() + "_" + subType + "_" + mapType + "_" + in + "_" + out;
+    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators, String subType, String mapType, MLMeta mlmeta) {
+        return market + "_" + getName() + "_" + dao.getName() + "_" + model.getName() + "_" + getFilenamePart() + subType + "_" + mapType + "_" + mlmeta.dimString() + in + "_" + out;
     }
 }

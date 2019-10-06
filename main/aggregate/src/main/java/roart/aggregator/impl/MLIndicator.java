@@ -865,7 +865,7 @@ public class MLIndicator extends Aggregator {
     }
     
     public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators) {
-        return market + "_" + getName() + "_" + dao.getName() + "_" + model.getEngineName() + "_" + model.getName() + "_" + in + "_" + out + "_" + getFilenamePart(indicators);
+        return market + "_" + getName() + "_" + dao.getName() + "_" +  model.getName() + "_" + in + "_" + out + "_" + getFilenamePart(indicators);
     }
 }
 
