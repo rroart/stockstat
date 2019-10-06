@@ -1,6 +1,6 @@
 package roart.common.ml;
 
-@SuppressWarnings("squid:S00117")
+@SuppressWarnings("squid:S00116")
 public abstract class GemConfig extends NeuralNetConfig {
 
     protected int steps;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import roart.common.config.MLConstants;
 
-@SuppressWarnings("squid:S00117")
+@SuppressWarnings("squid:S00116")
 public class GemIcarlConfig extends GemConfig {
 
     private int n_memories;

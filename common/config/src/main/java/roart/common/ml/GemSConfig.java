@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import roart.common.config.MLConstants;
 
-@SuppressWarnings("squid:S00117")
+@SuppressWarnings("squid:S00116")
 public class GemSConfig extends GemConfig {
 
     @JsonCreator
