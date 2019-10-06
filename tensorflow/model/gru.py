@@ -12,11 +12,11 @@ class Model(MyModel):
     # Define your layers here.
     amodel=Sequential()
     amodel.add(Dropout(config.dropoutin, input_shape = myobj.size))
-    amodel.add(GRU(config.hiddenneurons, return_sequences = True, time_major = False))
+    amodel.add(GRU(config.hidden, return_sequences = True, time_major = False))
     amodel.add(Dropout(config.dropout))
-    for i in range(1, config.hiddenlayers):
+    for i in range(1, config.layers):
       print("Adding hidden layer", i)
-      amodel.add(GRU(config.hiddenneurons, return_sequences = i != config.hiddenlayers - 1, time_major = False))
+      amodel.add(GRU(config.hidden, return_sequences = i != config.layers - 1, time_major = False))
       amodel.add(Dropout(config.dropout))
     amodel.add(Dense(myobj.classes))
     self.model = amodel

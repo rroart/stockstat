@@ -14,10 +14,10 @@ class Model(MyModel):
     super(Model, self).__init__(config, name='my_model')
     # Define your layers here.
     amodel=tf.keras.Sequential()
-    amodel.add(tf.keras.layers.Dense(config.hiddenneurons, activation='relu', input_shape=(myobj.size,)))
-    for i in range(0, config.hiddenlayers):
+    amodel.add(tf.keras.layers.Dense(config.hidden, activation='relu', input_shape=(myobj.size,)))
+    for i in range(0, config.layers):
       print("Adding hidden layer", i)
-      amodel.add(tf.keras.layers.Dense(config.hiddenneurons, activation='relu'))
+      amodel.add(tf.keras.layers.Dense(config.hidden, activation='relu'))
     amodel.add(tf.keras.layers.Dense(myobj.classes, activation='softmax'))
     self.model = amodel
     self.dense_1 = Dense(32, activation='relu', input_shape=(myobj.size,))
