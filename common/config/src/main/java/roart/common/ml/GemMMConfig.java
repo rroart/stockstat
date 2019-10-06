@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import roart.common.config.MLConstants;
 
-@SuppressWarnings("squid:S00116")
+@SuppressWarnings({"squid:S00116", "squid:S00117"})
 public class GemMMConfig extends GemConfig {
 
     @JsonCreator
