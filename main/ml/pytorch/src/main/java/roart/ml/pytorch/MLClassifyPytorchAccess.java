@@ -293,10 +293,13 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/learntestclassify");
         } catch (Exception e) {
             log.error("Exception", e);
+            return result;
         }
         result.setAccuracy(ret.getAccuracy());
-        Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret);
-        result.setCatMap(retMap);
+        if (ret.getClassifycatarray() != null) {
+            Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret);
+            result.setCatMap(retMap);
+        }
         return result;
     }
 
