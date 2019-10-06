@@ -7,7 +7,7 @@ source config.sh
 if [ "$1" = "p" ]; then
     PORT=8018
     MODELS="2"
-    TIMECONFIG[1]="\"pytorchMLPConfig\" : { \"name\" : \"mlp\", \"steps\" : 1000, \"hiddenneurons\" : 20, \"hiddenlayers\":3, \"lr\" : 0.1 }"
+    TIMECONFIG[1]="\"pytorchMLPConfig\" : { \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 20, \"layers\":3, \"lr\" : 0.1 }"
     TIMECONFIG[2]="\"pytorchRNNConfig\" : { \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"slide_stride\" : 2, \"lr\" : 0.01 }"
 fi
 
