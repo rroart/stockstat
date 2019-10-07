@@ -356,15 +356,17 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 countMap2 = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
                             }
                             if (countMap2 == null) {
-                                testCount++;
-                                continue;
+                                //testCount++;
+                                //continue;
                             }
 
                             probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
                             meta[6] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
 
-                            addEventRow(subType, countMap2);
+                            if (countMap2 != null) {
+                                addEventRow(subType, countMap2);
+                            }
                             handleResultMeta(testCount, offsetMap, countMap);
                             testCount++;
                         }
@@ -466,7 +468,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> classifyMap = mapMap.get(subType).get("fresh");
                             log.debug("map name {}", mapName);
-                            if (learnMap == null || classifyMap == null || classifyMap.isEmpty()) {
+                            if (learnMap == null || learnMap.isEmpty() || classifyMap == null || classifyMap.isEmpty()) {
                                 log.warn("Map null and continue? {}", mapName);
                                 continue;
                             }
@@ -505,13 +507,15 @@ public abstract class IndicatorAggregator extends Aggregator {
                     countMap2 = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
                 }
                 if (countMap2 == null) {
-                    continue;
+                    //continue;
                 }
 
                 probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
                 handleResultMetaAccuracy(testCount, result);
 
-                addEventRow(subType, countMap2);
+                if (countMap2 != null) {
+                    addEventRow(subType, countMap2);
+                }
                 Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
                 handleResultMeta(testCount, offsetMap, countMap2);
             }
@@ -684,7 +688,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                             testCount++;
                             continue;
                         }
-                        addEventRow(subType, countMap);
+                        if (countMap != null) {
+                            addEventRow(subType, countMap);
+                        }
                         handleResultMeta(testCount, offsetMap, countMap);
                         testCount++;
                     }
