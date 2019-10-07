@@ -375,18 +375,22 @@ public abstract class ComponentML extends Component {
         return subComponents;
     }
 
+    @Override
     protected void subenable(Map<String, Object> valueMap, String subcomponent) {
         String[] pairArray = subcomponent.split(" ");
         Pair<String, String> pair = new ImmutablePair(pairArray[0], pairArray[1]);
         Map<Pair<String, String>, String> map = getMap();
         String key = map.get(pair);
+        /*
         if (!map.containsKey(key)) {
             log.error("Key not found {}", key);
             return;
         }
+        */
         valueMap.put(key, Boolean.TRUE);
     }
 
+    @Override
     protected void subdisable(Map<String, Object> valueMap, String subcomponent) {
         String[] pair = subcomponent.split(" ");
         String ml = pair[0];
@@ -399,6 +403,13 @@ public abstract class ComponentML extends Component {
         for (Entry<String, String> entry : map.entrySet()) {
             String disableKey = entry.getValue();
             valueMap.put(disableKey, Boolean.FALSE);
+        }
+        Map<Pair<String, String>, String> fullMap = getMap();
+        for (Entry<Pair<String, String>, String> entry : fullMap.entrySet()) {
+            Pair<String, String> aPair = entry.getKey();
+            if (ml.equals(aPair.getLeft())) {
+                valueMap.put(entry.getValue(), Boolean.FALSE);
+            }
         }
     }
 
