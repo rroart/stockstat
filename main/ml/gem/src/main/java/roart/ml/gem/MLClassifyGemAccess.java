@@ -278,22 +278,22 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
              gemconfig = nnconfigs.getGemConfig().getGemGEMConfig();
         }
         if (sconfig == null) {
-            sconfig = new GemSConfig(1000, 2, 2, 0.1);
+            sconfig = new GemSConfig(100, 2, 2, 0.001);
         }
         if (iconfig == null) {
-            iconfig = new GemIConfig(1000, 2, 2, 0.1, false, false);
+            iconfig = new GemIConfig(100, 2, 2, 0.001, false, false);
         }
         if (mconfig == null) {
-            mconfig = new GemMMConfig(1000, 2, 2, 0.1);
+            mconfig = new GemMMConfig(100, 2, 2, 0.001);
         }
         if (icarlconfig == null) {
-            icarlconfig = new GemIcarlConfig(1000, 2, 2, 0.1, 10, 1, 10, false);
+            icarlconfig = new GemIcarlConfig(100, 2, 2, 0.001, 10, 1, 10, false);
         }
         if (ewcconfig == null) {
-            ewcconfig = new GemEWCConfig(1000, 2, 2, 0.1, 10, 1);
+            ewcconfig = new GemEWCConfig(100, 2, 2, 0.001, 10, 1);
         }
         if (gemconfig == null) {
-            gemconfig = new GemGEMConfig(1000, 2, 2, 0.1, 256, 0.5, false);
+            gemconfig = new GemGEMConfig(100, 2, 2, 0.001, 256, 0.5, false);
         }
         param.setGemSConfig(sconfig);
         param.setGemIConfig(iconfig);

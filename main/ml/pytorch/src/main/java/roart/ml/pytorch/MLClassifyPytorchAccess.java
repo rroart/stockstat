@@ -256,19 +256,19 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             lstmconfig = nnconfigs.getPytorchConfig().getPytorchLSTMConfig();
        }
         if (mlpconfig == null) {
-            mlpconfig = new PytorchMLPConfig(1000, 3, 20, 0.1);
+            mlpconfig = new PytorchMLPConfig(100, 2, 100, 0.1);
         }
         if (cnnconfig == null) {
-            cnnconfig = new PytorchCNNConfig(1000, 4, 1, 0.001);
+            cnnconfig = new PytorchCNNConfig(100, 4, 1, 0.01);
         }
         if (rnnconfig == null) {
-            rnnconfig = new PytorchRNNConfig(100, 2, 100, 0.001, 1);
+            rnnconfig = new PytorchRNNConfig(100, 2, 100, 0.01, 1);
         }
         if (gruconfig == null) {
-            gruconfig = new PytorchGRUConfig(100, 2, 100, 0.001, 1);
+            gruconfig = new PytorchGRUConfig(100, 2, 100, 0.01, 1);
         }
         if (lstmconfig == null) {
-            lstmconfig = new PytorchLSTMConfig(100, 2, 100, 0.001, 1);
+            lstmconfig = new PytorchLSTMConfig(100, 2, 100, 0.01, 1);
         }
         param.setPytorchMLPConfig(mlpconfig);
         param.setPytorchCNNConfig(cnnconfig);

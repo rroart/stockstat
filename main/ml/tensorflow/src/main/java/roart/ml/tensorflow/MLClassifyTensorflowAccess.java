@@ -281,8 +281,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             int jj = 0;
         }
         if (dnnConfig == null) {
-            dnnConfig = new TensorflowDNNConfig(100, 3, 20);
-            //dnnConfig = getDefault(TensorflowDNNConfig.class);
+            dnnConfig = new TensorflowDNNConfig(100, 2, 100);
         }
         if (licconfig == null) {
             licconfig = new TensorflowLICConfig(100);
@@ -291,19 +290,19 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             lirconfig = new TensorflowLIRConfig(100);
         }
         if (mlpconfig == null) {
-            mlpconfig = new TensorflowMLPConfig(1000, 3, 20, 0.1);
+            mlpconfig = new TensorflowMLPConfig(100, 2, 100, 0.01);
         }
         if (cnnconfig == null) {
-            cnnconfig = new TensorflowCNNConfig(1000, 4, 1, 0.5);
+            cnnconfig = new TensorflowCNNConfig(100, 4, 1, 0.5);
         }
         if (rnnconfig == null) {
-            rnnconfig = new TensorflowRNNConfig(100, 2, 100, 0.001, 1, 0, 0);
+            rnnconfig = new TensorflowRNNConfig(100, 2, 100, 0.01, 1, 0, 0);
         }
         if (gruconfig == null) {
-            gruconfig = new TensorflowGRUConfig(100, 2, 100, 0.001, 1, 0, 0);
+            gruconfig = new TensorflowGRUConfig(100, 2, 100, 0.01, 1, 0, 0);
         }
         if (lstmconfig == null) {
-            lstmconfig = new TensorflowLSTMConfig(100, 2, 100, 0.001, 1, 0, 0);
+            lstmconfig = new TensorflowLSTMConfig(100, 2, 100, .01, 1, 0, 0);
         }
         param.setTensorflowDNNConfig(dnnConfig);
         param.setTensorflowLICConfig(licconfig);

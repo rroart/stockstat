@@ -13,7 +13,7 @@ public class ConfigConstantMaps {
 
     private static final String SPARKLORCONFIG = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6 }";
 
-    private static final String SPARKMLPCCONFIG = "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"hidden\" : 20 }";
+    private static final String SPARKMLPCCONFIG = "{ \"maxiter\" : 100, \"layers\" : 2, \"tol\" : 1.0E-6, \"hidden\" : 100 }";
 
     private static final String SPARKOVRCONFIG = "{ \"maxiter\" : 100, \"tol\" : 1.0E-6, \"fitintercept\" : false }";
 
@@ -21,41 +21,41 @@ public class ConfigConstantMaps {
 
     private static final String TENSORFLOWPREDICTORLSTMCONFIG = "{ \"epochs\": 5, \"windowsize\": 3, \"horizon\": 5 }";
 
-    private static final String GEMSINGLECONFIG = "{ \"name\" : \"single\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.1, \"data_file\" : \"\" }";
+    private static final String GEMSINGLECONFIG = "{ \"name\" : \"single\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"data_file\" : \"\" }";
     
-    private static final String GEMINDEPENDENTCONFIG = "{ \"name\" : \"independent\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.1, \"finetune\" : false, \"cuda\" : false, \"data_file\" : \"\" }";
+    private static final String GEMINDEPENDENTCONFIG = "{ \"name\" : \"independent\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"finetune\" : false, \"cuda\" : false, \"data_file\" : \"\" }";
     
-    private static final String GEMMULTIMODALCONFIG = "{ \"name\" : \"multimodal\", \"steps\" : 100, \"n_layers\" : 1, \"n_hiddens\" : 100, \"lr\" : 0.1, \"data_file\" : \"\" }";
+    private static final String GEMMULTIMODALCONFIG = "{ \"name\" : \"multimodal\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"data_file\" : \"\" }";
     
-    private static final String GEMEWCCONFIG = "{ \"name\" : \"EWC\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.1, \"n_memories\" : 10, \"memory_strength\" : 1, \"data_file\" : \"\" }";
+    private static final String GEMEWCCONFIG = "{ \"name\" : \"EWC\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"n_memories\" : 10, \"memory_strength\" : 1, \"data_file\" : \"\" }";
     
-    private static final String GEMGEMCONFIG = "{ \"name\" : \"GEM\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.1, \"n_memories\" : 256, \"memory_strength\" : 0.5, \"cuda\" : false, \"data_file\" : \"\" }";
+    private static final String GEMGEMCONFIG = "{ \"name\" : \"GEM\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"n_memories\" : 256, \"memory_strength\" : 0.5, \"cuda\" : false, \"data_file\" : \"\" }";
 
-    private static final String GEMICARLCONFIG = "{ \"name\" : \"iCaRL\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 1.0, \"n_memories\" : 1280, \"memory_strength\" : 1, \"samples_per_task\" : 10, \"cuda\" : false, \"data_file\" : \"\" }";
+    private static final String GEMICARLCONFIG = "{ \"name\" : \"iCaRL\", \"steps\" : 100, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"n_memories\" : 1280, \"memory_strength\" : 1, \"samples_per_task\" : 10, \"cuda\" : false, \"data_file\" : \"\" }";
 
-    private static final String PYTORCHMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 20, \"layers\":3, \"lr\" : 0.1 }";
+    private static final String PYTORCHMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 100, \"hidden\" : 100, \"layers\": 2, \"lr\" : 0.01 }";
     
-    private static final String PYTORCHRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.1 }";
+    private static final String PYTORCHRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
     
-    private static final String PYTORCHLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.1 }";
+    private static final String PYTORCHLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
     
-    private static final String PYTORCHGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.1 }";
+    private static final String PYTORCHGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
     
-    private static final String PYTORCHCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 4, \"lr\" : 0.1 }";
+    private static final String PYTORCHCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 100, \"stride\" : 1, \"kernelsize\" : 4, \"lr\" : 0.01 }";
     
-    private static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\", \"steps\" : 100, \"hidden\" : 20, \"layers\":3 }";
+    private static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\", \"steps\" : 100, \"hidden\" : 100, \"layers\": 2 }";
 
     private static final String TENSORFLOWLICCONFIG = "{ \"name\" : \"lic\", \"steps\" : 100 }";
 
-    private static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 20, \"layers\" : 3, \"lr\" : 0.1 }";
+    private static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
 
-    private static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
+    private static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
 
     private static final String TENSORFLOWCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 100, \"stride\" : 1, \"kernelsize\" : 4, \"dropout\" : 0.5 }";
 
-    private static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
+    private static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
 
-    private static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.001, \"dropout\" : 0, \"dropoutin\" : 0 }";
+    private static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 100, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
 
     private static final String TENSORFLOWLIRCONFIG = "{ \"name\" : \"lir\", \"steps\" : 100 }";
     
