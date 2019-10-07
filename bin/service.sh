@@ -14,7 +14,7 @@ java -jar stockstat-web-0.5-SNAPSHOT.jar 2>&1 | tee /tmp/web.out > /dev/null 2>&
 cd ../tensorflow
 ./flasktf.sh 2>&1 | tee /tmp/flasktf.out &
 
-cd ../pt
+cd ../pytorch
 ./flaskpt.sh 2>&1 | tee /tmp/flaskpt.out &
 
 cd ../gem
