@@ -25,7 +25,7 @@ public class MLClassifyPytorchCNNModel  extends MLClassifyPytorchModel {
     
     @Override
     public String getKey() {
-        return ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG;
+        return ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG;
     }
 
     @Override
