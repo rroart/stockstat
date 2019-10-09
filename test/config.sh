@@ -1,4 +1,4 @@
-STEPS=100
+STEPS=1000
 
     GEMCONFIG[1]="\"gemSConfig\" : { \"name\" : \"single\" ,\"steps\" : $STEPS, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"data_file\" : \"\" }"
     GEMCONFIG[2]="\"gemIConfig\" : { \"name\" : \"independent\", \"steps\" : $STEPS, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"finetune\" : false, \"cuda\" : false, \"data_file\" : \"\" }"
