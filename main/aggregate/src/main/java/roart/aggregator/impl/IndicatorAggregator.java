@@ -348,6 +348,11 @@ public abstract class IndicatorAggregator extends Aggregator {
                             //indicators.add(this);
                             log.info("Filename {}", filename);
                             LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
+
+                            probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
+                            meta[6] = result.getAccuracy();
+                            resultMeta.setTestAccuracy(result.getAccuracy());
+
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
 
@@ -359,10 +364,6 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 testCount++;
                                 continue;
                             }
-
-                            probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
-                            meta[6] = result.getAccuracy();
-                            resultMeta.setTestAccuracy(result.getAccuracy());
 
                             addEventRow(subType, countMap2);
                             handleResultMeta(testCount, offsetMap, countMap);
@@ -466,7 +467,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> classifyMap = mapMap.get(subType).get("fresh");
                             log.debug("map name {}", mapName);
-                            if (learnMap == null || classifyMap == null || classifyMap.isEmpty()) {
+                            if (learnMap == null || learnMap.isEmpty() || classifyMap == null || classifyMap.isEmpty()) {
                                 log.warn("Map null and continue? {}", mapName);
                                 continue;
                             }
