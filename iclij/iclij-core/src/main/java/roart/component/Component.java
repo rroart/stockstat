@@ -333,7 +333,7 @@ public abstract class Component {
         return testAccuracies
                 .stream()
                 .mapToDouble(e -> e)
-                .average()
+                .max()
                 .orElse(0);
     }
 
