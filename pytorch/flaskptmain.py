@@ -5,6 +5,9 @@ from flask import Flask, request
 import sys
 from multiprocessing import Process, Queue
 
+import json
+from werkzeug.wrappers import Response
+
 def classifyrunner2(queue, request):
     import classify
     cl = classify.Classify()
@@ -42,7 +45,10 @@ def do_learntestclassify():
     def classifyrunner(queue, request):
         import classify
         cl = classify.Classify()
-        cl.do_learntestclassify(queue, request, True)
+        try:
+            cl.do_learntestclassify(queue, request, True)
+        except:
+            queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None}), mimetype='application/json'))
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
     process.start()
