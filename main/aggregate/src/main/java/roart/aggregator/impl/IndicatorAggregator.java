@@ -1381,40 +1381,43 @@ public abstract class IndicatorAggregator extends Aggregator {
         List<SubType> mergelist = wantedMergeSubTypes();
         // for each wanted merge trigger
         for (SubType mergeSubType : mergelist) {
-            int wantedSize = 0;
             int wanteds = 0;
-            //for (String mapType : mapTypes.values()) {
-            Map<String, Pair<Object, Double>> resultMap = new HashMap<>();
             for (int i = 0; i < subTypes.size(); i++) {
                 SubType aSubType = subTypes.get(i);
                 if (aSubType.useMerged) {
                     wanteds++;
-                    wantedSize += getAfterBefore().before;
                 }
             }
-            SubType mySubType = null;
-            for (SubType subType : subTypes) {
-                if (mergeSubType.mySubType == subType.mySubType) {
-                    mySubType = subType;
-                }
-            }
+            SubType mySubType = getMySubType(subTypes, mergeSubType);
             if (!metaMap.containsKey(mySubType)) {
                 MLMeta mlmeta = new MLMeta();
                 mlmeta.timeseries = true;
                 mlmeta.classify = true;
                 mlmeta.dim1 = mergeSubType.afterbefore.before;
                 mlmeta.dim2 = wanteds;
+                if (wanteds == 1) {
+                    log.error("Only one dim");
+                }
                 mlmeta.also1d = true;
                 metaMap.put(mySubType, mlmeta);
             } else {
                 MLMeta mlmeta = metaMap.get(mergeSubType);
+                if (mlmeta != null) {
+                    int jj = 0;
+                }
+            }
+        }
+        for (SubType mergeSubType : mergelist) {
+            SubType mySubType = getMySubType(subTypes, mergeSubType);
+            MLMeta mlmeta = metaMap.get(mySubType);
+            if (mlmeta != null) {
                 if (mlmeta.dim1 != mergeSubType.afterbefore.before) {
                     log.error("Wrong value {} {}", mlmeta.dim1, mergeSubType.afterbefore.before);
                 }
+            } else {
+                int jj = 0;
             }
-            //Map<String, Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>>> m = getPosNeg(labelMapShort, afterbefore);
-            Map<Double, String> reverseClassification = createLabelMapShort();
-            // map from h/m + posnegcom to map<model, results>
+           // map from h/m + posnegcom to map<model, results>
             for (String id : getListMap().keySet()) {
                 double[][] list = getListMap().get(id);
                 log.debug("t {}", Arrays.toString(list[0]));
@@ -1461,8 +1464,8 @@ public abstract class IndicatorAggregator extends Aggregator {
 		    }
 		}
                 //double[] array = new double[0];
-                double[][] arrays = new double[wanteds][];
-                SubType[] subs = new SubType[wanteds];
+                double[][] arrays = new double[mlmeta.dim2][];
+                SubType[] subs = new SubType[mlmeta.dim2];
                 int count = 0;
 		for (SubType subType : subTypes) {
                     if (!subType.useMerged) {
@@ -1529,6 +1532,16 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
         }
         mapMap.putAll(newMapMap);
+    }
+
+    private SubType getMySubType(List<SubType> subTypes, SubType mergeSubType) {
+        SubType mySubType = null;
+        for (SubType subType : subTypes) {
+            if (mergeSubType.mySubType == subType.mySubType) {
+                mySubType = subType;
+            }
+        }
+        return mySubType;
     }
 
     static <K, V> Map<K, V> mapGetter(Map<String, Map<K, V>> mapMap, String key) {
