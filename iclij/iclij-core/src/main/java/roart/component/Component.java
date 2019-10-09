@@ -81,8 +81,7 @@ public abstract class Component {
     
     public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent);
 
-    protected void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps) {        
-    }
+    protected abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
 
     public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
         try {
@@ -327,7 +326,9 @@ public abstract class Component {
         }
         for (ResultMeta meta : param.getResultMeta()) {
             Double testaccuracy = meta.getTestAccuracy();
-            testAccuracies.add(testaccuracy);
+            if (testaccuracy != null) {
+                testAccuracies.add(testaccuracy);
+            }
         }
         return testAccuracies
                 .stream()

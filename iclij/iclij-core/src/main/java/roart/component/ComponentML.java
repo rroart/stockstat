@@ -171,7 +171,9 @@ public abstract class ComponentML extends Component {
         return evolveConfig;
     }
 
-    protected void handleMLMeta(ComponentMLData param, Map<String, List<Object>> mlMaps) {
+    @Override
+    protected void handleMLMeta(ComponentData componentparam, Map<String, List<Object>> mlMaps) {
+        ComponentMLData param = (ComponentMLData) componentparam;
         Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) mlMaps.get(PipelineConstants.PROBABILITY);
         List<List> resultMetaArray = (List) mlMaps.get(PipelineConstants.RESULTMETAARRAY);
         param.setResultMetaArray(resultMetaArray);
