@@ -67,7 +67,7 @@ class MyEstimator():
             shutil.rmtree(self.classifier.model_dir)
         del self.classifier
 
-    def localsave(self):
+    def localsave():
         return False
 
     def wantDynamic(self):

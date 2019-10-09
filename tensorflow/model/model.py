@@ -4,7 +4,7 @@ import numpy as np
 class MyModel():
     def __init__(self, config, name):
         self.config = config
-
+        
     def train(self, train, traincat):
         # this calls call
         #self.fit(train, traincat, epochs = self.config.steps)
@@ -35,5 +35,5 @@ class MyModel():
     def tidy(self):
         return None
 
-    def localsave(self):
+    def localsave():
         return True
