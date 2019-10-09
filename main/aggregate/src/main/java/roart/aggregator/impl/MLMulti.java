@@ -62,7 +62,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORMACD).get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, 0, shortneg), new Filter(false, 0, shortpos) };
                 if (taObject != null) {
-                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE, conf, filter, "macd"));
+                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE, conf, filter, Constants.MACD, MySubType.MACDHIST));
                 }
             }
             if (conf.wantAggregatorsMlmultiRSI()) {
@@ -71,7 +71,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORRSI).get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLRSIBuyRSILimit(), shortpos), new Filter(false, conf.getMLRSISellRSILimit(), shortneg) };
                 if (taObject != null) {
-                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "rsi"));
+                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.RSI, MySubType.RSI));
                 }
             }
             if (conf.wantAggregatorsMlmultiATR()) {
@@ -80,7 +80,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORATR).get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLATRBuyLimit(), shortpos), new Filter(false, conf.getMLATRSellLimit(), shortneg) };
                 if (taObject != null) {
-                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "atr"));
+                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.ATR, MySubType.ATR));
                 }
             }
             if (conf.wantAggregatorsMlmultiCCI()) {
@@ -89,7 +89,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORCCI).get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLCCIBuyLimit(), shortpos), new Filter(false, conf.getMLCCISellLimit(), shortneg) };
                 if (taObject != null) {
-                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "cci"));
+                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.CCI, MySubType.CCI));
                 }
             }
             if (conf.wantAggregatorsMlmultiSTOCH()) {
@@ -98,7 +98,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORSTOCH).get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLSTOCHBuyLimit(), shortpos), new Filter(false, conf.getMLSTOCHSellLimit(), shortneg) };
                 if (taObject != null) {
-                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE, conf, filter, "stoch"));
+                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE, conf, filter, Constants.STOCH, MySubType.STOCH));
                 }
             }
             if (conf.wantAggregatorsMlmultiSTOCHRSI()) {
@@ -107,7 +107,7 @@ public class MLMulti extends IndicatorAggregator {
                 Object resultObject = cat.getIndicatorLocalResultMap().get(PipelineConstants.INDICATORSTOCHRSI).get(PipelineConstants.RESULT);
                 Filter[] filter = new Filter[] { new Filter(true, conf.getMLRSIBuySRSILimit(), shortpos), new Filter(false, conf.getMLRSISellSRSILimit(), shortneg) };
                 if (taObject != null) {
-                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "stochrsi"));
+                    wantedSubTypesList.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, Constants.STOCHRSI, MySubType.STOCHRSI));
                 }
             }
         }
@@ -122,7 +122,7 @@ public class MLMulti extends IndicatorAggregator {
     private class SubTypeMulti extends MergeSubType {
         private MyMyConfig conf;
         private String name;
-        public SubTypeMulti(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, MyMyConfig conf, Filter[] filter, String name) {
+        public SubTypeMulti(Object list, Object taObject, Object resultObject, AfterBeforeLimit afterbefore, int[] range, MyMyConfig conf, Filter[] filter, String name, MySubType mySubType) {
             super(afterbefore);
             this.listMap = (Map<String, Double[][]>) list;
             this.taMap = (Map<String, Object[]>) taObject;
@@ -132,6 +132,7 @@ public class MLMulti extends IndicatorAggregator {
             this.filters = filter;
             this.conf = conf;
             this.name = name;
+            this.mySubType = mySubType;
         }
         @Override
         public String getType() {
@@ -188,40 +189,4 @@ public class MLMulti extends IndicatorAggregator {
         }
         return ret;
     }
-
-    /*
-    @Override
-    protected List<SubType> wantedMergeSubTypes() {
-        List<SubType> list = new ArrayList<>();
-        if (conf.isMACDEnabled()) {
-            if (conf.wantMLHist()) {
-                list.add(new MacdSubTypeHist(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
-            }
-            if (conf.wantMLMacd()) {
-                list.add(new MacdSubTypeMacd(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
-            }
-            if (conf.wantMLSignal()) {
-                list.add(new MacdSubTypeSignal(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE));
-            }
-            list.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.THREERANGE, conf, filter, "macd", MySubType.MACD));
-        }
-        if (conf.isRSIEnabled()) {
-            list.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "rsi", MySubType.RSI));
-        }
-        if (conf.isATREnabled()) {
-            list.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "atr", MySubType.ATR));
-        }
-        if (conf.isCCIEnabled()) {
-            list.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "cci", MySubType.CCI));
-        }
-        if (conf.isSTOCHEnabled()) {
-            list.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.TWORANGE, conf, filter, "stoch", MySubType.STOCH));
-        }
-        if (conf.isSTOCHRSIEnabled()) {
-            list.add(new SubTypeMulti(list, taObject, resultObject, afterbefore, TaConstants.ONERANGE, conf, filter, "stochrsi", MySubType.STOCHRSI));
-        }
-        return list;
-    }
-    */
-    
 }
