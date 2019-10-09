@@ -15,7 +15,7 @@ public class MLClassifyPytorchCNNModel  extends MLClassifyPytorchModel {
 
     @Override
     public int getId() {
-        return 3;
+        return 5;
     }
 
     @Override
