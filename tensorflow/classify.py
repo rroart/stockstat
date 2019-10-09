@@ -248,9 +248,7 @@ class Classify:
             test = np.transpose(test, [1, 0, 2])
             
         accuracy_score = None
-        print("hhhhhh", self.wantLearn(myobj)       )
         if self.wantLearn(myobj):
-            print("hhhhhh")
             accuracy_score = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat)
         #print(type(classifier))
 
