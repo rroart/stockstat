@@ -49,6 +49,12 @@ def do_learntestclassify():
             cl.do_learntestclassify(queue, request, True)
         except:
             queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None}), mimetype='application/json'))
+            import sys,traceback
+            traceback.print_exc(file=sys.stdout)
+            import random
+            f = open("/tmp/outpt" + str(random.randint(1000,9999)) + ".txt", "w")
+            f.write(request.get_data(as_text=True))
+            f.close()
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
     process.start()

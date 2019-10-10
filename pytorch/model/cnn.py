@@ -70,6 +70,8 @@ class Net(nn.Module):
         # Reshaping the outputs such that it can be fit into the fully connected layer
         #out = out.contiguous().view(-1, self.config.hidden)
         #print("outs", out.size())
+        print("shape")
+        print(x.shape)
         out = self.layer1(x)
         out = self.layer2(out)
         
