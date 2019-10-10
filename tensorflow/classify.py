@@ -133,6 +133,8 @@ class Classify:
         return train, traincat, test, testcat
     
     def do_learntestinner(self, myobj, classifier, train, traincat, test, testcat):
+        print("shape")
+        print(train.shape)
         classifier.train(train, traincat)
         #print(train)
         #print(traincat)
