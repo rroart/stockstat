@@ -64,11 +64,11 @@ public class LearnTestClassify {
     
     private GemIcarlConfig gemIcarlConfig;
     
-    private Object[][] trainingarray;
+    private Object[] trainingarray;
 
     private Object[] trainingcatarray;
     
-    private Object[][] classifyarray;
+    private Object[] classifyarray;
 
     private Object[] classifycatarray;
 
@@ -260,11 +260,11 @@ public class LearnTestClassify {
         super();
     }
 
-    public Object[][] getTrainingarray() {
+    public Object[] getTrainingarray() {
         return trainingarray;
     }
 
-    public void setTrainingarray(Object[][] trainingarray) {
+    public void setTrainingarray(Object[] trainingarray) {
         this.trainingarray = trainingarray;
     }
 
@@ -276,11 +276,11 @@ public class LearnTestClassify {
         this.trainingcatarray = catarray;
     }
 
-    public Object[][] getClassifyarray() {
+    public Object[] getClassifyarray() {
         return classifyarray;
     }
 
-    public void setClassifyarray(Object[][] classifyarray) {
+    public void setClassifyarray(Object[] classifyarray) {
         this.classifyarray = classifyarray;
     }
 

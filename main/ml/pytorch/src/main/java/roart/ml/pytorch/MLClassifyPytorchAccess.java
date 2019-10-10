@@ -85,7 +85,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             MLClassifyModel model) {
         // not used?
         //List<List<Object>> listlist = getListList(map);
-        Object[][] objobj = new Object[map.size()][];
+        Object[] objobj = new Object[map.size()];
         Object[] cat = new Object[map.size()];
         getTrainingSet(map, objobj, cat);
         LearnTestClassify param = new LearnTestClassify();
@@ -101,17 +101,13 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         return test.getAccuracy();
     }
 
-    private void getTrainingSet(Map<String, Pair<Object, Double>> map, Object[][] objobj, Object[] cat) {
+    private void getTrainingSet(Map<String, Pair<Object, Double>> map, Object[] objobj, Object[] cat) {
         int i = 0;
         for (Entry<String, Pair<Object, Double>> entry : map.entrySet()) {
-            double[] key = (double[]) entry.getValue().getLeft();
-            Object[] obj = new Object[key.length/* + 1*/];
-            for (int j = 0; j < key.length; j ++) {
-                obj[j] = key[j];
-            }
             Pair<Object, Double> pair = entry.getValue();
+            Object key = pair.getLeft();
             cat[i] = pair.getRight();
-            objobj[i++] = obj;
+            objobj[i++] = key;
         }
     }
 
@@ -150,13 +146,13 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             int classes) {
         LearnTestClassify param = new LearnTestClassify();
         List<String> retList = new ArrayList<>();
-        Object[][] objobj = new Object[map.size()][];
+        Object[] objobj = new Object[map.size()];
         getClassifyArray(map, retList, objobj);
         param.setClassifyarray(objobj);
         param.setModelInt(model.getId());
         param.setSize(size);
         param.setClasses(classes);
-        for(Object[] obj : objobj) {
+        for(Object obj : objobj) {
             log.info("inner {}", Arrays.asList(obj));
         }
         LearnTestClassify ret = null;
@@ -191,15 +187,12 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         return retMap;
     }
 
-    private void getClassifyArray(Map<String, Pair<Object, Double>> map2, List<String> retList, Object[][] objobj) {
+    private void getClassifyArray(Map<String, Pair<Object, Double>> map2, List<String> retList, Object[] objobj) {
         int i = 0;
         for (Entry<String, Pair<Object, Double>> entry : map2.entrySet()) {
-            double[] value = (double[]) entry.getValue().getLeft();
-            Object[] obj = new Object[value.length/* + 1*/];
-            for (int j = 0; j < value.length; j ++) {
-                obj[j] = value[j];
-            }
-            objobj[i++] = obj;
+            Pair<Object, Double> pair = entry.getValue();
+            Object value = pair.getLeft();
+            objobj[i++] = value;
             retList.add(entry.getKey());
         }
     }
@@ -236,7 +229,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         } catch (Exception e) {
             log.error("Exception", e);
         }
-        Object[][] trainingArray = new Object[learnMap.size()][];
+        Object[] trainingArray = new Object[learnMap.size()];
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
         PytorchMLPConfig mlpconfig = null;
@@ -282,10 +275,10 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         List<String> retList = new ArrayList<>();
-        Object[][] classifyArray = new Object[classifyMap.size()][];
+        Object[] classifyArray = new Object[classifyMap.size()];
         getClassifyArray(classifyMap, retList, classifyArray);
         param.setClassifyarray(classifyArray);
-        for(Object[] obj : classifyArray) {
+        for(Object obj : classifyArray) {
             log.info("inner {}", Arrays.asList(obj));
         }
         LearnTestClassify ret = null;
