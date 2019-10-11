@@ -136,8 +136,10 @@ public abstract class MLClassifyModel {
             }
             return newarray;
         }
-        if (isThreeDimensional()) {
-            
+        if (mlmeta.dim2 == null && isThreeDimensional()) {
+            double[][] newarray = new double[1][];
+            newarray[0] = (double[]) array;
+            return newarray;
         }
         return array;
     }
