@@ -94,7 +94,8 @@ class Classify:
     def zero(self, myobj):
         return hasattr(myobj, 'zero') and myobj.zero == True
 
-    def gettraintest(self, myobj):
+    def gettraintest(self, myobj, config):
+        mydim = myobj.size
         array = np.array(myobj.trainingarray, dtype='f')
         cat = np.array(myobj.trainingcatarray, dtype='i')
         #print(array)
@@ -112,7 +113,7 @@ class Classify:
             if not self.zero(myobj):
                 testcat = testcat - 1
         else:
-            (lenrow, lencol) = array.shape
+            lenrow = array.shape[0]
             half = round(lenrow / 2)
             train = array[:half, :]
             test = array[half:, :]
@@ -130,7 +131,11 @@ class Classify:
         #print(classifier)
         #print("train", train);
         #print(traincat)
-        return train, traincat, test, testcat
+        print("mydim");
+        print(mydim)
+        mydim = train.shape[1:]
+        print(mydim)
+        return train, traincat, test, testcat, mydim
     
     def do_learntestinner(self, myobj, classifier, train, traincat, test, testcat):
         print("shape")
@@ -234,6 +239,8 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
+        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config)
+        myobj.size = size
         exists = self.exists(myobj)
         if exists and not self.wantDynamic(myobj) and not self.wantLearn(myobj):
             #with tf.get_default_session() as sess:
@@ -244,7 +251,6 @@ class Classify:
         else:
             model = Model.Model(myobj, config)
         classifier = model
-        (train, traincat, test, testcat) = self.gettraintest(myobj)
         if config.name == "rnnnot":
             train = np.transpose(train, [1, 0, 2])
             test = np.transpose(test, [1, 0, 2])
