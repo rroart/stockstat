@@ -537,7 +537,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 }
             } else {
                 double[][] myvalue = (double[][]) value.getLeft();
-                for (int j = 0; j < mlmeta.dim2; j++) {
+                for (int j = 0; j < myvalue.length; j++) {
                     if (size < 0) {
                         size = myvalue[j].length;
                     }
