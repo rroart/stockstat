@@ -90,8 +90,9 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
+        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config)
+        myobj.size = size
         model = Model.Net(myobj, config, True)
-        (train, traincat, test, testcat) = self.gettraintest(myobj, config)
         #testcat = torch.LongTensor(testcat)
         accuracy_score = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, True)
         global dictclass
