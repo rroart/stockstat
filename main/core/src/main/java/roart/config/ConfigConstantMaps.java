@@ -488,7 +488,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGGEMSINGLEPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG, GEMSINGLECONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMPATH, "");
-        deflt.put(ConfigConstants.MACHINELEARNINGGEMSERVER, "http://localhost:8030/");
+        deflt.put(ConfigConstants.MACHINELEARNINGGEMSERVER, "http://localhost:8040/");
         deflt.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);
         deflt.put(ConfigConstants.INDICATORS, Boolean.TRUE);
         deflt.put(ConfigConstants.INDICATORSMOVE, Boolean.TRUE);
