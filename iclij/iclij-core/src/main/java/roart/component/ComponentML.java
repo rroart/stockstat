@@ -372,6 +372,8 @@ public abstract class ComponentML extends Component {
                 String key = entry.getKey();
                 Pair<String, String> subComponent = revMap.get(key);
                 subComponents.add(subComponent.getLeft() + " " + subComponent.getRight());
+            } else {
+                int jj = 0;
             }
         }
         return subComponents;
@@ -401,6 +403,7 @@ public abstract class ComponentML extends Component {
             log.error("Key not found {}", ml);
             return;
         }
+        valueMap.put(map.get(ml), Boolean.TRUE);
         map.remove(ml);
         for (Entry<String, String> entry : map.entrySet()) {
             String disableKey = entry.getValue();
