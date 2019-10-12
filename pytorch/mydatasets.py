@@ -62,7 +62,8 @@ def getmnist(config):
         x_valid = x_valid.reshape(x_valid.size(0), -1)
         mydim = 784
     else:
-      mydim = 28    
+      #mydim = 28
+      mydim = mydim
     print(type(x_train), x_train.shape)
     print(type(y_train), y_train.shape)
     print("mydim", mydim)

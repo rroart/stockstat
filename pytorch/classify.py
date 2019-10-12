@@ -233,6 +233,7 @@ class Classify:
         return hasattr(myobj, 'zero') and myobj.zero == True
             
     def gettraintest(self, myobj, config):
+        mydim = myobj.size
         array = np.array(myobj.trainingarray, dtype='f')
         cat = np.array([], dtype='i')
         if hasattr(myobj, 'trainingcatarray'):
@@ -257,7 +258,7 @@ class Classify:
             if not self.zero(myobj):
                 testcat = testcat - 1
         else:
-            (lenrow, lencol) = array.shape
+            lenrow = array.shape[0]
             half = round(lenrow / 2)
             train = array[:half, :]
             test = array[half:, :]
@@ -269,7 +270,13 @@ class Classify:
                 traincat = cat
                 testcat = cat
 
-        return train, traincat, test, testcat
+        print("mydim", mydim)
+        print (train.shape)
+        if config.name == "cnn":
+            mydim = train.shape[1:]
+            print("mydim2", mydim)
+        print("mydim", mydim)
+        return train, traincat, test, testcat, mydim
         #print("classes")
         #print(myobj.classes)
         #print("cwd")
@@ -402,6 +409,8 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
+        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config)
+        myobj.size = size
         exists = self.exists(myobj)
         if exists and not self.wantDynamic(myobj) and not self.wantLearn(myobj):
             checkpoint = torch.load(self.getpath(myobj) + myobj.filename + ".pt")
@@ -409,7 +418,6 @@ class Classify:
         else:
             model = Model.Net(myobj, config, classify)
         #myobj.size, myobj.classes, dim, layers)
-        (train, traincat, test, testcat) = self.gettraintest(myobj, config)
         #testcat = torch.LongTensor(testcat)
         accuracy_score = None
         if self.wantLearn(myobj):
