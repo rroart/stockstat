@@ -73,9 +73,10 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         (config, modelname) = self.getModel(myobj)
         Model = importlib.import_module('model.' + modelname)
+        (train, traincat, test, testcat, size) = self.gettraintest(myobj, config)
+        myobj.size = size
         model = Model.Model(myobj, config)
         classifier = model
-        (train, traincat, test, testcat) = self.gettraintest(myobj)
         accuracy_score = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
@@ -133,7 +134,10 @@ class Classify:
         #print(traincat)
         print("mydim");
         print(mydim)
-        mydim = train.shape[1:]
+        if len(train.shape) == 2:
+            mydim = train.shape[1]
+        else:
+            mydim = train.shape[1:]
         print(mydim)
         return train, traincat, test, testcat, mydim
     
@@ -260,8 +264,8 @@ class Classify:
             accuracy_score = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat)
         #print(type(classifier))
 
-        print("neuralnetcommand")
-        print(myobj.neuralnetcommand.mlclassify, myobj.neuralnetcommand.mllearn, myobj.neuralnetcommand.mldynamic)
+        #print("neuralnetcommand")
+        #print(myobj.neuralnetcommand.mlclassify, myobj.neuralnetcommand.mllearn, myobj.neuralnetcommand.mldynamic)
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             #with tf.compat.v1.get_default_session() as sess:
             if Model.Model.localsave():
