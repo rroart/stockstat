@@ -22,6 +22,7 @@ import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
@@ -228,7 +229,8 @@ public class PredictorLSTM extends AbstractPredictor {
         if (nnconfigString != null) {
             ObjectMapper mapper = new ObjectMapper();
             TensorflowPredictorLSTMConfig lstmConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
-            nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(lstmConfig);
+            nnConfigs.setTensorflowConfig(new NeuralNetTensorflowConfig(null, null, null, null, null, null, null, null, lstmConfig));
+            //nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(lstmConfig);
         }
 
         long time2 = System.currentTimeMillis();

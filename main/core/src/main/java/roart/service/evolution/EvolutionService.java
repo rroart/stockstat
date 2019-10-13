@@ -25,6 +25,7 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.dao.DbDao;
@@ -557,7 +558,8 @@ public class EvolutionService {
                 log.info("NNConfig {}", nnconfigString);
                 ObjectMapper mapper = new ObjectMapper();
                 TensorflowPredictorLSTMConfig nnConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
-                nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(nnConfig);
+                nnConfigs.setTensorflowConfig(new NeuralNetTensorflowConfig(null, null, null, null, null, null, null, null, nnConfig));
+                //nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(nnConfig);
             }
         }
         if (nnConfigs == null) {

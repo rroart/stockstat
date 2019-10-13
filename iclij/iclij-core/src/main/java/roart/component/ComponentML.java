@@ -18,6 +18,7 @@ import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
@@ -74,7 +75,8 @@ public abstract class ComponentML extends Component {
                     nnConfigs = new NeuralNetConfigs();
                     ObjectMapper mapper = new ObjectMapper();
                     TensorflowPredictorLSTMConfig nnConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
-                    nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(nnConfig);                
+                    nnConfigs.setTensorflowConfig(new NeuralNetTensorflowConfig(null, null, null, null, null, null, null, null, nnConfig));
+                    //nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(nnConfig);                
                 } else {
                     ObjectMapper mapper = new ObjectMapper();
                     nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);            
