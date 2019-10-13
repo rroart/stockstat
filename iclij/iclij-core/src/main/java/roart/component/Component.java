@@ -330,11 +330,16 @@ public abstract class Component {
                 testAccuracies.add(testaccuracy);
             }
         }
-        return testAccuracies
+        double acc = testAccuracies
                 .stream()
                 .mapToDouble(e -> e)
                 .max()
-                .orElse(0);
+                .orElse(-1);
+        if (acc < 0) {
+            return null;
+        } else {
+            return acc;
+        }
     }
 
 }
