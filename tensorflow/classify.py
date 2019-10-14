@@ -230,7 +230,9 @@ class Classify:
     def exists(self, myobj):
         if not hasattr(myobj, 'filename'):
             return False
-        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".ckpt")
+        if os.path.exists(self.getpath(myobj) + myobj.filename):
+            return True
+        return os.path.isfile(self.getpath(myobj) + myobj.filename + ".ckpt.index")
     
     def do_learntestclassify(self, queue, request):
       with tf.Session() as sess:
