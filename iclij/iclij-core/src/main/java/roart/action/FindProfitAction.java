@@ -119,6 +119,11 @@ public class FindProfitAction extends MarketAction {
             long time0 = System.currentTimeMillis();
             //Market market = FindProfitAction.findMarket(componentparam);
             ProfitData profitdata = new ProfitData();
+            evolve = false; // param.getInput().getConfig().wantEvolveML();
+            Map<String, Object> aMap = new HashMap<>();
+            aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, config.wantsFindProfitMLDynamic());
+            aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
+            aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
             ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, new HashMap<>(), marketTime.subcomponent);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
