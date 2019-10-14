@@ -354,8 +354,11 @@ public class MLIndicator extends Aggregator {
                     meta1[4] = result.getAccuracy();
                     resultMeta1.setTestAccuracy(result.getAccuracy());
                     mapResult.put(model, classifyResult);
-                    IndicatorUtils.filterNonExistingClassifications(labelMapShort, classifyResult);
-                    Map<String, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
+                    Map<String, Long> countMap = new HashMap<>();
+                    if (classifyResult != null) {
+                        IndicatorUtils.filterNonExistingClassifications(labelMapShort, classifyResult);
+                        countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
+                    }
                     StringBuilder counts = new StringBuilder("classified ");
                     for (Entry<String, Long> countEntry : countMap.entrySet()) {
                         counts.append(countEntry.getKey() + " : " + countEntry.getValue() + " ");
@@ -446,8 +449,11 @@ public class MLIndicator extends Aggregator {
                 log.info("keys" + classifyResult.keySet());
                 //log.info("ke2 " + classifyResult.values().stream().toString());
                 mapResult.put(model, classifyResult);
-                IndicatorUtils.filterNonExistingClassifications(labelMapShort, classifyResult);
-                Map<String, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
+                Map<String, Long> countMap = new HashMap<>();
+                if (classifyResult != null) {
+                    IndicatorUtils.filterNonExistingClassifications(labelMapShort, classifyResult);
+                    countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
+                }
                 StringBuilder counts = new StringBuilder("classified ");
                 for (Entry<String, Long> countEntry : countMap.entrySet()) {
                     counts.append(countEntry.getKey() + " : " + countEntry.getValue() + " ");
@@ -609,8 +615,11 @@ public class MLIndicator extends Aggregator {
                 log.info("len {}", arrayLength);
                 Map<String, Double[]> classifyResult = mldao.classify(this, map, model, arrayLength, 2, labelMapShort, mapTime);
                 mapResult.put(model, classifyResult);
-                IndicatorUtils.filterNonExistingClassifications(labelMapShort, classifyResult);
-                Map<String, Long> countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
+                Map<String, Long> countMap = new HashMap<>();
+                if (classifyResult != null) {
+                    IndicatorUtils.filterNonExistingClassifications(labelMapShort, classifyResult);
+                    countMap = classifyResult.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting()));
+                }
                 StringBuilder counts = new StringBuilder("classified ");
                 for (Entry<String, Long> countEntry : countMap.entrySet()) {
                     counts.append(countEntry.getKey() + " : " + countEntry.getValue() + " ");
