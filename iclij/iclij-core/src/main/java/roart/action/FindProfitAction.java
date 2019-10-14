@@ -225,6 +225,7 @@ public class FindProfitAction extends MarketAction {
         componentMap.put(marketTime.componentName, marketTime.component);
         
         try {
+            evolve = false;
             List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve, dataMap, componentMap);
             return newMemories;
         } catch (Exception e) {
