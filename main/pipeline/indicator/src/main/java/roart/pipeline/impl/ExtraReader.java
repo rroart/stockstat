@@ -162,6 +162,9 @@ public class ExtraReader extends Pipeline {
         marketdata.periodtext = periodText;
         marketdata.meta = DbDao.getById(market, conf);
         Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocksId);
+        if (days == 0) {
+            days = stockdatemap.keySet().size();
+        }
         // the main list, based on freshest or specific date.
 
         /*

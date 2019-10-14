@@ -128,7 +128,11 @@ public class EvolutionService {
              */
     
             List<StockItem>[] datedstocklists = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), 2, conf.getTableMoveIntervalDays());
-    
+
+            if (days == 0) {
+                days = stockdatemap.keySet().size();
+            }
+
             List<StockItem> datedstocks = datedstocklists[0];
             if (datedstocks == null) {
                 return new ArrayList<>();
@@ -155,7 +159,7 @@ public class EvolutionService {
                     newIndicatorMap);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
     
-            findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap);
+            findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, days);
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
             return retlist;
@@ -168,7 +172,7 @@ public class EvolutionService {
 
     private void findRecommendSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days) throws Exception {
         TaUtil tu = new TaUtil();
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
@@ -182,7 +186,7 @@ public class EvolutionService {
     
             for (int i = 0; i < 2; i++) {
                 List<String> scoreList = recommendList[i];
-                IndicatorChromosome indicatorEval0 = new IndicatorChromosome(conf, scoreList, retObj, true, disableList, new ProportionScore(i == 0));
+                IndicatorChromosome indicatorEval0 = new IndicatorChromosome(conf, scoreList, retObj, true, disableList, new ProportionScore(i == 0), days);
                 indicatorEval0.setAscending(i == 0);
                 
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
@@ -407,7 +411,10 @@ public class EvolutionService {
             if (conf.getdate() == null) {
                 new ServiceUtil().getCurrentDate(conf, stockdatemap);
             }
-    
+            if (days == 0) {
+                days = stockdatemap.keySet().size();
+            }
+
             Map<String, MarketData> marketdatamap = null;
             marketdatamap = new ServiceUtil().getMarketdatamap(days, markets, conf);
             Map<String, PeriodData> periodDataMap = new ServiceUtil().getPerioddatamap(markets,

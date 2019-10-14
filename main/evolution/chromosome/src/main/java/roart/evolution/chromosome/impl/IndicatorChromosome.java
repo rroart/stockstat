@@ -54,13 +54,16 @@ public class IndicatorChromosome extends AbstractChromosome {
 
     private AbstractScore evalUtil;
     
-    public IndicatorChromosome(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil) {
+    private int listlen;
+    
+    public IndicatorChromosome(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil, int listlen) {
         this.conf = conf.copy();
         setKeys(keys);
         this.retObj = retObj;
         this.useMax = b;
         this.disableList = disableList;
         this.evalUtil = evalUtil;
+        this.listlen = listlen;
     }
 
     public MyMyConfig getConf() {
@@ -116,7 +119,6 @@ public class IndicatorChromosome extends AbstractChromosome {
     @Override
     public double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException {
         int count = 0;
-        int listlen = conf.getTableDays();
         List<Map<String, Double[][]>> listList = (List<Map<String, Double[][]>>) retObj[2];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj[0];
         Map<String, Double[]> indicatorMap = dayIndicatorMap.get(j);
@@ -260,10 +262,8 @@ public class IndicatorChromosome extends AbstractChromosome {
 
     @Override
     public double getFitness() throws JsonParseException, JsonMappingException, IOException {
-        int macdlen = conf.getTableDays();
-
         double testRecommendQualBuySell = 0;
-        for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < macdlen; j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
+        for (int j = conf.getTestIndicatorRecommenderComplexFutureDays(); j < listlen; j += conf.getTestIndicatorRecommenderComplexIntervalDays()) {
             // scale down wrt max?
             testRecommendQualBuySell += getEvaluations(j);
         }
@@ -292,7 +292,7 @@ public class IndicatorChromosome extends AbstractChromosome {
 
     @Override
     public AbstractChromosome copy() {
-        AbstractChromosome newEval = new IndicatorChromosome(new MyMyConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil);
+        AbstractChromosome newEval = new IndicatorChromosome(new MyMyConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil, listlen);
         return newEval;
     }
 
