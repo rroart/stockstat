@@ -262,7 +262,7 @@ public abstract class ComponentML extends Component {
                     if (!enable.contains(cnfPersist)) {
                         enable.add(cnfPersist);
                     }
-                    map.remove(name);
+                    map.remove(pair);
                 }
                 count++;        
             }
