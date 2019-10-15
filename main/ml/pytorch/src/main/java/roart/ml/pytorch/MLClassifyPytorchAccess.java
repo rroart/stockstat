@@ -171,7 +171,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         Map<String, Double[]> retMap = new HashMap<>();
         for (int j = 0; j < retList.size(); j ++) {
             Double acat = Double.valueOf((Integer) cat[j]);
-            Double aprob = (Double) prob[j];
+            Double aprob = null; // (Double) prob[j];
             String id = retList.get(j);
             retMap.put(id, new Double[]{ acat, aprob });
             //MutablePair pair = (MutablePair) classifyMap.get(id);
