@@ -54,6 +54,7 @@ def do_learntestclassify():
             import random
             f = open("/tmp/outpt" + str(random.randint(1000,9999)) + ".txt", "w")
             f.write(request.get_data(as_text=True))
+            traceback.print_exc(file=f)
             f.close()
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
