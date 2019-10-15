@@ -235,7 +235,7 @@ class Classify:
         return os.path.isfile(self.getpath(myobj) + myobj.filename + ".ckpt.index")
     
     def do_learntestclassify(self, queue, request):
-      with tf.Session() as sess:
+      with tf.compat.v1.Session() as sess:
       #with tf.compat.v1.get_default_session() as sess:
         #tf.logging.set_verbosity(tf.logging.FATAL)
         dt = datetime.now()
@@ -251,9 +251,12 @@ class Classify:
         if exists and not self.wantDynamic(myobj) and not self.wantLearn(myobj):
             #with tf.get_default_session() as sess:
             if Model.Model.localsave():
+                # dummy variable to allow saver
+                model = Model.Model(myobj, config)
                 saver = tf.compat.v1.train.Saver()
                 print("Restoring")
                 saver.restore(sess, self.getpath(myobj) + myobj.filename + ".ckpt")
+                print("Restoring done")
         else:
             model = Model.Model(myobj, config)
         classifier = model
