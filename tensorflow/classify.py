@@ -257,6 +257,8 @@ class Classify:
                 print("Restoring")
                 saver.restore(sess, self.getpath(myobj) + myobj.filename + ".ckpt")
                 print("Restoring done")
+            else:
+                model = Model.Model(myobj, config)
         else:
             model = Model.Model(myobj, config)
         classifier = model
