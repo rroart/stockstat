@@ -60,7 +60,7 @@ public class EvolveAction extends MarketAction {
             if (component == null) {
                 continue;
             }
-            boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
+            boolean evolve = true; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
             Map<String, Object> aMap = new HashMap<>();
