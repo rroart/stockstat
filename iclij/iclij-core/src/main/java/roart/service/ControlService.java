@@ -201,12 +201,13 @@ public class ControlService {
         ids.add(ml);
         param.setIds(ids);
         param.setConfList(disableList);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVENN);
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
         neuralnetcommand.setMllearn(true);
         neuralnetcommand.setMlclassify(true);
-        neuralnetcommand.setMldynamic(conf.wantMLDynamic());
+        // where is this reset?
+        neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
+        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVENN);
         if (doSet) {
             updateMap.putAll(result.getMaps().get("update"));
             //Map<String, Object> updateMap = result.getMaps().get("update");
