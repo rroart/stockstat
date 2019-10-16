@@ -23,7 +23,7 @@ public class SparkLORConfigGene extends SparkConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         SparkLORConfigGene offspring = new SparkLORConfigGene((SparkLORConfig) getConfig());
-        ((SparkConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((SparkConfigGene) otherNN);
         return offspring;
     }
     

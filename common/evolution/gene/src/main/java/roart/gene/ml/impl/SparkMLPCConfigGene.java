@@ -42,7 +42,7 @@ public class SparkMLPCConfigGene extends SparkConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         SparkMLPCConfigGene offspring = new SparkMLPCConfigGene((SparkMLPCConfig) getConfig());
-        ((SparkConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((SparkConfigGene) otherNN);
         SparkMLPCConfigGene other = (SparkMLPCConfigGene) otherNN;
         SparkMLPCConfig myconfig = (SparkMLPCConfig) getConfig();
         SparkMLPCConfig otherconfig = (SparkMLPCConfig) other.getConfig();

@@ -39,7 +39,7 @@ public class SparkLSVCConfigGene extends SparkConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         SparkLSVCConfigGene offspring = new SparkLSVCConfigGene((SparkLSVCConfig) getConfig());
-        ((SparkConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((SparkConfigGene) otherNN);
         SparkLSVCConfigGene other = (SparkLSVCConfigGene) otherNN;
         SparkLSVCConfig myconfig = (SparkLSVCConfig) getConfig();
         SparkLSVCConfig otherconfig = (SparkLSVCConfig) other.getConfig();
