@@ -611,7 +611,7 @@ public class EvolutionService {
                 sameKey &= enabled;
                 workingConf.getConfigValueMap().put(tmpkey, sameKey);
             }
-            NeuralNetConfig nnconfig = nnConfigs.get(key);
+            NeuralNetConfig nnconfig = nnConfigs.getAndSet(key);
             NeuralNetConfigGene nnconfigGene = NeuralNetConfigGeneFactory.get(nnconfig, key);
             NeuralNetChromosome chromosome = new NeuralNetChromosome(workingConf, ml, dataReaders, categories, key, nnconfigGene, catName, cat, neuralnetcommand);
             if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
