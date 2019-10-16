@@ -17,6 +17,7 @@ import roart.component.model.ComponentData;
 import roart.config.Market;
 import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.model.ProfitData;
@@ -63,10 +64,17 @@ public class EvolveAction extends MarketAction {
             boolean evolve = true; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
+            // 0 ok?
+            param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
+            param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
+            param.getConfigValueMap().put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.FALSE);
             Map<String, Object> aMap = new HashMap<>();
+            // don't need these both here and in getevolveml?
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
+            aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+            aMap.put(ConfigConstants.MISCMYDAYS, 0);
             List<Integer> positions = null;
             ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent);
             Map<String, Object> updateMap = componentData.getUpdateMap();
