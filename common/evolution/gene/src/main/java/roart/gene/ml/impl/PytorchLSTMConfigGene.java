@@ -25,7 +25,7 @@ public class PytorchLSTMConfigGene extends PytorchRecurrentConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         PytorchLSTMConfigGene offspring = new PytorchLSTMConfigGene((PytorchLSTMConfig) getConfig());
-        ((PytorchLSTMConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((PytorchConfigGene) otherNN);
         return offspring;
     }
 }

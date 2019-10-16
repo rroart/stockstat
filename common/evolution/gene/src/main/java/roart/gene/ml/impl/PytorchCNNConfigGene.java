@@ -46,7 +46,7 @@ public class PytorchCNNConfigGene extends PytorchPreFeedConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         PytorchCNNConfigGene offspring = new PytorchCNNConfigGene((PytorchCNNConfig) getConfig());
-        ((PytorchPreFeedConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((PytorchConfigGene) otherNN);
         PytorchCNNConfigGene other = (PytorchCNNConfigGene) otherNN;
         PytorchCNNConfig myconfig = (PytorchCNNConfig) getConfig();
         PytorchCNNConfig otherconfig = (PytorchCNNConfig) other.getConfig();

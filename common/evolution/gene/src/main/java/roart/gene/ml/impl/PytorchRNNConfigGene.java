@@ -24,7 +24,7 @@ public class PytorchRNNConfigGene extends PytorchRecurrentConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         PytorchRNNConfigGene offspring = new PytorchRNNConfigGene((PytorchRNNConfig) getConfig());
-        ((PytorchRNNConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((PytorchConfigGene) otherNN);
         return offspring;
     }
 }

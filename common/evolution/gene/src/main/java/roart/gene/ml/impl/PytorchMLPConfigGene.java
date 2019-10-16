@@ -23,7 +23,7 @@ public class PytorchMLPConfigGene extends PytorchFeedConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         PytorchMLPConfigGene offspring = new PytorchMLPConfigGene((PytorchMLPConfig) getConfig());
-        ((PytorchMLPConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((PytorchConfigGene) otherNN);
         return offspring;
     }
 }

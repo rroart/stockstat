@@ -24,7 +24,7 @@ public class PytorchGRUConfigGene extends PytorchRecurrentConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         PytorchGRUConfigGene offspring = new PytorchGRUConfigGene((PytorchGRUConfig) getConfig());
-        ((PytorchGRUConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((PytorchConfigGene) otherNN);
         return offspring;
     }
 }
