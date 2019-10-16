@@ -232,6 +232,10 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         Object[] trainingArray = new Object[learnMap.size()];
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMap();
+        String config = configMap.get(model.getKey());
+        nnconfigs.getAndSet(config);
+        /*
         PytorchMLPConfig mlpconfig = null;
         PytorchCNNConfig cnnconfig = null;
         PytorchRNNConfig rnnconfig = null;
@@ -268,6 +272,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         param.setPytorchRNNConfig(rnnconfig);
         param.setPytorchGRUConfig(gruconfig);
         param.setPytorchLSTMConfig(lstmconfig);
+        */
         NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param);
         param.setTrainingarray(trainingArray);
         param.setTrainingcatarray(trainingCatArray);

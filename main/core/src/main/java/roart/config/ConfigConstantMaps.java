@@ -11,54 +11,6 @@ import roart.gene.impl.CalcComplexGene;
 
 public class ConfigConstantMaps {
 
-    private static final String SPARKLORCONFIG = "{ \"maxiter\" : 1000, \"tol\" : 1.0E-6 }";
-
-    private static final String SPARKMLPCCONFIG = "{ \"maxiter\" : 1000, \"layers\" : 2, \"tol\" : 1.0E-6, \"hidden\" : 100 }";
-
-    private static final String SPARKOVRCONFIG = "{ \"maxiter\" : 1000, \"tol\" : 1.0E-6, \"fitintercept\" : false }";
-
-    private static final String SPARKLSVCCONFIG = "{ \"maxiter\" : 1000, \"tol\" : 1.0E-6, \"fitintercept\" : false }";
-
-    private static final String TENSORFLOWPREDICTORLSTMCONFIG = "{ \"epochs\": 5, \"windowsize\": 3, \"horizon\": 5 }";
-
-    private static final String GEMSINGLECONFIG = "{ \"name\" : \"single\", \"steps\" : 1000, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"data_file\" : \"\" }";
-    
-    private static final String GEMINDEPENDENTCONFIG = "{ \"name\" : \"independent\", \"steps\" : 1000, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"finetune\" : false, \"cuda\" : false, \"data_file\" : \"\" }";
-    
-    private static final String GEMMULTIMODALCONFIG = "{ \"name\" : \"multimodal\", \"steps\" : 1000, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"data_file\" : \"\" }";
-    
-    private static final String GEMEWCCONFIG = "{ \"name\" : \"EWC\", \"steps\" : 1000, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"n_memories\" : 10, \"memory_strength\" : 1, \"data_file\" : \"\" }";
-    
-    private static final String GEMGEMCONFIG = "{ \"name\" : \"GEM\", \"steps\" : 1000, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"n_memories\" : 256, \"memory_strength\" : 0.5, \"cuda\" : false, \"data_file\" : \"\" }";
-
-    private static final String GEMICARLCONFIG = "{ \"name\" : \"iCaRL\", \"steps\" : 1000, \"n_layers\" : 2, \"n_hiddens\" : 100, \"lr\" : 0.001, \"n_memories\" : 1280, \"memory_strength\" : 1, \"samples_per_task\" : 10, \"cuda\" : false, \"data_file\" : \"\" }";
-
-    private static final String PYTORCHMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 100, \"layers\": 2, \"lr\" : 0.01 }";
-    
-    private static final String PYTORCHRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
-    
-    private static final String PYTORCHLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
-    
-    private static final String PYTORCHGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
-    
-    private static final String PYTORCHCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 4, \"lr\" : 0.01 }";
-    
-    private static final String TENSORFLOWDNNCONFIG = "{ \"name\" : \"dnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\": 2 }";
-
-    private static final String TENSORFLOWLICCONFIG = "{ \"name\" : \"lic\", \"steps\" : 1000 }";
-
-    private static final String TENSORFLOWMLPCONFIG = "{ \"name\" : \"mlp\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }";
-
-    private static final String TENSORFLOWRNNCONFIG = "{ \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
-
-    private static final String TENSORFLOWCNNCONFIG = "{ \"name\" : \"cnn\", \"steps\" : 1000, \"stride\" : 1, \"kernelsize\" : 4, \"dropout\" : 0.5 }";
-
-    private static final String TENSORFLOWLSTMCONFIG = "{ \"name\" : \"lstm\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
-
-    private static final String TENSORFLOWGRUCONFIG = "{ \"name\" : \"gru\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01, \"dropout\" : 0, \"dropoutin\" : 0 }";
-
-    private static final String TENSORFLOWLIRCONFIG = "{ \"name\" : \"lir\", \"steps\" : 1000 }";
-    
     public static Map<String, Class> map = new HashMap();
 
     public static void makeTypeMap() {
@@ -410,83 +362,83 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKMASTER, "spark://127.0.0.1:7077");
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPC, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPCPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG, SPARKMLPCCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG, MLConstants.SPARKMLPCCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLOR, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLORPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLORCONFIG, SPARKLORCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLORCONFIG, MLConstants.SPARKLORCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, SPARKOVRCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, MLConstants.SPARKOVRCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG, SPARKLSVCCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG, MLConstants.SPARKLSVCCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, TENSORFLOWDNNCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, MLConstants.TENSORFLOWDNNCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLICPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLICCONFIG, TENSORFLOWLICCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLICCONFIG, MLConstants.TENSORFLOWLICCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRCONFIG, TENSORFLOWLIRCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRCONFIG, MLConstants.TENSORFLOWLIRCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG, TENSORFLOWMLPCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG, MLConstants.TENSORFLOWMLPCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG, TENSORFLOWCNNCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG, MLConstants.TENSORFLOWCNNCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG, TENSORFLOWRNNCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG, MLConstants.TENSORFLOWRNNCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUCONFIG, TENSORFLOWGRUCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUCONFIG, MLConstants.TENSORFLOWGRUCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, TENSORFLOWLSTMCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, MLConstants.TENSORFLOWLSTMCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG, TENSORFLOWPREDICTORLSTMCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG, MLConstants.TENSORFLOWPREDICTORLSTMCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPATH, "/tmp/");
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, "http://localhost:8000");
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCH, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHMLPPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHMLPCONFIG, PYTORCHMLPCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHMLPCONFIG, MLConstants.PYTORCHMLPCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG, PYTORCHCNNCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG, MLConstants.PYTORCHCNNCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG, PYTORCHRNNCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG, MLConstants.PYTORCHRNNCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHGRU, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHGRUPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHGRUCONFIG, PYTORCHGRUCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHGRUCONFIG, MLConstants.PYTORCHGRUCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTM, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTMPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTMCONFIG, PYTORCHLSTMCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTMCONFIG, MLConstants.PYTORCHLSTMCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHPATH, "/tmp/");
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHSERVER, "http://localhost:8010/");
         deflt.put(ConfigConstants.MACHINELEARNINGGEM, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMEWC, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMEWCPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGGEMEWCCONFIG, GEMEWCCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGGEMEWCCONFIG, MLConstants.GEMEWCCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMGEM, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMGEMPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGGEMGEMCONFIG, GEMGEMCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGGEMGEMCONFIG, MLConstants.GEMGEMCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMICARL, Boolean.FALSE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMICARLPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGGEMICARLCONFIG, GEMICARLCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGGEMICARLCONFIG, MLConstants.GEMICARLCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTCONFIG, GEMINDEPENDENTCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTCONFIG, MLConstants.GEMINDEPENDENTCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODALPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODALCONFIG, GEMMULTIMODALCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODALCONFIG, MLConstants.GEMMULTIMODALCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMSINGLE, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMSINGLEPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG, GEMSINGLECONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG, MLConstants.GEMSINGLECONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGGEMPATH, "");
         deflt.put(ConfigConstants.MACHINELEARNINGGEMSERVER, "http://localhost:8040/");
         deflt.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);
@@ -1108,83 +1060,83 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLSPARKNETWORKTIMEOUT, new XMLType( Integer.class, null, "Machine Learning Spark Network Timeout"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPC, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML MLPC"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPCPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML MLPC persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG, new XMLType( String.class, SPARKMLPCCONFIG, "Config for Spark ML MLPC"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG, new XMLType( String.class, MLConstants.SPARKMLPCCONFIG, "Config for Spark ML MLPC"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLOR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML LR"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLORPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML LR persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLORCONFIG, new XMLType( String.class, SPARKLORCONFIG, "Config for Spark ML LR"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLORCONFIG, new XMLType( String.class, MLConstants.SPARKLORCONFIG, "Config for Spark ML LR"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML OVR"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML OVR persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, new XMLType( String.class, SPARKOVRCONFIG, "Config for Spark ML OVR"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG, new XMLType( String.class, MLConstants.SPARKOVRCONFIG, "Config for Spark ML OVR"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML Linear SVC"));
         mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Spark ML Linear SVC persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG, new XMLType( String.class, SPARKLSVCCONFIG, "Config for Spark ML Linear SVC"));
+        mymap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG, new XMLType( String.class, MLConstants.SPARKLSVCCONFIG, "Config for Spark ML Linear SVC"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow DNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow DNN persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, new XMLType( String.class, TENSORFLOWDNNCONFIG, "Config for Tensorflow DNN"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG, new XMLType( String.class, MLConstants.TENSORFLOWDNNCONFIG, "Config for Tensorflow DNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow LIC"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLICPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow LIC persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLICCONFIG, new XMLType( String.class, TENSORFLOWLICCONFIG, "Config for Tensorflow L"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLICCONFIG, new XMLType( String.class, MLConstants.TENSORFLOWLICCONFIG, "Config for Tensorflow L"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow LIR"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow LIR persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRCONFIG, new XMLType( String.class, TENSORFLOWLIRCONFIG, "Config for Tensorflow LIR"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRCONFIG, new XMLType( String.class, MLConstants.TENSORFLOWLIRCONFIG, "Config for Tensorflow LIR"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow Predictor LSTM"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Tensorflow Predictor LSTM persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG, new XMLType( String.class, TENSORFLOWPREDICTORLSTMCONFIG, "Config for Tensorflow (Keras) LSTM"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG, new XMLType( String.class, MLConstants.TENSORFLOWPREDICTORLSTMCONFIG, "Config for Tensorflow (Keras) LSTM"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow MLP"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow MLP persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG, new XMLType(String.class, TENSORFLOWMLPCONFIG, "Config for Tensorflow MLP"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG, new XMLType(String.class, MLConstants.TENSORFLOWMLPCONFIG, "Config for Tensorflow MLP"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow CNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow CNN persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG, new XMLType(String.class, TENSORFLOWCNNCONFIG, "Config for Tensorflow CNN"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG, new XMLType(String.class, MLConstants.TENSORFLOWCNNCONFIG, "Config for Tensorflow CNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow RNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow RNN persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG, new XMLType(String.class, TENSORFLOWRNNCONFIG, "Config for Tensorflow RNN"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG, new XMLType(String.class, MLConstants.TENSORFLOWRNNCONFIG, "Config for Tensorflow RNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow LSTM"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow LSTM persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, new XMLType(String.class, TENSORFLOWLSTMCONFIG, "Config for Tensorflow LSTM"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG, new XMLType(String.class, MLConstants.TENSORFLOWLSTMCONFIG, "Config for Tensorflow LSTM"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow GRU"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow GRU persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUCONFIG, new XMLType(String.class, TENSORFLOWGRUCONFIG, "Config for Tensorflow GRU"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUCONFIG, new XMLType(String.class, MLConstants.TENSORFLOWGRUCONFIG, "Config for Tensorflow GRU"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPATH, new XMLType( String.class, "/tmp/", "Tensorflow path"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWSERVER, new XMLType( String.class, "http://localhost:8000", "Tensorflow Server"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCH, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch MLP"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHMLPPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch MLP persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHMLPCONFIG, new XMLType(String.class, PYTORCHMLPCONFIG, "Config for Pytorch MLP"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHMLPCONFIG, new XMLType(String.class, MLConstants.PYTORCHMLPCONFIG, "Config for Pytorch MLP"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch CNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch CNN persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG, new XMLType(String.class, PYTORCHCNNCONFIG, "Config for Pytorch CNN"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG, new XMLType(String.class, MLConstants.PYTORCHCNNCONFIG, "Config for Pytorch CNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch RNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch RNN persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG, new XMLType(String.class, PYTORCHRNNCONFIG, "Config for Pytorch RNN"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG, new XMLType(String.class, MLConstants.PYTORCHRNNCONFIG, "Config for Pytorch RNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTM, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch LSTM"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTMPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch LSTM persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTMCONFIG, new XMLType(String.class, PYTORCHLSTMCONFIG, "Config for Pytorch LSTM"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTMCONFIG, new XMLType(String.class, MLConstants.PYTORCHLSTMCONFIG, "Config for Pytorch LSTM"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHGRU, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch GRU"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHGRUPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch GRU persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHGRUCONFIG, new XMLType(String.class, PYTORCHGRUCONFIG, "Config for Pytorch GRU"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHGRUCONFIG, new XMLType(String.class, MLConstants.PYTORCHGRUCONFIG, "Config for Pytorch GRU"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHPATH, new XMLType(String.class, "/tmp", "Pytorch path"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHSERVER, new XMLType(String.class, "http://localhost:8010/", "Pytorch server"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEM, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMEWC, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM EWC"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMEWCPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM EWC persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGGEMEWCCONFIG, new XMLType(String.class, GEMEWCCONFIG, "Config for GEM EWC"));
+        mymap.put(ConfigConstants.MACHINELEARNINGGEMEWCCONFIG, new XMLType(String.class, MLConstants.GEMEWCCONFIG, "Config for GEM EWC"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMGEM, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM GEM"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMGEMPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM GEM persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGGEMGEMCONFIG, new XMLType(String.class, GEMGEMCONFIG, "Config for GEM GEM"));
+        mymap.put(ConfigConstants.MACHINELEARNINGGEMGEMCONFIG, new XMLType(String.class, MLConstants.GEMGEMCONFIG, "Config for GEM GEM"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMICARL, new XMLType(Boolean.class, Boolean.FALSE, "Enable GEM iCaRL"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMICARLPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM iCaRL persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGGEMICARLCONFIG, new XMLType(String.class, GEMICARLCONFIG, "Config for GEM iCaRL"));
+        mymap.put(ConfigConstants.MACHINELEARNINGGEMICARLCONFIG, new XMLType(String.class, MLConstants.GEMICARLCONFIG, "Config for GEM iCaRL"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM independent"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM independent persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTCONFIG, new XMLType(String.class, GEMINDEPENDENTCONFIG, "Config for GEM independent"));
+        mymap.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENTCONFIG, new XMLType(String.class, MLConstants.GEMINDEPENDENTCONFIG, "Config for GEM independent"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM multimodal"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODALPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM multimodal persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODALCONFIG, new XMLType(String.class, GEMMULTIMODALCONFIG, "Config for GEM multimodal"));
+        mymap.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODALCONFIG, new XMLType(String.class, MLConstants.GEMMULTIMODALCONFIG, "Config for GEM multimodal"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMSINGLE, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM single"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMSINGLEPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable GEM single persist"));
-        mymap.put(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG, new XMLType(String.class, GEMSINGLECONFIG, "Config for GEM single"));
+        mymap.put(ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG, new XMLType(String.class, MLConstants.GEMSINGLECONFIG, "Config for GEM single"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMPATH, new XMLType(String.class, "/tmp", "GEM path"));
         mymap.put(ConfigConstants.MACHINELEARNINGGEMSERVER, new XMLType(String.class, "http://localhost:8020/", "GEM server"));
         mymap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, new XMLType(Boolean.class, Boolean.FALSE, "Do machine learning dynamically if no persistent present"));

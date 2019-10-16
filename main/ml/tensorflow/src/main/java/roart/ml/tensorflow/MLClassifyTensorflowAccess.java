@@ -279,6 +279,10 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         Object[] trainingArray = new Object[learnMap.size()];
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMap();
+        String config = configMap.get(model.getKey());
+        nnconfigs.getAndSet(config);
+        /*
         TensorflowDNNConfig dnnConfig = null;
         TensorflowLICConfig licconfig = null;
         TensorflowLIRConfig lirconfig = null;
@@ -332,6 +336,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.setTensorflowRNNConfig(rnnconfig);
         param.setTensorflowGRUConfig(gruconfig);
         param.setTensorflowLSTMConfig(lstmconfig);
+        */
         NeuralNetConfig m = ((MLClassifyTensorflowModel) model).getModelAndSet(nnconfigs, param);
         param.setTrainingarray(trainingArray);
         param.setTrainingcatarray(trainingCatArray);
@@ -346,11 +351,13 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             log.info("inner {}", Arrays.asList(obj));
         }
         LearnTestClassify ret = null;
+        /*
         if (model.getId() == 1) {
             log.info("Used ML config {}", dnnConfig);
         } else {
             log.info("Used ML config {}", licconfig);
         }
+        */
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
         } catch (Exception e) {

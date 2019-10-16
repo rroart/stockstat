@@ -263,6 +263,10 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         if (newConts.size() < LIMIT) {
             return result;
         }
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMap();
+        String config = configMap.get(model.getKey());
+        nnconfigs.getAndSet(config);
+        /*
         GemSConfig sconfig = null;
         GemIConfig iconfig = null;
         GemMMConfig mconfig = null;
@@ -301,6 +305,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         param.setGemIcarlConfig(icarlconfig);
         param.setGemEWCConfig(ewcconfig);
         param.setGemGEMConfig(gemconfig);
+        */
         NeuralNetConfig m = ((MLClassifyGemModel) model).getModelAndSet(nnconfigs, param);
         param.setTrainingarray(trainingArray);
         param.setTrainingcatarray(trainingCatArray);
