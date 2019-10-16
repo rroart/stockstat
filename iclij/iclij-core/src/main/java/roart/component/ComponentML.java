@@ -88,7 +88,7 @@ public abstract class ComponentML extends Component {
                 String key2 = entry2.getKey();
                 EvolveMLConfig config = entry2.getValue();
                 if (!config.getSave()) {
-                    if (nnConfigs.get(key2) != null) {
+                    if (nnConfigs.getAndSet(key2) != null) {
                         log.error("Key {} not null", key2);
                     }
                     nnConfigs.set(key2, null);
