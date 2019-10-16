@@ -20,7 +20,7 @@ public class TensorflowLIRConfigGene extends TensorflowEstimatorConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         TensorflowLIRConfigGene offspring = new TensorflowLIRConfigGene((TensorflowLIRConfig) getConfig());
-        ((TensorflowLIRConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((TensorflowConfigGene) otherNN);
         return offspring;
      }
 

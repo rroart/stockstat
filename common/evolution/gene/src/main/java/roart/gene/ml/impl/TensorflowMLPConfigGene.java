@@ -24,7 +24,7 @@ public class TensorflowMLPConfigGene extends TensorflowFeedConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         TensorflowMLPConfigGene offspring = new TensorflowMLPConfigGene((TensorflowMLPConfig) getConfig());
-        ((TensorflowFeedConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((TensorflowConfigGene) otherNN);
         return offspring;
     }
     

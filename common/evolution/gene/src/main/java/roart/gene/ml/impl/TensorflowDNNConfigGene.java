@@ -44,7 +44,7 @@ public class TensorflowDNNConfigGene extends TensorflowEstimatorConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         TensorflowDNNConfigGene offspring = new TensorflowDNNConfigGene((TensorflowDNNConfig) getConfig());
-        ((TensorflowDNNConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((TensorflowConfigGene) otherNN);
         TensorflowDNNConfig myconfig = (TensorflowDNNConfig) getConfig();
         TensorflowDNNConfig otherconfig = (TensorflowDNNConfig) ((TensorflowDNNConfigGene) otherNN).getConfig();
         if (random.nextBoolean()) {

@@ -23,7 +23,7 @@ public class TensorflowGRUConfigGene extends TensorflowRecurrentConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         TensorflowGRUConfigGene offspring = new TensorflowGRUConfigGene((TensorflowGRUConfig) getConfig());
-        ((TensorflowGRUConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((TensorflowConfigGene) otherNN);
         return offspring;
     }
 }

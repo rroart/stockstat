@@ -23,7 +23,7 @@ public class TensorflowLSTMConfigGene extends TensorflowRecurrentConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         TensorflowLSTMConfigGene offspring = new TensorflowLSTMConfigGene((TensorflowLSTMConfig) getConfig());
-        ((TensorflowLSTMConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((TensorflowConfigGene) otherNN);
         return offspring;
     }
 }

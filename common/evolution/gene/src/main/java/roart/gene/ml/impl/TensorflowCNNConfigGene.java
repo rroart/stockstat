@@ -46,7 +46,7 @@ public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         TensorflowCNNConfigGene offspring = new TensorflowCNNConfigGene((TensorflowCNNConfig) getConfig());
-        ((TensorflowCNNConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((TensorflowConfigGene) otherNN);
         TensorflowCNNConfigGene other = (TensorflowCNNConfigGene) otherNN;
         TensorflowCNNConfig myconfig = (TensorflowCNNConfig) getConfig();
         TensorflowCNNConfig otherconfig = (TensorflowCNNConfig) other.getConfig();
