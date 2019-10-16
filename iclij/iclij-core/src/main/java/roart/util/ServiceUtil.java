@@ -994,7 +994,7 @@ public class ServiceUtil {
         LocalDate date = param.getInput().getEnddate();
         LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
         List<ConfigItem> filterConfigs = new ArrayList<>();
-        List<ConfigItem> configs = ConfigItem.getAll();
+        List<ConfigItem> configs = ConfigItem.getAll(market.getConfig().getMarket());
         List<ConfigItem> currentConfigs = configs.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
         currentConfigs = currentConfigs.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         for (ConfigItem config : currentConfigs) {
