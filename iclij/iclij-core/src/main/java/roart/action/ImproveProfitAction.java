@@ -22,6 +22,7 @@ import roart.config.IclijXMLConfig;
 import roart.config.Market;
 import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.service.model.ProfitData;
@@ -95,10 +96,16 @@ public class ImproveProfitAction extends MarketAction {
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
+            // 0 ok?
+            param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
+            param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
+            param.getConfigValueMap().put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.TRUE);
             Map<String, Object> aMap = new HashMap<>();
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
+            aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+            aMap.put(ConfigConstants.MISCMYDAYS, 0);
             ComponentData componentData = component.improve(action, param, market, profitdata, null, buy, subcomponent);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
