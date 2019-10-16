@@ -67,7 +67,7 @@ public class EvolveAction extends MarketAction {
             // 0 ok?
             param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
             param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
-            param.getConfigValueMap().put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.FALSE);
+            param.getConfigValueMap().put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.TRUE);
             Map<String, Object> aMap = new HashMap<>();
             // don't need these both here and in getevolveml?
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
