@@ -12,6 +12,10 @@ public class NeuralNetPytorchConfig {
 
     private PytorchLSTMConfig pytorchLSTMConfig;
 
+    public NeuralNetPytorchConfig() {
+        super();
+    }
+
     public PytorchMLPConfig getPytorchMLPConfig() {
         return pytorchMLPConfig;
     }

@@ -7,6 +7,10 @@ public class NeuralNetSparkConfig {
     private SparkOVRConfig sparkOVRConfig;
     private SparkLSVCConfig sparkLSVCConfig;
 
+    public NeuralNetSparkConfig() {
+        super();
+    }
+
     public NeuralNetSparkConfig(SparkLORConfig sparkLRConfig, SparkMLPCConfig sparkMLPCConfig,
             SparkOVRConfig sparkOVRConfig, SparkLSVCConfig sparkLSVCConfig) {
         super();

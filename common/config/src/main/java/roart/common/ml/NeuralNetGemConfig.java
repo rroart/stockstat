@@ -14,6 +14,10 @@ public class NeuralNetGemConfig {
     
     private GemSConfig gemSConfig;
 
+    public NeuralNetGemConfig() {
+        super();
+    }
+
     public GemEWCConfig getGemEWCConfig() {
         return gemEWCConfig;
     }

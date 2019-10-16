@@ -1,15 +1,23 @@
 package roart.common.ml;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
+import roart.common.util.JsonUtil;
 
 public class NeuralNetConfigs {
-    private NeuralNetSparkConfig sparkConfig;
+    private NeuralNetSparkConfig sparkConfig = new NeuralNetSparkConfig();
     
-    private NeuralNetTensorflowConfig tensorflowConfig;
+    private NeuralNetTensorflowConfig tensorflowConfig = new NeuralNetTensorflowConfig();
     
-    private NeuralNetPytorchConfig pytorchConfig;
+    private NeuralNetPytorchConfig pytorchConfig = new NeuralNetPytorchConfig();
     
-    private NeuralNetGemConfig gemConfig;
+    private NeuralNetGemConfig gemConfig = new NeuralNetGemConfig();
     
     public NeuralNetConfigs(NeuralNetSparkConfig sparkConfig, NeuralNetTensorflowConfig tensorflowConfig,
             NeuralNetPytorchConfig pytorchConfig, NeuralNetGemConfig gemConfig) {
@@ -133,130 +141,196 @@ public class NeuralNetConfigs {
         }
     }
 
-    public NeuralNetConfig get(String key) {
+    public NeuralNetConfig getAndSet(String key) {
         switch (key) {
         case ConfigConstants.MACHINELEARNINGSPARKMLLOR:
             if (sparkConfig.getSparkLORConfig() == null) {
-                //sparkConfig.setSparkLRConfig(new SparkLORConfig());
+                sparkConfig.setSparkLORConfig((SparkLORConfig) get(key));
             }
             return sparkConfig.getSparkLORConfig();
         case ConfigConstants.MACHINELEARNINGSPARKMLMLPC:
             if (sparkConfig.getSparkMLPCConfig() == null) {
-                //sparkConfig.setSparkMLPCConfig(new SparkMLPCConfig());
+                sparkConfig.setSparkMLPCConfig((SparkMLPCConfig) get(key));
             }
             return sparkConfig.getSparkMLPCConfig();
         case ConfigConstants.MACHINELEARNINGSPARKMLOVR:
             if (sparkConfig.getSparkOVRConfig() == null) {
-                //sparkConfig.setSparkOVRConfig(new SparkOVRConfig());
+                sparkConfig.setSparkOVRConfig((SparkOVRConfig) get(key));
             }
             return sparkConfig.getSparkOVRConfig();
         case ConfigConstants.MACHINELEARNINGSPARKMLLSVC:
             if (sparkConfig.getSparkLSVCConfig() == null) {
-                //sparkConfig.setSparkLSVCConfig(new SparkLSVCConfig());
+                sparkConfig.setSparkLSVCConfig((SparkLSVCConfig) get(key));
             }
             return sparkConfig.getSparkLSVCConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWDNN:
             if (tensorflowConfig.getTensorflowDNNConfig() == null) {
-                //tensorflowConfig.setTensorflowDNNConfig(new TensorflowDNNConfig());
+                tensorflowConfig.setTensorflowDNNConfig((TensorflowDNNConfig) get(key));
             }
             return tensorflowConfig.getTensorflowDNNConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLIC:
             if (tensorflowConfig.getTensorflowLICConfig() == null) {
-                //tensorflowConfig.setTensorflowLConfig(new TensorflowLICConfig());
+                tensorflowConfig.setTensorflowLICConfig((TensorflowLICConfig) get(key));
             }
             return tensorflowConfig.getTensorflowLICConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLIR:
             if (tensorflowConfig.getTensorflowLIRConfig() == null) {
-                //tensorflowConfig.setTensorflowLConfig(new TensorflowLICConfig());
+                tensorflowConfig.setTensorflowLIRConfig((TensorflowLIRConfig) get(key));
             }
             return tensorflowConfig.getTensorflowLIRConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWMLP:
             if (tensorflowConfig.getTensorflowMLPConfig() == null) {
-                //tensorflowConfig.setTensorflowMLPConfig(new TensorflowMLPConfig());
+                tensorflowConfig.setTensorflowMLPConfig((TensorflowMLPConfig) get(key));
             }
             return tensorflowConfig.getTensorflowMLPConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN:
             if (tensorflowConfig.getTensorflowCNNConfig() == null) {
-                //tensorflowConfig.setTensorflowCNNConfig(new TensorflowCNNConfig());
+                tensorflowConfig.setTensorflowCNNConfig((TensorflowCNNConfig) get(key));
             }
             return tensorflowConfig.getTensorflowCNNConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWRNN:
             if (tensorflowConfig.getTensorflowRNNConfig() == null) {
-                //tensorflowConfig.setTensorflowRNNConfig(new TensorflowRNNConfig());
+                tensorflowConfig.setTensorflowRNNConfig((TensorflowRNNConfig) get(key));
             }
             return tensorflowConfig.getTensorflowRNNConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWGRU:
             if (tensorflowConfig.getTensorflowGRUConfig() == null) {
-                //tensorflowConfig.setTensorflowGRUConfig(new TensorflowGRUConfig());
+                tensorflowConfig.setTensorflowGRUConfig((TensorflowGRUConfig) get(key));
             }
             return tensorflowConfig.getTensorflowGRUConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
             if (tensorflowConfig.getTensorflowLSTMConfig() == null) {
-                //tensorflowConfig.setTensorflowLSTMConfig(new TensorflowLSTMConfig());
+                tensorflowConfig.setTensorflowLSTMConfig((TensorflowLSTMConfig) get(key));
             }
             return tensorflowConfig.getTensorflowLSTMConfig();
         case ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM:
-            if (tensorflowConfig.getTensorflowLSTMConfig() == null) {
-                //tensorflowConfig.setTensorflowLSTMConfig(new TensorflowPredictorLSTMConfig());
+            if (tensorflowConfig.getTensorflowPredictorLSTMConfig() == null) {
+                tensorflowConfig.setTensorflowPredictorLSTMConfig((TensorflowPredictorLSTMConfig) get(key));
             }
             return tensorflowConfig.getTensorflowLSTMConfig();
         case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
             if (pytorchConfig.getPytorchMLPConfig() == null) {
-                //pytorchConfig.setPytorchMLPConfig(new PytorchMLPConfig());
+                pytorchConfig.setPytorchMLPConfig((PytorchMLPConfig) get(key));
             }
             return pytorchConfig.getPytorchMLPConfig();
         case ConfigConstants.MACHINELEARNINGPYTORCHCNN:
             if (pytorchConfig.getPytorchCNNConfig() == null) {
-                //pytorchConfig.setPytorchCNNConfig(new PytorchCNNConfig());
+                pytorchConfig.setPytorchCNNConfig((PytorchCNNConfig) get(key));
             }
             return pytorchConfig.getPytorchCNNConfig();
         case ConfigConstants.MACHINELEARNINGPYTORCHRNN:
             if (pytorchConfig.getPytorchRNNConfig() == null) {
-                //pytorchConfig.setPytorchRNNConfig(new PytorchRNNConfig());
+                pytorchConfig.setPytorchRNNConfig((PytorchRNNConfig) get(key));
             }
             return pytorchConfig.getPytorchRNNConfig();
         case ConfigConstants.MACHINELEARNINGPYTORCHGRU:
             if (pytorchConfig.getPytorchGRUConfig() == null) {
-                //pytorchConfig.setPytorchGRUConfig(new PytorchGRUConfig());
+                pytorchConfig.setPytorchGRUConfig((PytorchGRUConfig) get(key));
             }
             return pytorchConfig.getPytorchGRUConfig();
         case ConfigConstants.MACHINELEARNINGPYTORCHLSTM:
             if (pytorchConfig.getPytorchLSTMConfig() == null) {
-                //pytorchConfig.setPytorchLSTMConfig(new PytorchLSTMConfig());
+                pytorchConfig.setPytorchLSTMConfig((PytorchLSTMConfig) get(key));
             }
             return pytorchConfig.getPytorchLSTMConfig();
         case ConfigConstants.MACHINELEARNINGGEMEWC:
             if (gemConfig.getGemEWCConfig() == null) {
-                //gemConfig.setGemEWCConfig(new GemEWCConfig());
+                gemConfig.setGemEWCConfig((GemEWCConfig) get(key));
             }
             return gemConfig.getGemEWCConfig();
         case ConfigConstants.MACHINELEARNINGGEMGEM:
             if (gemConfig.getGemGEMConfig() == null) {
-                //gemConfig.setGemGEMConfig(new GemGEMConfig());
+                gemConfig.setGemGEMConfig((GemGEMConfig) get(key));
             }
             return gemConfig.getGemGEMConfig();
         case ConfigConstants.MACHINELEARNINGGEMICARL:
             if (gemConfig.getGemIcarlConfig() == null) {
-                //gemConfig.setGemIcarlConfig(new GemIcarlConfig());
+                gemConfig.setGemIcarlConfig((GemIcarlConfig) get(key));
             }
             return gemConfig.getGemIcarlConfig();
         case ConfigConstants.MACHINELEARNINGGEMINDEPENDENT:
             if (gemConfig.getGemIConfig() == null) {
-                //gemConfig.setGemIConfig(new GemIConfig());
+                gemConfig.setGemIConfig((GemIConfig) get(key));
             }
             return gemConfig.getGemIConfig();
         case ConfigConstants.MACHINELEARNINGGEMMULTIMODAL:
             if (gemConfig.getGemMMConfig() == null) {
-                //gemConfig.setGemMMConfig(new GemMMConfig());
+                gemConfig.setGemMMConfig((GemMMConfig) get(key));
             }
             return gemConfig.getGemMMConfig();
         case ConfigConstants.MACHINELEARNINGGEMSINGLE:
             if (gemConfig.getGemSConfig() == null) {
-                //gemConfig.setGemSConfig(new GemSConfig());
+                gemConfig.setGemSConfig((GemSConfig) get(key));
             }
             return gemConfig.getGemSConfig();
         }
         return null;
+    }
+
+    private Map<String, Pair<Class<NeuralNetConfig>, String>> getMap() {
+        Map<String, Pair<Class<NeuralNetConfig>, String>> map = new HashMap<>();
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPC, new ImmutablePair(SparkMLPCConfig.class, MLConstants.SPARKMLPCCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLOR, new ImmutablePair(SparkLORConfig.class, MLConstants.SPARKLORCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, new ImmutablePair(SparkOVRConfig.class, MLConstants.SPARKOVRCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, new ImmutablePair(SparkLSVCConfig.class, MLConstants.SPARKLSVCCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, new ImmutablePair(TensorflowDNNConfig.class, MLConstants.TENSORFLOWDNNCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, new ImmutablePair(TensorflowLICConfig.class, MLConstants.TENSORFLOWLICCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR, new ImmutablePair(TensorflowLIRConfig.class, MLConstants.TENSORFLOWLIRCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, new ImmutablePair(TensorflowMLPConfig.class, MLConstants.TENSORFLOWMLPCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, new ImmutablePair(TensorflowCNNConfig.class, MLConstants.TENSORFLOWCNNCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, new ImmutablePair(TensorflowRNNConfig.class, MLConstants.TENSORFLOWRNNCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, new ImmutablePair(TensorflowGRUConfig.class, MLConstants.TENSORFLOWGRUCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, new ImmutablePair(TensorflowLSTMConfig.class, MLConstants.TENSORFLOWLSTMCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, new ImmutablePair(TensorflowPredictorLSTMConfig.class, MLConstants.TENSORFLOWPREDICTORLSTMCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, new ImmutablePair(PytorchMLPConfig.class, MLConstants.PYTORCHMLPCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, new ImmutablePair(PytorchCNNConfig.class, MLConstants.PYTORCHCNNCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, new ImmutablePair(PytorchRNNConfig.class, MLConstants.PYTORCHRNNCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHGRU, new ImmutablePair(PytorchGRUConfig.class, MLConstants.PYTORCHGRUCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTM, new ImmutablePair(PytorchLSTMConfig.class, MLConstants.PYTORCHLSTMCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGGEMEWC, new ImmutablePair(GemEWCConfig.class, MLConstants.GEMEWCCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGGEMGEM, new ImmutablePair(GemGEMConfig.class, MLConstants.GEMGEMCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGGEMICARL, new ImmutablePair(GemIcarlConfig.class, MLConstants.GEMICARLCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT, new ImmutablePair(GemIConfig.class, MLConstants.GEMINDEPENDENTCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL, new ImmutablePair(GemMMConfig.class, MLConstants.GEMMULTIMODALCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGGEMSINGLE, new ImmutablePair(GemSConfig.class, MLConstants.GEMSINGLECONFIG));
+        return map;
+    }
+    
+    public Map<String, String> getConfigMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPC, ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLOR, ConfigConstants.MACHINELEARNINGSPARKMLLORCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, ConfigConstants.MACHINELEARNINGSPARKMLOVRCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, ConfigConstants.MACHINELEARNINGTENSORFLOWLICCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR, ConfigConstants.MACHINELEARNINGTENSORFLOWLIRCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, ConfigConstants.MACHINELEARNINGTENSORFLOWGRUCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, ConfigConstants.MACHINELEARNINGPYTORCHMLPCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHGRU, ConfigConstants.MACHINELEARNINGPYTORCHGRUCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHLSTM, ConfigConstants.MACHINELEARNINGPYTORCHLSTMCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGGEMEWC, ConfigConstants.MACHINELEARNINGGEMEWCCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGGEMGEM, ConfigConstants.MACHINELEARNINGGEMGEMCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGGEMICARL, ConfigConstants.MACHINELEARNINGGEMICARLCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT, ConfigConstants.MACHINELEARNINGGEMINDEPENDENTCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL, ConfigConstants.MACHINELEARNINGGEMMULTIMODALCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGGEMSINGLE, ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG);
+        return map;
+    }
+    
+    public NeuralNetConfig get(String key) {
+        NeuralNetConfig nnconfig = null;
+        Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
+        Pair<Class<NeuralNetConfig>, String> nnstring = map.get(key);
+        nnconfig = JsonUtil.convert(nnstring.getRight(), nnstring.getLeft());
+        return nnconfig;
     }
 
 }

@@ -14,7 +14,7 @@ public class IclijConfigConstantMaps {
 
     private static final String MLCONFIG = "{ \"spark\" : { \"mlpc\" : " + ACONFIG + ", \"lor\" : " + ACONFIG + ", \"ovr\" : " + ACONFIG + ", \"lsvc\" : " + ACONFIG + " }, \"tensorflow\" : { \"dnn\" : " + ACONFIG + ",  \"lic\" : " + ACONFIG + ", \"lir\" : " + ACONFIG + ", \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + ", \"predictorlstm\" : { \"load\" : true, \"save\" : true, \"enable\" : false, \"evolve\" : false } }, \"pytorch\" : { \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + " }, \"gem\" : { \"ewc\" : " + ACONFIG + ", \"gem\" : " + ACONFIG + ", \"i\" : " + ACONFIG + ", \"icarl\" : " + DISABLECONFIG + ", \"mm\" : " + ACONFIG + ", \"s\" : " + ACONFIG + " } }";
 
-    private static final String MLCONFIGLSTM = "{ \"lstm\" : " + ACONFIG + " }";
+    private static final String MLCONFIGPREDICTORLSTM = "{ \"tensorflow\" : { \"predictorlstm\" : " + ACONFIG + " } }";
 
     private static final String RECOMMENDEVOLUTIONCONFIG = "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }";
 
@@ -200,7 +200,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.EVOLVERECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.EVOLVEPREDICTOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.EVOLVEPREDICTOREVOLUTIONCONFIG, null);
-        deflt.put(IclijConfigConstants.EVOLVEPREDICTORMLCONFIG, MLCONFIGLSTM);
+        deflt.put(IclijConfigConstants.EVOLVEPREDICTORMLCONFIG, MLCONFIGPREDICTORLSTM);
         deflt.put(IclijConfigConstants.MPSERVERCPU, 0.5);
         deflt.put(IclijConfigConstants.MPCLIENTCPU, 0.5);
         deflt.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.FALSE);
@@ -229,7 +229,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.FINDPROFITRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.FINDPROFITPREDICTOR, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, null);
-        deflt.put(IclijConfigConstants.FINDPROFITPREDICTORMLCONFIG, MLCONFIGLSTM);
+        deflt.put(IclijConfigConstants.FINDPROFITPREDICTORMLCONFIG, MLCONFIGPREDICTORLSTM);
         deflt.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, 10);
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.TRUE);
@@ -256,7 +256,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG, null);
-        deflt.put(IclijConfigConstants.IMPROVEPROFITPREDICTORMLCONFIG, MLCONFIGLSTM);
+        deflt.put(IclijConfigConstants.IMPROVEPROFITPREDICTORMLCONFIG, MLCONFIGPREDICTORLSTM);
         deflt.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, null);
@@ -281,7 +281,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLMULTIMLCONFIG, MLCONFIG);
         deflt.put(IclijConfigConstants.MACHINELEARNINGPREDICTOR, Boolean.FALSE);
         deflt.put(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG, null);
-        deflt.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, MLCONFIGLSTM);
+        deflt.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, MLCONFIGPREDICTORLSTM);
         deflt.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, Boolean.TRUE);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPS, 5);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, 20);
@@ -478,7 +478,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.EVOLVERECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolve evolution based"));
         mymap.put(IclijConfigConstants.EVOLVEPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable evolve predictor"));
         mymap.put(IclijConfigConstants.EVOLVEPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "evolve predictor evolution config"));
-        mymap.put(IclijConfigConstants.EVOLVEPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGLSTM, "evolve predictor ml enable"));
+        mymap.put(IclijConfigConstants.EVOLVEPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGPREDICTORLSTM, "evolve predictor ml enable"));
         mymap.put(IclijConfigConstants.MISCSHUTDOWNHOUR, new IclijXMLType(Integer.class, null, "Server shutdown hour"));
         mymap.put(IclijConfigConstants.MPSERVERCPU, new IclijXMLType(Double.class, 0.5, "Server cpu usage"));
         mymap.put(IclijConfigConstants.MPCLIENTCPU, new IclijXMLType(Double.class, 0.5, "Client cpu usage"));
@@ -508,7 +508,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.FINDPROFITRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable find profit evolution based"));
         mymap.put(IclijConfigConstants.FINDPROFITPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit predictor"));
         mymap.put(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Find profit predictor evolution config"));
-        mymap.put(IclijConfigConstants.FINDPROFITPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGLSTM, "Find profit predictor ml enable"));
+        mymap.put(IclijConfigConstants.FINDPROFITPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGPREDICTORLSTM, "Find profit predictor ml enable"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit autorun"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable improve profit fitness minimum"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlindicator"));
@@ -535,7 +535,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.IMPROVEPROFITRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit evolution based"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit predictor"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve profit predictor evolution config"));
-        mymap.put(IclijConfigConstants.IMPROVEPROFITPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGLSTM, "Improve profit predictor ml enable"));
+        mymap.put(IclijConfigConstants.IMPROVEPROFITPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGPREDICTORLSTM, "Improve profit predictor ml enable"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable machine learning autorun"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable machine learning mlindicator"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "machine learning mlindicator evolution config"));
@@ -560,7 +560,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLMULTIMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "machine learning mlmulti ml enable"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable machine learning predictor"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "machine learning predictor evolution config"));
-        mymap.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGLSTM, "machine learning predictor ml enable"));
+        mymap.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIGPREDICTORLSTM, "machine learning predictor ml enable"));
         mymap.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, new IclijXMLType(Boolean.class, Boolean.TRUE, "Single market loops with evolve first only"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPS, new IclijXMLType(Integer.class, 5, "Single market loops"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, new IclijXMLType(Integer.class, 20, "Single market loop interval"));

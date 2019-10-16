@@ -20,6 +20,10 @@ public class NeuralNetTensorflowConfig {
 
     private TensorflowPredictorLSTMConfig tensorflowPredictorLSTMConfig;
 
+    public NeuralNetTensorflowConfig() {
+        super();
+    }
+
     public TensorflowDNNConfig getTensorflowDNNConfig() {
         return tensorflowDNNConfig;
     }
