@@ -5,7 +5,7 @@ import java.util.Random;
 public class RandomUtil {
     
     public static int random(Random random, int min, int max) {
-        return random(random, min, max - min);
+        return random(random, min, 1, max - min);
     }
     
     public static int random(Random random, int base, int multiple, int range) {
