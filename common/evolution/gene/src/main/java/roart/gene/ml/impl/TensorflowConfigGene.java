@@ -31,19 +31,10 @@ public abstract class TensorflowConfigGene extends NeuralNetConfigGene {
     }
 
     public void crossover(TensorflowConfigGene other) {
-        TensorflowFeedConfig myconfig = (TensorflowFeedConfig) getConfig();
-        TensorflowFeedConfig otherconfig = (TensorflowFeedConfig) other.getConfig();
-        if (random.nextBoolean()) {
-            myconfig.setHidden(otherconfig.getHidden());
-        }
-        if (random.nextBoolean()) {
-            myconfig.setLayers(otherconfig.getLayers());
-        }
+        TensorflowConfig myconfig = (TensorflowConfig) getConfig();
+        TensorflowConfig otherconfig = (TensorflowConfig) other.getConfig();
         if (random.nextBoolean()) {
             myconfig.setSteps(otherconfig.getSteps());
-        }
-        if (random.nextBoolean()) {
-            myconfig.setLr(otherconfig.getLr());
         }
     }
     
