@@ -24,7 +24,7 @@ public class GemSConfigGene extends GemConfigGene {
     @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         GemSConfigGene offspring = new GemSConfigGene((GemSConfig) getConfig());
-        ((GemConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((GemConfigGene) otherNN);
         return offspring;
     }
 

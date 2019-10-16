@@ -47,7 +47,7 @@ public class GemIcarlConfigGene extends GemConfigGene {
         GemIcarlConfig offspringconfig = (GemIcarlConfig) offspring.getConfig();
         GemIcarlConfig otherconfig = (GemIcarlConfig) other.getConfig();
 
-        ((GemConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((GemConfigGene) otherNN);
         if (random.nextBoolean()) {
             offspringconfig.setN_memories(otherconfig.getN_memories());
         }

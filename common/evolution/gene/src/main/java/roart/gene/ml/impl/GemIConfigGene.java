@@ -41,7 +41,7 @@ public class GemIConfigGene extends GemConfigGene {
         GemIConfig offspringconfig = (GemIConfig) offspring.getConfig();
         GemIConfig otherconfig = (GemIConfig) other.getConfig();
 
-        ((GemConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((GemConfigGene) otherNN);
         if (random.nextBoolean()) {
             offspringconfig.setFinetune(otherconfig.isFinetune());
         }

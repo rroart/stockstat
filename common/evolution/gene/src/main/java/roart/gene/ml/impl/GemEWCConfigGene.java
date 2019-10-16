@@ -42,7 +42,7 @@ public class GemEWCConfigGene extends GemConfigGene {
         GemEWCConfig offspringconfig = (GemEWCConfig) offspring.getConfig();
         GemEWCConfig otherconfig = (GemEWCConfig) other.getConfig();
 
-        ((GemConfigGene) offspring).crossover(otherNN);
+        offspring.crossover((GemConfigGene) otherNN);
         if (random.nextBoolean()) {
             offspringconfig.setN_memories(otherconfig.getN_memories());
         }
