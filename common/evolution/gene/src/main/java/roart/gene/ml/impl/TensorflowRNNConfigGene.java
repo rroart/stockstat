@@ -9,18 +9,6 @@ public class TensorflowRNNConfigGene extends TensorflowRecurrentConfigGene {
     }
     
     @Override
-    public void randomize() {
-        super.randomize();
-    }
-
-    @Override
-    public void mutate() {
-        int task = random.nextInt(RANDOMS);
-        super.mutate(task);
-
-    }
-    
-    @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         TensorflowRNNConfigGene offspring = new TensorflowRNNConfigGene((TensorflowRNNConfig) getConfig());
         offspring.crossover((TensorflowConfigGene) otherNN);

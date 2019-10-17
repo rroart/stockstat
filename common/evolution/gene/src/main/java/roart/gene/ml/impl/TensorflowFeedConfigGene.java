@@ -6,8 +6,6 @@ import roart.common.constants.Constants;
 
 public abstract class TensorflowFeedConfigGene extends TensorflowConfigGene {
 
-    protected static final int RANDOMS = 4;
-
     public TensorflowFeedConfigGene(TensorflowConfig config) {
         super(config);
     }
@@ -22,12 +20,14 @@ public abstract class TensorflowFeedConfigGene extends TensorflowConfigGene {
     }
     
     @Override
-    public void mutate(int task) {
+    public void mutate() {
         TensorflowFeedConfig myconfig = (TensorflowFeedConfig) getConfig();
+	int task = random.nextInt(RANDOMS + 3);
         if (task < RANDOMS) {
             super.mutate(task);
             return;
         }
+	task = task - RANDOMS;
         switch (task) {
         case 0:
             myconfig.setHidden(generateHidden());

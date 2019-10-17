@@ -9,18 +9,6 @@ public class TensorflowGRUConfigGene extends TensorflowRecurrentConfigGene {
     }
     
     @Override
-    public void randomize() {
-        super.randomize();
-    }
-
-    @Override
-    public void mutate() {
-        int task = random.nextInt(RANDOMS);
-        super.mutate(task);
-
-    }
-    
-    @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         TensorflowGRUConfigGene offspring = new TensorflowGRUConfigGene((TensorflowGRUConfig) getConfig());
         offspring.crossover((TensorflowConfigGene) otherNN);

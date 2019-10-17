@@ -22,14 +22,15 @@ public abstract class TensorflowRecurrentConfigGene extends TensorflowFeedConfig
     @Override
     public void mutate() {
         TensorflowRecurrentConfig myconfig = (TensorflowRecurrentConfig) getConfig();
-        int task = random.nextInt(RANDOMS + 3);
-        if (task < RANDOMS) {
-            super.mutate(task);
+        int task = random.nextInt(RANDOMS + 3 + 3);
+        if (task < RANDOMS + 3) {
+            super.mutate();
             return;
         }
+	task = task - RANDOMS - 3;
         switch (task) {
         case 0:
-            myconfig.setSlide(generateStride());
+            myconfig.setSlide(generateSlide());
             break;
         case 1:
             myconfig.setDropout(generateDropout());

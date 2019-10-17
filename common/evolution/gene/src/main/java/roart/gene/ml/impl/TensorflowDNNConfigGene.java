@@ -7,8 +7,6 @@ import roart.common.constants.Constants;
 
 public class TensorflowDNNConfigGene extends TensorflowEstimatorConfigGene {
 
-    protected static final int RANDOMS = 2;
-    
     public TensorflowDNNConfigGene(TensorflowConfig config) {
         super(config);
     }
@@ -24,11 +22,12 @@ public class TensorflowDNNConfigGene extends TensorflowEstimatorConfigGene {
     @Override
     public void mutate() {
         TensorflowDNNConfig myconfig = (TensorflowDNNConfig) getConfig();
-        int task = random.nextInt(RANDOMS);
+        int task = random.nextInt(RANDOMS + 2);
         if (task < RANDOMS) {
             super.mutate(task);
             return;
         }
+        task = task - RANDOMS;
         switch (task) {
         case 0:
             myconfig.setHidden(generateHidden());
