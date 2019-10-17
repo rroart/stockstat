@@ -207,7 +207,7 @@ public class NeuralNetConfigs {
             if (tensorflowConfig.getTensorflowPredictorLSTMConfig() == null) {
                 tensorflowConfig.setTensorflowPredictorLSTMConfig((TensorflowPredictorLSTMConfig) get(key));
             }
-            return tensorflowConfig.getTensorflowLSTMConfig();
+            return tensorflowConfig.getTensorflowPredictorLSTMConfig();
         case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
             if (pytorchConfig.getPytorchMLPConfig() == null) {
                 pytorchConfig.setPytorchMLPConfig((PytorchMLPConfig) get(key));
