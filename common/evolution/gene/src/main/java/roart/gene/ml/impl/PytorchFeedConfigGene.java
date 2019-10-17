@@ -19,12 +19,14 @@ public abstract class PytorchFeedConfigGene extends PytorchConfigGene {
     }
     
     @Override
-    public void mutate(int task) {
+    public void mutate() {
         PytorchFeedConfig myconfig = (PytorchFeedConfig) getConfig();
+        int task = random.nextInt(RANDOMS + 3);
         if (task < RANDOMS) {
             super.mutate(task);
             return;
         }
+        task = task - RANDOMS;
         switch (task) {
         case 0:
             myconfig.setHidden(generateHidden());

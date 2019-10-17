@@ -20,14 +20,15 @@ public abstract class PytorchRecurrentConfigGene extends PytorchFeedConfigGene {
     @Override
     public void mutate() {
         PytorchRecurrentConfig myconfig = (PytorchRecurrentConfig) getConfig();
-        int task = random.nextInt(RANDOMS + 1);
-        if (task < RANDOMS) {
-            super.mutate(task);
+        int task = random.nextInt(RANDOMS + 1 + 3);
+        if (task < RANDOMS + 3) {
+            super.mutate();
             return;
         }
+        task = task - RANDOMS - 3;
         switch (task) {
         case 0:
-            myconfig.setSlide(generateStride());
+            myconfig.setSlide(generateSlide());
             break;
         default:
 	    log.error(Constants.NOTFOUND, task);

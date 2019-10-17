@@ -8,7 +8,7 @@ import roart.common.constants.Constants;
 
 public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     
-    protected static final int RANDOMS = 4;
+    protected static final int RANDOMS = 1;
     
     public PytorchConfigGene(PytorchConfig config) {
         super(config);
@@ -16,26 +16,14 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
 
     @Override
     public void randomize() {
-        PytorchFeedConfig myconfig = (PytorchFeedConfig) getConfig();
-        myconfig.setHidden(generateHidden());
-        myconfig.setLayers(generateLayers());
-        myconfig.setLr(generateLr());
+        PytorchConfig myconfig = (PytorchConfig) getConfig();
         myconfig.setSteps(generateSteps());
     }
 
     public void mutate(int task) {
-        PytorchFeedConfig myconfig = (PytorchFeedConfig) getConfig();
+        PytorchConfig myconfig = (PytorchConfig) getConfig();
         switch (task) {
         case 0:
-            myconfig.setHidden(generateHidden());
-            break;
-        case 1:
-            myconfig.setLayers(generateLayers());
-            break;
-        case 2:
-            myconfig.setLr(generateLr());
-            break;
-        case 3:
             myconfig.setSteps(generateSteps());
             break;
         default:
@@ -44,19 +32,10 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     }
 
     public void crossover(PytorchConfigGene other) {
-        PytorchFeedConfig myconfig = (PytorchFeedConfig) getConfig();
-        PytorchFeedConfig otherconfig = (PytorchFeedConfig) other.getConfig();
-        if (random.nextBoolean()) {
-            myconfig.setHidden(otherconfig.getHidden());
-        }
-        if (random.nextBoolean()) {
-            myconfig.setLayers(otherconfig.getLayers());
-        }
+        PytorchConfig myconfig = (PytorchConfig) getConfig();
+        PytorchConfig otherconfig = (PytorchConfig) other.getConfig();
         if (random.nextBoolean()) {
             myconfig.setSteps(otherconfig.getSteps());
-        }
-        if (random.nextBoolean()) {
-            myconfig.setLr(otherconfig.getLr());
         }
     }
     

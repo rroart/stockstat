@@ -28,6 +28,7 @@ public class PytorchCNNConfigGene extends PytorchPreFeedConfigGene {
             super.mutate(task);
             return;
         }
+        task = task - RANDOMS;
         switch (task) {
         case 0:
             myconfig.setKernelsize(generateKernelsize());

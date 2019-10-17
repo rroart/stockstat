@@ -10,18 +10,6 @@ public class PytorchGRUConfigGene extends PytorchRecurrentConfigGene {
     }
     
     @Override
-    public void randomize() {
-        super.randomize();
-    }
-
-    @Override
-    public void mutate() {
-        int task = random.nextInt(RANDOMS);
-        super.mutate(task);
-
-    }
-    
-    @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         PytorchGRUConfigGene offspring = new PytorchGRUConfigGene((PytorchGRUConfig) getConfig());
         offspring.crossover((PytorchConfigGene) otherNN);

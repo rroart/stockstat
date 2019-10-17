@@ -9,18 +9,6 @@ public class PytorchMLPConfigGene extends PytorchFeedConfigGene {
     }
     
     @Override
-    public void randomize() {
-        super.randomize();
-    }
-
-    @Override
-    public void mutate() {
-        int task = random.nextInt(RANDOMS);
-        super.mutate(task);
-
-    }
-    
-    @Override
     public AbstractGene crossover(AbstractGene otherNN) {
         PytorchMLPConfigGene offspring = new PytorchMLPConfigGene((PytorchMLPConfig) getConfig());
         offspring.crossover((PytorchConfigGene) otherNN);
