@@ -258,13 +258,18 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
         List<ContItem> newConts = new ArrayList<>();
         log.info("First training array size {}", trainingArray.length);
-        trainingArray = filter(trainingArray, filename, newConts);
-        log.info("Filtered training array size {}, limit {}", trainingArray.length, LIMIT);        
-        if (newConts.size() < LIMIT) {
-            return result;
+        if (neuralnetcommand.isMllearn()) {
+            trainingArray = filter(trainingArray, filename, newConts);
+            log.info("Filtered training array size {}, limit {}", trainingArray.length, LIMIT);        
+            if (newConts.size() < LIMIT) {
+                return result;
+            }
         }
-        Map<String, String> configMap = new NeuralNetConfigs().getConfigMap();
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
         String config = configMap.get(model.getKey());
+        if (nnconfigs == null) {
+            nnconfigs = new NeuralNetConfigs();
+        }
         nnconfigs.getAndSet(config);
         /*
         GemSConfig sconfig = null;
@@ -326,7 +331,9 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
-        saveme(newConts);
+        if (neuralnetcommand.isMllearn()) {
+            saveme(newConts);
+        }
         result.setAccuracy(ret.getAccuracy());
         if (ret.getClassifycatarray() != null) {
             Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret);
