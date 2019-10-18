@@ -349,6 +349,9 @@ public class MLIndicator extends Aggregator {
                     String path = model.getPath();
                     boolean mldynamic = conf.wantMLDynamic();
                     LearnTestClassifyResult result = mldao.learntestclassify(nnconfigs, this, learnMap, model, arrayLength, 2, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
+                    if (result == null) {
+                        continue;
+                    }
                     Map<String, Double[]> classifyResult = result.getCatMap();
                     probabilityMap.put(mldao.getName() + model.getId(), result.getAccuracy());
                     meta1[4] = result.getAccuracy();
@@ -439,14 +442,17 @@ public class MLIndicator extends Aggregator {
                 MLClassifyModel model = futMap.getModel();
                 int testCount = futMap.getTestCount();
                 LearnTestClassifyResult result = future.get();
+                if (result == null) {
+                    continue;
+                }
                 Map<String, Double[]> classifyResult = result.getCatMap();
                 probabilityMap.put(mldao.getName() + model.getId(), result.getAccuracy());
                 Object[] meta = resultMetaArray.get(testCount);
                 ResultMeta resultMeta = getResultMetas().get(testCount);
                 meta[4] = result.getAccuracy();
                 resultMeta.setTestAccuracy(result.getAccuracy());
-                log.info("keys" + Arrays.deepToString(classifyResult.values().toArray()));
-                log.info("keys" + classifyResult.keySet());
+                //log.info("keys" + Arrays.deepToString(classifyResult.values().toArray()));
+                //log.info("keys" + classifyResult.keySet());
                 //log.info("ke2 " + classifyResult.values().stream().toString());
                 mapResult.put(model, classifyResult);
                 Map<String, Long> countMap = new HashMap<>();
