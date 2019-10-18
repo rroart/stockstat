@@ -124,7 +124,7 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, config.wantsFindProfitMLDynamic());
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
-            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, new HashMap<>(), marketTime.subcomponent);
+            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, aMap, marketTime.subcomponent);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
