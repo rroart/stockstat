@@ -2,6 +2,7 @@ package roart.common.ml;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -324,7 +325,16 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGGEMSINGLE, ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG);
         return map;
     }
-    
+
+    public Map<String, String> getConfigMapRev() {
+        Map<String, String> aMap = getConfigMap();
+        Map<String, String> retMap = new HashMap<>();
+        for (Entry<String, String> entry : aMap.entrySet()) {
+            retMap.put(entry.getValue(), entry.getKey());
+        }
+        return retMap;
+    }
+
     public NeuralNetConfig get(String key) {
         NeuralNetConfig nnconfig = null;
         Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();

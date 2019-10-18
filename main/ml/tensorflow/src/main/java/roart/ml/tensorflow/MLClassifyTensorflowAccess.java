@@ -279,8 +279,11 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         Object[] trainingArray = new Object[learnMap.size()];
         Object[] trainingCatArray = new Object[learnMap.size()];
         getTrainingSet(learnMap, trainingArray, trainingCatArray);
-        Map<String, String> configMap = new NeuralNetConfigs().getConfigMap();
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
         String config = configMap.get(model.getKey());
+        if (nnconfigs == null) {
+            nnconfigs = new NeuralNetConfigs();
+        }
         nnconfigs.getAndSet(config);
         /*
         TensorflowDNNConfig dnnConfig = null;
