@@ -348,18 +348,21 @@ public abstract class ComponentMLIndicator extends ComponentML {
                 Double incdecProb = null;
                 if (returnSize > 1) {
                     incdecProb = (Double) list.get(resultIndex + 1);
+                    if (incdecProb == null) {
+                        log.error("Prob null");
+                    }
                 }
                 total++;
                 if (incdec.equals(ServiceUtilConstants.INC)) {
                     incSize++;
                     if (incThreshold) {
                         goodTP++;
-                        if (returnSize > 1) {
+                        if (returnSize > 1 && incdecProb != null) {
                             goodTPprob += incdecProb;
                         }
                     } else {
                         goodFP++;
-                        if (returnSize > 1) {
+                        if (returnSize > 1 && incdecProb != null) {
                             goodFPprob += (1 - incdecProb);                                    }
                     }
                 }
@@ -367,12 +370,12 @@ public abstract class ComponentMLIndicator extends ComponentML {
                     decSize++;
                     if (!incThreshold) {
                         goodTN++;
-                        if (returnSize > 1) {
+                        if (returnSize > 1 && incdecProb != null) {
                             goodTNprob += incdecProb;
                         }
                     } else {
                         goodFN++;
-                        if (returnSize > 1) {
+                        if (returnSize > 1 && incdecProb != null) {
                             goodFNprob += (1 - incdecProb);
                         }
                     }
