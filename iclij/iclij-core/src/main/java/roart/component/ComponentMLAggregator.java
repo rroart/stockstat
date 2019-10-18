@@ -173,6 +173,9 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 Double tfpnProb = null;
                 if (returnSize > 1) {
                     tfpnProb = (Double) list.get(resultIndex + 1);
+                    if (tfpnProb == null) {
+                        log.error("Prob null");
+                    }
                 }
                 if (valFuture != null && valNow != null) {
                     //System.out.println("vals " + key + " " + valNow + " " + valFuture);
@@ -181,7 +184,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                         tpSize++;
                         if (valFuture > valNow ) {
                             goodTP++;
-                            if (returnSize > 1) {
+                            if (returnSize > 1 && tfpnProb != null) {
                                 goodTPprob += tfpnProb;
                             }
                         }
@@ -190,7 +193,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                         fpSize++;
                         if (valFuture < valNow) {
                             goodFP++;
-                            if (returnSize > 1) {
+                            if (returnSize > 1 && tfpnProb != null) {
                                 goodFPprob += tfpnProb;
                             }
                         }
@@ -199,7 +202,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                         tnSize++;
                         if (valFuture < valNow) {
                             goodTN++;
-                            if (returnSize > 1) {
+                            if (returnSize > 1 && tfpnProb != null) {
                                 goodTNprob += tfpnProb;
                             }
                         }
@@ -208,7 +211,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                         fnSize++;
                         if (valFuture > valNow) {
                             goodFN++;
-                            if (returnSize > 1) {
+                            if (returnSize > 1 && tfpnProb != null) {
                                 goodFNprob += tfpnProb;
                             }
                         }
