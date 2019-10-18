@@ -348,7 +348,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                             //indicators.add(this);
                             log.info("Filename {}", filename);
                             LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
-
+                            if (result == null) {
+                                continue;
+                            }
                             probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
                             meta[6] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
@@ -497,6 +499,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                 String mapType = futMap.getMapType();
                 int testCount = futMap.getTestCount();
                 LearnTestClassifyResult result = future.get();
+                if (result == null) {
+                    continue;
+                }
                 Map<String, Double[]> classifyResult = result.getCatMap();
                 Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
                 Map<String, Map<String, Double[]>> mapResult2 = mapResult1.get(model);
