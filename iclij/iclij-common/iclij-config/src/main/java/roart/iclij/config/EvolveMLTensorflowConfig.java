@@ -103,7 +103,7 @@ public class EvolveMLTensorflowConfig {
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, rnn);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, gru);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, lstm);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, lstm);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, predictorlstm);
         return map;
     }
 }
