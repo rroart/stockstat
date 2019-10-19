@@ -502,6 +502,7 @@ public class EvolutionService {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
+        /*
         if (ml.equals(PipelineConstants.MLINDICATOR)) {
             nnconfigString = conf.getAggregatorsMLIndicatorMLConfig();
             if (nnconfigString != null) {
@@ -569,10 +570,11 @@ public class EvolutionService {
                 //nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(nnConfig);
             }
         }
+        */
         if (nnConfigs == null) {
             nnConfigs = new NeuralNetConfigs();            
         }
-        NeuralNetConfigs newNNConfigs = new NeuralNetConfigs();
+        //NeuralNetConfigs newNNConfigs = new NeuralNetConfigs();
         List<String> keys = new ArrayList<>();
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLOR);
         keys.add(ConfigConstants.MACHINELEARNINGSPARKMLMLPC);
@@ -604,6 +606,12 @@ public class EvolutionService {
             if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(key))) {
                 continue;
             }
+        
+            Map<String, String> anotherConfigMap = nnConfigs.getAnotherConfigMap();
+            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(anotherConfigMap.get(key)))) {
+                continue;
+            }
+            /*
             MyMyConfig workingConf = conf.copy();
             for (String tmpkey : keys) {
                 boolean enabled = (boolean) workingConf.getValueOrDefault(tmpkey);
@@ -611,9 +619,13 @@ public class EvolutionService {
                 sameKey &= enabled;
                 workingConf.getConfigValueMap().put(tmpkey, sameKey);
             }
-            NeuralNetConfig nnconfig = nnConfigs.getAndSet(key);
+            */
+            String configKey = nnConfigs.getConfigMap().get(key);
+            String configValue = (String) conf.getValueOrDefault(configKey);
+            
+            NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue);
             NeuralNetConfigGene nnconfigGene = NeuralNetConfigGeneFactory.get(nnconfig, key);
-            NeuralNetChromosome chromosome = new NeuralNetChromosome(workingConf, ml, dataReaders, categories, key, nnconfigGene, catName, cat, neuralnetcommand);
+            NeuralNetChromosome chromosome = new NeuralNetChromosome(conf.copy(), ml, dataReaders, categories, key, nnconfigGene, catName, cat, neuralnetcommand);
             if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
                 chromosome.setAscending(false);
             }
@@ -625,42 +637,42 @@ public class EvolutionService {
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
             NeuralNetConfig newnnconf = newnnconfgene.getConfig();
-            newNNConfigs.set(key, newnnconf);
+            //newNNConfigs.set(key, newnnconf);
+            ObjectMapper mapper = new ObjectMapper();
+            String newNNConfigstring = mapper.writeValueAsString(newnnconf);
+            String myKey = null;
+            if (ml.equals(PipelineConstants.MLINDICATOR)) {
+                myKey = ConfigConstants.AGGREGATORSINDICATORMLCONFIG;
+            }
+            if (ml.equals(PipelineConstants.MLMACD)) {
+                myKey = ConfigConstants.AGGREGATORSMLMACDMLCONFIG;
+            }
+            if (ml.equals(PipelineConstants.MLRSI)) {
+                myKey = ConfigConstants.AGGREGATORSMLRSIMLCONFIG;
+            }
+            if (ml.equals(PipelineConstants.MLMULTI)) {
+                myKey = ConfigConstants.AGGREGATORSMLMULTIMLCONFIG;
+            }
+            if (ml.equals(PipelineConstants.MLATR)) {
+                myKey = ConfigConstants.AGGREGATORSMLATRMLCONFIG;
+            }
+            if (ml.equals(PipelineConstants.MLCCI)) {
+                myKey = ConfigConstants.AGGREGATORSMLCCIMLCONFIG;
+            }
+            if (ml.equals(PipelineConstants.MLSTOCH)) {
+                myKey = ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG;
+            }
+            if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
+                myKey = ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG;
+                //newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
+            }
+            updateMap.put(configKey, newNNConfigstring);
+            ResultItemTableRow row = new ResultItemTableRow();
+            row.add(myKey);
+            row.add(nnconfigString);
+            row.add(newnnconf);
+            table.add(row);
         }
-        ObjectMapper mapper = new ObjectMapper();
-        String newNNConfigstring = mapper.writeValueAsString(newNNConfigs);
-        String myKey = null;
-        if (ml.equals(PipelineConstants.MLINDICATOR)) {
-            myKey = ConfigConstants.AGGREGATORSINDICATORMLCONFIG;
-        }
-        if (ml.equals(PipelineConstants.MLMACD)) {
-            myKey = ConfigConstants.AGGREGATORSMLMACDMLCONFIG;
-        }
-        if (ml.equals(PipelineConstants.MLRSI)) {
-            myKey = ConfigConstants.AGGREGATORSMLRSIMLCONFIG;
-        }
-        if (ml.equals(PipelineConstants.MLMULTI)) {
-            myKey = ConfigConstants.AGGREGATORSMLMULTIMLCONFIG;
-        }
-        if (ml.equals(PipelineConstants.MLATR)) {
-            myKey = ConfigConstants.AGGREGATORSMLATRMLCONFIG;
-        }
-        if (ml.equals(PipelineConstants.MLCCI)) {
-            myKey = ConfigConstants.AGGREGATORSMLCCIMLCONFIG;
-        }
-        if (ml.equals(PipelineConstants.MLSTOCH)) {
-            myKey = ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG;
-        }
-        if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
-            myKey = ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG;
-            newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
-        }
-        updateMap.put(myKey, newNNConfigstring);
-        ResultItemTableRow row = new ResultItemTableRow();
-        row.add(myKey);
-        row.add(nnconfigString);
-        row.add(newNNConfigstring);
-        table.add(row);
     }
 
 }

@@ -50,15 +50,16 @@ public abstract class ComponentML extends Component {
             String newConfStr = JsonUtil.convert(evolveConfig);
             param.getService().conf.getConfigValueMap().put(ConfigConstants.EVOLVEMLEVOLUTIONCONFIG, newConfStr);
 
-            Map<String, Object> evolveMap = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
-            param.getService().conf.getConfigValueMap().putAll(evolveMap);
+            // We do not need this with the other subcomp settings?
+            //Map<String, Object> evolveMap = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
+            //param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
             List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap);
             mlSaves(mlConfigMap, param, anUpdateMap, subcomponent);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
             }
-            return evolveMap;
+            return new HashMap<>(); //evolveMap;
         }
         return new HashMap<>();
         //Map<String, Object> i = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
@@ -94,7 +95,7 @@ public abstract class ComponentML extends Component {
                     nnConfigs.set(key2, null);
                 }
             }
-            String value = null;
+            String value = nnconfigString;
             try {
                 if (getPipeline().equals(PipelineConstants.PREDICTORSLSTM)) {
                     TensorflowPredictorLSTMConfig nnConfig = nnConfigs.getTensorflowConfig().getTensorflowPredictorLSTMConfig();
@@ -394,6 +395,8 @@ public abstract class ComponentML extends Component {
         }
         */
         valueMap.put(key, Boolean.TRUE);
+        String mlKey = new NeuralNetConfigs().getAnotherConfigMap().get(key);
+        valueMap.put(mlKey, Boolean.TRUE);
     }
 
     @Override
@@ -405,7 +408,7 @@ public abstract class ComponentML extends Component {
             log.error("Key not found {}", ml);
             return;
         }
-        valueMap.put(map.get(ml), Boolean.TRUE);
+        //valueMap.put(map.get(ml), Boolean.TRUE);
         map.remove(ml);
         for (Entry<String, String> entry : map.entrySet()) {
             String disableKey = entry.getValue();
