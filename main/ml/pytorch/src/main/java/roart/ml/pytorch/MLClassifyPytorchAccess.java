@@ -153,7 +153,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         for(Object obj : objobj) {
-            log.info("inner {}", Arrays.asList(obj));
+            //log.info("inner {}", Arrays.asList(obj));
         }
         LearnTestClassify ret = null;
         try {
@@ -211,8 +211,10 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             result.setCatMap(new HashMap<>());
             return result;
         }
+        // return if
+        // persist is false and dynamic is false
         boolean persist = model.wantPersist();
-        if (!neuralnetcommand.isMldynamic() != persist) {
+        if (!neuralnetcommand.isMldynamic() && !persist) {
             return result;
         }
         LearnTestClassify param = new LearnTestClassify();
@@ -287,7 +289,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         getClassifyArray(classifyMap, retList, classifyArray);
         param.setClassifyarray(classifyArray);
         for(Object obj : classifyArray) {
-            log.info("inner {}", Arrays.asList(obj));
+            //log.info("inner {}", Arrays.asList(obj));
         }
         LearnTestClassify ret = null;
         try {

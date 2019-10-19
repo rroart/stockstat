@@ -171,7 +171,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         for(Object[] obj : objobj) {
-            log.info("inner {}", Arrays.asList(obj));
+            //log.info("inner {}", Arrays.asList(obj));
         }
         LearnTestClassify ret = null;
         try {
@@ -233,7 +233,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
             return result;
         }
         boolean persist = model.wantPersist();
-        if (!neuralnetcommand.isMldynamic() != persist) {
+        if (neuralnetcommand.isMldynamic() || !persist) {
             return result;
         }
         LearnTestClassify param = new LearnTestClassify();
@@ -322,7 +322,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         getClassifyArray(classifyMap, retList, classifyArray);
         param.setClassifyarray(classifyArray);
         for(Object[] obj : classifyArray) {
-            log.info("inner {}", Arrays.asList(obj));
+            //log.info("inner {}", Arrays.asList(obj));
         }
         LearnTestClassify ret = null;
         try {

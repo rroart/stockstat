@@ -238,8 +238,10 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         if (spark == null) {
             return null;
         }
+        // return if
+        // persist is false and dynamic is false
         boolean persist = mlmodel.wantPersist();
-        if (!neuralnetcommand.isMldynamic() != persist) {
+        if (!neuralnetcommand.isMldynamic() && !persist) {
             return null;
         }
         boolean exists = false;
