@@ -633,7 +633,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 if (resultMap1 != null) {
                                     aType = resultMap1.get(id);
                                 } else {
-                                    log.info("map null {}", mapType);
+                                    int jj = 0;
+                                    //log.info("map null {}", mapType);
                                 }
                                 int modelSize = model.getSizes(this);
                                 if (retindex > 28) {
