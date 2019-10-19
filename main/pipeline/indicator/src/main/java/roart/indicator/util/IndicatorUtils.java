@@ -610,7 +610,7 @@ public class IndicatorUtils {
     }
 
     public static void filterNonExistingClassifications3(Map<Double, String> labelMapShort, Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap) {
-        log.info("Values " + learnMap.values());
+        //log.info("Values " + learnMap.values());
         // due to tensorflow l classifying to 3rd (not inc dec)
         for (Entry<String, List<Pair<double[], Pair<Object, Double>>>> entry : learnMap.entrySet()) {
             String key = entry.getKey();
