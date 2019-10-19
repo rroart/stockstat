@@ -55,6 +55,8 @@ class Classify:
         intlist = []
         problist = []
         array = torch.FloatTensor(array)
+        print("rrayshape")
+        print(array.shape)
         predictions = model(array)
         print(type(predictions))
         print("predictions")
@@ -413,7 +415,9 @@ class Classify:
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config)
         myobj.size = size
         exists = self.exists(myobj)
-        if exists and not self.wantDynamic(myobj) and not self.wantLearn(myobj):
+        # load model if:
+        # exists and not dynamic and wantclassify
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             checkpoint = torch.load(self.getpath(myobj) + myobj.filename + ".pt")
             model = checkpoint['model']
         else:
@@ -423,6 +427,8 @@ class Classify:
         accuracy_score = None
         if self.wantLearn(myobj):
             accuracy_score = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
+        # save model if
+        # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             torch.save({'model': model }, self.getpath(myobj) + myobj.filename + ".pt")
         (intlist, problist) = (None, None)
@@ -451,6 +457,8 @@ class Classify:
         classifier = model
         print("mod", modelname)
         accuracy_score = self.do_learntestinner(myobj, classifier, model, train, traincat, test, testcat, classify)
+        myobj.classifyarray = train
+        (intlist, problist) = self.do_classifyinner(myobj, model)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
         queue.put(Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json'))

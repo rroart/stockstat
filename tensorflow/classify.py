@@ -248,7 +248,8 @@ class Classify:
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config)
         myobj.size = size
         exists = self.exists(myobj)
-        if exists and not self.wantDynamic(myobj) and not self.wantLearn(myobj):
+        # load model if:                                                               # exists and not dynamic and wantclassify
+        if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             #with tf.get_default_session() as sess:
             if Model.Model.localsave():
                 # dummy variable to allow saver
@@ -273,6 +274,7 @@ class Classify:
 
         #print("neuralnetcommand")
         #print(myobj.neuralnetcommand.mlclassify, myobj.neuralnetcommand.mllearn, myobj.neuralnetcommand.mldynamic)
+        # save model if                                                                # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
             #with tf.compat.v1.get_default_session() as sess:
             if Model.Model.localsave():
