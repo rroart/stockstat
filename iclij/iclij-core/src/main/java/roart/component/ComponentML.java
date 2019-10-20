@@ -118,7 +118,7 @@ public abstract class ComponentML extends Component {
             configItem.setMarket(param.getMarket());
             configItem.setRecord(LocalDate.now());
             configItem.setSubcomponent(subcomponent);
-            configItem.setValue(value);
+            configItem.setValue(nnconfigString);
             try {
                 configItem.save();
             } catch (Exception e) {
