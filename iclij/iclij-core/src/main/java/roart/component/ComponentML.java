@@ -70,6 +70,7 @@ public abstract class ComponentML extends Component {
             String key = entry.getKey();
             String nnconfigString = (String) entry.getValue();
             //Map<String, String> mapToConfig = MLConfigs.getMapToConfig();
+            /*
             NeuralNetConfigs nnConfigs = null;
             try {
                 if (getPipeline().equals(PipelineConstants.PREDICTORSLSTM)) {
@@ -95,7 +96,9 @@ public abstract class ComponentML extends Component {
                     nnConfigs.set(key2, null);
                 }
             }
+            */
             String value = nnconfigString;
+            /*
             try {
                 if (getPipeline().equals(PipelineConstants.PREDICTORSLSTM)) {
                     TensorflowPredictorLSTMConfig nnConfig = nnConfigs.getTensorflowConfig().getTensorflowPredictorLSTMConfig();
@@ -106,6 +109,7 @@ public abstract class ComponentML extends Component {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
+            */
             if (value == null) {
                 log.error("Config value null");
                 continue;
