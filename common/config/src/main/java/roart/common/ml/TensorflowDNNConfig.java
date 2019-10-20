@@ -41,6 +41,10 @@ public class TensorflowDNNConfig extends TensorflowEstimatorConfig {
         super(MLConstants.DNN);
     }
 
+    public TensorflowDNNConfig(TensorflowDNNConfig config) {
+        this(config.steps, config.layers, config.hidden);
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + layers + " " + hidden;

@@ -29,6 +29,10 @@ public class GemGEMConfig extends GemConfig {
         this.cuda = cuda;
     }
 
+    public GemGEMConfig(GemGEMConfig config) {
+        this(config.steps, config.n_layers, config.n_hiddens, config.lr, config.n_memories, config.memory_strength, config.cuda);
+    }
+
     public GemGEMConfig(String name) {
         super(name);
     }

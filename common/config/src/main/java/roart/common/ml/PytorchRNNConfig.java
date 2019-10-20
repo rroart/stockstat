@@ -17,6 +17,10 @@ public class PytorchRNNConfig extends PytorchRecurrentConfig {
         super(MLConstants.RNN, steps, layers, hidden, lr, slide);
     }
 
+    public PytorchRNNConfig(PytorchRNNConfig config) {
+        this(config.steps, config.layers, config.hidden, config.lr, config.slide);
+    }
+
     public PytorchRNNConfig(String name) {
         super(name);
     }

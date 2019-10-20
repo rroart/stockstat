@@ -23,4 +23,8 @@ public class TensorflowRNNConfig extends TensorflowRecurrentConfig {
         super(name);
     }
 
+    public TensorflowRNNConfig(TensorflowRNNConfig config) {
+        this(config.steps, config.layers, config.hidden, config.lr, config.slide, config.getDropout(), config.dropoutin);
+    }
+
 }

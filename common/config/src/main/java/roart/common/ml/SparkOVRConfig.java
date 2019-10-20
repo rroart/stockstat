@@ -26,6 +26,10 @@ public class SparkOVRConfig extends SparkConfig {
         this.fitintercept = fitintercept;
     }
 
+    public SparkOVRConfig(SparkOVRConfig config) {
+        this(config.getMaxiter(), config.getTol(), config.getFitintercept());
+    }
+
     public SparkOVRConfig(String name) {
         super(name);
     }

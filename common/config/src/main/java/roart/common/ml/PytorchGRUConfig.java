@@ -17,6 +17,10 @@ public class PytorchGRUConfig extends PytorchRecurrentConfig {
         super(MLConstants.GRU, steps, layers, hidden, lr, slide);
     }
 
+    public PytorchGRUConfig(PytorchGRUConfig config) {
+        this(config.steps, config.layers, config.hidden, config.lr, config.slide);
+    }
+
     public PytorchGRUConfig(String name) {
         super(name);
     }

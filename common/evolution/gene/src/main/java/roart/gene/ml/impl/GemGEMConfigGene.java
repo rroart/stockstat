@@ -1,13 +1,20 @@
 package roart.gene.ml.impl;
 
+import roart.common.ml.GemEWCConfig;
 import roart.common.ml.GemGEMConfig;
 import roart.common.util.RandomUtil;
 import roart.gene.AbstractGene;
+import roart.gene.NeuralNetConfigGene;
 
 public class GemGEMConfigGene extends GemConfigGene {
 
     public GemGEMConfigGene(GemGEMConfig config) {
         super(config);
+    }
+
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new GemGEMConfigGene(new GemGEMConfig((GemGEMConfig) getConfig()));
     }
 
     @Override

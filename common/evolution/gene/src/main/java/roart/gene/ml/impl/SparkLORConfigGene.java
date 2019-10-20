@@ -1,12 +1,19 @@
 package roart.gene.ml.impl;
 
 import roart.common.ml.SparkLORConfig;
+import roart.common.ml.SparkOVRConfig;
 import roart.gene.AbstractGene;
+import roart.gene.NeuralNetConfigGene;
 
 public class SparkLORConfigGene extends SparkConfigGene {
 
     public SparkLORConfigGene(SparkLORConfig config) {
         super(config);
+    }
+
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new SparkLORConfigGene(new SparkLORConfig((SparkLORConfig) getConfig()));
     }
 
     @Override

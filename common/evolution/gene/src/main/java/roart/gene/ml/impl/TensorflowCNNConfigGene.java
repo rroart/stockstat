@@ -3,6 +3,7 @@ package roart.gene.ml.impl;
 import roart.common.ml.TensorflowCNNConfig;
 import roart.common.ml.TensorflowConfig;
 import roart.gene.AbstractGene;
+import roart.gene.NeuralNetConfigGene;
 import roart.common.constants.Constants;
 
 public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
@@ -11,6 +12,11 @@ public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
         super(config);
      }
     
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new TensorflowCNNConfigGene(new TensorflowCNNConfig((TensorflowCNNConfig) getConfig()));
+    }
+
     @Override
     public void randomize() {
         super.randomize();

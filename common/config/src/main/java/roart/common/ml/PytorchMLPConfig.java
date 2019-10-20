@@ -15,6 +15,10 @@ public class PytorchMLPConfig extends PytorchFeedConfig {
         super(MLConstants.MLP, steps, layers, hidden, lr);
     }
 
+    public PytorchMLPConfig(PytorchMLPConfig config) {
+        this(config.steps, config.layers, config.hidden, config.lr);
+    }
+
     public PytorchMLPConfig(String name) {
         super(name);
     }

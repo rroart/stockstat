@@ -53,6 +53,10 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
         super(name);
     }
 
+    public TensorflowCNNConfig(TensorflowCNNConfig config) {
+        this(config.steps, config.kernelsize, config.stride, config.dropout);
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + kernelsize + " " + stride + " " + dropout;

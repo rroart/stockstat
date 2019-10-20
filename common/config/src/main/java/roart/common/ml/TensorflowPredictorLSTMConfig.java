@@ -58,6 +58,10 @@ public class TensorflowPredictorLSTMConfig extends NeuralNetConfig {
         this.horizon = horizon;
     }
 
+    public TensorflowPredictorLSTMConfig(TensorflowPredictorLSTMConfig config) {
+        this(config.epochs, config.windowsize, config.horizon);
+    }
+
     public TensorflowPredictorLSTMConfig() {
         super(MLConstants.PREDICTORLSTM);
     }

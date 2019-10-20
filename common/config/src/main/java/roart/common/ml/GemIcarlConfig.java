@@ -33,6 +33,10 @@ public class GemIcarlConfig extends GemConfig {
         this.cuda = cuda;
     }
 
+    public GemIcarlConfig(GemIcarlConfig config) {
+        this(config.steps, config.n_layers, config.n_hiddens, config.lr, config.n_memories, config.memory_strength, config.samples_per_task, config.cuda);
+    }
+
     public GemIcarlConfig(String name) {
         super(name);
     }

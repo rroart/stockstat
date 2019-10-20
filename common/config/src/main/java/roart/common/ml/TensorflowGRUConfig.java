@@ -23,4 +23,8 @@ public class TensorflowGRUConfig extends TensorflowRecurrentConfig {
         super(name);
     }
 
+    public TensorflowGRUConfig(TensorflowGRUConfig config) {
+        this(config.steps, config.layers, config.hidden, config.lr, config.slide, config.dropout, config.dropoutin);
+    }
+
 }

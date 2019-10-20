@@ -3,11 +3,17 @@ package roart.gene.ml.impl;
 import roart.common.ml.GemEWCConfig;
 import roart.common.util.RandomUtil;
 import roart.gene.AbstractGene;
+import roart.gene.NeuralNetConfigGene;
 
 public class GemEWCConfigGene extends GemConfigGene {
 
     public GemEWCConfigGene(GemEWCConfig config) {
         super(config);
+    }
+
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new GemEWCConfigGene(new GemEWCConfig((GemEWCConfig) getConfig()));
     }
 
     @Override

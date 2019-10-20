@@ -1,5 +1,6 @@
 package roart.gene.ml.impl;
 
+import roart.common.ml.TensorflowCNNConfig;
 import roart.common.ml.TensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.gene.AbstractGene;
@@ -16,6 +17,11 @@ public class TensorflowPredictorLSTMConfigGene extends NeuralNetConfigGene {
 
     public TensorflowPredictorLSTMConfigGene(TensorflowPredictorLSTMConfig config) {
         super(config);
+    }
+
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new TensorflowPredictorLSTMConfigGene(new TensorflowPredictorLSTMConfig((TensorflowPredictorLSTMConfig) getConfig()));
     }
 
     public void mutate(int task) {

@@ -25,6 +25,8 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
         this.config = config;
     }
 
+    public abstract NeuralNetConfigGene copy();
+
     protected int generateSteps() {
         return RandomUtil.random(random, 10, 10, 100);
     }
@@ -68,4 +70,5 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
     public String toString() {
         return config.toString();
     }
+
 }

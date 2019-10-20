@@ -25,6 +25,10 @@ public class GemIConfig extends GemConfig {
         this.cuda = cuda;
     }
 
+    public GemIConfig(GemIConfig config) {
+        this(config.steps, config.n_layers, config.n_hiddens, config.lr, config.finetune, config.cuda);
+    }
+
     public GemIConfig(String name) {
         super(name);
     }

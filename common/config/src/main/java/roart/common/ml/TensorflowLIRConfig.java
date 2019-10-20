@@ -17,4 +17,8 @@ public class TensorflowLIRConfig extends TensorflowEstimatorConfig {
         super(name);
     }
 
+    public TensorflowLIRConfig(TensorflowLIRConfig config) {
+        this(config.steps);
+    }
+
 }

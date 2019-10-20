@@ -18,6 +18,10 @@ public class SparkLSVCConfig extends SparkConfig {
 	this.fitintercept = fitintercept;
     }
 
+    public SparkLSVCConfig(SparkLSVCConfig config) {
+        this(config.getMaxiter(), config.getTol(), config.getFitintercept());
+    }
+
     public SparkLSVCConfig(String name) {
         super(name);
     }

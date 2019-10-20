@@ -24,6 +24,10 @@ public class SparkLORConfig extends SparkConfig {
         super(name);
     }
 
+    public SparkLORConfig(SparkLORConfig config) {
+        this(config.getMaxiter(), config.getTol());
+    }
+
     /*
     public Double getReg() {
         return reg;

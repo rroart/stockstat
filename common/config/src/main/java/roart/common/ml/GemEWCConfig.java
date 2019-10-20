@@ -25,6 +25,10 @@ public class GemEWCConfig extends GemConfig {
         this.memory_strength = memory_strength;
     }
 
+    public GemEWCConfig(GemEWCConfig config) {
+        this(config.steps, config.n_layers, config.n_hiddens, config.lr, config.n_memories, config.memory_strength);
+    }
+
     public GemEWCConfig(String name) {
         super(name);
     }

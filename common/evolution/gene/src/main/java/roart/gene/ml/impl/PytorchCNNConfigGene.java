@@ -1,7 +1,9 @@
 package roart.gene.ml.impl;
 
 import roart.common.ml.PytorchConfig;
+import roart.common.ml.TensorflowCNNConfig;
 import roart.gene.AbstractGene;
+import roart.gene.NeuralNetConfigGene;
 import roart.common.ml.PytorchCNNConfig;
 import roart.common.constants.Constants;
 
@@ -11,6 +13,11 @@ public class PytorchCNNConfigGene extends PytorchPreFeedConfigGene {
         super(config);
     }
     
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new PytorchCNNConfigGene(new PytorchCNNConfig((PytorchCNNConfig) getConfig()));
+    }
+
     @Override
     public void randomize() {
         super.randomize();

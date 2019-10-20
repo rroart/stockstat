@@ -17,4 +17,8 @@ public class TensorflowLICConfig extends TensorflowEstimatorConfig {
         super(name);
     }
 
+    public TensorflowLICConfig(TensorflowLICConfig config) {
+        this(config.steps);
+    }
+
 }

@@ -17,6 +17,10 @@ public class GemMMConfig extends GemConfig {
         super(MLConstants.MM, steps, n_layers, n_hiddens, lr);
     }
 
+    public GemMMConfig(GemMMConfig config) {
+        this(config.steps, config.n_layers, config.n_hiddens, config.lr);
+    }
+
     public GemMMConfig(String name) {
         super(name);
     }

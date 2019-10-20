@@ -2,13 +2,20 @@ package roart.gene.ml.impl;
 
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.SparkLSVCConfig;
+import roart.common.ml.SparkOVRConfig;
 import roart.gene.AbstractGene;
+import roart.gene.NeuralNetConfigGene;
 import roart.common.constants.Constants;
 
 public class SparkLSVCConfigGene extends SparkConfigGene {
 
     public SparkLSVCConfigGene(NeuralNetConfig config) {
         super(config);
+    }
+
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new SparkLSVCConfigGene(new SparkLSVCConfig((SparkLSVCConfig) getConfig()));
     }
 
     @Override

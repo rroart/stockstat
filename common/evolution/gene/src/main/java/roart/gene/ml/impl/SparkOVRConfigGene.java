@@ -3,12 +3,18 @@ package roart.gene.ml.impl;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.SparkOVRConfig;
 import roart.gene.AbstractGene;
+import roart.gene.NeuralNetConfigGene;
 import roart.common.constants.Constants;
 
 public class SparkOVRConfigGene extends SparkConfigGene {
 
     public SparkOVRConfigGene(NeuralNetConfig config) {
         super(config);
+    }
+
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new SparkOVRConfigGene(new SparkOVRConfig((SparkOVRConfig) getConfig()));
     }
 
     @Override

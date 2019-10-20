@@ -27,6 +27,10 @@ public class SparkMLPCConfig extends SparkConfig {
         this.hidden = hidden;
     }
 
+    public SparkMLPCConfig(SparkMLPCConfig config) {
+        this(config.getMaxiter(), config.getTol(), config.getLayers(), config.getHidden());
+    }
+
     public SparkMLPCConfig(String name) {
         super(name);
     }

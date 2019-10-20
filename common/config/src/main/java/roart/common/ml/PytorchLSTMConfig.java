@@ -17,6 +17,10 @@ public class PytorchLSTMConfig extends PytorchRecurrentConfig {
         super(MLConstants.LSTM, steps, layers, hidden, lr, slide);
     }
 
+    public PytorchLSTMConfig(PytorchLSTMConfig config) {
+        this(config.steps, config.layers, config.hidden, config.lr, config.slide);
+    }
+
     public PytorchLSTMConfig(String name) {
         super(name);
     }

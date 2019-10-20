@@ -49,6 +49,10 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
         this.lr = lr;
     }
     
+    public PytorchCNNConfig(PytorchCNNConfig config) {
+        this(config.steps, config.kernelsize, config.stride, config.lr);
+    }
+
     public PytorchCNNConfig(String name) {
         super(name);
     }

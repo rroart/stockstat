@@ -1,12 +1,19 @@
 package roart.gene.ml.impl;
 
 import roart.common.ml.GemMMConfig;
+import roart.common.ml.GemMMConfig;
 import roart.gene.AbstractGene;
+import roart.gene.NeuralNetConfigGene;
 
 public class GemMMConfigGene extends GemConfigGene {
 
     public GemMMConfigGene(GemMMConfig config) {
         super(config);
+    }
+
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new GemMMConfigGene(new GemMMConfig((GemMMConfig) getConfig()));
     }
 
     @Override

@@ -1,7 +1,9 @@
 package roart.gene.ml.impl;
 
+import roart.common.ml.TensorflowCNNConfig;
 import roart.common.ml.TensorflowLICConfig;
 import roart.gene.AbstractGene;
+import roart.gene.NeuralNetConfigGene;
 
 public class TensorflowLICConfigGene extends TensorflowEstimatorConfigGene {
 
@@ -9,6 +11,11 @@ public class TensorflowLICConfigGene extends TensorflowEstimatorConfigGene {
         super(config);
     }
     
+    @Override
+    public NeuralNetConfigGene copy() {
+        return new TensorflowLICConfigGene(new TensorflowLICConfig((TensorflowLICConfig) getConfig()));
+    }
+
     @Override
     public void mutate() {
         int task = random.nextInt(RANDOMS);
