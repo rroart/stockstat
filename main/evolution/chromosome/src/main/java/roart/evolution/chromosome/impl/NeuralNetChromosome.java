@@ -70,6 +70,10 @@ public class NeuralNetChromosome extends AbstractChromosome {
         this.neuralnetcommand = neuralnetcommand;
     }
 
+    public NeuralNetChromosome(NeuralNetChromosome chromosome) {
+        this(chromosome.conf, chromosome.ml, chromosome.dataReaders, chromosome.categories, chromosome.key, chromosome.nnConfigGene.copy(), chromosome.catName, chromosome.cat, chromosome.neuralnetcommand);
+    }
+
     public MyMyConfig getConf() {
         return conf;
     }
@@ -225,12 +229,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
 
     @Override
     public AbstractChromosome copy() {
-        NeuralNetConfigGene newNNConfig = null;
-        //this.
-        if (nnConfigGene != null) {
-            newNNConfig = (NeuralNetConfigGene) (nnConfigGene);
-        }
-        return new NeuralNetChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
+        return new NeuralNetChromosome(this);
     }
     
     @Override
