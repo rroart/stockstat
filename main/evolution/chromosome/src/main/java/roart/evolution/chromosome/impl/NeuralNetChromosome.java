@@ -141,7 +141,9 @@ public class NeuralNetChromosome extends AbstractChromosome {
         double fitness = 0;
         for (Entry<String, Object> entry : map.entrySet()) {
             Double value = (Double) entry.getValue();
-            fitness += value;
+            if (value != null) {
+                fitness += value;
+            }
         }
         if (!map.isEmpty()) {
             fitness = fitness / map.size();
