@@ -8,7 +8,7 @@ class MyEstimator():
         self.classifier = None
   
     def train(self, train, traincat):
-        get_train_inputs = tf.estimator.inputs.numpy_input_fn(
+        get_train_inputs = tf.compat.v1.estimator.inputs.numpy_input_fn(
             x = { "features": train },
             y = traincat,
             num_epochs=None,
@@ -17,7 +17,7 @@ class MyEstimator():
         self.classifier.train(input_fn = get_train_inputs, steps = self.config.steps)
 
     def evaluate(self, test, testcat):
-        get_test_inputs = tf.estimator.inputs.numpy_input_fn(
+        get_test_inputs = tf.compat.v1.estimator.inputs.numpy_input_fn(
             x = { "features": test },
             y = testcat,
             num_epochs=None,
@@ -34,7 +34,7 @@ class MyEstimator():
         return average_loss, accuracy_score
 
     def predict(self, array):
-        get_classifier_inputs = tf.estimator.inputs.numpy_input_fn(
+        get_classifier_inputs = tf.compat.v1.estimator.inputs.numpy_input_fn(
             x = { "features": array },
             shuffle=False
         )

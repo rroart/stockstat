@@ -12,7 +12,7 @@ class Model(MyEstimator):
         self.classifier = tf.estimator.LinearClassifier(
             feature_columns = feature_columns,
             model_dir = self.getModelDir(),
-            n_classes = myobj.classes)
+            n_classes = myobj.classes, loss_reduction=tf.keras.losses.Reduction.SUM)
 
   def call(self, inputs):
     # Define your forward pass here,

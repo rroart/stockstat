@@ -11,7 +11,7 @@ class Model(MyEstimator):
     with tf.device(pu):
         self.classifier = tf.estimator.LinearRegressor(
             model_dir = self.getModelDir(),
-            feature_columns = feature_columns)
+            feature_columns = feature_columns, loss_reduction=tf.keras.losses.Reduction.SUM)
 
   def call(self, inputs):
     # Define your forward pass here,
