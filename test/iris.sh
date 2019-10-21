@@ -22,7 +22,7 @@ if [ "$1" = "p" ]; then
 fi
 
 if [[ "$1" =~ ^g ]]; then
-    PORT=8028
+    PORT=8048
     MODELS=`seq 1 5`
     CONFIG=( "" "${GEMCONFIG[@]}" )
 fi
