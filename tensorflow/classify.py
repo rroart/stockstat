@@ -9,7 +9,6 @@ import numpy as np
 import importlib
 
 import json
-from nameko.web.handlers import http
 from datetime import datetime
 from werkzeug.wrappers import Response
 import shutil
