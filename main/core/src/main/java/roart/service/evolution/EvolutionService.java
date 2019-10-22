@@ -373,7 +373,7 @@ public class EvolutionService {
         }
     }
 
-    public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand) throws JsonParseException, JsonMappingException, IOException {
+    public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         ObjectMapper mapper = new ObjectMapper();
@@ -471,7 +471,7 @@ public class EvolutionService {
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
 
-             findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, catName, cat, neuralnetcommand);
+            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, catName, cat, neuralnetcommand, scoreMap);
     
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
@@ -497,7 +497,7 @@ public class EvolutionService {
     }
 
     private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
+            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
@@ -667,6 +667,7 @@ public class EvolutionService {
                 //newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
             }
             updateMap.put(configKey, newNNConfigstring);
+            scoreMap.put(configKey, best.getFitness());
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
             row.add(nnconfigString);

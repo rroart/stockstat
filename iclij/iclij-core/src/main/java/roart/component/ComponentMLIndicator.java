@@ -115,7 +115,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
         Map<String, EvolveMLConfig> mlConfigMap = mlConfig.getAll();
         if (param.getInput().getConfig().wantEvolveML()) {
             //ComponentMLMACD.setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
-            Map<String, Object> anUpdateMap = (Map<String, Object>) param.getService().getEvolveML(true, new ArrayList<>(), PipelineConstants.MLINDICATOR, param.getService().conf, null);
+            Map<String, Object> anUpdateMap = (Map<String, Object>) param.getService().getEvolveML(true, new ArrayList<>(), PipelineConstants.MLINDICATOR, param.getService().conf, null, null);
             if (param.getInput().getValuemap() != null) {
                 param.getInput().getValuemap().putAll(anUpdateMap); 
             }

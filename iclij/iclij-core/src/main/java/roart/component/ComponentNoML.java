@@ -27,7 +27,7 @@ import roart.util.ServiceUtil;
 public abstract class ComponentNoML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap) {
         if (evolve) {
             String confStr = param.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {

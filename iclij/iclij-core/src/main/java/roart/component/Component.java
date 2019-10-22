@@ -109,25 +109,37 @@ public abstract class Component {
         }
         String pipeline = getPipeline();
         param.getService().conf.getConfigValueMap().putAll(valueMap);
+        Map<String, Object> scoreMap = new HashMap<>();
         if (evolve) {   
             long time0 = System.currentTimeMillis();
-            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent);
+            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap);
             if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
-                TimingItem timing = saveTiming(param, evolve, time0, null, null, subcomponent);
+                Double score = null;
+                if (IclijConstants.EVOLVE.equals(param.getAction()) ) {
+                    score = scoreMap
+                            .values()
+                            .stream()
+                            .mapToDouble(e -> (Double) e)
+                            .max()
+                            .orElse(-1);
+                }
+                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent);
                 param.getTimings().add(timing);
            }
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
         long time0 = System.currentTimeMillis();
-        Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
-        param.setCategory(resultMaps);
-        param.getAndSetCategoryValueMap();
-        Map resultMaps2 = param.getResultMap();
-        handleMLMeta(param, resultMaps2);
-        if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
+        if (!IclijConstants.EVOLVE.equals(param.getAction()) ) {
+            Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
+            param.setCategory(resultMaps);
+            param.getAndSetCategoryValueMap();
+            Map resultMaps2 = param.getResultMap();
+            handleMLMeta(param, resultMaps2);
+        }
+        if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) && !IclijConstants.EVOLVE.equals(param.getAction())) {
             Double score = null;
-            if (!IclijConstants.FINDPROFIT.equals(param.getAction()) ) {
+            if (IclijConstants.MACHINELEARNING.equals(param.getAction()) ) {
                 try {
                     score = calculateAccuracy(param);
                 } catch (Exception e) {
@@ -175,7 +187,7 @@ public abstract class Component {
         return null;
     }
     
-    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent);
+    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap);
 
     public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata);
     

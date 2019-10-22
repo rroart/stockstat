@@ -39,7 +39,7 @@ import roart.util.ServiceUtil;
 public abstract class ComponentML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
         Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);
@@ -54,10 +54,14 @@ public abstract class ComponentML extends Component {
             //Map<String, Object> evolveMap = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, true);
             //param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
-            List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap);
+            Map<String, Object> aScoreMap = new HashMap<>();
+            List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap, aScoreMap);
             mlSaves(mlConfigMap, param, anUpdateMap, subcomponent);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
+            }
+            if (scoreMap != null) {
+                scoreMap.putAll(aScoreMap);
             }
             return new HashMap<>(); //evolveMap;
         }

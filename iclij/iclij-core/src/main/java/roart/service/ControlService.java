@@ -194,7 +194,7 @@ public class ControlService {
         //return result.getMaps().get("update");
     }
 
-    public List<ResultItem> getEvolveML(boolean doSet, List<String> disableList, String ml, MyMyConfig conf, Map<String, Object> updateMap) {
+    public List<ResultItem> getEvolveML(boolean doSet, List<String> disableList, String ml, MyMyConfig conf, Map<String, Object> updateMap, Map<String, Object> scoreMap) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         Set<String> ids = new HashSet<>();
@@ -210,6 +210,7 @@ public class ControlService {
         ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVENN);
         if (doSet) {
             updateMap.putAll(result.getMaps().get("update"));
+            scoreMap.putAll(result.getMaps().get("score"));
             //Map<String, Object> updateMap = result.getMaps().get("update");
             //conf.getConfigValueMap().putAll(updateMap);
             //return updateMap;

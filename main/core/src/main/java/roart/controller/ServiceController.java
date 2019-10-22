@@ -261,9 +261,11 @@ public class ServiceController implements CommandLineRunner {
             String ml = ids.iterator().next();
             Map<String, Map<String, Object>> maps = new HashMap<>();
             Map<String, Object> updateMap = new HashMap<>();
+            Map<String, Object> scoreMap = new HashMap<>();
             maps.put("update", updateMap);
+            maps.put("score", scoreMap);
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
-            result.setList(new EvolutionService().getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand));
+            result.setList(new EvolutionService().getEvolveML( aConfig, disableList, updateMap, ml, neuralnetcommand, scoreMap));
             result.setMaps(maps);
             result.setConfig(aConfig);
         } catch (Exception e) {
