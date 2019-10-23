@@ -110,6 +110,8 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGGEMPATH, String.class);
         map.put(ConfigConstants.MACHINELEARNINGGEMSERVER, String.class);
         map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGMLLEARN, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, Boolean.class);
 
         map.put(ConfigConstants.INDICATORS, Boolean.class);
         map.put(ConfigConstants.INDICATORSMOVE, Boolean.class);
