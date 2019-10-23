@@ -60,11 +60,11 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
     }
     
     public double generateDropout() {
-        return RandomUtil.random(random, 0.5, 0.1, 3);
+        return RandomUtil.random(random, 0.2, 0.1, 4);
     }
     
     public double generateDropoutIn() {
-        return RandomUtil.random(random, 0.8, 0.1, 2);
+        return RandomUtil.random(random, 0.0, 0.1, 3);
     }
     
     public String toString() {
