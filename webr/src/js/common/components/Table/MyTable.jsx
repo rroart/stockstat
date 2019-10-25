@@ -1,7 +1,5 @@
 /* eslint-disable no-undef */
 import React, { PureComponent } from 'react';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import BootstrapTable from 'react-bootstrap-table-next';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
 
