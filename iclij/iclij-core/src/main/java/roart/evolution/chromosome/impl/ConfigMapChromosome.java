@@ -214,7 +214,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
-            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map);
+            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent);
             //componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
@@ -239,7 +239,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
             component.enableDisable(componentData, positions, param.getConfigValueMap());
 
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map);
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent);
             component.calculateIncDec(componentData2, profitdata, positions);
 
             List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
@@ -330,7 +330,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
         }
         // or rather verified incdec
         log.info("Fit {} {} {}", this.componentName, incdecFitness, memoryFitness);
-        configSaves(param, getMap());
+        //configSaves(param, getMap());
         param.getUpdateMap().putAll(getMap());
         return incdecFitness;
     }

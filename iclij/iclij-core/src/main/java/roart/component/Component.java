@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -247,6 +248,7 @@ public abstract class Component {
             param.setFutureDate(LocalDate.now());
             TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent);
             param.getTimings().add(timing);
+            configSaves(param, confMap, subcomponent);
             if (false) {
                 ConfigItem configItem = new ConfigItem();
                 configItem.setAction(param.getAction());
@@ -281,6 +283,32 @@ public abstract class Component {
             log.error(Constants.EXCEPTION, e);
         }
         return param;
+    }
+
+    private void configSaves(ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
+        for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
+            String key = entry.getKey();
+            Object object = entry.getValue();
+            if (object == null) {
+                log.error("Config value null");
+                continue;
+            }
+            ConfigItem configItem = new ConfigItem();
+            configItem.setAction(param.getAction());
+            configItem.setComponent(getPipeline());
+            configItem.setDate(param.getBaseDate());
+            configItem.setId(key);
+            configItem.setMarket(param.getMarket());
+            configItem.setRecord(LocalDate.now());
+            configItem.setSubcomponent(subcomponent);
+            String value = JsonUtil.convert(object);
+            configItem.setValue(value);
+            try {
+                configItem.save();
+            } catch (Exception e) {
+                log.info(Constants.EXCEPTION, e);
+            }
+        }
     }
 
     protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList, Boolean buy, String subcomponent) {
