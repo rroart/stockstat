@@ -6,6 +6,8 @@ import './Main.css';
 //import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { Tabs, Tab } from 'react-bootstrap';
 
+import { Market } from '../Market'
+import { Configuration } from '../Configuration'
 import { Misc } from '../Misc'
 import { Test } from '../test'
 //import Misc from '../util'
@@ -75,23 +77,19 @@ var newtab = new Tab(map);
         <Fragment>
           <h1>Stockstat Iclij</h1>
 	  <h2>H{result3}H{count}H</h2>
-        <Tabs defaultActiveKey={1} id="maintabs">
-          <Tab eventKey={1} title="Misc">
-            <h2>Any content 1</h2>
-            <Misc/>
-            <h3>Cont</h3>
+	  <Tabs defaultActiveKey={1} id="maintabs">
+          <Tab eventKey={1} title="Market">
+            <h2>Market</h2>
+            <Market {...this.props}/>
           </Tab>
-          <Tab eventKey={2} title="Comics">
-            <h2>Any content 2</h2>
+          <Tab eventKey={2} title="Configuration">
+            <h2>Configuration</h2>
+            <Configuration {...this.props}/>
           </Tab>
-          <Tab eventKey={3} title="Coin">
-            <h2>Any content 3</h2>
+          <Tab eventKey={3} title="Control Panel">
+            <h2>Control Panel</h2>
           </Tab>
-          <Tab eventKey={4} title="Training">
-            <h2>Any content 4</h2>
-          </Tab>
-	  <Tab title="t"/>
-	  { mytabs.map(item => this.getanewtab(item)) }
+          { mytabs.map((item, index) => this.getanewtab(item, index)) }
         </Tabs>
         <Button
        bsStyle="primary"
@@ -131,6 +129,7 @@ var newtab = new Tab(map);
           <pre>
             {JSON.stringify(result.toJS(), undefined, 2)}
           </pre>
+	  <h4>Affero GPL</h4>
 </div>
         </Fragment>
       );

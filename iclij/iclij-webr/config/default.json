@@ -1,7 +1,7 @@
 {
   "env": "default",
   "host": "0.0.0.0",
-  "port": "3083",
+  "port": "3081",
   "publicPath": "/",
   "assetPath": "assets",
   "jsSourcePath": "src/js",
@@ -20,7 +20,7 @@
   },
   "browserSync": {
     "active": true,
-    "port": 3005
+    "port": 3003
   },
   "html": [
     {
