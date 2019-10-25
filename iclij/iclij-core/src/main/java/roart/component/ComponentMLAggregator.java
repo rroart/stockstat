@@ -160,7 +160,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     continue;
                 }
                 if (offsetMap == null) {
-                    int jj = 0;
+                    log.info("Offset map null, skipping rest");
+                    continue;
                 }
                 List<Double> off = offsetMap.get(key);
                 if (off == null) {
