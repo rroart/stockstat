@@ -296,7 +296,7 @@ public abstract class Component {
             ConfigItem configItem = new ConfigItem();
             configItem.setAction(param.getAction());
             configItem.setComponent(getPipeline());
-            configItem.setDate(param.getBaseDate());
+            configItem.setDate(LocalDate.now());
             configItem.setId(key);
             configItem.setMarket(param.getMarket());
             configItem.setRecord(LocalDate.now());
