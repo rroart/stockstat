@@ -440,7 +440,7 @@ public class MyVaadinUI extends UI implements ViewDisplay {
         tab.addComponent(verManualList);
         tab.addComponent(horChooseGraph);
         tab.addComponent(horTester);
-        tab.addComponent(horTester2);
+        //tab.addComponent(horTester2);
         return tab;
     }
 
