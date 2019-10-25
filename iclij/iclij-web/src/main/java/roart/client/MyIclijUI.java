@@ -506,7 +506,6 @@ public class MyIclijUI extends UI implements ViewDisplay {
         horDate.addComponent(getDate());
         horDate.addComponent(getResetDate());
         HorizontalLayout horGetAuto = new HorizontalLayout();
-        horGetAuto.addComponent(getMarket());
         //horStat.addComponent(getDays());
         HorizontalLayout horVerify = new HorizontalLayout();
         horVerify.addComponent(getVerify());
@@ -515,6 +514,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         horOther.addComponent(getSingleMarket());
         horOther.addComponent(getSingleMarketLoop());
         HorizontalLayout horOther2 = new HorizontalLayout();
+        horOther2.addComponent(getMarket());
         horOther2.addComponent(getImproveProfit());
         horOther2.addComponent(getMarketImprove());
         horOther2.addComponent(getMarketEvolve());
@@ -591,10 +591,10 @@ public class MyIclijUI extends UI implements ViewDisplay {
         //tab.addComponent(horNewInd);
         tab.addComponent(horMarkets);
         tab.addComponent(horDate);
-        tab.addComponent(horGetAuto);
+        tab.addComponent(horOther2);
+        //tab.addComponent(horGetAuto);
         tab.addComponent(horVerify);
         tab.addComponent(horOther);
-        tab.addComponent(horOther2);
         tab.addComponent(horDb); 
         tab.addComponent(horDb2);
         //tab.addComponent(horDb3);
