@@ -28,7 +28,7 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
     public abstract NeuralNetConfigGene copy();
 
     protected int generateSteps() {
-        return RandomUtil.random(random, 10, 10, 100);
+        return RandomUtil.random(random, 100, 100, 10);
     }
 
     protected double generateLr() {
