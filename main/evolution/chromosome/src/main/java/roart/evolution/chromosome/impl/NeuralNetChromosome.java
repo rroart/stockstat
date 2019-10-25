@@ -148,6 +148,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
         if (!map.isEmpty()) {
             fitness = fitness / map.size();
         }
+        log.info("Fit #{} {} {} {}", new Object[] { this.hashCode(), fitness, map.values().stream().mapToDouble(e -> (Double) e).summaryStatistics(), this.toString()});
         return fitness;
     }
 
