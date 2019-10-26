@@ -513,9 +513,9 @@ public class MyIclijUI extends UI implements ViewDisplay {
         HorizontalLayout horOther = new HorizontalLayout();
         horOther.addComponent(getSingleMarket());
         horOther.addComponent(getSingleMarketLoop());
+        horOther.addComponent(getImproveProfit());
         HorizontalLayout horOther2 = new HorizontalLayout();
         horOther2.addComponent(getMarket());
-        horOther2.addComponent(getImproveProfit());
         horOther2.addComponent(getMarketImprove());
         horOther2.addComponent(getMarketEvolve());
         horOther2.addComponent(getMarketMachineLearning());
