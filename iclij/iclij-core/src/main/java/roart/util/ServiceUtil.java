@@ -183,6 +183,8 @@ public class ServiceUtil {
             List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime());
             List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
+            listInc = mergeList(listInc);
+            listDec = mergeList(listDec);
             List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
             lists.addAll(subLists);
@@ -432,9 +434,6 @@ public class ServiceUtil {
     static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
             List<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
-        listInc = mergeList(listInc);
-        listDec = mergeList(listDec);
-        listIncDec = mergeList(listIncDec);
         if (!listInc.isEmpty()) {
             List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listIncBoolean.stream().filter(i -> i).count();                            
@@ -477,17 +476,14 @@ public class ServiceUtil {
 
     public static List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec) {
         // and a new list for common items
-        //List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
-        //List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
-        //List<IncDecItem> listIncDec = listInc.stream().filter(m -> decIds.contains(m.getId())).collect(Collectors.toList());
-        //List<IncDecItem> listDecInc = listDec.stream().filter(m -> incIds.contains(m.getId())).collect(Collectors.toList());
-
-        List<IncDecItem> common = new ArrayList<>(listInc);
-        common.retainAll(listDec);
-        
+        List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        List<String> commonIds = new ArrayList<>(incIds);
+        commonIds.retainAll(decIds);
+        List<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toList());
+        common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toList()));
         listInc.removeAll(common);
         listDec.removeAll(common);
-        //listIncDec.addAll(listDecInc);
         return common;
     }
 
@@ -533,6 +529,8 @@ public class ServiceUtil {
         
         List<IncDecItem> listInc = new ArrayList<>(myData.incs);
         List<IncDecItem> listDec = new ArrayList<>(myData.decs);
+        listInc = mergeList(listInc);
+        listDec = mergeList(listDec);
         List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
         Map<String, Object> trendMap = new HashMap<>();
         Short mystartoffset = market.getConfig().getStartoffset();
