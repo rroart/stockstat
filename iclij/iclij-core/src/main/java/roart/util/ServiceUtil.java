@@ -45,6 +45,7 @@ import roart.config.Market;
 import roart.config.MarketFilter;
 import roart.constants.IclijConstants;
 import roart.constants.IclijPipelineConstants;
+import roart.db.IclijDbDao;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
@@ -152,7 +153,7 @@ public class ServiceUtil {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
-        List<IncDecItem> listAll = IncDecItem.getAll();
+        List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         Map<String, Object> trendMap = new HashMap<>();
@@ -236,7 +237,7 @@ public class ServiceUtil {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
-        List<IncDecItem> listAll = IncDecItem.getAll();
+        List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
@@ -266,7 +267,7 @@ public class ServiceUtil {
 
     private static void getContentTimings(LocalDate date, List<IclijServiceList> lists, List<Market> markets, MarketAction action)
             throws Exception {
-        List<TimingItem> listAllTimings = TimingItem.getAll();
+        List<TimingItem> listAllTimings = IclijDbDao.getAllTiming();
         for (Market market : markets) {
             List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, market, action.getName(), action.getTime(market));
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
@@ -284,7 +285,7 @@ public class ServiceUtil {
             Map<Boolean, String> booleanTexts = action.getBooleanTexts();
             Boolean[] booleans = action.getBooleans();
             for (Boolean bool : booleans) {
-                updateMarketMap.put(market.getConfig().getMarket() + booleanTexts.get(bool), new HashMap<>());
+                updateMarketMap.put(market.getConfig().getMarket() + " " + booleanTexts.get(bool), new HashMap<>());
                 Map<String, Component> componentMap = action.getComponentMap(componentList, null);
                 for (Component component : componentMap.values()) {
                     List<String> subcomponents = component.getSubComponents(market, param);
@@ -338,7 +339,7 @@ public class ServiceUtil {
             Map<Boolean, String> booleanTexts = action.getBooleanTexts();
             Boolean[] booleans = action.getBooleans();
             for (Boolean bool : booleans) {
-                Map<String, Object> anUpdateMap = updateMarketMap.get(marketName + booleanTexts.get(bool));
+                Map<String, Object> anUpdateMap = updateMarketMap.get(marketName + " " + booleanTexts.get(bool));
                 IclijServiceList updates = convert(marketName + " " + booleanTexts.get(bool), anUpdateMap);
                 lists.add(updates);
             }
@@ -994,7 +995,7 @@ public class ServiceUtil {
         LocalDate date = param.getInput().getEnddate();
         LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
         List<ConfigItem> filterConfigs = new ArrayList<>();
-        List<ConfigItem> configs = ConfigItem.getAll(market.getConfig().getMarket());
+        List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket());
         List<ConfigItem> currentConfigs = configs.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
         currentConfigs = currentConfigs.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         for (ConfigItem config : currentConfigs) {

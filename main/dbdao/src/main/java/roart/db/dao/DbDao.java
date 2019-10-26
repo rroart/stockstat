@@ -54,7 +54,10 @@ public class DbDao {
         if (access == null) {
             return null;
         }
-        return access.getAll(type);
+        long time0 = System.currentTimeMillis();
+        List<StockItem> list = access.getAll(type);
+        log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return list;
     }
 
     /*
@@ -68,7 +71,10 @@ public class DbDao {
     */
 
     public static List<StockItem> getAll(String market, MyMyConfig conf) throws Exception {
-        return StockUtil.filterWeekend(conf, DbDao.instance(conf).getAll(market));
+        long time0 = System.currentTimeMillis();
+        List<StockItem> list = StockUtil.filterWeekend(conf, DbDao.instance(conf).getAll(market));
+        log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return list;
     }
 
     public static List<String> getMarkets() throws Exception {

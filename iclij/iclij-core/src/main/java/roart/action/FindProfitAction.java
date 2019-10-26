@@ -22,6 +22,7 @@ import roart.component.FindProfitComponentFactory;
 import roart.component.model.ComponentData;
 import roart.config.Market;
 import roart.constants.IclijConstants;
+import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
@@ -182,7 +183,7 @@ public class FindProfitAction extends MarketAction {
     protected List<IncDecItem> getIncDecItems() {
         List<IncDecItem> incdecitems = null;
         try {
-            incdecitems = IncDecItem.getAll();
+            incdecitems = IclijDbDao.getAllIncDecs();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

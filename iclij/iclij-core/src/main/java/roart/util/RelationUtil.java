@@ -27,7 +27,7 @@ public class RelationUtil {
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        List<IncDecItem> listAll = IncDecItem.getAll();
+        List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
         /*
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(ServiceUtil.getHeader("Content"));

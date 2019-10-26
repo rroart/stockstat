@@ -83,7 +83,7 @@ public abstract class MarketAction extends Action {
     public WebData getMarkets(Action parent, ComponentInput input, Boolean evolve) {
         List<TimingItem> timings = null;
         try {
-            timings = TimingItem.getAll();
+            timings = IclijDbDao.getAllTiming();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
