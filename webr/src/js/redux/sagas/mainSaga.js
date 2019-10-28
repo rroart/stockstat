@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import type { mainType, MyConfig, GuiSize } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
-import { ServiceParam, ServiceResult } from '../../common/types/main'
+import { ServiceParam, ServiceResult, NeuralNetCommand } from '../../common/types/main'
 import { MyTable } from '../../common/components/Table'
 
 export function* fetchMainData() {
@@ -56,6 +56,11 @@ export function* fetchContent(action) {
     serviceparam.config = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
+    var neuralnetcommand = new NeuralNetCommand();
+    neuralnetcommand.mllearn = true;
+    neuralnetcommand.mlclassify = true;
+    neuralnetcommand.mldynamic = config.get('configValueMap').get('machinelearning.mldynamic');
+    serviceparam.neuralnetcommand = neuralnetcommand;
     let result = yield call(Client.fetchApi.search, "/getcontent", serviceparam);
     console.log("herecontent2");
     console.log(result);

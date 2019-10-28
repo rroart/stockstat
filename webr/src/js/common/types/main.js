@@ -12,6 +12,7 @@ export type ServiceParam = {
     confList: string[],
     webpath: string,
     guiSize: GuiSize,
+    neuralnetcommand: NeuralNetCommand,
 }
 
 export type ServiceResult = {
@@ -36,4 +37,10 @@ export type MyConfig = {
 export type GuiSize = {
     x: int;
     y: int;
+}
+
+export type NeuralNetCommand = {
+    mllearn : boolean;
+    mlclassify : boolean;
+    mldynamic : boolean;
 }
