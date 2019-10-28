@@ -91,7 +91,7 @@ var nums = [ [ '1' , '2'], ['3' , '4'], ['5', '6']];
           <Tab eventKey={3} title="Control Panel">
             <h2>Control Panel</h2>
           </Tab>
-	  { mytabs.map((item, index) => this.getanewtab(item, index)) }
+	  { mytabs.map((item, index) => this.getanewtab(item, 4 + index)) }
         </Tabs>
         <Button
        bsStyle="primary"
