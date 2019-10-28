@@ -11,26 +11,28 @@ function handleButtonClick(props, e, value) {
     props.getcontentgraph(props.main.config, value, props);
 }
 
-function convert(resultitemtable, date, props) {
+function convert(list, date, props) {
     console.log("here");
-    console.log(resultitemtable);
-    const array = resultitemtable.rows;
+    console.log(list);
+    const array = list.list;
     console.log(array);
-    if (array.length == 0) {
+    if (array === undefined || array.length == 0) {
 	return (
-	    <ReactTable key={date} data={ [] } columns={ [] } />
+	    <div>
+	    <h3>{ list.title }</h3>
+	    </div>
 	);
     }
-    const head = array[0];
-    const rest = array.slice(1);
+    const head = Object.keys(array[0]);
+    const rest = array
     const columns = [];
     const result = [];
-    for(var i = 0; i < head.cols.length; i++) {
-	if (head.cols[i] == "Img") {
-	    //columns.push({ accessor: head.cols[i], Header: head.cols[i], sort: true, id: 'button', Cell: ({value}) => (<a onClick={console.log('clicked value', value)}>Button</a>) });
-	    columns.push({ accessor: head.cols[i], Header: head.cols[i], sort: true, id: 'button', Cell: ({value}) => (<a onClick={(e) => handleButtonClick(props, e, value)}>{value}</a>) });
+    for(var i = 0; i < head.length; i++) {
+	if (head[i] == "Img") {
+	    //columns.push({ accessor: head[i], Header: head[i], sort: true, id: 'button', Cell: ({value}) => (<a onClick={console.log('clicked value', value)}>Button</a>) });
+	    columns.push({ accessor: head[i], Header: head[i], sort: true, id: 'button', Cell: ({value}) => (<a onClick={(e) => handleButtonClick(props, e, value)}>{value}</a>) });
 	} else {
-	    columns.push({ accessor: head.cols[i], Header: head.cols[i], sort: true });
+	    columns.push({ accessor: head[i], Header: head[i], sort: true });
 	}
     }
     console.log(columns);
@@ -40,14 +42,21 @@ function convert(resultitemtable, date, props) {
     console.log(rest.length);
     for(var j = 0; j < rest.length; j++) {
 	const row = rest[j];
-	//console.log(row);
+	if (j == 0) {
+	    console.log(row);
+	    console.log(head[0]);
+	    console.log(head[1]);
+	}
 	const newrow = [];
-	for(var i = 0; i < head.cols.length; i++) {
-	    newrow[head.cols[i]] = row.cols[i];
+	for(var i = 0; i < head.length; i++) {
+	    newrow[head[i]] = row[head[i]];
+	}
+	if (j == 0) {
+	    console.log(newrow);
 	}
 	/*
-	if (head.cols[0] == "Img") {
-	    newrow[head.cols[0]] = "bla";
+	if (head[0] == "Img") {
+	    newrow[head[0]] = "bla";
 	}
 	*/
 	result.push(newrow);
@@ -55,7 +64,10 @@ function convert(resultitemtable, date, props) {
     console.log(result);
     console.log(columns);
     return (
+	<div>
+    <h3>>{ list.title }</h3>
     <ReactTable key={date} data={ result } columns={ columns } />
+	</div>
   );
 }
 
@@ -97,8 +109,8 @@ function convertbs(resultitemtable) {
     const rest = array.slice(1);
     const columns = [];
     const result = [];
-    for(var i = 0; i < head.cols.length; i++) {
-	columns.push({ dataField: head.cols[i], text: head.cols[i], sort: true });
+    for(var i = 0; i < head.length; i++) {
+	columns.push({ dataField: head[i], text: head[i], sort: true });
     }
     console.log(columns);
     console.log(head);
@@ -109,8 +121,8 @@ function convertbs(resultitemtable) {
 	const row = rest[j];
 	//console.log(row);
 	const newrow = [];
-	for(var i = 0; i < head.cols.length; i++) {
-	    newrow[head.cols[i]] = row.cols[i];
+	for(var i = 0; i < head.length; i++) {
+	    newrow[head[i]] = row[i];
 	}
 	result.push(newrow);
     }
@@ -160,25 +172,14 @@ function image(data, i) {
     );
 }
 
-function getTab(list, date, props) {
+function getTab(lists, date, props) {
     const tables = [];
-    for(var i = 0; i < list.length; i++) {
-	console.log(list[i])
-	if (list[i]._class == "roart.model.ResultItemTable") {
-	    const resultitemtable = list[i];
-	    const table = getTable(resultitemtable, date + i, props);
-	    tables.push(table);
-	    console.log(table);
-	}
-	if (list[i]._class == "roart.model.ResultItemStream") {
-	    const stream = list[i];
-	    //let buff = new Buffer(stream.bytes, 'base64');
-	    //let text = buff.toString('ascii');
-	    //console.log(text);
-	    const example = image(stream.bytes, i);
-	    tables.push(example);
-	    console.log(example);
-	}
+    for(var i = 0; i < lists.length; i++) {
+	console.log(lists[i])
+	const list = lists[i];
+	const table = getTable(list, date + i, props);
+	tables.push(table);
+	console.log(table);
     }
     return(
     <div>
