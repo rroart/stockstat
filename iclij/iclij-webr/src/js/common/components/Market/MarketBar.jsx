@@ -116,6 +116,8 @@ class MarketBar extends PureComponent {
 	const markets = main && main.markets ? main.markets : null;
 	const startdate = main && main.startdate ? main.startdate : null;
 	const enddate = main && main.enddate ? main.enddate : null;
+	console.log(process.env);
+	console.log(process.porti);
 	console.log(main.market);
 	console.log(main.config);
 	//console.log(main.config.get('market'));
