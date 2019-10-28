@@ -2,6 +2,7 @@ package roart.iclij.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import roart.common.util.JsonUtil;
@@ -152,6 +153,16 @@ public class ConfigItem {
         }
         return configItems;
     }
+
+   public static List<ConfigItem> getAll(String market, String action, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
+       List<Config> configs = Config.getAll(market, action, component, subcomponent, startDate, endDate);
+       List<ConfigItem> configItems = new ArrayList<>();
+       for (Config config : configs) {
+           ConfigItem memoryItem = getConfigItem(config);
+           configItems.add(memoryItem);
+       }
+       return configItems;
+   }
 
     private static ConfigItem getConfigItem(Config config) {
         ConfigItem configItem = new ConfigItem();

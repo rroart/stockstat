@@ -203,7 +203,7 @@ public class ServiceUtil {
         getContentTimings(date, lists, markets, findProfitAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
-        getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, findProfitAction);
+        //getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, findProfitAction);
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
@@ -342,8 +342,10 @@ public class ServiceUtil {
             Boolean[] booleans = action.getBooleans();
             for (Boolean bool : booleans) {
                 Map<String, Object> anUpdateMap = updateMarketMap.get(marketName + " " + booleanTexts.get(bool));
-                IclijServiceList updates = convert(marketName + " " + booleanTexts.get(bool), anUpdateMap);
-                lists.add(updates);
+                if (anUpdateMap != null) {
+                    IclijServiceList updates = convert(marketName + " " + booleanTexts.get(bool), anUpdateMap);
+                    lists.add(updates);
+                }
             }
             List<MemoryItem> marketMemory = action.getMarketMemory(market);
             List<MemoryItem> currentList = action.filterKeepRecent(marketMemory, componentInput.getEnddate(), action.getTime(market));
@@ -378,7 +380,7 @@ public class ServiceUtil {
         getContentTimings(date, lists, markets, mlAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
-        getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, mlAction);
+        //getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, mlAction);
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
@@ -993,6 +995,14 @@ public class ServiceUtil {
         LocalDate date = param.getInput().getEnddate();
         LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
         List<ConfigItem> filterConfigs = new ArrayList<>();
+        List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, olddate, date);
+        for (ConfigItem config : configs) {
+            if (buy != null && config.getBuy() != null && buy != config.getBuy()) {
+                continue;
+            }
+            filterConfigs.add(config);
+        }
+        /*
         List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket());
         List<ConfigItem> currentConfigs = configs.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
         currentConfigs = currentConfigs.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
@@ -1004,6 +1014,7 @@ public class ServiceUtil {
                 filterConfigs.add(config);
             }
         }
+        */
         Collections.sort(filterConfigs, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
         Map<String, Class> type = param.getService().conf.getType();
         Map<String, Object> updateMap = new HashMap<>();

@@ -1,10 +1,12 @@
 package roart.db;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.util.TimeUtil;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
@@ -46,6 +48,13 @@ public class IclijDbDao {
         long time0 = System.currentTimeMillis();
         List<IncDecItem> list = IncDecItem.getAll();        
         log.info("IncDecItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return list;
+    }
+
+    public static List<ConfigItem> getAllConfigs(String market, String action, String component, String subcomponent, LocalDate startDate, LocalDate endDate) throws Exception {
+        long time0 = System.currentTimeMillis();
+        List<ConfigItem> list = ConfigItem.getAll(market, action, component, subcomponent, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
+        log.info("ConfigItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }
 

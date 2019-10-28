@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
@@ -17,6 +18,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.query.Query;
 
 @Entity
 @Table(name = "Config")
@@ -162,6 +164,42 @@ public class Config implements Serializable {
         list = session.createQuery("from Config where market = :mymarket").setParameter("mymarket",  mymarket).list();
         transaction.commit();
 	}
+        return list;
+    }
+
+    @Transient
+    @Transactional
+    public static List<Config> getAll(String market, String action, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
+        List<Config> list = null;
+        Session session = HibernateUtil.getMyHibernateSession();
+        synchronized (HibernateUtil.class) {
+        Transaction transaction = session.beginTransaction();
+        String queryString = "from Config where market = :market and action = :action and component = :component";
+        if (subcomponent != null) {
+            queryString += " and subcomponent = :subcomponent";
+        }
+        if (startDate != null) {
+            queryString += " and date >= :startdate";
+        }
+        if (endDate != null) {
+            queryString += " and date <= :enddate";
+        }
+        Query query = session.createQuery(queryString);
+        query.setParameter("market", market);
+        query.setParameter("action", action);
+        query.setParameter("component", component);
+        if (subcomponent != null) {
+            query.setParameter("subcomponent", subcomponent);
+        }
+        if (startDate != null) {
+            query.setParameter("startdate", startDate, TemporalType.DATE);
+        }
+        if (endDate != null) {
+            query.setParameter("enddate", endDate, TemporalType.DATE);
+        }
+        list = query.list();
+        transaction.commit();
+        }
         return list;
     }
 
