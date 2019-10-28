@@ -4,6 +4,16 @@ export type mainType = {
   source: string,
 }
 
+export type IclijServiceParam = {
+    iclijConfig: object,
+    ids: string[],
+    market: string,
+    wantMaps: boolean,
+    confList: string[],
+    webpath: string,
+    offset: int,
+}
+
 export type ServiceParam = {
     config: object,
     ids: string[],
@@ -21,6 +31,21 @@ export type ServiceResult = {
     list: string[],
     maps: object,
     error: string,
+}
+
+export type IclijServiceResult = {
+    iclijConfig: object,
+    markets: string[],
+    stocks: object,
+    list: string[],
+    maps: object,
+    error: string,
+    lists: IclijServiceList[],
+}
+
+export type IclijServiceList = {
+    title: string,
+    list: object,
 }
 
 export type MyConfig = {
