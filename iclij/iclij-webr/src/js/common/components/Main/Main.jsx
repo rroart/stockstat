@@ -42,10 +42,10 @@ class Main extends React.Component {
   onIncrement() { this.props.increment() }
   onIncrement2() { this.props.increment2() }
 
-  getanewtab(title) {
-  return(
-          <Tab title={title}>
-            <h2>Any content 3</h2>
+    getanewtab(data, num) {
+	return(
+	    <Tab key={num} eventKey={num} title="Result">
+              { data }
           </Tab>
 	  )
 }
@@ -89,7 +89,7 @@ var newtab = new Tab(map);
           <Tab eventKey={3} title="Control Panel">
             <h2>Control Panel</h2>
           </Tab>
-          { mytabs.map((item, index) => this.getanewtab(item, index)) }
+          { mytabs.map((item, index) => this.getanewtab(item, 4 + index)) }
         </Tabs>
         <Button
        bsStyle="primary"
