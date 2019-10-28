@@ -148,7 +148,7 @@ export const reducers = {
     }),
     [NEWTAB_MAIN]: (state, { payload }) =>
     state.set({
-	tabs: gettabs4(state, payload)
+	'tabs': gettabs4(state, payload)
 	})
 	//console.log('ppp')
 	//console.log(payload)
@@ -224,7 +224,7 @@ function gettabs4(state, payload) {
     console.log(arr);
     var arrayLength = arr.length;
     var newpay = payload + arrayLength;
-    arr.push(newpay);
+    arr.push(payload);
     console.log("state1");
     console.log(state);
     console.log(arr);
@@ -256,6 +256,17 @@ function gettabs3(state) {
     console.log(state);
     return 'newTab'+arrayLength;
     //return arr;
+}
+
+function getConfigAfterSet(state, payload) {
+    var config = state.get('config');
+    return config.set(payload[0], payload[1]);
+}
+
+function getConfigValueMapAfterSet(state, payload) {
+    var config = state.get('config');
+    const valueMap = config.get('configValueMap');
+    return config.set('configValueMap', valueMap.set(payload[0], payload[1]));
 }
 
 export const initialState = () =>
