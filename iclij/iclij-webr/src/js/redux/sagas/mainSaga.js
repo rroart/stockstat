@@ -3,10 +3,10 @@ import { delay } from 'redux-saga';
 import { constants as mainConstants, actions as mainActions } from '../modules/main';
 import { Tabs, Tab } from 'react-bootstrap';
 
-import type { mainType } from '../../common/types/main'
+import type { mainType, MyConfig, GuiSize } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
-import { ServiceParam, ServiceResult } from '../../common/types/main'
+import { ServiceParam, ServiceResult, IclijServiceParam, IclijServiceResult } from '../../common/types/main'
 import { MyTable } from '../../common/components/Table'
 
 export function* fetchMainData() {
@@ -22,7 +22,7 @@ export function* fetchMainData() {
 }
 
 export function* fetchConfig() {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     //serviceparam.market = '0';                                                
     console.log("hereconfig");
     let config = yield call(Client.fetchApi.search, "/getconfig", serviceparam);
@@ -46,14 +46,15 @@ function getMyConfig(config, market, date) {
 }
 
 export function* fetchContent(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const props = action.payload.props;
     const date = config.get('enddate');
+    console.log(date);
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.config = getMyConfig(config, serviceparam.market, date);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search, "/getcontent", serviceparam);
@@ -62,20 +63,20 @@ export function* fetchContent(action) {
     console.log(action);
     const config2 = result;
     console.log(config2);
-    const list = result.list;
-    const tab = MyTable.getTab(result.list, Date.now(), props);
+    const list = result.lists;
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
 export function* fetchContentEvolve(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const props = action.payload.props;
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.config = getMyConfig(config, serviceparam.market, date);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search, "/getcontentevolve", serviceparam);
@@ -84,20 +85,20 @@ export function* fetchContentEvolve(action) {
     console.log(action);
     const config2 = result;
     console.log(config2);
-    const list = result.list;
-    const tab = MyTable.getTab(result.list, Date.now(), props);
+    const list = result.lists;
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
 export function* fetchContentImprove(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const props = action.payload.props;
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.config = getMyConfig(config, serviceparam.market, date);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search, "/getcontentimprove", serviceparam);
@@ -106,20 +107,20 @@ export function* fetchContentImprove(action) {
     console.log(action);
     const config2 = result;
     console.log(config2);
-    const list = result.list;
-    const tab = MyTable.getTab(result.list, Date.now(), props);
+    const list = result.lists;
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
 export function* fetchContentMachineLearning(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const props = action.payload.props;
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.config = getMyConfig(config, serviceparam.market, date);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search, "/getcontentmachinelearning", serviceparam);
@@ -128,13 +129,13 @@ export function* fetchContentMachineLearning(action) {
     console.log(action);
     const config2 = result;
     console.log(config2);
-    const list = result.list;
-    const tab = MyTable.getTab(result.list, Date.now(), props);
+    const list = result.lists;
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
 export function* fetchSingleMarket(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const props = action.payload.props;
@@ -148,7 +149,7 @@ export function* fetchSingleMarket(action) {
     for (i = 0; i < loops; i++) {
 	serviceparam.market = config.get('market');
 	console.log(serviceparam.market);
-	serviceparam.config = getMyConfig(config, serviceparam.market, date);
+	serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
 	serviceparam.offset = i * config.singlemarket.loopinterval;
 	console.log("herecontent");
 	console.log(serviceparam.market);
@@ -158,21 +159,21 @@ export function* fetchSingleMarket(action) {
 	console.log(action);
 	const config2 = result;
 	console.log(config2);
-	const list = result.list;
-	const tab = MyTable.getTab(result.list, Date.now(), props);
+	const list = result.lists;
+	const tab = MyTable.getTab(result.lists, Date.now(), props);
 	yield put(mainActions.newtabMain(tab));
     }
 }
 
 export function* fetchImproveProfit(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const props = action.payload.props;
     const date = config.get('enddate');
     serviceparam.market = config.get('market');
     console.log(serviceparam.market);
-    serviceparam.config = getMyConfig(config, serviceparam.market, date);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
     console.log("herecontent");
     console.log(serviceparam.market);
     let result = yield call(Client.fetchApi.search, "/improveprofit", serviceparam);
@@ -181,13 +182,13 @@ export function* fetchImproveProfit(action) {
     console.log(action);
     const config2 = result;
     console.log(config2);
-    const list = result.list;
-    const tab = MyTable.getTab(result.list, Date.now(), props);
+    const list = result.lists;
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
     yield put(mainActions.newtabMain(tab));
 }
 
 export function* fetchGetVerify(action) {
-    var serviceparam = new ServiceParam();
+    var serviceparam = new IclijServiceParam();
     console.log(action);
     const config = action.payload.config;
     const props = action.payload.props;
@@ -201,7 +202,7 @@ export function* fetchGetVerify(action) {
     for (i = 0; i < loops; i++) {
 	serviceparam.market = config.get('market');
 	console.log(serviceparam.market);
-	serviceparam.config = getMyConfig(config, serviceparam.market, date);
+	serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
 	serviceparam.offset = i * config.verification.loopinterval;
 	console.log("herecontent");
 	console.log(serviceparam.market);
@@ -211,8 +212,8 @@ export function* fetchGetVerify(action) {
 	console.log(action);
 	const config2 = result;
 	console.log(config2);
-	const list = result.list;
-	const tab = MyTable.getTab(result.list, Date.now(), props);
+	const list = result.lists;
+	const tab = MyTable.getTab(result.lists, Date.now(), props);
 	yield put(mainActions.newtabMain(tab));
     }
 }
