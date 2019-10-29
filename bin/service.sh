@@ -19,3 +19,9 @@ cd ../pytorch
 
 cd ../gem
 ./flaskgem.sh 2>&1 | tee /tmp/flaskgem.out &
+
+cd ../webr/docroot
+xterm -e "http-server -p 8182" &
+
+cd ../../iclij/iclij-webr/docroot
+xterm -e "http-server -p 8183" &

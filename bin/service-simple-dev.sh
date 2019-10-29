@@ -24,5 +24,13 @@ xterm -e "./flaskpt.sh dev 2>&1 | tee /tmp/flaskptdev.out" &
 cd ../gem
 xterm -e "./flaskgem.sh dev 2>&1 | tee /tmp/flaskgemdev.out" &
 
+cd ../../../..
+
+cd ../webr
+xterm -e "npm run dev" &
+
+cd ../iclij/iclij-webr
+xterm -e "npm run dev" &
+
 #cd ../python/pd
 #xterm -e ./flaskpd.sh &
