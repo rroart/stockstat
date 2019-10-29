@@ -431,4 +431,12 @@ public abstract class ComponentML extends Component {
         }
     }
 
+    protected String withComma(Object obj) {
+        String str = (String) obj;
+        if (str == null || str.length() == 0) {
+            return "";
+        } else {
+            return ", " + str;
+        }
+    }
 }

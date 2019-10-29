@@ -228,7 +228,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setFuturedate(param.getFutureDate());
             memory.setComponent(getPipeline());
             memory.setCategory(param.getCategoryTitle());
-            memory.setSubcomponent(meta.get(0) + ", " + meta.get(1) + ", " + meta.get(3) + ", " + meta.get(4));
+            memory.setSubcomponent(meta.get(0) + withComma(meta.get(1)) + withComma(meta.get(3)) + withComma(meta.get(4)));
             memory.setTestaccuracy(testaccuracy);
             //memory.setPositives(goodInc);
             memory.setTp(goodTP);

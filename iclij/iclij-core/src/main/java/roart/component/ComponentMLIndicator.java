@@ -390,7 +390,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
             memory.setFuturedate(param.getFutureDate());
             memory.setComponent(PipelineConstants.MLINDICATOR);
             memory.setCategory(param.getCategoryTitle());
-            memory.setSubcomponent(meta.getMlName() + ", " + meta.getModelName() + ", " + meta.getSubType() + ", " + meta.getSubSubType());
+            memory.setSubcomponent(meta.getMlName() + withComma(meta.getModelName()) + withComma(meta.getSubType()) + withComma(meta.getSubSubType()));
             memory.setTestaccuracy(testaccuracy);
             //memory.setPositives(goodInc);
             memory.setTp(goodTP);
