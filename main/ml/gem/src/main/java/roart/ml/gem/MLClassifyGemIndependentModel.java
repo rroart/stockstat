@@ -24,6 +24,11 @@ public class MLClassifyGemIndependentModel  extends MLClassifyGemModel {
     }
     
     @Override
+    public String getShortName() {
+        return MLConstants.IN;
+    }
+    
+    @Override
     public String getKey() {
         return ConfigConstants.MACHINELEARNINGGEMINDEPENDENTCONFIG;
     }

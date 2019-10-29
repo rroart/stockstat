@@ -31,7 +31,12 @@ public class MLClassifyRandomModel extends MLClassifyModel {
 
     @Override
     public String getName() {
-        return "RND";
+        return MLConstants.RND;
+    }
+
+    @Override
+    public String getShortName() {
+        return MLConstants.RND;
     }
 
     @Override

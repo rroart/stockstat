@@ -24,6 +24,11 @@ public class MLClassifyGemGEMModel  extends MLClassifyGemModel {
     }
     
     @Override
+    public String getShortName() {
+        return MLConstants.GEM;
+    }
+    
+    @Override
     public String getKey() {
         return ConfigConstants.MACHINELEARNINGGEMGEMCONFIG;
     }

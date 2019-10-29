@@ -12,6 +12,10 @@ public class MLConstants {
     public static final String GEM = "gem";
     public static final String RANDOM = "random";
 
+    public static final String SP = "spark";
+    public static final String TF = "tf";
+    public static final String PT = "pt";
+
     public static final String MLPC = "mlpc";
     public static final String LIR = "lir";
     public static final String LOR = "lor";
@@ -33,13 +37,16 @@ public class MLConstants {
     
     public static final String S = "s";
     public static final String I = "i";
+    public static final String IC = "in";
+    public static final String IN = "ic";
     public static final String MM = "m";
 
     public static final String MLP = "mlp";
     public static final String RNN = "rnn";
     public static final String CNN = "cnn";
     public static final String GRU = "gru";
-    //public static final String GEM = "GEM";
+
+    public static final String RND = "RND";
     
     public static final String SPARKLORCONFIG = "{ \"maxiter\" : 1000, \"tol\" : 1.0E-6 }";
     public static final String SPARKMLPCCONFIG = "{ \"maxiter\" : 1000, \"layers\" : 2, \"tol\" : 1.0E-6, \"hidden\" : 100 }";

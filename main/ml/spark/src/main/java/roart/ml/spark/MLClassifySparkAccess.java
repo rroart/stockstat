@@ -225,6 +225,12 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
 
 
     @Override
+    public String getShortName() {
+        return MLConstants.SP;
+    }
+
+
+    @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, Map<String, Pair<Object, Double>> learnMap,
             MLClassifyModel mlmodel, int size, int classes, Map<String, Pair<Object, Double>> classifyMap,
             Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {

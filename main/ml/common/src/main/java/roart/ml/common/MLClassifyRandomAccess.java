@@ -108,7 +108,12 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
 
     @Override
     public String getName() {
-        return MLConstants.TENSORFLOW;
+        return MLConstants.RND;
+    }
+
+    @Override
+    public String getShortName() {
+        return MLConstants.RND;
     }
 
     @Override

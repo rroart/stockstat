@@ -146,4 +146,6 @@ public abstract class MLClassifyModel {
 
     public abstract boolean wantPersist();
 
+    public abstract String getShortName();
+
 }

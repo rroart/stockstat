@@ -31,5 +31,7 @@ public abstract class MLClassifyAccess {
     public abstract String getName();
     
     public abstract void clean();
+
+    public abstract String getShortName();
 }
 

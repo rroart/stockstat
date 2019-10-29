@@ -333,16 +333,16 @@ public abstract class IndicatorAggregator extends Aggregator {
                             }
                             // make OO of this, create object
                             Object[] meta = new Object[9];
-                            meta[0] = mldao.getName();
-                            meta[1] = model.getName();
+                            meta[0] = mldao.getShortName();
+                            meta[1] = model.getShortName();
                             meta[2] = model.getReturnSize();
                             meta[3] = subType.getType();
                             meta[4] = mapType;
                             meta[5] = countMap;
                             resultMetaArray.add(meta);
                             ResultMeta resultMeta = new ResultMeta();
-                            resultMeta.setMlName(mldao.getName());
-                            resultMeta.setModelName(model.getName());
+                            resultMeta.setMlName(mldao.getShortName());
+                            resultMeta.setModelName(model.getShortName());
                             resultMeta.setReturnSize(model.getReturnSize());
                             resultMeta.setSubType(subType.getType());
                             resultMeta.setSubSubType(mapType);
@@ -482,16 +482,16 @@ public abstract class IndicatorAggregator extends Aggregator {
                 }
 		// make OO of this, create object
 		Object[] meta = new Object[9];
-		meta[0] = mldao.getName();
-		meta[1] = model.getName();
+		meta[0] = mldao.getShortName();
+		meta[1] = model.getShortName();
 		meta[2] = model.getReturnSize();
 		meta[3] = subType.getType();
 		meta[4] = mapType;
                 meta[5] = countMap;
 		resultMetaArray.add(meta);
 		ResultMeta resultMeta = new ResultMeta();
-		resultMeta.setMlName(mldao.getName());
-		resultMeta.setModelName(model.getName());
+		resultMeta.setMlName(mldao.getShortName());
+		resultMeta.setModelName(model.getShortName());
 		resultMeta.setReturnSize(model.getReturnSize());
 		resultMeta.setSubType(subType.getType());
 		resultMeta.setSubSubType(mapType);
@@ -785,8 +785,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                         Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                         // make OO of this, create object
                         Object[] meta = new Object[9];
-                        meta[0] = mldao.getName();
-                        meta[1] = model.getName();
+                        meta[0] = mldao.getShortName();
+                        meta[1] = model.getShortName();
                         meta[2] = model.getReturnSize();
                         meta[3] = subType.getType();
                         meta[4] = mapType;
@@ -794,8 +794,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                         meta[6] = testaccuracy;
                         resultMetaArray.add(meta);
                         ResultMeta resultMeta = new ResultMeta();
-                        resultMeta.setMlName(mldao.getName());
-                        resultMeta.setModelName(model.getName());
+                        resultMeta.setMlName(mldao.getShortName());
+                        resultMeta.setModelName(model.getShortName());
                         resultMeta.setReturnSize(model.getReturnSize());
                         resultMeta.setSubType(subType.getType());
                         resultMeta.setSubSubType(mapType);
@@ -1589,9 +1589,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                             log.error("Exception fix later, refactor", e);
                         }
                         String merge = subType.isMerge ? "MRG " : "";
-                        objs[retindex++] = title + " " + merge + subType.getName() + Constants.WEBBR +  subType.getType() + model.getName() + mapType + " " + val;
+                        objs[retindex++] = title + " " + merge + subType.getName() + Constants.WEBBR +  subType.getType() + model.getShortName() + mapType + " " + val;
                         if (model.getReturnSize() > 1) {
-                            objs[retindex++] = title + " " + merge + subType.getName() + Constants.WEBBR +  subType.getType() + model.getName() + mapType + " prob ";
+                            objs[retindex++] = title + " " + merge + subType.getName() + Constants.WEBBR +  subType.getType() + model.getShortName() + mapType + " prob ";
                         }
                         //retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
                     }

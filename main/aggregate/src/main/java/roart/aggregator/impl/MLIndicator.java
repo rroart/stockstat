@@ -323,14 +323,14 @@ public class MLIndicator extends Aggregator {
                     Map<Object, Long> countMap1 = learnMap.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta1 = new Object[6];
-                    meta1[0] = mldao.getName();
-                    meta1[1] = model.getName();
+                    meta1[0] = mldao.getShortName();
+                    meta1[1] = model.getShortName();
                     meta1[2] = model.getReturnSize();
                     meta1[3] = countMap1;
                     resultMetaArray.add(meta1);
                     ResultMeta resultMeta1 = new ResultMeta();
-                    resultMeta1.setMlName(mldao.getName());
-                    resultMeta1.setModelName(model.getName());
+                    resultMeta1.setMlName(mldao.getShortName());
+                    resultMeta1.setModelName(model.getShortName());
                     resultMeta1.setReturnSize(model.getReturnSize());
                     resultMeta1.setLearnMap(countMap1);
                     getResultMetas().add(resultMeta1);
@@ -404,14 +404,14 @@ public class MLIndicator extends Aggregator {
                     Map<Object, Long> countMap1 = learnMap.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta1 = new Object[6];
-                    meta1[0] = mldao.getName();
-                    meta1[1] = model.getName();
+                    meta1[0] = mldao.getShortName();
+                    meta1[1] = model.getShortName();
                     meta1[2] = model.getReturnSize();
                     meta1[3] = countMap1;
                     resultMetaArray.add(meta1);
                     ResultMeta resultMeta1 = new ResultMeta();
-                    resultMeta1.setMlName(mldao.getName());
-                    resultMeta1.setModelName(model.getName());
+                    resultMeta1.setMlName(mldao.getShortName());
+                    resultMeta1.setModelName(model.getShortName());
                     resultMeta1.setReturnSize(model.getReturnSize());
                     resultMeta1.setLearnMap(countMap1);
                     getResultMetas().add(resultMeta1);
@@ -652,15 +652,15 @@ public class MLIndicator extends Aggregator {
                     Map<Object, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta = new Object[6];
-                    meta[0] = mldao.getName();
-                    meta[1] = model.getName();
+                    meta[0] = mldao.getShortName();
+                    meta[1] = model.getShortName();
                     meta[2] = model.getReturnSize();
                     meta[3] = countMap;
                     meta[4] = testAccuracy;
                     resultMetaArray.add(meta);
                     ResultMeta resultMeta = new ResultMeta();
-                    resultMeta.setMlName(mldao.getName());
-                    resultMeta.setModelName(model.getName());
+                    resultMeta.setMlName(mldao.getShortName());
+                    resultMeta.setModelName(model.getShortName());
                     resultMeta.setReturnSize(model.getReturnSize());
                     resultMeta.setLearnMap(countMap);
                     resultMeta.setTestAccuracy(testAccuracy);
@@ -814,9 +814,9 @@ public class MLIndicator extends Aggregator {
                     } catch (Exception e) {
                         log.error("Exception fix later, refactor", e);
                     }
-                    objs[retindex++] = title + " " + "mlind" + Constants.WEBBR +  model.getName() + mapType + " " + val;
+                    objs[retindex++] = title + " " + "mlind" + Constants.WEBBR +  model.getShortName() + mapType + " " + val;
                     if (model.getReturnSize() > 1) {
-                        objs[retindex++] = title + " " + "mlind" + Constants.WEBBR +  model.getName() + mapType + " prob ";
+                        objs[retindex++] = title + " " + "mlind" + Constants.WEBBR +  model.getShortName() + mapType + " prob ";
                     }
                 }
             }

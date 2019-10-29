@@ -35,4 +35,9 @@ public abstract class MLClassifySparkModel extends MLClassifyModel {
         return getConf().getSparkMLPath();
     }
     
+    @Override
+    public String getShortName() {
+        return getName();
+    }
+
 }

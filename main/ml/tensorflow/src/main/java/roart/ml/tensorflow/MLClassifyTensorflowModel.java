@@ -34,4 +34,10 @@ public abstract class MLClassifyTensorflowModel extends MLClassifyModel {
     public String getPath() {
         return getConf().getTensorflowPath();
     }
+
+    @Override
+    public String getShortName() {
+        return getName();
+    }
+
 }

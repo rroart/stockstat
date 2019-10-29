@@ -24,6 +24,11 @@ public class MLClassifyGemMultimodalModel  extends MLClassifyGemModel {
     }
     
     @Override
+    public String getShortName() {
+        return MLConstants.MM;
+    }
+    
+    @Override
     public String getKey() {
         return ConfigConstants.MACHINELEARNINGGEMMULTIMODALCONFIG;
     }

@@ -250,6 +250,11 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
+    public String getShortName() {
+        return MLConstants.TF;
+    }
+
+    @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> learnMap,
             MLClassifyModel model, int size, int classes, Map<String, Pair<Object, Double>> classifyMap,
             Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {

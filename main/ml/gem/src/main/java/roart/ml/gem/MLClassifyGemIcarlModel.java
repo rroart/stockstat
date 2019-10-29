@@ -24,6 +24,11 @@ public class MLClassifyGemIcarlModel  extends MLClassifyGemModel {
     }
     
     @Override
+    public String getShortName() {
+        return MLConstants.IC;
+    }
+    
+    @Override
     public String getKey() {
         return ConfigConstants.MACHINELEARNINGGEMICARLCONFIG;
     }

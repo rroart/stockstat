@@ -34,4 +34,10 @@ public abstract class MLClassifyPytorchModel extends MLClassifyModel {
     public String getPath() {
         return getConf().getPytorchPath();
     }
+
+    @Override
+    public String getShortName() {
+        return getName();
+    }
+
 }

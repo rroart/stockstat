@@ -24,6 +24,11 @@ public class MLClassifyGemEWCModel  extends MLClassifyGemModel {
     }
     
     @Override
+    public String getShortName() {
+        return MLConstants.EWC;
+    }
+    
+    @Override
     public String getKey() {
         return ConfigConstants.MACHINELEARNINGGEMEWCCONFIG;
     }

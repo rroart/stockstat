@@ -105,6 +105,10 @@ public class MLClassifyDao {
         return access.getName();
     }
     
+    public String getShortName() {
+        return access.getShortName();
+    }
+    
     public void clean() {
         access.clean();
     }
