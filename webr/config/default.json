@@ -1,7 +1,7 @@
 {
   "env": "default",
   "host": "0.0.0.0",
-  "port": "3082",
+  "port": "18182",
   "publicPath": "/",
   "assetPath": "assets",
   "jsSourcePath": "src/js",

@@ -18,6 +18,7 @@
   <module>iclij-common</module>
   <module>iclij-core</module>
   <module>iclij-web</module>
+  <module>iclij-webr</module>
 </modules>
   <build>
     <plugins>

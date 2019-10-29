@@ -32,7 +32,7 @@ webpackConfig.devServer = {
   compress: true,
   noInfo: true,
   quiet: true,
-  open: true,
+  open: false,
   stats: 'errors-only',
 };
 

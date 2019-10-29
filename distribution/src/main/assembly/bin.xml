@@ -121,6 +121,26 @@
       </includes>
       <outputDirectory>docker</outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../webr</directory>
+      <includes>
+        <include>**</include>
+      </includes>
+      <excludes>
+	<exclude>src/**</exclude>
+      </excludes>
+      <outputDirectory>webr</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/../iclij/iclij-webr</directory>
+      <includes>
+        <include>**</include>
+      </includes>
+      <excludes>
+	<exclude>src/**</exclude>
+      </excludes>
+      <outputDirectory>iclij-webr</outputDirectory>
+    </fileSet>
   </fileSets>
   <!--files>
     <file>
