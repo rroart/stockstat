@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {Http, Response, Headers, RequestOptions} from '@angular/http';
 
+import { isDevMode } from '@angular/core';
+
 //import { Stock } from './stock-market.model';
 
 @Injectable()
@@ -14,9 +16,9 @@ export class MainService {
     //let headers = new Headers({ 'Content-Type': 'application/json' });
     //let options = new RequestOptions({ headers: headers }); 
     let param = config;
-    console.log(`http://localhost:12345` + url);
+    console.log(`http://localhost:` + MainService.getPort() + url);
     return this.httpClient
-      .post(`http://localhost:12345` + url, param);
+      .post(`http://localhost:` + MainService.getPort() + url, param);
       //.pipe(
       //map((res: Response) => { res.json() } ));
       //.catch(MainService.handleError)
@@ -28,4 +30,13 @@ export class MainService {
         return Observable.throw(error || 'Server error');
     }
 
+    static getPort() {
+      console.log("devmode");
+      console.log(isDevMode());
+      if (!isDevMode()) {
+        return 12345;
+      } else {
+        return 22345;
+      }
+    }
 }
