@@ -4,8 +4,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { ActivationEnd, Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil, map } from 'rxjs/operators';
-import { MatButtonModule } from '@angular/material';
-import { MatTableModule, MatTableDataSource, MatSort } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSort } from '@angular/material/sort';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 
 import { ActionIncrement } from '../main.actions';
 

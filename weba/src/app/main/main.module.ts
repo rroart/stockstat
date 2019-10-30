@@ -33,7 +33,8 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { ConfigtreeComponent } from './configuration/configtree.component';
 import { TreeviewComponent } from './configuration/treeview.component';
 import { MytableComponent } from './table/mytable.component';
-import { MatTableModule, MatTableDataSource, MatSortModule } from '@angular/material';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 
 @NgModule({
   imports: [
