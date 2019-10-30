@@ -357,7 +357,7 @@ public abstract class MarketAction extends Action {
         //System.out.println(currentList.get(0).getRecord());
         Map<Object[], List<MemoryItem>> listMap = new HashMap<>();
         // map subcat + posit -> list
-        currentList.forEach(m -> listGetterAdder(listMap, new Object[]{m.getComponent(), m.getPosition() }, m));
+        currentList.forEach(m -> listGetterAdder(listMap, new Object[]{m.getComponent(), m.getSubcomponent(), m.getPosition() }, m));
         ProfitInputData inputdata = filterMemoryListMapsWithConfidence(market, listMap);        
         ProfitData profitdata = new ProfitData();
         profitdata.setInputdata(inputdata);

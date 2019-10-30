@@ -880,6 +880,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(MemoryItem::getCategory).setCaption("Category");
         table.addColumn(MemoryItem::getComponent).setCaption("Component");
         table.addColumn(MemoryItem::getSubcomponent).setCaption("Subcomponent");
+        table.addColumn(MemoryItem::getDescription).setCaption("Description");
         table.addColumn(MemoryItem::getInfo).setCaption("Info");
         table.addColumn(MemoryItem::getFuturedays).setCaption("Futuredays");
         table.addColumn(MemoryItem::getFuturedate).setCaption("Futuredate");

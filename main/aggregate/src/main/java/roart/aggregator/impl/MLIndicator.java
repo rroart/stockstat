@@ -323,14 +323,14 @@ public class MLIndicator extends Aggregator {
                     Map<Object, Long> countMap1 = learnMap.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta1 = new Object[6];
-                    meta1[0] = mldao.getShortName();
-                    meta1[1] = model.getShortName();
+                    meta1[0] = mldao.getName();
+                    meta1[1] = model.getName();
                     meta1[2] = model.getReturnSize();
                     meta1[3] = countMap1;
                     resultMetaArray.add(meta1);
                     ResultMeta resultMeta1 = new ResultMeta();
-                    resultMeta1.setMlName(mldao.getShortName());
-                    resultMeta1.setModelName(model.getShortName());
+                    resultMeta1.setMlName(mldao.getName());
+                    resultMeta1.setModelName(model.getName());
                     resultMeta1.setReturnSize(model.getReturnSize());
                     resultMeta1.setLearnMap(countMap1);
                     getResultMetas().add(resultMeta1);
@@ -353,7 +353,7 @@ public class MLIndicator extends Aggregator {
                         continue;
                     }
                     Map<String, Double[]> classifyResult = result.getCatMap();
-                    probabilityMap.put(mldao.getName() + model.getId(), result.getAccuracy());
+                    probabilityMap.put(mldao.getName() + model.getName(), result.getAccuracy());
                     meta1[4] = result.getAccuracy();
                     resultMeta1.setTestAccuracy(result.getAccuracy());
                     mapResult.put(model, classifyResult);
@@ -404,14 +404,14 @@ public class MLIndicator extends Aggregator {
                     Map<Object, Long> countMap1 = learnMap.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta1 = new Object[6];
-                    meta1[0] = mldao.getShortName();
-                    meta1[1] = model.getShortName();
+                    meta1[0] = mldao.getName();
+                    meta1[1] = model.getName();
                     meta1[2] = model.getReturnSize();
                     meta1[3] = countMap1;
                     resultMetaArray.add(meta1);
                     ResultMeta resultMeta1 = new ResultMeta();
-                    resultMeta1.setMlName(mldao.getShortName());
-                    resultMeta1.setModelName(model.getShortName());
+                    resultMeta1.setMlName(mldao.getName());
+                    resultMeta1.setModelName(model.getName());
                     resultMeta1.setReturnSize(model.getReturnSize());
                     resultMeta1.setLearnMap(countMap1);
                     getResultMetas().add(resultMeta1);
@@ -446,7 +446,7 @@ public class MLIndicator extends Aggregator {
                     continue;
                 }
                 Map<String, Double[]> classifyResult = result.getCatMap();
-                probabilityMap.put(mldao.getName() + model.getId(), result.getAccuracy());
+                probabilityMap.put(mldao.getName() + model.getName(), result.getAccuracy());
                 Object[] meta = resultMetaArray.get(testCount);
                 ResultMeta resultMeta = getResultMetas().get(testCount);
                 meta[4] = result.getAccuracy();
@@ -647,20 +647,20 @@ public class MLIndicator extends Aggregator {
                 Map<String, Pair<Object, Double>> map = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
                     Double testAccuracy = mldao.learntest(nnconfigs, this, map, model, arrayLength, 2, mapTime, null);  
-                    probabilityMap.put(mldao.getName() + model.getId(), testAccuracy);
+                    probabilityMap.put(mldao.getName() + model.getName(), testAccuracy);
                     IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                     Map<Object, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
                     Object[] meta = new Object[6];
-                    meta[0] = mldao.getShortName();
-                    meta[1] = model.getShortName();
+                    meta[0] = mldao.getName();
+                    meta[1] = model.getName();
                     meta[2] = model.getReturnSize();
                     meta[3] = countMap;
                     meta[4] = testAccuracy;
                     resultMetaArray.add(meta);
                     ResultMeta resultMeta = new ResultMeta();
-                    resultMeta.setMlName(mldao.getShortName());
-                    resultMeta.setModelName(model.getShortName());
+                    resultMeta.setMlName(mldao.getName());
+                    resultMeta.setModelName(model.getName());
                     resultMeta.setReturnSize(model.getReturnSize());
                     resultMeta.setLearnMap(countMap);
                     resultMeta.setTestAccuracy(testAccuracy);

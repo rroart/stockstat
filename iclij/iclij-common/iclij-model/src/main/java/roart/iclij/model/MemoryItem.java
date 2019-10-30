@@ -32,6 +32,8 @@ public class MemoryItem {
     
     private String subcomponent;
     
+    private String description;
+    
     private String info;
     
     private Integer futuredays;
@@ -102,6 +104,9 @@ public class MemoryItem {
         }
         if (subcomponent != null) {
             ret += subcomponent + "\n";
+        }
+        if (description != null) {
+            ret += description + "\n";
         }
         if (info != null) {
             ret += info + "\n";
@@ -235,6 +240,14 @@ public class MemoryItem {
         this.subcomponent = subcomponent;
     }
     
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getInfo() {
         return info;
     }
@@ -457,6 +470,7 @@ public class MemoryItem {
         memory.setComponent(getComponent());
         memory.setConfidence(getConfidence());
         memory.setDate(TimeUtil.convertDate(getDate()));
+        memory.setDescription(getDescription());
         memory.setFn(getFn());
         memory.setFnConf(getFnConf());
         memory.setFnProb(getFnProb());
@@ -519,6 +533,7 @@ public class MemoryItem {
         memoryItem.setComponent(memory.getComponent());
         memoryItem.setConfidence(memory.getConfidence());
         memoryItem.setDate(TimeUtil.convertDate(memory.getDate()));
+        memoryItem.setDescription(memory.getDescription());
         memoryItem.setFn(memory.getFn());
         memoryItem.setFnConf(memory.getFnConf());
         memoryItem.setFnProb(memory.getFnProb());

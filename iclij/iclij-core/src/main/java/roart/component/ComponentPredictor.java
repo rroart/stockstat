@@ -131,7 +131,7 @@ public class ComponentPredictor extends ComponentML {
         Object[] keys = new Object[2];
         keys[0] = PipelineConstants.PREDICTORSLSTM;
         keys[1] = null;
-        keys = ComponentMLMACD.getRealKeys(keys, profitdata.getInputdata().getConfMap().keySet());
+        keys = ComponentMLAggregator.getRealKeys(keys, profitdata.getInputdata().getConfMap().keySet());
         Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keys);
         Map<String, Object> resultMap = (Map<String, Object>) param.getResultMap().get("result");
         List<MyElement> list0 = new ArrayList<>();

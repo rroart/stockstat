@@ -146,7 +146,7 @@ public class ComponentRecommender extends ComponentNoML {
         Object[] keys = new Object[2];
         keys[0] = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
         keys[1] = i;
-        keys = ComponentMLMACD.getRealKeys(keys, profitdata.getInputdata().getConfMap().keySet());
+        keys = ComponentMLAggregator.getRealKeys(keys, profitdata.getInputdata().getConfMap().keySet());
         //System.out.println(okListMap.get(keys));
         Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keys);
         //System.out.println(okConfMap.keySet());
@@ -474,7 +474,8 @@ public class ComponentRecommender extends ComponentNoML {
         memory.setFuturedays(param.getFuturedays());
         memory.setFuturedate(param.getFutureDate());
         memory.setComponent(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        memory.setSubcomponent("rec " + position + " " + eval.name());
+        memory.setSubcomponent(null);
+        memory.setDescription("rec " + position + " " + eval.name());
         memory.setCategory(param.getCategoryTitle());
         memory.setPositives((long) goodBuy);
         memory.setSize(totalBuy);

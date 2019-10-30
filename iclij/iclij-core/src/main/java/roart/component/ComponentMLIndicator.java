@@ -203,7 +203,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
                     boolean increase = false;
                     //System.out.println(okConfMap.keySet());
                     Set<Object[]> keyset = profitdata.getInputdata().getConfMap().keySet();
-                    keys = ComponentMLMACD.getRealKeys(keys, keyset);
+                    keys = ComponentMLAggregator.getRealKeys(keys, keyset);
                     //System.out.println(okListMap.keySet());
                     if (tfpn.equals(INC)) {
                         increase = true;
@@ -390,7 +390,8 @@ public abstract class ComponentMLIndicator extends ComponentML {
             memory.setFuturedate(param.getFutureDate());
             memory.setComponent(PipelineConstants.MLINDICATOR);
             memory.setCategory(param.getCategoryTitle());
-            memory.setSubcomponent(meta.getMlName() + withComma(meta.getModelName()) + withComma(meta.getSubType()) + withComma(meta.getSubSubType()));
+            memory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
+            memory.setDescription(getShort(meta.getMlName()) + withComma(getShort(meta.getModelName())) + withComma(meta.getSubType()) + withComma(meta.getSubSubType()));
             memory.setTestaccuracy(testaccuracy);
             //memory.setPositives(goodInc);
             memory.setTp(goodTP);

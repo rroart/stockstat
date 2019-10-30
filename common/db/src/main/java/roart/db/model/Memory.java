@@ -61,6 +61,9 @@ public class Memory implements Serializable {
     private String subcomponent;
 
     @Column
+    private String description;
+
+    @Column
     private String info;
 
     @Column
@@ -483,6 +486,14 @@ public class Memory implements Serializable {
         session.save(this);
         transaction.commit();
 	}
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

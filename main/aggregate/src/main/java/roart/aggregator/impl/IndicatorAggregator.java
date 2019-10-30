@@ -333,22 +333,22 @@ public abstract class IndicatorAggregator extends Aggregator {
                             }
                             // make OO of this, create object
                             Object[] meta = new Object[9];
-                            meta[0] = mldao.getShortName();
-                            meta[1] = model.getShortName();
+                            meta[0] = mldao.getName();
+                            meta[1] = model.getName();
                             meta[2] = model.getReturnSize();
                             meta[3] = subType.getType();
                             meta[4] = mapType;
                             meta[5] = countMap;
                             resultMetaArray.add(meta);
                             ResultMeta resultMeta = new ResultMeta();
-                            resultMeta.setMlName(mldao.getShortName());
-                            resultMeta.setModelName(model.getShortName());
+                            resultMeta.setMlName(mldao.getName());
+                            resultMeta.setModelName(model.getName());
                             resultMeta.setReturnSize(model.getReturnSize());
                             resultMeta.setSubType(subType.getType());
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
                             getResultMetas().add(resultMeta);
-                            probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
+                            probabilityMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
                             meta[6] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
 
@@ -482,16 +482,16 @@ public abstract class IndicatorAggregator extends Aggregator {
                 }
 		// make OO of this, create object
 		Object[] meta = new Object[9];
-		meta[0] = mldao.getShortName();
-		meta[1] = model.getShortName();
+		meta[0] = mldao.getName();
+		meta[1] = model.getName();
 		meta[2] = model.getReturnSize();
 		meta[3] = subType.getType();
 		meta[4] = mapType;
                 meta[5] = countMap;
 		resultMetaArray.add(meta);
 		ResultMeta resultMeta = new ResultMeta();
-		resultMeta.setMlName(mldao.getShortName());
-		resultMeta.setModelName(model.getShortName());
+		resultMeta.setMlName(mldao.getName());
+		resultMeta.setModelName(model.getName());
 		resultMeta.setReturnSize(model.getReturnSize());
 		resultMeta.setSubType(subType.getType());
 		resultMeta.setSubSubType(mapType);
@@ -512,7 +512,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     continue;
                 }
 
-                probabilityMap.put("" + model . getId() + key + subType + mapType, result.getAccuracy());
+                probabilityMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
                 handleResultMetaAccuracy(testCount, result);
 
                 addEventRow(subType, countMap2);
@@ -780,13 +780,13 @@ public abstract class IndicatorAggregator extends Aggregator {
                         log.debug("Outcomes {}", outcomes);
                         int size = getValidateSize(map, mlmeta);
                         Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, size, outcomes, mapTime, null);  
-                        probabilityMap.put("" + model . getId() + key + subType + mapType, testaccuracy);
+                        probabilityMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, testaccuracy);
                         IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                         Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                         // make OO of this, create object
                         Object[] meta = new Object[9];
-                        meta[0] = mldao.getShortName();
-                        meta[1] = model.getShortName();
+                        meta[0] = mldao.getName();
+                        meta[1] = model.getName();
                         meta[2] = model.getReturnSize();
                         meta[3] = subType.getType();
                         meta[4] = mapType;
@@ -794,8 +794,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                         meta[6] = testaccuracy;
                         resultMetaArray.add(meta);
                         ResultMeta resultMeta = new ResultMeta();
-                        resultMeta.setMlName(mldao.getShortName());
-                        resultMeta.setModelName(model.getShortName());
+                        resultMeta.setMlName(mldao.getName());
+                        resultMeta.setModelName(model.getName());
                         resultMeta.setReturnSize(model.getReturnSize());
                         resultMeta.setSubType(subType.getType());
                         resultMeta.setSubSubType(mapType);

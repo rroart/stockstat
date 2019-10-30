@@ -439,4 +439,21 @@ public abstract class ComponentML extends Component {
             return ", " + str;
         }
     }
+    
+    private Map<String, String> getShortMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put(MLConstants.SPARK, MLConstants.SP);
+        map.put(MLConstants.TENSORFLOW, MLConstants.TF);
+        map.put(MLConstants.PYTORCH, MLConstants.PT);
+        return map;
+    }
+    
+    public String getShort(String str) {
+        String shortStr = getShortMap().get(str);
+        if (shortStr == null) {
+            return str;
+        } else {
+            return shortStr;
+        }
+    }
 }

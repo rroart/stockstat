@@ -228,7 +228,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setFuturedate(param.getFutureDate());
             memory.setComponent(getPipeline());
             memory.setCategory(param.getCategoryTitle());
-            memory.setSubcomponent(meta.get(0) + withComma(meta.get(1)) + withComma(meta.get(3)) + withComma(meta.get(4)));
+            memory.setSubcomponent(meta.get(0) + " " + meta.get(1));
+            memory.setDescription(getShort((String) meta.get(0)) + withComma(getShort((String) meta.get(1))) + withComma(meta.get(3)) + withComma(meta.get(4)));
             memory.setTestaccuracy(testaccuracy);
             //memory.setPositives(goodInc);
             memory.setTp(goodTP);
@@ -355,13 +356,15 @@ public abstract class ComponentMLAggregator extends ComponentML {
     static Object[] getRealKeys(Object[] keys, Set<Object[]> keyset) {
         for (Object[] keyss : keyset) {
             if (keys[0].equals(keyss[0])) {
-                if (keys[1] == null && keyss[1] == null) {
-                    keys = keyss;
-                    break;
-                }
-                if (keys[1].equals(keyss[1])) {
-                    keys = keyss;
-                    break;
+                if ((keys[1] == null && keyss[1] == null) || (keys[1].equals(keyss[1]))) {
+                    if (keys[2] == null && keyss[2] == null) {
+                        keys = keyss;
+                        break;
+                    }
+                    if (keys[2].equals(keyss[2])) {
+                        keys = keyss;
+                        break;
+                    }
                 }
             }
         }
@@ -391,7 +394,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         val.setScore(val.getScore() + add);
         String component = memory.getComponent();
         component = component != null ? component.substring(0, 3) : component;
-        val.setDescription(val.getDescription() + component + " " + memory.getSubcomponent() + ", ");
+        val.setDescription(val.getDescription() + component + " " + memory.getSubcomponent() + " " + memory.getDescription() + ", ");
         return val;
     }
 
