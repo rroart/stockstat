@@ -21,7 +21,7 @@ cd ../gem
 ./flaskgem.sh 2>&1 | tee /tmp/flaskgem.out &
 
 cd ../webr/docroot
-xterm -e "http-server -p 8182" &
+http-server -p 8182 &
 
-cd ../../iclij/iclij-webr/docroot
-xterm -e "http-server -p 8183" &
+cd ../../iclij-webr/docroot
+http-server -p 8183 &
