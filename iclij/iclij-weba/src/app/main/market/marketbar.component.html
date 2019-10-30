@@ -1,0 +1,14 @@
+  <h1>marketbar</h1>
+  <mat-select placeholder="Get market" (selectionChange)="changemarket($event)">
+    <mat-option *ngFor="let market of markets" [value]="market">{{ market }}</mat-option>
+  </mat-select>
+   <input matInput [matDatepicker]="startpicker" placeholder="Start date" (dateChange)=handleStartDateChange($event)>
+   <mat-datepicker-toggle matSuffix [for]="startpicker"></mat-datepicker-toggle>
+   <mat-datepicker #startpicker></mat-datepicker>
+   <input matInput [matDatepicker]="endpicker" placeholder="End date" (dateChange)=handleEndDateChange($event)>
+   <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
+   <mat-datepicker #endpicker></mat-datepicker>
+   <br/>
+  <button class="mat-raised-button" (click)="resetStartDate($event)">Reset start date</button>
+  <button class="mat-raised-button" (click)="resetEndDate($event)">Reset end date</button>
+  <button class="mat-raised-button" (click)="getMarketData($event)">Get market data</button>
