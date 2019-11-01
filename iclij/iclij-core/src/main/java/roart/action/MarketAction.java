@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -355,9 +357,9 @@ public abstract class MarketAction extends Action {
         List<MemoryItem> currentList = filterKeepRecent(marketMemory, prevdate, getTime(market));
         // or make a new object instead of the object array. use this as a pair
         //System.out.println(currentList.get(0).getRecord());
-        Map<Object[], List<MemoryItem>> listMap = new HashMap<>();
+        Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
         // map subcat + posit -> list
-        currentList.forEach(m -> listGetterAdder(listMap, new Object[]{m.getComponent(), m.getSubcomponent(), m.getPosition() }, m));
+        currentList.forEach(m -> listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
         ProfitInputData inputdata = filterMemoryListMapsWithConfidence(market, listMap);        
         ProfitData profitdata = new ProfitData();
         profitdata.setInputdata(inputdata);
@@ -415,12 +417,25 @@ public abstract class MarketAction extends Action {
         return markets;
     }
 
-    public Map<String, List<Integer>> createComponentPositionListMap(Map<Object[], List<MemoryItem>> okListMap) {
+    public Map<String, List<Integer>> createComponentPositionListMapOld(Map<Object[], List<MemoryItem>> okListMap) {
         Map<String, List<Integer>> listComponent = new HashMap<>();
         for (Object[] keys : okListMap.keySet()) {
             String component = (String) keys[0];
             Integer position = (Integer) keys[1];
             listGetterAdder(listComponent, component, position);
+        }
+        return listComponent;
+    }
+
+    public Map<String, List<Integer>> createComponentPositionListMap(Map<Pair<String, Integer>, List<MemoryItem>> okListMap) {
+        Map<String, List<Integer>> listComponent = new HashMap<>();
+        for (Pair<String, Integer> key : okListMap.keySet()) {
+            /*
+            String component = (String) keys[0];
+            String subcomponent = (String) keys[1];
+            Integer position = (Integer) keys[2];
+            */
+            listGetterAdder(listComponent, key.getLeft(), key.getRight());
         }
         return listComponent;
     }
@@ -461,7 +476,7 @@ public abstract class MarketAction extends Action {
         }
     }
 
-    protected abstract ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Object[], List<MemoryItem>> listMap);
+    protected abstract ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap);
     
     public List<MemoryItem> getMarketMemory(Market market) {
         List<MemoryItem> marketMemory = null;
@@ -486,7 +501,7 @@ public abstract class MarketAction extends Action {
     }
     
     protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config);
-
+ 
     public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days) {
         LocalDate olddate = date.minusDays(days);
         for (MemoryItem item : marketMemory) {

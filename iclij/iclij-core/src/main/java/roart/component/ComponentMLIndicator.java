@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -183,9 +185,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
                 int jj = 0;
             }
             if (positions == null || positions.contains(count)) {
-                Object[] keys = new Object[2];
-                keys[0] = PipelineConstants.MLINDICATOR;
-                keys[1] = count;
+                Pair keyPair = new ImmutablePair(PipelineConstants.MLINDICATOR, count);
                 for (String key : param.getCategoryValueMap().keySet()) {
                     List<List<Double>> resultList = param.getCategoryValueMap().get(key);
                     List<Double> mainList = resultList.get(0);
@@ -202,17 +202,17 @@ public abstract class ComponentMLIndicator extends ComponentML {
                     }
                     boolean increase = false;
                     //System.out.println(okConfMap.keySet());
-                    Set<Object[]> keyset = profitdata.getInputdata().getConfMap().keySet();
-                    keys = ComponentMLAggregator.getRealKeys(keys, keyset);
+                    Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
+                    //keyPair = ComponentMLAggregator.getRealKeys(keyPair, keyset);
                     //System.out.println(okListMap.keySet());
                     if (tfpn.equals(INC)) {
                         increase = true;
-                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getConfMap().get(keys), profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getConfMap().get(keyPair), profitdata.getInputdata().getListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                     if (tfpn.equals(DEC)) {
                         increase = false;
-                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getConfMap().get(keys), profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getConfMap().get(keyPair), profitdata.getInputdata().getListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                 }                        

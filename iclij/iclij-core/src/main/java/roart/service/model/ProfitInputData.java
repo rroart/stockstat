@@ -3,6 +3,8 @@ package roart.service.model;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 
@@ -11,9 +13,9 @@ public class ProfitInputData {
     
     List<Integer> positions;
     
-    private Map<Object[], Double> confMap;
+    private Map<Pair<String, Integer>, Double> confMap;
     
-    private Map<Object[], List<MemoryItem>> listMap;
+    private Map<Pair<String, Integer>, List<MemoryItem>> listMap;
     
     Map<String, String> nameMap;
 
@@ -25,19 +27,19 @@ public class ProfitInputData {
         this.resultMaps = resultMaps;
     }
 
-    public Map<Object[], Double> getConfMap() {
+    public Map<Pair<String, Integer>, Double> getConfMap() {
         return confMap;
     }
 
-    public void setConfMap(Map<Object[], Double> confMap) {
+    public void setConfMap(Map<Pair<String, Integer>, Double> confMap) {
         this.confMap = confMap;
     }
 
-    public Map<Object[], List<MemoryItem>> getListMap() {
+    public Map<Pair<String, Integer>, List<MemoryItem>> getListMap() {
         return listMap;
     }
 
-    public void setListMap(Map<Object[], List<MemoryItem>> listMap) {
+    public void setListMap(Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
         this.listMap = listMap;
     }
 

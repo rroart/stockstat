@@ -9,6 +9,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +40,11 @@ public class FindProfitAction extends MarketAction {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    protected ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Object[], List<MemoryItem>> listMap) {
-        Map<Object[], List<MemoryItem>> okListMap = new HashMap<>();
-        Map<Object[], Double> okConfMap = new HashMap<>();
-        for(Entry<Object[], List<MemoryItem>> entry : listMap.entrySet()) {
-            Object[] keys = entry.getKey();
+    protected ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
+        Map<Pair<String, Integer>, List<MemoryItem>> okListMap = new HashMap<>();
+        Map<Pair<String, Integer>, Double> okConfMap = new HashMap<>();
+        for(Entry<Pair<String, Integer>, List<MemoryItem>> entry : listMap.entrySet()) {
+            Pair<String, Integer> keys = entry.getKey();
             List<MemoryItem> memoryList = entry.getValue();
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
             confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
@@ -63,13 +66,13 @@ public class FindProfitAction extends MarketAction {
 
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config) {
-        for (Entry<String, List<Integer>> entry : listComponent.entrySet()) {
-            List<Integer> positions = entry.getValue();
+        for (Entry<String, Component> entry : componentMap.entrySet()) {
             String componentName = entry.getKey();
             Component component = componentMap.get(componentName);
             if (component == null) {
                 continue;
             }
+            List<Integer> positions = listComponent.get(componentName);
             param = dataMap.get(componentName);
             component.enableDisable(param, positions, param.getConfigValueMap());
 

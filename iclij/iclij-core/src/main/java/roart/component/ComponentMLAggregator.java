@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
@@ -54,8 +57,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
         System.out.println("a " + resultMap.keySet());
         System.out.println("b " + param.getCategoryValueMap().keySet());
         System.out.println("d " + profitdata.getInputdata().getConfMap().keySet());
-        for (Object[] key : profitdata.getInputdata().getConfMap().keySet()) {
-            System.out.println("e " + ((String)key[0]) + " " + (key[1]));
+        for (Pair<String, Integer> key : profitdata.getInputdata().getConfMap().keySet()) {
+            System.out.println("e " + key);
         }
         int resultIndex = 0;
         int count = 0;
@@ -66,9 +69,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 int jj = 0;
             }
             if (positions == null || positions.contains(count)) {
-                Object[] keys = new Object[2];
-                keys[0] = getPipeline();
-                keys[1] = count;
+                Pair keyPair = new ImmutablePair(getPipeline(), count);
                 for (String key : param.getCategoryValueMap().keySet()) {
                     List<List<Double>> resultList = param.getCategoryValueMap().get(key);
                     List<Double> mainList = resultList.get(0);
@@ -85,17 +86,17 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     }
                     boolean increase = false;
                     //System.out.println(okConfMap.keySet());
-                    Set<Object[]> keyset = profitdata.getInputdata().getConfMap().keySet();
-                    keys = getRealKeys(keys, keyset);
+                    Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
+                    //keyPair = getRealKeys(keyPair, keyset);
                     //System.out.println(okListMap.keySet());
                     if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
                         increase = true;
-                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getConfMap().get(keys), profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getConfMap().get(keyPair), profitdata.getInputdata().getListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                     if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
                         increase = false;
-                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getConfMap().get(keys), profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getConfMap().get(keyPair), profitdata.getInputdata().getListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                 }                        

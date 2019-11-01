@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,11 +130,9 @@ public class ComponentPredictor extends ComponentML {
     @Override
     public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
         PredictorData param = (PredictorData) componentparam;
-        Object[] keys = new Object[2];
-        keys[0] = PipelineConstants.PREDICTORSLSTM;
-        keys[1] = null;
-        keys = ComponentMLAggregator.getRealKeys(keys, profitdata.getInputdata().getConfMap().keySet());
-        Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keys);
+        Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTORSLSTM, null);
+        //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
+        Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keyPair);
         Map<String, Object> resultMap = (Map<String, Object>) param.getResultMap().get("result");
         List<MyElement> list0 = new ArrayList<>();
         //List<MyElement> list1 = new ArrayList<>();
@@ -163,7 +163,7 @@ public class ComponentPredictor extends ComponentML {
         }
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         //Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
-        handleBuySell(profitdata, param.getService(), param.getInput().getConfig(), keys, confidenceFactor, list0);
+        handleBuySell(profitdata, param.getService(), param.getInput().getConfig(), keyPair, confidenceFactor, list0);
         //handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list1);
     }
     
@@ -272,7 +272,7 @@ public class ComponentPredictor extends ComponentML {
         return memoryList;
     }
     
-    private void handleBuySell(ProfitData profitdata, ControlService srv, IclijConfig config, Object[] keys,
+    private void handleBuySell(ProfitData profitdata, ControlService srv, IclijConfig config, Pair<String, Integer> keys,
             Double confidenceFactor, List<MyElement> list) {
         int listSize = list.size();
         int recommend = config.recommendTopBottom();

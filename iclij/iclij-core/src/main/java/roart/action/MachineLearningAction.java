@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +41,11 @@ public class MachineLearningAction extends MarketAction {
 
     @Override
     protected ProfitInputData filterMemoryListMapsWithConfidence(Market market,
-            Map<Object[], List<MemoryItem>> listMap) {
-        Map<Object[], List<MemoryItem>> badListMap = new HashMap<>();
-        Map<Object[], Double> badConfMap = new HashMap<>();
-        for(Object[] keys : listMap.keySet()) {
-            List<MemoryItem> memoryList = listMap.get(keys);
+            Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
+        Map<Pair<String, Integer>, List<MemoryItem>> badListMap = new HashMap<>();
+        Map<Pair<String, Integer>, Double> badConfMap = new HashMap<>();
+        for(Pair<String, Integer> key : listMap.keySet()) {
+            List<MemoryItem> memoryList = listMap.get(key);
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
             confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
             Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
@@ -50,8 +53,8 @@ public class MachineLearningAction extends MarketAction {
             if (minOpt.isPresent()) {
                 min = minOpt.get();
             }
-            badListMap.put(keys, listMap.get(keys));
-            badConfMap.put(keys, min);
+            badListMap.put(key, listMap.get(key));
+            badConfMap.put(key, min);
         }
         ProfitInputData input = new ProfitInputData();
         input.setConfMap(badConfMap);
@@ -63,13 +66,13 @@ public class MachineLearningAction extends MarketAction {
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Map<String, List<Integer>> listComponent, Map<String, Component> componentMap,
             Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config) {
-        for (Entry<String, List<Integer>> entry : listComponent.entrySet()) {
-            List<Integer> positions = entry.getValue();
+        for (Entry<String, Component> entry : componentMap.entrySet()) {
             String componentName = entry.getKey();
             Component component = componentMap.get(componentName);
             if (component == null) {
                 continue;
             }
+            List<Integer> positions = listComponent.get(componentName);
             //if (dataMap.containsKey(componentName)) {
             //    param = dataMap.get(componentName);
             //}

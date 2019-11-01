@@ -12,6 +12,8 @@ import java.util.Random;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,8 +230,8 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 log.error(Constants.EXCEPTION, e);
             }
 
-            Map<Object[], List<MemoryItem>> listMap = new HashMap<>();
-            myData.memoryItems.forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new Object[]{m.getComponent(), m.getSubcomponent(), m.getPosition() }, m));
+            Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
+            myData.memoryItems.forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
             ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap);        
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);

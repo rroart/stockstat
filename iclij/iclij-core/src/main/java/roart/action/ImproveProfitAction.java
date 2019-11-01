@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +46,11 @@ public class ImproveProfitAction extends MarketAction {
     }
 
     @Override
-    public ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Object[], List<MemoryItem>> listMap) {
-        Map<Object[], List<MemoryItem>> badListMap = new HashMap<>();
-        Map<Object[], Double> badConfMap = new HashMap<>();
-        for(Object[] keys : listMap.keySet()) {
-            List<MemoryItem> memoryList = listMap.get(keys);
+    public ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
+        Map<Pair<String, Integer>, List<MemoryItem>> badListMap = new HashMap<>();
+        Map<Pair<String, Integer>, Double> badConfMap = new HashMap<>();
+        for(Pair<String, Integer> key : listMap.keySet()) {
+            List<MemoryItem> memoryList = listMap.get(key);
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
             if (confidences.isEmpty()) {
                 int jj = 0;
@@ -74,8 +76,8 @@ public class ImproveProfitAction extends MarketAction {
             //System.out.println("Mark " + market.getConfig().getMarket() + " " + keys[0] + " " + min + " " + max );
             //Double conf = market.getConfidence();
             //System.out.println(conf);
-            badListMap.put(keys, listMap.get(keys));
-            badConfMap.put(keys, min);
+            badListMap.put(key, listMap.get(key));
+            badConfMap.put(key, min);
         }
         ProfitInputData input = new ProfitInputData();
         input.setConfMap(badConfMap);

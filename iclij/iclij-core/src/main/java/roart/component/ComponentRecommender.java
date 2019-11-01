@@ -14,6 +14,8 @@ import java.util.concurrent.Future;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,12 +145,10 @@ public class ComponentRecommender extends ComponentNoML {
         //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
         Map resultMaps = (Map) param.getResultMap();
         for (int i = 0; i < 2; i++) {
-        Object[] keys = new Object[2];
-        keys[0] = PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
-        keys[1] = i;
-        keys = ComponentMLAggregator.getRealKeys(keys, profitdata.getInputdata().getConfMap().keySet());
+        Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, i);
+        //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
         //System.out.println(okListMap.get(keys));
-        Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keys);
+        Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keyPair);
         //System.out.println(okConfMap.keySet());
         //System.out.println(okListMap.keySet());
         Map maps = (Map) resultMaps; //.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
@@ -176,25 +176,25 @@ public class ComponentRecommender extends ComponentNoML {
         }
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         //Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
-        handleBuySell(profitdata, (ComponentData) param, keys, confidenceFactor, list0);
+        handleBuySell(profitdata, (ComponentData) param, keyPair, confidenceFactor, list0);
         //handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list1);
         }
     }
 
-    private void handleBuySell(ProfitData profitdata, ComponentData param, Object[] keys, Double confidenceFactor, List<MyElement> list) {
+    private void handleBuySell(ProfitData profitdata, ComponentData param, Pair<String, Integer> keys, Double confidenceFactor, List<MyElement> list) {
         int listSize = list.size();
         int recommend = param.getInput().getConfig().recommendTopBottom();
         if (listSize < recommend * 3) {
             return;
         }
-        for (Object[] key : profitdata.getInputdata().getConfMap().keySet()) {
+        for (Pair<String, Integer> key : profitdata.getInputdata().getConfMap().keySet()) {
             try {
-                Object keyone = key[1];
+                Object keyone = key.getRight();
                 String keyonetext = "";
                 if (keyone != null) {
-                    keyonetext = "" + (int)key[1];
+                    keyonetext = "" + (int)key.getRight();
                 }
-                System.out.println("e " + ((String)key[0]) + " " + keyonetext);
+                System.out.println("e " + ((String)key.getLeft()) + " " + keyonetext);
             } catch (Exception e) {
                 log.error("grr" + key);
             }
