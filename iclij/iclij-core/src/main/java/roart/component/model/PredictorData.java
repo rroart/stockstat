@@ -10,11 +10,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.util.ServiceUtil;
 
-public class PredictorData extends ComponentData {
-    
-    public PredictorData() {
-        
-    }
+public class PredictorData extends ComponentMLData {
     
     public PredictorData(ComponentData param) {
         super(param);
