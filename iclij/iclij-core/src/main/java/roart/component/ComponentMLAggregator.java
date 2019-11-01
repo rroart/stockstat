@@ -51,6 +51,9 @@ public abstract class ComponentMLAggregator extends ComponentML {
     @Override
     public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
         ComponentMLData param = (ComponentMLData) componentparam;
+        if (positions == null) {
+            return;
+        }
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         System.out.println("c " + aResultMap.keySet());

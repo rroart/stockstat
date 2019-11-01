@@ -171,6 +171,9 @@ public abstract class ComponentMLIndicator extends ComponentML {
     @Override
     public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
         MLIndicatorData param = (MLIndicatorData) componentparam;
+        if (positions == null) {
+            return;
+        }
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         int resultIndex = 0;
