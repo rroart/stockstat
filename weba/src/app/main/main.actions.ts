@@ -24,6 +24,7 @@ export enum MainActionTypes {
   SETENDDATE = '[Main] Set end date',
   GETEVOLVE = '[Main] Get evolve',
   GETCONTENT = '[Main] Get content',
+  GETCONTENTGRAPH = '[Main] Get content graph',
   NEWTAB = '[Main] New tab',
   CHANGE_ANIMATIONS_PAGE = '[Main] Change Animations Page',
   CHANGE_ANIMATIONS_PAGE_DISABLED = '[Main] Change Animations Page Disabled',
@@ -172,6 +173,12 @@ export class ActionGetcontent implements Action {
   readonly type = MainActionTypes.GETCONTENT;
 
   constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetcontentGraph implements Action {
+  readonly type = MainActionTypes.GETCONTENTGRAPH;
+
+  constructor(readonly payload: { config: any, value: any }) {}
 }
 
 export class ActionNewtab implements Action {

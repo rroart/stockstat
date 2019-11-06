@@ -24,6 +24,7 @@ import { selectAuth } from '@app/core/auth/auth.selectors';
 import { Client, ConvertToSelect } from './Client';
 
 import { MytableComponent } from './table/mytable.component';
+import { MyimageComponent } from './table/myimage.component';
 
 interface State extends BaseSettingsState, BaseMainState {}
 
@@ -51,7 +52,8 @@ export class MainComponent implements OnInit, OnDestroy {
   ];
 
   mytabs: any;
-
+  mystuff: any;
+  
   constructor(
     private store: Store<State>,
     private router: Router,

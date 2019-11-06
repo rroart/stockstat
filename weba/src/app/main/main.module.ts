@@ -33,6 +33,7 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { ConfigtreeComponent } from './configuration/configtree.component';
 import { TreeviewComponent } from './configuration/treeview.component';
 import { MytableComponent } from './table/mytable.component';
+import { MyimageComponent } from './table/myimage.component';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 
@@ -55,6 +56,7 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
     ConfigurationComponent,
     ConfigtreeComponent,
     TreeviewComponent,
+    MyimageComponent,
     MytableComponent,
     /*
     TodosContainerComponent,

@@ -3,6 +3,7 @@ import { LocalStorageService } from '@app/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { asyncScheduler, of } from 'rxjs';
+import { MytableComponent } from './table/mytable.component';
 
 import {
   catchError,
@@ -24,6 +25,7 @@ import {
   ActionRetrieve,
   ActionError,
   ActionGetcontent,
+  ActionGetcontentGraph,
   ActionNewtab,
   MainActionTypes
 } from './main.actions';
@@ -110,6 +112,38 @@ export class MainEffects {
 	param['market'] = config['market'];
 	param['config'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getcontent', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	//console.log(res);
+	//return new ActionSetmarkets({ markets: res['markets']});
+	//return res['markets'];
+	}
+      )
+    );
+
+  @Effect()
+  getcontentgraph = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetcontentGraph>(MainActionTypes.GETCONTENTGRAPH),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetcontentGraph) => {
+        console.log(action);
+	const config = action.payload.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+	const id = action.payload.value;
+	console.log(id);
+	const ids = [param['market'] + "," + id];
+	param['ids'] = ids;
+	console.log(ids);
+	const guisize = new Object();
+	guisize['x']=600;
+    	guisize['y']=400;
+        param['guiSize'] = guisize;
+        return this.service.retrieve('/getcontentgraph2', param).pipe(
           map(res => new ActionNewtab(res.list)),
           catchError(error => of(new ActionError({ error })))
         )

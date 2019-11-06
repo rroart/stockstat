@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSort } from '@angular/material/sort';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 
-import { ActionIncrement } from '../main.actions';
+import { ActionIncrement, ActionGetcontentGraph } from '../main.actions';
 
 import { routeAnimations, TitleService } from '@app/core';
 //import { tick } from '@angular/core';
@@ -63,7 +63,8 @@ export class MytableComponent implements OnInit, OnDestroy {
     const array = this.value;
     //console.log(myarray);
     console.log(this.value);
-    const array2 = array[0].rows;
+
+    const array2 = array.rows;
     console.log(array2);
     const head = array2[0];
     const rest = array2.slice(1);
@@ -127,6 +128,14 @@ export class MytableComponent implements OnInit, OnDestroy {
   }
 
 @ViewChild(MatSort, { static: false }) sort: MatSort;
+
+handleButtonClick(config, value) {
+    console.log("hhaha");
+    console.log(config);
+    console.log(value);
+    //console.log(props);
+    this.store.dispatch(new ActionGetcontentGraph({ config, value }));
+}
 
 async delay(ms: number) {
     await new Promise(resolve => setTimeout(()=>resolve(), ms)).then(()=>console.log("fired"));
