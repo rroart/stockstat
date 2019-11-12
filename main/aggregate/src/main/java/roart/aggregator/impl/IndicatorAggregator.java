@@ -312,6 +312,11 @@ public abstract class IndicatorAggregator extends Aggregator {
 			    IndicatorUtils.filterNonExistingClassifications3(labelMapShort, learnMap);
                             
                             Map<String, Long> countMap = getCountMap(labelMapShort, learnMap);
+                            long count = countMap.values().stream().distinct().count();
+                            if (count == 1) {
+                                log.info("Nothing to learn");
+                                continue;
+                            }
                             //countMap = learnMap.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getRight().getRight()), Collectors.counting()));                            
 
                             int outcomes; // = (int) map.values().stream().distinct().count();
@@ -450,6 +455,11 @@ public abstract class IndicatorAggregator extends Aggregator {
                             }
 			    IndicatorUtils.filterNonExistingClassifications3(labelMapShort, learnMap);
 			    Map<String, Long> countMap = getCountMap(labelMapShort, learnMap);
+                            long count = countMap.values().stream().distinct().count();
+                            if (count == 1) {
+                                log.info("Nothing to learn");
+                                continue;
+                            }
                             int outcomes = (int) learnMap.values().stream().distinct().count();
                             outcomes = 4;
                             log.debug("Outcomes {}", outcomes);

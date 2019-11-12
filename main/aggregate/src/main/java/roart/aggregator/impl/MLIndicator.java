@@ -321,6 +321,11 @@ public class MLIndicator extends Aggregator {
                 Map<String, Pair<Object, Double>> learnMap = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
                     Map<Object, Long> countMap1 = learnMap.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
+                    long count = countMap1.values().stream().distinct().count();
+                    if (count == 1) {
+                        log.info("Nothing to learn");
+                        continue;
+                    }
                     // make OO of this, create object
                     Object[] meta1 = new Object[6];
                     meta1[0] = mldao.getName();
@@ -402,6 +407,11 @@ public class MLIndicator extends Aggregator {
                 Map<String, Pair<Object, Double>> learnMap = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
                     Map<Object, Long> countMap1 = learnMap.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
+                    long count = countMap1.values().stream().distinct().count();
+                    if (count == 1) {
+                        log.info("Nothing to learn");
+                        continue;
+                    }
                     // make OO of this, create object
                     Object[] meta1 = new Object[6];
                     meta1[0] = mldao.getName();
