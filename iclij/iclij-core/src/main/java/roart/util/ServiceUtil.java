@@ -185,7 +185,7 @@ public class ServiceUtil {
             List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
             listInc = mergeList(listInc);
             listDec = mergeList(listDec);
-            List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+            List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec, true);
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
             lists.addAll(subLists);
         }
@@ -489,6 +489,36 @@ public class ServiceUtil {
         return common;
     }
 
+    public static List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec, boolean verify) {
+        // and a new list for common items
+        List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        List<String> commonIds = new ArrayList<>(incIds);
+        commonIds.retainAll(decIds);
+        List<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toList());
+        common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toList()));
+        listInc.removeAll(common);
+        listDec.removeAll(common);
+        if (true) {
+            List<IncDecItem> mergecommon = new ArrayList<>();
+            for (String id : commonIds) {
+                IncDecItem inc = common.stream().filter(item -> id.equals(item.getId()) && item.isIncrease()).findAny().orElse(null);
+                IncDecItem dec = common.stream().filter(item -> id.equals(item.getId()) && !item.isIncrease()).findAny().orElse(null);
+                IncDecItem mergeitem = new IncDecItem();
+                mergeitem.setDate(LocalDate.now());
+                mergeitem.setDescription("Up: " + inc.getDescription() + " Down: " + dec.getDescription());
+                mergeitem.setId(id);
+                mergeitem.setIncrease(inc.getScore() > dec.getScore());
+                mergeitem.setMarket(inc.getMarket());
+                mergeitem.setName(inc.getName());
+                mergeitem.setScore(mergeitem.isIncrease() ? inc.getScore() - dec.getScore() : dec.getScore() - inc.getScore());
+                mergecommon.add(mergeitem);
+            }
+            common = mergecommon;
+        }
+        return common;
+    }
+
     public static IclijServiceResult getVerify(ComponentInput componentInput) throws Exception {
 	String type = "Verify";
         componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
@@ -533,7 +563,7 @@ public class ServiceUtil {
         List<IncDecItem> listDec = new ArrayList<>(myData.decs);
         listInc = mergeList(listInc);
         listDec = mergeList(listDec);
-        List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec);
+        List<IncDecItem> listIncDec = moveAndGetCommon(listInc, listDec, verificationdays > 0);
         Map<String, Object> trendMap = new HashMap<>();
         Short mystartoffset = market.getConfig().getStartoffset();
         short startoffset = mystartoffset != null ? mystartoffset : 0;
@@ -547,7 +577,7 @@ public class ServiceUtil {
             } catch (ParseException e) {
                 log.error(Constants.EXCEPTION, e);
             }            
-            findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, startoffset);
+            findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, listIncDec, startoffset);
             /*
             List<MapList> inc = new ArrayList<>();
             List<MapList> dec = new ArrayList<>();

@@ -262,7 +262,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }            
-                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, startoffset);
+                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset);
             }
 
             if (true) {

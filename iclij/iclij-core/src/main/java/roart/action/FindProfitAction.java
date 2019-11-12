@@ -144,7 +144,7 @@ public class FindProfitAction extends MarketAction {
     }
 
     public void getVerifyProfit(int days, LocalDate date, ControlService srv,
-            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, int startoffset) {
+            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset) {
         log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
@@ -160,6 +160,7 @@ public class FindProfitAction extends MarketAction {
         VerifyProfit verify = new VerifyProfit();
         verify.doVerify(listInc, days, true, categoryValueMap, oldDate, startoffset);
         verify.doVerify(listDec, days, false, categoryValueMap, oldDate, startoffset);
+        verify.doVerify(listIncDec, days, false, categoryValueMap, oldDate, startoffset);
         //return verify.getTrend(days, categoryValueMap);
     }
 
