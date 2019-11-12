@@ -871,7 +871,7 @@ public class MLIndicator extends Aggregator {
     public String getFilenamePart(List<AbstractIndicator> indicators) {
         String ret = "";
         for (AbstractIndicator indicator : indicators) {
-            ret = ret + indicator.getName() + " ";
+            ret = ret + indicator.getName() + "_";
             if (indicator.wantForExtras()) {
                 ret = ret + "d" + "_";
             }
@@ -905,7 +905,7 @@ public class MLIndicator extends Aggregator {
     }
     
     public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators) {
-        return market + "_" + getName() + "_" + dao.getName() + "_" +  model.getName() + "_" + in + "_" + out + "_" + getFilenamePart(indicators);
+        return market + "_" + getName() + "_" + dao.getName() + "_" +  model.getName() + "_" + getFilenamePart(indicators) + conf.getAggregatorsIndicatorFuturedays() + "_" + conf.getAggregatorsIndicatorThreshold() + "_" + in + "_" + out;
     }
 }
 
