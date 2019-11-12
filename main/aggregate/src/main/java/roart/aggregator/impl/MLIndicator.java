@@ -180,7 +180,7 @@ public class MLIndicator extends Aggregator {
             if (list[0][newlistidx] == null || list[0][curlistidx] == null) {
                 continue;
             }
-            double change = list[0][newlistidx]/list[0][curlistidx] - 1;
+            double change = list[0][newlistidx]/list[0][curlistidx];
             double[] merged = ArraysUtil.convert(indicatorMap.get(id));
 
             // cat 1.0 is for >= threshold, 2.0 is for belov
