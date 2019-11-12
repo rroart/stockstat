@@ -561,11 +561,14 @@ public abstract class MarketAction extends Action {
             Double value = null;
             if (offsetDays == null) {
                 value = list0.get(list0.size() - 1);
+                if (value != null) {
+                    value = 1 + (value / 100);
+                }
             } else {
                 Double curValue = list0.get(list0.size() - 1);
                 Double oldValue = list0.get(list0.size() - 1 - offsetDays);
                 if (curValue != null && oldValue != null) {
-                    value = (curValue / oldValue - 1) * 100;
+                    value = curValue / oldValue;
                 }
             }
             if (value == null) {
