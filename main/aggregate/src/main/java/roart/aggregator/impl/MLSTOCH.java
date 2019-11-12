@@ -163,5 +163,10 @@ public class MLSTOCH extends IndicatorAggregator {
         return Constants.STOCH + "_" + getAfterBefore().getFilePart();
     }
     
+    @Override
+    protected double getAggregatorsThreshold() {
+        return conf.getMLSTOCHThreshold();
+    }
+    
 }
 

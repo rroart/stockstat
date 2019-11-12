@@ -270,6 +270,11 @@ public class MLMACD extends IndicatorAggregator {
         return ret;
     }
 
+    @Override
+    protected double getAggregatorsThreshold() {
+        return conf.getMLMACDThreshold();
+    }
+    
     /*
     @Override
     protected List<SubType> wantedMergeSubTypes() {

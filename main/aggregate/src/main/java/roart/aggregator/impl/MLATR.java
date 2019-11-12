@@ -164,5 +164,10 @@ public class MLATR extends IndicatorAggregator {
         return Constants.ATR + "_" + getAfterBefore().getFilePart();
     }
     
+    @Override
+    protected double getAggregatorsThreshold() {
+        return conf.getMLATRThreshold();
+    }
+    
 }
 

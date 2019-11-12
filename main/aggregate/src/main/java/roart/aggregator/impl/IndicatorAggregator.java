@@ -1129,7 +1129,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                     mystart = 0;
                 }
             }
-            if (list[myend] < list[myend + afterbefore.after]) {
+            double change = list[myend + afterbefore.after] / list[myend] - 1;
+            if (change < getAggregatorsThreshold()) {
                 textlabel = labels[0];
             } else {
                 textlabel = labels[1];
@@ -1169,7 +1170,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                 mystart = 0;
             }
             if (end + afterbefore.after < listsize) {
-                if (list[myend] < list[myend + afterbefore.after]) {
+                double change = list[myend + afterbefore.after] / list[myend] - 1;
+                if (change < getAggregatorsThreshold()) {
                     textlabel = labels[0];
                 } else {
                     textlabel = labels[1];
@@ -1196,6 +1198,8 @@ public abstract class IndicatorAggregator extends Aggregator {
          */
         return triples;
     }
+
+    protected abstract double getAggregatorsThreshold();
 
     /**
      * 

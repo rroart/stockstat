@@ -271,6 +271,7 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATORINTERVALDAYS = "aggregators.indicator.intervaldays";
     public static final String AGGREGATORSINDICATORTHRESHOLD = "aggregators.indicator.threshold";
     public static final String AGGREGATORSMLMACD = "aggregators.mlmacd[@enable]";
+    public static final String AGGREGATORSMLMACDTHRESHOLD = "aggregators.mlmacd.threshold";
     public static final String AGGREGATORSMLMACDMLCONFIG = "aggregators.mlmacd.mlconfig";
     public static final String AGGREGATORSMLRSI = "aggregators.mlrsi[@enable]";
     public static final String AGGREGATORSMLRSIMLCONFIG = "aggregators.mlrsi.mlconfig";
@@ -282,24 +283,28 @@ public class ConfigConstants {
     public static final String AGGREGATORSMLRSISELLSRSILIMIT = "aggregators.mlrsi.sell.srsilimit";
     public static final String AGGREGATORSMLRSIDAYSBEFORELIMIT = "aggregators.mlrsi.daysbeforelimit";
     public static final String AGGREGATORSMLRSIDAYSAFTERLIMIT = "aggregators.mlrsi.daysafterlimit";
+    public static final String AGGREGATORSMLRSITHRESHOLD = "aggregators.mlrsi.threshold";
     public static final String AGGREGATORSMLATR = "aggregators.mlatr[@enable]";
     public static final String AGGREGATORSMLATRMLCONFIG = "aggregators.mlatr.mlconfig";
     public static final String AGGREGATORSMLATRBUYLIMIT = "aggregators.mlatr.buylimit";
     public static final String AGGREGATORSMLATRSELLLIMIT = "aggregators.mlatr.selllimit";
     public static final String AGGREGATORSMLATRDAYSBEFORELIMIT = "aggregators.mlatr.daysbeforelimit";
     public static final String AGGREGATORSMLATRDAYSAFTERLIMIT = "aggregators.mlatr.daysafterlimit";
+    public static final String AGGREGATORSMLATRTHRESHOLD = "aggregators.mlatr.threshold";
     public static final String AGGREGATORSMLCCI = "aggregators.mlcci[@enable]";
     public static final String AGGREGATORSMLCCIMLCONFIG = "aggregators.mlcci.mlconfig";
     public static final String AGGREGATORSMLCCIBUYLIMIT = "aggregators.mlcci.buylimit";
     public static final String AGGREGATORSMLCCISELLLIMIT = "aggregators.mlcci.selllimit";
     public static final String AGGREGATORSMLCCIDAYSBEFORELIMIT = "aggregators.mlcci.daysbeforelimit";
     public static final String AGGREGATORSMLCCIDAYSAFTERLIMIT = "aggregators.mlcci.daysafterlimit";
+    public static final String AGGREGATORSMLCCITHRESHOLD = "aggregators.mlcci.threshold";
     public static final String AGGREGATORSMLSTOCH = "aggregators.mlstoch[@enable]";
     public static final String AGGREGATORSMLSTOCHMLCONFIG = "aggregators.mlstoch.mlconfig";
     public static final String AGGREGATORSMLSTOCHBUYLIMIT = "aggregators.mlstoch.buylimit";
     public static final String AGGREGATORSMLSTOCHSELLLIMIT = "aggregators.mlstoch.selllimit";
     public static final String AGGREGATORSMLSTOCHDAYSBEFORELIMIT = "aggregators.mlstoch.daysbeforelimit";
     public static final String AGGREGATORSMLSTOCHDAYSAFTERLIMIT = "aggregators.mlstoch.daysafterlimit";
+    public static final String AGGREGATORSMLSTOCHTHRESHOLD = "aggregators.mlstoch.threshold";
     public static final String AGGREGATORSMLMULTI = "aggregators.mlmulti[@enable]";
     public static final String AGGREGATORSMLMULTIDAYSBEFORELIMIT = "aggregators.mlmulti.daysbeforelimit";
     public static final String AGGREGATORSMLMULTIDAYSAFTERLIMIT = "aggregators.mlmulti.daysafterlimit";
@@ -310,4 +315,5 @@ public class ConfigConstants {
     public static final String AGGREGATORSMLMULTICCI = "aggregators.mlmulti.cci[@enable]";
     public static final String AGGREGATORSMLMULTISTOCH = "aggregators.mlmulti.stoch[@enable]";
     public static final String AGGREGATORSMLMULTISTOCHRSI = "aggregators.mlmulti.stochrsi[@enable]";
+    public static final String AGGREGATORSMLMULTITHRESHOLD = "aggregators.mlmulti.threshold";
 }

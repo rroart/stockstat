@@ -189,4 +189,10 @@ public class MLMulti extends IndicatorAggregator {
         }
         return ret;
     }
+
+    @Override
+    protected double getAggregatorsThreshold() {
+        return conf.getMLMULTIThreshold();
+    }
+    
 }

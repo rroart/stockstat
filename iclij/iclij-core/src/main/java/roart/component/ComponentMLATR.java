@@ -106,6 +106,7 @@ public abstract class ComponentMLATR extends ComponentMLAggregator {
         confList.add(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLATRBUYLIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLATRSELLLIMIT);
+        confList.add(ConfigConstants.AGGREGATORSMLATRTHRESHOLD);
         return confList;
     }
 

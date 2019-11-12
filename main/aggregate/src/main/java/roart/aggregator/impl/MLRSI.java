@@ -197,6 +197,11 @@ public class MLRSI extends IndicatorAggregator {
         ret = ret + getAfterBefore().getFilePart();
         return ret;
     }
+
+    @Override
+    protected double getAggregatorsThreshold() {
+        return conf.getMLRSIThreshold();
+    }
     
     /*
     @Override

@@ -997,6 +997,10 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDMLCONFIG);
     }
 
+    public double getMLMACDThreshold() {
+        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDTHRESHOLD);
+    }
+
     public boolean wantMLRSI() {
         return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSI) &&
                 wantAggregators() &&
@@ -1033,6 +1037,10 @@ public class MyMyConfig extends MyConfig {
         return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT);
     }
 
+    public double getMLRSIThreshold() {
+        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSITHRESHOLD);
+    }
+
     public boolean wantMLATR() {
         return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLATR) &&
                 wantAggregators() &&
@@ -1058,6 +1066,10 @@ public class MyMyConfig extends MyConfig {
 
     public int getMLATRSellLimit() {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRSELLLIMIT);
+    }
+
+    public double getMLATRThreshold() {
+        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRTHRESHOLD);
     }
 
     public boolean wantMLCCI() {
@@ -1087,6 +1099,10 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCISELLLIMIT);
     }
 
+    public double getMLCCIThreshold() {
+        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCITHRESHOLD);
+    }
+
     public boolean wantMLSTOCH() {
         return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCH) &&
                 wantAggregators() &&
@@ -1112,6 +1128,10 @@ public class MyMyConfig extends MyConfig {
 
     public int getMLSTOCHSellLimit() {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHSELLLIMIT);
+    }
+
+    public double getMLSTOCHThreshold() {
+        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHTHRESHOLD);
     }
 
     public boolean wantAggregatorsIndicatorMACD() {
@@ -1204,6 +1224,10 @@ public class MyMyConfig extends MyConfig {
 
     public int getMLMultiDaysAfterLimit() {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT);
+    }
+
+    public double getMLMULTIThreshold() {
+        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
     }
 
     public boolean wantAggregatorsMlmultiMACD() {

@@ -153,6 +153,7 @@ public abstract class ComponentMLMulti extends ComponentMLAggregator {
         list.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
         list.add(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
         list.add(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
+        list.add(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
         return list;
     }
 

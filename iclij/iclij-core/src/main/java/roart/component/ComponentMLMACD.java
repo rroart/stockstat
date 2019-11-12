@@ -113,6 +113,7 @@ public abstract class ComponentMLMACD extends ComponentMLAggregator {
         confList.add(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML);
         confList.add(ConfigConstants.AGGREGATORSMLMACDMACDML);
         confList.add(ConfigConstants.AGGREGATORSMLMACDSIGNALML);
+        confList.add(ConfigConstants.AGGREGATORSMLMACDTHRESHOLD);
         return confList;
     }
 

@@ -164,5 +164,10 @@ public class MLCCI extends IndicatorAggregator {
         return Constants.CCI + "_" + getAfterBefore().getFilePart();
     }
     
+    @Override
+    protected double getAggregatorsThreshold() {
+        return conf.getMLCCIThreshold();
+    }
+    
 }
 
