@@ -165,6 +165,7 @@ class Classify:
       print(tf.__version__)
       if hasattr(myobj, 'modelInt'):
         if myobj.modelInt == 1:
+
             modelname = 'dnn'
             config = myobj.tensorflowDNNConfig
         if myobj.modelInt == 2:
@@ -188,6 +189,9 @@ class Classify:
         if myobj.modelInt == 8:
             modelname = 'lir'
             config = myobj.tensorflowLIRConfig
+        if myobj.modelInt == 9:
+            modelname = 'cnn2'
+            config = myobj.tensorflowCNN2Config
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'dnn':
@@ -206,6 +210,8 @@ class Classify:
             config = myobj.tensorflowGRUConfig
         if myobj.modelName == 'cnn':
             config = myobj.tensorflowCNNConfig
+        if myobj.modelName == 'cnn2':
+            config = myobj.tensorflowCNN2Config
         return config, myobj.modelName
 
     def wantDynamic(self, myobj):

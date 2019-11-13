@@ -275,7 +275,7 @@ class Classify:
 
         print("mydim", mydim)
         print (train.shape)
-        if config.name == "cnn":
+        if config.name == "cnn" or config.name == "cnn2":
             mydim = train.shape[1:]
             print("mydim2", mydim)
         print("mydim", mydim)
@@ -367,6 +367,9 @@ class Classify:
         if myobj.modelInt == 5:
             modelname = 'cnn'
             config = myobj.pytorchCNNConfig
+        if myobj.modelInt == 6:
+            modelname = 'cnn2'
+            config = myobj.pytorchCNN2Config
         return config, modelname
       if hasattr(myobj, 'modelName'):
         if myobj.modelName == 'mlp':
@@ -379,6 +382,8 @@ class Classify:
           config = myobj.pytorchLSTMConfig
         if myobj.modelName == 'gru':
           config = myobj.pytorchGRUConfig
+        if myobj.modelName == 'cnn2':
+          config = myobj.pytorchCNN2Config
         return config, myobj.modelName
 
     def wantDynamic(self, myobj):
@@ -418,6 +423,7 @@ class Classify:
         # load model if:
         # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
+            print("Loading model")
             checkpoint = torch.load(self.getpath(myobj) + myobj.filename + ".pt")
             model = checkpoint['model']
         else:
