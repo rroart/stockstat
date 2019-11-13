@@ -9,13 +9,13 @@ PORT=8008
 
 if [ "$1" = "t" ]; then
     PORT=8008
-    MODELS=`seq 1 7`
+    MODELS="`seq 1 7` 9"
     CONFIG=( "" "${TENSORFLOWCONFIG[@]}" )
 fi
 
 if [ "$1" = "p" ]; then
     PORT=8018
-    MODELS=`seq 1 5`
+    MODELS=`seq 1 6`
     CONFIG=( "" "${PYTORCHCONFIG[@]}" )
     TIMEMODELS=2
     TIMECONFIG[2]="\"pytorchRNNConfig\" : { \"name\" : \"rnn\", \"steps\" : 1000, \"hidden\" : 100, \"layers\" : 2, \"slide_stride\" : 2, \"lr\" : 0.01 }"
@@ -32,9 +32,14 @@ if [ -n "$2" ]; then
 fi
 
 DATASETARR[1]=\"mnist\"
-DATASETARRLEN=${#DATASETARR[@]}
+DATASETARR[2]=\"cifar10\"
+DATASETARRLEN=1
+#${#DATASETARR[@]}
+
+DATASETS=${DATASETARR[@]}
 
 OUTCOMESARR[1]=10
+OUTCOMESARR[2]=10
 
 TIMEDATASETARR[1]=\"dailymintemperatures\"
 TIMEDATASETARRLEN=${#TIMEDATASETARR[@]}
