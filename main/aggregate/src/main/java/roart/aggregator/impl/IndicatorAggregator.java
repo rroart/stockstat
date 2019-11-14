@@ -170,7 +170,8 @@ public abstract class IndicatorAggregator extends Aggregator {
         resultMap = new HashMap<>();
         otherResultMap = new HashMap<>();
         objectMap = new HashMap<>();
-        probabilityMap = new HashMap<>();
+        accuracyMap = new HashMap<>();
+        lossMap = new HashMap<>();
         resultMetaArray = new ArrayList<>();
         long time2 = System.currentTimeMillis();
         AfterBeforeLimit afterbefore = getAfterBefore();
@@ -353,7 +354,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
                             getResultMetas().add(resultMeta);
-                            probabilityMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
+                            accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
+                            lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                             meta[6] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
 
@@ -522,8 +524,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                     continue;
                 }
 
-                probabilityMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
-                handleResultMetaAccuracy(testCount, result);
+                accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
+                lossMap.put(mldao.getName() + model.getName(), result.getLoss());
 
                 addEventRow(subType, countMap2);
                 Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
@@ -790,7 +792,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                         log.debug("Outcomes {}", outcomes);
                         int size = getValidateSize(map, mlmeta);
                         Double testaccuracy = mldao.learntest(nnConfigs, this, map, model, size, outcomes, mapTime, null);  
-                        probabilityMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, testaccuracy);
+                        accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, testaccuracy);
                         IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                         Map<String, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e), Collectors.counting()));                            
                         // make OO of this, create object
@@ -1597,7 +1599,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                         String val = "";
                         // workaround
                         try {
-                            val = "" + MLClassifyModel.roundme((Double) probabilityMap.get("" + model . getId() + key + subType + mapType));
+                            val = "" + MLClassifyModel.roundme((Double) accuracyMap.get("" + model . getId() + key + subType + mapType));
                             //val = "" + MLClassifyModel.roundme(mldao.eval(model . getId(), key, subType + mapType));
                         } catch (Exception e) {
                             log.error("Exception fix later, refactor", e);

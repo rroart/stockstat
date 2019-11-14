@@ -235,7 +235,8 @@ public class MLIndicator extends Aggregator {
         log.info("time0 {}", (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
         otherResultMap = new HashMap<>();
-        probabilityMap = new HashMap<>();
+        accuracyMap = new HashMap<>();
+        lossMap = new HashMap<>();
         resultMetaArray = new ArrayList<>();
         otherMeta = new ArrayList<>();
         objectMap = new HashMap<>();
@@ -358,7 +359,8 @@ public class MLIndicator extends Aggregator {
                         continue;
                     }
                     Map<String, Double[]> classifyResult = result.getCatMap();
-                    probabilityMap.put(mldao.getName() + model.getName(), result.getAccuracy());
+                    accuracyMap.put(mldao.getName() + model.getName(), result.getAccuracy());
+                    lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                     meta1[4] = result.getAccuracy();
                     resultMeta1.setTestAccuracy(result.getAccuracy());
                     mapResult.put(model, classifyResult);
@@ -456,7 +458,8 @@ public class MLIndicator extends Aggregator {
                     continue;
                 }
                 Map<String, Double[]> classifyResult = result.getCatMap();
-                probabilityMap.put(mldao.getName() + model.getName(), result.getAccuracy());
+                accuracyMap.put(mldao.getName() + model.getName(), result.getAccuracy());
+                lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                 Object[] meta = resultMetaArray.get(testCount);
                 ResultMeta resultMeta = getResultMetas().get(testCount);
                 meta[4] = result.getAccuracy();
@@ -657,7 +660,7 @@ public class MLIndicator extends Aggregator {
                 Map<String, Pair<Object, Double>> map = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
                     Double testAccuracy = mldao.learntest(nnconfigs, this, map, model, arrayLength, 2, mapTime, null);  
-                    probabilityMap.put(mldao.getName() + model.getName(), testAccuracy);
+                    accuracyMap.put(mldao.getName() + model.getName(), testAccuracy);
                     IndicatorUtils.filterNonExistingClassifications2(labelMapShort, map);
                     Map<Object, Long> countMap = map.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getRight()), Collectors.counting()));                            
                     // make OO of this, create object
@@ -820,7 +823,7 @@ public class MLIndicator extends Aggregator {
                     String val = "";
                     // workaround
                     try {
-                        val = "" + MLClassifyModel.roundme((Double) probabilityMap.get(mldao.getName() + model.getId()));
+                        val = "" + MLClassifyModel.roundme((Double) accuracyMap.get(mldao.getName() + model.getId()));
                     } catch (Exception e) {
                         log.error("Exception fix later, refactor", e);
                     }

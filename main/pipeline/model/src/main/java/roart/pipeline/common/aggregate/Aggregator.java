@@ -27,7 +27,8 @@ public abstract class Aggregator extends PipelineResultData {
     protected Map<String, Object[]> objectMap;
     protected Map<String, Object[]> objectFixedMap;
     protected Map<String, Double[]> calculatedMap;
-    protected Map<String, Object> probabilityMap;
+    protected Map<String, Object> accuracyMap;
+    protected Map<String, Object> lossMap;
     protected Map<String, Object[]> otherResultMap;
     protected Map<String, Object[]> resultMap;
     protected List<Object[]> otherMeta;
@@ -97,7 +98,7 @@ public abstract class Aggregator extends PipelineResultData {
         map.put(PipelineConstants.OTHERRESULT, otherResultMap);
         map.put(PipelineConstants.RESULTMETA, resultMetas);
         map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
-        map.put(PipelineConstants.PROBABILITY, probabilityMap);
+        map.put(PipelineConstants.PROBABILITY, accuracyMap);
         map.put(PipelineConstants.OBJECT, objectMap);
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
         return map;
