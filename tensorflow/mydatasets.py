@@ -87,9 +87,9 @@ def getcifar10(config):
             #x_train = x_train.reshape(1, x_train.shape[0], x_train.shape[1])
             #x_test = x_test.reshape(1, x_test.shape[0], x_test.shape[1])
         else:
-            x_train = x_train.reshape((x_train.shape[0], 1024))
-            x_test = x_test.reshape((x_test.shape[0], 1024))
-            mydim = 1024
+            x_train = x_train.reshape((x_train.shape[0], 1024 * 3))
+            x_test = x_test.reshape((x_test.shape[0], 1024 * 3))
+            mydim = 1024 * 3
         y_train = np.int32(y_train)
         y_test = np.int32(y_test)
     else:
