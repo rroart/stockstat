@@ -21,7 +21,8 @@ public abstract class AbstractPredictor extends PipelineResultData {
     protected MyMyConfig conf;
     protected int category;
     protected Map<String, Object[]> resultMap;
-    protected Map<String, Object> probabilityMap;
+    protected Map<String, Object> accuracyMap;
+    protected Map<String, Object> lossMap;
    
     public AbstractPredictor(MyMyConfig conf, String string, int category) {
         this.title = string;
@@ -73,7 +74,8 @@ public abstract class AbstractPredictor extends PipelineResultData {
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);
-        map.put(PipelineConstants.PROBABILITY, probabilityMap);
+        map.put(PipelineConstants.ACCURACY, accuracyMap);
+        map.put(PipelineConstants.LOSS, lossMap);
         return map;
     }
 

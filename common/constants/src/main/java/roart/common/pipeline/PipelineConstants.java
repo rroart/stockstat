@@ -20,7 +20,8 @@ public class PipelineConstants {
     public static final String RESULTMETAARRAY = "resultmetaarray";
     public static final String RESULTMETA = "resultmeta";
     public static final String OTHERMETA = "othermeta";
-    public static final String PROBABILITY = "probability";
+    public static final String ACCURACY = "accuracy";
+    public static final String LOSS = "loss";
     public static final String PAIRDATE = "pairdate";
     public static final String PAIRLIST = "pairlist";
     public static final String PAIRDATELIST = "pairdatelist";

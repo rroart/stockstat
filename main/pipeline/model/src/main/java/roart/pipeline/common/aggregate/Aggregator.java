@@ -98,7 +98,8 @@ public abstract class Aggregator extends PipelineResultData {
         map.put(PipelineConstants.OTHERRESULT, otherResultMap);
         map.put(PipelineConstants.RESULTMETA, resultMetas);
         map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
-        map.put(PipelineConstants.PROBABILITY, accuracyMap);
+        map.put(PipelineConstants.ACCURACY, accuracyMap);
+        map.put(PipelineConstants.LOSS, lossMap);
         map.put(PipelineConstants.OBJECT, objectMap);
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
         return map;

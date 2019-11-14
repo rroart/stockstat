@@ -222,7 +222,7 @@ public class PredictorLSTM extends AbstractPredictor {
         }
         log.info("time0 {}", (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
-        probabilityMap = new HashMap<>();
+        accuracyMap = new HashMap<>();
 
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
         String nnconfigString = conf.getTensorflowPredictorLSTMConfig();
@@ -266,7 +266,7 @@ public class PredictorLSTM extends AbstractPredictor {
                         Map<String, Double[]> localMapResult = result.predictMap;
                         mapResult.putAll(localMapResult);
                         Map<String, Double> accuracyMap = result.accuracyMap;
-                        probabilityMap.putAll(accuracyMap);
+                        accuracyMap.putAll(accuracyMap);
                     }
                 }
             }
@@ -287,7 +287,7 @@ public class PredictorLSTM extends AbstractPredictor {
                 Double[] list3 = ArrayUtils.toObject(list);
                 LearnTestPredictResult result = mldao.predictone(new NeuralNetConfigs(), this, list3, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime);  
                 localMapResult.put(id, result.predicted);
-                probabilityMap.put(id, result.accuracy);
+                accuracyMap.put(id, result.accuracy);
             }
         }
         return localMapResult;
@@ -408,7 +408,7 @@ public class PredictorLSTM extends AbstractPredictor {
     public Object[] getResultItemTitle() {
         Object[] objs = new Object[fieldSize];
         int retindex = 0;
-        OptionalDouble average = probabilityMap
+        OptionalDouble average = accuracyMap
                 .values()
                 .stream()
                 .mapToDouble(a -> (Double) a)

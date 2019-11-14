@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregator.impl.MLATR;
 import roart.aggregator.impl.MLCCI;
+import roart.aggregator.impl.MLDataset;
 import roart.aggregator.impl.MLIndicator;
 import roart.aggregator.impl.MLMACD;
 import roart.aggregator.impl.MLMulti;
@@ -137,25 +138,25 @@ public class NeuralNetChromosome extends AbstractChromosome {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        Map<String, Object> map = (Map<String, Object>) pipelineData.getLocalResultMap().get(PipelineConstants.PROBABILITY);
-        if (map == null) {
+        Map<String, Object> accuracyMap = (Map<String, Object>) pipelineData.getLocalResultMap().get(PipelineConstants.ACCURACY);
+        if (accuracyMap == null) {
             int jj = 0;
         }
         double fitness = 0;
-        for (Entry<String, Object> entry : map.entrySet()) {
+        for (Entry<String, Object> entry : accuracyMap.entrySet()) {
             Double value = (Double) entry.getValue();
             if (value != null) {
                 fitness += value;
             }
         }
-        if (!map.isEmpty()) {
-            fitness = fitness / map.size();
-            double max = map.values().stream().mapToDouble(e -> (Double) e).max().orElse(-1);
-            List<Object> keys = Arrays.asList(map.entrySet().stream().filter(entry -> max == (double) entry.getValue())
+        if (!accuracyMap.isEmpty()) {
+            fitness = fitness / accuracyMap.size();
+            double max = accuracyMap.values().stream().mapToDouble(e -> (Double) e).max().orElse(-1);
+            List<Object> keys = Arrays.asList(accuracyMap.entrySet().stream().filter(entry -> max == (double) entry.getValue())
 .map(Map.Entry::getKey).toArray());
             log.info("Fit #{} {} {} {}", new Object[] { this.hashCode(), fitness, max, keys });
         }
-        log.info("Fit #{} {} {} {}", new Object[] { this.hashCode(), fitness, map.values().stream().mapToDouble(e -> (Double) e).summaryStatistics(), this.toString()});
+        log.info("Fit #{} {} {} {}", new Object[] { this.hashCode(), fitness, accuracyMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics(), this.toString()});
         return fitness;
     }
 
@@ -193,6 +194,10 @@ public class NeuralNetChromosome extends AbstractChromosome {
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
                 pipelineData = new MLIndicator(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+            }
+            if (ml.equals(PipelineConstants.DATASET)) {
+                //conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
+                pipelineData = new MLDataset(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
             }
             if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
                 value = mapper.writeValueAsString(nnConfigs.getTensorflowConfig().getTensorflowLSTMConfig());

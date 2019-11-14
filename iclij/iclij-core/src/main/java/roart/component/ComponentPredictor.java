@@ -122,7 +122,6 @@ public class ComponentPredictor extends ComponentML {
         handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
         
         Map<String, Object> maps = param.getResultMap();
-        Map<String, List<Double>> probabilityMap = (Map<String, List<Double>>) maps.get(PipelineConstants.PROBABILITY);
         
         return param;
     }
