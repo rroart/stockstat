@@ -112,4 +112,14 @@ public class MLClassifyDao {
     public void clean() {
         access.clean();
     }
+
+    public LearnTestClassifyResult dataset(NeuralNetConfigs nnconfigs,
+            MLClassifyModel model, Map<MLClassifyModel, Long> mapTime, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, String dataset) {
+        long time1 = System.currentTimeMillis();
+        LearnTestClassifyResult result = access.dataset(nnconfigs, model, neuralnetcommand, mlmeta, dataset);
+        long time = (System.currentTimeMillis() - time1);
+        log.info("time {} {}", model, time);
+        MLClassifyModel.mapAdder(mapTime, model, time);
+        return result;
+    }
 }

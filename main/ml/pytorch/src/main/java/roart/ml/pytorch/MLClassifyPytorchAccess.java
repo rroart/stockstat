@@ -312,6 +312,38 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
     }
 
     @Override
+    public LearnTestClassifyResult dataset(NeuralNetConfigs nnconfigs, MLClassifyModel model,
+            NeuralNetCommand neuralnetcommand,
+            MLMeta mlmeta, String dataset) {
+        LearnTestClassifyResult result = new LearnTestClassifyResult();
+        // return if
+        // persist is false and dynamic is false
+        boolean persist = model.wantPersist();
+        if (!neuralnetcommand.isMldynamic() && !persist) {
+            return result;
+        }
+        LearnTestClassify param = new LearnTestClassify();
+        param.setNeuralnetcommand(neuralnetcommand);
+        Map<String, String> configMap = new NeuralNetConfigs().getConfigMapRev();
+        String config = configMap.get(model.getKey());
+        if (nnconfigs == null) {
+            nnconfigs = new NeuralNetConfigs();
+        }
+        nnconfigs.getAndSet(config);
+        NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param);
+        param.setModelInt(model.getId());
+        LearnTestClassify ret = null;
+        try {
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/dataset");
+        } catch (Exception e) {
+            log.error("Exception", e);
+            return result;
+        }
+        result.setAccuracy(ret.getAccuracy());
+        return result;
+    }
+
+    @Override
     public void clean() {        
     }
 

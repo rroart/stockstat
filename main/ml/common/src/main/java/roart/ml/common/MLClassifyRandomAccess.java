@@ -145,5 +145,11 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     public void clean() {        
     }
 
+    @Override
+    public LearnTestClassifyResult dataset(NeuralNetConfigs nnconfigs, MLClassifyModel model,
+            NeuralNetCommand neuralnetcommand, MLMeta mlmeta, String dataset) {
+        return null;
+    }
+
 }
 

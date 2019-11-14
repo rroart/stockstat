@@ -33,5 +33,7 @@ public abstract class MLClassifyAccess {
     public abstract void clean();
 
     public abstract String getShortName();
+    
+    public abstract LearnTestClassifyResult dataset(NeuralNetConfigs nnconfigs, MLClassifyModel model, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, String dataset);
 }
 

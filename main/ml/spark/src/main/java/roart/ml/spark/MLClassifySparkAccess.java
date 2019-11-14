@@ -390,5 +390,12 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
         log.info("nam " + spark.sparkContext().appName() + " " + spark.sparkContext().applicationId() + " " + spark.sparkContext().applicationId());
         //spark.close();
     }
+
+
+    @Override
+    public LearnTestClassifyResult dataset(NeuralNetConfigs nnconfigs, MLClassifyModel model,
+            NeuralNetCommand neuralnetcommand, MLMeta mlmeta, String dataset) {
+        return null;
+    }
 }
 

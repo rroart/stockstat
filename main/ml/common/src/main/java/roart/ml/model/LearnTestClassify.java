@@ -95,6 +95,8 @@ public class LearnTestClassify {
     private Double loss;
     
     private Boolean exists;
+   
+    private String dataset;
     
     public TensorflowDNNConfig getTensorflowDNNConfig() {
         return tensorflowDNNConfig;
@@ -386,6 +388,14 @@ public class LearnTestClassify {
 
     public void setExists(Boolean exists) {
         this.exists = exists;
+    }
+
+    public String getDataset() {
+        return dataset;
+    }
+
+    public void setDataset(String dataset) {
+        this.dataset = dataset;
     }
 
 }
