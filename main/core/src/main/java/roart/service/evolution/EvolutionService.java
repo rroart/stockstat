@@ -585,12 +585,14 @@ public class EvolutionService {
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
         keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM);
         keys.add(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
         keys.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN2);
         keys.add(ConfigConstants.MACHINELEARNINGPYTORCHRNN);
         keys.add(ConfigConstants.MACHINELEARNINGPYTORCHGRU);
         keys.add(ConfigConstants.MACHINELEARNINGPYTORCHLSTM);

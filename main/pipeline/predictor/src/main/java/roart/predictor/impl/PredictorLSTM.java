@@ -229,7 +229,7 @@ public class PredictorLSTM extends AbstractPredictor {
         if (nnconfigString != null) {
             ObjectMapper mapper = new ObjectMapper();
             TensorflowPredictorLSTMConfig lstmConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
-            nnConfigs.setTensorflowConfig(new NeuralNetTensorflowConfig(null, null, null, null, null, null, null, null, lstmConfig));
+            nnConfigs.setTensorflowConfig(new NeuralNetTensorflowConfig(null, null, null, null, null, null, null, null, null, lstmConfig));
             //nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(lstmConfig);
         }
 

@@ -47,6 +47,9 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGTENSORFLOWCNN = "machinelearning.tensorflow.cnn[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWCNNPERSIST = "machinelearning.tensorflow.cnn.persist[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWCNNCONFIG = "machinelearning.tensorflow.cnn.config";
+    public static final String MACHINELEARNINGTENSORFLOWCNN2 = "machinelearning.tensorflow.cnn2[@enable]";
+    public static final String MACHINELEARNINGTENSORFLOWCNN2PERSIST = "machinelearning.tensorflow.cnn2.persist[@enable]";
+    public static final String MACHINELEARNINGTENSORFLOWCNN2CONFIG = "machinelearning.tensorflow.cnn2.config";
     public static final String MACHINELEARNINGTENSORFLOWRNN = "machinelearning.tensorflow.rnn[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWRNNPERSIST = "machinelearning.tensorflow.rnn.persist[@enable]";
     public static final String MACHINELEARNINGTENSORFLOWRNNCONFIG = "machinelearning.tensorflow.rnn.config";
@@ -65,6 +68,9 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGPYTORCHCNN = "machinelearning.pytorch.cnn[@enable]";
     public static final String MACHINELEARNINGPYTORCHCNNPERSIST = "machinelearning.pytorch.cnn.persist[@enable]";
     public static final String MACHINELEARNINGPYTORCHCNNCONFIG = "machinelearning.pytorch.cnn.config";
+    public static final String MACHINELEARNINGPYTORCHCNN2 = "machinelearning.pytorch.cnn2[@enable]";
+    public static final String MACHINELEARNINGPYTORCHCNN2PERSIST = "machinelearning.pytorch.cnn2.persist[@enable]";
+    public static final String MACHINELEARNINGPYTORCHCNN2CONFIG = "machinelearning.pytorch.cnn2.config";
     public static final String MACHINELEARNINGPYTORCHRNN = "machinelearning.pytorch.rnn[@enable]";
     public static final String MACHINELEARNINGPYTORCHRNNPERSIST = "machinelearning.pytorch.rnn.persist[@enable]";
     public static final String MACHINELEARNINGPYTORCHRNNCONFIG = "machinelearning.pytorch.rnn.config";

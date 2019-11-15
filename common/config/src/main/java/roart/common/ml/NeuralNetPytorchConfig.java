@@ -6,6 +6,8 @@ public class NeuralNetPytorchConfig {
 
     private PytorchCNNConfig pytorchCNNConfig;
 
+    private PytorchCNN2Config pytorchCNN2Config;
+
     private PytorchRNNConfig pytorchRNNConfig;
 
     private PytorchGRUConfig pytorchGRUConfig;
@@ -32,6 +34,14 @@ public class NeuralNetPytorchConfig {
         this.pytorchCNNConfig = pytorchCNNConfig;
     }
 
+    public PytorchCNN2Config getPytorchCNN2Config() {
+        return pytorchCNN2Config;
+    }
+
+    public void setPytorchCNN2Config(PytorchCNN2Config pytorchCNN2Config) {
+        this.pytorchCNN2Config = pytorchCNN2Config;
+    }
+
     public PytorchRNNConfig getPytorchRNNConfig() {
         return pytorchRNNConfig;
     }
@@ -56,11 +66,12 @@ public class NeuralNetPytorchConfig {
         this.pytorchLSTMConfig = pytorchLSTMConfig;
     }
 
-    public NeuralNetPytorchConfig(PytorchMLPConfig pytorchMLPConfig, PytorchCNNConfig pytorchCNNConfig,
+    public NeuralNetPytorchConfig(PytorchMLPConfig pytorchMLPConfig, PytorchCNNConfig pytorchCNNConfig, PytorchCNN2Config pytorchCNN2Config,
             PytorchRNNConfig pytorchRNNConfig, PytorchGRUConfig pytorchGRUConfig, PytorchLSTMConfig pytorchLSTMConfig) {
         super();
         this.pytorchMLPConfig = pytorchMLPConfig;
         this.pytorchCNNConfig = pytorchCNNConfig;
+        this.pytorchCNN2Config = pytorchCNN2Config;
         this.pytorchRNNConfig = pytorchRNNConfig;
         this.pytorchGRUConfig = pytorchGRUConfig;
         this.pytorchLSTMConfig = pytorchLSTMConfig;

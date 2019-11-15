@@ -55,6 +55,10 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
         return RandomUtil.random(random, 1, 5);
     }
 
+    protected int generateMaxpool() {
+        return RandomUtil.random(random, 1, 5);
+    }
+
     public double generateTol() {
         return RandomUtil.generatePow(random, 0.1, 1, 8);
     }

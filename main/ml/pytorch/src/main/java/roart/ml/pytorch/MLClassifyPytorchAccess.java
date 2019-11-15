@@ -20,6 +20,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.PytorchCNNConfig;
+import roart.common.ml.PytorchCNN2Config;
 import roart.common.ml.PytorchGRUConfig;
 import roart.common.ml.PytorchLSTMConfig;
 import roart.common.ml.PytorchMLPConfig;
@@ -54,6 +55,10 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         }
         if (conf.wantPytorchCNN()) {
             MLClassifyModel model = new MLClassifyPytorchCNNModel(conf);
+            models.add(model);
+        }
+        if (conf.wantPytorchCNN2()) {
+            MLClassifyModel model = new MLClassifyPytorchCNN2Model(conf);
             models.add(model);
         }
         if (conf.wantPytorchRNN()) {

@@ -9,6 +9,7 @@ import roart.common.ml.GemMMConfig;
 import roart.common.ml.GemSConfig;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
+import roart.common.ml.PytorchCNN2Config;
 import roart.common.ml.PytorchCNNConfig;
 import roart.common.ml.PytorchGRUConfig;
 import roart.common.ml.PytorchLSTMConfig;
@@ -18,6 +19,7 @@ import roart.common.ml.SparkLORConfig;
 import roart.common.ml.SparkLSVCConfig;
 import roart.common.ml.SparkMLPCConfig;
 import roart.common.ml.SparkOVRConfig;
+import roart.common.ml.TensorflowCNN2Config;
 import roart.common.ml.TensorflowCNNConfig;
 import roart.common.ml.TensorflowDNNConfig;
 import roart.common.ml.TensorflowGRUConfig;
@@ -33,6 +35,7 @@ import roart.gene.ml.impl.GemIConfigGene;
 import roart.gene.ml.impl.GemIcarlConfigGene;
 import roart.gene.ml.impl.GemMMConfigGene;
 import roart.gene.ml.impl.GemSConfigGene;
+import roart.gene.ml.impl.PytorchCNN2ConfigGene;
 import roart.gene.ml.impl.PytorchCNNConfigGene;
 import roart.gene.ml.impl.PytorchGRUConfigGene;
 import roart.gene.ml.impl.PytorchLSTMConfigGene;
@@ -42,6 +45,7 @@ import roart.gene.ml.impl.SparkLORConfigGene;
 import roart.gene.ml.impl.SparkLSVCConfigGene;
 import roart.gene.ml.impl.SparkMLPCConfigGene;
 import roart.gene.ml.impl.SparkOVRConfigGene;
+import roart.gene.ml.impl.TensorflowCNN2ConfigGene;
 import roart.gene.ml.impl.TensorflowCNNConfigGene;
 import roart.gene.ml.impl.TensorflowDNNConfigGene;
 import roart.gene.ml.impl.TensorflowGRUConfigGene;
@@ -73,6 +77,8 @@ public class NeuralNetConfigGeneFactory {
             return get((TensorflowMLPConfig) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN:
             return get((TensorflowCNNConfig) config);
+        case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2:
+            return get((TensorflowCNN2Config) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWRNN:
             return get((TensorflowRNNConfig) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWGRU:
@@ -85,6 +91,8 @@ public class NeuralNetConfigGeneFactory {
             return get((PytorchMLPConfig) config);
         case ConfigConstants.MACHINELEARNINGPYTORCHCNN:
             return get((PytorchCNNConfig) config);
+        case ConfigConstants.MACHINELEARNINGPYTORCHCNN2:
+            return get((PytorchCNN2Config) config);
         case ConfigConstants.MACHINELEARNINGPYTORCHRNN:
             return get((PytorchRNNConfig) config);
         case ConfigConstants.MACHINELEARNINGPYTORCHGRU:
@@ -143,6 +151,10 @@ public class NeuralNetConfigGeneFactory {
         return new TensorflowCNNConfigGene(config);
     }
     
+    public static NeuralNetConfigGene get(TensorflowCNN2Config config) {
+        return new TensorflowCNN2ConfigGene(config);
+    }
+    
     public static NeuralNetConfigGene get(TensorflowRNNConfig config) {
         return new TensorflowRNNConfigGene(config);
     }
@@ -165,6 +177,10 @@ public class NeuralNetConfigGeneFactory {
     
     public static NeuralNetConfigGene get(PytorchCNNConfig config) {
         return new PytorchCNNConfigGene(config);
+    }
+    
+    public static NeuralNetConfigGene get(PytorchCNN2Config config) {
+        return new PytorchCNN2ConfigGene(config);
     }
     
     public static NeuralNetConfigGene get(PytorchRNNConfig config) {

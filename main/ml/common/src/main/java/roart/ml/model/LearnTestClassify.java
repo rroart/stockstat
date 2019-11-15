@@ -7,11 +7,13 @@ import roart.common.ml.GemIcarlConfig;
 import roart.common.ml.GemMMConfig;
 import roart.common.ml.GemSConfig;
 import roart.common.ml.NeuralNetCommand;
+import roart.common.ml.PytorchCNN2Config;
 import roart.common.ml.PytorchCNNConfig;
 import roart.common.ml.PytorchGRUConfig;
 import roart.common.ml.PytorchLSTMConfig;
 import roart.common.ml.PytorchMLPConfig;
 import roart.common.ml.PytorchRNNConfig;
+import roart.common.ml.TensorflowCNN2Config;
 import roart.common.ml.TensorflowCNNConfig;
 import roart.common.ml.TensorflowDNNConfig;
 import roart.common.ml.TensorflowGRUConfig;
@@ -36,6 +38,8 @@ public class LearnTestClassify {
     
     private TensorflowCNNConfig tensorflowCNNConfig;
     
+    private TensorflowCNN2Config tensorflowCNN2Config;
+    
     private TensorflowRNNConfig tensorflowRNNConfig;
     
     private TensorflowLSTMConfig tensorflowLSTMConfig;
@@ -45,6 +49,8 @@ public class LearnTestClassify {
     private PytorchMLPConfig pytorchMLPConfig;
     
     private PytorchCNNConfig pytorchCNNConfig;
+    
+    private PytorchCNN2Config pytorchCNN2Config;
     
     private PytorchRNNConfig pytorchRNNConfig;
     
@@ -146,6 +152,14 @@ public class LearnTestClassify {
         this.tensorflowCNNConfig = tensorflowCNNConfig;
     }
 
+    public TensorflowCNN2Config getTensorflowCNN2Config() {
+        return tensorflowCNN2Config;
+    }
+
+    public void setTensorflowCNN2Config(TensorflowCNN2Config tensorflowCNN2Config) {
+        this.tensorflowCNN2Config = tensorflowCNN2Config;
+    }
+
     public TensorflowRNNConfig getTensorflowRNNConfig() {
         return tensorflowRNNConfig;
     }
@@ -184,6 +198,14 @@ public class LearnTestClassify {
 
     public void setPytorchCNNConfig(PytorchCNNConfig pytorchCNNConfig) {
         this.pytorchCNNConfig = pytorchCNNConfig;
+    }
+
+    public PytorchCNN2Config getPytorchCNN2Config() {
+        return pytorchCNN2Config;
+    }
+
+    public void setPytorchCNN2Config(PytorchCNN2Config pytorchCNN2Config) {
+        this.pytorchCNN2Config = pytorchCNN2Config;
     }
 
     public PytorchRNNConfig getPytorchRNNConfig() {

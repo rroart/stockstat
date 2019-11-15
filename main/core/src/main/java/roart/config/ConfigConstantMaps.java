@@ -56,6 +56,9 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG, String.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2PERSIST, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2CONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG, String.class);
@@ -77,6 +80,9 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG, String.class);
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2PERSIST, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2CONFIG, String.class);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG, String.class);
@@ -396,6 +402,9 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG, MLConstants.TENSORFLOWCNNCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2PERSIST, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2CONFIG, MLConstants.TENSORFLOWCNN2CONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG, MLConstants.TENSORFLOWRNNCONFIG);
@@ -417,6 +426,9 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG, MLConstants.PYTORCHCNNCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2PERSIST, Boolean.TRUE);
+        deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2CONFIG, MLConstants.PYTORCHCNN2CONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG, MLConstants.PYTORCHRNNCONFIG);
@@ -733,6 +745,9 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, "Enable Tensorflow CNN");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST, "Enable Tensorflow CNN persist");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG, "Config for Tensorflow CNN");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, "Enable Tensorflow CNN2");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2PERSIST, "Enable Tensorflow CNN2 persist");
+        text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2CONFIG, "Config for Tensorflow CNN2");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, "Enable Tensorflow RNN");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST, "Enable Tensorflow RNN persist");
         text.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG, "Config for Tensorflow RNN");
@@ -751,6 +766,9 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, "Enable Pytorch CNN");
         text.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST, "Enable Pytorch CNN persist");
         text.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG, "Config for Pytorch CNN");
+        text.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, "Enable Pytorch CNN2");
+        text.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2PERSIST, "Enable Pytorch CNN2 persist");
+        text.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2CONFIG, "Config for Pytorch CNN2");
         text.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, "Enable Pytorch RNN");
         text.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST, "Enable Pytorch RNN persist");
         text.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG, "Config for Pytorch RNN");
@@ -1115,6 +1133,9 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow CNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow CNN persist"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG, new XMLType(String.class, MLConstants.TENSORFLOWCNNCONFIG, "Config for Tensorflow CNN"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow CNN2"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2PERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow CNN2 persist"));
+        mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2CONFIG, new XMLType(String.class, MLConstants.TENSORFLOWCNN2CONFIG, "Config for Tensorflow CNN2"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow RNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Tensorflow RNN persist"));
         mymap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG, new XMLType(String.class, MLConstants.TENSORFLOWRNNCONFIG, "Config for Tensorflow RNN"));
@@ -1133,6 +1154,9 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch CNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch CNN persist"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG, new XMLType(String.class, MLConstants.PYTORCHCNNCONFIG, "Config for Pytorch CNN"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch CNN2"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2PERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch CNN2 persist"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2CONFIG, new XMLType(String.class, MLConstants.PYTORCHCNN2CONFIG, "Config for Pytorch CNN2"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch RNN"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNPERSIST, new XMLType(Boolean.class, Boolean.TRUE, "Enable Pytorch RNN persist"));
         mymap.put(ConfigConstants.MACHINELEARNINGPYTORCHRNNCONFIG, new XMLType(String.class, MLConstants.PYTORCHRNNCONFIG, "Config for Pytorch RNN"));

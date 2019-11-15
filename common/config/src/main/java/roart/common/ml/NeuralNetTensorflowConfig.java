@@ -12,6 +12,8 @@ public class NeuralNetTensorflowConfig {
 
     private TensorflowCNNConfig tensorflowCNNConfig;
 
+    private TensorflowCNN2Config tensorflowCNN2Config;
+
     private TensorflowRNNConfig tensorflowRNNConfig;
 
     private TensorflowGRUConfig tensorflowGRUConfig;
@@ -64,6 +66,14 @@ public class NeuralNetTensorflowConfig {
         this.tensorflowCNNConfig = tensorflowCNNConfig;
     }
 
+    public TensorflowCNN2Config getTensorflowCNN2Config() {
+        return tensorflowCNN2Config;
+    }
+
+    public void setTensorflowCNN2Config(TensorflowCNN2Config tensorflowCNN2Config) {
+        this.tensorflowCNN2Config = tensorflowCNN2Config;
+    }
+
     public TensorflowRNNConfig getTensorflowRNNConfig() {
         return tensorflowRNNConfig;
     }
@@ -98,7 +108,7 @@ public class NeuralNetTensorflowConfig {
 
     public NeuralNetTensorflowConfig(TensorflowDNNConfig tensorflowDNNConfig, TensorflowLICConfig tensorflowLICConfig,
             TensorflowLIRConfig tensorflowLIRConfig, TensorflowMLPConfig tensorflowMLPConfig,
-            TensorflowCNNConfig tensorflowCNNConfig, TensorflowRNNConfig tensorflowRNNConfig,
+            TensorflowCNNConfig tensorflowCNNConfig, TensorflowCNN2Config tensorflowCNN2Config, TensorflowRNNConfig tensorflowRNNConfig,
             TensorflowGRUConfig tensorflowGRUConfig, TensorflowLSTMConfig tensorflowLSTMConfig,
             TensorflowPredictorLSTMConfig tensorflowPredictorLSTMConfig) {
         super();
@@ -107,6 +117,7 @@ public class NeuralNetTensorflowConfig {
         this.tensorflowLIRConfig = tensorflowLIRConfig;
         this.tensorflowMLPConfig = tensorflowMLPConfig;
         this.tensorflowCNNConfig = tensorflowCNNConfig;
+        this.tensorflowCNN2Config = tensorflowCNN2Config;
         this.tensorflowRNNConfig = tensorflowRNNConfig;
         this.tensorflowGRUConfig = tensorflowGRUConfig;
         this.tensorflowLSTMConfig = tensorflowLSTMConfig;

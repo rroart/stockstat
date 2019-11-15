@@ -16,7 +16,9 @@ public class EvolveMLTensorflowConfig {
     private EvolveMLConfig mlp;
     
     private EvolveMLConfig cnn;
-    
+
+    private EvolveMLConfig cnn2;
+
     private EvolveMLConfig rnn;
     
     private EvolveMLConfig gru;
@@ -55,6 +57,12 @@ public class EvolveMLTensorflowConfig {
     public void setCnn(EvolveMLConfig cnn) {
         this.cnn = cnn;
     }
+    public EvolveMLConfig getCnn2() {
+        return cnn2;
+    }
+    public void setCnn2(EvolveMLConfig cnn2) {
+        this.cnn2 = cnn2;
+    }
     public EvolveMLConfig getRnn() {
         return rnn;
     }
@@ -88,6 +96,7 @@ public class EvolveMLTensorflowConfig {
         lir.merge(tensorflow.lir);
         mlp.merge(tensorflow.mlp);
         cnn.merge(tensorflow.cnn);
+        cnn2.merge(tensorflow.cnn2);
         rnn.merge(tensorflow.rnn);
         gru.merge(tensorflow.gru);
         lstm.merge(tensorflow.lstm);
@@ -100,6 +109,7 @@ public class EvolveMLTensorflowConfig {
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR, lir);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, mlp);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, cnn);
+        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, cnn2);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, rnn);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, gru);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, lstm);

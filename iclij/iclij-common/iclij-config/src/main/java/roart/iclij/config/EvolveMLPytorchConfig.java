@@ -11,6 +11,8 @@ public class EvolveMLPytorchConfig {
     
     private EvolveMLConfig cnn;
     
+    private EvolveMLConfig cnn2;
+    
     private EvolveMLConfig rnn;
     
     private EvolveMLConfig gru;
@@ -28,6 +30,12 @@ public class EvolveMLPytorchConfig {
     }
     public void setCnn(EvolveMLConfig cnn) {
         this.cnn = cnn;
+    }
+    public EvolveMLConfig getCnn2() {
+        return cnn2;
+    }
+    public void setCnn2(EvolveMLConfig cnn2) {
+        this.cnn2 = cnn2;
     }
     public EvolveMLConfig getRnn() {
         return rnn;
@@ -53,6 +61,7 @@ public class EvolveMLPytorchConfig {
         }
         mlp.merge(pytorch.mlp);
         cnn.merge(pytorch.cnn);
+        cnn2.merge(pytorch.cnn2);
         rnn.merge(pytorch.rnn);
         gru.merge(pytorch.gru);
         lstm.merge(pytorch.lstm);
@@ -61,6 +70,7 @@ public class EvolveMLPytorchConfig {
     public Map<? extends String, ? extends EvolveMLConfig> getAll() {
         Map<String, EvolveMLConfig> map = new HashMap<>();
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, mlp);
+        map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, cnn2);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, cnn);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHRNN, rnn);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHGRU, gru);

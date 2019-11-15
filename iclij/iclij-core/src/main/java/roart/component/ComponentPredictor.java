@@ -83,6 +83,7 @@ public class ComponentPredictor extends ComponentML {
         configs.getTensorflow().setDnn(config);
         configs.getTensorflow().setMlp(config);
         configs.getTensorflow().setCnn(config);
+        configs.getTensorflow().setCnn2(config);
         configs.getTensorflow().setRnn(config);
         configs.getTensorflow().setLstm(config);
         configs.getTensorflow().setGru(config);
@@ -92,6 +93,7 @@ public class ComponentPredictor extends ComponentML {
         configs.getSpark().setLsvc(config);
         configs.getPytorch().setMlp(config);
         configs.getPytorch().setCnn(config);
+        configs.getPytorch().setCnn2(config);
         configs.getPytorch().setRnn(config);
         configs.getPytorch().setLstm(config);
         configs.getPytorch().setGru(config);

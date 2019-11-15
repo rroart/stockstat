@@ -441,6 +441,11 @@ public class MyMyConfig extends MyConfig {
                 && wantMLTensorflow();
     }
 
+    public  boolean wantTensorflowCNN2() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2)
+                && wantMLTensorflow();
+    }
+
     public  boolean wantTensorflowRNN() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN)
                 && wantMLTensorflow();
@@ -468,6 +473,11 @@ public class MyMyConfig extends MyConfig {
 
     public  boolean wantPytorchCNN() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNN)
+                && wantMLPytorch();
+    }
+
+    public  boolean wantPytorchCNN2() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNN2)
                 && wantMLPytorch();
     }
 
@@ -562,6 +572,10 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG);
     }
 
+    public String getTensorflowCNN2Config() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2CONFIG);
+    }
+
     public String getTensorflowRNNConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG);
     }
@@ -584,6 +598,10 @@ public class MyMyConfig extends MyConfig {
 
     public String getPytorchCNNConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG);
+    }
+
+    public String getPytorchCNN2Config() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNN2CONFIG);
     }
 
     public String getPytorchRNNConfig() {
@@ -658,6 +676,10 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST);
     }
 
+    public boolean wantTensorflowCNN2Persist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2PERSIST);
+    }
+
     public boolean wantTensorflowRNNPersist() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST);
     }
@@ -680,6 +702,10 @@ public class MyMyConfig extends MyConfig {
 
     public boolean wantPytorchCNNPersist() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST);
+    }
+
+    public boolean wantPytorchCNN2Persist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPYTORCHCNN2PERSIST);
     }
 
     public boolean wantPytorchRNNPersist() {
