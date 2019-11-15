@@ -9,6 +9,8 @@ public class MarketFilter {
 
     private String deccategory;
     
+    private Integer decdays;
+
     private Double decthreshold;
 
     private Double confidence;
@@ -49,6 +51,14 @@ public class MarketFilter {
 
     public void setDeccategory(String deccategory) {
         this.deccategory = deccategory;
+    }
+
+    public Integer getDecdays() {
+        return decdays;
+    }
+
+    public void setDecdays(Integer decdays) {
+        this.decdays = decdays;
     }
 
     public void setDecthreshold(Double decthreshold) {

@@ -377,7 +377,9 @@ public abstract class MarketAction extends Action {
         
         handleComponent(this, market, profitdata, param, listComponent, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config);
                 
-        filterBuys(param, market, profitdata, maps);
+        filterIncDecs(param, market, profitdata, maps, true);
+        filterIncDecs(param, market, profitdata, maps, false);
+        //filterDecs(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
         myData.profitData = profitdata;
 
@@ -440,17 +442,27 @@ public abstract class MarketAction extends Action {
         return listComponent;
     }
 
-    private void filterBuys(ComponentData param, Market market, ProfitData profitdata,
-            Map<String, Map<String, Object>> maps) {
+    private void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
+            Map<String, Map<String, Object>> maps, boolean inc) {
         List<String> dates = param.getService().getDates(param.getService().conf.getMarket());        
-        String category = market.getFilter().getInccategory();
+        String category;
+        if (inc) {
+            category = market.getFilter().getInccategory();
+        } else {
+            category = market.getFilter().getDeccategory();
+        }
         if (category != null) {
             Map<String, Object> categoryMap = maps.get(category);
             if (categoryMap != null) {
                 Integer offsetDays = null;
-                Integer incdays = market.getFilter().getIncdays();
-                if (incdays != null) {
-                    if (incdays == 0) {
+                Integer days;
+                if (inc) {
+                    days = market.getFilter().getIncdays();
+                } else {
+                    days = market.getFilter().getDecdays();
+                }
+                if (days != null) {
+                    if (days == 0) {
                         int year = param.getInput().getEnddate().getYear();
                         List<String> yearDates = new ArrayList<>();
                         for (String date : dates) {
@@ -464,13 +476,18 @@ public abstract class MarketAction extends Action {
                         int index = dates.indexOf(oldestDate);
                         offsetDays = dates.size() - 1 - index;
                     } else {
-                       offsetDays = incdays;
+                       offsetDays = days;
                     }
                 }
-                Double threshold = market.getFilter().getIncthreshold();
+                Double threshold;
+                if (inc) {
+                    threshold = market.getFilter().getIncthreshold();
+                } else {
+                    threshold = market.getFilter().getDecthreshold();
+                }
                 Map<String, List<List>> listMap3 = getCategoryList(maps, category);
-                Map<String, IncDecItem> buysFilter = buyFilterOnIncreaseValue(market, profitdata.getBuys(), maps, threshold, categoryMap,
-                        listMap3, offsetDays);
+                Map<String, IncDecItem> buysFilter = incdecFilterOnIncreaseValue(market, profitdata.getBuys(), maps, threshold, categoryMap,
+                        listMap3, offsetDays, inc);
                 profitdata.setBuys(buysFilter);
             }
         }
@@ -540,11 +557,11 @@ public abstract class MarketAction extends Action {
         return listMap3;
     }
 
-    public Map<String, IncDecItem> buyFilterOnIncreaseValue(Market market, Map<String, IncDecItem> buys,
+    public Map<String, IncDecItem> incdecFilterOnIncreaseValue(Market market, Map<String, IncDecItem> incdecs,
             Map<String, Map<String, Object>> maps, Double threshold, Map<String, Object> categoryMap,
-            Map<String, List<List>> listMap3, Integer offsetDays) {
-        Map<String, IncDecItem> buysFilter = new HashMap<>();
-        for(IncDecItem item : buys.values()) {
+            Map<String, List<List>> listMap3, Integer offsetDays, boolean inc) {
+        Map<String, IncDecItem> incdecsFilter = new HashMap<>();
+        for(IncDecItem item : incdecs.values()) {
             String key = item.getId();
             if (listMap3 == null) {
                 if (categoryMap != null) {
@@ -574,12 +591,15 @@ public abstract class MarketAction extends Action {
             if (value == null) {
                 continue;
             }
-            if (value < threshold) {
+            if (inc && value < threshold) {
                 continue;
             }
-            buysFilter.put(key, item);
+            if (!inc && value > threshold) {
+                continue;
+            }
+            incdecsFilter.put(key, item);
         }
-        return buysFilter;
+        return incdecsFilter;
     }
 
     public List<Market> getMarkets() {
