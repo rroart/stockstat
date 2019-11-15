@@ -11,6 +11,8 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
     
     private int stride;
     
+    private double dropout;
+    
     private double lr;
     
     public int getKernelsize() {
@@ -29,6 +31,14 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
         this.stride = stride;
     }
 
+    public double getDropout() {
+        return dropout;
+    }
+
+    public void setDropout(double dropout) {
+        this.dropout = dropout;
+    }
+
     public double getLr() {
         return lr;
     }
@@ -42,15 +52,17 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
             @JsonProperty("steps") int steps, 
             @JsonProperty("kernelsize") int kernelsize, 
             @JsonProperty("stride") int stride, 
+            @JsonProperty("dropout") double dropout, 
             @JsonProperty("lr") double lr) {
         super(MLConstants.CNN, steps);
         this.kernelsize = kernelsize;
         this.stride = stride;
+        this.dropout = dropout;
         this.lr = lr;
     }
     
     public PytorchCNNConfig(PytorchCNNConfig config) {
-        this(config.steps, config.kernelsize, config.stride, config.lr);
+        this(config.steps, config.kernelsize, config.stride, config.dropout, config.lr);
     }
 
     public PytorchCNNConfig(String name) {

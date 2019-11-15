@@ -28,12 +28,14 @@ class Net(nn.Module):
         self.layer1 = nn.Sequential(
             nn.Conv1d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)),
             nn.BatchNorm1d(c1),
-            nn.ReLU())
+            nn.ReLU(),
+            nn.Dropout(config.dropout))
             #nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer2 = nn.Sequential(
             nn.Conv1d(c1, c2, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)),
             nn.BatchNorm1d(c2),
-            nn.ReLU())
+            nn.ReLU(),
+            nn.Dropout(config.dropout))
         #self.l1 = nn.Conv1d(myobj.size, 16, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2))
             #nn.MaxPool2d(kernel_size=2, stride=2))
         #self.l2 = nn.Conv1d(16, 32, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2))

@@ -17,7 +17,7 @@ STEPS=1000
     PYTORCHCONFIG[2]="\"pytorchRNNConfig\" : { \"name\" : \"rnn\", \"steps\" : $STEPS, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }"
     PYTORCHCONFIG[3]="\"pytorchLSTMConfig\" : { \"name\" : \"lstm\", \"steps\" : $STEPS, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }"
     PYTORCHCONFIG[4]="\"pytorchGRUConfig\" : { \"name\" : \"gru\", \"steps\" : $STEPS, \"hidden\" : 100, \"layers\" : 2, \"lr\" : 0.01 }"
-    PYTORCHCONFIG[5]="\"pytorchCNNConfig\" : { \"name\" : \"cnn\", \"steps\" : $STEPS, \"stride\" : 1, \"kernelsize\" : 4, \"lr\" : 0.01 }"
+    PYTORCHCONFIG[5]="\"pytorchCNNConfig\" : { \"name\" : \"cnn\", \"steps\" : $STEPS, \"stride\" : 1, \"kernelsize\" : 4, \"dropout\" : 0.5, \"lr\" : 0.01 }"
     PYTORCHCONFIG[6]="\"pytorchCNN2Config\" : { \"name\" : \"cnn2\", \"steps\" : $STEPS, \"stride\" : 1, \"kernelsize\" : 3, \"maxpool\" : 4, \"dropout1\" : 0.25, \"dropout2\" : 0.5, \"lr\" : 0.01 }"
     
     TENSORFLOWCONFIG[1]="\"tensorflowDNNConfig\" : { \"name\" : \"dnn\", \"steps\" : $STEPS, \"hidden\" : 100, \"layers\": 2 }"
