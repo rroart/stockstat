@@ -121,6 +121,10 @@ public abstract class MLClassifyModel {
         return false;
     }
 
+    public boolean isFourDimensional() {
+        return false;
+    }
+
     public abstract String getPath();
 
     public Object transform(Object array, MLMeta mlmeta) {
@@ -137,6 +141,11 @@ public abstract class MLClassifyModel {
             return newarray;
         }
         if (mlmeta.dim2 == null && isThreeDimensional()) {
+            double[][] newarray = new double[1][];
+            newarray[0] = (double[]) array;
+            return newarray;
+        }
+        if (mlmeta.dim3 == null && isFourDimensional()) {
             double[][] newarray = new double[1][];
             newarray[0] = (double[]) array;
             return newarray;

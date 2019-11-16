@@ -294,6 +294,16 @@ public class MLIndicator extends Aggregator {
                 doLearnTestClassifyFuture(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta, neuralnetcommand);
             } else {
                 doLearnTestClassify(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta, neuralnetcommand);
+            }
+            MLMeta mlmeta1 = new MLMeta();
+            mlmeta1.dim1 = arrayLength;
+            mlmeta1.dim3 = arrayLength;
+            mlmeta1.classify = true;
+            mlmeta1.features = true;
+            if (multi /*conf.wantMLMP()*/) {
+                doLearnTestClassifyFuture1(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta1, neuralnetcommand);
+            } else {
+                doLearnTestClassify1(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta1, neuralnetcommand);
            }
         }
         createResultMap(conf, mapResult);
@@ -321,6 +331,9 @@ public class MLIndicator extends Aggregator {
             for (MLClassifyDao mldao : mldaos) {
                 Map<String, Pair<Object, Double>> learnMap = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
+                    if (mlmeta.dim3 == null && model.isFourDimensional()) {
+                        continue;
+                    }
                     Map<Object, Long> countMap1 = learnMap.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
                     long count = countMap1.values().stream().distinct().count();
                     if (count == 1) {
@@ -408,6 +421,9 @@ public class MLIndicator extends Aggregator {
             for (MLClassifyDao mldao : mldaos) {
                 Map<String, Pair<Object, Double>> learnMap = mergedCatMap;
                 for (MLClassifyModel model : mldao.getModels()) {          
+                    if (mlmeta.dim3 == null && model.isFourDimensional()) {
+                        continue;
+                    }
                     Map<Object, Long> countMap1 = learnMap.values().stream().collect(Collectors.groupingBy(e2 -> labelMapShort.get(e2.getRight()), Collectors.counting()));                            
                     long count = countMap1.values().stream().distinct().count();
                     if (count == 1) {

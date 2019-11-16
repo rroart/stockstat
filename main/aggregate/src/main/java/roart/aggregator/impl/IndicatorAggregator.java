@@ -300,6 +300,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                             if (!isBinary(mapTypeInt) && model.isBinary()) {
                                 continue;
                             }
+                            if (mlmeta.dim3 == null && model.isFourDimensional()) {
+                                continue;
+                            }
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
@@ -444,6 +447,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                         }
                         for (int mapTypeInt : getMapTypeList()) {
                             if (!isBinary(mapTypeInt) && model.isBinary()) {
+                                continue;
+                            }
+                            if (mlmeta.dim3 == null && model.isFourDimensional()) {
                                 continue;
                             }
                             String mapType = mapTypes.get(mapTypeInt);
