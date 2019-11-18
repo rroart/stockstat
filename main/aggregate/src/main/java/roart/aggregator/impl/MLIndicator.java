@@ -262,7 +262,6 @@ public class MLIndicator extends Aggregator {
             mergedCatMap.putAll(retMap);
         }
 
-
         // map from h/m to model to posnegcom map<model, results>
         Map<MLClassifyModel, Map<String, Double[]>> mapResult = new HashMap<>();
         log.info("Period {} {}", title, mapMap.keySet());
@@ -934,6 +933,10 @@ public class MLIndicator extends Aggregator {
     }
     
     public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators) {
+        String testmarket = conf.getMLmarket();
+        if (testmarket != null) {
+            market = testmarket;
+        }
         return market + "_" + getName() + "_" + dao.getName() + "_" +  model.getName() + "_" + getFilenamePart(indicators) + conf.getAggregatorsIndicatorFuturedays() + "_" + conf.getAggregatorsIndicatorThreshold() + "_" + in + "_" + out;
     }
 }

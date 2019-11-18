@@ -16,6 +16,7 @@ public class MyMyConfig extends MyConfig {
         fixIntegerDouble();
         this.mydate = config.mydate;
         this.mymarket = config.mymarket;
+        this.mlmarket = config.mlmarket;
     }
 
     private void fixIntegerDouble() {

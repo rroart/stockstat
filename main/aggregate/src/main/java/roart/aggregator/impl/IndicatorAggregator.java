@@ -1779,6 +1779,10 @@ public abstract class IndicatorAggregator extends Aggregator {
     public abstract String getFilenamePart();
     
     public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators, String subType, String mapType, MLMeta mlmeta) {
+        String testmarket = conf.getMLmarket();
+        if (testmarket != null) {
+            market = testmarket;
+        }
         return market + "_" + getName() + "_" + dao.getName() + "_" + model.getName() + "_" + getFilenamePart() + getAggregatorsThreshold() + "_" + subType + "_" + mapType + "_" + mlmeta.dimString() + in + "_" + out;
     }
 }

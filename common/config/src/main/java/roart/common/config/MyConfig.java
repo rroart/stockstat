@@ -31,6 +31,8 @@ public class MyConfig {
 
     protected String mymarket = "0";
 
+    protected String mlmarket = null;
+
     /*
 	private Integer mydays = 180;
 
@@ -166,6 +168,14 @@ public class MyConfig {
 
     public String getMarket() {
         return mymarket;
+    }
+
+    public void setMLmarket(String value) {
+        mlmarket = value;
+    }
+
+    public String getMLmarket() {
+        return mlmarket;
     }
 
 
