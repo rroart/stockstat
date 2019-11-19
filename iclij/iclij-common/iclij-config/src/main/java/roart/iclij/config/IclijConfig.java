@@ -595,6 +595,134 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.EVOLVEPREDICTOREVOLUTIONCONFIG);
     }
 
+    public boolean wantEvolveRecommender() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER);
+    }
+
+    public boolean wantDatasetML() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETML);
+    }
+
+    public String getDatasetMLEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLEVOLUTIONCONFIG);
+    }
+
+    public String getDatasetIndicatorrecommenderEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG);
+    }
+
+    public String getDatasetMLMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLMLCONFIG);
+    }
+
+    public boolean wantsDatasetAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETAUTORUN);
+    }
+
+    public int getDatasetFitnessMinimum() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.DATASETFITNESSMINIMUM);
+    }
+
+    public boolean wantsDatasetMLMACD() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETMLMACD);
+    }
+
+    public boolean wantsDatasetMLRSI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETMLRSI);
+    }
+
+    public boolean wantsDatasetMLATR() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETMLATR);
+    }
+
+    public boolean wantsDatasetMLCCI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETMLCCI);
+    }
+
+    public boolean wantsDatasetMLSTOCH() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETMLSTOCH);
+    }
+
+    public boolean wantsDatasetMLMulti() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETMLMULTI);
+    }
+
+    public boolean wantsDatasetMLIndicator() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETMLINDICATOR);
+    }
+
+    public String getDatasetMLMACDMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLMACDMLCONFIG);
+    }
+
+    public String getDatasetMLRSIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLRSIMLCONFIG);
+    }
+
+    public String getDatasetMLATRMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLATRMLCONFIG);
+    }
+
+    public String getDatasetMLCCIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLCCIMLCONFIG);
+    }
+
+    public String getDatasetMLSTOCHMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLSTOCHMLCONFIG);
+    }
+
+    public String getDatasetMLMultiMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLMULTIMLCONFIG);
+    }
+
+    public String getDatasetMLIndicatorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLINDICATORMLCONFIG);
+    }
+
+    public String getDatasetMLMACDEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLMACDEVOLUTIONCONFIG);
+    }
+
+    public String getDatasetMLRSIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLRSIEVOLUTIONCONFIG);
+    }
+
+    public String getDatasetMLATREvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLATREVOLUTIONCONFIG);
+    }
+
+    public String getDatasetMLCCIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLCCIEVOLUTIONCONFIG);
+    }
+
+    public String getDatasetMLSTOCHEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLSTOCHEVOLUTIONCONFIG);
+    }
+
+    public String getDatasetMLMultiEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLMULTIEVOLUTIONCONFIG);
+    }
+
+    public String getDatasetMLIndicatorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETMLINDICATOREVOLUTIONCONFIG);
+    }
+
+   public boolean wantsDatasetRecommender() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETRECOMMENDER);
+    }
+
+    public boolean wantsDatasetPredictor() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETPREDICTOR);
+    }
+
+    public String getDatasetPredictorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETPREDICTORMLCONFIG);
+    }
+
+    public String getDatasetPredictorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG);
+    }
+
     public Object getValueOrDefault(String key) {
         // jackson messes around here...
         if (configValueMap == null) {

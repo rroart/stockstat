@@ -13,12 +13,16 @@ public class MarketConfig {
 
     private Short evolvetime;
 
+    private Short datasettime;
+
     private String id;
 
     private Short startoffset;
     
+    private Boolean dataset;
+    
     public MarketConfig() {
-        
+        super();
     }
     
     public String getMarket() {
@@ -69,6 +73,14 @@ public class MarketConfig {
         this.evolvetime = evolvetime;
     }
 
+    public Short getDatasettime() {
+        return datasettime;
+    }
+
+    public void setDatasettime(Short datasettime) {
+        this.datasettime = datasettime;
+    }
+
     public String getId() {
         return id;
     }
@@ -83,6 +95,14 @@ public class MarketConfig {
 
     public void setStartoffset(Short startoffset) {
         this.startoffset = startoffset;
+    }
+
+    public Boolean getDataset() {
+        return dataset;
+    }
+
+    public void setDataset(Boolean dataset) {
+        this.dataset = dataset;
     }
 
 }
