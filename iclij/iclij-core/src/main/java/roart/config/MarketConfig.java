@@ -15,6 +15,8 @@ public class MarketConfig {
 
     private Short datasettime;
 
+    private Short crosstime;
+
     private String id;
 
     private Short startoffset;
@@ -79,6 +81,14 @@ public class MarketConfig {
 
     public void setDatasettime(Short datasettime) {
         this.datasettime = datasettime;
+    }
+
+    public Short getCrosstime() {
+        return crosstime;
+    }
+
+    public void setCrosstime(Short crosstime) {
+        this.crosstime = crosstime;
     }
 
     public String getId() {

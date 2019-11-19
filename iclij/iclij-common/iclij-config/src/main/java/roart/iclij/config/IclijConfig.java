@@ -723,6 +723,130 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG);
     }
 
+    public boolean wantCrosstestML() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTML);
+    }
+
+    public String getCrosstestMLEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLEVOLUTIONCONFIG);
+    }
+
+    public String getCrosstestIndicatorrecommenderEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTINDICATORRECOMMENDEREVOLUTIONCONFIG);
+    }
+
+    public String getCrosstestMLMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLMLCONFIG);
+    }
+
+    public boolean wantsCrosstestAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTAUTORUN);
+    }
+
+    public int getCrosstestFitnessMinimum() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.CROSSTESTFITNESSMINIMUM);
+    }
+
+    public boolean wantsCrosstestMLMACD() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTMLMACD);
+    }
+
+    public boolean wantsCrosstestMLRSI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTMLRSI);
+    }
+
+    public boolean wantsCrosstestMLATR() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTMLATR);
+    }
+
+    public boolean wantsCrosstestMLCCI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTMLCCI);
+    }
+
+    public boolean wantsCrosstestMLSTOCH() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTMLSTOCH);
+    }
+
+    public boolean wantsCrosstestMLMulti() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTMLMULTI);
+    }
+
+    public boolean wantsCrosstestMLIndicator() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTMLINDICATOR);
+    }
+
+    public String getCrosstestMLMACDMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLMACDMLCONFIG);
+    }
+
+    public String getCrosstestMLRSIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLRSIMLCONFIG);
+    }
+
+    public String getCrosstestMLATRMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLATRMLCONFIG);
+    }
+
+    public String getCrosstestMLCCIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLCCIMLCONFIG);
+    }
+
+    public String getCrosstestMLSTOCHMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLSTOCHMLCONFIG);
+    }
+
+    public String getCrosstestMLMultiMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLMULTIMLCONFIG);
+    }
+
+    public String getCrosstestMLIndicatorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLINDICATORMLCONFIG);
+    }
+
+    public String getCrosstestMLMACDEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLMACDEVOLUTIONCONFIG);
+    }
+
+    public String getCrosstestMLRSIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLRSIEVOLUTIONCONFIG);
+    }
+
+    public String getCrosstestMLATREvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLATREVOLUTIONCONFIG);
+    }
+
+    public String getCrosstestMLCCIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLCCIEVOLUTIONCONFIG);
+    }
+
+    public String getCrosstestMLSTOCHEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLSTOCHEVOLUTIONCONFIG);
+    }
+
+    public String getCrosstestMLMultiEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLMULTIEVOLUTIONCONFIG);
+    }
+
+    public String getCrosstestMLIndicatorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTMLINDICATOREVOLUTIONCONFIG);
+    }
+
+   public boolean wantsCrosstestRecommender() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTRECOMMENDER);
+    }
+
+    public boolean wantsCrosstestPredictor() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.CROSSTESTPREDICTOR);
+    }
+
+    public String getCrosstestPredictorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTPREDICTORMLCONFIG);
+    }
+
+    public String getCrosstestPredictorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTPREDICTOREVOLUTIONCONFIG);
+    }
+
     public Object getValueOrDefault(String key) {
         // jackson messes around here...
         if (configValueMap == null) {
