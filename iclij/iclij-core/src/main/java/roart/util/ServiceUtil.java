@@ -1114,8 +1114,39 @@ public class ServiceUtil {
 
     public static List<String> getDatasetComponents(IclijConfig config, String market) {
         List<String> components = new ArrayList<>();
-        if (config.wantsEvolveRecommender()) {
+        if (config.wantDatasetML()) {
             components.add(PipelineConstants.DATASET);
+        }
+        return components;
+    }
+
+    public static List<String> getCrosstestComponents(IclijConfig config, String market) {
+        List<String> components = new ArrayList<>();
+        if (config.wantsMachineLearningPredictor()) {
+            components.add(PipelineConstants.PREDICTORSLSTM);
+        }
+        if (config.wantsMachineLearningMLMACD()) {
+            components.add(PipelineConstants.MLMACD);
+        }
+        if (config.wantsMachineLearningMLRSI()) {
+            components.add(PipelineConstants.MLRSI);
+        }
+        if (wantThree(market)) {
+        if (config.wantsMachineLearningMLATR()) {
+            components.add(PipelineConstants.MLATR);
+        }
+        if (config.wantsMachineLearningMLCCI()) {
+            components.add(PipelineConstants.MLCCI);
+        }
+        if (config.wantsMachineLearningMLSTOCH()) {
+            components.add(PipelineConstants.MLSTOCH);
+        }
+        }
+        if (config.wantsMachineLearningMLMulti()) {
+            components.add(PipelineConstants.MLMULTI);
+        }
+        if (config.wantsMachineLearningMLIndicator()) {
+            components.add(PipelineConstants.MLINDICATOR);
         }
         return components;
     }
