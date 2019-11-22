@@ -11,10 +11,10 @@ class Net(nn.Module):
         self.classify = classify
 
         #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
-        print("MO",myobj.size)
+        #print("MO",myobj.size)
         dim1 = myobj.size[0]
         dim2 = myobj.size[1]
-        print(dim1, dim2)
+        #print(dim1, dim2)
         c1 = 32
         c2 = 64
         o1 = (dim1 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
@@ -52,9 +52,9 @@ class Net(nn.Module):
         #     nn.BatchNorm2d(32),
         #     nn.ReLU(),
         #     nn.MaxPool2d(kernel_size=2, stride=2))
-        print("O12", o1, o2)
-        print("P12", p1, p2)
-        print("fc1", c2, p2, c2*p2)
+        #print("O12", o1, o2)
+        #print("P12", p1, p2)
+        #print("fc1", c2, p2, c2*p2)
         self.fc1 = nn.Linear(c2 * p2, 128)
         self.drop = nn.Dropout(config.dropout2)
         self.fc2 = nn.Linear(64, myobj.classes)
@@ -94,9 +94,9 @@ class Net(nn.Module):
         #print("shape")
         #print(x.shape)
         out = self.layer1(x)
-        print("xxx", out.shape)
+        #print("xxx", out.shape)
         out = self.layer2(out)
-        print("xxx", out.shape)
+        #print("xxx", out.shape)
         
         #r2 = nn.ReLU()
         #out = self.l1(x)
@@ -114,10 +114,10 @@ class Net(nn.Module):
         #print("oo", out.shape)
         out = out.view(out.size(0), -1)
         out = out.view(out.size(0), -1)
-        print("xxx", out.shape)
+        #print("xxx", out.shape)
         #print("oo", out.shape)
         out = out.view(out.size(0), -1)
-        print("xxx4", out.shape)
+        #print("xxx4", out.shape)
         #print("oo", out.shape)
         out = self.fc1(out)
         out = self.drop(out)

@@ -11,10 +11,10 @@ class Net(nn.Module):
         self.classify = classify
 
         #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
-        print("MO",myobj.size)
+        #print("MO",myobj.size)
         dim1 = myobj.size[0]
         dim2 = myobj.size[1]
-        print(dim1, dim2)
+        #print(dim1, dim2)
         c1 = 16
         c2 = 8
         o1 = (dim1 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
@@ -50,8 +50,8 @@ class Net(nn.Module):
         #     nn.BatchNorm2d(32),
         #     nn.ReLU(),
         #     nn.MaxPool2d(kernel_size=2, stride=2))
-        print("O12", o1, o2)
-        print("P12", p1, p2)
+        #print("O12", o1, o2)
+        #print("P12", p1, p2)
         self.fc1 = nn.Linear(c2 * p2, 64)
         self.fc2 = nn.Linear(64, myobj.classes)
 
