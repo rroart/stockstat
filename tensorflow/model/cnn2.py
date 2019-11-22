@@ -7,14 +7,20 @@ from .model import MyModel
 
 class Model(MyModel):
 
-  def __init__(self, myobj, config):
-    super(Model, self).__init__(config, name='my_model')
+  def __init__(self, myobj, config, classify):
+    super(Model, self).__init__(config, classify, name='my_model')
+
+    if classify:
+      loss = 'sparse_categorical_crossentropy'
+    else:
+      loss = 'mean_squared_error'
+
     # Define your layers here.
 
     #https://medium.com/@alexrachnog/neural-networks-for-algorithmic-trading-2-1-multivariate-time-series-ab016ce70f57
     modelm = Sequential()
-    print("inputshape");
-    print(myobj.size);
+    #print("inputshape");
+    #print(myobj.size);
     # input_shape = (WINDOW, EMB_SIZE),
     modelm.add(Convolution2D(input_shape = myobj.size,
                         filters=32,
@@ -83,7 +89,7 @@ class Model(MyModel):
     self.dense_4 = Dense(myobj.classes, activation='softmax')
     #adam = tf.keras.optimizers.Adam(lr=1)
     self.model.compile(optimizer='adadelta',
-                       loss='sparse_categorical_crossentropy',
+                       loss=loss,
                        metrics=['accuracy'])
     return
     # https://www.kaggle.com/heyhello/mnist-simple-convnet/data

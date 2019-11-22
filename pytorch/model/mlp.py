@@ -10,21 +10,27 @@ class Net(nn.Module):
         self.myobj = myobj
         self.config = config
 
-        sizearr = [myobj.size] + [config.hidden] * config.layers + [myobj.classes]
+        if classify:
+            sizearr = [myobj.size] + [config.hidden] * config.layers + [myobj.classes]
+        else:
+            sizearr = [myobj.size] + [config.hidden] * config.layers + [1]
         mylayers = []
         for i in range(0, len(sizearr) - 1):
-            print("sizearr", sizearr[i], sizearr[i+1])
+            #print("sizearr", sizearr[i], sizearr[i+1])
             mylayers.append(nn.Linear(sizearr[i], sizearr[i + 1]))
             if i < (len(sizearr) - 2):
                 mylayers.append(nn.ReLU())
         self.layers = nn.Sequential(*mylayers)
         #self.layers.apply(Xavier)
         
-        # setup optimizer
-        self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
-
         # setup losses
-        self.bce = torch.nn.CrossEntropyLoss()
+        # setup optimizer
+        if classify:
+            self.bce = torch.nn.CrossEntropyLoss()
+            self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
+        else:
+            self.bce = torch.nn.MSELoss()
+            self.opt = torch.optim.RMSprop(self.parameters(), lr=config.lr)
 
     def forward(self, x):
         x = self.layers(x)
@@ -33,5 +39,6 @@ class Net(nn.Module):
     def observe(self, x, y):
         self.train()
         self.zero_grad()
+        #print("sz",self(x).size(),  y.size())
         self.bce(self(x), y).backward()
         self.opt.step()

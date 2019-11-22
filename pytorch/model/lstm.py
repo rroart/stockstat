@@ -12,17 +12,20 @@ class Net(nn.Module):
         
     self.rnn = nn.LSTM(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)   
     # Fully connected layer
-    self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
-
-    # setup optimizer
-    self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
+    if classify:
+      self.fc = nn.Linear(self.config.hidden, self.myobj.classes)
+    else:
+      self.fc = nn.Linear(self.config.hidden, 1)
 
     # setup losses
+    # setup optimizer
     self.bce = torch.nn.BCELoss()
     if classify:
       self.bce = torch.nn.CrossEntropyLoss()
+      self.opt = torch.optim.SGD(self.parameters(), lr=config.lr)
     else:
       self.bce = torch.nn.MSELoss()
+      self.opt = torch.optim.RMSprop(self.parameters(), lr=config.lr)
 
   def forward(self, x):
     batches = x.size(0)

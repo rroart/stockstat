@@ -4,8 +4,8 @@ from .myestimator import MyEstimator
 
 class Model(MyEstimator):
 
-  def __init__(self, myobj, config):
-    super(Model, self).__init__(myobj, config, name='my_model')
+  def __init__(self, myobj, config, classify):
+    super(Model, self).__init__(myobj, config, classify)
     feature_columns = [ tf.feature_column.numeric_column("features", shape=[myobj.size] ) ]
     pu = '/cpu:0'
     with tf.device(pu):

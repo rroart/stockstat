@@ -7,8 +7,14 @@ from .model import MyModel
 
 class Model(MyModel):
 
-  def __init__(self, myobj, config):
-    super(Model, self).__init__(config, name='my_model')
+  def __init__(self, myobj, config, classify):
+    super(Model, self).__init__(config, classify, name='my_model')
+
+    if classify:
+      loss = 'sparse_categorical_crossentropy'
+    else:
+      loss = 'mean_squared_error'
+
     # Define your layers here.
 
     # https://machinelearningmastery.com/how-to-develop-convolutional-neural-network-models-for-time-series-forecasting/
@@ -85,7 +91,7 @@ class Model(MyModel):
     self.dense_4 = Dense(myobj.classes, activation='softmax')
     #adam = tf.keras.optimizers.Adam(lr=1)
     self.model.compile(optimizer='adam',
-                       loss='sparse_categorical_crossentropy',
+                       loss=loss,
                        metrics=['accuracy'])
     return
     # https://www.kaggle.com/heyhello/mnist-simple-convnet/data

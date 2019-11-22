@@ -2,10 +2,11 @@ import tensorflow as tf
 import shutil
 
 class MyEstimator():
-    def __init__(self, myobj, config, name):
+    def __init__(self, myobj, config, classify):
         self.myobj = myobj
         self.config = config
         self.classifier = None
+        self.classify = classify
   
     def train(self, train, traincat):
         get_train_inputs = tf.compat.v1.estimator.inputs.numpy_input_fn(
@@ -24,7 +25,7 @@ class MyEstimator():
             shuffle=True
         )
         eval_dict = self.classifier.evaluate(input_fn = get_test_inputs, steps = self.config.steps)
-        #print(eval_dict)
+        #print("eca", eval_dict)
         if self.config.name == 'lir':
             accuracy_score = 0
             average_loss = eval_dict["average_loss"]
@@ -43,9 +44,10 @@ class MyEstimator():
         predictions = self.classifier.predict(input_fn=get_classifier_inputs)
         if self.config.name == 'lir':
             for prediction in predictions:
-                class_id = int(prediction['predictions'][0])
-                intlist.append(class_id)
-                problist.append(0)
+                #print("p", prediction)
+                value = float(prediction['predictions'][0])
+                intlist.append(value)
+                problist.append(None)
             return intlist, problist
         for prediction in predictions:
             class_id = prediction['class_ids'][0]

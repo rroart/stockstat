@@ -16,7 +16,7 @@ def classifyrunner2(queue, request):
 def predictrunner(queue, request):
     import classify
     cl = classify.Classify()
-    cl.do_learntestclassify(queue, request, False)
+    cl.do_learntestclassify(queue, request)
 
 def hasgpu():
     import torch
@@ -46,7 +46,7 @@ def do_learntestclassify():
         import classify
         cl = classify.Classify()
         try:
-            cl.do_learntestclassify(queue, request, True)
+            cl.do_learntestclassify(queue, request)
         except:
             queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None}), mimetype='application/json'))
             import sys,traceback

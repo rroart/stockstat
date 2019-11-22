@@ -1,17 +1,30 @@
 import tensorflow as tf
-from tensorflow.keras.layers import Dense, Activation, Dropout, SimpleRNN, RNN
+from tensorflow.keras.layers import Dense, Activation, Dropout, SimpleRNN, RNN, Flatten, TimeDistributed
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, RMSprop
 
 from .model import MyModel
 
 class Model(MyModel):
 
-  def __init__(self, myobj, config):
-    super(Model, self).__init__(config, name='my_model')
+  def __init__(self, myobj, config, classify):
+    super(Model, self).__init__(config, classify, name='my_model')
+
+    #print("class", classify)
+    if classify:
+      loss = 'sparse_categorical_crossentropy'
+      activation = 'softmax'
+      optimizer = Adam(lr = config.lr)
+    else:
+      loss = 'mean_squared_error'
+      activation = 'linear'
+      optimizer = RMSprop(lr = config.lr)
+
+    #loss = 'sparse_categorical_crossentropy'
     # Define your layers here.
     # https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781788292061/7/ch07lvl1sec59/simple-rnn-with-keras
     amodel=Sequential()
+    #print("ooo",myobj.size)
     amodel.add(Dropout(config.dropoutin, input_shape = myobj.size))
     amodel.add(SimpleRNN(config.hidden, return_sequences = True))
     # , time_major = False
@@ -20,11 +33,14 @@ class Model(MyModel):
       print("Adding hidden layer", i)
       amodel.add(SimpleRNN(config.hidden, return_sequences = i != config.layers - 1, time_major = False))
       amodel.add(Dropout(config.dropout))
-    amodel.add(Dense(myobj.classes))
+    amodel.add(Flatten())
+    if classify:
+      amodel.add(Dense(myobj.classes, activation = activation))
+    else:
+      amodel.add(Dense(1, activation = activation))
     self.model = amodel
-    optimizer = Adam(lr = config.lr)
     self.model.compile(optimizer = optimizer,
-                       loss='sparse_categorical_crossentropy',
+                       loss=loss,
                        metrics=['accuracy'])
 
   def call(self, inputs):
