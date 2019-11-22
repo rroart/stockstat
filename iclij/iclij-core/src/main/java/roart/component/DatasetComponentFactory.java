@@ -9,6 +9,8 @@ public class DatasetComponentFactory extends ComponentFactory {
 
     public Component factory(String component) {
         switch (component) {
+        case PipelineConstants.DATASET:
+            return new DatasetComponent();
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
             return new DatasetComponentRecommender();
         case PipelineConstants.PREDICTORSLSTM:

@@ -111,6 +111,8 @@ public abstract class MarketAction extends Action {
         myData.timingMap = new HashMap<>();
         myData.updateMap2 = new HashMap<>();
         myData.timingMap2 = new HashMap<>();
+
+        markets = filterMarkets(markets);
         
         IclijConfig config = paramTemplate.getInput().getConfig();
         List<MarketComponentTime> marketTimes = new ArrayList<>();
@@ -202,6 +204,22 @@ public abstract class MarketAction extends Action {
             }            
         }       
         return myData;
+    }
+
+    protected boolean isDataset() {
+        return false;
+    }
+    
+    private List<Market> filterMarkets(List<Market> markets) {
+        List<Market> filtered = new ArrayList<>();
+        for (Market market : markets) {
+            Boolean dataset = market.getConfig().getDataset();
+            boolean adataset = dataset != null && dataset;
+            if (adataset == isDataset()) {
+                filtered.add(market);
+            }
+        }
+        return filtered;
     }
 
     private static final int AVERAGE_SIZE = 5;

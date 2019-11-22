@@ -426,7 +426,7 @@ public class ServiceUtil {
         List<IclijServiceList> subLists = new ArrayList<>();
         if (!listIncDec.isEmpty()) {
             IclijServiceList incDec = new IclijServiceList();
-            incDec.setTitle(market + " " + "timing");
+            incDec.setTitle(market + " " + "timing" + " " + listIncDec.stream().mapToDouble(TimingItem::getMytime).summaryStatistics());
             incDec.setList(listIncDec);
             subLists.add(incDec);
         }
@@ -1108,6 +1108,14 @@ public class ServiceUtil {
         }
         if (config.wantsEvolveMLIndicator()) {
             components.add(PipelineConstants.MLINDICATOR);
+        }
+        return components;
+    }
+
+    public static List<String> getDatasetComponents(IclijConfig config, String market) {
+        List<String> components = new ArrayList<>();
+        if (config.wantsEvolveRecommender()) {
+            components.add(PipelineConstants.DATASET);
         }
         return components;
     }
