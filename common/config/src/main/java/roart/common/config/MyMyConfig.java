@@ -427,11 +427,6 @@ public class MyMyConfig extends MyConfig {
                 && wantMLTensorflow();
     }
 
-    public  boolean wantTensorflowLIR() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR)
-                && wantMLTensorflow();
-    }
-
     public  boolean wantTensorflowMLP() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP)
                 && wantMLTensorflow();
@@ -459,11 +454,6 @@ public class MyMyConfig extends MyConfig {
 
     public  boolean wantTensorflowGRU() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU)
-                && wantMLTensorflow();
-    }
-
-    public  boolean wantTensorflowPredictorLSTM() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM)
                 && wantMLTensorflow();
     }
 
@@ -561,10 +551,6 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLICCONFIG);
     }
 
-    public String getTensorflowLIRConfig() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRCONFIG);
-    }
-
     public String getTensorflowMLPConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG);
     }
@@ -587,10 +573,6 @@ public class MyMyConfig extends MyConfig {
 
     public String getTensorflowGRUConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUCONFIG);
-    }
-
-    public String getTensorflowPredictorLSTMConfig() {
-        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG);
     }
 
     public String getPytorchMLPConfig() {
@@ -665,10 +647,6 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLICPERSIST);
     }
 
-    public boolean wantTensorflowLIRPersist() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWLIRPERSIST);
-    }
-
     public boolean wantTensorflowMLPPersist() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWMLPPERSIST);
     }
@@ -691,10 +669,6 @@ public class MyMyConfig extends MyConfig {
 
     public boolean wantTensorflowGRUPersist() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWGRUPERSIST);
-    }
-
-    public boolean wantTensorflowPredictorLSTMPersist() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMPERSIST);
     }
 
     public boolean wantPytorchMLPPersist() {
@@ -858,14 +832,152 @@ public class MyMyConfig extends MyConfig {
     }
 
     public boolean wantPredictors() {
-        return (Boolean) getValueOrDefault(ConfigConstants.PREDICTORS); 
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORS)
+                && wantML();
     }
 
-    public boolean wantPredictorLSTM() {
-        return (Boolean) getValueOrDefault(ConfigConstants.PREDICTORSLSTM) 
-                && wantTensorflowPredictorLSTM()
-                && wantPredictors() 
-                && wantMLTensorflow();
+    public int getPredictorsDays() {
+        return (Integer) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS);
+    }
+
+    public int getPredictorsFuturedays() {
+        return (Integer) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS);
+    }
+
+    public boolean wantPredictorsTensorflow() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORS)
+                && wantPredictors();
+    }
+
+    public boolean wantPredictorsPytorch() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORS)
+                && wantPredictors();
+    }
+
+    public  boolean wantPredictorTensorflowLIR() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR)
+                && wantPredictorsTensorflow();
+    }
+
+    public  boolean wantPredictorTensorflowMLP() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP)
+                && wantPredictorsTensorflow();
+    }
+
+    public  boolean wantPredictorTensorflowRNN() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN)
+                && wantPredictorsTensorflow();
+    }
+
+    public boolean wantPredictorTensorflowLSTM() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM) 
+                && wantPredictorsTensorflow();
+    }
+
+    public  boolean wantPredictorTensorflowGRU() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU)
+                && wantPredictorsTensorflow();
+    }
+
+    public  boolean wantPredictorPytorchMLP() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP)
+                && wantPredictorsPytorch();
+    }
+
+    public  boolean wantPredictorPytorchRNN() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN)
+                && wantPredictorsPytorch();
+    }
+
+    public boolean wantPredictorPytorchLSTM() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM) 
+                && wantPredictorsPytorch();
+    }
+
+    public  boolean wantPredictorPytorchGRU() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU)
+                && wantPredictorsPytorch();
+    }
+
+    public  boolean wantPredictorTensorflowLIRPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRPERSIST)
+                && wantPredictorsTensorflow();
+    }
+
+    public  boolean wantPredictorTensorflowMLPPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLPPERSIST)
+                && wantPredictorsTensorflow();
+    }
+
+    public  boolean wantPredictorTensorflowRNNPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNNPERSIST)
+                && wantPredictorsTensorflow();
+    }
+
+    public boolean wantPredictorTensorflowLSTMPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMPERSIST) 
+                && wantPredictorsTensorflow();
+    }
+
+    public  boolean wantPredictorTensorflowGRUPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUPERSIST)
+                && wantPredictorsTensorflow();
+    }
+
+    public  boolean wantPredictorPytorchMLPPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLPPERSIST)
+                && wantPredictorsPytorch();
+    }
+
+    public  boolean wantPredictorPytorchRNNPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNNPERSIST)
+                && wantPredictorsPytorch();
+    }
+
+    public boolean wantPredictorPytorchLSTMPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTMPERSIST) 
+                && wantPredictorsPytorch();
+    }
+
+    public  boolean wantPredictorPytorchGRUPersist() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRUPERSIST)
+                && wantPredictorsPytorch();
+    }
+
+    public  String getPredictorTensorflowLIRConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRCONFIG);
+    }
+
+    public  String getPredictorTensorflowMLPConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLPCONFIG);
+    }
+
+    public  String getPredictorTensorflowRNNConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNNCONFIG);
+    }
+
+    public String getPredictorTensorflowLSTMConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG);
+    }
+
+    public  String getPredictorTensorflowGRUConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUCONFIG);
+    }
+
+    public  String getPredictorPytorchMLPConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLPCONFIG);
+    }
+
+    public  String getPredictorPytorchRNNConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNNCONFIG);
+    }
+
+    public String getPredictorPytorchLSTMConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTMCONFIG);
+    }
+
+    public  String getPredictorPytorchGRUConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRUCONFIG);
     }
 
     /*
