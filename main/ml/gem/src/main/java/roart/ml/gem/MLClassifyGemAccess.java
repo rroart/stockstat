@@ -13,7 +13,9 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +87,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
             int classes, String filename) {
         return learntestInner(nnconfigs, map, size, classes, model);
     }
@@ -95,7 +97,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         return models;
     }
 
-    private Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<Object, Double>> map, int size, int classes,
+    private Double learntestInner(NeuralNetConfigs nnconfigs, List<Triple<String, Object, Double>> map, int size, int classes,
             MLClassifyModel model) {
         // not used?
         //List<List<Object>> listlist = getListList(map);
@@ -115,16 +117,15 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         return test.getAccuracy();
     }
 
-    private void getTrainingSet(Map<String, Pair<Object, Double>> map, Object[][] objobj, Object[] cat) {
+    private void getTrainingSet(List<Triple<String, Object, Double>> list, Object[][] objobj, Object[] cat) {
         int i = 0;
-        for (Entry<String, Pair<Object, Double>> entry : map.entrySet()) {
-            double[] key = (double[]) entry.getValue().getLeft();
+        for (Triple<String, Object, Double> entry : list) {
+            double[] key = (double[]) entry.getMiddle();
             Object[] obj = new Object[key.length/* + 1*/];
             for (int j = 0; j < key.length; j ++) {
                 obj[j] = key[j];
             }
-            Pair<Object, Double> pair = entry.getValue();
-            cat[i] = pair.getRight();
+            cat[i] = entry.getRight();
             objobj[i++] = obj;
         }
     }
@@ -151,7 +152,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
             int classes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         if (map.isEmpty()) {
@@ -160,7 +161,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         return classifyInner(map, model, size, classes);
     }
 
-    private Map<String, Double[]> classifyInner(Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
+    private Map<String, Double[]> classifyInner(List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
             int classes) {
         LearnTestClassify param = new LearnTestClassify();
         List<String> retList = new ArrayList<>();
@@ -183,7 +184,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         return retMap;
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, Map<String, Pair<Object, Double>> classifyMap, LearnTestClassify ret) {
+    private Map<String, Double[]> getCatMap(List<String> retList, List<Triple<String, Object, Double>> classifyMap, LearnTestClassify ret) {
         Object[] cat = ret.getClassifycatarray();
         Object[] prob = ret.getClassifyprobarray();
         Map<String, Double[]> retMap = new HashMap<>();
@@ -194,27 +195,27 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
             retMap.put(id, new Double[]{ acat, aprob });
             //MutablePair pair = (MutablePair) classifyMap.get(id);
             //pair.setRight(acat);
-            Pair pair = classifyMap.get(id);
-            if (pair.getRight() != null) {
+            Triple triple = classifyMap.get(j);
+            if (triple.getRight() != null) {
                 int jj = 0;
             }
-            MutablePair mutablePair = new MutablePair(pair.getLeft(), null);
-            mutablePair.setRight(acat);
-            classifyMap.put(id, mutablePair);
+            Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), acat);
+            //triple.setRight(acat);
+            classifyMap.set(j, mutableTriple);
         }
         return retMap;
     }
 
-    private void getClassifyArray(Map<String, Pair<Object, Double>> map2, List<String> retList, Object[][] objobj) {
+    private void getClassifyArray(List<Triple<String, Object, Double>> list, List<String> retList, Object[][] objobj) {
         int i = 0;
-        for (Entry<String, Pair<Object, Double>> entry : map2.entrySet()) {
-            double[] value = (double[]) entry.getValue().getLeft();
+        for (Triple<String, Object, Double> entry : list) {
+            double[] value = (double[]) entry.getMiddle();
             Object[] obj = new Object[value.length/* + 1*/];
             for (int j = 0; j < value.length; j ++) {
                 obj[j] = value[j];
             }
             objobj[i++] = obj;
-            retList.add(entry.getKey());
+            retList.add(entry.getLeft());
         }
     }
 
@@ -229,8 +230,8 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> learnMap,
-            MLClassifyModel model, int size, int classes, Map<String, Pair<Object, Double>> classifyMap,
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnMap,
+            MLClassifyModel model, int size, int classes, List<Triple<String, Object, Double>> classifyMap,
             Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {

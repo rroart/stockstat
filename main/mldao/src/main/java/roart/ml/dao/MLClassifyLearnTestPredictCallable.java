@@ -1,9 +1,10 @@
 package roart.ml.dao;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private Aggregator indicator;
     
-    private Map<String, Pair<Object, Double>> learnmap;
+    private List<Triple<String, Object, Double>> learnmap;
     
     private MLClassifyModel model;
     
@@ -35,7 +36,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private Map<MLClassifyModel, Long> mapTime;
     
-    private Map<String, Pair<Object, Double>> classifymap;
+    private List<Triple<String, Object, Double>> classifymap;
     
     private  Map<Double, String> shortMap;
 
@@ -49,8 +50,8 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     
     private MLMeta mlmeta;
     
-    public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, Map<String, Pair<Object, Double>> learnmap, MLClassifyModel model,
-            int size, int outcomes, Map<MLClassifyModel, Long> mapTime, Map<String, Pair<Object, Double>> classifymap, Map<Double, String> shortMap,
+    public MLClassifyLearnTestPredictCallable(NeuralNetConfigs nnconfigs, MLClassifyDao mldao, Aggregator indicator, List<Triple<String, Object, Double>> learnmap, MLClassifyModel model,
+            int size, int outcomes, Map<MLClassifyModel, Long> mapTime, List<Triple<String, Object, Double>> classifymap, Map<Double, String> shortMap,
             String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
         super();
         this.nnconfigs = nnconfigs;

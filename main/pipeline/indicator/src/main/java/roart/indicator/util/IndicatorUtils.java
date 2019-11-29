@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -295,7 +296,7 @@ public class IndicatorUtils {
                 if (result.length == arraySize && Arrays.stream(result).allMatch(i -> !Double.isNaN(i))) {
                     indicatorMap.put(id, result);
                     IndicatorUtils.addToLists(indicatorLists, result);
-                    log.info("outid {} {}", id, Arrays.asList(result));
+                    log.debug("outid {} {}", id, Arrays.asList(result));
                 } else {
                     if (result.length == arraySize) {
                         int jj = 0;
@@ -626,6 +627,22 @@ public class IndicatorUtils {
                 list.removeAll(filterNonExistingClassifications);
                 log.error("Removing key {} {}", key, filterNonExistingClassifications);
             }
+        }
+    }
+
+    public static void filterNonExistingClassifications4(Map<Double, String> labelMapShort, List<Triple<String, Object, Double>> list) {
+        log.info("Values " + list);
+        // due to tensorflow l classifying to 3rd (not inc dec)
+        List<Triple<String, Object, Double>> filterNonExistingClassifications = new ArrayList<>();
+        for (Triple<String, Object, Double> entry : list) {
+            Double value = entry.getRight();
+            if (labelMapShort.get(value) == null) {
+                filterNonExistingClassifications.add(entry);
+            }
+        }
+        for (Triple<String, Object, Double> key : filterNonExistingClassifications) {
+            list.remove(key);
+            log.error("Removing key {}", key);
         }
     }
 

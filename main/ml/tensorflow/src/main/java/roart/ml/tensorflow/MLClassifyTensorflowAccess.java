@@ -9,7 +9,9 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,16 +60,16 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             MLClassifyModel model = new MLClassifyTensorflowLICModel(conf);
             models.add(model);
         }	    
-        if (conf.wantTensorflowLIR()) {
-            MLClassifyModel model = new MLClassifyTensorflowLIRModel(conf);
-            models.add(model);
-        }           
         if (conf.wantTensorflowMLP()) {
             MLClassifyModel model = new MLClassifyTensorflowMLPModel(conf);
             models.add(model);
         }           
         if (conf.wantTensorflowCNN()) {
             MLClassifyModel model = new MLClassifyTensorflowCNNModel(conf);
+            models.add(model);
+        }           
+        if (conf.wantTensorflowCNN2()) {
+            MLClassifyModel model = new MLClassifyTensorflowCNN2Model(conf);
             models.add(model);
         }           
         if (conf.wantTensorflowRNN()) {
@@ -85,7 +87,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
+    public Double learntest(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
             int classes, String filename) {
         return learntestInner(nnconfigs, map, size, classes, model);
     }
@@ -95,7 +97,33 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return models;
     }
 
-    private Double learntestInner(NeuralNetConfigs nnconfigs, Map<String, Pair<Object, Double>> map, int size, int classes,
+    @Override
+    public List<MLClassifyModel> getModels(String model) {
+        List<MLClassifyModel> mymodels = new ArrayList<>();
+        if (model.equals(MLConstants.LIR) && conf.wantPredictorTensorflowLIR()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowLIRModel(conf);
+            mymodels.add(amodel);
+        }           
+        if (model.equals(MLConstants.MLP) && conf.wantPredictorTensorflowMLP()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowMLPModel(conf);
+            mymodels.add(amodel);
+        }           
+        if (model.equals(MLConstants.RNN) && conf.wantPredictorTensorflowRNN()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowRNNModel(conf);
+            mymodels.add(amodel);
+        }           
+        if (model.equals(MLConstants.LSTM) && conf.wantPredictorTensorflowLSTM()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowLSTMModel(conf);
+            mymodels.add(amodel);
+        }           
+        if (model.equals(MLConstants.GRU) && conf.wantPredictorTensorflowGRU()) {
+            MLClassifyModel amodel = new MLClassifyTensorflowGRUModel(conf);
+            mymodels.add(amodel);
+        }           
+        return mymodels;
+    }
+    
+    private Double learntestInner(NeuralNetConfigs nnconfigs, List<Triple<String, Object, Double>> map, int size, int classes,
             MLClassifyModel model) {
         // not used?
         //List<List<Object>> listlist = getListList(map);
@@ -121,27 +149,12 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return test.getAccuracy();
     }
 
-    private void getTrainingSet(Map<String, Pair<Object, Double>> map, Object[] objobj, Object[] cat) {
+    private void getTrainingSet(List<Triple<String, Object, Double>> list, Object[] objobj, Object[] cat) {
         int i = 0;
-        for (Entry<String, Pair<Object, Double>> entry : map.entrySet()) {
-            Pair<Object, Double> pair = entry.getValue();
-            Object key = pair.getLeft();
-            cat[i] = pair.getRight();
+        for (Triple<String, Object, Double> entry : list) {
+            Object key = entry.getMiddle();
+            cat[i] = entry.getRight();
             objobj[i++] = key;
-        }
-    }
-
-    private void getTrainingSetOld(Map<String, Pair<Object, Double>> map, Object[][] objobj, Object[] cat) {
-        int i = 0;
-        for (Entry<String, Pair<Object, Double>> entry : map.entrySet()) {
-            double[] key = (double[]) entry.getValue().getLeft();
-            Object[] obj = new Object[key.length/* + 1*/];
-            for (int j = 0; j < key.length; j ++) {
-                obj[j] = key[j];
-            }
-            Pair<Object, Double> pair = entry.getValue();
-            cat[i] = pair.getRight();
-            objobj[i++] = obj;
         }
     }
 
@@ -167,7 +180,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public Map<String, Double[]> classify(Aggregator indicator, Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
+    public Map<String, Double[]> classify(Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
             int classes, Map<Double, String> shortMap) {
         Map<Integer, Map<String, Double[]>> retMap = new HashMap<>();
         if (map.isEmpty()) {
@@ -176,7 +189,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return classifyInner(map, model, size, classes);
     }
 
-    private Map<String, Double[]> classifyInner(Map<String, Pair<Object, Double>> map, MLClassifyModel model, int size,
+    private Map<String, Double[]> classifyInner(List<Triple<String, Object, Double>> map, MLClassifyModel model, int size,
             int classes) {
         LearnTestClassify param = new LearnTestClassify();
         List<String> retList = new ArrayList<>();
@@ -199,7 +212,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         return retMap;
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, Map<String, Pair<Object, Double>> classifyMap, LearnTestClassify ret) {
+    private Map<String, Double[]> getCatMap(List<String> retList, List<Triple<String, Object, Double>> classifyMap, LearnTestClassify ret) {
         Object[] cat = ret.getClassifycatarray();
         Object[] prob = ret.getClassifyprobarray();
         Map<String, Double[]> retMap = new HashMap<>();
@@ -210,37 +223,23 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             retMap.put(id, new Double[]{ acat, aprob });
             //MutablePair pair = (MutablePair) classifyMap.get(id);
             //pair.setRight(acat);
-            Pair pair = classifyMap.get(id);
-            if (pair.getRight() != null) {
+            Triple triple = classifyMap.get(j);
+            if (triple.getRight() != null) {
                 int jj = 0;
             }
-            MutablePair mutablePair = new MutablePair(pair.getLeft(), null);
-            mutablePair.setRight(acat);
-            classifyMap.put(id, mutablePair);
+            Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), acat);
+            //triple.setRight(acat);
+            classifyMap.set(j, mutableTriple);
         }
         return retMap;
     }
 
-    private void getClassifyArray(Map<String, Pair<Object, Double>> map2, List<String> retList, Object[] objobj) {
+    private void getClassifyArray(List<Triple<String, Object, Double>> list, List<String> retList, Object[] objobj) {
         int i = 0;
-        for (Entry<String, Pair<Object, Double>> entry : map2.entrySet()) {
-            Pair<Object, Double> pair = entry.getValue();
-            Object value = pair.getLeft();
+        for (Triple<String, Object, Double> entry : list) {
+            Object value = entry.getMiddle();
             objobj[i++] = value;
-            retList.add(entry.getKey());
-        }
-    }
-
-    private void getClassifyArrayOld(Map<String, Pair<Object, Double>> map2, List<String> retList, Object[][] objobj) {
-        int i = 0;
-        for (Entry<String, Pair<Object, Double>> entry : map2.entrySet()) {
-            double[] value = (double[]) entry.getValue().getLeft();
-            Object[] obj = new Object[value.length/* + 1*/];
-            for (int j = 0; j < value.length; j ++) {
-                obj[j] = value[j];
-            }
-            objobj[i++] = obj;
-            retList.add(entry.getKey());
+            retList.add(entry.getLeft());
         }
     }
 
@@ -255,8 +254,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     }
 
     @Override
-    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, Map<String, Pair<Object, Double>> learnMap,
-            MLClassifyModel model, int size, int classes, Map<String, Pair<Object, Double>> classifyMap,
+    public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnMap,
+            MLClassifyModel model, int size, int classes, List<Triple<String, Object, Double>> classifyMap,
             Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
@@ -349,7 +348,13 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         */
         NeuralNetConfig m = ((MLClassifyTensorflowModel) model).getModelAndSet(nnconfigs, param);
         param.setTrainingarray(trainingArray);
-        param.setTrainingcatarray(trainingCatArray);
+        if (Arrays.stream(trainingCatArray).allMatch(e -> e != null)) {
+            param.setTrainingcatarray(trainingCatArray);
+            param.setClassify(true);
+        } else {
+            param.setTrainingcatarray(new Object[0]);
+            param.setClassify(false);
+        }
         param.setModelInt(model.getId());
         param.setSize(size);
         param.setClasses(classes);
@@ -375,10 +380,12 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             return result;
         }
         result.setAccuracy(ret.getAccuracy());
+        result.setLoss(ret.getLoss());
         if (ret.getClassifycatarray() != null) {
             Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret);
             result.setCatMap(retMap);
         }
+        result.setClassify(param.getClassify());
         return result;
     }
 
@@ -411,6 +418,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             return result;
         }
         result.setAccuracy(ret.getAccuracy());
+        result.setClassify(ret.getClassify());
         return result;
     }
 
