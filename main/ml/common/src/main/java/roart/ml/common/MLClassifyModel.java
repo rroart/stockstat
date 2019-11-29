@@ -145,9 +145,9 @@ public abstract class MLClassifyModel {
             newarray[0] = (double[]) array;
             return newarray;
         }
-        if (mlmeta.dim3 == null && isFourDimensional()) {
-            double[][] newarray = new double[1][];
-            newarray[0] = (double[]) array;
+        if (mlmeta.dim3 != null && isFourDimensional()) {
+            double[][][] newarray = new double[1][][];
+            newarray[0] = (double[][]) array;
             return newarray;
         }
         return array;
