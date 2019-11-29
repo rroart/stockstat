@@ -256,6 +256,13 @@ class Classify:
     def gettraintest(self, myobj, config, classify):
         mydim = myobj.size
         array = np.array(myobj.trainingarray, dtype='f')
+        if config.name == "cnn2":
+            print("cnn2 shape")
+            print(array.shape)
+            #array = np.transpose(array, [0, 3, 2, 1])
+            array = np.transpose(array, [0, 2, 3, 1])
+            print(array.shape)
+
         cat = np.array([], dtype='i')
         if hasattr(myobj, 'trainingcatarray') and not myobj.trainingcatarray is None:
             cat = np.array(myobj.trainingcatarray, dtype='i')
@@ -519,7 +526,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"accuracy": accuracy_score, "loss": loss }), mimetype='application/json'))
+        queue.put(Response(json.dumps({"accuracy": accuracy_score, "loss": loss, "classify" : classify }), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getpath(self, myobj):
