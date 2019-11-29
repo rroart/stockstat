@@ -70,7 +70,7 @@ public abstract class Component {
     public static void disabler(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
         valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        valueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        valueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         valueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         valueMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, Boolean.FALSE);
@@ -78,13 +78,13 @@ public abstract class Component {
         valueMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);
     }
     
-    public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent);
+    public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket);
     
     public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent);
 
     protected abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
 
-    public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
+    public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
         try {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
         } catch (ParseException e) {
@@ -103,7 +103,7 @@ public abstract class Component {
         this.enable(valueMap);
         this.subenable(valueMap, subcomponent);
         try {
-            Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent);
+            Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket);
             valueMap.putAll(loadValues);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -113,7 +113,7 @@ public abstract class Component {
         Map<String, Object> scoreMap = new HashMap<>();
         if (evolve) {   
             long time0 = System.currentTimeMillis();
-            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap);
+            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null);
             if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
                 Double score = null;
                 if (IclijConstants.EVOLVE.equals(param.getAction()) ) {
@@ -124,7 +124,7 @@ public abstract class Component {
                             .max()
                             .orElse(-1);
                 }
-                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent);
+                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket);
                 param.getTimings().add(timing);
            }
         }
@@ -147,7 +147,7 @@ public abstract class Component {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
-            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent);
+            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent, mlmarket);
             param.getTimings().add(timing);
         }
     }
@@ -167,11 +167,12 @@ public abstract class Component {
         log.info("Disable {}", disableML);
     }
 
-    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent) {
+    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setBuy(buy);
         timing.setMarket(param.getInput().getMarket());
+        timing.setMlmarket(mlmarket);
         timing.setEvolve(evolve);
         timing.setComponent(getPipeline());
         timing.setTime(time0);
@@ -188,13 +189,13 @@ public abstract class Component {
         return null;
     }
     
-    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap);
+    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket);
 
     public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata);
     
     public abstract EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata);
     
-    public abstract Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata);
+    public abstract Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata, String mlmarket);
 
     public abstract String getLocalMLConfig(ComponentData componentdata);
 
@@ -218,7 +219,7 @@ public abstract class Component {
 
     public abstract String getPipeline();
     
-    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent) throws Exception;
+    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket) throws Exception;
 
     protected abstract EvolutionConfig getImproveEvolutionConfig(IclijConfig config);
     
@@ -246,7 +247,8 @@ public abstract class Component {
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
             param.setFutureDate(LocalDate.now());
-            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent);
+            // fix mlmarket;
+            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent, null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);
             if (false) {
@@ -347,12 +349,12 @@ public abstract class Component {
         }
     }
     
-    public abstract List<String> getSubComponents(Market market, ComponentData componentData);
+    public abstract List<String> getSubComponents(Market market, ComponentData componentData, String mlmarket);
 
     public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) throws Exception {
-        List<String> subComponents = getSubComponents(market, param);
+        List<String> subComponents = getSubComponents(market, param, null);
         for(String subComponent : subComponents) {
-            ComponentData componentData = handle(action, market, param, profitdata, new ArrayList<>(), false, new HashMap<>(), subComponent);
+            ComponentData componentData = handle(action, market, param, profitdata, new ArrayList<>(), false, new HashMap<>(), subComponent, null);
             calculateMemory(componentData);
         }
         return null;

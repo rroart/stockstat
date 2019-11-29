@@ -39,10 +39,10 @@ import roart.util.ServiceUtil;
 public abstract class ComponentML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
-        Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);
+        Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param, mlmarket);
         // part special
         // if (param.getInput().getConfig().wantEvolveML()) {
         if (evolve) {
@@ -136,12 +136,12 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent) throws Exception {
-        Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param);
-        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent);
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket) throws Exception {
+        Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param, mlmarket);
+        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent, mlmarket);
     }
 
-    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent) throws Exception {
+    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket) throws Exception {
         Map<String, Object> map = new HashMap<>();
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
             String key = entry.getKey();
@@ -149,6 +149,9 @@ public abstract class ComponentML extends Component {
             if (config.getLoad()) {
                 String marketName = market.getConfig().getMarket();
                 String component = getPipeline();
+                if (mlmarket != null) {
+                    marketName = mlmarket;
+                }
                 Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent);
                 map.putAll(configMap);
             }
@@ -157,7 +160,7 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData param) {
+    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData param, String mlmarket) {
         System.out.println(param.getInput().getConfig().getEvolveMLMLConfig());
         String localMl = getLocalMLConfig(param);
         String ml = param.getInput().getConfig().getEvolveMLMLConfig();
@@ -168,11 +171,15 @@ public abstract class ComponentML extends Component {
         MLConfigs overrideLSTM = getOverrideMLConfig(param);
         mlConfig.merge(localMLConfig);
         mlConfig.merge(marketMlConfig);
-        mlConfig.merge(overrideLSTM);
-        Map<String, EvolveMLConfig> mlConfigMap = mlConfig.getAll();
+        //mlConfig.merge(overrideLSTM);
+        Map<String, EvolveMLConfig> mlConfigMap = getMLConfigs(mlConfig);
         return mlConfigMap;
     }
 
+    Map<String, EvolveMLConfig> getMLConfigs(MLConfigs mlConfig) {
+        return mlConfig.getAll();
+    }
+    
     @Override
     public EvolutionConfig getEvolutionConfig(ComponentData param) {
         String confStr = param.getInput().getConfig().getEvolveMLEvolutionConfig();
@@ -291,11 +298,11 @@ public abstract class ComponentML extends Component {
         map.put(MLConstants.LSVC, ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
         map.put(MLConstants.DNN, ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
         map.put(MLConstants.LIC, ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
-        map.put(MLConstants.LSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM);
+        map.put(MLConstants.LSTM, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM);
         return map;
     }
 
-    private Map<Pair<String, String>, String> getMap() {
+    protected Map<Pair<String, String>, String> getMap() {
         Map<Pair <String, String>, String> map = new HashMap<>();
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.MLPC), ConfigConstants.MACHINELEARNINGSPARKMLMLPC);
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LIR), ConfigConstants.MACHINELEARNINGSPARKMLLOR);
@@ -303,14 +310,13 @@ public abstract class ComponentML extends Component {
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LSVC), ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.DNN), ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIC), ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGTENSORFLOWLIR);
+        //map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.MLP), ConfigConstants.MACHINELEARNINGTENSORFLOWMLP);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.CNN), ConfigConstants.MACHINELEARNINGTENSORFLOWCNN);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.CNN2), ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.RNN), ConfigConstants.MACHINELEARNINGTENSORFLOWRNN);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.GRU), ConfigConstants.MACHINELEARNINGTENSORFLOWGRU);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.PREDICTORLSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM);
         map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPYTORCHMLP);
         map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.CNN), ConfigConstants.MACHINELEARNINGPYTORCHCNN);
         map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.CNN2), ConfigConstants.MACHINELEARNINGPYTORCHCNN2);
@@ -326,7 +332,7 @@ public abstract class ComponentML extends Component {
         return map;
     }
 
-    private Map<Pair<String, String>, String> getMapPersist() {
+    protected Map<Pair<String, String>, String> getMapPersist() {
         Map<Pair <String, String>, String> map = new HashMap<>();
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.MLPC), ConfigConstants.MACHINELEARNINGSPARKMLMLPCPERSIST);
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LIR), ConfigConstants.MACHINELEARNINGSPARKMLLORPERSIST);
@@ -334,14 +340,13 @@ public abstract class ComponentML extends Component {
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LSVC), ConfigConstants.MACHINELEARNINGSPARKMLLSVCPERSIST);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.DNN), ConfigConstants.MACHINELEARNINGTENSORFLOWDNNPERSIST);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIC), ConfigConstants.MACHINELEARNINGTENSORFLOWLICPERSIST);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGTENSORFLOWLIRPERSIST);
+        //map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRPERSIST);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.MLP), ConfigConstants.MACHINELEARNINGTENSORFLOWMLPPERSIST);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.CNN), ConfigConstants.MACHINELEARNINGTENSORFLOWCNNPERSIST);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.CNN2), ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2PERSIST);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.RNN), ConfigConstants.MACHINELEARNINGTENSORFLOWRNNPERSIST);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMPERSIST);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.GRU), ConfigConstants.MACHINELEARNINGTENSORFLOWGRUPERSIST);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.PREDICTORLSTM), ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMPERSIST);
         map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPYTORCHMLPPERSIST);
         map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.CNN), ConfigConstants.MACHINELEARNINGPYTORCHCNNPERSIST);
         map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.CNN2), ConfigConstants.MACHINELEARNINGPYTORCHCNN2PERSIST);
@@ -357,7 +362,7 @@ public abstract class ComponentML extends Component {
         return map;
     }
 
-    private Map<String, Pair<String, String>> getMapRev() {
+    protected Map<String, Pair<String, String>> getMapRev() {
         Map<Pair<String, String>, String> aMap = getMap();
         Map<String, Pair<String, String>> retMap = new HashMap<>();
         for (Entry<Pair<String, String>, String> entry : aMap.entrySet()) {
@@ -376,10 +381,10 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    public List<String> getSubComponents(Market market, ComponentData componentData) {
+    public List<String> getSubComponents(Market market, ComponentData componentData, String mlmarket) {
         List<String> subComponents = new ArrayList<>();
         Map<String, Pair<String, String>> revMap = getMapRev();
-        Map<String, EvolveMLConfig> mlConfigs = getMLConfig(market, componentData);
+        Map<String, EvolveMLConfig> mlConfigs = getMLConfig(market, componentData, mlmarket);
         for (Entry<String, EvolveMLConfig> entry : mlConfigs.entrySet()) {
             EvolveMLConfig mlConfig = entry.getValue();
             if (mlConfig.getEnable()) {

@@ -234,7 +234,7 @@ public abstract class MarketAction extends Action {
             Component component = entry.getValue();
             boolean evolve = getEvolve(component, param);
 
-            List<String> subComponents = component.getSubComponents(market, param);
+            List<String> subComponents = component.getSubComponents(market, param, null);
             for(String subComponent : subComponents) {
                 Boolean[] booleans = getBooleans();
                 for (Boolean buy : booleans) {
@@ -646,13 +646,13 @@ public abstract class MarketAction extends Action {
         Map<String, Component> componentMap = new HashMap<>();
         for (String componentName : listComponent) {
             Component component = getComponentFactory().factory(componentName);
-            if (market != null && componentName.equals(PipelineConstants.PREDICTORSLSTM)) {
+            if (market != null && componentName.equals(PipelineConstants.PREDICTOR)) {
                 MLConfigs mlConfigs = market.getMlconfig();
                 if (mlConfigs != null) {
                     MLConfig mlConfig = mlConfigs.getTensorflow().getLstm();
                     if (mlConfig != null) {
                         if (!mlConfig.getEnable()) {
-                            continue;
+                            //continue;
                         }
                     }
                 }
