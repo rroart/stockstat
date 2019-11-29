@@ -104,6 +104,8 @@ public class LearnTestClassify {
    
     private String dataset;
     
+    private Boolean classify;
+    
     public TensorflowDNNConfig getTensorflowDNNConfig() {
         return tensorflowDNNConfig;
     }
@@ -418,6 +420,14 @@ public class LearnTestClassify {
 
     public void setDataset(String dataset) {
         this.dataset = dataset;
+    }
+
+    public Boolean getClassify() {
+        return classify;
+    }
+
+    public void setClassify(Boolean classify) {
+        this.classify = classify;
     }
 
 }
