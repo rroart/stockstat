@@ -14,17 +14,23 @@ class Net(nn.Module):
         #print("MO",myobj.size)
         dim1 = myobj.size[0]
         dim2 = myobj.size[1]
-        #print(dim1, dim2)
+        dim3 = myobj.size[2]
         c1 = 32
         c2 = 64
-        o1 = (dim1 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
-        o1 = int(o1)
-        o2 = (o1 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
-        o2 = int(o2)
-        p1 = (dim2 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
-        p1 = int(p1)
+        pool_kernel_size = 2
+        o1 = (dim1 - config.kernelsize + 2 * (config.kernelsize // 2)) // config.stride + 1
+        #o1 = int(o1)
+        o2 = (o1 - config.kernelsize + 2 * (config.kernelsize // 2)) // config.stride + 1
+        #o2 = int(o2)
+        p1 = (dim2 - config.kernelsize + 2 * (config.kernelsize // 2)) // config.stride + 1
+        #p1 = int(p1)
         p2 = (p1 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
-        p2 = int(p2)
+        #p2 = int(p2)
+        q1 = (dim3 - config.kernelsize + 2 * (config.kernelsize // 2)) // config.stride + 1
+        q2 = (q1 - config.kernelsize + 2 * (config.kernelsize // 2)) / config.stride + 1
+        o3 = o2 // pool_kernel_size
+        p3 = p2 // pool_kernel_size
+        q3 = q2 // pool_kernel_size
         self.layer1 = nn.Sequential(
             nn.Conv2d(dim1, c1, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)),
             nn.BatchNorm2d(c1),
@@ -34,7 +40,7 @@ class Net(nn.Module):
             nn.Conv2d(c1, c2, kernel_size = config.kernelsize, stride = config.stride, padding=(config.kernelsize // 2)),
             nn.BatchNorm2d(c2),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
+            nn.MaxPool2d(kernel_size=pool_kernel_size),
             #nn.MaxPool2d(kernel_size=4),
             #, stride=2),
             nn.Dropout(config.dropout1))
@@ -52,11 +58,20 @@ class Net(nn.Module):
         #     nn.BatchNorm2d(32),
         #     nn.ReLU(),
         #     nn.MaxPool2d(kernel_size=2, stride=2))
-        #print("O12", o1, o2)
-        #print("P12", p1, p2)
-        #print("fc1", c2, p2, c2*p2)
-        self.fc1 = nn.Linear(c2 * p2, 128)
+        #print("O12", o1, o2, o3)
+        #print("P12", p1, p2, p3)
+        #print("Q12", q1, q2, q3)
+        #pq3 = min(p3, q3)
+        #print("pq3", pq3)
+        #print(o3, p3, q3)
+        #print("fc1", c2, p1, p2, c2*p1*p2)
+        #print("fc1", c2, m1, m2, c2*m1*m2)
+        # / 2 is the dropout
+        #self.fc1 = nn.Linear(int(c2 * m1 * m2 * config.dropout2), 128)
+        #self.fc1 = nn.Linear(int(c2 * p1 * p2), 128)
+        self.fc1 = nn.Linear(int(c2 * p3 * q3), 128)
         self.drop = nn.Dropout(config.dropout2)
+        self.fc15 = nn.Linear(128, 64)
         self.fc2 = nn.Linear(64, myobj.classes)
 
         #Defining the layers
@@ -109,7 +124,7 @@ class Net(nn.Module):
         #out = r2(out)
         r1 = nn.ReLU()
         #print("oo", out.shape)
-        b1 = nn.BatchNorm1d(64)
+        #b1 = nn.BatchNorm2d(64)
 
         #print("oo", out.shape)
         out = out.view(out.size(0), -1)
@@ -120,15 +135,17 @@ class Net(nn.Module):
         #print("xxx4", out.shape)
         #print("oo", out.shape)
         out = self.fc1(out)
+        #print("oo", out.shape)
         out = self.drop(out)
         #print("oo", out.shape)
-        out = b1(out)
+        #out = b1(out)
         #print("oo", out.shape)
         out = r1(out)
         
         #print("oo", out.shape)
         if self.classify:
             #out = self.fc(out[:, :, -1])
+            out = self.fc15(out)
             out = self.fc2(out)
         else:
             out = self.fc(out)
