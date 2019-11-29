@@ -91,7 +91,7 @@ public class MachineLearningAction extends MarketAction {
             
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
-            ComponentData componentData = component.handle(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
+            ComponentData componentData = component.handle(action, market, param, profitdata, positions, evolve, aMap, subcomponent, null);
         }
     }
 

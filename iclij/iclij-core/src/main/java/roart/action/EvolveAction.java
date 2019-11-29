@@ -79,7 +79,7 @@ public class EvolveAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             List<Integer> positions = null;
-            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent);
+            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);

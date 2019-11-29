@@ -216,7 +216,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
-            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent);
+            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent, null);
             //componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
@@ -241,7 +241,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
             component.enableDisable(componentData, positions, param.getConfigValueMap());
 
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent);
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null);
             component.calculateIncDec(componentData2, profitdata, positions);
 
             List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());

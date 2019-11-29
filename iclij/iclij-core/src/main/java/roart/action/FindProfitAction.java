@@ -83,7 +83,7 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
             
-            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent);
+            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null);
             component.calculateIncDec(componentData, profitdata, positions);
             if (param.getInput().isDoSave()) {
                 IncDecItem myitem = null;
@@ -128,7 +128,7 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, config.wantsFindProfitMLDynamic());
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
-            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, aMap, marketTime.subcomponent);
+            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, aMap, marketTime.subcomponent, null);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());

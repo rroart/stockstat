@@ -14,6 +14,8 @@ public class TimingItem {
     
     private String market;
 
+    private String mlmarket;
+    
     private String action;
     
     private boolean evolve;
@@ -50,6 +52,14 @@ public class TimingItem {
 
     public void setMarket(String market) {
         this.market = market;
+    }
+
+    public String getMlmarket() {
+        return mlmarket;
+    }
+
+    public void setMlmarket(String mlmarket) {
+        this.mlmarket = mlmarket;
     }
 
     public String getAction() {
@@ -121,6 +131,7 @@ public class TimingItem {
         timing.setDate(TimeUtil.convertDate(getDate()));
         timing.setEvolve(isEvolve());
         timing.setMarket(getMarket());
+        timing.setMlmarket(getMlmarket());
         timing.setRecord(TimeUtil.convertDate(getRecord()));
         timing.setTime(getMytime());
         timing.setScore(getScore());
@@ -156,6 +167,7 @@ public class TimingItem {
         timingItem.setDate(TimeUtil.convertDate(timing.getDate()));
         timingItem.setEvolve(timing.isEvolve());
         timingItem.setMarket(timing.getMarket());
+        timingItem.setMlmarket(timing.getMlmarket());
         timingItem.setRecord(TimeUtil.convertDate(timing.getRecord()));
         timingItem.setMytime(timing.getTime());
         timingItem.setScore(timing.getScore());
@@ -166,4 +178,5 @@ public class TimingItem {
     public void setTime(long time0) {
         this.mytime = ((double) (System.currentTimeMillis()) - time0) / 1000;
     }
+
 }

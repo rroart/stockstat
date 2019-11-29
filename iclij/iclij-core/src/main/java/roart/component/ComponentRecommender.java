@@ -115,14 +115,14 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
     
         RecommenderData param = new RecommenderData(componentparam);        
         
         int futuredays = (int) param.getService().conf.getTestIndicatorRecommenderComplexFutureDays();
         param.setFuturedays(futuredays);
 
-        handle2(action, market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap, subcomponent);
+        handle2(action, market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket);
 
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
@@ -841,7 +841,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata) {
+    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata, String mlmarket) {
         return null;
     }
 

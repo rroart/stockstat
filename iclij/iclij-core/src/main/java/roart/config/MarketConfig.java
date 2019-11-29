@@ -23,6 +23,8 @@ public class MarketConfig {
     
     private Boolean dataset;
     
+    private String[] mlmarkets;
+    
     public MarketConfig() {
         super();
     }
@@ -113,6 +115,14 @@ public class MarketConfig {
 
     public void setDataset(Boolean dataset) {
         this.dataset = dataset;
+    }
+
+    public String[] getMlmarkets() {
+        return mlmarkets;
+    }
+
+    public void setMlmarkets(String[] mlmarkets) {
+        this.mlmarkets = mlmarkets;
     }
 
 }

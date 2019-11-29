@@ -33,6 +33,9 @@ public class Timing implements Serializable {
     private String market;
 
     @Column
+    private String mlmarket;
+
+    @Column
     private String action;
 
     @Column
@@ -65,6 +68,14 @@ public class Timing implements Serializable {
 
     public void setMarket(String market) {
         this.market = market;
+    }
+
+    public String getMlmarket() {
+        return mlmarket;
+    }
+
+    public void setMlmarket(String mlmarket) {
+        this.mlmarket = mlmarket;
     }
 
     public String getAction() {

@@ -65,29 +65,29 @@ public class CrossTestAction extends MarketAction {
             if (component == null) {
                 continue;
             }
-            boolean evolve = true; // param.getInput().getConfig().wantEvolveML();
-            //component.set(market, param, profitdata, positions, evolve);
-            //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
-            // 0 ok?
-            param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
-            param.getConfigValueMap().put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.TRUE);
-            Map<String, Object> aMap = new HashMap<>();
-            // don't need these both here and in getevolveml?
-            aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
-            aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
-            aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
-            aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            List<Integer> positions = null;
-            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent);
-            Map<String, Object> updateMap = componentData.getUpdateMap();
-            if (updateMap != null) {
-                param.getUpdateMap().putAll(updateMap);
+            for (String mlmarket : market.getConfig().getMlmarkets()) {
+                param.getService().conf.setMLmarket(mlmarket);
+                boolean evolve = true; // param.getInput().getConfig().wantEvolveML();
+                //component.set(market, param, profitdata, positions, evolve);
+                //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
+                // 0 ok?
+                param.getConfigValueMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
+                param.getConfigValueMap().put(ConfigConstants.MISCMYDAYS, 0);
+                param.getConfigValueMap().put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.TRUE);
+                Map<String, Object> aMap = new HashMap<>();
+                // don't need these both here and in getevolveml?
+                aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, false);
+                aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
+                aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, false);
+                aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+                aMap.put(ConfigConstants.MISCMYDAYS, 0);
+                List<Integer> positions = null;
+                ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket);
+                Map<String, Object> updateMap = componentData.getUpdateMap();
+                if (updateMap != null) {
+                    param.getUpdateMap().putAll(updateMap);
+                }
             }
-            //component.calculateIncDec(componentData, profitdata, positions);
-            //System.out.println("Buys: " + market.getMarket() + buys);
-            //System.out.println("Sells: " + market.getMarket() + sells);           
         }
     }
 

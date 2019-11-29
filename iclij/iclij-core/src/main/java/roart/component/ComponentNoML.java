@@ -27,7 +27,7 @@ import roart.util.ServiceUtil;
 public abstract class ComponentNoML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket) {
         if (evolve) {
             String confStr = param.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {
@@ -45,7 +45,7 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket) throws Exception {
         Map<String, Object> map = new HashMap<>();
         String marketName = market.getConfig().getMarket();
         String component = getPipeline();
@@ -122,7 +122,7 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    public List<String> getSubComponents(Market market, ComponentData componentData) {
+    public List<String> getSubComponents(Market market, ComponentData componentData, String mlmarket) {
         List<String> list = new ArrayList<>();
         list.add("");
         return list;

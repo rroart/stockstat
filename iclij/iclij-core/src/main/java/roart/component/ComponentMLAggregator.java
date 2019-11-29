@@ -27,13 +27,13 @@ import roart.util.ServiceUtilConstants;
 public abstract class ComponentMLAggregator extends ComponentML {
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
         MLAggregatorData param = new MLAggregatorData(componentparam);
 
         int daysafterzero = getDaysAfterLimit(componentparam);
         param.setFuturedays(daysafterzero);
 
-        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket);
         //Map resultMaps = param.getResultMap();
         //handleMLMeta(param, resultMaps);
         return param;
