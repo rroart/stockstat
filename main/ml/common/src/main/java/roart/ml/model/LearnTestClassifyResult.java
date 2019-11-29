@@ -11,6 +11,8 @@ public class LearnTestClassifyResult {
     
     private Boolean exists;
     
+    private Boolean classify;
+    
     public LearnTestClassifyResult() {
         super();
     }
@@ -45,6 +47,14 @@ public class LearnTestClassifyResult {
 
     public void setExists(Boolean exists) {
         this.exists = exists;
+    }
+
+    public Boolean getClassify() {
+        return classify;
+    }
+
+    public void setClassify(Boolean classify) {
+        this.classify = classify;
     }
 
 }
