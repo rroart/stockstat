@@ -1335,6 +1335,10 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI);
     }
 
+    public int getAggregatorsIndicatorDays() {
+        return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORDAYS);
+    }
+
     public int getAggregatorsIndicatorFuturedays() {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
     }

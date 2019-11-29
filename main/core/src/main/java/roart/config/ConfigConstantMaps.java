@@ -332,6 +332,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI, Boolean.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATORDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, Double.class);
@@ -548,7 +549,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNNCONFIG, MLConstants.TENSORFLOWRNNCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMPERSIST, Boolean.TRUE);
-        deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG, MLConstants.TENSORFLOWPREDICTORLSTMCONFIG);
+        deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG, MLConstants.TENSORFLOWLSTMCONFIG);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUPERSIST, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUCONFIG, MLConstants.TENSORFLOWGRUCONFIG);
@@ -700,6 +701,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI, Boolean.FALSE);
+        deflt.put(ConfigConstants.AGGREGATORSINDICATORDAYS, 20);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, 10);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, 1);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, 1.0);
@@ -1062,6 +1064,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH, "ML indicator extras use RSI result");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI, "ML indicator extras use STOCHRSI result");
         text.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, "ML indicator days in the future for threshold");
+        text.put(ConfigConstants.AGGREGATORSINDICATORDAYS, "ML indicator days");
         text.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, "ML indicator days in the future interval");
         text.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, "ML indicator threshold for classifier");
         text.put(ConfigConstants.AGGREGATORSMLMACD, "MLMACD aggregator enable");
@@ -1121,6 +1124,7 @@ public class ConfigConstantMaps {
         range.put(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO, new Double[] { 1.0, 20.0 } );
         range.put(ConfigConstants.AGGREGATORSMLMACDTHRESHOLD, new Double[] { 0.8, 1.2 } );
         range.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, new Double[] { 2.0, 5.0 } );
+        range.put(ConfigConstants.AGGREGATORSINDICATORDAYS, new Double[] { 2.0, 25.0 } );
         range.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, new Double[] { 2.0, 25.0 } );
         range.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, new Double[] { 2.0, 15.0 } );
         range.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, new Double[] { 0.8, 1.2 } );
@@ -1434,6 +1438,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASCCI, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator extras use CCI result"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCH, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator extras use STOCH result"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator extras use STOCHRSI result"));
+        mymap.put(ConfigConstants.AGGREGATORSINDICATORDAYS, new XMLType( Integer.class, 20, "ML indicator days in the future for threshold"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS, new XMLType( Integer.class, 10, "ML indicator days in the future for threshold"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS, new XMLType( Integer.class, 1, "ML indicator days in the future interval"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD, new XMLType( Double.class, 0, "ML indicator threshold for classifier"));

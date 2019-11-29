@@ -297,6 +297,7 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATOREXTRASCCI = "aggregators.indicator.extrascci[@enable]";
     public static final String AGGREGATORSINDICATOREXTRASSTOCH = "aggregators.indicator.extrasstoch[@enable]";
     public static final String AGGREGATORSINDICATOREXTRASSTOCHRSI = "aggregators.indicator.extrasstochrsi[@enable]";
+    public static final String AGGREGATORSINDICATORDAYS = "aggregators.indicator.days";
     public static final String AGGREGATORSINDICATORFUTUREDAYS = "aggregators.indicator.futuredays";
     public static final String AGGREGATORSINDICATORINTERVALDAYS = "aggregators.indicator.intervaldays";
     public static final String AGGREGATORSINDICATORTHRESHOLD = "aggregators.indicator.threshold";
