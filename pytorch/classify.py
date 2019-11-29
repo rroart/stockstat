@@ -568,7 +568,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"accuracy": accuracy_score, "loss": loss}), mimetype='application/json'))
+        queue.put(Response(json.dumps({"accuracy": accuracy_score, "loss": loss, "classify" : classify}), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
         
     def getpath(self, myobj):
