@@ -98,6 +98,7 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGGEMPATH = "machinelearning.gem.path";
     public static final String MACHINELEARNINGGEMSERVER = "machinelearning.gem.server";
     public static final String MACHINELEARNINGPREDICTORS = "machinelearning.predictors[@enable]";
+    public static final String MACHINELEARNINGPREDICTORSMLCONFIG = "machinelearning.predictors.mlconfig";
     public static final String MACHINELEARNINGPREDICTORSDAYS = "machinelearning.predictors.days";
     public static final String MACHINELEARNINGPREDICTORSFUTUREDAYS = "machinelearning.predictors.futuredays";
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOW = "machinelearning.predictors.tensorflow[@enable]";

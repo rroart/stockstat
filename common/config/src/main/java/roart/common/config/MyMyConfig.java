@@ -836,6 +836,10 @@ public class MyMyConfig extends MyConfig {
                 && wantML();
     }
 
+    public String getPredictorsMLConfig() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG);
+    }
+
     public int getPredictorsDays() {
         return (Integer) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS);
     }

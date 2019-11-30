@@ -165,6 +165,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA, Boolean.class);
         map.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, Integer.class);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, String.class);
 	map.put(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS, Integer.class);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW, Boolean.class);
@@ -901,6 +902,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA, "Enable indicator STOCH delta");
         text.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, "STOCH delta days");
         text.put(ConfigConstants.MACHINELEARNINGPREDICTORS, "Enable predictors");
+        text.put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, "Predictors mlconfig");
 	text.put(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS, "Predictors days");
         text.put(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS, "Predictors future days");
         text.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW, "Enable Predictor Tensorflow");
@@ -1317,6 +1319,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTA, new XMLType( Boolean.class, Boolean.TRUE, "Enable indicator STOCH delta"));
         mymap.put(ConfigConstants.INDICATORSSTOCHSTOCHDELTADAYS, new XMLType( Integer.class, 3, "STOCH delta days"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, new XMLType( Boolean.class, Boolean.TRUE, "Enable predictors"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, new XMLType( String.class, null, "Predictors mlconfig"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS, new XMLType( Integer.class, 20, "Predictors days"));
 	mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS, new XMLType( Integer.class, 10, "Predictors future days"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow"));
