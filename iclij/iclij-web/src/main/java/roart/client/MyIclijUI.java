@@ -281,6 +281,36 @@ public class MyIclijUI extends UI implements ViewDisplay {
         return button;
     }
 
+    private Button getMarketCrosstest() {
+        Button button = new Button("Get market evolve data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayCrosstestResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getMarketDataset() {
+        Button button = new Button("Get market evolve data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayDatasetResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
     private Button getSingleMarket() {
         Button button = new Button("Run and get single market data");
         button.addClickListener(new Button.ClickListener() {
@@ -632,7 +662,15 @@ public class MyIclijUI extends UI implements ViewDisplay {
     }
     
     private void displayMachineLearningResults() {
-        controlService.getContentMachineLearning(this);
+        controlService.getContentDataset(this);
+    }
+    
+    private void displayDatasetResults() {
+        controlService.getContentEvolve(this);
+    }
+    
+    private void displayCrosstestResults() {
+        controlService.getContentCrosstest(this);
     }
     
     private void displaySingleMarket() {

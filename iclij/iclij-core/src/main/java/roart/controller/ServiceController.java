@@ -89,6 +89,20 @@ public class ServiceController {
         return ServiceUtil.getContentEvolve(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
     }
 
+    @RequestMapping(value = "/" + EurekaConstants.GETCONTENTDATASET,
+            method = RequestMethod.POST)
+    public IclijServiceResult getContentDataset(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getContentDataset(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
+    @RequestMapping(value = "/" + EurekaConstants.GETCONTENTCROSSTEST,
+            method = RequestMethod.POST)
+    public IclijServiceResult getContentCrosstest(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getContentCrosstest(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENTMACHINELEARNING,
             method = RequestMethod.POST)
     public IclijServiceResult getContentMachineLearning(@RequestBody IclijServiceParam param/*@PathVariable String market*/)

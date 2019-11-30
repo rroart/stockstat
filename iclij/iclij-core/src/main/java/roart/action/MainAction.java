@@ -77,6 +77,12 @@ public class MainAction extends Action {
         if (IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
             getGoals().add(new ImproveProfitAction());
         }
+        if (IclijXMLConfig.getConfigInstance().wantsCrosstestAutorun()) {        
+            getGoals().add(new CrossTestAction());
+        }
+        if (IclijXMLConfig.getConfigInstance().wantsDatasetAutorun()) {        
+            getGoals().add(new DatasetAction());
+        }
     }
 
     public void addIfNotContaining(Action action) {

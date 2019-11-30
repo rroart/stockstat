@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.action.Action;
+import roart.action.CrossTestAction;
+import roart.action.DatasetAction;
 import roart.action.EvolveAction;
 import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
@@ -290,7 +292,7 @@ public class ServiceUtil {
                 updateMarketMap.put(market.getConfig().getMarket() + " " + booleanTexts.get(bool), new HashMap<>());
                 Map<String, Component> componentMap = action.getComponentMap(componentList, null);
                 for (Component component : componentMap.values()) {
-                    List<String> subcomponents = component.getSubComponents(market, param);
+                    List<String> subcomponents = component.getSubComponents(market, param, null);
                     for (String subcomponent : subcomponents) {
                         Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), action.getName(), component.getPipeline(), false, bool, subcomponent);
                         updateMarketMap.get(market.getConfig().getMarket() + " " + booleanTexts.get(bool)).putAll(anUpdateMap);
@@ -321,6 +323,70 @@ public class ServiceUtil {
         }
         
         EvolveAction evolveAction = new EvolveAction();
+        getContentTimings(date, lists, markets, evolveAction);
+        Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
+        Map<String, Object> updateMap = new HashMap<>();
+        getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, evolveAction);
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        getContentMemoriesUpdates(componentInput, lists, updateMarketMap, evolveAction);
+        print(result);
+        return result;
+    }
+
+    public static IclijServiceResult getContentDataset(ComponentInput componentInput) throws Exception {
+        LocalDate date = componentInput.getEnddate();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+
+         List<IclijServiceList> lists = new ArrayList<>();
+        lists.add(getHeader("Content"));
+        List<Market> markets = conf.getMarkets(instance);
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(lists);
+
+        ComponentData param = null; 
+        try {
+            param = getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+        
+        DatasetAction evolveAction = new DatasetAction();
+        getContentTimings(date, lists, markets, evolveAction);
+        Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
+        Map<String, Object> updateMap = new HashMap<>();
+        getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, evolveAction);
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        getContentMemoriesUpdates(componentInput, lists, updateMarketMap, evolveAction);
+        print(result);
+        return result;
+    }
+
+    public static IclijServiceResult getContentCrosstest(ComponentInput componentInput) throws Exception {
+        LocalDate date = componentInput.getEnddate();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+
+         List<IclijServiceList> lists = new ArrayList<>();
+        lists.add(getHeader("Content"));
+        List<Market> markets = conf.getMarkets(instance);
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(lists);
+
+        ComponentData param = null; 
+        try {
+            param = getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+        
+        CrossTestAction evolveAction = new CrossTestAction();
         getContentTimings(date, lists, markets, evolveAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -843,7 +909,7 @@ public class ServiceUtil {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         }
         if (config.wantsFindProfitPredictor()) {
-            components.add(PipelineConstants.PREDICTORSLSTM);
+            components.add(PipelineConstants.PREDICTOR);
         }
         if (config.wantsFindProfitMLMACD()) {
             components.add(PipelineConstants.MLMACD);
@@ -948,7 +1014,7 @@ public class ServiceUtil {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         }
         if (config.wantsImproveProfitPredictor()) {
-            components.add(PipelineConstants.PREDICTORSLSTM);
+            components.add(PipelineConstants.PREDICTOR);
         }
         if (config.wantsImproveProfitMLMACD()) {
             components.add(PipelineConstants.MLMACD);
@@ -1084,7 +1150,7 @@ public class ServiceUtil {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         }
         if (config.wantsEvolvePredictor()) {
-            components.add(PipelineConstants.PREDICTORSLSTM);
+            components.add(PipelineConstants.PREDICTOR);
         }
         if (config.wantsEvolveMLMACD()) {
             components.add(PipelineConstants.MLMACD);
@@ -1123,7 +1189,7 @@ public class ServiceUtil {
     public static List<String> getCrosstestComponents(IclijConfig config, String market) {
         List<String> components = new ArrayList<>();
         if (config.wantsMachineLearningPredictor()) {
-            components.add(PipelineConstants.PREDICTORSLSTM);
+            components.add(PipelineConstants.PREDICTOR);
         }
         if (config.wantsMachineLearningMLMACD()) {
             components.add(PipelineConstants.MLMACD);
@@ -1154,7 +1220,7 @@ public class ServiceUtil {
     public static List<String> getMachineLearningComponents(IclijConfig config, String market) {
         List<String> components = new ArrayList<>();
         if (config.wantsMachineLearningPredictor()) {
-            components.add(PipelineConstants.PREDICTORSLSTM);
+            components.add(PipelineConstants.PREDICTOR);
         }
         if (config.wantsMachineLearningMLMACD()) {
             components.add(PipelineConstants.MLMACD);

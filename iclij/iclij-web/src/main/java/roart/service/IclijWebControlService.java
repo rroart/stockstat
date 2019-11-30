@@ -166,6 +166,20 @@ public class IclijWebControlService {
         new IclijThread(ui, param).start();
     }
 
+    public void getContentDataset(MyIclijUI ui) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setIclijConfig(getIclijConf());
+        param.setWebpath(EurekaConstants.GETCONTENTDATASET);
+        new IclijThread(ui, param).start();
+    }
+
+    public void getContentCrosstest(MyIclijUI ui) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setIclijConfig(getIclijConf());
+        param.setWebpath(EurekaConstants.GETCONTENTCROSSTEST);
+        new IclijThread(ui, param).start();
+    }
+
     public void getSingleMarket(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());

@@ -82,6 +82,14 @@ class MarketBar extends PureComponent {
 	props.getcontentevolve(props.main.config, props.main.market, props);
     }
     
+    getContentDataset(event, props) {
+	props.getcontentdataset(props.main.config, props.main.market, props);
+    }
+    
+    getContentCrosstest(event, props) {
+	props.getcontentcrosstest(props.main.config, props.main.market, props);
+    }
+    
     getContentImprove(event, props) {
 	props.getcontentimprove(props.main.config, props.main.market, props);
     }
@@ -213,6 +221,26 @@ class MarketBar extends PureComponent {
 		      }
 		      >
 		      Get improve profit data
+		    </Button>
+		  </NavItem>
+		  <NavItem eventKey={6} href="#">
+		    <Button
+		      bsStyle="primary"
+		      onClick={
+			  (e) => this.getContentDataset(e, this.props)
+		      }
+		      >
+		      Get dataset data
+		    </Button>
+		  </NavItem>
+		  <NavItem eventKey={6} href="#">
+		    <Button
+		      bsStyle="primary"
+		      onClick={
+			  (e) => this.getContentCrosstest(e, this.props)
+		      }
+		      >
+		      Get crosstest data
 		    </Button>
 		  </NavItem>
 		</Nav>

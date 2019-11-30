@@ -28,6 +28,8 @@ const GETCONFIG = 'app/main/GETCONFIG';
 const GETCONTENT = 'app/main/GETCONTENT';
 const GETCONTENTIMPROVE = 'app/main/GETCONTENTIMPROVE';
 const GETCONTENTEVOLVE = 'app/main/GETCONTENTEVOLVE';
+const GETCONTENTDATASET = 'app/main/GETCONTENTDATASET';
+const GETCONTENTCROSSTEST = 'app/main/GETCONTENTCROSSTEST';
 const GETCONTENTMACHINELEARNING = 'app/main/GETCONTENTMACHINELEARNING';
 const GETSINGLEMARKET = 'app/main/GETSINGLEMARKET'
 const GETIMPROVEPROFIT = 'app/main/GETIMPROVEPROFIT'
@@ -58,6 +60,8 @@ export const constants = {
     GETCONTENT,
     GETCONTENTIMPROVE,
     GETCONTENTEVOLVE,
+    GETCONTENTDATASET,
+    GETCONTENTCROSSTEST,
     GETCONTENTMACHINELEARNING,
     GETSINGLEMARKET,
     GETIMPROVEPROFIT,
@@ -92,6 +96,8 @@ export const setconfigvaluemap = createAction(SETCONFIGVALUEMAP, ( array ) => ( 
 export const getConfig = createAction(GETCONFIG, () => ( {} ) );
 export const getcontent = createAction(GETCONTENT, (config, market, props) => ( { config, market, props } ) );
 export const getcontentevolve = createAction(GETCONTENTEVOLVE, (config, market, props) => ( { config, market, props } ) );
+export const getcontentdataset = createAction(GETCONTENTDATASET, (config, market, props) => ( { config, market, props } ) );
+export const getcontentcrosstest = createAction(GETCONTENTCROSSTEST, (config, market, props) => ( { config, market, props } ) );
 export const getcontentimprove = createAction(GETCONTENTIMPROVE, (config, market, props) => ( { config, market, props } ) );
 export const getcontentmachinelearning = createAction(GETCONTENTMACHINELEARNING, (config, market, props) => ( { config, market, props } ) );
 export const getsinglemarket = createAction(GETSINGLEMARKET, (config, market, props, loop) => ( { config, market, props, loop } ) );
@@ -122,6 +128,8 @@ export const actions = {
     getConfig,
     getcontent,
     getcontentevolve,
+    getcontentdataset,
+    getcontentcrosstest,
     getcontentimprove,
     getcontentmachinelearning,
     getsinglemarket,
