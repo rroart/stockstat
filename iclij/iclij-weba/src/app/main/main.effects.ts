@@ -24,6 +24,16 @@ import {
   ActionRetrieve,
   ActionError,
   ActionGetcontent,
+  ActionGetcontentEvolve,
+  ActionGetcontentDataset,
+  ActionGetcontentCrosstest,
+  ActionGetcontentMachineLearning,
+  ActionGetcontentImprove,
+  ActionGetSingleMarket,
+  ActionGetSingleMarketLoop,
+  ActionGetVerify,
+  ActionGetVerifyLoop,
+  ActionGetImproveProfit,
   ActionNewtab,
   MainActionTypes
 } from './main.actions';
@@ -56,13 +66,13 @@ export class MainEffects {
       debounceTime(debounce, scheduler),
       switchMap((action: ActionGetmarkets) => {
         console.log(action);
-        const res = this.service.retrieve('/getmarkets', {});
+        const res = this.service.retrieve0('/getmarkets', {});
 	// action.payload.url
 	//console.log(res);
 	//const res3 = res.pipe(map(res => { console.log(res); return res; } ));
 	//const res2 = res.pipe(map(res => { return res.json(); } ));
 	//console.log(res2);
-        return this.service.retrieve('/getmarkets', {}).pipe(
+        return this.service.retrieve0('/getmarkets', {}).pipe(
           map(res => new ActionSetmarkets({ markets: res['markets'] })),
           catchError(error => of(new ActionError({ error })))
         )
@@ -105,6 +115,7 @@ export class MainEffects {
       switchMap((action: ActionGetcontent) => {
         console.log(action);
 	const config = action.payload; //.config;
+	console.log(config);
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
@@ -113,9 +124,211 @@ export class MainEffects {
           map(res => new ActionNewtab(res.list)),
           catchError(error => of(new ActionError({ error })))
         )
-	//console.log(res);
-	//return new ActionSetmarkets({ markets: res['markets']});
-	//return res['markets'];
+	}
+      )
+    );
+
+  @Effect()
+  getcontentevolve = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetcontentEvolve>(MainActionTypes.GETCONTENTEVOLVE),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetcontentEvolve) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getcontentevolve', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getcontentdataset = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetcontentDataset>(MainActionTypes.GETCONTENTDATASET),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetcontentDataset) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getcontentdataset', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getcontentcrosstest = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetcontentCrosstest>(MainActionTypes.GETCONTENTCROSSTEST),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetcontentCrosstest) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getcontentcrosstest', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getcontentmachinelearning = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetcontentMachineLearning>(MainActionTypes.GETCONTENTMACHINELEARNING),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetcontentMachineLearning) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getcontentmachinelearning', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getcontentimprove = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetcontentImprove>(MainActionTypes.GETCONTENTIMPROVE),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetcontentImprove) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getcontentimprove', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getsinglemarket = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetSingleMarket>(MainActionTypes.GETSINGLEMARKET),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetSingleMarket) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getsinglemarket', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getsinglemarketloop = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetSingleMarketLoop>(MainActionTypes.GETSINGLEMARKETLOOP),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetSingleMarketLoop) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	const loops = config['singlemarket']['loops'];
+        var i;
+        for (i = 0; i < loops; i++) {
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+	param['offset'] = i * config['singlemarket']['loopinterval'];
+	return this.service.retrieve('/getsinglemarket', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+	}
+      )
+    );
+
+  @Effect()
+  getverify = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetVerify>(MainActionTypes.GETVERIFY),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetVerify) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getverify', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getverifyloop = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetVerifyLoop>(MainActionTypes.GETVERIFYLOOP),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetVerifyLoop) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getverify', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getimprove = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetImproveProfit>(MainActionTypes.GETIMPROVEPROFIT),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetImproveProfit) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['config'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getimprove', param).pipe(
+          map(res => new ActionNewtab(res.list)),
+          catchError(error => of(new ActionError({ error })))
+        )
 	}
       )
     );

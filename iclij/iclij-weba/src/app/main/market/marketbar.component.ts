@@ -6,7 +6,7 @@ import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil, map } from 'rxjs/operators';
 import { MatButtonModule } from '@angular/material/button';
 
-import { ActionIncrement, ActionSetstartdate, ActionSetenddate, ActionGetcontent, ActionSetconfigvalue } from '../main.actions';
+import { ActionIncrement, ActionSetstartdate, ActionSetenddate, ActionGetcontent, ActionGetcontentEvolve, ActionGetcontentDataset, ActionGetcontentCrosstest, ActionGetcontentImprove, ActionGetcontentMachineLearning, ActionGetVerify, ActionGetVerifyLoop, ActionGetSingleMarket, ActionGetSingleMarketLoop, ActionGetImproveProfit, ActionSetconfigvalue } from '../main.actions';
 
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -140,9 +140,60 @@ export class MarketbarComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ActionSetenddate({ enddate: null }));
   }
 
-    getMarketData($event) {
+    getContent($event) {
     console.log($event);
+    console.log(this);
     this.store.dispatch(new ActionGetcontent(this.main.config));
+  }
+
+    getContentMachineLearning($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetcontentMachineLearning(this.main.config));
+  }
+
+    getContentEvolve($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetcontentEvolve(this.main.config));
+  }
+
+    getContentDataset($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetcontentDataset(this.main.config));
+  }
+
+    getContentCrosstest($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetcontentCrosstest(this.main.config));
+  }
+
+    getContentImprove($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetcontentImprove(this.main.config));
+  }
+
+    getVerify($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetVerify(this.main.config));
+  }
+
+    getVerifyLoop($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetVerifyLoop(this.main.config));
+  }
+
+    getSingleMarket($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetSingleMarket(this.main.config));
+  }
+
+    getSingleMarketLoop($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetSingleMarketLoop(this.main.config));
+  }
+
+    getImproveProfit($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetImproveProfit(this.main.config));
   }
 
 async delay(ms: number) {

@@ -63,15 +63,18 @@ export class MytableComponent implements OnInit, OnDestroy {
     const array = this.value;
     //console.log(myarray);
     console.log(this.value);
-    const array2 = array[0].rows;
+         var h;
+    for (h = 0; h < array.length; h++) {
+
+    const array2 = array[h].rows;
     console.log(array2);
-    const head = array2[0];
-    const rest = array2.slice(1);
+    const head = Object.keys(array2[0])
+    const rest = array2;
     console.log("start");
     console.log(head);
     console.log(rest);
-    this.displayedColumns = head.cols;
-    console.log(head.cols);
+    this.displayedColumns = head;
+    console.log(head);
     console.log(rest);
     const result = [];
         for(var j = 0; j < rest.length; j++) {
@@ -79,8 +82,8 @@ export class MytableComponent implements OnInit, OnDestroy {
         //console.log(row);
         //console.log(row.cols[0]);
         const newrow = [];
-        for(var i = 0; i < head.cols.length; i++) {
-            newrow[head.cols[i]] = row.cols[i];
+        for(var i = 0; i < head.length; i++) {
+            newrow[head[i]] = row[head[i]];
         }
         result.push(newrow);
     }
@@ -91,6 +94,7 @@ export class MytableComponent implements OnInit, OnDestroy {
     console.log(this.sort);
     this.dataSource.sort = this.sort;
     console.log(this.dataSource);
+    }
   }
 
   ngOnDestroy(): void {

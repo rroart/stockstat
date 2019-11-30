@@ -24,6 +24,16 @@ export enum MainActionTypes {
   SETENDDATE = '[Main] Set end date',
   GETEVOLVE = '[Main] Get evolve',
   GETCONTENT = '[Main] Get content',
+  GETCONTENTEVOLVE = '[Main] Get content evolve',
+  GETCONTENTDATASET = '[Main] Get content crosstest',
+  GETCONTENTCROSSTEST = '[Main] Get content crosstest',
+  GETCONTENTMACHINELEARNING = '[Main] Get content machine learning',
+  GETCONTENTIMPROVE = '[Main] Get content improve',
+  GETSINGLEMARKET = '[Main] Get single market',
+  GETSINGLEMARKETLOOP = '[Main] Get single market loop',
+  GETVERIFY = '[Main] Get verify',
+  GETVERIFYLOOP = '[Main] Get verify loop',
+  GETIMPROVEPROFIT = '[Main] Get improve profit',
   NEWTAB = '[Main] New tab',
   CHANGE_ANIMATIONS_PAGE = '[Main] Change Animations Page',
   CHANGE_ANIMATIONS_PAGE_DISABLED = '[Main] Change Animations Page Disabled',
@@ -174,6 +184,66 @@ export class ActionGetcontent implements Action {
   constructor(readonly payload: { config: any }) {}
 }
 
+export class ActionGetcontentEvolve implements Action {
+  readonly type = MainActionTypes.GETCONTENTEVOLVE;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetcontentDataset implements Action {
+  readonly type = MainActionTypes.GETCONTENTDATASET;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetcontentCrosstest implements Action {
+  readonly type = MainActionTypes.GETCONTENTCROSSTEST;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetcontentMachineLearning implements Action {
+  readonly type = MainActionTypes.GETCONTENTMACHINELEARNING;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetcontentImprove implements Action {
+  readonly type = MainActionTypes.GETCONTENTIMPROVE;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetSingleMarket implements Action {
+  readonly type = MainActionTypes.GETSINGLEMARKET;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetSingleMarketLoop implements Action {
+  readonly type = MainActionTypes.GETSINGLEMARKETLOOP;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetVerify implements Action {
+  readonly type = MainActionTypes.GETVERIFY;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetVerifyLoop implements Action {
+  readonly type = MainActionTypes.GETVERIFYLOOP;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetImproveProfit implements Action {
+  readonly type = MainActionTypes.GETIMPROVEPROFIT;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
 export class ActionNewtab implements Action {
   readonly type = MainActionTypes.NEWTAB;
 
@@ -203,5 +273,15 @@ export type MainActions =
   | ActionError
   | ActionGetevolve
   | ActionGetcontent
+  | ActionGetcontentEvolve
+  | ActionGetcontentDataset
+  | ActionGetcontentCrosstest
+  | ActionGetcontentMachineLearning
+  | ActionGetcontentImprove
+  | ActionGetSingleMarket
+  | ActionGetSingleMarketLoop
+  | ActionGetVerify
+  | ActionGetVerifyLoop
+  | ActionGetImproveProfit
   | ActionNewtab
   | ActionMainChangeStickyHeader;
