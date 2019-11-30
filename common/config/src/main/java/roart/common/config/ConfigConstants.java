@@ -348,4 +348,5 @@ public class ConfigConstants {
     public static final String AGGREGATORSMLMULTISTOCH = "aggregators.mlmulti.stoch[@enable]";
     public static final String AGGREGATORSMLMULTISTOCHRSI = "aggregators.mlmulti.stochrsi[@enable]";
     public static final String AGGREGATORSMLMULTITHRESHOLD = "aggregators.mlmulti.threshold";
+    public static final String DATASETMLCONFIG = "dataset.mlconfig";
 }

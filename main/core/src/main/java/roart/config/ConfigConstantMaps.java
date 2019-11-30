@@ -382,6 +382,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD, Double.class);
+        map.put(ConfigConstants.DATASETMLCONFIG, String.class);
     }
 
     public static Map<String, Object> deflt = new HashMap();
@@ -1491,6 +1492,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.AGGREGATORSMLMULTICCI, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti CCI enable"));
         mymap.put(ConfigConstants.AGGREGATORSMLMULTISTOCH, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti STOCH enable"));
         mymap.put(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI, new XMLType( Boolean.class, Boolean.FALSE, "ML mlmulti STOCHRSI enable"));
+        mymap.put(ConfigConstants.DATASETMLCONFIG, new XMLType(String.class, null, "Dataset ml config"));
     }
 
 }

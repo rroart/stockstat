@@ -1435,6 +1435,10 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGGEMPATH);              
     }
 
+    public String getDatasetMLConfig() {
+        return (String) getValueOrDefault(ConfigConstants.DATASETMLCONFIG);
+    }
+
     public Object getValue(String key) {
         return getConfigValueMap().get(key);
     }
