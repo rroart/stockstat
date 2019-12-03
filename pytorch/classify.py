@@ -103,6 +103,7 @@ class Classify:
                     array = torch.cat((array[:,:,1:], intlist3), 2)
                     predicted = torch.cat((predicted, intlist3), 2)
             #print("predarray", predicted.shape, predicted)
+            predicted = predicted.tolist()
             return predicted, problist
         else:
             predictions = model(array)
