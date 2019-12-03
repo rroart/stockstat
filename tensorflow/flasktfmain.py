@@ -41,8 +41,8 @@ def do_learntest():
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
     process.start()
-    process.join()
     result = queue.get()
+    process.join()
     return result
     import classify
     cl = classify.Classify()
@@ -59,6 +59,7 @@ def do_learntestclassify():
             queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None}), mimetype='application/json'))
             import sys,traceback
             traceback.print_exc(file=sys.stdout)
+            print("")
             import random
             f = open("/tmp/outtf" + str(random.randint(1000,9999)) + ".txt", "w")
             f.write(request.get_data(as_text=True))
@@ -67,8 +68,8 @@ def do_learntestclassify():
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
     process.start()
-    process.join()
     result = queue.get()
+    process.join()
     return result
 
 @app.route('/predictone', methods=['POST'])
@@ -76,8 +77,8 @@ def do_learntestpredictone():
     queue = Queue()
     process = Process(target=predictrunner, args=(queue, request))
     process.start()
-    process.join()
     result = queue.get()
+    process.join()
     return result
 
 @app.route('/predict', methods=['POST'])
@@ -85,8 +86,8 @@ def do_learntestpredict():
     queue = Queue()
     process = Process(target=predictrunner, args=(queue, request))
     process.start()
-    process.join()
     result = queue.get()
+    process.join()
     return result
 
 @app.route('/dataset', methods=['POST'])
@@ -98,8 +99,8 @@ def do_dataset():
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
     process.start()
-    process.join()
     result = queue.get()
+    process.join()
     return result
     import classify
     cl = classify.Classify()
@@ -114,16 +115,16 @@ def do_filename():
     queue = Queue()
     process = Process(target=filenamerunner, args=(queue, request))
     process.start()
-    process.join()
     result = queue.get()
+    process.join()
     return result
 
 if __name__ == '__main__':
     queue = Queue()
     process = Process(target=hasgpurunner, args=(queue, None))
     process.start()
-    process.join()
     hasgpu = queue.get()
+    process.join()
     threaded = False
     if len(sys.argv) > 1 and (not hasgpu) and sys.argv[1] == 'multi':
         threaded = True
