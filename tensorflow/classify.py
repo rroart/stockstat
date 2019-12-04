@@ -274,6 +274,7 @@ class Classify:
             cat = cat - 1
         if not classify:
             (inputs, labels) = self.getSlide(array, None, myobj, config)
+            mydim = myobj.size
             return inputs, labels, inputs, labels, mydim
         if hasattr(myobj, 'testarray') and hasattr(myobj, 'testcatarray'):
             test = np.array(myobj.testarray, dtype='f')
