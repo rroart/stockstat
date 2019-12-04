@@ -290,6 +290,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                 MLMeta mlmeta = metaMap.get(subType);
                 Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = new HashMap<>();
                 for (MLClassifyDao mldao : mldaos) {
+                    if (mldao.getModels().size() != 1) {
+                        log.error("Models size is {}", mldao.getModels().size());
+                    }
                     // map from posnegcom to map<id, result>
                     Map<String, Map<String, Double[]>> mapResult2 = new HashMap<>();
                     for (MLClassifyModel model : mldao.getModels()) {
@@ -336,12 +339,12 @@ public abstract class IndicatorAggregator extends Aggregator {
                             boolean mldynamic = conf.wantMLDynamic();
                             //indicators.add(this);
                             log.info("Filename {}", filename);
-                            LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
+                            LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                             if (result == null) {
                                 continue;
                             }
                             // make OO of this, create object
-                            Object[] meta = new Object[9];
+                            Object[] meta = new Object[10];
                             meta[0] = mldao.getName();
                             meta[1] = model.getName();
                             meta[2] = model.getReturnSize();
@@ -361,7 +364,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                             lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                             meta[6] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
-
+                            meta[9] = result.getLoss();
+                            resultMeta.setLoss(result.getLoss());
+                            
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
 
@@ -434,6 +439,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                     mapResult.put(subType, mapResult1);
                 }
                 for (MLClassifyDao mldao : mldaos) {
+                    if (mldao.getModels().size() != 1) {
+                        log.error("Models size is {}", mldao.getModels().size());
+                    }
                     // map from posnegcom to map<id, result>
                     for (MLClassifyModel model : mldao.getModels()) {
                         if (model.isPredictorOnly()) {
@@ -498,7 +506,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     continue;
                 }
 		// make OO of this, create object
-		Object[] meta = new Object[9];
+		Object[] meta = new Object[10];
 		meta[0] = mldao.getName();
 		meta[1] = model.getName();
 		meta[2] = model.getReturnSize();
@@ -535,7 +543,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                 addEventRow(subType, countMap2);
                 Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
                 handleResultMeta(testCount, offsetMap, countMap2);
-		testCount++;
+		handleResultMetaAccuracy(testCount, result);
+                testCount++;
             }
         } catch (Exception e) {
             log.error("Exception", e);
@@ -606,6 +615,8 @@ public abstract class IndicatorAggregator extends Aggregator {
         ResultMeta resultMeta = getResultMetas().get(testCount);
         meta[6] = result.getAccuracy();
         resultMeta.setTestAccuracy(result.getAccuracy());
+        meta[9] = result.getLoss();
+        resultMeta.setLoss(result.getLoss());
     }
 
     private void createResultMap(MyMyConfig conf,
