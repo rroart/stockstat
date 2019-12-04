@@ -11,7 +11,7 @@ public class CrosstestComponentFactory extends ComponentFactory {
         switch (component) {
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
             return new CrosstestComponentRecommender();
-        case PipelineConstants.PREDICTORSLSTM:
+        case PipelineConstants.PREDICTOR:
             return new CrosstestComponentPredictor();
         case PipelineConstants.MLMACD:
             return new CrosstestComponentMLMACD();

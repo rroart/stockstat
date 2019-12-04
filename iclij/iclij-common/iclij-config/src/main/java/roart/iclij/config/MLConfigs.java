@@ -85,4 +85,12 @@ public class MLConfigs {
         map.putAll(gem.getAll());
         return map;
     }
+
+    @JsonIgnore
+    public Map<String, EvolveMLConfig> getAllPredictors() {
+        Map<String, EvolveMLConfig> map = new HashMap<>();
+        map.putAll(tensorflow.getAllPredictors());
+        map.putAll(pytorch.getAllPredictors());
+        return map;
+    }
 }

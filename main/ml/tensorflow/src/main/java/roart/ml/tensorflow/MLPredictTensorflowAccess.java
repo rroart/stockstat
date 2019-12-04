@@ -20,6 +20,7 @@ import roart.ml.model.MLPredictAccess;
 import roart.ml.model.MLPredictModel;
 import roart.pipeline.common.predictor.AbstractPredictor;
 
+@Deprecated
 public class MLPredictTensorflowAccess extends MLPredictAccess {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -36,7 +37,7 @@ public class MLPredictTensorflowAccess extends MLPredictAccess {
 
     private void findModels() {
         models = new ArrayList<>();
-        if (conf.wantTensorflowPredictorLSTM()) {
+        if (conf.wantPredictorTensorflowLSTM()) {
             MLPredictModel model = new MLPredictTensorflowLSTMModel(conf);
             models.add(model);
         }

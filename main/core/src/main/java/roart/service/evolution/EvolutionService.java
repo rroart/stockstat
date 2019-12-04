@@ -467,7 +467,7 @@ public class EvolutionService {
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     periodText, marketdatamap, periodDataMap, datedstocklists, datareaders);
             AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, dayStocks,
-                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders, categories);
+                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders, categories, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
 
@@ -575,44 +575,7 @@ public class EvolutionService {
             nnConfigs = new NeuralNetConfigs();            
         }
         //NeuralNetConfigs newNNConfigs = new NeuralNetConfigs();
-        List<String> keys = new ArrayList<>();
-        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLOR);
-        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLMLPC);
-        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLOVR);
-        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
-        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM);
-        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
-        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN);
-        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN2);
-        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHRNN);
-        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHGRU);
-        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHLSTM);
-        keys.add(ConfigConstants.MACHINELEARNINGGEMEWC);
-        keys.add(ConfigConstants.MACHINELEARNINGGEMGEM);
-        keys.add(ConfigConstants.MACHINELEARNINGGEMICARL);
-        keys.add(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT);
-        keys.add(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL);
-        keys.add(ConfigConstants.MACHINELEARNINGGEMSINGLE);
-        
-        for (String key : keys) {
-            System.out.println(conf.getValueOrDefault(key));
-            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(key))) {
-                continue;
-            }
-        
-            Map<String, String> anotherConfigMap = nnConfigs.getAnotherConfigMap();
-            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(anotherConfigMap.get(key)))) {
-                continue;
-            }
+        List<String> foundkeys = new NeuralNetChromosome(conf, null, null, null, null, null, null, null, null).getFoundKeys(conf, nnConfigs);
             /*
             MyMyConfig workingConf = conf.copy();
             for (String tmpkey : keys) {
@@ -622,17 +585,19 @@ public class EvolutionService {
                 workingConf.getConfigValueMap().put(tmpkey, sameKey);
             }
             */
+        for (String key : foundkeys) {
             String configKey = nnConfigs.getConfigMap().get(key);
             String configValue = (String) conf.getValueOrDefault(configKey);
             
             NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue);
             NeuralNetConfigGene nnconfigGene = NeuralNetConfigGeneFactory.get(nnconfig, key);
             NeuralNetChromosome chromosome = new NeuralNetChromosome(conf.copy(), ml, dataReaders, categories, key, nnconfigGene, catName, cat, neuralnetcommand);
-            if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
+            if (ml.equals(PipelineConstants.PREDICTOR)) {
                 chromosome.setAscending(false);
             }
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
+            evolution.setParallel(false);
     
             Individual best = evolution.getFittest(evolutionConfig, chromosome);
     
@@ -664,8 +629,9 @@ public class EvolutionService {
             if (ml.equals(PipelineConstants.MLSTOCH)) {
                 myKey = ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG;
             }
-            if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
-                myKey = ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG;
+            if (ml.equals(PipelineConstants.PREDICTOR)) {
+                myKey = nnConfigs.getConfigMap().get(key);
+                myKey = ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG;
                 //newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
             }
             updateMap.put(configKey, newNNConfigstring);

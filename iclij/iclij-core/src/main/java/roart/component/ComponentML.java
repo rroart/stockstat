@@ -371,7 +371,7 @@ public abstract class ComponentML extends Component {
         return retMap;
     }
 
-    private Map<String, String> getMlMap() {
+    protected Map<String, String> getMlMap() {
         Map<String, String> map = new HashMap<>();
         map.put(MLConstants.SPARK, ConfigConstants.MACHINELEARNINGSPARKML);
         map.put(MLConstants.TENSORFLOW, ConfigConstants.MACHINELEARNINGTENSORFLOW);

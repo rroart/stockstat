@@ -237,7 +237,7 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfig, Aggregator indicator, List<Triple<String, Object, Double>> learnMap,
             MLClassifyModel mlmodel, int size, int classes, List<Triple<String, Object, Double>> classifyMap,
-            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
+            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         LearnTestClassifyResult result2 = new LearnTestClassifyResult();
         if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
             result2.setCatMap(new HashMap<>());

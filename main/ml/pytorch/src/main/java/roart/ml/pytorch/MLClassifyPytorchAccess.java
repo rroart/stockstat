@@ -41,6 +41,8 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
 
     private String pytorchServer;
 
+    private List<MLClassifyModel>  mymodels;
+
     public MLClassifyPytorchAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();
@@ -88,7 +90,10 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
 
     @Override
     public List<MLClassifyModel> getModels(String model) {
-        List<MLClassifyModel> mymodels = new ArrayList<>();
+        if (mymodels != null) {
+            return mymodels;
+        }
+        mymodels = new ArrayList<>();
         if (model.equals(MLConstants.MLP) && conf.wantPredictorPytorchMLP()) {
             MLClassifyModel amodel = new MLClassifyPytorchMLPModel(conf);
             mymodels.add(amodel);
@@ -187,26 +192,29 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         } catch (Exception e) {
             log.error("Exception", e);
         }
-        Map<String, Double[]> retMap = getCatMap(retList, map, ret);
+        Map<String, Double[]> retMap = getCatMap(retList, map, ret, true);
         return retMap;
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, List<Triple<String, Object, Double>> classifyMap, LearnTestClassify ret) {
+    private Map<String, Double[]> getCatMap(List<String> retList, List<Triple<String, Object, Double>> classifyMap, LearnTestClassify ret, boolean classify) {
         Object[] cat = ret.getClassifycatarray();
         Object[] prob = ret.getClassifyprobarray();
         Map<String, Double[]> retMap = new HashMap<>();
         for (int j = 0; j < retList.size(); j ++) {
-            Double acat = Double.valueOf((Integer) cat[j]);
-            Double aprob = null; // (Double) prob[j];
             String id = retList.get(j);
-            retMap.put(id, new Double[]{ acat, aprob });
-            //MutablePair pair = (MutablePair) classifyMap.get(id);
-            //pair.setRight(acat);
+            if (classify) {
+                Double acat = Double.valueOf((Integer) cat[j]);
+                Double aprob = null; // (Double) prob[j];
+                retMap.put(id, new Double[]{ acat, aprob });
+            } else {
+                ArrayList list = (ArrayList) cat[j];
+                retMap.put(id, Arrays.copyOf((list).toArray(), list.size(), Double[].class));
+            }
             Triple triple = classifyMap.get(j);
             if (triple.getRight() != null) {
                 int jj = 0;
             }
-            Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), acat);
+            Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), cat[j]);
             //triple.setRight(acat);
             classifyMap.set(j, mutableTriple);
         }
@@ -235,9 +243,9 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnMap,
             MLClassifyModel model, int size, int classes, List<Triple<String, Object, Double>> classifyMap,
-            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
+            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
-        if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
+        if (classify && neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
             result.setCatMap(new HashMap<>());
             return result;
         }
@@ -270,62 +278,25 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             nnconfigs = new NeuralNetConfigs();
         }
         nnconfigs.getAndSet(config);
-        /*
-        PytorchMLPConfig mlpconfig = null;
-        PytorchCNNConfig cnnconfig = null;
-        PytorchRNNConfig rnnconfig = null;
-        PytorchGRUConfig gruconfig = null;
-        PytorchLSTMConfig lstmconfig = null;
-        if (nnconfigs != null) {
-            //dnnConfig = nnconfigs.getPytorchDNNConfig();
-            //lconfig = nnconfigs.getPytorchLConfig();
-        }
-        if (nnconfigs != null) {
-            mlpconfig = nnconfigs.getPytorchConfig().getPytorchMLPConfig();
-            cnnconfig = nnconfigs.getPytorchConfig().getPytorchCNNConfig();
-            rnnconfig = nnconfigs.getPytorchConfig().getPytorchRNNConfig();
-            gruconfig = nnconfigs.getPytorchConfig().getPytorchGRUConfig();
-            lstmconfig = nnconfigs.getPytorchConfig().getPytorchLSTMConfig();
-       }
-        if (mlpconfig == null) {
-            mlpconfig = new PytorchMLPConfig(1000, 2, 100, 0.1);
-        }
-        if (cnnconfig == null) {
-            cnnconfig = new PytorchCNNConfig(1000, 4, 1, 0.01);
-        }
-        if (rnnconfig == null) {
-            rnnconfig = new PytorchRNNConfig(1000, 2, 100, 0.01, 1);
-        }
-        if (gruconfig == null) {
-            gruconfig = new PytorchGRUConfig(1000, 2, 100, 0.01, 1);
-        }
-        if (lstmconfig == null) {
-            lstmconfig = new PytorchLSTMConfig(1000, 2, 100, 0.01, 1);
-        }
-        param.setPytorchMLPConfig(mlpconfig);
-        param.setPytorchCNNConfig(cnnconfig);
-        param.setPytorchRNNConfig(rnnconfig);
-        param.setPytorchGRUConfig(gruconfig);
-        param.setPytorchLSTMConfig(lstmconfig);
-        */
         NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param);
         param.setTrainingarray(trainingArray);
-        if (Arrays.stream(trainingCatArray).allMatch(e -> e != null)) {
-            param.setTrainingcatarray(trainingCatArray);
-            param.setClassify(true);
+        param.setClassify(classify);
+        if (classify) {
+          param.setTrainingcatarray(trainingCatArray);
         } else {
-            param.setTrainingcatarray(new Object[0]);
-            param.setClassify(false);
+          param.setTrainingcatarray(new Object[0]);
         }
         param.setModelInt(model.getId());
         param.setSize(size);
         param.setClasses(classes);
         List<String> retList = new ArrayList<>();
-        Object[] classifyArray = new Object[classifyMap.size()];
-        getClassifyArray(classifyMap, retList, classifyArray);
-        param.setClassifyarray(classifyArray);
-        for(Object obj : classifyArray) {
-            //log.info("inner {}", Arrays.asList(obj));
+        if (true || classify) {
+            Object[] classifyArray = new Object[classifyMap.size()];
+            getClassifyArray(classifyMap, retList, classifyArray);
+            param.setClassifyarray(classifyArray);
+            for(Object obj : classifyArray) {
+                //log.info("inner {}", Arrays.asList(obj));
+            }
         }
         LearnTestClassify ret = null;
         try {
@@ -337,7 +308,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         result.setAccuracy(ret.getAccuracy());
         result.setLoss(ret.getLoss());
         if (ret.getClassifycatarray() != null) {
-            Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret);
+            Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret, classify);
             result.setCatMap(retMap);
         }
         result.setClassify(param.getClassify());

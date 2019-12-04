@@ -71,7 +71,7 @@ public class NeuralNetConfigGeneFactory {
             return get((TensorflowDNNConfig) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLIC:
             return get((TensorflowLICConfig) config);
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWLIR:
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR:
             return get((TensorflowLIRConfig) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWMLP:
             return get((TensorflowMLPConfig) config);
@@ -85,7 +85,7 @@ public class NeuralNetConfigGeneFactory {
             return get((TensorflowGRUConfig) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
             return get((TensorflowLSTMConfig) config);
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM:
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM:
             return get((TensorflowPredictorLSTMConfig) config);
         case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
             return get((PytorchMLPConfig) config);

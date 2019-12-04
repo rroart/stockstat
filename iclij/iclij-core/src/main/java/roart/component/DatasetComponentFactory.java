@@ -13,7 +13,7 @@ public class DatasetComponentFactory extends ComponentFactory {
             return new DatasetComponent();
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
             return new DatasetComponentRecommender();
-        case PipelineConstants.PREDICTORSLSTM:
+        case PipelineConstants.PREDICTOR:
             return new DatasetComponentPredictor();
         case PipelineConstants.MLMACD:
             return new DatasetComponentMLMACD();

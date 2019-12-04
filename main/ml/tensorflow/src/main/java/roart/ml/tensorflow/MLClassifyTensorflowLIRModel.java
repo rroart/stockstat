@@ -25,7 +25,7 @@ public class MLClassifyTensorflowLIRModel  extends MLClassifyTensorflowModel {
     
     @Override
     public String getKey() {
-        return ConfigConstants.MACHINELEARNINGTENSORFLOWLIRCONFIG;
+        return ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRCONFIG;
     }
     
     @Override
@@ -51,7 +51,7 @@ public class MLClassifyTensorflowLIRModel  extends MLClassifyTensorflowModel {
 
     @Override
     public boolean wantPersist() {
-        return getConf().wantTensorflowLIRPersist();
+        return getConf().wantPredictorTensorflowLIRPersist();
     }
 
 }

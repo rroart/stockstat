@@ -25,7 +25,7 @@ public abstract class MLClassifyAccess {
 
     public abstract Map<String, Double[]> classify(Aggregator indicator, List<Triple<String, Object, Double>> map, MLClassifyModel model, int size, int outcomes, Map<Double, String> shortMap);
 
-    public abstract LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnTestMap, MLClassifyModel model, int size, int outcomes, List<Triple<String, Object, Double>> classifyMap, Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta);
+    public abstract LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnTestMap, MLClassifyModel model, int size, int outcomes, List<Triple<String, Object, Double>> classifyMap, Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify);
 
     public abstract List<MLClassifyModel> getModels();
 

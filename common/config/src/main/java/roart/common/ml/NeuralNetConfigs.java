@@ -85,7 +85,7 @@ public class NeuralNetConfigs {
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLIC:
             tensorflowConfig.setTensorflowLICConfig((TensorflowLICConfig) conf);
             break; 
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWLIR:
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR:
             tensorflowConfig.setTensorflowLIRConfig((TensorflowLIRConfig) conf);
             break; 
         case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN:
@@ -94,20 +94,21 @@ public class NeuralNetConfigs {
         case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2:
             tensorflowConfig.setTensorflowCNN2Config((TensorflowCNN2Config) conf);
             break; 
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWRNN:
             tensorflowConfig.setTensorflowRNNConfig((TensorflowRNNConfig) conf);
             break; 
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWGRU:
             tensorflowConfig.setTensorflowGRUConfig((TensorflowGRUConfig) conf);
             break; 
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWMLP:
             tensorflowConfig.setTensorflowMLPConfig((TensorflowMLPConfig) conf);
             break; 
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
             tensorflowConfig.setTensorflowLSTMConfig((TensorflowLSTMConfig) conf);
-            break; 
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM:
-            tensorflowConfig.setTensorflowPredictorLSTMConfig((TensorflowPredictorLSTMConfig) conf);
             break; 
         case ConfigConstants.MACHINELEARNINGPYTORCHCNN:
             pytorchConfig.setPytorchCNNConfig((PytorchCNNConfig) conf);
@@ -115,15 +116,19 @@ public class NeuralNetConfigs {
         case ConfigConstants.MACHINELEARNINGPYTORCHCNN2:
             pytorchConfig.setPytorchCNN2Config((PytorchCNN2Config) conf);
             break; 
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN:
         case ConfigConstants.MACHINELEARNINGPYTORCHRNN:
             pytorchConfig.setPytorchRNNConfig((PytorchRNNConfig) conf);
             break; 
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU:
         case ConfigConstants.MACHINELEARNINGPYTORCHGRU:
             pytorchConfig.setPytorchGRUConfig((PytorchGRUConfig) conf);
             break; 
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP:
         case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
             pytorchConfig.setPytorchMLPConfig((PytorchMLPConfig) conf);
             break; 
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM:
         case ConfigConstants.MACHINELEARNINGPYTORCHLSTM:
             pytorchConfig.setPytorchLSTMConfig((PytorchLSTMConfig) conf);
             break;
@@ -180,11 +185,12 @@ public class NeuralNetConfigs {
                 tensorflowConfig.setTensorflowLICConfig((TensorflowLICConfig) get(key));
             }
             return tensorflowConfig.getTensorflowLICConfig();
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWLIR:
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR:
             if (tensorflowConfig.getTensorflowLIRConfig() == null) {
                 tensorflowConfig.setTensorflowLIRConfig((TensorflowLIRConfig) get(key));
             }
             return tensorflowConfig.getTensorflowLIRConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWMLP:
             if (tensorflowConfig.getTensorflowMLPConfig() == null) {
                 tensorflowConfig.setTensorflowMLPConfig((TensorflowMLPConfig) get(key));
@@ -200,26 +206,25 @@ public class NeuralNetConfigs {
                 tensorflowConfig.setTensorflowCNN2Config((TensorflowCNN2Config) get(key));
             }
             return tensorflowConfig.getTensorflowCNN2Config();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWRNN:
             if (tensorflowConfig.getTensorflowRNNConfig() == null) {
                 tensorflowConfig.setTensorflowRNNConfig((TensorflowRNNConfig) get(key));
             }
             return tensorflowConfig.getTensorflowRNNConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWGRU:
             if (tensorflowConfig.getTensorflowGRUConfig() == null) {
                 tensorflowConfig.setTensorflowGRUConfig((TensorflowGRUConfig) get(key));
             }
             return tensorflowConfig.getTensorflowGRUConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
             if (tensorflowConfig.getTensorflowLSTMConfig() == null) {
                 tensorflowConfig.setTensorflowLSTMConfig((TensorflowLSTMConfig) get(key));
             }
             return tensorflowConfig.getTensorflowLSTMConfig();
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM:
-            if (tensorflowConfig.getTensorflowPredictorLSTMConfig() == null) {
-                tensorflowConfig.setTensorflowPredictorLSTMConfig((TensorflowPredictorLSTMConfig) get(key));
-            }
-            return tensorflowConfig.getTensorflowPredictorLSTMConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP:
         case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
             if (pytorchConfig.getPytorchMLPConfig() == null) {
                 pytorchConfig.setPytorchMLPConfig((PytorchMLPConfig) get(key));
@@ -235,16 +240,19 @@ public class NeuralNetConfigs {
                 pytorchConfig.setPytorchCNN2Config((PytorchCNN2Config) get(key));
             }
             return pytorchConfig.getPytorchCNN2Config();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN:
         case ConfigConstants.MACHINELEARNINGPYTORCHRNN:
             if (pytorchConfig.getPytorchRNNConfig() == null) {
                 pytorchConfig.setPytorchRNNConfig((PytorchRNNConfig) get(key));
             }
             return pytorchConfig.getPytorchRNNConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU:
         case ConfigConstants.MACHINELEARNINGPYTORCHGRU:
             if (pytorchConfig.getPytorchGRUConfig() == null) {
                 pytorchConfig.setPytorchGRUConfig((PytorchGRUConfig) get(key));
             }
             return pytorchConfig.getPytorchGRUConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM:
         case ConfigConstants.MACHINELEARNINGPYTORCHLSTM:
             if (pytorchConfig.getPytorchLSTMConfig() == null) {
                 pytorchConfig.setPytorchLSTMConfig((PytorchLSTMConfig) get(key));
@@ -316,11 +324,12 @@ public class NeuralNetConfigs {
                 tensorflowConfig.setTensorflowLICConfig((TensorflowLICConfig) get(key, config));
             }
             return tensorflowConfig.getTensorflowLICConfig();
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWLIR:
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR:
             if (tensorflowConfig.getTensorflowLIRConfig() == null) {
                 tensorflowConfig.setTensorflowLIRConfig((TensorflowLIRConfig) get(key, config));
             }
             return tensorflowConfig.getTensorflowLIRConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWMLP:
             if (tensorflowConfig.getTensorflowMLPConfig() == null) {
                 tensorflowConfig.setTensorflowMLPConfig((TensorflowMLPConfig) get(key, config));
@@ -336,26 +345,25 @@ public class NeuralNetConfigs {
                 tensorflowConfig.setTensorflowCNN2Config((TensorflowCNN2Config) get(key, config));
             }
             return tensorflowConfig.getTensorflowCNN2Config();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWRNN:
             if (tensorflowConfig.getTensorflowRNNConfig() == null) {
                 tensorflowConfig.setTensorflowRNNConfig((TensorflowRNNConfig) get(key, config));
             }
             return tensorflowConfig.getTensorflowRNNConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWGRU:
             if (tensorflowConfig.getTensorflowGRUConfig() == null) {
                 tensorflowConfig.setTensorflowGRUConfig((TensorflowGRUConfig) get(key, config));
             }
             return tensorflowConfig.getTensorflowGRUConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM:
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
             if (tensorflowConfig.getTensorflowLSTMConfig() == null) {
                 tensorflowConfig.setTensorflowLSTMConfig((TensorflowLSTMConfig) get(key, config));
             }
             return tensorflowConfig.getTensorflowLSTMConfig();
-        case ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM:
-            if (tensorflowConfig.getTensorflowPredictorLSTMConfig() == null) {
-                tensorflowConfig.setTensorflowPredictorLSTMConfig((TensorflowPredictorLSTMConfig) get(key, config));
-            }
-            return tensorflowConfig.getTensorflowPredictorLSTMConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP:
         case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
             if (pytorchConfig.getPytorchMLPConfig() == null) {
                 pytorchConfig.setPytorchMLPConfig((PytorchMLPConfig) get(key, config));
@@ -371,16 +379,19 @@ public class NeuralNetConfigs {
                 pytorchConfig.setPytorchCNN2Config((PytorchCNN2Config) get(key, config));
             }
             return pytorchConfig.getPytorchCNN2Config();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN:
         case ConfigConstants.MACHINELEARNINGPYTORCHRNN:
             if (pytorchConfig.getPytorchRNNConfig() == null) {
                 pytorchConfig.setPytorchRNNConfig((PytorchRNNConfig) get(key, config));
             }
             return pytorchConfig.getPytorchRNNConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU:
         case ConfigConstants.MACHINELEARNINGPYTORCHGRU:
             if (pytorchConfig.getPytorchGRUConfig() == null) {
                 pytorchConfig.setPytorchGRUConfig((PytorchGRUConfig) get(key, config));
             }
             return pytorchConfig.getPytorchGRUConfig();
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM:
         case ConfigConstants.MACHINELEARNINGPYTORCHLSTM:
             if (pytorchConfig.getPytorchLSTMConfig() == null) {
                 pytorchConfig.setPytorchLSTMConfig((PytorchLSTMConfig) get(key, config));
@@ -428,14 +439,12 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, new ImmutablePair(SparkLSVCConfig.class, MLConstants.SPARKLSVCCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, new ImmutablePair(TensorflowDNNConfig.class, MLConstants.TENSORFLOWDNNCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, new ImmutablePair(TensorflowLICConfig.class, MLConstants.TENSORFLOWLICCONFIG));
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR, new ImmutablePair(TensorflowLIRConfig.class, MLConstants.TENSORFLOWLIRCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, new ImmutablePair(TensorflowMLPConfig.class, MLConstants.TENSORFLOWMLPCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, new ImmutablePair(TensorflowCNNConfig.class, MLConstants.TENSORFLOWCNNCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, new ImmutablePair(TensorflowCNN2Config.class, MLConstants.TENSORFLOWCNN2CONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, new ImmutablePair(TensorflowRNNConfig.class, MLConstants.TENSORFLOWRNNCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, new ImmutablePair(TensorflowGRUConfig.class, MLConstants.TENSORFLOWGRUCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, new ImmutablePair(TensorflowLSTMConfig.class, MLConstants.TENSORFLOWLSTMCONFIG));
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, new ImmutablePair(TensorflowPredictorLSTMConfig.class, MLConstants.TENSORFLOWPREDICTORLSTMCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, new ImmutablePair(PytorchMLPConfig.class, MLConstants.PYTORCHMLPCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, new ImmutablePair(PytorchCNNConfig.class, MLConstants.PYTORCHCNNCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, new ImmutablePair(PytorchCNN2Config.class, MLConstants.PYTORCHCNN2CONFIG));
@@ -448,6 +457,15 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT, new ImmutablePair(GemIConfig.class, MLConstants.GEMINDEPENDENTCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL, new ImmutablePair(GemMMConfig.class, MLConstants.GEMMULTIMODALCONFIG));
         map.put(ConfigConstants.MACHINELEARNINGGEMSINGLE, new ImmutablePair(GemSConfig.class, MLConstants.GEMSINGLECONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR, new ImmutablePair(TensorflowLIRConfig.class, MLConstants.TENSORFLOWLIRCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP, new ImmutablePair(TensorflowMLPConfig.class, MLConstants.TENSORFLOWMLPCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN, new ImmutablePair(TensorflowRNNConfig.class, MLConstants.TENSORFLOWRNNCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU, new ImmutablePair(TensorflowGRUConfig.class, MLConstants.TENSORFLOWGRUCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM, new ImmutablePair(TensorflowLSTMConfig.class, MLConstants.TENSORFLOWLSTMCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP, new ImmutablePair(PytorchMLPConfig.class, MLConstants.PYTORCHMLPCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN, new ImmutablePair(PytorchRNNConfig.class, MLConstants.PYTORCHRNNCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU, new ImmutablePair(PytorchGRUConfig.class, MLConstants.PYTORCHGRUCONFIG));
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM, new ImmutablePair(PytorchLSTMConfig.class, MLConstants.PYTORCHLSTMCONFIG));
         return map;
     }
     
@@ -459,14 +477,13 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, ConfigConstants.MACHINELEARNINGSPARKML);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, ConfigConstants.MACHINELEARNINGTENSORFLOW);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, ConfigConstants.MACHINELEARNINGTENSORFLOW);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR, ConfigConstants.MACHINELEARNINGTENSORFLOW);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, ConfigConstants.MACHINELEARNINGTENSORFLOW);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, ConfigConstants.MACHINELEARNINGTENSORFLOW);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, ConfigConstants.MACHINELEARNINGTENSORFLOW);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, ConfigConstants.MACHINELEARNINGTENSORFLOW);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, ConfigConstants.MACHINELEARNINGTENSORFLOW);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOW);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOW);
+        //map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOW);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, ConfigConstants.MACHINELEARNINGPYTORCH);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, ConfigConstants.MACHINELEARNINGPYTORCH);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, ConfigConstants.MACHINELEARNINGPYTORCH);
@@ -479,6 +496,15 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT, ConfigConstants.MACHINELEARNINGGEM);
         map.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL, ConfigConstants.MACHINELEARNINGGEM);
         map.put(ConfigConstants.MACHINELEARNINGGEMSINGLE, ConfigConstants.MACHINELEARNINGGEM);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCH);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCH);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCH);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCH);
         return map;
     }
 
@@ -490,14 +516,13 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, ConfigConstants.MACHINELEARNINGSPARKMLLSVCCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, ConfigConstants.MACHINELEARNINGTENSORFLOWDNNCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, ConfigConstants.MACHINELEARNINGTENSORFLOWLICCONFIG);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR, ConfigConstants.MACHINELEARNINGTENSORFLOWLIRCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, ConfigConstants.MACHINELEARNINGTENSORFLOWMLPCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, ConfigConstants.MACHINELEARNINGTENSORFLOWCNNCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2CONFIG);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, ConfigConstants.MACHINELEARNINGTENSORFLOWRNNCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, ConfigConstants.MACHINELEARNINGTENSORFLOWGRUCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWLSTMCONFIG);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG);
+        //map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHMLP, ConfigConstants.MACHINELEARNINGPYTORCHMLPCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN, ConfigConstants.MACHINELEARNINGPYTORCHCNNCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGPYTORCHCNN2, ConfigConstants.MACHINELEARNINGPYTORCHCNN2CONFIG);
@@ -510,6 +535,15 @@ public class NeuralNetConfigs {
         map.put(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT, ConfigConstants.MACHINELEARNINGGEMINDEPENDENTCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL, ConfigConstants.MACHINELEARNINGGEMMULTIMODALCONFIG);
         map.put(ConfigConstants.MACHINELEARNINGGEMSINGLE, ConfigConstants.MACHINELEARNINGGEMSINGLECONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLPCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNNCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLPCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNNCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRUCONFIG);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTMCONFIG);
         return map;
     }
 

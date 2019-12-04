@@ -44,6 +44,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     private String tensorflowServer;
 
+    private List<MLClassifyModel>  mymodels;
+
     public MLClassifyTensorflowAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();
@@ -99,7 +101,10 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     @Override
     public List<MLClassifyModel> getModels(String model) {
-        List<MLClassifyModel> mymodels = new ArrayList<>();
+        if (mymodels != null) {
+            return mymodels;
+        }
+        mymodels = new ArrayList<>();
         if (model.equals(MLConstants.LIR) && conf.wantPredictorTensorflowLIR()) {
             MLClassifyModel amodel = new MLClassifyTensorflowLIRModel(conf);
             mymodels.add(amodel);
@@ -208,26 +213,29 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         } catch (Exception e) {
             log.error("Exception", e);
         }
-        Map<String, Double[]> retMap = getCatMap(retList, map, ret);
+        Map<String, Double[]> retMap = getCatMap(retList, map, ret, true);
         return retMap;
     }
 
-    private Map<String, Double[]> getCatMap(List<String> retList, List<Triple<String, Object, Double>> classifyMap, LearnTestClassify ret) {
+    private Map<String, Double[]> getCatMap(List<String> retList, List<Triple<String, Object, Double>> classifyMap, LearnTestClassify ret, boolean classify) {
         Object[] cat = ret.getClassifycatarray();
         Object[] prob = ret.getClassifyprobarray();
         Map<String, Double[]> retMap = new HashMap<>();
         for (int j = 0; j < retList.size(); j ++) {
-            Double acat = Double.valueOf((Integer) cat[j]);
-            Double aprob = (Double) prob[j];
             String id = retList.get(j);
-            retMap.put(id, new Double[]{ acat, aprob });
-            //MutablePair pair = (MutablePair) classifyMap.get(id);
-            //pair.setRight(acat);
+            if (classify) {
+                Double acat = Double.valueOf((Integer) cat[j]);
+                Double aprob = (Double) prob[j];
+                retMap.put(id, new Double[]{ acat, aprob });
+            } else {
+                ArrayList list = (ArrayList) cat[j];
+                retMap.put(id, Arrays.copyOf((list).toArray(), list.size(), Double[].class));
+            }
             Triple triple = classifyMap.get(j);
             if (triple.getRight() != null) {
                 int jj = 0;
             }
-            Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), acat);
+            Triple mutableTriple = new MutableTriple(triple.getLeft(), triple.getMiddle(), cat[j]);
             //triple.setRight(acat);
             classifyMap.set(j, mutableTriple);
         }
@@ -256,9 +264,9 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnMap,
             MLClassifyModel model, int size, int classes, List<Triple<String, Object, Double>> classifyMap,
-            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
+            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
-        if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
+        if (classify && neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
             result.setCatMap(new HashMap<>());
             return result;
         }
@@ -291,88 +299,27 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             nnconfigs = new NeuralNetConfigs();
         }
         nnconfigs.getAndSet(config);
-        /*
-        TensorflowDNNConfig dnnConfig = null;
-        TensorflowLICConfig licconfig = null;
-        TensorflowLIRConfig lirconfig = null;
-        TensorflowMLPConfig mlpconfig = null;
-        TensorflowCNNConfig cnnconfig = null;
-        TensorflowRNNConfig rnnconfig = null;
-        TensorflowGRUConfig gruconfig = null;
-        TensorflowLSTMConfig lstmconfig = null;
-        if (nnconfigs != null) {
-            dnnConfig = nnconfigs.getTensorflowConfig().getTensorflowDNNConfig();
-            licconfig = nnconfigs.getTensorflowConfig().getTensorflowLICConfig();
-            lirconfig = nnconfigs.getTensorflowConfig().getTensorflowLIRConfig();
-            mlpconfig = nnconfigs.getTensorflowConfig().getTensorflowMLPConfig();
-            cnnconfig = nnconfigs.getTensorflowConfig().getTensorflowCNNConfig();
-            rnnconfig = nnconfigs.getTensorflowConfig().getTensorflowRNNConfig();
-            gruconfig = nnconfigs.getTensorflowConfig().getTensorflowGRUConfig();
-            lstmconfig = nnconfigs.getTensorflowConfig().getTensorflowLSTMConfig();
-       }
-        if (dnnConfig == null && licconfig == null) {
-            int jj = 0;
-        }
-        if (dnnConfig == null) {
-            dnnConfig = new TensorflowDNNConfig(1000, 2, 100);
-        }
-        if (licconfig == null) {
-            licconfig = new TensorflowLICConfig(1000);
-        }
-        if (lirconfig == null) {
-            lirconfig = new TensorflowLIRConfig(1000);
-        }
-        if (mlpconfig == null) {
-            mlpconfig = new TensorflowMLPConfig(1000, 2, 1000, 0.01);
-        }
-        if (cnnconfig == null) {
-            cnnconfig = new TensorflowCNNConfig(1000, 4, 1, 0.5);
-        }
-        if (rnnconfig == null) {
-            rnnconfig = new TensorflowRNNConfig(1000, 2, 1000, 0.01, 1, 0, 0);
-        }
-        if (gruconfig == null) {
-            gruconfig = new TensorflowGRUConfig(1000, 2, 100, 0.01, 1, 0, 0);
-        }
-        if (lstmconfig == null) {
-            lstmconfig = new TensorflowLSTMConfig(1000, 2, 100, .01, 1, 0, 0);
-        }
-        param.setTensorflowDNNConfig(dnnConfig);
-        param.setTensorflowLICConfig(licconfig);
-        param.setTensorflowLIRConfig(lirconfig);
-        param.setTensorflowMLPConfig(mlpconfig);
-        param.setTensorflowCNNConfig(cnnconfig);
-        param.setTensorflowRNNConfig(rnnconfig);
-        param.setTensorflowGRUConfig(gruconfig);
-        param.setTensorflowLSTMConfig(lstmconfig);
-        */
         NeuralNetConfig m = ((MLClassifyTensorflowModel) model).getModelAndSet(nnconfigs, param);
         param.setTrainingarray(trainingArray);
-        if (Arrays.stream(trainingCatArray).allMatch(e -> e != null)) {
+        param.setClassify(classify);
+          if (classify) {
             param.setTrainingcatarray(trainingCatArray);
-            param.setClassify(true);
         } else {
             param.setTrainingcatarray(new Object[0]);
-            param.setClassify(false);
         }
         param.setModelInt(model.getId());
         param.setSize(size);
         param.setClasses(classes);
         List<String> retList = new ArrayList<>();
-        Object[] classifyArray = new Object[classifyMap.size()];
-        getClassifyArray(classifyMap, retList, classifyArray);
-        param.setClassifyarray(classifyArray);
-        for(Object obj : classifyArray) {
-            //log.info("inner {}", Arrays.asList(obj));
+        if (true || classify) {
+            Object[] classifyArray = new Object[classifyMap.size()];
+            getClassifyArray(classifyMap, retList, classifyArray);
+            param.setClassifyarray(classifyArray);
+            for(Object obj : classifyArray) {
+                //log.info("inner {}", Arrays.asList(obj));
+            }
         }
         LearnTestClassify ret = null;
-        /*
-        if (model.getId() == 1) {
-            log.info("Used ML config {}", dnnConfig);
-        } else {
-            log.info("Used ML config {}", licconfig);
-        }
-        */
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
         } catch (Exception e) {
@@ -382,7 +329,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         result.setAccuracy(ret.getAccuracy());
         result.setLoss(ret.getLoss());
         if (ret.getClassifycatarray() != null) {
-            Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret);
+            Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret, classify);
             result.setCatMap(retMap);
         }
         result.setClassify(param.getClassify());

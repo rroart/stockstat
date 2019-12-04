@@ -1,5 +1,6 @@
 package roart.pipeline.common.predictor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,10 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.model.PipelineResultData;
 import roart.model.StockItem;
 import roart.result.model.ResultItemTableRow;
+import roart.result.model.ResultMeta;
 
 public abstract class AbstractPredictor extends PipelineResultData {
 
@@ -23,14 +26,28 @@ public abstract class AbstractPredictor extends PipelineResultData {
     protected Map<String, Object[]> resultMap;
     protected Map<String, Object> accuracyMap;
     protected Map<String, Object> lossMap;
+    protected List<Object[]> resultMetaArray;
+    private List<ResultMeta> resultMetas;
+
+    protected NeuralNetCommand neuralnetcommand;
    
-    public AbstractPredictor(MyMyConfig conf, String string, int category) {
+    public AbstractPredictor(MyMyConfig conf, String string, int category, NeuralNetCommand neuralnetcommand) {
         this.title = string;
         this.conf = conf;
         this.category = category;
+        this.neuralnetcommand = neuralnetcommand;
+        resultMetas = new ArrayList<>();
     }
 
     public abstract boolean isEnabled();
+
+    public List<ResultMeta> getResultMetas() {
+        return resultMetas;
+    }
+
+    public void setResultMetas(List<ResultMeta> resultMetas) {
+        this.resultMetas = resultMetas;
+    }
 
     public String getTitle() {
         return title;
@@ -74,6 +91,8 @@ public abstract class AbstractPredictor extends PipelineResultData {
         map.put(PipelineConstants.CATEGORY, category);
         map.put(PipelineConstants.CATEGORYTITLE, title);
         map.put(PipelineConstants.RESULT, resultMap);
+        map.put(PipelineConstants.RESULTMETA, resultMetas);
+        map.put(PipelineConstants.RESULTMETAARRAY, resultMetaArray);
         map.put(PipelineConstants.ACCURACY, accuracyMap);
         map.put(PipelineConstants.LOSS, lossMap);
         return map;
@@ -84,6 +103,8 @@ public abstract class AbstractPredictor extends PipelineResultData {
     public abstract void calculate() throws Exception;
 
     public abstract boolean hasValue();
+
+    public abstract String getName();
     
 }
 

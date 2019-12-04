@@ -71,8 +71,12 @@ public class PipelineConstants {
     public static final String MLSTOCH = "mlstoch";
     public static final String RECOMMENDERRSI = "recommenderrsi";
     public static final String AGGREGATORRECOMMENDERINDICATOR = "aggregatorrecommenderindicator";
-    public static final String PREDICTORSLSTM = "predictorslstm";
+    public static final String PREDICTOR = "predictor";
+    public static final String LIR = "lir";
+    public static final String MLP = "mlp";
+    public static final String RNN = "rnn";
     public static final String LSTM = "lstm";
+    public static final String GRU = "gru";
     public static final String DATASET = "dataset";
     public static final String CROSSTEST = "crosstest";
     

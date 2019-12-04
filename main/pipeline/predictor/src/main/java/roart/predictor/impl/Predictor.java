@@ -3,6 +3,7 @@ package roart.predictor.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +14,9 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,29 +24,28 @@ import roart.category.AbstractCategory;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.indicator.util.IndicatorUtils;
 import roart.ml.common.MLClassifyModel;
+import roart.ml.common.MLMeta;
 import roart.ml.dao.MLClassifyDao;
-import roart.ml.dao.MLPredictDao;
-import roart.ml.model.LearnTestPredictResult;
-import roart.ml.model.MLPredictModel;
+import roart.ml.model.LearnTestClassifyResult;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
-import roart.predictor.impl.PredictorTensorflowLSTM.PredSubType;
-import roart.predictor.impl.PredictorTensorflowLSTM.PredSubTypeSingle;
 import roart.result.model.ResultItemTableRow;
+import roart.result.model.ResultMeta;
 
 public abstract class Predictor extends AbstractPredictor {
 
-    public Predictor(MyMyConfig conf, String string, int category) {
-        super(conf, string, category);
+    public Predictor(MyMyConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders) {
+        super(conf, string, category, neuralnetcommand);
         if (!isEnabled()) {
             return;
         }
@@ -52,7 +54,6 @@ public abstract class Predictor extends AbstractPredictor {
         this.key = title;
         this.categories = categories;
         this.datareaders = datareaders;
-        makeWantedSubTypes();
         makeMapTypes();
         if (conf.wantML()) {
             if (getType().equals(MLConstants.TENSORFLOW) && conf.wantPredictorsTensorflow()) {
@@ -93,7 +94,7 @@ public abstract class Predictor extends AbstractPredictor {
     protected Map<String, double[][]> truncBase100ListMap;
     protected Map<String, double[][]> truncBase100FillListMap;
     Object[] emptyField = new Object[1];
-    Map<MLPredictModel, Long> mapTime = new HashMap<>();
+    Map<MLClassifyModel, Long> mapTime = new HashMap<>();
 
     List<ResultItemTableRow> mlTimesTableRows = null;
     List<ResultItemTableRow> eventTableRows = null;
@@ -101,7 +102,7 @@ public abstract class Predictor extends AbstractPredictor {
     private int fieldSize = 0;
 
     public abstract String getType();
-    
+
     @Override
     public Map<Integer, List<ResultItemTableRow>> otherTables() {
         Map<Integer, List<ResultItemTableRow>> retMap = new HashMap<>();
@@ -139,16 +140,6 @@ public abstract class Predictor extends AbstractPredictor {
 
     private void makeMapTypes() {
         mapTypes.put(0, "me");
-    }
-
-    private List<PredSubType> wantedSubTypes = new ArrayList<>();
-
-    private List<PredSubType> wantedSubTypes() {
-        return wantedSubTypes;
-    }
-
-    private void makeWantedSubTypes() {
-        wantedSubTypes.add(new PredSubTypeSingle());
     }
 
     // make an oo version of this
@@ -195,13 +186,22 @@ public abstract class Predictor extends AbstractPredictor {
         log.info("time0 {}", (System.currentTimeMillis() - time0));
         resultMap = new HashMap<>();
         accuracyMap = new HashMap<>();
+        lossMap = new HashMap<>();
+        resultMetaArray = new ArrayList<>();
 
+        List<Date> dateList = (List<Date>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
+        Integer days = conf.getDays();
+        if (days == 0) {
+            days = dateList.size();
+        }
+        
         NeuralNetConfigs nnConfigs = new NeuralNetConfigs();
-        String nnconfigString = conf.getTensorflowPredictorLSTMConfig();
+        String nnconfigString = getMyNeuralNetConfig();
         if (nnconfigString != null) {
             ObjectMapper mapper = new ObjectMapper();
-            TensorflowPredictorLSTMConfig lstmConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
-            nnConfigs.setTensorflowConfig(new NeuralNetTensorflowConfig(null, null, null, null, null, null, null, null, null, lstmConfig));
+            nnConfigs = mapper.readValue(nnconfigString, NeuralNetConfigs.class);
+            //TensorflowPredictorLSTMConfig lstmConfig = mapper.readValue(nnconfigString, TensorflowPredictorLSTMConfig.class);
+            //nnConfigs.setTensorflowConfig(new NeuralNetTensorflowConfig(null, null, null, null, null, null, null, null, null));
             //nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(lstmConfig);
         }
 
@@ -214,12 +214,12 @@ public abstract class Predictor extends AbstractPredictor {
             double[] list = list0[0];
             log.info("list {} {}", list.length, Arrays.asList(list));
         }
-        Map<String, Double[]> mapResult = new HashMap<>();
+        Map<MLClassifyModel, Map<String, Double[]>> mapResult = new HashMap<>();
         if (conf.wantML()) {
             if (false && conf.wantPercentizedPriceIndex()) {
-                doPredictions(conf, mapResult, base100FillListMap, truncBase100FillListMap, nnConfigs);
+                doPredictions(conf, mapResult, base100FillListMap, truncBase100FillListMap, nnConfigs, days);
             } else {
-                doPredictions(conf, mapResult, fillListMap, truncFillListMap, nnConfigs);                
+                doPredictions(conf, mapResult, fillListMap, truncFillListMap, nnConfigs, days);                
             }
         }
         createResultMap(conf, mapResult, false && conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap);
@@ -228,15 +228,81 @@ public abstract class Predictor extends AbstractPredictor {
 
     }
 
-    private void doPredictions(MyMyConfig conf, Map<String, Double[]> mapResult, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs) {
+    protected String getMyNeuralNetConfig() {
+        return conf.getPredictorsMLConfig();
+    }
+
+    protected abstract String getNeuralNetConfig();
+
+    private void doPredictions(MyMyConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs, int days) {
         try {
             for (MLClassifyDao mldao : mldaos) {
+                if (mldao.getModels().size() != 1) {
+                    log.error("Models size is {}", mldao.getModels().size());
+                }
                 for (MLClassifyModel model : mldao.getModels(predictorName())) {
-                    LearnTestPredictResult result = getMapResultList(conf, mldao, model, aListMap, aTruncListMap, nnConfigs);
-                    Map<String, Double[]> localMapResult = result.predictMap;
-                    mapResult.putAll(localMapResult);
-                    Map<String, Double> accuracyMap = result.accuracyMap;
-                    accuracyMap.putAll(accuracyMap);
+                    List<Triple<String, Object, Double>> map = new ArrayList<>();
+                    // days find max
+                    days = 0;
+                    for (String id : aListMap.keySet()) {
+                        Double[] listl = aListMap.get(id)[0];
+                        double[][] list0 = aTruncListMap.get(id);
+                        double[] list = list0[0];
+                        // check reverse. move up before if?
+                        if (list != null && list.length > days) {
+                            days = list.length;
+                        }
+                    }
+                    log.info("list days {}", days);
+                    for (String id : aListMap.keySet()) {
+                        Double[] listl = aListMap.get(id)[0];
+                        double[][] list0 = aTruncListMap.get(id);
+                        double[] list = list0[0];
+                        // check reverse. move up before if?
+                        if (list != null && list.length == days) {
+                            log.info("list {}", list.length);
+                            Object list3 = ArrayUtils.toObject(list);
+                            map.add(new ImmutableTriple(id, list3, null));
+                        }
+                    }
+                    List<Triple<String, Object, Double>> classifylist = new ArrayList<>();
+                    for (String id : aListMap.keySet()) {
+                        Double[] listl = aListMap.get(id)[0];
+                        double[][] list0 = aTruncListMap.get(id);
+                        double[] list = list0[0];
+                        // check reverse. move up before if?
+                        if (list != null && list.length >= conf.getPredictorsDays()) {
+                            log.info("list {}", list.length);
+                            Object list3 = ArrayUtils.toObject(Arrays.copyOfRange(list, list.length - conf.getPredictorsDays(), list.length));
+                            classifylist.add(new ImmutableTriple(id, list3, null));
+                        }
+                    }
+                    // make OO of this, create object
+                    Object[] meta = new Object[10];
+                    meta[0] = mldao.getName();
+                    meta[1] = model.getName();
+                    meta[2] = model.getReturnSize();
+                    resultMetaArray.add(meta);
+                    ResultMeta resultMeta = new ResultMeta();
+                    resultMeta.setMlName(mldao.getName());
+                    resultMeta.setModelName(model.getName());
+                    resultMeta.setReturnSize(model.getReturnSize());
+                    getResultMetas().add(resultMeta);
+                    MLMeta mlmeta = new MLMeta();
+                    mlmeta.dim1 = 10;
+                    mlmeta.classify = true;
+                    mlmeta.features = true;
+                    String filename = getFilename(mldao, model, "" + conf.getPredictorsDays(), "" + conf.getPredictorsFuturedays(), conf.getMarket(), null);
+                    String path = model.getPath();
+                    LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, null, map, model, conf.getPredictorsDays(), conf.getPredictorsFuturedays(), mapTime, classifylist, null, path, filename, neuralnetcommand, mlmeta, false);  
+                    Map<String, Double[]> classifyResult = result.getCatMap();
+                    accuracyMap.put(mldao.getName() + model.getName(), result.getAccuracy());
+                    lossMap.put(mldao.getName() + model.getName(), result.getLoss());
+                    meta[9] = result.getLoss();
+                    resultMeta.setLoss(result.getLoss());
+                    mapResult.put(model, classifyResult);
+                    meta[4] = result.getAccuracy();
+                    resultMeta.setTestAccuracy(result.getAccuracy());
                 }
             }
         } catch (Exception e) {
@@ -244,8 +310,8 @@ public abstract class Predictor extends AbstractPredictor {
         }
     }
 
-    private Map<String, Double[]> getMapResult(MyMyConfig conf, MLPredictDao mldao, int horizon, int windowsize,
-            int epochs, MLPredictModel model, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap) {
+    private Map<String, Double[]> getMapResult(MyMyConfig conf, MLClassifyDao mldao, int horizon, int windowsize,
+            int epochs, MLClassifyModel model, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap) {
         Map<String, Double[]> localMapResult = new HashMap<>();
         for (String id : aListMap.keySet()) {
             double[][] list0 = aTruncListMap.get(id);
@@ -254,43 +320,34 @@ public abstract class Predictor extends AbstractPredictor {
             log.info("list {} {}", list.length, windowsize);
             if (list != null && list.length > 2 * windowsize ) {
                 Double[] list3 = ArrayUtils.toObject(list);
-                LearnTestPredictResult result = mldao.predictone(new NeuralNetConfigs(), this, list3, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime);  
-                localMapResult.put(id, result.predicted);
-                accuracyMap.put(id, result.accuracy);
+                LearnTestClassifyResult result = null; //mldao.learntestclassify(nnConfigs, null, map, model, 10, 1, mapTime, null, null, path, filename, neuralnetcommand, mlmeta);  
+                localMapResult = result.getCatMap();
+                accuracyMap.put(id, result.getAccuracy());
+                lossMap.put(id, result.getLoss());
             }
         }
         return localMapResult;
     }
 
-    private LearnTestPredictResult getMapResultList(MyMyConfig conf, MLPredictDao mldao, MLPredictModel model, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs) {
-        Map<String, Double[]> map = new HashMap<>();
-        for (String id : aListMap.keySet()) {
-            Double[] listl = aListMap.get(id)[0];
-            double[][] list0 = aTruncListMap.get(id);
-            double[] list = list0[0];
-            // check reverse. move up before if?
-            if (list != null) {
-                log.info("list {}", list.length);
-                Double[] list3 = ArrayUtils.toObject(list);
-                map.put(id, list3);
-            }
-        }
-        return mldao.predict(this, nnConfigs, map, model, conf.getMACDDaysBeforeZero(), key, 4, mapTime);  
-    }
-
-    private void createResultMap(MyMyConfig conf, Map<String, Double[]> mapResult, Map<String, Double[][]> aListMap) {
-        for (String id : aListMap.keySet()) {
-            Object[] fields = new Object[1];
+    private void createResultMap(MyMyConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult, Map<String, Double[][]> aListMap) {
+        for (String id : listMap.keySet()) {
+            Object[] fields = new Object[fieldSize];
             resultMap.put(id, fields);
-            int retindex = 0;
+            int retindex = 0 ;
+
+            // make OO of this
             if (conf.wantML()) {
-                List<PredSubType> subTypes2 = wantedSubTypes();
-                for (PredSubType subType : subTypes2) {
-                    for (MLPredictDao mldao : mldaos) {
-                        for (MLPredictModel model : mldao.getModels()) {
-                            retindex = mldao.addResults(fields, retindex, id, model, this, mapResult, null);
-                        }   
-                    }
+                for (MLClassifyDao mldao : mldaos) {
+                    for (MLClassifyModel model : mldao.getModels(predictorName())) {
+                        Map<String, Double[]> resultMap = mapResult.get(model);
+                        Double[] aType = null;
+                        if (resultMap != null) {
+                            aType = resultMap.get(id);
+                            if (aType != null) {
+                                fields[retindex++] = aType[aType.length - 1];
+                            }
+                        }
+                    }   
                 }
             }
         }
@@ -298,8 +355,8 @@ public abstract class Predictor extends AbstractPredictor {
 
     private void handleSpentTime(MyMyConfig conf) {
         if (conf.wantMLTimes()) {
-            for (Entry<MLPredictModel, Long> entry : mapTime.entrySet()) {
-                MLPredictModel model = entry.getKey();
+            for (Entry<MLClassifyModel, Long> entry : mapTime.entrySet()) {
+                MLClassifyModel model = entry.getKey();
                 ResultItemTableRow row = new ResultItemTableRow();
                 row.add(key);
                 row.add(model.getEngineName());
@@ -372,7 +429,7 @@ public abstract class Predictor extends AbstractPredictor {
     public Object[] getResultItemTitle() {
         Object[] objs = new Object[fieldSize];
         int retindex = 0;
-        OptionalDouble average = accuracyMap
+        OptionalDouble average = lossMap
                 .values()
                 .stream()
                 .mapToDouble(a -> (Double) a)
@@ -386,13 +443,10 @@ public abstract class Predictor extends AbstractPredictor {
         } catch (Exception e) {
             log.error("Exception fix later, refactor", e);
         }
-        List<PredSubType> subTypes = wantedSubTypes();
-        for (PredSubType subType : subTypes) {
-            for (MLPredictDao mldao : mldaos) {
-                objs[retindex++] = title + Constants.WEBBR + val;
-                //objs[retindex++] = predictorName() + Constants.WEBBR + "value";
-                //retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
-            }
+        for (MLClassifyDao mldao : mldaos) {
+            objs[retindex++] = title + Constants.WEBBR + val;
+            //objs[retindex++] = predictorName() + Constants.WEBBR + "value";
+            //retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
         }
 
 
@@ -402,17 +456,7 @@ public abstract class Predictor extends AbstractPredictor {
 
     private int fieldSize() {
         emptyField = new Object[1];
-        if (true) return 1;
-        int size = 0;
-        List<PredSubType> subTypes = wantedSubTypes();
-        for (PredSubType subType : subTypes) {
-            for (MLPredictDao mldao : mldaos) {
-                size += mldao.getSizes(this);
-            }
-        }
-        emptyField = new Object[size];
-        log.info("fieldsizet {}", size);
-        return size;
+        return 1;
     }
 
     @Override
@@ -421,4 +465,18 @@ public abstract class Predictor extends AbstractPredictor {
         Pipeline datareader = pipelineMap.get("" + category);
         return anythingHere((Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST));
     }
+    
+    @Override
+    public String getName() {
+        return PipelineConstants.PREDICTOR;
+    }
+
+    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List indicators) {
+        String testmarket = conf.getMLmarket();
+        if (testmarket != null) {
+            market = testmarket;
+        }
+        return market + "_" + getName() + "_" + dao.getName() + "_" +  model.getName() + "_" + conf.getPredictorsDays() + "_" + conf.getPredictorsFuturedays() + "_" + in + "_" + out;
+    }
+
 }

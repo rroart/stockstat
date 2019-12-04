@@ -1,6 +1,7 @@
 package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,15 @@ import roart.evolution.species.Individual;
 import roart.gene.NeuralNetConfigGene;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
-import roart.predictor.impl.PredictorLSTM;
+import roart.predictor.impl.PredictorPytorchGRU;
+import roart.predictor.impl.PredictorPytorchLSTM;
+import roart.predictor.impl.PredictorPytorchMLP;
+import roart.predictor.impl.PredictorPytorchRNN;
+import roart.predictor.impl.PredictorTensorflowGRU;
+import roart.predictor.impl.PredictorTensorflowLIR;
+import roart.predictor.impl.PredictorTensorflowLSTM;
+import roart.predictor.impl.PredictorTensorflowMLP;
+import roart.predictor.impl.PredictorTensorflowRNN;
 
 public class NeuralNetChromosome extends AbstractChromosome {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -199,10 +208,51 @@ public class NeuralNetChromosome extends AbstractChromosome {
                 //conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
                 pipelineData = new MLDataset(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
             }
-            if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
-                value = mapper.writeValueAsString(nnConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
-                conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG, value);
-                pipelineData = new PredictorLSTM(conf, catName, null, null, catName, cat, categories, dataReaders);
+            if (ml.equals(PipelineConstants.PREDICTOR)) {
+                conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, value);
+                //value = mapper.writeValueAsString(nnConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
+                //conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG, value);
+                List<String> foundkeys = getFoundKeys(conf, nnConfigs);
+                pipelineData = null;
+                for (String key : foundkeys) {
+                    switch (key) {
+                    case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR:
+                        pipelineData = new PredictorTensorflowLIR(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        break;
+
+                    case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP:
+                        pipelineData = new PredictorTensorflowMLP(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        break;
+
+                    case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN:
+                        pipelineData = new PredictorTensorflowRNN(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        break;
+
+                    case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU:
+                        pipelineData = new PredictorTensorflowGRU(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        break;
+
+                    case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM:
+                        pipelineData = new PredictorTensorflowLSTM(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        break;
+
+                    case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP:
+                        pipelineData = new PredictorPytorchMLP(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        break;
+
+                    case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN:
+                        pipelineData = new PredictorPytorchRNN(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        break;
+
+                    case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU:
+                        pipelineData = new PredictorPytorchGRU(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        break;
+
+                    case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM:
+                        pipelineData = new PredictorPytorchLSTM(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        break;
+                    }
+                }
                 ((AbstractPredictor) pipelineData).calculate();
             }
             return pipelineData;
@@ -255,6 +305,67 @@ public class NeuralNetChromosome extends AbstractChromosome {
     @Override
     public String toString() {
         return key + " " + nnConfigGene;
+    }
+
+    public List<String> getFoundKeys(MyMyConfig conf, NeuralNetConfigs nnConfigs) {
+        List<String> keys = getMLkeys();
+        
+        List<String> foundkeys = new ArrayList<>();
+        for (String key : keys) {
+            System.out.println(conf.getValueOrDefault(key));
+            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(key))) {
+                continue;
+            }
+        
+            Map<String, String> anotherConfigMap = nnConfigs.getAnotherConfigMap();
+            if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(anotherConfigMap.get(key)))) {
+                continue;
+            }
+            foundkeys.add(key);
+        }
+        if (foundkeys.size() != 1) {
+            log.error("Foundkeys size {}", foundkeys.size());
+        }
+        return foundkeys;
+    }
+
+    private List<String> getMLkeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLOR);
+        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLMLPC);
+        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLOVR);
+        keys.add(ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU);
+        keys.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
+        //keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN2);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHRNN);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHGRU);
+        keys.add(ConfigConstants.MACHINELEARNINGPYTORCHLSTM);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMEWC);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMGEM);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMICARL);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMINDEPENDENT);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMMULTIMODAL);
+        keys.add(ConfigConstants.MACHINELEARNINGGEMSINGLE);
+        keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR);
+        keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP);
+        keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN);
+        keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU);
+        keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM);
+        keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP);
+        keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN);
+        keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU);
+        keys.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM);
+        return keys;
     }
 
 }

@@ -17,7 +17,7 @@ import roart.indicator.impl.IndicatorSTOCHRSI;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
-import roart.predictor.impl.PredictorLSTM;
+import roart.predictor.impl.PredictorTensorflowLSTM;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockDao;
 import roart.model.data.MarketData;

@@ -73,7 +73,7 @@ public class MLClassifyLearnTestPredictCallable implements Callable {
     @Override
     public LearnTestClassifyResult call() throws Exception {
         log.info("call1");
-        return mldao.learntestclassify(nnconfigs, indicator, learnmap, model, size, 4, mapTime, classifymap, shortMap, path, filename, neuralnetcommand, mlmeta);  
+        return mldao.learntestclassify(nnconfigs, indicator, learnmap, model, size, 4, mapTime, classifymap, shortMap, path, filename, neuralnetcommand, mlmeta, true);  
     }
     
 }

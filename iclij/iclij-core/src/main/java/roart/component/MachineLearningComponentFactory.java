@@ -11,7 +11,7 @@ public class MachineLearningComponentFactory extends ComponentFactory {
         switch (component) {
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
             return new MachineLearningComponentRecommender();
-        case PipelineConstants.PREDICTORSLSTM:
+        case PipelineConstants.PREDICTOR:
             return new MachineLearningComponentPredictor();
         case PipelineConstants.MLMACD:
             return new MachineLearningComponentMLMACD();

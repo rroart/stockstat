@@ -175,7 +175,7 @@ public class ControlService {
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     periodText, marketdatamap, periodDataMap, datedstocklists, datareaders);
             AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, dayStocks,
-                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders, categories);
+                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders, categories, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
             
@@ -215,8 +215,8 @@ public class ControlService {
                         continue;
                     }
                     Map map = predictors[i].getLocalResultMap();
-                    maps.put(predictors[i].getTitle(), map);
-                    log.debug("ca {}", predictors[i].getTitle());
+                    maps.put(predictors[i].getName(), map);
+                    log.debug("ca {}", predictors[i].getName());
                 }
                 for (int i = 0; i < aggregates.length; i++) {
                     log.debug("ag {}", aggregates[i].getName());

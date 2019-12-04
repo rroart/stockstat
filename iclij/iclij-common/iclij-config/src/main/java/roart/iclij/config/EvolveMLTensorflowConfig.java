@@ -25,8 +25,6 @@ public class EvolveMLTensorflowConfig {
     
     private EvolveMLConfig lstm;
     
-    private EvolveMLConfig predictorlstm;
-        
     public EvolveMLConfig getDnn() {
         return dnn;
     }
@@ -81,12 +79,6 @@ public class EvolveMLTensorflowConfig {
     public void setLstm(EvolveMLConfig lstm) {
         this.lstm = lstm;
     }
-    public EvolveMLConfig getPredictorlstm() {
-        return predictorlstm;
-    }
-    public void setPredictorlstm(EvolveMLConfig predictorlstm) {
-        this.predictorlstm = predictorlstm;
-    }
     public void merge(EvolveMLTensorflowConfig tensorflow) {
         if (tensorflow == null) {
             return;
@@ -100,20 +92,28 @@ public class EvolveMLTensorflowConfig {
         rnn.merge(tensorflow.rnn);
         gru.merge(tensorflow.gru);
         lstm.merge(tensorflow.lstm);
-        predictorlstm.merge(tensorflow.predictorlstm);
     }
+    
     public Map<? extends String, ? extends EvolveMLConfig> getAll() {
         Map<String, EvolveMLConfig> map = new HashMap<>();
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, dnn);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, lic);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIR, lir);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP, mlp);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN, cnn);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2, cnn2);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN, rnn);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU, gru);
         map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM, lstm);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, predictorlstm);
+        return map;
+    }
+
+    public Map<? extends String, ? extends EvolveMLConfig> getAllPredictors() {
+        Map<String, EvolveMLConfig> map = new HashMap<>();
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR, lir);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP, mlp);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN, rnn);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU, gru);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM, lstm);
         return map;
     }
 }

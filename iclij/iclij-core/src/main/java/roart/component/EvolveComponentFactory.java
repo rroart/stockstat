@@ -11,7 +11,7 @@ public class EvolveComponentFactory extends ComponentFactory {
         switch (component) {
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
             return new EvolveComponentRecommender();
-        case PipelineConstants.PREDICTORSLSTM:
+        case PipelineConstants.PREDICTOR:
             return new EvolveComponentPredictor();
         case PipelineConstants.MLMACD:
             return new EvolveComponentMLMACD();

@@ -287,7 +287,7 @@ public class ComponentData {
         Map<String, Object> setValueMap = new HashMap<>();
         setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        setValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        setValueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
@@ -307,7 +307,7 @@ public class ComponentData {
         Map<String, Object> setValueMap = new HashMap<>();
         setValueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        setValueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);
+        setValueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
@@ -335,6 +335,7 @@ public class ComponentData {
         service.conf.setdate(TimeUtil.convertDate(this.getBaseDate()));
         Map<String, Map<String, Object>> maps = service.getContent(getDisableList());
         this.resultMaps = maps;
+        System.out.println(maps.keySet());
         Map<String, Object> aMap = (Map) maps.get(mapName);
         this.resultMap = aMap;
         return aMap;  
@@ -358,6 +359,7 @@ public class ComponentData {
     public void setCategory(Map aMap) {
         if (aMap == null) {
             int jj = 0;
+            return;
         }
         Integer aCategory = (Integer) aMap.get(PipelineConstants.CATEGORY);
         this.setCategory(aCategory);

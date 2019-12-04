@@ -16,8 +16,8 @@ public class PredictorData extends ComponentMLData {
         super(param);
     }
     
-    @Override
-    public Map<String, Object> getResultMap(String mapName, Map<String, Object> setValueMap) {
+    //@Override
+    public Map<String, Object> getResultMapNot(String mapName, Map<String, Object> setValueMap) {
         getService().conf.setConfigValueMap(new HashMap<>(getConfigValueMap()));
         getService().conf.getConfigValueMap().putAll(setValueMap);
         getService().conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.TRUE);

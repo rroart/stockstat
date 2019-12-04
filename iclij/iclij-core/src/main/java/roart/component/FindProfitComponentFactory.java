@@ -11,7 +11,7 @@ public class FindProfitComponentFactory extends ComponentFactory {
         switch (component) {
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
             return new FindProfitComponentRecommender();
-        case PipelineConstants.PREDICTORSLSTM:
+        case PipelineConstants.PREDICTOR:
             return new FindProfitComponentPredictor();
         case PipelineConstants.MLMACD:
             return new FindProfitComponentMLMACD();

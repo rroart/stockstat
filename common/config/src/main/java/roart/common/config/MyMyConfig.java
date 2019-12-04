@@ -849,12 +849,12 @@ public class MyMyConfig extends MyConfig {
     }
 
     public boolean wantPredictorsTensorflow() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORS)
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW)
                 && wantPredictors();
     }
 
     public boolean wantPredictorsPytorch() {
-        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORS)
+        return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCH)
                 && wantPredictors();
     }
 

@@ -78,4 +78,13 @@ public class EvolveMLPytorchConfig {
         return map;
     }
     
+    public Map<? extends String, ? extends EvolveMLConfig> getAllPredictors() {
+        Map<String, EvolveMLConfig> map = new HashMap<>();
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP, mlp);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN, rnn);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU, gru);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM, lstm);
+        return map;
+    }
+    
 }

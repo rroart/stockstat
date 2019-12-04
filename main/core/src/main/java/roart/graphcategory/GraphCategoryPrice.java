@@ -71,7 +71,7 @@ public class GraphCategoryPrice extends GraphCategory {
                     dataseteq = new DefaultCategoryDataset( );
                 }
                 DefaultCategoryDataset dataset = StockUtil.getFilterChartDated(days, ids, marketdatamap, perioddata, Constants.PRICECOLUMN, conf.isGraphEqualize(), dataseteq);
-                if (conf.wantPredictorLSTM()){
+                if (conf.wantPredictorTensorflowLSTM()){
                     Pair<String, String> pair2 = ids.iterator().next();
                     String market = pair2.getLeft();
                     MarketData marketdata = marketdatamap.get(market);

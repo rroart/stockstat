@@ -111,7 +111,7 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOWRNN = "machinelearning.predictors.tensorflow.rnn[@enable]";
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOWRNNPERSIST = "machinelearning.predictors.tensorflow.rnn.persist[@enable]";
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOWRNNCONFIG = "machinelearning.predictors.tensorflow.rnn.config";
-    public static final String MACHINELEARNINGPREDICTORSTENSORFLOWLSTM = "machinelearning.predictors.tensorflow.predictor.lstm[@enable]";
+    public static final String MACHINELEARNINGPREDICTORSTENSORFLOWLSTM = "machinelearning.predictors.tensorflow.lstm[@enable]";
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOWLSTMPERSIST = "machinelearning.predictors.tensorflow.lstm.persist[@enable]";
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG = "machinelearning.predictors.tensorflow.lstm.config";
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOWGRU = "machinelearning.predictors.tensorflow.gru[@enable]";

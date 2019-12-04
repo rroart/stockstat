@@ -119,7 +119,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
     @Override
     public LearnTestClassifyResult learntestclassify(NeuralNetConfigs nnconfigs, Aggregator indicator, List<Triple<String, Object, Double>> learnMap,
             MLClassifyModel model, int size, int outcomes, List<Triple<String, Object, Double>> classifyMap,
-            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta) {
+            Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
         if (classifyMap == null || classifyMap.isEmpty()) {
             result.setCatMap(new HashMap<>());

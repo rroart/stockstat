@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
+import roart.common.config.MLConstants;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
@@ -28,6 +29,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentInput;
+import roart.component.model.ComponentMLData;
 import roart.component.model.ComponentData;
 import roart.component.model.PredictorData;
 import roart.config.Market;
@@ -41,6 +43,7 @@ import roart.evolution.species.Individual;
 import roart.gene.ml.impl.TensorflowPredictorLSTMConfigGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.MLService;
 import roart.service.PredictorService;
@@ -53,27 +56,29 @@ public class ComponentPredictor extends ComponentML {
     
     @Override
     public void enable(Map<String, Object> valueMap) {
-        valueMap.put(ConfigConstants.PREDICTORS, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.PREDICTORSLSTM, Boolean.TRUE);                
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPC, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLOR, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTM, Boolean.TRUE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.FALSE);                
-        valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, Boolean.FALSE);                
+        valueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.TRUE);                
+        //.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM, Boolean.TRUE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNINGSPARKML, Boolean.FALSE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLMLPC, Boolean.FALSE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLOR, Boolean.FALSE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLOVR, Boolean.FALSE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNINGSPARKMLLSVC, Boolean.FALSE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOW, Boolean.TRUE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM, Boolean.TRUE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN, Boolean.FALSE);                
+        //valueMap.put(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC, Boolean.FALSE);                
     }
 
     @Override
     public void disable(Map<String, Object> valueMap) {
-        valueMap.put(ConfigConstants.PREDICTORS, Boolean.FALSE);        
+        valueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);        
     }
 
-    public static MLConfigs getDisableNonLSTM() {
+    @Deprecated
+    private static MLConfigs getDisableNonLSTM() {
         EvolveMLConfig config = new EvolveMLConfig();
         config.setEnable(false);
         config.setEvolve(false);
@@ -106,12 +111,16 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
         //log.info("Component not impl {}", this.getClass().getName());
         
         PredictorData param = new PredictorData(componentparam);
         
-        String lstmConf = param.getService().conf.getTensorflowPredictorLSTMConfig();
+        int futuredays = (int) param.getService().conf.getPredictorsFuturedays();
+        param.setFuturedays(futuredays);
+
+        /*
+        String lstmConf = param.getService().conf.getPredictorTensorflowLSTMConfig();
         int futuredays = 0;
         try { 
             TensorflowPredictorLSTMConfig lstm = new ObjectMapper().readValue(lstmConf, TensorflowPredictorLSTMConfig.class);
@@ -120,8 +129,9 @@ public class ComponentPredictor extends ComponentML {
             log.error("Exception", e);
         }
         param.setFuturedays(futuredays);
+        */
 
-        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket);
         
         Map<String, Object> maps = param.getResultMap();
         
@@ -131,7 +141,7 @@ public class ComponentPredictor extends ComponentML {
     @Override
     public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
         PredictorData param = (PredictorData) componentparam;
-        Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTORSLSTM, null);
+        Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
         Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keyPair);
         Map<String, Object> resultMap = (Map<String, Object>) param.getResultMap().get("result");
@@ -172,23 +182,8 @@ public class ComponentPredictor extends ComponentML {
     public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        PredictorChromosome chromosome = new PredictorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.PREDICTORSLSTM, buy, subcomponent);
-        TensorflowPredictorLSTMConfig config = new TensorflowPredictorLSTMConfig(5, 5, 5);
-        config.full = true;
-        Map<String, Object> map = null;
-        try {
-            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        if (map != null) {
-            String configStr = (String) map.get(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG);
-            if (configStr != null) {
-                config = JsonUtil.convert(configStr, TensorflowPredictorLSTMConfig.class);
-            }
-        }
-        TensorflowPredictorLSTMConfigGene gene = new TensorflowPredictorLSTMConfigGene(config);
-        chromosome.setConfig(gene);
+        ConfigMapChromosome chromosome = new PredictorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.PREDICTOR, buy, subcomponent);
+        loadme(param, chromosome, market, confList, buy, subcomponent);
         return improve(action, param, chromosome, subcomponent);
     }
 
@@ -202,74 +197,78 @@ public class ComponentPredictor extends ComponentML {
         long goodDec = 0;
         long totalInc = 0;
         long totalDec = 0;
-        for (String key : param.getCategoryValueMap().keySet()) {
-            List<List<Double>> resultList = param.getCategoryValueMap().get(key);
-            List<Double> mainList = resultList.get(0);
-            if (mainList != null) {
-                Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays());
-                List<Double> predFutureList = resultMap.get(key);
-                if (predFutureList == null) {
-                    continue;
-                }
-                Double predFuture = predFutureList.get(0);
-                if (valFuture != null && valNow != null && predFuture != null) {
-                    System.out.println("vals " + valNow + " " + valFuture + " " + predFuture);
-                    total++;
-                    if (predFuture > valNow) {
-                        totalInc++;
-                        if (valFuture > valNow) {
-                            goodInc++;
-                        }
+        for (ResultMeta meta : param.getResultMeta()) {
+            for (String key : param.getCategoryValueMap().keySet()) {
+                List<List<Double>> resultList = param.getCategoryValueMap().get(key);
+                List<Double> mainList = resultList.get(0);
+                if (mainList != null) {
+                    Double valFuture = mainList.get(mainList.size() - 1);
+                    Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays());
+                    List<Double> predFutureList = resultMap.get(key);
+                    if (predFutureList == null) {
+                        continue;
                     }
-                    if (predFuture < valNow) {
-                        totalDec++;
-                        if (valFuture < valNow) {
-                            goodDec++;
+                    Double predFuture = predFutureList.get(0);
+                    if (valFuture != null && valNow != null && predFuture != null) {
+                        System.out.println("vals " + valNow + " " + valFuture + " " + predFuture);
+                        total++;
+                        if (predFuture > valNow) {
+                            totalInc++;
+                            if (valFuture > valNow) {
+                                goodInc++;
+                            }
+                        }
+                        if (predFuture < valNow) {
+                            totalDec++;
+                            if (valFuture < valNow) {
+                                goodDec++;
+                            }
                         }
                     }
                 }
             }
+            //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
+            MemoryItem incMemory = new MemoryItem();
+            incMemory.setMarket(param.getMarket());
+            incMemory.setRecord(LocalDate.now());
+            incMemory.setDate(param.getBaseDate());
+            incMemory.setUsedsec(param.getUsedsec());
+            incMemory.setFuturedays(param.getFuturedays());
+            incMemory.setFuturedate(param.getFutureDate());
+            incMemory.setComponent(PipelineConstants.PREDICTOR);
+            incMemory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
+            incMemory.setDescription("inc");
+            incMemory.setCategory(param.getCategoryTitle());
+            incMemory.setPositives(goodInc);
+            incMemory.setSize(total);
+            incMemory.setConfidence((double) goodInc / totalInc);
+            if (param.isDoSave()) {
+                incMemory.save();
+            }
+            MemoryItem decMemory = new MemoryItem();
+            decMemory.setMarket(param.getMarket());
+            decMemory.setRecord(LocalDate.now());
+            decMemory.setDate(param.getBaseDate());
+            decMemory.setUsedsec(param.getUsedsec());
+            decMemory.setFuturedays(param.getFuturedays());
+            decMemory.setFuturedate(param.getFutureDate());
+            decMemory.setComponent(PipelineConstants.PREDICTOR);
+            decMemory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
+            decMemory.setDescription("dec");
+            decMemory.setCategory(param.getCategoryTitle());
+            decMemory.setPositives(goodDec);
+            decMemory.setSize(total);
+            decMemory.setConfidence((double) goodDec / totalDec);
+            if (param.isDoSave()) {
+                decMemory.save();
+            }
+            if (param.isDoPrint()) {
+                System.out.println(incMemory);
+                System.out.println(decMemory);
+            }
+            memoryList.add(incMemory);
+            memoryList.add(decMemory);
         }
-        //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
-        MemoryItem incMemory = new MemoryItem();
-        incMemory.setMarket(param.getMarket());
-        incMemory.setRecord(LocalDate.now());
-        incMemory.setDate(param.getBaseDate());
-        incMemory.setUsedsec(param.getUsedsec());
-        incMemory.setFuturedays(param.getFuturedays());
-        incMemory.setFuturedate(param.getFutureDate());
-        incMemory.setComponent(PipelineConstants.PREDICTORSLSTM);
-        incMemory.setSubcomponent("inc");
-        incMemory.setCategory(param.getCategoryTitle());
-        incMemory.setPositives(goodInc);
-        incMemory.setSize(total);
-        incMemory.setConfidence((double) goodInc / totalInc);
-        if (param.isDoSave()) {
-            incMemory.save();
-        }
-        MemoryItem decMemory = new MemoryItem();
-        decMemory.setMarket(param.getMarket());
-        decMemory.setRecord(LocalDate.now());
-        decMemory.setDate(param.getBaseDate());
-        decMemory.setUsedsec(param.getUsedsec());
-        decMemory.setFuturedays(param.getFuturedays());
-        decMemory.setFuturedate(param.getFutureDate());
-        decMemory.setComponent(PipelineConstants.PREDICTORSLSTM);
-        decMemory.setSubcomponent("dec");
-        decMemory.setCategory(param.getCategoryTitle());
-        decMemory.setPositives(goodDec);
-        decMemory.setSize(total);
-        decMemory.setConfidence((double) goodDec / totalDec);
-        if (param.isDoSave()) {
-            decMemory.save();
-        }
-        if (param.isDoPrint()) {
-        System.out.println(incMemory);
-        System.out.println(decMemory);
-        }
-        memoryList.add(incMemory);
-        memoryList.add(decMemory);
         return memoryList;
     }
     
@@ -348,13 +347,14 @@ public class ComponentPredictor extends ComponentML {
 
     @Override
     public String getPipeline() {
-        return PipelineConstants.PREDICTORSLSTM;
+        return PipelineConstants.PREDICTOR;
     }
     
     @Override
     public List<String> getConfList() {
         List<String> list = new ArrayList<>();
-        list.add(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG);
+        list.add(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS);
+        list.add(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS);
         return list;
     }
 
@@ -363,5 +363,94 @@ public class ComponentPredictor extends ComponentML {
         List[] list = new ArrayList[2];
         return list;
     }
+
+    @Override
+    public List<String> getSubComponents(Market market, ComponentData componentData, String mlmarket) {
+        List<String> subComponents = new ArrayList<>();
+        Map<String, Pair<String, String>> revMap = getMapRev();
+        Map<String, EvolveMLConfig> mlConfigs = getMLConfig(market, componentData, mlmarket);
+        for (Entry<String, EvolveMLConfig> entry : mlConfigs.entrySet()) {
+            EvolveMLConfig mlConfig = entry.getValue();
+            if (mlConfig.getEnable()) {
+                String key = entry.getKey();
+                Pair<String, String> subComponent = revMap.get(key);
+                subComponents.add(subComponent.getLeft() + " " + subComponent.getRight());
+            } else {
+                int jj = 0;
+            }
+        }
+        return subComponents;
+    }
+
+    @Override
+    protected Map<String, String> getMlMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put(MLConstants.TENSORFLOW, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW);
+        map.put(MLConstants.PYTORCH, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCH);
+        return map;
+    }
+
+    @Override
+    protected Map<Pair<String, String>, String> getMap() {
+        Map<Pair <String, String>, String> map = new HashMap<>();
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU);
+        return map;
+    }
+
+    @Override
+    protected Map<Pair<String, String>, String> getMapPersist() {
+        Map<Pair <String, String>, String> map = new HashMap<>();
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLPPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNNPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMPERSIST);
+        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUPERSIST);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLPPERSIST);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNNPERSIST);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTMPERSIST);
+        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRUPERSIST);
+        return map;
+    }
+
+    @Override
+    Map<String, EvolveMLConfig> getMLConfigs(MLConfigs mlConfig) {
+        return mlConfig.getAllPredictors();
+    }
+    
+    @Override
+    public Double calculateAccuracy(ComponentData componentparam) throws Exception {
+        ComponentMLData param = (ComponentMLData) componentparam;
+        List<Double> testAccuracies = new ArrayList<>();
+        if (param.getResultMeta() == null) {
+            return null;
+        }
+        for (ResultMeta meta : param.getResultMeta()) {
+            // only different
+            Double testaccuracy = meta.getLoss();
+            if (testaccuracy != null) {
+                testAccuracies.add(testaccuracy);
+            }
+        }
+        // and min difference
+        double acc = testAccuracies
+                .stream()
+                .mapToDouble(e -> e)
+                .min()
+                .orElse(-1);
+        if (acc < 0) {
+            return null;
+        } else {
+            return acc;
+        }
+    }
+
 }
 

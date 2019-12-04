@@ -48,12 +48,12 @@ public class PredictorChromosome extends ConfigMapChromosome {
     @Override
     public double getFitness()
             throws JsonParseException, JsonMappingException, IOException {
-        ((TensorflowPredictorLSTMConfig) config.getConfig()).full = true;
-        Map<String, Object> map = new HashMap<>();
-        String string = JsonUtil.convert(config);
-        map.put(ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG, string);
-        param.getService().conf.getConfigValueMap().putAll(map);
-        setMap(map);
+        //((TensorflowPredictorLSTMConfig) config.getConfig()).full = true;
+        //Map<String, Object> map = new HashMap<>();
+        //String string = JsonUtil.convert(config);
+        //map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG, string);
+        //param.getService().conf.getConfigValueMap().putAll(map);
+        //setMap(map);
         return super.getFitness();
     }
 
@@ -112,7 +112,7 @@ public class PredictorChromosome extends ConfigMapChromosome {
         aggregate = future.get();
         */
         try {
-        memoryItems = new MyFactory().myfactory(null, PipelineConstants.PREDICTORSLSTM);
+        memoryItems = new MyFactory().myfactory(null, PipelineConstants.PREDICTOR);
         } catch (Exception e) {
             //log.error(Constants.EXCEPTION, e);
         }
@@ -134,7 +134,7 @@ public class PredictorChromosome extends ConfigMapChromosome {
             srv.getConfig();            
             srv.conf.getConfigValueMap().putAll(getMap());
             */
-            if (ml.equals(PipelineConstants.PREDICTORSLSTM)) {
+            if (ml.equals(PipelineConstants.PREDICTOR)) {
                 List<MemoryItem> memories = new PredictorService().doPredict(new ComponentInput(conf.getMarket(), LocalDate.now(), Integer.valueOf(0), false, false), getMap());
                 return memories;
             } 

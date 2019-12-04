@@ -20,7 +20,7 @@ public class NeuralNetTensorflowConfig {
 
     private TensorflowLSTMConfig tensorflowLSTMConfig;
 
-    private TensorflowPredictorLSTMConfig tensorflowPredictorLSTMConfig;
+    //private TensorflowPredictorLSTMConfig tensorflowPredictorLSTMConfig;
 
     public NeuralNetTensorflowConfig() {
         super();
@@ -98,6 +98,7 @@ public class NeuralNetTensorflowConfig {
         this.tensorflowLSTMConfig = tensorflowLSTMConfig;
     }
 
+    /*
     public TensorflowPredictorLSTMConfig getTensorflowPredictorLSTMConfig() {
         return tensorflowPredictorLSTMConfig;
     }
@@ -105,12 +106,13 @@ public class NeuralNetTensorflowConfig {
     public void setTensorflowPredictorLSTMConfig(TensorflowPredictorLSTMConfig tensorflowPredictorLSTMConfig) {
         this.tensorflowPredictorLSTMConfig = tensorflowPredictorLSTMConfig;
     }
+    */
 
     public NeuralNetTensorflowConfig(TensorflowDNNConfig tensorflowDNNConfig, TensorflowLICConfig tensorflowLICConfig,
             TensorflowLIRConfig tensorflowLIRConfig, TensorflowMLPConfig tensorflowMLPConfig,
             TensorflowCNNConfig tensorflowCNNConfig, TensorflowCNN2Config tensorflowCNN2Config, TensorflowRNNConfig tensorflowRNNConfig,
-            TensorflowGRUConfig tensorflowGRUConfig, TensorflowLSTMConfig tensorflowLSTMConfig,
-            TensorflowPredictorLSTMConfig tensorflowPredictorLSTMConfig) {
+            TensorflowGRUConfig tensorflowGRUConfig, TensorflowLSTMConfig tensorflowLSTMConfig
+            /*TensorflowPredictorLSTMConfig tensorflowPredictorLSTMConfig*/) {
         super();
         this.tensorflowDNNConfig = tensorflowDNNConfig;
         this.tensorflowLICConfig = tensorflowLICConfig;
@@ -121,7 +123,7 @@ public class NeuralNetTensorflowConfig {
         this.tensorflowRNNConfig = tensorflowRNNConfig;
         this.tensorflowGRUConfig = tensorflowGRUConfig;
         this.tensorflowLSTMConfig = tensorflowLSTMConfig;
-        this.tensorflowPredictorLSTMConfig = tensorflowPredictorLSTMConfig;
+        //this.tensorflowPredictorLSTMConfig = tensorflowPredictorLSTMConfig;
     }
     
 }

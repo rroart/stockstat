@@ -7,6 +7,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.ml.model.LearnTestPredict;
 
+@Deprecated
 public class MLPredictTensorflowLSTMModel extends MLPredictTensorflowModel {
     public MLPredictTensorflowLSTMModel(MyMyConfig conf) {
         super(conf);
@@ -24,14 +25,14 @@ public class MLPredictTensorflowLSTMModel extends MLPredictTensorflowModel {
     
     @Override
     public String getKey() {
-        return ConfigConstants.MACHINELEARNINGTENSORFLOWPREDICTORLSTMCONFIG;
+        return ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMCONFIG;
     }
 
    @Override
     public NeuralNetConfig getModelAndSet(NeuralNetConfigs conf, LearnTestPredict param) {
         TensorflowPredictorLSTMConfig modelConf = null;
         if (conf != null) {
-            modelConf = conf.getTensorflowConfig().getTensorflowPredictorLSTMConfig();
+            //modelConf = conf.getTensorflowConfig().getTensorflowPredictorLSTMConfig();
         }    
         if (modelConf == null) {
             modelConf = convert(TensorflowPredictorLSTMConfig.class);

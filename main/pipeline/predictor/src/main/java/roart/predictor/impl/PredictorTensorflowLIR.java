@@ -4,6 +4,7 @@ import java.util.Map;
 
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
+import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -11,8 +12,8 @@ import roart.pipeline.Pipeline;
 
 public class PredictorTensorflowLIR extends TensorflowPredictor {
 
-    public PredictorTensorflowLIR(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title, int category, AbstractCategory[] categories, Pipeline[] datareaders) throws Exception {
-        super(conf, string, category);
+    public PredictorTensorflowLIR(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title, int category, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        super(conf, string, category, neuralnetcommand, marketdatamap, periodDataMap, categories, datareaders);
     }
 
     @Override
@@ -25,5 +26,10 @@ public class PredictorTensorflowLIR extends TensorflowPredictor {
         return PipelineConstants.LIR;
     }
 
+    @Override
+    protected String getNeuralNetConfig() {
+        return conf.getPredictorTensorflowLIRConfig();
+    }
+    
 }
 

@@ -22,7 +22,7 @@ public abstract class ComponentFactory {
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
             serviceAction = new ServiceAction(market, ServiceAction.Task.RECOMMENDER);
             break;
-        case PipelineConstants.PREDICTORSLSTM:
+        case PipelineConstants.PREDICTOR:
             serviceAction = new ServiceAction(market, ServiceAction.Task.PREDICTOR);
             break;
         case PipelineConstants.MLMACD:
