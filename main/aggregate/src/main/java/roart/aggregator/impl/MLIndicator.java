@@ -400,6 +400,9 @@ public class MLIndicator extends Aggregator {
             }
             */
             for (MLClassifyDao mldao : mldaos) {
+                if (mldao.getModels().size() != 1) {
+                    log.error("Models size is {}", mldao.getModels().size());
+                }
                 for (MLClassifyModel model : mldao.getModels()) {          
                     if (mlmeta.dim3 == null && model.isFourDimensional()) {
                         continue;
@@ -421,7 +424,7 @@ public class MLIndicator extends Aggregator {
                         log.info("keyset {}", classifyMap.stream().map(Triple::getLeft).collect(Collectors.toList()));
                     }
                     // make OO of this, create object
-                    Object[] meta1 = new Object[6];
+                    Object[] meta1 = new Object[10];
                     meta1[0] = mldao.getName();
                     meta1[1] = model.getName();
                     meta1[2] = model.getReturnSize();
@@ -437,15 +440,17 @@ public class MLIndicator extends Aggregator {
                     String filename = getFilename(mldao, model, "" + arrayLength, "2", conf.getMarket(), indicators);
                     String path = model.getPath();
                     boolean mldynamic = conf.wantMLDynamic();
-                    LearnTestClassifyResult result = mldao.learntestclassify(nnconfigs, this, learnMap, model, arrayLength, 2, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
+                    LearnTestClassifyResult result = mldao.learntestclassify(nnconfigs, this, learnMap, model, arrayLength, 2, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                     if (result == null) {
                         continue;
                     }
                     Map<String, Double[]> classifyResult = result.getCatMap();
                     accuracyMap.put(mldao.getName() + model.getName(), result.getAccuracy());
                     lossMap.put(mldao.getName() + model.getName(), result.getLoss());
-                    meta1[4] = result.getAccuracy();
+                    meta1[6] = result.getAccuracy();
                     resultMeta1.setTestAccuracy(result.getAccuracy());
+                    meta1[9] = result.getLoss();
+                    resultMeta1.setLoss(result.getLoss());
                     mapResult.put(model, classifyResult);
                     Map<String, Long> countMap = new HashMap<>();
                     if (classifyResult != null) {
@@ -491,6 +496,9 @@ public class MLIndicator extends Aggregator {
             List<Future<LearnTestClassifyResult>> futureList = new ArrayList<>();
             Map<Future<LearnTestClassifyResult>, FutureMap> futureMap = new HashMap<>();
             for (MLClassifyDao mldao : mldaos) {
+                if (mldao.getModels().size() != 1) {
+                    log.error("Models size is {}", mldao.getModels().size());
+                }
                 for (MLClassifyModel model : mldao.getModels()) {          
                     if (mlmeta.dim3 == null && model.isFourDimensional()) {
                         continue;
@@ -512,7 +520,7 @@ public class MLIndicator extends Aggregator {
 
                     }
                     // make OO of this, create object
-                    Object[] meta1 = new Object[6];
+                    Object[] meta1 = new Object[10];
                     meta1[0] = mldao.getName();
                     meta1[1] = model.getName();
                     meta1[2] = model.getReturnSize();
@@ -550,8 +558,10 @@ public class MLIndicator extends Aggregator {
                 lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                 Object[] meta = resultMetaArray.get(testCount);
                 ResultMeta resultMeta = getResultMetas().get(testCount);
-                meta[4] = result.getAccuracy();
+                meta[6] = result.getAccuracy();
                 resultMeta.setTestAccuracy(result.getAccuracy());
+                meta[9] = result.getLoss();
+                resultMeta.setLoss(result.getLoss());
                 //log.info("keys" + Arrays.deepToString(classifyResult.values().toArray()));
                 //log.info("keys" + classifyResult.keySet());
                 //log.info("ke2 " + classifyResult.values().stream().toString());
