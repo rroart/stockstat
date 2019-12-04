@@ -19,6 +19,12 @@ public class ResultMeta {
     
     private Map classifyMap;
 
+    private Map countMap;
+    
+    private Map offsetMap;
+    
+    private Double loss;
+    
     public String getMlName() {
         return mlName;
     }
@@ -81,6 +87,30 @@ public class ResultMeta {
 
     public void setClassifyMap(Map classifyMap) {
         this.classifyMap = classifyMap;
+    }
+
+    public Map getCountMap() {
+        return countMap;
+    }
+
+    public void setCountMap(Map countMap) {
+        this.countMap = countMap;
+    }
+
+    public Map getOffsetMap() {
+        return offsetMap;
+    }
+
+    public void setOffsetMap(Map offsetMap) {
+        this.offsetMap = offsetMap;
+    }
+
+    public Double getLoss() {
+        return loss;
+    }
+
+    public void setLoss(Double loss) {
+        this.loss = loss;
     }
     
 }
