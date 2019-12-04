@@ -595,10 +595,6 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.EVOLVEPREDICTOREVOLUTIONCONFIG);
     }
 
-    public boolean wantEvolveRecommender() {
-        return (Boolean) getValueOrDefault(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER);
-    }
-
     public boolean wantDatasetML() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.DATASETML);
     }
