@@ -72,7 +72,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
     @Override
     public void disable(Map<String, Object> valueMap) {
         valueMap.put(ConfigConstants.AGGREGATORSINDICATOR, Boolean.FALSE);        
-        valueMap.put(PipelineConstants.MLINDICATOR, Boolean.FALSE);        
+        //valueMap.put(PipelineConstants.MLINDICATOR, Boolean.FALSE);        
         valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
         valueMap.put(ConfigConstants.INDICATORSATR, Boolean.FALSE);                
         valueMap.put(ConfigConstants.INDICATORSCCI, Boolean.FALSE);                
@@ -91,16 +91,16 @@ public abstract class ComponentMLIndicator extends ComponentML {
     }
 
     public static MLConfigs getDisableLSTM() {
-        EvolveMLConfig config = new EvolveMLConfig();
-        config.setEnable(false);
-        config.setEvolve(false);
+        //EvolveMLConfig config = new EvolveMLConfig();
+        //config.setEnable(false);
+        //config.setEvolve(false);
         MLConfigs configs = new MLConfigs();
-        configs.getTensorflow().setPredictorlstm(config);
+        //configs.getTensorflow().setPredictorlstm(config);
         return configs;
     }
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
 
         MLIndicatorData param = new MLIndicatorData(componentparam);
 
@@ -109,7 +109,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
         double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
         param.setThreshold(threshold);
 
-        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket);
         //Map resultMaps = param.getResultMap();
         //handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
@@ -255,6 +255,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
             MemoryItem memory = new MemoryItem();
             int returnSize = (int) meta.getReturnSize();
             Double testaccuracy = (Double) meta.getTestAccuracy();
+            Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.getOffsetMap();
             //Map<String, double[]> offsetMap = (Map<String, double[]>) meta.get(8);
             /*
             Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
@@ -282,9 +283,18 @@ public abstract class ComponentMLIndicator extends ComponentML {
                 if (mainList == null) {
                     continue;
                 }
-                //int offset = (int) offsetMap.get(key)[0];
-                Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays());
+                if (offsetMap == null) {
+                    log.info("Offset map null, skipping rest");
+                    continue;
+                }
+                List<Double> off = offsetMap.get(key);
+                if (off == null) {
+                    log.error("The offset should not be null for {}", key);
+                    continue;
+                }
+                int offsetZero = (int) Math.round(off.get(0));
+                Double valFuture = mainList.get(mainList.size() - 1 - param.getLoopoffset() - offsetZero);
+                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays() - param.getLoopoffset() - offsetZero);
                 if (valFuture == null || valNow == null) {
                     continue;
                 }
