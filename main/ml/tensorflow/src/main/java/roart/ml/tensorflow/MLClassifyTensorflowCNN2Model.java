@@ -50,11 +50,6 @@ public class MLClassifyTensorflowCNN2Model extends MLClassifyTensorflowModel{
     }
 
     @Override
-    public boolean isThreeDimensional() {
-        return true;
-    }
-
-    @Override
     public boolean isFourDimensional() {
         return true;
     }

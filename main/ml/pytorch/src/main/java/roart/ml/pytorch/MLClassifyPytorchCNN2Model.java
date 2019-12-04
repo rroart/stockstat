@@ -50,11 +50,6 @@ public class MLClassifyPytorchCNN2Model extends MLClassifyPytorchModel {
     }
 
     @Override
-    public boolean isThreeDimensional() {
-        return true;
-    }
-
-    @Override
     public boolean isFourDimensional() {
         return true;
     }
