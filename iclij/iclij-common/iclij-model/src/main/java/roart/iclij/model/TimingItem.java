@@ -30,6 +30,8 @@ public class TimingItem {
     
     private Boolean buy;
     
+    private String description;
+    
     public LocalDate getRecord() {
         return record;
     }
@@ -118,9 +120,21 @@ public class TimingItem {
         this.buy = buy;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTime(long time0) {
+        this.mytime = ((double) (System.currentTimeMillis()) - time0) / 1000;
+    }
+
     @Override
     public String toString() {
-        return market + " " + component + " " + subcomponent + " " + action + " " + record + " " + date + " " + evolve + " " + mytime + " " + score + "\n"; 
+        return market + " " + component + " " + subcomponent + " " + action + " " + record + " " + date + " " + evolve + " " + mytime + " " + score + " " + description + "\n"; 
     }
     
     public void save() throws Exception {
@@ -129,6 +143,7 @@ public class TimingItem {
         timing.setBuy(getBuy());
         timing.setComponent(getComponent());
         timing.setDate(TimeUtil.convertDate(getDate()));
+        timing.setDescription(getDescription());
         timing.setEvolve(isEvolve());
         timing.setMarket(getMarket());
         timing.setMlmarket(getMlmarket());
@@ -165,6 +180,7 @@ public class TimingItem {
         timingItem.setBuy(timing.getBuy());
         timingItem.setComponent(timing.getComponent());
         timingItem.setDate(TimeUtil.convertDate(timing.getDate()));
+        timingItem.setDescription(timing.getDescription());
         timingItem.setEvolve(timing.isEvolve());
         timingItem.setMarket(timing.getMarket());
         timingItem.setMlmarket(timing.getMlmarket());
@@ -173,10 +189,6 @@ public class TimingItem {
         timingItem.setScore(timing.getScore());
         timingItem.setSubcomponent(timing.getSubcomponent());
         return timingItem;
-    }
-
-    public void setTime(long time0) {
-        this.mytime = ((double) (System.currentTimeMillis()) - time0) / 1000;
     }
 
 }

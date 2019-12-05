@@ -116,6 +116,7 @@ public abstract class Component {
             evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null);
             if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
                 Double score = null;
+                String description = null;
                 if (IclijConstants.EVOLVE.equals(param.getAction()) ) {
                     score = scoreMap
                             .values()
@@ -123,8 +124,9 @@ public abstract class Component {
                             .mapToDouble(e -> (Double) e)
                             .max()
                             .orElse(-1);
+                    description = scoreMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics().toString();
                 }
-                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket);
+                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket, description);
                 param.getTimings().add(timing);
            }
         }
@@ -140,14 +142,17 @@ public abstract class Component {
         }
         if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) && !IclijConstants.EVOLVE.equals(param.getAction())) {
             Double score = null;
+            String description = null;
             if (IclijConstants.MACHINELEARNING.equals(param.getAction()) ) {
                 try {
-                    score = calculateAccuracy(param);
+                    Object[] result = calculateAccuracy(param);
+                    score = (Double) result[0];
+                    description = (String) result[1];
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
-            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent, mlmarket);
+            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent, mlmarket, description);
             param.getTimings().add(timing);
         }
     }
@@ -167,7 +172,7 @@ public abstract class Component {
         log.info("Disable {}", disableML);
     }
 
-    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket) {
+    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setBuy(buy);
@@ -180,6 +185,7 @@ public abstract class Component {
         timing.setDate(param.getFutureDate());
         timing.setScore(score);
         timing.setSubcomponent(subcomponent);
+        timing.setDescription(description);
         try {
             timing.save();
             return timing;
@@ -248,7 +254,7 @@ public abstract class Component {
             param.setScoreMap(scoreMap);
             param.setFutureDate(LocalDate.now());
             // fix mlmarket;
-            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent, null);
+            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent, null, null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);
             if (false) {
@@ -360,11 +366,12 @@ public abstract class Component {
         return null;
     }
     
-    public Double calculateAccuracy(ComponentData componentparam) throws Exception {
+    public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
+        Object[] result = new Object[2];
         ComponentMLData param = (ComponentMLData) componentparam;
         List<Double> testAccuracies = new ArrayList<>();
         if (param.getResultMeta() == null) {
-            return null;
+            return result;
         }
         for (ResultMeta meta : param.getResultMeta()) {
             Double testaccuracy = meta.getTestAccuracy();
@@ -378,9 +385,11 @@ public abstract class Component {
                 .max()
                 .orElse(-1);
         if (acc < 0) {
-            return null;
+            return result;
         } else {
-            return acc;
+            result[0] = acc;
+            result[1] = testAccuracies.stream().mapToDouble(e -> e).summaryStatistics().toString();
+            return result;
         }
     }
 

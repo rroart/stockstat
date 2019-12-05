@@ -426,11 +426,12 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public Double calculateAccuracy(ComponentData componentparam) throws Exception {
+    public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
+        Object[] result = new Object[2];
         ComponentMLData param = (ComponentMLData) componentparam;
         List<Double> testAccuracies = new ArrayList<>();
         if (param.getResultMeta() == null) {
-            return null;
+            return result;
         }
         for (ResultMeta meta : param.getResultMeta()) {
             // only different
@@ -446,9 +447,11 @@ public class ComponentPredictor extends ComponentML {
                 .min()
                 .orElse(-1);
         if (acc < 0) {
-            return null;
+            return result;
         } else {
-            return acc;
+            result[0] = acc;
+            result[1] = testAccuracies.stream().mapToDouble(e -> e).summaryStatistics();
+            return result;
         }
     }
 

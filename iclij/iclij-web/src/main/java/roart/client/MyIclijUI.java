@@ -869,6 +869,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(TimingItem::getMytime).setCaption("Time");
         table.addColumn(TimingItem::getScore).setCaption("Score");
         table.addColumn(TimingItem::getBuy).setCaption("Buy");
+        table.addColumn(TimingItem::getDescription).setCaption("Description");
         table.setWidth("90%");
         table.setItems(mylist);
         System.out.println("added");
