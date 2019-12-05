@@ -85,6 +85,15 @@ public class MainAction extends Action {
         }
     }
 
+    public static boolean wantsGoals() {
+        return IclijXMLConfig.getConfigInstance().wantsMachineLearningAutorun()
+                || IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() 
+                || IclijXMLConfig.getConfigInstance().wantsEvolveAutorun()      
+                || IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()      
+                || IclijXMLConfig.getConfigInstance().wantsCrosstestAutorun()       
+                || IclijXMLConfig.getConfigInstance().wantsDatasetAutorun();
+    }
+
     public void addIfNotContaining(Action action) {
         if (!getGoals().contains(action)) {
             getGoals().add(action);

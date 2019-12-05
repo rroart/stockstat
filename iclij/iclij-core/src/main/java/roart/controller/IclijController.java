@@ -44,7 +44,7 @@ public class IclijController implements CommandLineRunner {
 	    try {
 	        MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { IclijXMLConfig.getConfigInstance().mpServerCpu() } );
-            if (IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() || IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
+            if (MainAction.wantsGoals()) {        
                 Action action = new MainAction();
                 action.goal(null, null);
             }
