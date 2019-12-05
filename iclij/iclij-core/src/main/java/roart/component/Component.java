@@ -3,11 +3,13 @@ package roart.component;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,6 +150,23 @@ public abstract class Component {
                     Object[] result = calculateAccuracy(param);
                     score = (Double) result[0];
                     description = (String) result[1];
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+            if (IclijConstants.CROSSTEST.equals(param.getAction()) ) {
+                try {
+                    List<MemoryItem> memories = null;
+                    try {
+                        memories = calculateMemory(param);
+                    } catch (Exception e) {
+                        log.error(Constants.EXCEPTION, e);
+                    }
+                    if (memories != null) {
+                        DoubleSummaryStatistics summary = memories.stream().mapToDouble(MemoryItem::getConfidence).filter(Objects::nonNull).summaryStatistics();
+                        score = summary.getAverage();
+                        description = summary.toString();
+                    }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

@@ -10,9 +10,12 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.config.ConfigConstants;
+import roart.common.constants.Constants;
 import roart.component.Component;
 import roart.component.ComponentFactory;
 import roart.component.CrosstestComponentFactory;
@@ -29,6 +32,8 @@ import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
 
 public class CrossTestAction extends MarketAction {
+
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected ProfitInputData filterMemoryListMapsWithConfidence(Market market,
@@ -67,7 +72,7 @@ public class CrossTestAction extends MarketAction {
             }
             for (String mlmarket : market.getConfig().getMlmarkets()) {
                 param.getService().conf.setMLmarket(mlmarket);
-                boolean evolve = true; // param.getInput().getConfig().wantEvolveML();
+                boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
                 //component.set(market, param, profitdata, positions, evolve);
                 //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
                 // 0 ok?
@@ -79,8 +84,8 @@ public class CrossTestAction extends MarketAction {
                 aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, false);
                 aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
                 aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, false);
-                aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
-                aMap.put(ConfigConstants.MISCMYDAYS, 0);
+                //aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+                //aMap.put(ConfigConstants.MISCMYDAYS, 0);
                 List<Integer> positions = null;
                 ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket);
                 Map<String, Object> updateMap = componentData.getUpdateMap();
