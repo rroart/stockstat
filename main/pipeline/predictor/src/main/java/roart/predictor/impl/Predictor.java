@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -433,6 +434,7 @@ public abstract class Predictor extends AbstractPredictor {
                 .values()
                 .stream()
                 .mapToDouble(a -> (Double) a)
+                .filter(Objects::nonNull)
                 .average();
         // make OO of this
         String val = "";
