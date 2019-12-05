@@ -144,7 +144,11 @@ public abstract class MarketAction extends Action {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            List<TimingItem> currentTimings = ServiceUtil.getCurrentTimings(olddate, timings, market, getName(), getTime(market));
+            Short time = getTime(market);
+            if (getTime(market) == null) {
+                continue;
+            }
+            List<TimingItem> currentTimings = ServiceUtil.getCurrentTimings(olddate, timings, market, getName(), time);
             List<IncDecItem> currentIncDecs = null; // ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
             if (true) {
                 List<String> componentList = getProfitComponents(config, marketName);
