@@ -430,16 +430,16 @@ public abstract class Predictor extends AbstractPredictor {
     public Object[] getResultItemTitle() {
         Object[] objs = new Object[fieldSize];
         int retindex = 0;
-        OptionalDouble average = lossMap
-                .values()
-                .stream()
-                .mapToDouble(a -> (Double) a)
-                .filter(Objects::nonNull)
-                .average();
         // make OO of this
         String val = "";
         // workaround
         try {
+            OptionalDouble average = lossMap
+                    .values()
+                    .stream()
+                    .mapToDouble(a -> (Double) a)
+                    .filter(Objects::nonNull)
+                    .average();
             val = "" + MLClassifyModel.roundmebig(average.getAsDouble());
             //val = "" + MLClassifyModel.roundme(mldao.eval(model . getId(), key, subType + mapType));
         } catch (Exception e) {
