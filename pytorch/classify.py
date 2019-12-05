@@ -525,6 +525,7 @@ class Classify:
         #myobj.size, myobj.classes, dim, layers)
         #testcat = torch.LongTensor(testcat)
         accuracy_score = None
+        loss = None
         if self.wantLearn(myobj):
             (accuracy_score, loss) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
         # save model if

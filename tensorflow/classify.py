@@ -445,7 +445,7 @@ class Classify:
             #with tf.get_default_session() as sess:
             if Model.Model.localsave():
                 # dummy variable to allow saver
-                model = Model.Model(myobj, config)
+                model = Model.Model(myobj, config, classify)
                 saver = tf.compat.v1.train.Saver()
                 print("Restoring")
                 saver.restore(sess, self.getpath(myobj) + myobj.filename + ".ckpt")
@@ -460,6 +460,7 @@ class Classify:
             test = np.transpose(test, [1, 0, 2])
             
         accuracy_score = None
+        loss = None
         if self.wantLearn(myobj):
             (accuracy_score, loss) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
         #print(type(classifier))
