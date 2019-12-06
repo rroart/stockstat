@@ -105,7 +105,7 @@ public abstract class Component {
         this.enable(valueMap);
         this.subenable(valueMap, subcomponent);
         try {
-            Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket);
+            Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket, action);
             valueMap.putAll(loadValues);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -116,10 +116,10 @@ public abstract class Component {
         if (evolve) {   
             long time0 = System.currentTimeMillis();
             evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null);
-            if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) ) {
+            if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction())) {
                 Double score = null;
                 String description = null;
-                if (IclijConstants.EVOLVE.equals(param.getAction()) ) {
+                if (IclijConstants.EVOLVE.equals(param.getAction()) || IclijConstants.DATASET.equals(param.getAction())) {
                     score = scoreMap
                             .values()
                             .stream()
@@ -135,7 +135,7 @@ public abstract class Component {
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
         long time0 = System.currentTimeMillis();
-        if (!IclijConstants.EVOLVE.equals(param.getAction()) ) {
+        if (!IclijConstants.EVOLVE.equals(param.getAction()) && !IclijConstants.DATASET.equals(param.getAction())) {
             Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
             param.setCategory(resultMaps);
             param.getAndSetCategoryValueMap();
@@ -244,7 +244,7 @@ public abstract class Component {
 
     public abstract String getPipeline();
     
-    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket) throws Exception;
+    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action) throws Exception;
 
     protected abstract EvolutionConfig getImproveEvolutionConfig(IclijConfig config);
     
@@ -338,12 +338,12 @@ public abstract class Component {
         }
     }
 
-    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList, Boolean buy, String subcomponent) {
+    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList, Boolean buy, String subcomponent, MarketAction action) {
         List<String> config = new ArrayList<>();
         
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent);
+            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
