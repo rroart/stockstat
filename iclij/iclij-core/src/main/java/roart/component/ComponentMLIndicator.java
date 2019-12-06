@@ -199,7 +199,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
             confList.addAll(getThreeConfList());
         }
         ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent);
-        loadme(param, chromosome, market, confList, buy, subcomponent);
+        loadme(param, chromosome, market, confList, buy, subcomponent, action);
         return improve(action, param, chromosome, subcomponent);
     }
 

@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
@@ -136,12 +137,12 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action) throws Exception {
         Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param, mlmarket);
-        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent, mlmarket);
+        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent, mlmarket, action);
     }
 
-    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket) throws Exception {
+    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action) throws Exception {
         Map<String, Object> map = new HashMap<>();
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
             String key = entry.getKey();
@@ -152,7 +153,7 @@ public abstract class ComponentML extends Component {
                 if (mlmarket != null) {
                     marketName = mlmarket;
                 }
-                Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent);
+                Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent, action);
                 map.putAll(configMap);
             }
         }

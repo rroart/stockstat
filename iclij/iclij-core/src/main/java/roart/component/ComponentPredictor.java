@@ -183,7 +183,7 @@ public class ComponentPredictor extends ComponentML {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapChromosome chromosome = new PredictorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.PREDICTOR, buy, subcomponent);
-        loadme(param, chromosome, market, confList, buy, subcomponent);
+        loadme(param, chromosome, market, confList, buy, subcomponent, action);
         return improve(action, param, chromosome, subcomponent);
     }
 

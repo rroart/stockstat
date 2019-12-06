@@ -326,7 +326,7 @@ public class ComponentRecommender extends ComponentNoML {
 	}
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent);
+            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

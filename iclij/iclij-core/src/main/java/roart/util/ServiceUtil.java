@@ -214,14 +214,14 @@ public class ServiceUtil {
         IclijServiceList trends = convert(trendMap);
         lists.add(trends);
 
-        addRelations(componentInput, lists, new ArrayList<>());
+        addRelations(componentInput, lists, new ArrayList<>(), findProfitAction);
         
         print(result);
         return result;
     }
 
-    private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, List<IncDecItem> listIncDecs) throws Exception {
-        List[] objects = new RelationUtil().method(componentInput, listIncDecs);
+    private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, List<IncDecItem> listIncDecs, FindProfitAction findProfitAction) throws Exception {
+        List[] objects = new RelationUtil().method(componentInput, listIncDecs, findProfitAction);
         
         IclijServiceList incdecs = new IclijServiceList();
         incdecs.setTitle("Incdecs with relations");
@@ -294,7 +294,7 @@ public class ServiceUtil {
                 for (Component component : componentMap.values()) {
                     List<String> subcomponents = component.getSubComponents(market, param, null);
                     for (String subcomponent : subcomponents) {
-                        Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), action.getName(), component.getPipeline(), false, bool, subcomponent);
+                        Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), action.getName(), component.getPipeline(), false, bool, subcomponent, action);
                         updateMarketMap.get(market.getConfig().getMarket() + " " + booleanTexts.get(bool)).putAll(anUpdateMap);
                         updateMap.putAll(anUpdateMap);
                     }
@@ -681,7 +681,7 @@ public class ServiceUtil {
         List<IncDecItem> listIncDecs = new ArrayList<>(myData.incs);
         listIncDecs.addAll(myData.decs);
         
-        addRelations(componentInput, retLists, listIncDecs);
+        addRelations(componentInput, retLists, listIncDecs, findProfitAction);
 
         return result;
     }
@@ -1087,9 +1087,9 @@ public class ServiceUtil {
         return allMemoryItems;
     }
 
-    public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve, Boolean buy, String subcomponent) throws Exception {
+    public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve, Boolean buy, String subcomponent, MarketAction marketaction) throws Exception {
         LocalDate date = param.getInput().getEnddate();
-        LocalDate olddate = date.minusDays(market.getFilter().getRecordage());
+        LocalDate olddate = date.minusDays(marketaction.getTime(market));
         List<ConfigItem> filterConfigs = new ArrayList<>();
         List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, olddate, date);
         for (ConfigItem config : configs) {
@@ -1180,9 +1180,7 @@ public class ServiceUtil {
 
     public static List<String> getDatasetComponents(IclijConfig config, String market) {
         List<String> components = new ArrayList<>();
-        if (config.wantDatasetML()) {
-            components.add(PipelineConstants.DATASET);
-        }
+        components.add(PipelineConstants.DATASET);
         return components;
     }
 

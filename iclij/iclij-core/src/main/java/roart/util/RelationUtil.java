@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import roart.action.FindProfitAction;
 import roart.component.model.ComponentInput;
 import roart.config.IclijXMLConfig;
 import roart.config.Market;
@@ -23,7 +24,7 @@ import roart.iclij.model.TimingItem;
 import roart.iclij.service.IclijServiceList;
 
 public class RelationUtil {
-    public List[] method(ComponentInput componentInput, List<IncDecItem> listIncDecs) throws Exception {
+    public List[] method(ComponentInput componentInput, List<IncDecItem> listIncDecs, FindProfitAction findProfitAction) throws Exception {
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
@@ -88,7 +89,7 @@ public class RelationUtil {
         currentIncDecs.addAll(listIncDecs);
         List<Market> markets = conf.getMarkets(instance);
         for (Market market : markets) {
-            List<IncDecItem> marketCurrentIncDecs = ServiceUtil.getCurrentIncDecs(date, listAll, market, market.getFilter().getRecordage());
+            List<IncDecItem> marketCurrentIncDecs = ServiceUtil.getCurrentIncDecs(date, listAll, market, findProfitAction.getTime(market));
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
         

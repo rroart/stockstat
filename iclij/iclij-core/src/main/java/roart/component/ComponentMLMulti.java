@@ -133,7 +133,7 @@ public abstract class ComponentMLMulti extends ComponentMLAggregator {
             confList.addAll(getThreeConfList());
         }
         ConfigMapChromosome chromosome = new MLMultiChromosome(action, param, profitdata, confList, market, positions, PipelineConstants.MLMULTI, buy, subcomponent);
-        loadme(param, chromosome, market, confList, buy, subcomponent);
+        loadme(param, chromosome, market, confList, buy, subcomponent, action);
         return improve(action, param, chromosome, subcomponent);
     }
 

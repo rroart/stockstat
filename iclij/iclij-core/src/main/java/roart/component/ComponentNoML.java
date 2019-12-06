@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
@@ -45,11 +46,11 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action) throws Exception {
         Map<String, Object> map = new HashMap<>();
         String marketName = market.getConfig().getMarket();
         String component = getPipeline();
-        Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent);
+        Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent, action);
         map.putAll(configMap);
         return map;
     }

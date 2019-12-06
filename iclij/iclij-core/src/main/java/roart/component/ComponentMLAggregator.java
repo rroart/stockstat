@@ -44,7 +44,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, confList, subcomponent);
-        loadme(param, chromosome, market, confList, buy, subcomponent);
+        loadme(param, chromosome, market, confList, buy, subcomponent, action);
         return improve(action, param, chromosome, subcomponent);
     }
 
