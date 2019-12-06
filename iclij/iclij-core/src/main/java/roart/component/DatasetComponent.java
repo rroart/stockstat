@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import roart.action.MarketAction;
+import roart.common.config.ConfigConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
+import roart.component.model.DatasetData;
 import roart.config.Market;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.MLConfigs;
@@ -17,15 +19,19 @@ public class DatasetComponent extends ComponentML {
 
     @Override
     public void enable(Map<String, Object> valueMap) {
+        valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.TRUE);        
     }
 
     @Override
     public void disable(Map<String, Object> valueMap) {
+        valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);        
     }
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata,
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata,
             List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
+        DatasetData param = new DatasetData(componentparam);
+
         int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
         param.setFuturedays(futuredays);
 

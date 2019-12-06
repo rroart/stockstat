@@ -158,7 +158,6 @@ public class MLDataset extends Aggregator {
 
     private void calculate(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        log.info("checkthis {}", key.equals(title));
         Map<String, Pipeline> pipelineMap = new HashMap<>();
         long time0 = System.currentTimeMillis();
         log.info("time0 {}", (System.currentTimeMillis() - time0));
@@ -275,53 +274,7 @@ public class MLDataset extends Aggregator {
     }
 
     private void createResultMap(MyMyConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult) {
-        for (String id : listMap.keySet()) {
-            Object[] fields = new Object[fieldSize];
-            resultMap.put(id, fields);
-            int retindex = 0 ;
-
-            // make OO of this
-            if (conf.wantML()) {
-                Map<Double, String> labelMapShort2 = null;
-                for (MLClassifyDao mldao : mldaos) {
-                    for (MLClassifyModel model : mldao.getModels()) {
-                        Map<String, Map<String, Double[]>> mapResult2 = new HashMap<>();
-                        mapResult2.put(MYTITLE, mapResult.get(model));
-                        List<Integer> typeList = getTypeList();
-                        for (int mapTypeInt : typeList) {
-                            String mapType = mapTypes.get(mapTypeInt);
-                            Map<String, Double[]> resultMap1 = mapResult2.get(mapType);
-                            Double[] aType = null;
-                            if (resultMap1 != null) {
-                                aType = resultMap1.get(id);
-                            } else {
-                                log.info("map null  {}", mapType);
-                            }
-                            fields[retindex++] = aType != null ? labelMapShort2.get(aType[0]) : null;
-                            if (model.getReturnSize() > 1) {
-                                fields[retindex++] = aType != null ? aType[1] : null;
-                            }
-                            //retindex = mldao.addResults(fields, retindex, id, model, this, mapResult2, labelMapShort2);
-                        }
-                    }   
-                }
-            }
-        }
-    }
-
-    private boolean anythingHere(Map<String, Double[][]> listMap2) {
-        for (Double[][] array : listMap2.values()) {
-            for (int i = 0; i < array.length; i++) {
-                int len = array[i].length;
-                if (array[i][len - 1] != null) {
-                    return true;
-                }
-                if (array[i][0] != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        // empty
     }
 
     public static void mapAdder(Map<MLClassifyModel, Long> map, MLClassifyModel key, Long add) {

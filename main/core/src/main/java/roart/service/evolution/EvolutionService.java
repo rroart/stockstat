@@ -376,6 +376,34 @@ public class EvolutionService {
     public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
+        if (conf.isDataset()) {
+            ObjectMapper mapper = new ObjectMapper();
+            EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
+            Set<String> markets = new HashSet<>();
+            markets.add(conf.getMarket());
+        
+            List<ResultItemTable> otherTables = new ArrayList<>();
+            otherTables.add(mlTimesTable);
+            otherTables.add(eventTable);
+        
+            ResultItemTable table = new ResultItemTable();
+            ResultItemTableRow headrow = new ResultItemTableRow();
+            headrow.add("Config");
+            headrow.add("Old value");
+            headrow.add("New value");
+            table.add(headrow);
+        
+            try {
+                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap);
+        
+                List<ResultItem> retlist = new ArrayList<>();
+                retlist.add(table);
+                return retlist;
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+                return new ArrayList<>();
+            }
+        }
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
         //createOtherTables();
@@ -633,6 +661,50 @@ public class EvolutionService {
                 myKey = nnConfigs.getConfigMap().get(key);
                 myKey = ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG;
                 //newNNConfigstring = mapper.writeValueAsString(newNNConfigs.getTensorflowConfig().getTensorflowLSTMConfig());
+            }
+            updateMap.put(configKey, newNNConfigstring);
+            scoreMap.put(configKey, best.getFitness());
+            ResultItemTableRow row = new ResultItemTableRow();
+            row.add(myKey);
+            row.add(nnconfigString);
+            row.add(newnnconf);
+            table.add(row);
+        }
+    }
+
+    private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, ResultItemTable table, Map<String, Object> updateMap,
+            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap) throws Exception {
+        log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
+        NeuralNetConfigs nnConfigs = null;
+        String nnconfigString = null;
+        if (nnConfigs == null) {
+            nnConfigs = new NeuralNetConfigs();            
+        }
+        List<String> foundkeys = new NeuralNetChromosome(conf, null, null, null, null, null, null, null, null).getFoundKeys(conf, nnConfigs);
+        for (String key : foundkeys) {
+            String configKey = nnConfigs.getConfigMap().get(key);
+            String configValue = (String) conf.getValueOrDefault(configKey);
+            
+            NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue);
+            NeuralNetConfigGene nnconfigGene = NeuralNetConfigGeneFactory.get(nnconfig, key);
+            NeuralNetChromosome chromosome = new NeuralNetChromosome(conf.copy(), ml, null, null, key, nnconfigGene, null, 0, neuralnetcommand);
+            if (configKey.contains(PipelineConstants.PREDICTOR)) {
+                chromosome.setAscending(false);
+            }
+    
+            OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
+            evolution.setParallel(false);
+    
+            Individual best = evolution.getFittest(evolutionConfig, chromosome);
+    
+            NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
+            NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
+            NeuralNetConfig newnnconf = newnnconfgene.getConfig();
+            ObjectMapper mapper = new ObjectMapper();
+            String newNNConfigstring = mapper.writeValueAsString(newnnconf);
+            String myKey = null;
+            if (ml.equals(PipelineConstants.DATASET)) {
+                myKey = ConfigConstants.DATASETMLCONFIG;                
             }
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());

@@ -17,6 +17,7 @@ public class MyMyConfig extends MyConfig {
         this.mydate = config.mydate;
         this.mymarket = config.mymarket;
         this.mlmarket = config.mlmarket;
+        this.dataset = config.dataset;
     }
 
     private void fixIntegerDouble() {

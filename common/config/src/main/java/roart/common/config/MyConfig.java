@@ -33,6 +33,8 @@ public class MyConfig {
 
     protected String mlmarket = null;
 
+    protected boolean dataset = false;
+    
     /*
 	private Integer mydays = 180;
 
@@ -176,6 +178,14 @@ public class MyConfig {
 
     public String getMLmarket() {
         return mlmarket;
+    }
+
+    public boolean isDataset() {
+        return dataset;
+    }
+
+    public void setDataset(boolean dataset) {
+        this.dataset = dataset;
     }
 
 

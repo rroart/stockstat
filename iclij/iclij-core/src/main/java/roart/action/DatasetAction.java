@@ -80,6 +80,7 @@ public class DatasetAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             List<Integer> positions = null;
+            param.getService().conf.setDataset(true);
             ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
@@ -146,7 +147,7 @@ public class DatasetAction extends MarketAction {
 
     @Override
     protected void setValMap(ComponentData param) {
-        param.getAndSetWantedCategoryValueMap();
+        // empty here
     }
 
     @Override
@@ -157,5 +158,10 @@ public class DatasetAction extends MarketAction {
     @Override
     public boolean isDataset() {
         return true;
+    }
+    
+    @Override
+    protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
+        return null;
     }
 }

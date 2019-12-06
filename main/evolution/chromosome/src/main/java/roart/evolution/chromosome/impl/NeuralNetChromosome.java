@@ -205,7 +205,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
                 pipelineData = new MLIndicator(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
             }
             if (ml.equals(PipelineConstants.DATASET)) {
-                //conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
+                conf.getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);
                 pipelineData = new MLDataset(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
             }
             if (ml.equals(PipelineConstants.PREDICTOR)) {

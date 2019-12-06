@@ -131,9 +131,11 @@ public abstract class MarketAction extends Action {
             //srv.getConfig();
             param.setService(srv);
             srv.conf.setMarket(market.getConfig().getMarket());
-            List<String> stockDates = param.getService().getDates(marketName);
-            if (stockDates == null || stockDates.isEmpty()) {
-                continue;
+            if (!isDataset()) {
+                List<String> stockDates = param.getService().getDates(marketName);
+                if (stockDates == null || stockDates.isEmpty()) {
+                    continue;
+                }
             }
             componentDataMap.put(marketName, param);
             LocalDate olddate = param.getInput().getEnddate();
@@ -398,9 +400,11 @@ public abstract class MarketAction extends Action {
         param.setTimings(new ArrayList<>());
         
         handleComponent(this, market, profitdata, param, listComponent, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config);
-                
+        
+        if (!isDataset()) {
         filterIncDecs(param, market, profitdata, maps, true);
         filterIncDecs(param, market, profitdata, maps, false);
+        }
         //filterDecs(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
         myData.profitData = profitdata;
@@ -527,7 +531,7 @@ public abstract class MarketAction extends Action {
         return marketMemory;
     }
 
-    private Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
+    protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
         Map<String, String> nameMap = null;
         for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
             Map<String, Object> map = entry.getValue();
