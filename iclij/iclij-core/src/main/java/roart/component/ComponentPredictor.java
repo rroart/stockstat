@@ -450,7 +450,7 @@ public class ComponentPredictor extends ComponentML {
             return result;
         } else {
             result[0] = acc;
-            result[1] = testAccuracies.stream().mapToDouble(e -> e).summaryStatistics();
+            result[1] = testAccuracies.stream().mapToDouble(e -> e).summaryStatistics().toString();
             return result;
         }
     }
