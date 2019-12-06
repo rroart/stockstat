@@ -71,8 +71,6 @@ public class NeuralNetConfigGeneFactory {
             return get((TensorflowDNNConfig) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLIC:
             return get((TensorflowLICConfig) config);
-        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR:
-            return get((TensorflowLIRConfig) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWMLP:
             return get((TensorflowMLPConfig) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWCNN:
@@ -85,8 +83,6 @@ public class NeuralNetConfigGeneFactory {
             return get((TensorflowGRUConfig) config);
         case ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM:
             return get((TensorflowLSTMConfig) config);
-        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM:
-            return get((TensorflowPredictorLSTMConfig) config);
         case ConfigConstants.MACHINELEARNINGPYTORCHMLP:
             return get((PytorchMLPConfig) config);
         case ConfigConstants.MACHINELEARNINGPYTORCHCNN:
@@ -111,6 +107,24 @@ public class NeuralNetConfigGeneFactory {
 	    return get((GemMMConfig) config);
 	case ConfigConstants.MACHINELEARNINGGEMSINGLE:
 	    return get((GemSConfig) config);
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR:
+            return get((TensorflowLIRConfig) config);
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP:
+            return get((TensorflowMLPConfig) config);
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN:
+            return get((TensorflowRNNConfig) config);
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU:
+            return get((TensorflowGRUConfig) config);
+        case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM:
+            return get((TensorflowLSTMConfig) config);
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP:
+            return get((PytorchMLPConfig) config);
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN:
+            return get((PytorchRNNConfig) config);
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU:
+            return get((PytorchGRUConfig) config);
+        case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM:
+            return get((PytorchLSTMConfig) config);
         }
         return null;
     }
