@@ -336,6 +336,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         nnconfigs.getAndSet(config);
         NeuralNetConfig m = ((MLClassifyPytorchModel) model).getModelAndSet(nnconfigs, param);
         param.setModelInt(model.getId());
+        param.setDataset(dataset);
         LearnTestClassify ret = null;
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/dataset");

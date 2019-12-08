@@ -357,6 +357,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         nnconfigs.getAndSet(config);
         NeuralNetConfig m = ((MLClassifyTensorflowModel) model).getModelAndSet(nnconfigs, param);
         param.setModelInt(model.getId());
+        param.setDataset(dataset);
         LearnTestClassify ret = null;
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/dataset");

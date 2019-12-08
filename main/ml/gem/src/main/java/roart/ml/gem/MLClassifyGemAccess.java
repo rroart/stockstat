@@ -418,6 +418,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         nnconfigs.getAndSet(config);
         NeuralNetConfig m = ((MLClassifyGemModel) model).getModelAndSet(nnconfigs, param);
         param.setModelInt(model.getId());
+        param.setDataset(dataset);
         LearnTestClassify ret = null;
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/dataset");
