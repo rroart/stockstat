@@ -106,6 +106,8 @@ public class LearnTestClassify {
     
     private Boolean classify;
     
+    private Boolean zero;
+    
     public TensorflowDNNConfig getTensorflowDNNConfig() {
         return tensorflowDNNConfig;
     }
@@ -428,6 +430,14 @@ public class LearnTestClassify {
 
     public void setClassify(Boolean classify) {
         this.classify = classify;
+    }
+
+    public Boolean getZero() {
+        return zero;
+    }
+
+    public void setZero(Boolean zero) {
+        this.zero = zero;
     }
 
 }
