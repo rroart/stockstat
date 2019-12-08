@@ -579,7 +579,7 @@ class Classify:
             return myobj.path + '/'
         return '/tmp/'
 
-    def do_filename(self, request):
+    def do_filename(self, queue, request):
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         exists = self.exists(myobj)
-        return Response(json.dumps({"exists": exists}), mimetype='application/json')
+        queue.put(Response(json.dumps({"exists": exists}), mimetype='application/json'))
