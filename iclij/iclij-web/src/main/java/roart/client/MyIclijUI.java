@@ -662,11 +662,11 @@ public class MyIclijUI extends UI implements ViewDisplay {
     }
     
     private void displayMachineLearningResults() {
-        controlService.getContentDataset(this);
+        controlService.getContentMachineLearning(this);
     }
     
     private void displayDatasetResults() {
-        controlService.getContentEvolve(this);
+        controlService.getContentDataset(this);
     }
     
     private void displayCrosstestResults() {
