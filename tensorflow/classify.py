@@ -533,7 +533,7 @@ class Classify:
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getpath(self, myobj):
-        if hasattr(myobj, 'path'):
+        if hasattr(myobj, 'path') and not myobj.path is None:
             return myobj.path + '/'
         return '/tmp/'
 
