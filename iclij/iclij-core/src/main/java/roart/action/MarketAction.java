@@ -378,7 +378,7 @@ public abstract class MarketAction extends Action {
         }
         marketMemory.addAll(myData.memoryItems);
         LocalDate prevdate = getPrevDate(param, market);
-        List<MemoryItem> currentList = filterKeepRecent(marketMemory, prevdate, getTime(market));
+        List<MemoryItem> currentList = filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getTime(market));
         // or make a new object instead of the object array. use this as a pair
         //System.out.println(currentList.get(0).getRecord());
         Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();

@@ -1089,7 +1089,7 @@ public class ServiceUtil {
 
     public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve, Boolean buy, String subcomponent, MarketAction marketaction) throws Exception {
         LocalDate date = param.getInput().getEnddate();
-        LocalDate olddate = date.minusDays(marketaction.getTime(market));
+        LocalDate olddate = date.minusDays(2 * marketaction.getTime(market));
         List<ConfigItem> filterConfigs = new ArrayList<>();
         List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, olddate, date);
         for (ConfigItem config : configs) {
