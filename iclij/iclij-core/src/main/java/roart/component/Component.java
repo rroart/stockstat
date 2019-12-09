@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -150,6 +151,9 @@ public abstract class Component {
                     Object[] result = calculateAccuracy(param);
                     score = (Double) result[0];
                     description = (String) result[1];
+                    if (result[2] != null) {
+                        description =  (String) result[2] + " " + description;
+                    }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -386,7 +390,7 @@ public abstract class Component {
     }
     
     public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
-        Object[] result = new Object[2];
+        Object[] result = new Object[3];
         ComponentMLData param = (ComponentMLData) componentparam;
         List<Double> testAccuracies = new ArrayList<>();
         if (param.getResultMeta() == null) {
@@ -408,6 +412,17 @@ public abstract class Component {
         } else {
             result[0] = acc;
             result[1] = testAccuracies.stream().mapToDouble(e -> e).summaryStatistics().toString();
+            result[2] = null;
+            if (param.getResultMeta().size() > 1) {
+                List<ResultMeta> metalist = param.getResultMeta()
+                .stream()
+                .filter(e -> e.getTestAccuracy() == acc)
+                .collect(Collectors.toList());
+                result[2] = "";
+                for(ResultMeta meta : metalist) {
+                    result[2] = result[2] + meta.getSubType() + meta.getSubSubType() + " ";
+                }
+            }
             return result;
         }
     }
