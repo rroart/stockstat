@@ -1186,30 +1186,30 @@ public class ServiceUtil {
 
     public static List<String> getCrosstestComponents(IclijConfig config, String market) {
         List<String> components = new ArrayList<>();
-        if (config.wantsMachineLearningPredictor()) {
+        if (config.wantsCrosstestPredictor()) {
             components.add(PipelineConstants.PREDICTOR);
         }
-        if (config.wantsMachineLearningMLMACD()) {
+        if (config.wantsCrosstestMLMACD()) {
             components.add(PipelineConstants.MLMACD);
         }
-        if (config.wantsMachineLearningMLRSI()) {
+        if (config.wantsCrosstestMLRSI()) {
             components.add(PipelineConstants.MLRSI);
         }
         if (wantThree(market)) {
-        if (config.wantsMachineLearningMLATR()) {
+        if (config.wantsCrosstestMLATR()) {
             components.add(PipelineConstants.MLATR);
         }
-        if (config.wantsMachineLearningMLCCI()) {
+        if (config.wantsCrosstestMLCCI()) {
             components.add(PipelineConstants.MLCCI);
         }
-        if (config.wantsMachineLearningMLSTOCH()) {
+        if (config.wantsCrosstestMLSTOCH()) {
             components.add(PipelineConstants.MLSTOCH);
         }
         }
-        if (config.wantsMachineLearningMLMulti()) {
+        if (config.wantsCrosstestMLMulti()) {
             components.add(PipelineConstants.MLMULTI);
         }
-        if (config.wantsMachineLearningMLIndicator()) {
+        if (config.wantsCrosstestMLIndicator()) {
             components.add(PipelineConstants.MLINDICATOR);
         }
         return components;
