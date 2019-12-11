@@ -333,6 +333,20 @@ public abstract class ComponentML extends Component {
         return map;
     }
 
+    protected List<String> getOtherList() {
+        List<String> map = new ArrayList<>();
+        map.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR);
+        map.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP);
+        map.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN);
+        map.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM);
+        map.add(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU);
+        map.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP);
+        map.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN);
+        map.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM);
+        map.add(ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU);
+        return map;
+    }
+
     protected Map<Pair<String, String>, String> getMapPersist() {
         Map<Pair <String, String>, String> map = new HashMap<>();
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.MLPC), ConfigConstants.MACHINELEARNINGSPARKMLMLPCPERSIST);
@@ -430,6 +444,9 @@ public abstract class ComponentML extends Component {
         for (Entry<String, String> entry : map.entrySet()) {
             String disableKey = entry.getValue();
             valueMap.put(disableKey, Boolean.FALSE);
+        }
+        for (String otherKey : getOtherList()) {
+            valueMap.put(otherKey, Boolean.FALSE);
         }
         Map<Pair<String, String>, String> fullMap = getMap();
         for (Entry<Pair<String, String>, String> entry : fullMap.entrySet()) {

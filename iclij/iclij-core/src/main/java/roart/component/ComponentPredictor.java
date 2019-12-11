@@ -50,7 +50,7 @@ import roart.service.PredictorService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 
-public class ComponentPredictor extends ComponentML {
+public abstract class ComponentPredictor extends ComponentML {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
@@ -402,6 +402,26 @@ public class ComponentPredictor extends ComponentML {
         map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN);
         map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM);
         map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU);
+        return map;
+    }
+
+    @Override
+    protected List<String> getOtherList() {
+        List<String> map = new ArrayList<>();
+        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
+        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
+        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP);
+        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN);
+        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2);
+        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN);
+        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
+        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU);
+        map.add(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
+        map.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN);
+        map.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN2);
+        map.add(ConfigConstants.MACHINELEARNINGPYTORCHRNN);
+        map.add(ConfigConstants.MACHINELEARNINGPYTORCHLSTM);
+        map.add(ConfigConstants.MACHINELEARNINGPYTORCHGRU);
         return map;
     }
 
