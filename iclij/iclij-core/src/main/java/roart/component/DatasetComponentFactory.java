@@ -11,6 +11,7 @@ public class DatasetComponentFactory extends ComponentFactory {
         switch (component) {
         case PipelineConstants.DATASET:
             return new DatasetComponent();
+            /*
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
             return new DatasetComponentRecommender();
         case PipelineConstants.PREDICTOR:
@@ -29,6 +30,7 @@ public class DatasetComponentFactory extends ComponentFactory {
             return new DatasetComponentMLMulti();
         case PipelineConstants.MLINDICATOR:
             return new DatasetComponentMLIndicator();
+            */
         default:
             return null;
         }
@@ -36,6 +38,8 @@ public class DatasetComponentFactory extends ComponentFactory {
 
     public List<Component> getAllComponents() {
         List<Component> list = new ArrayList<>();
+        list.add(new DatasetComponent());
+        /*
         list.add(new DatasetComponentRecommender());
         list.add(new DatasetComponentPredictor());
         list.add(new DatasetComponentMLMACD());
@@ -45,6 +49,7 @@ public class DatasetComponentFactory extends ComponentFactory {
         list.add(new DatasetComponentMLSTOCH());
         list.add(new DatasetComponentMLMulti());
         list.add(new DatasetComponentMLIndicator());
+        */
         return list;
     }
 }

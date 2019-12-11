@@ -11,8 +11,10 @@ import roart.component.model.ComponentMLData;
 import roart.component.model.DatasetData;
 import roart.config.Market;
 import roart.evolution.config.EvolutionConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;
 
 public class DatasetComponent extends ComponentML {
@@ -80,6 +82,11 @@ public class DatasetComponent extends ComponentML {
     @Override
     protected List<String> getConfList() {
         return null;
+    }
+
+    @Override
+    public int getPriority(IclijConfig srv) {
+        return 0;
     }
 
 }

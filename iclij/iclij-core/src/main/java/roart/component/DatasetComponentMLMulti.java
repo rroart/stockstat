@@ -4,7 +4,7 @@ import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 
-public class DatasetComponentMLMulti extends ComponentMLMulti {
+public abstract class DatasetComponentMLMulti extends ComponentMLMulti {
     @Override
     public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
         String localDataset = componentdata.getInput().getConfig().getDatasetMLMultiEvolutionConfig();

@@ -4,7 +4,7 @@ import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 
-public class DatasetComponentMLIndicator extends ComponentMLIndicator {
+public abstract class DatasetComponentMLIndicator extends ComponentMLIndicator {
     @Override
     public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
         String localDataset = componentdata.getInput().getConfig().getDatasetMLIndicatorEvolutionConfig();
