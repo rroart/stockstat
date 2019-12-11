@@ -620,7 +620,7 @@ public class ServiceUtil {
         //param.setUpdateMap(updateMap);
         Market market = findProfitAction.findMarket(param);
         boolean evolve = getEvolve(verificationdays, param);
-        WebData myData = findProfitAction.getMarket(null, param, market, evolve);
+        WebData myData = findProfitAction.getMarket(null, param, market, evolve, null);
         ProfitData buysells = myData.profitData; // findProfitAction.getPicks(param, allMemoryItems);
         updateMap = myData.updateMap;
         allMemoryItems.addAll(myData.memoryItems);
@@ -962,7 +962,7 @@ public class ServiceUtil {
         //memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
         Market market = improveProfitAction.findMarket(param);
-        WebData webData = improveProfitAction.getMarket(null, param, market, null);        
+        WebData webData = improveProfitAction.getMarket(null, param, market, null, null);        
         List<MapList> mapList = improveProfitAction.getList(webData.updateMap);
         IclijServiceList resultMap = new IclijServiceList();
         resultMap.setTitle("Improve Profit Info");
@@ -1075,7 +1075,7 @@ public class ServiceUtil {
         UpdateDBAction updateDbAction = new UpdateDBAction();
         Queue<Action> serviceActions = updateDbAction.findAllMarketComponentsToCheck(param, days, config, components);
         for (Action serviceAction : serviceActions) {
-            serviceAction.goal(null, param);
+            serviceAction.goal(null, param, null);
             Map<String, Object> resultMap = serviceAction.getLocalResultMap();
             List<MemoryItem> memoryItems = (List<MemoryItem>) resultMap.get(IclijPipelineConstants.MEMORY);
             if (memoryItems != null) {
