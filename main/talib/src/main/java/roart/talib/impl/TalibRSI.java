@@ -34,14 +34,14 @@ public class TalibRSI extends Talib {
         MInteger beg = new MInteger();
         MInteger end = new MInteger();
         double[] rsi = new double[values.length];
-        log.info("lookback {}", core.rsiLookback(14));
+        log.debug("lookback {}", core.rsiLookback(14));
         core.rsi(0, size - 1, values, 14, beg, end, rsi);
         Object[] objs = new Object[4];
         objs[RSIIDXRSI] = rsi;
         objs[RSIIDXBEG] = beg.value;
         objs[RSIIDXEND] = end.value;
         objs[RSIIDXRSIFIXED] = ArraysUtil.makeFixed(rsi, beg.value, end.value, values.length);
-        log.info("rsi beg end {} {} {}", beg.value, end.value, Arrays.toString(rsi));
+        log.debug("rsi beg end {} {} {}", beg.value, end.value, Arrays.toString(rsi));
         return objs;
     }
 

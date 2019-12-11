@@ -54,7 +54,7 @@ public class Ta4jMACD extends Ta4j {
             return objs;
         }
         TimeSeries series = getClosedSeries(values, size);
-        log.info(""+series.getBarCount());
+        log.debug(""+series.getBarCount());
         if (series.getBarCount() == 0) {
             int jj = 0;
         }
@@ -68,12 +68,12 @@ public class Ta4jMACD extends Ta4j {
         DifferenceIndicator macdIndicator2 = new DifferenceIndicator(shortEma, longEma);
         DifferenceIndicator macdIndicator = new DifferenceIndicator(macdI, signal);
         for (int j = 0; j < size; j++) {
-            log.info(""+j      );
+            log.debug(""+j      );
             sig[j] = signal.getValue(j).doubleValue();
             macd[j] = macdI.getValue(j).doubleValue();
             hist[j] = macdIndicator.getValue(j).doubleValue();
         }
-        log.info("timer {}", System.currentTimeMillis() - time0);
+        log.debug("timer {}", System.currentTimeMillis() - time0);
         return objs;
     }
 

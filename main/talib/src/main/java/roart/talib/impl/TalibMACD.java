@@ -44,7 +44,7 @@ public class TalibMACD extends Talib {
         double[] macd = new double[values.length];
         double[] sig = new double[values.length];
         double[] hist = new double[values.length];
-        log.info("lookback {}", core.macdLookback(26, 12, 9));     
+        log.debug("lookback {}", core.macdLookback(26, 12, 9));     
         core.macd(0, size - 1, values, 26, 12, 9, beg, end, macd, sig, hist);
         Object[] objs = new Object[8];
         objs[MACDIDXMACD] = macd;
@@ -55,7 +55,7 @@ public class TalibMACD extends Talib {
         objs[MACDIDXMACDFIXED] = ArraysUtil.makeFixed(macd, beg.value, end.value, values.length);
         objs[MACDIDXSIGFIXED] = ArraysUtil.makeFixed(sig, beg.value, end.value, values.length);
         objs[MACDIDXHISTFIXED] = ArraysUtil.makeFixed(hist, beg.value, end.value, values.length);
-        log.info("timer {}", System.currentTimeMillis() - time0);
+        log.debug("timer {}", System.currentTimeMillis() - time0);
         return objs;
     }
 
