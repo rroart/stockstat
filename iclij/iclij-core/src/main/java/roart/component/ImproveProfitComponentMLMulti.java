@@ -3,6 +3,8 @@ package roart.component;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
+import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.IclijConfig;
 
 public class ImproveProfitComponentMLMulti extends ComponentMLMulti { 
     @Override
@@ -16,4 +18,9 @@ public class ImproveProfitComponentMLMulti extends ComponentMLMulti {
         return componentdata.getInput().getConfig().getImproveProfitMLMultiMLConfig();
     }
     
+    @Override
+    public int getPriority(IclijConfig srv) {
+        return getPriority(srv, IclijConfigConstants.IMPROVEPROFITMLMULTI);
+    }
+
 }

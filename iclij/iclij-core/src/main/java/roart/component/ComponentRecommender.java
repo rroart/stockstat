@@ -860,5 +860,10 @@ public class ComponentRecommender extends ComponentNoML {
         return PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
     }
 
+    @Override
+    public int getPriority(IclijConfig srv) {
+        return 0;
+    }
+
 }
 

@@ -27,9 +27,11 @@ import roart.config.Market;
 import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Trend;
+import roart.iclij.config.IclijConfig;
 import roart.service.ControlService;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
@@ -257,6 +259,11 @@ public class FindProfitAction extends MarketAction {
     @Override
     public ComponentFactory getComponentFactory() {
         return new FindProfitComponentFactory();
+    }
+
+    @Override
+    public int getPriority(IclijConfig srv) {
+        return getPriority(srv, IclijConfigConstants.FINDPROFIT);
     }
 
 }

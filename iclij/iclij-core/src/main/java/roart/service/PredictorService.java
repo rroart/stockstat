@@ -50,7 +50,7 @@ public class PredictorService {
         Market market = new FindProfitAction().findMarket(componentparam);
         ProfitData profitdata = new ProfitData();
 
-        Component component = new ComponentPredictor();
+        Component component = null; // new ComponentPredictor();
         ComponentData componentData = component.handle(new FindProfitAction(), market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
         return component.calculateMemory(componentData);

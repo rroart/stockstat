@@ -150,7 +150,7 @@ public class ServiceController {
     public void getFindProfit()
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        new FindProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null);
+        new FindProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null, null);
     }
 
     @RequestMapping(value = "/improveprofit",
@@ -159,7 +159,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //new ImproveProfitAction().goal(null, null);
-        new ImproveProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null);
+        new ImproveProfitAction().getMarkets(null, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null, null);
     }
 
     @RequestMapping(value = "/findprofit",
@@ -188,7 +188,7 @@ public class ServiceController {
     public void getUpdateDb()
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
-        new UpdateDBAction().goal(null, null);
+        new UpdateDBAction().goal(null, null, null);
     }
 
 }

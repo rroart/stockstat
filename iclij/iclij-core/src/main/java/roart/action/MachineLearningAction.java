@@ -30,6 +30,7 @@ import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.result.model.ResultMeta;
+import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
@@ -154,6 +155,11 @@ public class MachineLearningAction extends MarketAction {
     @Override
     public ComponentFactory getComponentFactory() {
         return new MachineLearningComponentFactory();
+    }
+
+    @Override
+    public int getPriority(IclijConfig srv) {
+        return getPriority(srv, IclijConfigConstants.MACHINELEARNING);
     }
 
 }

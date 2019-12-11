@@ -106,6 +106,7 @@ public class IclijConfigConstants {
     public static final String MISCSHUTDOWNHOUR = "misc.shutdownhour";
     public static final String MPSERVERCPU = "mp.server.cpu";
     public static final String MPCLIENTCPU = "mp.client.cpu";
+    public static final String FINDPROFIT = "findprofit";
     public static final String FINDPROFITAUTORUN = "findprofit.autorun";
     public static final String FINDPROFITMLDYNAMIC = "findprofit.mldynamic";
     public static final String FINDPROFITRECOMMENDER = "findprofit.recommender";
@@ -133,6 +134,7 @@ public class IclijConfigConstants {
     public static final String FINDPROFITPREDICTOR = "findprofit.predictor";
     public static final String FINDPROFITPREDICTOREVOLUTIONCONFIG = "findprofit.predictor.evolutionconfig";
     public static final String FINDPROFITPREDICTORMLCONFIG = "findprofit.predictor.mlconfig";
+    public static final String IMPROVEPROFIT = "improveprofit";
     public static final String IMPROVEPROFITAUTORUN = "improveprofit.autorun";
     public static final String IMPROVEPROFITFITNESSMINIMUM = "improveprofit.fitnessminimum";
     public static final String IMPROVEPROFITRECOMMENDER = "improveprofit.recommender";
@@ -160,6 +162,7 @@ public class IclijConfigConstants {
     public static final String IMPROVEPROFITPREDICTOR = "improveprofit.predictor";
     public static final String IMPROVEPROFITPREDICTOREVOLUTIONCONFIG = "improveprofit.predictor.evolutionconfig";
     public static final String IMPROVEPROFITPREDICTORMLCONFIG = "improveprofit.predictor.mlconfig";
+    public static final String MACHINELEARNING = "machinelearning";
     public static final String MACHINELEARNINGAUTORUN = "machinelearning.autorun";
     public static final String MACHINELEARNINGMLMACD = "machinelearning.mlmacd";
     public static final String MACHINELEARNINGMLMACDEVOLUTIONCONFIG = "machinelearning.mlmacd.evolutionconfig";

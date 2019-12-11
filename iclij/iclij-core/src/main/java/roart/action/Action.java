@@ -31,7 +31,7 @@ public abstract class Action {
         this.memory = memory;
     }
 
-    public abstract void goal(Action parent, ComponentData param) throws InterruptedException;
+    public abstract void goal(Action parent, ComponentData param, Integer priority) throws InterruptedException;
 
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();

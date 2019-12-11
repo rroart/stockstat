@@ -72,17 +72,25 @@ public abstract class MarketAction extends Action {
     
     public abstract ComponentFactory getComponentFactory();
     
-    public void goal(Action parent, ComponentData param) {
-        getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null);
+    public abstract int getPriority(IclijConfig conf);
+    
+    public int getPriority(IclijConfig conf, String key) {
+        Integer value = (Integer) conf.getConfigValueMap().get(key + "[@priority]");
+        return value != null ? value : 0;
+    }
+    
+    @Override
+    public void goal(Action parent, ComponentData param, Integer priority) {
+        getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
     }
 
-    public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve) {
+    public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve, Integer priority) {
         List<Market> markets = new ArrayList<>();
         markets.add(market);
-        return getMarkets(parent, param, markets, new ArrayList<>(), evolve);
+        return getMarkets(parent, param, markets, new ArrayList<>(), evolve, priority);
     }        
     
-    public WebData getMarkets(Action parent, ComponentInput input, Boolean evolve) {
+    public WebData getMarkets(Action parent, ComponentInput input, Boolean evolve, Integer priority) {
         List<TimingItem> timings = null;
         try {
             timings = IclijDbDao.getAllTiming();
@@ -96,10 +104,10 @@ public abstract class MarketAction extends Action {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        return getMarkets(parent, param, markets, timings, evolve);
+        return getMarkets(parent, param, markets, timings, evolve, priority);
     }        
     
-    private WebData getMarkets(Action parent, ComponentData paramTemplate, List<Market> markets, List<TimingItem> timings, Boolean evolve) {
+    private WebData getMarkets(Action parent, ComponentData paramTemplate, List<Market> markets, List<TimingItem> timings, Boolean evolve, Integer priority) {
 	// test picks for aggreg recommend, predict etc
         // remember and make confidence
         // memory is with date, confidence %, inc/dec, semantic item
@@ -155,7 +163,14 @@ public abstract class MarketAction extends Action {
             if (true) {
                 List<String> componentList = getProfitComponents(config, marketName);
                 Map<String, Component> componentMap = getComponentMap(componentList, market);
-                List<MarketComponentTime> marketTime = getList(getName(), componentMap, timings, market, param, currentTimings);
+                Map<String, Component> componentMapFiltered = new HashMap<>();
+                for (Entry<String, Component> entry : componentMap.entrySet()) {
+                    int mypriority = getPriority(config) + entry.getValue().getPriority(config);
+                    if (priority == null || (mypriority >= priority && mypriority < (priority + 9))) {
+                        componentMapFiltered.put(entry.getKey(),  entry.getValue());
+                    }
+                }
+                List<MarketComponentTime> marketTime = getList(getName(), componentMapFiltered, timings, market, param, currentTimings);
                 marketTimes.addAll(marketTime);
             } else {
                 int jj = 0;

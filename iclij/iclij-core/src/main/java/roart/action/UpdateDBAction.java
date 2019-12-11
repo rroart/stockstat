@@ -31,7 +31,7 @@ public class UpdateDBAction extends Action {
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Override
-    public void goal(Action parent, ComponentData param) throws InterruptedException {
+    public void goal(Action parent, ComponentData param, Integer priority) throws InterruptedException {
         List<Market> markets = getMarkets();
         List<MemoryItem> toCheck = findMarketComponentsToCheck(markets);
         Queue<Action> goals = getGoals(toCheck);

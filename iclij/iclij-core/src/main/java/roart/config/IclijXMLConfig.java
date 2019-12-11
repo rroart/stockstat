@@ -219,6 +219,12 @@ public class IclijXMLConfig {
                 //o = configxml.getString(s);
                 log.info("Unknown " + text);
                 //continue;
+                String pri = (String) elem2.getProperty("[@priority]");
+                if (pri != null) {
+                    Integer priority = Integer.valueOf(pri);
+                    configInstance.getConfigValueMap().put(node0 + "[@priority]", priority);
+                    System.out.println("pri " + node0 + " " + pri);
+                }
             } else {
                 String s2 = "";
                 switch (myclass.getName()) {
@@ -244,6 +250,12 @@ public class IclijXMLConfig {
                 }
                 log.info("grr {} {}", node0, o);
                 configInstance.getConfigValueMap().put(node0, o);
+                String pri = (String) elem2.getProperty("[@priority]");
+                if (pri != null) {
+                    Integer priority = Integer.valueOf(pri);
+                    configInstance.getConfigValueMap().put(node0 + "[@priority]", priority);
+                    System.out.println("pri " + node0 + " " + pri);
+                }
             }
             setValues(elem2, node);
         }

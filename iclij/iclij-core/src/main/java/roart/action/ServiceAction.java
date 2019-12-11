@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.constants.Constants;
 import roart.component.model.ComponentInput;
 import roart.component.model.ComponentData;
-import roart.service.ControlService;
+import roart.iclij.config.IclijConfig;
 import roart.service.MLService;
 import roart.service.PredictorService;
 import roart.service.RecommenderService;
@@ -76,10 +76,10 @@ public class ServiceAction extends Action {
     }
 
     @Override
-    public void goal(Action parent, ComponentData param) throws InterruptedException {
+    public void goal(Action parent, ComponentData param, Integer priority) throws InterruptedException {
         log.info("At {} : Updating {} {}", new Date(), market, task);
         /*
-        ControlService srv = new ControlService();
+        IclijConfig srv = new IclijConfig();
         srv.getConfig();
         srv.conf.setMarket(market);
         ComponentInput input = new ComponentInput(market, date, 0, save, true);

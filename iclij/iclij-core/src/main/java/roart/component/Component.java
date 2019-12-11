@@ -427,5 +427,12 @@ public abstract class Component {
         }
     }
 
+    public abstract int getPriority(IclijConfig conf);
+
+    public int getPriority(IclijConfig conf, String key) {
+        Integer value = (Integer) conf.getConfigValueMap().get(key + "[@priority]");
+        return value != null ? value : 0;
+    }
+    
 }
 

@@ -23,6 +23,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
@@ -151,6 +152,11 @@ public class EvolveAction extends MarketAction {
     @Override
     public ComponentFactory getComponentFactory() {
         return new EvolveComponentFactory();
+    }
+
+    @Override
+    public int getPriority(IclijConfig srv) {
+        return getPriority(srv, IclijConfigConstants.EVOLVE);
     }
 
 }

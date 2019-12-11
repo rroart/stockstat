@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
+import roart.iclij.config.IclijConfig;
 import roart.service.ControlService;
 
 public class MainAction extends Action {
@@ -21,8 +22,8 @@ public class MainAction extends Action {
 
     @SuppressWarnings("squid:S2189")
     @Override
-    public void goal(Action parent, ComponentData param) throws InterruptedException {
-        IclijXMLConfig.getConfigInstance();
+    public void goal(Action parent, ComponentData param, Integer priority) throws InterruptedException {
+        IclijConfig config = IclijXMLConfig.getConfigInstance();
         System.out.println("Start");
         ControlService srv = new ControlService();
         boolean noException = false;
@@ -58,8 +59,12 @@ public class MainAction extends Action {
                 addGoals();
                 //addIfNotContaining(updateDBACtion);
             } else {
-                Action action = getGoals().poll();
-                action.goal(this, param);
+                for (int pri = 0; pri < 100; pri += 10) {
+                    for (Action anAction : getGoals()) {
+                        MarketAction action = (MarketAction) anAction;
+                        action.goal(this, param, pri);
+                    }
+                }
             }
         }
     }

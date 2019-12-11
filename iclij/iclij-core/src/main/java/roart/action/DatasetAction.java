@@ -24,6 +24,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
@@ -164,4 +165,10 @@ public class DatasetAction extends MarketAction {
     protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
         return null;
     }
+    
+    @Override
+    public int getPriority(IclijConfig srv) {
+        return getPriority(srv, IclijConfigConstants.DATASET);
+    }
+
 }
