@@ -360,8 +360,7 @@ public abstract class ComponentPredictor extends ComponentML {
 
     @Override
     public List<String>[] enableDisable(ComponentData param, List<Integer> positions) {
-        List[] list = new ArrayList[2];
-        return list;
+        return new ArrayList[] { new ArrayList<String>(), new ArrayList<String>() };
     }
 
     @Override
