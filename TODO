@@ -52,7 +52,6 @@ T: drop special handling for lstm config
 B: serviceutil nasdaq tradcomm?
 B: again confidencefactor null?
 B: conf. factor still null in comp.rec., and further down
-T: Fix getRealkeys, both inside an in findBuySell... (confidencefactor was null)
 T: Rearrange buy/sell, and failed categories?
 T: Cleanup recommender buy/sell duality
 WB: Why buy xor sell?
@@ -138,7 +137,6 @@ B: Mlindicator MLClassifySparkAccess learntestclassify 6 NaN (tautil 199 rsi beg
 C: NeuralNetChromosome change price to most wanted
 T: Nvidia
 WB: tf open file limi
-B: Flask threaded tf process lock (Tf server/client hangs)
 B: MLMACD/MLindicator null key, tf giving nonexisting class.
 T: Tf python cleanup
 F: Look at tf serving?
@@ -194,10 +192,10 @@ Config
 B: Wrong use of deflt with settings?
 T: Synch XML reader config code
 T: making instances
-T: Fix thresholds, common standard
 T: MyMyConfig getValueOrDefault use more
 F: no env SPARK_DRIVER_HOST, use config file?
 T: insert has duplicated code
+C: miscmydays, tabledays?
 
 Data
 B: my box import does not work
@@ -241,7 +239,6 @@ C: priority changes , to .
 ?: incdec in core?
 ?: Core w verify incdec proportion
 ?: CL for permit og evolusjon handler.
-C: Merge LSTM with others
 C: java 12 (I50)
 F: Iclij verif show new ml config
 F: Use testaccuracy in iclij / compare with reliab/conf incdec (I26)
@@ -275,27 +272,58 @@ T: MLIndicator/MLMACD calculateMomentums createresultMap getTitles make oo versi
 T: MLIndicator/MLMACD getTitles fix workaround
 T: MLMACD createPosNegMaps also do MACD
 T: MLMACD save return map, getters setters
-B: configitem > 510b, json conv err (I83)
-WC: MLMACD do not use macd and sig (I96)
-WB: ATR/CCI/STOCH displayed when not applicable (I97)
-WB: ATR/CCI/STOCH base100 fix (I98)
-WF: Add pytorch (I99)
-WF: Neural net continual learning (I100)
-WF: Tensorflow extend and refactor (I101)
-WC: Findprofit use market/component tuple when calculating, split incdec, merge later (I102)
-WB: Only one buy/sell counts as both, miss one run (I103)
-WF: Add Spark SVM (I104)
+WB: configitem > 510b, json conv err (I83)
 RC: Change LearnTestClassify, remove deprecated, add new, rename
-WC: Refactor ML granularity (I105)
-WF: Add tests for neural net (I106)
-C: ML loss/accuracy return (I107)
 C: For evolution don't mutate disabled dependencies (I108)
-C: DNN drop units array, just iterate (I109)
-C: Predictor LSTM normalize at 100 (I110)
-WC: Evolution refactor, chromosome to contain gene, containing config (I111)
-WC: Spark renames (I112)
+RC: Predictor LSTM normalize at 100
 C: Evolve individual print out diffs (I113)
-WC: Machine learning persist (I114)
+WF: More ML hyperparameters, dropout, activate function, weight init, opt, loss (I116)
+B: Future parallell problem (I122)
+WT: Hibernate transactions (I123)
+RC: Mlclassifymodel with config and steps for filename
+C: Change classes to 2 when only 2 (I127)
+C: IBM MER (I128)
+WC: Evolution refactor, chromosome to contain gene, containing config (I111)
+t: configitem getall market
+
+B: python ml
+B: classcastexception null
+B: classcastexception [[d
+B: Offsetmap missing items (offset should not be null error) (I129)
+T: Optimize (I131)
+B: Relations (I133)
+C: Trend w/ summary (I134)
+T: Evolve add incdecthreshold
+C: Merge LSTM with others
+F: mlmarket menu (I148)
+multi v suff/result meta with mix index
+crosstestaction predictor loss none?
+tradstoc etc nov 22 23
+verify loop testing loopoffset
+C: Use inc dec not buy sell (I120)
+WC: ML loss/accuracy return (I107)
+C: GPU (I124)
+new nordnet content, and etf, rsync
+WF: Add datasets (I142)
+c: timing ml with filename
+ml capabilities (I151)
+Mlact sep inc dec due to thres (I150)
+(I152)
+
+r: buyfilteronincrease offsetday null? (ok...)
+?: TimeDistributed
+?: new todos
+?: memoryitem change description subcomponent 
+?: high acc on few iter
+?: iclij evolve disable gem, new new config constant (no)
+B: pure getcontent calls all ml empty
+?: if acc 0 => null? retry? check date
+?: gem and pytorch prob
+?: gem does return class none, see offsetmap == null
+B: gem loadingmodel when should not
+B: spark load with schema
+B: empty spark and result == null and npe
+?: aggr rec indic -1
 RC: Rename neuralnetconfig to gene/chromosome
 RC: split out gene out of SparkMCPConfig etc, let the gene contain SparkMCPConfig
 RC: Extend Spark with LR
@@ -303,19 +331,39 @@ RC: Tensorflow add LinearRegressor
 RC: Tensorflow rename L to LC LinearClassifier
 ?: configmapchromosome some parts are not chromosome?
 ?: configmapchromosome split out gene?
-
-new nordnet content
-Evolve add incdec threshold
+?: split out evolveml
+?: source adl
+?: buy sell hold
+?: mlmodels with timeseries attribute
+t: .copy
+t: use evolved other actions
+t: evolve run two times?
+Mlp ord and timeser 3d -≥ 1d
+CNN also for multi
 Mlmulti w vix
 daystocks...
 trend fix
 trend date with improve
-gui config save
 jenetics?
+datasources from text file in addition to db
+?: ps list control panel
+?: roc sma bollinger
+gui config save
 
-hyper: dropout, activatefunc, weightinit
+2 dropout train only
+https://machinelearningmastery.com/dropout-for-regularizing-deep-neural-networks
+CNN no dropout
+https://www.kdnuggets.com/2018/09/dropout-convolutional-networks.html
 
-no both incdec
+Mlindicator timeseries (= mlmulti) https://www.researchgate.net/publication/323131323_A_deep_learning_based_stock_trading_model_with_2-D_CNN_trend_detection/link/5b3b703caca27207850625a9/download
+
+v https://www.sciencedirect.com/science/article/pii/S1877050918307828/pdf?md5=8011b6b7260c19ed09cb38bd7edb0410&pid=1-s2.0-S1877050918307828-main.pdf
+
+v https://m.economictimes.com/wealth/invest/7-stock-market-technical-indicators-that-can-help-you-invest/amp_articleshow/63342749.cms
+
+v https://www.marketwatch.com/amp/story/guid/B066D806-AE2A-11E9-BB8A-5079E07D34B3
+
+v https://www.kiplinger.com/slideshow/investing/T031-S001-market-indicators/index.html
 
 stoch(rsi) and merge
 
@@ -331,28 +379,31 @@ relations/link/combine util at end? check
 
 pytorch/tf batch_first/major
 
-GPU
-
 --
 
-    public void enableDisable(Map<String, Object> map, List<String> list, boolean bool) {
-NPE:        for (String key : list) {
+pytorch cnn
 
+****
 
-Find handleFilterTimings(
-marketTime.time += average.getAsDouble();
+gru tensorflow test (evolve) index 3 is out of bounds for axis 0 with size 1
+cnn pytorch classify
+spark load java.lang.UnsupportedOperationException: empty collection
+org.apache.spark.sql.AnalysisException: Unable to infer schema for Parquet. It must be specified manually.
 
+2019-12-10 12:51:17,841 ERROR [qtp1635082651-4600] r.p.c.a.Aggregator [MLIndicator.java:583] Exception
+java.lang.ClassCastException: null
 
-cboevol/tradstoc 0830 mlrsi
-java.lang.ArrayIndexOutOfBoundsException: 0
-        at roart.aggregator.impl.IndicatorAggregator.getTitles(IndicatorAggregator.java:1440)
+Caused by: java.lang.ClassCastException: [[D cannot be cast to [D
+2019-12-10 12:43:53,518 ERROR [qtp1635082651-279] r.p.c.a.Aggregator [MLIndicator.java:583] Exception
 
-2019-08-26 09:48:18,782 ERROR [qtp901689694-1247] r.s.e.EvolutionService [EvolutionService.java:159] Exception
-java.util.concurrent.ExecutionException: java.util.NoSuchElementException: No value present
-Caused by: java.util.NoSuchElementException: No value present
-tail: '/tmp/stockstatcore.log' has become inaccessible: No such file or directory
+552: LearnTestClassifyResult result = future.get()
 
- [MLClassifySparkAccess.java:249]  e 1 [NaN]
+/home/roart/anaconda/anaconda3/envs/gem/lib/python3.7/site-packages/torch/nn/modules/loss.py:443: UserWarning: Using a target size (torch.Size([86310])) that is different to the input size (torch.Size([86310, 1])). This will likely lead to incorrect results due to broadcasting. Please ensure they have the same size.
+  return F.mse_loss(input, target, reduction=self.reduction)
+
+**
+
+[MLClassifySparkAccess.java:249]  e 1 [NaN]
 
 
  256781 | improveprofit | mlmacd    | 2019-08-15 00:00:00 | aggregators.mlmacd.daysbeforezero       | tradcomm | 2019-08-15 00:00:00 |       |       | 
@@ -361,24 +412,10 @@ tail: '/tmp/stockstatcore.log' has become inaccessible: No such file or director
  256782 | improveprofit | mlmacd    | 2019-08-15 00:00:00 | aggregators.mlmacd.macdml[@enable]      | tradcomm | 2019-08-15 00:00:00 |       |       | 
 (4 rows)
 
-
-java.lang.IllegalArgumentException: requirement failed: init value should <= bound at scala.Predef$.require(Predef.scala:224) at breeze.optimize.StrongWolfeLineSearch.minimizeWithBound(StrongWolfe.scala:73)
-
 Caused by: java.lang.IllegalArgumentException: requirement failed: BLAS.dot(x: Vector, y:Vector) was given Vectors with non-matching sizes: x.size = 25, y.size = 41
         at scala.Predef$.require(Predef.scala:224)
 
-
-ValueError: Cannot reshape a tensor with 5248 elements to shape [128,25] (3200 elements) for 'dnn/input_from_feature_columns/input_layer/features/Reshape' (op: 'Reshape') with input shapes: [128,41], [2] and with input tensors computed as partial shapes: input[1] = [128,25].
-
 improve lstm inelearning.histogramml[@enable] null
-
-2019-07-14 14:22:54,028 ERROR [qtp85121323-1718] r.s.e.EvolutionService [EvolutionService.java:159] Exception
-java.lang.ClassCastException: null
-
-comp.mlindicator 
-2019-07-07 12:34:21,694 ERROR [main] r.e.c.i.MLIndicatorChromosome [ConfigMapChromosome.java:297] Exception
-java.lang.NullPointerException: null
-        at roart.component.ComponentMLIndicator.calculateIncDec(ComponentMLIndicator.java:148)
 
 aggregators.indicatorrecommender.complex.rsi.sell.weightstochrsinode
 
@@ -403,6 +440,43 @@ java.lang.ClassCastException: java.base/java.lang.String cannot be cast to roart
 
 --
 
+WC: Action/component priorities (I149)
+WC: Timing with description stats (I147)
+WB: Flask threaded process deadlock (I146)
+WC: Use list for learned and classified data (I145)
+WF: More models can predict value (I144)
+WC: Add market filter for decrease also (I143)
+WC: ML skip if only one result type (I141)
+WC: Change thresholds to 1.0x based, common standard (I140)
+WF: Dataset evolve (I139)
+WF: Crosstest models from other markets (I138)
+WC: Incdec merge, largets one wins boolean (I137)
+DB: PredictorData need to be subclass of ComponentML (I136)
+DT: Fix component position map and drop use of getRealkeys (I135)
+DB: Common incdec missing (I132)
+WT: Add only metas if ML is run (I130)
+WC: Mlindicator also with 2D timeseries (I126)
+WC: Upgrade to Tensorflow 2 (I125)
+WC: React/Angular frontend (I121)
+WF: CNN 2D (I119)
+WC: Refactor predictor (I118)
+WC: Indicatoraggregator inc above threshold (I117)
+WF: Evolve action (I115)
+WF: Machine learning persist (I114)
+WC: Spark renames (I112)
+WC: Mlindicator with offsets (I110)
+WC: MLPC/DNN drop units array, just iterate (I109)
+WF: Add tests for neural net (I106)
+WC: Refactor ML granularity (I105)
+WF: Add Spark SVM (I104)
+WB: Only one buy/sell counts as both, miss one run (I103)
+WC: Findprofit use market/component tuple when calculating, split incdec, merge later (I102)
+WF: Tensorflow extend and refactor (I101)
+WF: Neural net continual learning (I100)
+WF: Add pytorch (I99)
+WB: ATR/CCI/STOCH base100 fix (I98)
+WB: ATR/CCI/STOCH displayed when not applicable (I97)
+WC: MLMACD do not use macd and sig (I96)
 WB: Validate returned false even if no boolean in list (I95)
 WC: Disabling all components first (I94)
 WC: MyExecutors lighter on dev (I93)
