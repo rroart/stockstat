@@ -43,6 +43,26 @@ class MarketBar extends PureComponent {
 	props.setconfigvalue([ 'market', event.value ]);
     }
     
+    handleChangeML(event, props) {
+	console.log(event);
+	console.log(event.value);
+	console.log(props);
+	//this.props.setmarket({market: event.value});
+	props.setmarket(event.value);
+	//props.setconfigvalue([ 'market', event.value ]);
+	props.setconfigvalue([ 'mlmarket', event.value ]);
+    }
+    
+    resetML(event, props) {
+	console.log(event);
+	console.log(event.value);
+	console.log(props);
+	//this.props.setmarket({market: event.value});
+	props.setmlmarket(null);
+	//props.setconfigvalue([ 'market', event.value ]);
+	props.setconfigvalue([ 'mlmarket', null ]);
+    }
+    
     handleStartDateChange(event, props) {
 	console.log(event);
 	console.log(props);
@@ -147,6 +167,20 @@ class MarketBar extends PureComponent {
 		    Name
 		    <Select options="[{size:'5'}]"
 			    onChange={e => this.handleChange(e, this.props)}
+		      options={markets2}
+		      />
+		  </NavItem>
+		  <NavItem eventKey={1} href="#">
+		    Name
+		    <Select options="[{size:'5'}]"
+			    onChange={e => this.handleChangeML(e, this.props)}
+		      options={markets2}
+		      />
+		  </NavItem>
+		  <NavItem eventKey={1} href="#">
+		    Name
+		    <Select options="[{size:'5'}]"
+			    onChange={e => this.resetML(e, this.props)}
 		      options={markets2}
 		      />
 		  </NavItem>

@@ -14,6 +14,8 @@ public class ComponentInput {
     
     private String market;
 
+    private String mlmarket;
+
     private LocalDate enddate;
     
     private Integer loopoffset;
@@ -84,6 +86,14 @@ public class ComponentInput {
 
     public void setMarket(String market) {
         this.market = market;
+    }
+
+    public String getMlmarket() {
+        return mlmarket;
+    }
+
+    public void setMlmarket(String mlmarket) {
+        this.mlmarket = mlmarket;
     }
 
     public LocalDate getEnddate() {

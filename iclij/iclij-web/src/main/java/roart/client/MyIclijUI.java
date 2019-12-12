@@ -394,6 +394,59 @@ public class MyIclijUI extends UI implements ViewDisplay {
         return ls;
     }
 
+    private ListSelect getMLMarkets() {
+        ListSelect ls = new ListSelect("Get ML market");
+        Set<String> marketSet = null;
+        try {
+            List<String> markets = controlService.getMarkets();
+            markets.remove(null);
+            marketSet = new TreeSet<>(markets);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return ls;
+        }
+        log.info("languages " + marketSet);
+        if (marketSet == null ) {
+            return ls;
+        }
+        ls.setItems(marketSet);
+        //ls.setNullSelectionAllowed(false);
+        // Show 5 items and a scrollbar if there are more                       
+        ls.setRows(5);
+        ls.addValueChangeListener(new ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String                 
+                Set<String> values = (Set<String>) event.getValue();
+                // TODO multi-valued?
+                String value = values.iterator().next();
+                // Do something with the value                              
+                try {
+                    controlService.getIclijConf().setMLMarket(value);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        //ls.setImmediate(true);
+        return ls;
+    }
+
+    private Button resetMLMarkets() {
+        Button button = new Button("Reset ML market");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    controlService.getIclijConf().setMLmarket(null);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
     private VerticalLayout getControlPanelTab() {
         boolean isProductionMode = VaadinService.getCurrent()
                 .getDeploymentConfiguration().isProductionMode();
@@ -530,6 +583,8 @@ public class MyIclijUI extends UI implements ViewDisplay {
         horNewInd.setWidth("90%");
         HorizontalLayout horMarkets = new HorizontalLayout();
         horMarkets.addComponent(getMarkets());
+        horMarkets.addComponent(getMLMarkets());
+        horMarkets.addComponent(resetMLMarkets());
         HorizontalLayout horDate = new HorizontalLayout();
         horDate.setHeight("20%");
         horDate.setWidth("90%");

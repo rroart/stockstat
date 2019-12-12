@@ -34,6 +34,8 @@ public class IclijConfig {
 
     private String market;
 
+    private String mlmarket;
+
     public LocalDate getDate() {
         return date;
     }
@@ -48,6 +50,14 @@ public class IclijConfig {
 
     public void setMarket(String market) {
         this.market = market;
+    }
+
+    public String getMlmarket() {
+        return mlmarket;
+    }
+
+    public void setMlmarket(String mlmarket) {
+        this.mlmarket = mlmarket;
     }
 
     public ConfigTreeMap getConfigTreeMap() {

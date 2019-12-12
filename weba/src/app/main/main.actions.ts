@@ -14,6 +14,7 @@ export enum MainActionTypes {
   RETRIEVE = '[Main] Retrieve',
   GETMARKET = '[Main] Get market',
   SETMARKET = '[Main] Set market',
+  SETMLMARKET = '[Main] Set ml market',
   GETMARKETS = '[Main] Get markets',
   SETMARKETS = '[Main] Set markets',
   GETCONFIG = '[Main] Get config',
@@ -115,6 +116,14 @@ export class ActionSetmarket implements Action {
   constructor(readonly payload: { market: string }) {}
 }
 
+export class ActionSetmlmarket implements Action {
+  readonly type = MainActionTypes.SETMLMARKET;
+  //console.log("here");
+  //constructor() {}
+  //constructor(readonly payload: { res: any }) {}
+  constructor(readonly payload: { mlmarket: string }) {}
+}
+
 export class ActionSetconfig implements Action {
   readonly type = MainActionTypes.SETCONFIG;
 
@@ -199,6 +208,7 @@ export type MainActions =
   | ActionGetmarket
   | ActionGetmarkets
   | ActionSetmarket
+  | ActionSetmlmarket
   | ActionSetmarkets
   | ActionGetconfig
   | ActionSetconfig

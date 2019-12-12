@@ -18,6 +18,7 @@ const INCREMENT_ASYNC = 'app/main/INCREMENT_ASYNC';
 const INCREMENT2 = 'app/main/INCREMENT2';
 const GET_COUNT = 'app/main/GET_COUNT';
 const SETMARKET = 'app/main/SETMARKET';
+const SETMLMARKET = 'app/main/SETMLMARKET';
 const SETMARKETS = 'app/main/SETMARKETS';
 const GETMARKETS = 'app/main/GETMARKETS';
 const SETSTARTDATE = 'app/main/SETSTARTDATE';
@@ -46,6 +47,7 @@ export const constants = {
     NEWTAB_MAIN3,
     GET_COUNT,
     SETMARKET,
+    SETMLMARKET,
     SETMARKETS,
     GETMARKETS,
     SETSTARTDATE,
@@ -78,6 +80,7 @@ export const increment2 = createAction(INCREMENT2, ( count ) => ({ count }));
 export const incrementasync = createAction(INCREMENT_ASYNC, () => ({  }));
 export const getCount = createAction(GET_COUNT, () => ({ }));
 export const setmarket = createAction(SETMARKET, (market) => ({ market } ) );
+export const setmarket = createAction(SETMLMARKET, (market) => ({ market } ) );
 export const getMarkets = createAction(GETMARKETS, () => ( {} ) );
 export const setmarkets = createAction(SETMARKETS, (markets) => ( { markets } ) );
 export const setstartdate = createAction(SETSTARTDATE, (startdate) => ( { startdate } ) );
@@ -106,6 +109,7 @@ export const actions = {
     incrementasync,
     getCount,
     setmarket,
+    setmlmarket,
     setmarkets,
     setstartdate,
     setenddate,
@@ -172,6 +176,10 @@ export const reducers = {
       ...payload,
     }),
     [SETMARKET]: (state, { payload }) =>
+	state.merge({
+	    ...payload
+	}),
+    [SETMLMARKET]: (state, { payload }) =>
 	state.merge({
 	    ...payload
 	}),

@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'react-bootstrap';
 import type { mainType, MyConfig, GuiSize } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
-import { ServiceParam, ServiceResult, NeuralNetCommand } from '../../common/types/main'
+import type { ServiceParam, ServiceResult, NeuralNetCommand } from '../../common/types/main'
 import { MyTable } from '../../common/components/Table'
 
 export function* fetchMainData() {
@@ -162,7 +162,9 @@ export function* fetchEvolve(action) {
 }
 
 export function* fetchMarkets() {
-    var serviceparam = new ServiceParam();
+    console.log("heremarkets");
+    //var serviceparam = new ServiceParam();
+    var serviceparam : ServiceParam;
     //serviceparam.market = '0';
     console.log("heremarkets");
     let markets = yield call(Client.fetchApi.search, "/getmarkets", serviceparam);

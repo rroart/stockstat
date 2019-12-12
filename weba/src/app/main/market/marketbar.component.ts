@@ -120,6 +120,42 @@ export class MarketbarComponent implements OnInit, OnDestroy {
   this.store.dispatch(new ActionIncrement({incCount: 2})));
   }
 
+  changemlmarket($event) {
+  console.log('market');
+  console.log($event);
+  console.log(this);
+  this.store.dispatch(new ActionSetmarket({ 'mlmarket': $event.value }));
+  this.store.dispatch(new ActionSetconfigvalue([ 'mlmarket', $event.value ]));
+  //this.increment.focus();
+  }
+  incrementAsync($event) {
+  console.log('incremnentas');
+  console.log($event);
+  //this.increment.focus();
+  //tick(1000);
+  this.delay(10000).then( () =>
+  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
+  this.store.dispatch(new ActionIncrement({incCount: 2})));
+  }
+
+  resetmlmarket($event) {
+  console.log('market');
+  console.log($event);
+  console.log(this);
+  this.store.dispatch(new ActionSetmarket({ 'mlmarket': null }));
+  this.store.dispatch(new ActionSetconfigvalue([ 'mlmarket', null ]));
+  //this.increment.focus();
+  }
+  incrementAsync($event) {
+  console.log('incremnentas');
+  console.log($event);
+  //this.increment.focus();
+  //tick(1000);
+  this.delay(10000).then( () =>
+  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
+  this.store.dispatch(new ActionIncrement({incCount: 2})));
+  }
+
     handleStartDateChange($event) {
     console.log($event);
     this.store.dispatch(new ActionSetstartdate({ startdate: $event.value}));

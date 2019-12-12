@@ -2,6 +2,10 @@
   <mat-select placeholder="Get market" (selectionChange)="changemarket($event)">
     <mat-option *ngFor="let market of markets" [value]="market">{{ market }}</mat-option>
   </mat-select>
+  <mat-select placeholder="Get ml market" (selectionChange)="changemlmarket($event)">
+    <mat-option *ngFor="let market of markets" [value]="market">{{ market }}</mat-option>
+  </mat-select>
+  <button class="mat-raised-button" (click)="resetmlmarket($event)">Reset ml market</button>
    <input matInput [matDatepicker]="startpicker" placeholder="Start date" (dateChange)=handleStartDateChange($event)>
    <mat-datepicker-toggle matSuffix [for]="startpicker"></mat-datepicker-toggle>
    <mat-datepicker #startpicker></mat-datepicker>

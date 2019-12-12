@@ -705,6 +705,9 @@ public class ServiceUtil {
         IclijServiceList header = new IclijServiceList();
         result.getLists().add(header);
         header.setTitle(type + " " + "Market: " + componentInput.getConfig().getMarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + componentInput.getLoopoffset());
+        IclijServiceList header2 = new IclijServiceList();
+        result.getLists().add(header2);
+        header2.setTitle(type + " " + "ML market: " + componentInput.getConfig().getMlmarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + componentInput.getLoopoffset());
         List<MapList> aList = new ArrayList<>();
         header.setList(aList);
         MapList mapList = new MapList();
@@ -717,6 +720,7 @@ public class ServiceUtil {
         ComponentData param = new ComponentData(input);
         param.setAction(IclijConstants.FINDPROFIT);
         String market = input.getConfig().getMarket();
+        String mlmarket = input.getConfig().getMlmarket();
         /*
         if (market == null) {
             throw new Exception("Market null");
@@ -728,6 +732,8 @@ public class ServiceUtil {
         if (market != null) {
             srv.conf.setMarket(market);
             param.getInput().setMarket(market);
+            srv.conf.setMLmarket(mlmarket);
+            param.getInput().setMlmarket(mlmarket);
         }
         // verification days, 0 or something
         param.setOffset(days);

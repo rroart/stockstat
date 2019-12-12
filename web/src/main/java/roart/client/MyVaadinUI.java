@@ -353,6 +353,8 @@ public class MyVaadinUI extends UI implements ViewDisplay {
         horDb.setWidth("60%");
         //horDb.addComponent(getDbItem());
         horDb.addComponent(getMarkets());
+        horDb.addComponent(getMLMarkets());
+        horDb.addComponent(resetMLMarkets());
 
         HorizontalLayout horDb2 = new HorizontalLayout();
         horDb2.setHeight("20%");
@@ -622,6 +624,59 @@ public class MyVaadinUI extends UI implements ViewDisplay {
         // Fire value changes immediately when the field loses focus
         ls.setImmediate(true);
         return ls;
+    }
+
+    private ListSelect getMLMarkets() {
+        ListSelect ls = new ListSelect("Get ML market");
+        Set<String> marketSet = null;
+        try {
+            List<String> markets = controlService.getMarkets();
+            markets.remove(null);
+            marketSet = new TreeSet<String>(markets);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return ls;
+        }
+        log.info("languages " + marketSet);
+        if (marketSet == null ) {
+            return ls;
+        }
+        ls.addItems(marketSet);
+        ls.setNullSelectionAllowed(false);
+        // Show 5 items and a scrollbar if there are more                       
+        ls.setRows(5);
+        ls.addValueChangeListener(new Property.ValueChangeListener() {
+            public void valueChange(ValueChangeEvent event) {
+                // Assuming that the value type is a String                 
+                String value = (String) event.getProperty().getValue();
+                // Do something with the value                              
+                try {
+                    controlService.conf.setMLmarket(value);
+                    Notification.show("Request sent");
+                    //displayResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        // Fire value changes immediately when the field loses focus
+        ls.setImmediate(true);
+        return ls;
+    }
+
+    private Button resetMLMarkets() {
+        Button button = new Button("Reset ML market");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    controlService.conf.setMLmarket(null);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
     }
 
     Set<Pair<String, String>> chosen = new HashSet<>();
