@@ -286,11 +286,11 @@ public class MLClassifySparkAccess extends MLClassifyAccess {
                 test = data;
             }
             for (double[] e : map.keySet()) {
-                log.info(" e " + Arrays.asList(e));
+                log.debug(" e " + Arrays.asList(e));
             }
             for (double[] e : map.keySet()) {
                 List<Double> l = Arrays.stream(e).boxed().collect(Collectors.toList());
-                log.info(" e " + l.size() + " " + l);
+                log.debug(" e " + l.size() + " " + l);
             }
             MLClassifySparkModel sparkModel = (MLClassifySparkModel) mlmodel;
             PipelineModel model = null;
