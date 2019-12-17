@@ -290,6 +290,7 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
+        setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
@@ -310,6 +311,7 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
+        setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
