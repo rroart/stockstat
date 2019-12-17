@@ -124,7 +124,7 @@ export class MarketbarComponent implements OnInit, OnDestroy {
   console.log('market');
   console.log($event);
   console.log(this);
-  this.store.dispatch(new ActionSetmarket({ 'mlmarket': $event.value }));
+  this.store.dispatch(new ActionSetmlmarket({ 'mlmarket': $event.value }));
   this.store.dispatch(new ActionSetconfigvalue([ 'mlmarket', $event.value ]));
   //this.increment.focus();
   }
@@ -142,7 +142,7 @@ export class MarketbarComponent implements OnInit, OnDestroy {
   console.log('market');
   console.log($event);
   console.log(this);
-  this.store.dispatch(new ActionSetmarket({ 'mlmarket': null }));
+  this.store.dispatch(new ActionSetmlmarket({ 'mlmarket': null }));
   this.store.dispatch(new ActionSetconfigvalue([ 'mlmarket', null ]));
   //this.increment.focus();
   }
