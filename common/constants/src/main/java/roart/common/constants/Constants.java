@@ -51,6 +51,8 @@ public class Constants {
 
     public static final String INC = "Inc";
     public static final String DEC = "Dec";
+    public static final String ABOVE = "Above";
+    public static final String BELOW = "Below";
     public static final int EVENT = 0;
     public static final int MLTIMES = 1;
 
