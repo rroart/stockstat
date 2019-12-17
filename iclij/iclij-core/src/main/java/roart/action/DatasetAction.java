@@ -24,6 +24,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
@@ -57,7 +58,7 @@ public class DatasetAction extends MarketAction {
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Map<String, List<Integer>> listComponent, Map<String, Component> componentMap,
-            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config) {
+            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -82,7 +83,7 @@ public class DatasetAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             List<Integer> positions = null;
             param.getService().conf.setDataset(true);
-            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null);
+            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null, null);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -169,6 +170,16 @@ public class DatasetAction extends MarketAction {
     @Override
     public int getPriority(IclijConfig srv) {
         return getPriority(srv, IclijConfigConstants.DATASET);
+    }
+
+    @Override
+    protected String getFuturedays0(IclijConfig conf) {
+        return null;
+    }
+
+    @Override
+    public String getThreshold(IclijConfig conf) {
+        return null;
     }
 
 }

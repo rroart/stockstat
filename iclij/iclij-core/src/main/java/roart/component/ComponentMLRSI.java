@@ -45,6 +45,7 @@ import roart.evolution.species.Individual;
 import roart.gene.AbstractGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.MLService;
@@ -104,8 +105,8 @@ public abstract class ComponentMLRSI extends ComponentMLAggregator {
 
     @Override
     protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent) {
-        return new MLRSIChromosome(action, param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent);
+            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent, Parameters parameters) {
+        return new MLRSIChromosome(action, param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent, parameters);
     }
 
     @Override
@@ -130,5 +131,15 @@ public abstract class ComponentMLRSI extends ComponentMLAggregator {
         return PipelineConstants.MLRSI;
     }
 
+    @Override
+    public String getThreshold() {
+        return ConfigConstants.AGGREGATORSMLRSITHRESHOLD;
+    }
+    
+    @Override
+    public String getFuturedays() {
+        return ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT;
+    }
+    
 }
 

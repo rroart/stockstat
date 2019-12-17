@@ -29,6 +29,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.result.model.ResultMeta;
 import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;
@@ -66,7 +67,7 @@ public class MachineLearningAction extends MarketAction {
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Map<String, List<Integer>> listComponent, Map<String, Component> componentMap,
-            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config) {
+            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters) {
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             String componentName = entry.getKey();
             Component component = componentMap.get(componentName);
@@ -89,10 +90,17 @@ public class MachineLearningAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
+
+            String key = component.getThreshold();
+            aMap.put(key, "[" + parameters.getThreshold() + "]");
+            String key2 = component.getFuturedays();
+            aMap.put(key2, parameters.getFuturedays());
+            
+            aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
-            ComponentData componentData = component.handle(action, market, param, profitdata, positions, evolve, aMap, subcomponent, null);
+            ComponentData componentData = component.handle(action, market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters);
         }
     }
 
@@ -160,6 +168,16 @@ public class MachineLearningAction extends MarketAction {
     @Override
     public int getPriority(IclijConfig srv) {
         return getPriority(srv, IclijConfigConstants.MACHINELEARNING);
+    }
+
+    @Override
+    protected String getFuturedays0(IclijConfig conf) {
+        return conf.getMachineLearningFuturedays();
+    }
+
+    @Override
+    public String getThreshold(IclijConfig conf) {
+        return conf.getMachineLearningThreshold();
     }
 
 }

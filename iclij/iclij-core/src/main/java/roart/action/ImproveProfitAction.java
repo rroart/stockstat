@@ -27,6 +27,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
@@ -87,7 +88,7 @@ public class ImproveProfitAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -109,7 +110,7 @@ public class ImproveProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            ComponentData componentData = component.improve(action, param, market, profitdata, null, buy, subcomponent);
+            ComponentData componentData = component.improve(action, param, market, profitdata, null, buy, subcomponent, parameters);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -184,6 +185,16 @@ public class ImproveProfitAction extends MarketAction {
     @Override
     public int getPriority(IclijConfig srv) {
         return getPriority(srv, IclijConfigConstants.IMPROVEPROFIT);
+    }
+
+    @Override
+    protected String getFuturedays0(IclijConfig conf) {
+        return null;
+    }
+
+    @Override
+    public String getThreshold(IclijConfig conf) {
+        return null;
     }
 
 }

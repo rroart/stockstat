@@ -10,4 +10,5 @@ module iclij.common.config {
 
     requires common.config;
     requires jackson.annotations;
+    requires slf4j.api;
 }

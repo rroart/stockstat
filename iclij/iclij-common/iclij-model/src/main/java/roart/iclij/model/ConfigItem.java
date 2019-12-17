@@ -20,6 +20,8 @@ public class ConfigItem {
 
     private String subcomponent;
 
+    private String parameters;
+    
     private String action;
     
     private String id;
@@ -71,6 +73,14 @@ public class ConfigItem {
         this.subcomponent = subcomponent;
     }
 
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
     public String getAction() {
         return action;
     }
@@ -116,7 +126,7 @@ public class ConfigItem {
 
     @Override
     public String toString() {
-        return market + " " + component + " " + subcomponent + " " + action + " " + record + " " + date + " " + id + " " + value + " " + score + "\n"; 
+        return market + " " + component + " " + subcomponent + " " + parameters + " " + action + " " + record + " " + date + " " + id + " " + value + " " + score + "\n"; 
     }
     
     public void save() throws Exception {
@@ -127,6 +137,7 @@ public class ConfigItem {
         config.setDate(TimeUtil.convertDate(getDate()));
         config.setId(getId());
         config.setMarket(getMarket());
+        config.setParameters(getParameters());
         config.setRecord(TimeUtil.convertDate(getRecord()));
         config.setScore(getScore());
         config.setSubcomponent(getSubcomponent());
@@ -154,8 +165,8 @@ public class ConfigItem {
         return configItems;
     }
 
-   public static List<ConfigItem> getAll(String market, String action, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
-       List<Config> configs = Config.getAll(market, action, component, subcomponent, startDate, endDate);
+   public static List<ConfigItem> getAll(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) throws Exception {
+       List<Config> configs = Config.getAll(market, action, component, subcomponent, parameters, startDate, endDate);
        List<ConfigItem> configItems = new ArrayList<>();
        for (Config config : configs) {
            ConfigItem memoryItem = getConfigItem(config);
@@ -173,6 +184,7 @@ public class ConfigItem {
         configItem.setComponent(config.getComponent());
         configItem.setMarket(config.getMarket());
         configItem.setRecord(TimeUtil.convertDate(config.getRecord()));
+        configItem.setParameters(config.getParameters());
         configItem.setScore(config.getScore());
         configItem.setSubcomponent(config.getSubcomponent());
         configItem.setValue(JsonUtil.strip(config.getValue()));

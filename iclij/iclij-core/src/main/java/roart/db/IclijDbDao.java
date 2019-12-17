@@ -51,9 +51,9 @@ public class IclijDbDao {
         return list;
     }
 
-    public static List<ConfigItem> getAllConfigs(String market, String action, String component, String subcomponent, LocalDate startDate, LocalDate endDate) throws Exception {
+    public static List<ConfigItem> getAllConfigs(String market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) throws Exception {
         long time0 = System.currentTimeMillis();
-        List<ConfigItem> list = ConfigItem.getAll(market, action, component, subcomponent, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
+        List<ConfigItem> list = ConfigItem.getAll(market, action, component, subcomponent, parameters, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
         log.info("ConfigItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }

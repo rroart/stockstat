@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractScore {
     protected static Logger log = LoggerFactory.getLogger(AbstractScore.class);
-    public abstract double calculateResult(Map<String, List<Double>> list);
-    public abstract double[] calculate(Map<String, List<Double>> list);
+    public abstract double calculateResult(Map<String, List<Double>> list, Double threshold);
+    public abstract double[] calculate(Map<String, List<Double>> list, Double threshold);
     public abstract String name();
 }

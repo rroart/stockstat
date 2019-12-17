@@ -1,10 +1,20 @@
 package roart.common.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import roart.common.util.JsonUtil;
+
 import java.util.Optional;
 
 public class MyMyConfig extends MyConfig {
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     public MyMyConfig(MyConfig config) {
         setConfigTreeMap(config.getConfigTreeMap());
@@ -806,6 +816,10 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MISCFILTERWEEKEND);
     }
 
+    public String getThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.MISCTHRESHOLD);
+    }
+
     public String getDbSparkMaster() {
         return (String) getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER);
     }
@@ -1006,6 +1020,10 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS);
     }
 
+    public Double getTestIndicatorRecommenderComplexThreshold() {
+        return (Double) getValueOrDefault(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD);
+    }
+
     public Integer getTestIndicatorRecommenderComplexIntervalDays() {
         return (Integer) getValueOrDefault(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXINTERVALDAYS);
     }
@@ -1141,8 +1159,8 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDMLCONFIG);
     }
 
-    public double getMLMACDThreshold() {
-        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDTHRESHOLD);
+    public String getMLMACDThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLMACDTHRESHOLD);
     }
 
     public boolean wantMLRSI() {
@@ -1181,8 +1199,8 @@ public class MyMyConfig extends MyConfig {
         return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSISELLSRSILIMIT);
     }
 
-    public double getMLRSIThreshold() {
-        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSITHRESHOLD);
+    public String getMLRSIThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLRSITHRESHOLD);
     }
 
     public boolean wantMLATR() {
@@ -1212,8 +1230,8 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRSELLLIMIT);
     }
 
-    public double getMLATRThreshold() {
-        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRTHRESHOLD);
+    public String getMLATRThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLATRTHRESHOLD);
     }
 
     public boolean wantMLCCI() {
@@ -1243,8 +1261,8 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCISELLLIMIT);
     }
 
-    public double getMLCCIThreshold() {
-        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCITHRESHOLD);
+    public String getMLCCIThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLCCITHRESHOLD);
     }
 
     public boolean wantMLSTOCH() {
@@ -1274,8 +1292,8 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHSELLLIMIT);
     }
 
-    public double getMLSTOCHThreshold() {
-        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHTHRESHOLD);
+    public String getMLSTOCHThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLSTOCHTHRESHOLD);
     }
 
     public boolean wantAggregatorsIndicatorMACD() {
@@ -1352,8 +1370,8 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
     }
 
-    public double getAggregatorsIndicatorThreshold() {
-        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
+    public String getAggregatorsIndicatorThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
     }
 
     public boolean wantAggregatorsMlmultiML() {
@@ -1374,8 +1392,8 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT);
     }
 
-    public double getMLMULTIThreshold() {
-        return (Double) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
+    public String getMLMULTIThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
     }
 
     public boolean wantAggregatorsMlmultiMACD() {
@@ -1438,6 +1456,31 @@ public class MyMyConfig extends MyConfig {
 
     public String getDatasetMLConfig() {
         return (String) getValueOrDefault(ConfigConstants.DATASETMLCONFIG);
+    }
+
+    public Double getThreshold(String key) {
+        if (key == null) {
+            return 1.0;
+        }
+        String myThreshold = (String) getConfigValueMap().get(key);
+        try {
+            double d = Double.valueOf(myThreshold);
+            log.error("Using old format {}", myThreshold);
+            return d;
+        } catch (Exception e) {            
+        }
+        try {
+            Double[] array = JsonUtil.convert(myThreshold, Double[].class);
+            if (array.length == 1) {
+                return array[0];
+            } else {
+                log.error("Threshold size not 1 {}", array);
+                return 1.0;
+            }
+        } catch (Exception e) {
+            log.error("Could not parse {}", myThreshold);
+            return 1.0;
+        }
     }
 
     public Object getValue(String key) {

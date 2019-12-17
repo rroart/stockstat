@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
@@ -21,30 +22,31 @@ import roart.config.Market;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtilConstants;
 
 public abstract class ComponentMLAggregator extends ComponentML {
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         MLAggregatorData param = new MLAggregatorData(componentparam);
 
         int daysafterzero = getDaysAfterLimit(componentparam);
         param.setFuturedays(daysafterzero);
 
-        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         //Map resultMaps = param.getResultMap();
         //handleMLMeta(param, resultMaps);
         return param;
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, confList, subcomponent);
-        loadme(param, chromosome, market, confList, buy, subcomponent, action);
+        ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, confList, subcomponent, parameters);
+        loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }
 
@@ -89,17 +91,17 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     }
                     boolean increase = false;
                     //System.out.println(okConfMap.keySet());
-                    Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
+                    //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
                     //keyPair = getRealKeys(keyPair, keyset);
                     //System.out.println(okListMap.keySet());
                     if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
                         increase = true;
-                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getConfMap().get(keyPair), profitdata.getInputdata().getListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                     if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
                         increase = false;
-                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getConfMap().get(keyPair), profitdata.getInputdata().getListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                 }                        
@@ -111,7 +113,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
+    public List<MemoryItem> calculateMemory(ComponentData componentparam, Parameters parameters) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
@@ -184,10 +186,11 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 }
                 if (valFuture != null && valNow != null) {
                     //System.out.println("vals " + key + " " + valNow + " " + valFuture);
+                    boolean aboveThreshold = (valFuture / valNow) >= (Double) meta.get(10);
                     total++;
                     if (tfpn.equals(ServiceUtilConstants.TP)) {
                         tpSize++;
-                        if (valFuture > valNow ) {
+                        if (aboveThreshold) {
                             goodTP++;
                             if (returnSize > 1 && tfpnProb != null) {
                                 goodTPprob += tfpnProb;
@@ -196,7 +199,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     }
                     if (tfpn.equals(ServiceUtilConstants.FP)) {
                         fpSize++;
-                        if (valFuture < valNow) {
+                        if (!aboveThreshold) {
                             goodFP++;
                             if (returnSize > 1 && tfpnProb != null) {
                                 goodFPprob += tfpnProb;
@@ -205,7 +208,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     }
                     if (tfpn.equals(ServiceUtilConstants.TN)) {
                         tnSize++;
-                        if (valFuture < valNow) {
+                        if (!aboveThreshold) {
                             goodTN++;
                             if (returnSize > 1 && tfpnProb != null) {
                                 goodTNprob += tfpnProb;
@@ -214,7 +217,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     }
                     if (tfpn.equals(ServiceUtilConstants.FN)) {
                         fnSize++;
-                        if (valFuture > valNow) {
+                        if (aboveThreshold) {
                             goodFN++;
                             if (returnSize > 1 && tfpnProb != null) {
                                 goodFNprob += tfpnProb;
@@ -235,6 +238,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setSubcomponent(meta.get(0) + " " + meta.get(1));
             memory.setDescription(getShort((String) meta.get(0)) + withComma(getShort((String) meta.get(1))) + withComma(meta.get(3)) + withComma(meta.get(4)));
             memory.setTestaccuracy(testaccuracy);
+            memory.setParameters(JsonUtil.convert(parameters));
             //memory.setPositives(goodInc);
             memory.setTp(goodTP);
             memory.setFp(goodFP);
@@ -353,7 +357,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
     
     protected abstract ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent);
+            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent, Parameters parameters);
 
     protected abstract int getDaysAfterLimit(ComponentData componentparam);
     

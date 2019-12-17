@@ -33,7 +33,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     private int listIdx;
     
     public RecommenderChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent);
+        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent, null);
     }
 
     private List<Set<String>> makeSet(List<List<String>> listPerm) {
@@ -45,7 +45,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     }
 
     public RecommenderChromosome(MarketAction action, List<String> defaultConfList, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent);
+        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent, null);
         Set<String> defaultConfSet = new HashSet<>(defaultConfList);
         Set<String> confSet = new HashSet<>(confList);
         Set<String> disableSet = new HashSet<>(defaultConfSet);

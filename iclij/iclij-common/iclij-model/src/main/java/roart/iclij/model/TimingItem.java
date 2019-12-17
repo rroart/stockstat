@@ -24,6 +24,8 @@ public class TimingItem {
     
     private String subcomponent;
     
+    private String parameters;
+    
     private Double mytime;
 
     private Double score;
@@ -96,6 +98,14 @@ public class TimingItem {
         this.subcomponent = subcomponent;
     }
 
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
     public Double getMytime() {
         return mytime;
     }
@@ -134,7 +144,7 @@ public class TimingItem {
 
     @Override
     public String toString() {
-        return market + " " + component + " " + subcomponent + " " + action + " " + record + " " + date + " " + evolve + " " + mytime + " " + score + " " + description + "\n"; 
+        return market + " " + mlmarket + " " + component + " " + subcomponent + " " + parameters + " " + action + " " + record + " " + date + " " + evolve + " " + mytime + " " + score + " " + description + "\n"; 
     }
     
     public void save() throws Exception {
@@ -151,7 +161,8 @@ public class TimingItem {
         timing.setTime(getMytime());
         timing.setScore(getScore());
         timing.setSubcomponent(getSubcomponent());
-        timing.save();
+        timing.setParameters(getParameters());
+       timing.save();
     }
     
     public static List<TimingItem> getAll() throws Exception {
@@ -188,6 +199,7 @@ public class TimingItem {
         timingItem.setMytime(timing.getTime());
         timingItem.setScore(timing.getScore());
         timingItem.setSubcomponent(timing.getSubcomponent());
+        timingItem.setParameters(timing.getParameters());
         return timingItem;
     }
 

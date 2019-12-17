@@ -38,6 +38,7 @@ import roart.iclij.config.MLConfigs;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
 import roart.service.ControlService;
 import roart.service.model.ProfitData;
@@ -255,32 +256,47 @@ public abstract class MarketAction extends Action {
             Component component = entry.getValue();
             boolean evolve = getEvolve(component, param);
 
+            Double[] thresholds = getThresholds(param.getInput().getConfig());
+            Integer[] futuredays = getFuturedays(param.getInput().getConfig());
             List<String> subComponents = component.getSubComponents(market, param, null);
             for(String subComponent : subComponents) {
-                Boolean[] booleans = getBooleans();
-                for (Boolean buy : booleans) {
-                    List<TimingItem> currentTimingFiltered = currentTimings.stream().filter(m -> m != null && componentName.equals(m.getComponent()) && (subComponents == null || subComponent.equals(m.getSubcomponent())) && (buy == null || ((m.getBuy() == null || m.getBuy() == buy)))).collect(Collectors.toList());
-                    if (!currentTimingFiltered.isEmpty()) {
-                        continue;
+                for (Integer aFutureday : futuredays) {
+                    for (Double threshold : thresholds) {
+                        Parameters parameters = new Parameters();
+                        parameters.setThreshold(threshold);
+                        parameters.setFuturedays(aFutureday);
+                        String parameterString = JsonUtil.convert(parameters);
+                        Boolean[] booleans = getBooleans();
+                        for (Boolean buy : booleans) {
+                            List<TimingItem> currentTimingFiltered = currentTimings.stream().filter(m -> m != null 
+                                    && componentName.equals(m.getComponent()) 
+                                    && (subComponents == null || subComponent.equals(m.getSubcomponent())) 
+                                    && (m.getParameters() == null || parameterString.equals(m.getParameters())) 
+                                    && (buy == null || ((m.getBuy() == null || m.getBuy() == buy)))).collect(Collectors.toList());
+                            if (!currentTimingFiltered.isEmpty()) {
+                                continue;
+                            }
+                            //List<TimingItem> timingToDo = new ArrayList<>();
+                            MarketComponentTime marketTime = new MarketComponentTime();
+                            marketTime.market = market;
+                            marketTime.componentName = componentName;
+                            marketTime.component = component;
+                            marketTime.subcomponent = subComponent;
+                            marketTime.parameters = parameters;
+                            //marketTime.timings = timingToDo;
+                            marketTime.buy = buy;
+                            List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true, buy, subComponent, parameters);
+                            if (evolve) {
+                                handleFilterTimings(action, market, marketTime, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate(), buy, timings, subComponent, parameters);               
+                            }
+                            // evolve is not false
+                            if (getName().equals(IclijConstants.FINDPROFIT)) {
+                                List<TimingItem> filterTimings = getMyTimings(timings, marketName, action, componentName, false, buy, subComponent, parameters);
+                                handleFilterTimings(action, market, marketTime, componentName, filterTimings, evolve, param.getInput().getEnddate(), buy, timings, subComponent, parameters);
+                            }
+                            marketTimes.add(marketTime);
+                        }
                     }
-                    //List<TimingItem> timingToDo = new ArrayList<>();
-                    MarketComponentTime marketTime = new MarketComponentTime();
-                    marketTime.market = market;
-                    marketTime.componentName = componentName;
-                    marketTime.component = component;
-                    marketTime.subcomponent = subComponent;
-                    //marketTime.timings = timingToDo;
-                    marketTime.buy = buy;
-                    List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true, buy, subComponent);
-                    if (evolve) {
-                        handleFilterTimings(action, market, marketTime, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate(), buy, timings, subComponent);               
-                    }
-                    // evolve is not false
-                    if (getName().equals(IclijConstants.FINDPROFIT)) {
-                        List<TimingItem> filterTimings = getMyTimings(timings, marketName, action, componentName, false, buy, subComponent);
-                        handleFilterTimings(action, market, marketTime, componentName, filterTimings, evolve, param.getInput().getEnddate(), buy, timings, subComponent);
-                    }
-                    marketTimes.add(marketTime);
                 }
             }
         }
@@ -288,7 +304,7 @@ public abstract class MarketAction extends Action {
     }
 
     private void handleFilterTimings(String action, Market market, MarketComponentTime marketTime,
-            String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date, Boolean buy, List<TimingItem> timings, String subComponent) {
+            String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date, Boolean buy, List<TimingItem> timings, String subComponent, Parameters parameters) {
         if (!filterTimings.isEmpty()) {
             Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
             LocalDate olddate = date.minusDays(((long) AVERAGE_SIZE) * getTime(market));
@@ -307,7 +323,7 @@ public abstract class MarketAction extends Action {
                 log.error("should not be here");
             }
         } else {
-            List<TimingItem> filterTimingsEvolution = getMyTimings(timings, action, component, evolve, buy, subComponent);
+            List<TimingItem> filterTimingsEvolution = getMyTimings(timings, action, component, evolve, buy, subComponent, parameters);
             OptionalDouble average = getAverage(filterTimingsEvolution);
             marketTime.time += average.orElse(0);
             if (!evolve) {
@@ -336,33 +352,37 @@ public abstract class MarketAction extends Action {
         boolean haverun;
         //List<TimingItem> timings;
         Boolean buy;
-        
+        Parameters parameters;
+
         @Override
         public String toString() {
-            return market.getConfig().getMarket() + " " + componentName + " " + subcomponent + " " + buy + " " + time + " " + haverun;
+            String paramString = JsonUtil.convert(parameters);
+            return market.getConfig().getMarket() + " " + componentName + " " + subcomponent + " " + paramString + " " + buy + " " + time + " " + haverun;
         }
     }
     
-    private List<TimingItem> getMyTimings(List<TimingItem> timings, String market, String action, String component, boolean evolve, Boolean buy, String subcomponent) {
+    private List<TimingItem> getMyTimings(List<TimingItem> timings, String market, String action, String component, boolean evolve, Boolean buy, String subcomponent, Parameters parameters) {
         List<TimingItem> filterTimings = new ArrayList<>();
+        String paramString = JsonUtil.convert(parameters);
         for (TimingItem timing : timings) {
             if (buy != null && timing.getBuy() != null && buy != timing.getBuy()) {
                 continue;
             }
-            if (market.equals(timing.getMarket()) && action.equals(timing.getAction()) && component.equals(timing.getComponent()) && subcomponent.equals(timing.getSubcomponent())&& evolve == timing.isEvolve()) {
+            if (market.equals(timing.getMarket()) && action.equals(timing.getAction()) && component.equals(timing.getComponent()) && subcomponent.equals(timing.getSubcomponent()) && evolve == timing.isEvolve() && paramString == timing.getParameters()) {
                 filterTimings.add(timing);
             }
         }
         return filterTimings;
     }
 
-    private List<TimingItem> getMyTimings(List<TimingItem> timings, String action, String component, boolean evolve, Boolean buy, String subcomponent) {
+    private List<TimingItem> getMyTimings(List<TimingItem> timings, String action, String component, boolean evolve, Boolean buy, String subcomponent, Parameters parameters) {
         List<TimingItem> filterTimings = new ArrayList<>();
+        String paramString = JsonUtil.convert(parameters);
         for (TimingItem timing : timings) {
             if (timing.getBuy() != null && buy != timing.getBuy()) {
                 continue;
             }
-            if (action.equals(timing.getAction()) && component.equals(timing.getComponent()) && subcomponent.equals(timing.getSubcomponent()) && evolve == timing.isEvolve()) {
+            if (action.equals(timing.getAction()) && component.equals(timing.getComponent()) && subcomponent.equals(timing.getSubcomponent()) && evolve == timing.isEvolve() && paramString == timing.getParameters()) {
                 filterTimings.add(timing);
             }
         }
@@ -414,7 +434,7 @@ public abstract class MarketAction extends Action {
 
         param.setTimings(new ArrayList<>());
         
-        handleComponent(this, market, profitdata, param, listComponent, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config);
+        handleComponent(this, market, profitdata, param, listComponent, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters);
         
         if (!isDataset()) {
         filterIncDecs(param, market, profitdata, maps, true);
@@ -558,7 +578,7 @@ public abstract class MarketAction extends Action {
         return nameMap;
     }
     
-    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config);
+    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters);
  
     public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days) {
         LocalDate olddate = date.minusDays(days);
@@ -691,6 +711,32 @@ public abstract class MarketAction extends Action {
         map.put(false, "down");
         map.put(true, "up");
         return map;
+    }
+
+    protected abstract String getFuturedays0(IclijConfig conf);
+    
+    public Integer[] getFuturedays(IclijConfig conf) {
+        String thresholdString = getFuturedays0(conf);
+        try {
+            Double.valueOf(thresholdString);
+            log.error("Using old format {}", thresholdString);
+            thresholdString = "[" + thresholdString + "]";
+        } catch (Exception e) {            
+        }
+        return JsonUtil.convert(thresholdString, Integer[].class);
+    }
+
+    public abstract String getThreshold(IclijConfig conf);
+    
+    private Double[] getThresholds(IclijConfig conf) {
+        String thresholdString = getThreshold(conf);
+        try {
+            Double.valueOf(thresholdString);
+            log.error("Using old format {}", thresholdString);
+            thresholdString = "[" + thresholdString + "]";
+        } catch (Exception e) {            
+        }
+        return JsonUtil.convert(thresholdString, Double[].class);
     }
 
 }

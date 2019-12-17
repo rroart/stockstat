@@ -164,7 +164,7 @@ public class MLSTOCH extends IndicatorAggregator {
     }
     
     @Override
-    protected double getAggregatorsThreshold() {
+    protected String getAggregatorsThreshold() {
         return conf.getMLSTOCHThreshold();
     }
     

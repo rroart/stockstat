@@ -7,14 +7,14 @@ import java.util.Map.Entry;
 import roart.evolution.fitness.AbstractScore;
 
 public class SumScore extends AbstractScore {
-    public double calculateResult(Map<String, List<Double>> resultMap) {
+    public double calculateResult(Map<String, List<Double>> resultMap, Double threshold) {
         double result = 0;
-        double[] array = calculate(resultMap);
+        double[] array = calculate(resultMap, threshold);
         result += array[0] / array[1];
         return result;
     }
     
-    public double[] calculate(Map<String, List<Double>> list) {
+    public double[] calculate(Map<String, List<Double>> list, Double threshold) {
         double result = 0;
         for (Entry<String, List<Double>> entry : list.entrySet()) {
             List<Double> resultList = entry.getValue();

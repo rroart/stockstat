@@ -44,6 +44,9 @@ public class Config implements Serializable {
     private String subcomponent;
 
     @Column
+    private String parameters;
+    
+    @Column
     private String id;
 
     @Column(length = 511)
@@ -91,6 +94,14 @@ public class Config implements Serializable {
 
     public void setSubcomponent(String subcomponent) {
         this.subcomponent = subcomponent;
+    }
+
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 
     public String getId() {
@@ -169,7 +180,7 @@ public class Config implements Serializable {
 
     @Transient
     @Transactional
-    public static List<Config> getAll(String market, String action, String component, String subcomponent, Date startDate, Date endDate) throws Exception {
+    public static List<Config> getAll(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) throws Exception {
         List<Config> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
         synchronized (HibernateUtil.class) {
@@ -177,6 +188,9 @@ public class Config implements Serializable {
         String queryString = "from Config where market = :market and action = :action and component = :component";
         if (subcomponent != null) {
             queryString += " and subcomponent = :subcomponent";
+        }
+        if (parameters != null) {
+            queryString += " and parameters = :parameters";
         }
         if (startDate != null) {
             queryString += " and date >= :startdate";
@@ -190,6 +204,9 @@ public class Config implements Serializable {
         query.setParameter("component", component);
         if (subcomponent != null) {
             query.setParameter("subcomponent", subcomponent);
+        }
+        if (parameters != null) {
+            query.setParameter("parameters", parameters);
         }
         if (startDate != null) {
             query.setParameter("startdate", startDate, TemporalType.DATE);

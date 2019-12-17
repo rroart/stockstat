@@ -32,6 +32,7 @@ import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.model.ConfigItem;
+import roart.iclij.model.Parameters;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
@@ -40,7 +41,7 @@ import roart.util.ServiceUtil;
 public abstract class ComponentML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
         Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param, mlmarket);
@@ -57,7 +58,7 @@ public abstract class ComponentML extends Component {
             Map<String, Object> anUpdateMap = new HashMap<>();
             Map<String, Object> aScoreMap = new HashMap<>();
             List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap, aScoreMap);
-            mlSaves(mlConfigMap, param, anUpdateMap, subcomponent);
+            mlSaves(mlConfigMap, param, anUpdateMap, subcomponent, parameters);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
             }
@@ -70,7 +71,7 @@ public abstract class ComponentML extends Component {
         //Map<String, Object> i = setnns(param.getService().conf, param.getInput().getConfig(), mlConfigMap, false);
     }
 
-    private void mlSaves(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
+    private void mlSaves(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, String subcomponent, Parameters parameters) {
         for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = entry.getKey();
             String nnconfigString = (String) entry.getValue();
@@ -127,6 +128,7 @@ public abstract class ComponentML extends Component {
             configItem.setMarket(param.getMarket());
             configItem.setRecord(LocalDate.now());
             configItem.setSubcomponent(subcomponent);
+            configItem.setParameters(JsonUtil.convert(parameters));
             configItem.setValue(nnconfigString);
             try {
                 configItem.save();
@@ -137,12 +139,12 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception {
         Map<String, EvolveMLConfig> mlConfigMap = getMLConfig(market, param, mlmarket);
-        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent, mlmarket, action);
+        return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent, mlmarket, action, parameters);
     }
 
-    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action) throws Exception {
+    protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception {
         Map<String, Object> map = new HashMap<>();
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
             String key = entry.getKey();
@@ -153,7 +155,7 @@ public abstract class ComponentML extends Component {
                 if (mlmarket != null) {
                     marketName = mlmarket;
                 }
-                Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent, action);
+                Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent, action, parameters);
                 map.putAll(configMap);
             }
         }

@@ -1,7 +1,10 @@
 package roart.iclij.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Map.Entry;
@@ -9,6 +12,7 @@ import java.util.Map.Entry;
 import roart.common.config.ConfigTreeMap;
 
 public class IclijConfig {
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     public IclijConfig(IclijConfig config) {
         this.configTreeMap = config.configTreeMap;
@@ -228,6 +232,18 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITPREDICTOREVOLUTIONCONFIG);
     }
 
+    public String getFindProfitFuturedays() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITFUTUREDAYS);
+    }
+
+    public String getFindProfitThreshold() {
+        return (String) getValueOrDefault(IclijConfigConstants.FINDPROFITTHRESHOLD);
+    }
+
+    public double getFindProfitManualThreshold() {
+        return (Double) getValueOrDefault(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD);
+    }
+
     public boolean wantsImproveProfitAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITAUTORUN);
     }
@@ -424,6 +440,14 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG);
     }
 
+    public String getMachineLearningFuturedays() {
+        return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGFUTUREDAYS);
+    }
+
+    public String getMachineLearningThreshold() {
+        return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGTHRESHOLD);
+    }
+
     public boolean wantsMachineLearningPredictor() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGPREDICTOR);
     }
@@ -603,6 +627,14 @@ public class IclijConfig {
 
     public String getEvolvePredictorEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.EVOLVEPREDICTOREVOLUTIONCONFIG);
+    }
+
+    public String getEvolveFuturedays() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVEFUTUREDAYS);
+    }
+
+    public String getEvolveThreshold() {
+        return (String) getValueOrDefault(IclijConfigConstants.EVOLVETHRESHOLD);
     }
 
     public boolean wantDatasetML() {
@@ -851,6 +883,14 @@ public class IclijConfig {
 
     public String getCrosstestPredictorEvolutionConfig() {
         return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTPREDICTOREVOLUTIONCONFIG);
+    }
+
+    public String getCrosstestFuturedays() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTFUTUREDAYS);
+    }
+
+    public String getCrosstestThreshold() {
+        return (String) getValueOrDefault(IclijConfigConstants.CROSSTESTTHRESHOLD);
     }
 
     public Object getValueOrDefault(String key) {

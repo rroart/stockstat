@@ -174,6 +174,7 @@ public class EvolutionService {
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
             Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days) throws Exception {
         TaUtil tu = new TaUtil();
+        double threshold = conf.getTestIndicatorRecommenderComplexThreshold();
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
@@ -186,7 +187,7 @@ public class EvolutionService {
     
             for (int i = 0; i < 2; i++) {
                 List<String> scoreList = recommendList[i];
-                IndicatorChromosome indicatorEval0 = new IndicatorChromosome(conf, scoreList, retObj, true, disableList, new ProportionScore(i == 0), days);
+                IndicatorChromosome indicatorEval0 = new IndicatorChromosome(conf, scoreList, retObj, true, disableList, new ProportionScore(i == 0), days, threshold);
                 indicatorEval0.setAscending(i == 0);
                 
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);

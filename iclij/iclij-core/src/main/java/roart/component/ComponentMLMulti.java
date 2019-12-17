@@ -44,6 +44,7 @@ import roart.evolution.species.Individual;
 import roart.gene.AbstractGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.MLService;
@@ -124,7 +125,7 @@ public abstract class ComponentMLMulti extends ComponentMLAggregator {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
@@ -132,15 +133,15 @@ public abstract class ComponentMLMulti extends ComponentMLAggregator {
         if (gotThree) {
             confList.addAll(getThreeConfList());
         }
-        ConfigMapChromosome chromosome = new MLMultiChromosome(action, param, profitdata, confList, market, positions, PipelineConstants.MLMULTI, buy, subcomponent);
-        loadme(param, chromosome, market, confList, buy, subcomponent, action);
+        ConfigMapChromosome chromosome = new MLMultiChromosome(action, param, profitdata, confList, market, positions, PipelineConstants.MLMULTI, buy, subcomponent, parameters);
+        loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }
 
     @Override
     protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent) {
-        return new MLMultiChromosome(action, param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent);
+            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent, Parameters parameters) {
+        return new MLMultiChromosome(action, param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent, parameters);
     }
 
     @Override
@@ -181,5 +182,15 @@ public abstract class ComponentMLMulti extends ComponentMLAggregator {
         return PipelineConstants.MLMULTI;
     }
 
+    @Override
+    public String getThreshold() {
+        return ConfigConstants.AGGREGATORSMLMULTITHRESHOLD;
+    }
+    
+    @Override
+    public String getFuturedays() {
+        return ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT;
+    }
+    
 }
 

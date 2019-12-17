@@ -25,6 +25,8 @@ public class ResultMeta {
     
     private Double loss;
     
+    private Double threshold;
+    
     public String getMlName() {
         return mlName;
     }
@@ -111,6 +113,14 @@ public class ResultMeta {
 
     public void setLoss(Double loss) {
         this.loss = loss;
+    }
+
+    public Double getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Double threshold) {
+        this.threshold = threshold;
     }
     
 }

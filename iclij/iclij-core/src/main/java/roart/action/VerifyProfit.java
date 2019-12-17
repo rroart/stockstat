@@ -15,7 +15,7 @@ import roart.iclij.model.Trend;
 
 public class VerifyProfit {
 
-    public void doVerify(List<IncDecItem> list, int days, boolean increaseNot, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset) {
+    public void doVerify(List<IncDecItem> list, int days, boolean increaseNot, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold) {
         if (days <= 0) {
             return;
         }
@@ -30,8 +30,8 @@ public class VerifyProfit {
                 Double valFuture = mainList.get(mainList.size() - 1 - startoffset);
                 Double valNow = mainList.get(mainList.size() - 1 - startoffset - days);
                 if (valFuture != null && valNow != null) {
-                    boolean verified = (item.isIncrease() && valFuture > valNow) ||
-                            (!item.isIncrease() && valFuture < valNow);
+                    boolean verified = (item.isIncrease() && (valFuture / valNow > threshold)) ||
+                            (!item.isIncrease() && (valFuture / valNow < threshold));
                     item.setDate(date);
                     item.setVerified(verified);
                     item.setVerificationComment("Change: " + Trend.roundme(valFuture / valNow) + " Old: " + valNow + " New: " + valFuture);

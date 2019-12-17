@@ -9,14 +9,14 @@ import java.util.Map.Entry;
 import roart.evolution.fitness.AbstractScore;
 
 public class IncDecScore extends AbstractScore {
-    public double calculateResult(Map<String, List<Double>> resultMap) {
+    public double calculateResult(Map<String, List<Double>> resultMap, Double threshold) {
         double result = 0;
-        double[] array = calculate(resultMap);
+        double[] array = calculate(resultMap, threshold);
         result += array[0] / array[1];
         return result;
     }
 
-    public double[] calculate(Map<String, List<Double>> resultMap) {
+    public double[] calculate(Map<String, List<Double>> resultMap, Double threshold) {
         int div = 4;
         double goodBuy = 0;
         long totalBuy = 0;

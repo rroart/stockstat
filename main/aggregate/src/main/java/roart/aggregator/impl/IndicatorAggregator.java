@@ -23,11 +23,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.aggregator.impl.IndicatorAggregator.AfterBeforeLimit;
 import roart.aggregator.impl.IndicatorAggregator.SubType;
 import roart.category.AbstractCategory;
+import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
@@ -35,6 +37,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
+import roart.common.util.JsonUtil;
 import roart.executor.MyExecutors;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
@@ -181,14 +184,22 @@ public abstract class IndicatorAggregator extends Aggregator {
         log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
         log.debug("listmap {} {}", listMap.size(), listMap.keySet());
+
+        //Map<Double, Pair> thresholdMap = new HashMap<>();
+        Map<Double, Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>>> mapResult0 = new HashMap<>();
+        Double[] thresholds = getThresholds();
+        for (Double threshold : thresholds) {
+        
         // a map from subtype h/m + maptype com/neg/pos to a map<values, label>
         Map<SubType, MLMeta> metaMap = new HashMap<>();
-        Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = createPosNegMaps(conf, metaMap);
-        doMergeLearn(conf, mapMap, cat, afterbefore, metaMap);
+        Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = createPosNegMaps(conf, metaMap, threshold);
+        doMergeLearn(conf, mapMap, cat, afterbefore, metaMap, threshold);
+        
         usedSubTypes = new ArrayList<>(mapMap.keySet());
-        fieldSize = fieldSize();
+        fieldSize = fieldSize() * thresholds.length;
         // map from h/m to model to posnegcom map<model, results>
         Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = new HashMap<>();
+        mapResult0.put(threshold, mapResult);
         log.debug("Period {} {}", title, mapMap.keySet());
         String nnconfigString = getNeuralNetConfig();
         NeuralNetConfigs nnConfigs = null;
@@ -200,16 +211,33 @@ public abstract class IndicatorAggregator extends Aggregator {
             Map<Double, String> labelMapShort = createLabelMapShort();
             boolean multi = neuralnetcommand.isMldynamic() || (neuralnetcommand.isMlclassify() && !neuralnetcommand.isMllearn());
             if (multi /*conf.wantMLMP()*/) {
-                doLearnTestClassifyFuture(nnConfigs, conf, mapMap, mapResult, labelMapShort, metaMap, neuralnetcommand);
+                doLearnTestClassifyFuture(nnConfigs, conf, mapMap, mapResult, labelMapShort, metaMap, neuralnetcommand, threshold);
             } else {
-                doLearnTestClassify(nnConfigs, conf, mapMap, mapResult, labelMapShort, metaMap, neuralnetcommand);
+                doLearnTestClassify(nnConfigs, conf, mapMap, mapResult, labelMapShort, metaMap, neuralnetcommand, threshold);
             }
-        }
-        createResultMap(conf, mapResult);
-        log.info("time1 {}", (System.currentTimeMillis() - time1));
+        }        
         handleOtherStats(conf, mapMap);
+        }
+        log.info("time1 {}", (System.currentTimeMillis() - time1));
+        createResultMap(conf, mapResult0);
         handleSpentTime(conf);
 
+    }
+
+    private Double[] getThresholds() {
+        boolean gui = conf.getConfigValueMap().get(ConfigConstants.MISCTHRESHOLD) != null;
+        log.info("GUI thresholds {}", gui);
+        String thresholdString = getAggregatorsThreshold();
+        if (gui) {
+            thresholdString = conf.getThreshold();
+        }
+        try {
+            Double.valueOf(thresholdString);
+            log.error("Using old format {}", thresholdString);
+            thresholdString = "[" + thresholdString + "]";
+        } catch (Exception e) {            
+        }
+        return JsonUtil.convert(thresholdString, Double[].class);
     }
 
     protected boolean anythingHere(Map<String, Double[][]> listMap2) {
@@ -271,13 +299,16 @@ public abstract class IndicatorAggregator extends Aggregator {
     public void addResultItemTitle(ResultItemTableRow headrow) {
         int retindex = 0;
         Object[] objs = new Object[fieldSize];
-        getTitles(retindex, objs);
+        Double[] thresholds = getThresholds();
+        for (Double threshold : thresholds) {
+        getTitles(retindex, objs, threshold);
+        }
         headrow.addarr(objs);
     }
 
     private void doLearnTestClassify(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
-            Map<Double, String> labelMapShort, Map<SubType, MLMeta> metaMap, NeuralNetCommand neuralnetcommand) {
+            Map<Double, String> labelMapShort, Map<SubType, MLMeta> metaMap, NeuralNetCommand neuralnetcommand, Double threshold) {
         List<SubType> subTypes = usedSubTypes();
         AfterBeforeLimit afterbefore = getAfterBefore();
         // map from h/m + posnegcom to map<model, results>
@@ -334,7 +365,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             List<Triple<String, Object, Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
-                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType, mlmeta);
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             //indicators.add(this);
@@ -344,13 +375,14 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 continue;
                             }
                             // make OO of this, create object
-                            Object[] meta = new Object[10];
+                            Object[] meta = new Object[11];
                             meta[0] = mldao.getName();
                             meta[1] = model.getName();
                             meta[2] = model.getReturnSize();
                             meta[3] = subType.getType();
                             meta[4] = mapType;
                             meta[5] = countMap;
+                            meta[6] = threshold;
                             resultMetaArray.add(meta);
                             ResultMeta resultMeta = new ResultMeta();
                             resultMeta.setMlName(mldao.getName());
@@ -359,6 +391,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setSubType(subType.getType());
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
+                            resultMeta.setThreshold(threshold);
                             getResultMetas().add(resultMeta);
                             accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
                             lossMap.put(mldao.getName() + model.getName(), result.getLoss());
@@ -420,7 +453,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private void doLearnTestClassifyFuture(NeuralNetConfigs nnConfigs, MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult,
-            Map<Double, String> labelMapShort, Map<SubType, MLMeta> metaMap, NeuralNetCommand neuralnetcommand) {
+            Map<Double, String> labelMapShort, Map<SubType, MLMeta> metaMap, NeuralNetCommand neuralnetcommand, Double threshold) {
         List<SubType> subTypes = usedSubTypes();
         AfterBeforeLimit afterbefore = getAfterBefore();
         // map from h/m + posnegcom to map<model, results>
@@ -483,7 +516,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             List<Triple<String, Object, Double>> classifyMLMap = transformLearnClassifyMap(classifyMap, false, mlmeta, model);
                             int size = getValidateSize(learnMLMap, mlmeta);
                             List<AbstractIndicator> indicators = new ArrayList<>();
-                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType, mlmeta);
+                            String filename = getFilename(mldao, model, "" + size, "" + outcomes, conf.getMarket(), indicators, subType.getType(), mapType, mlmeta, threshold);
                             String path = model.getPath();
                             boolean mldynamic = conf.wantMLDynamic();
                             Callable callable = new MLClassifyLearnTestPredictCallable(nnConfigs, mldao, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
@@ -506,13 +539,14 @@ public abstract class IndicatorAggregator extends Aggregator {
                     continue;
                 }
 		// make OO of this, create object
-		Object[] meta = new Object[10];
+		Object[] meta = new Object[11];
 		meta[0] = mldao.getName();
 		meta[1] = model.getName();
 		meta[2] = model.getReturnSize();
 		meta[3] = subType.getType();
 		meta[4] = mapType;
                 meta[5] = countMap;
+                meta[10] = threshold;
 		resultMetaArray.add(meta);
 		ResultMeta resultMeta = new ResultMeta();
 		resultMeta.setMlName(mldao.getName());
@@ -521,6 +555,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 		resultMeta.setSubType(subType.getType());
 		resultMeta.setSubSubType(mapType);
 		resultMeta.setLearnMap(countMap);
+		resultMeta.setThreshold(threshold);
 		getResultMetas().add(resultMeta);
                             
                 Map<String, Double[]> classifyResult = result.getCatMap();
@@ -620,7 +655,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private void createResultMap(MyMyConfig conf,
-            Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult) {
+            Map<Double, Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>>> mapResult0) {
         for (String id : listMap.keySet()) {
             Object[] fields = new Object[fieldSize];
             resultMap.put(id, fields);
@@ -631,7 +666,10 @@ public abstract class IndicatorAggregator extends Aggregator {
                 Map<Double, String> labelMapShort2 = createLabelMapShort();
                 //int momidx = 6;
                 Double[] type;
-                List<SubType> subTypes2 = usedSubTypes();
+                Double[] thresholds = getThresholds();
+                for (Double threshold : thresholds) {
+                Map<SubType, Map<MLClassifyModel, Map<String, Map<String, Double[]>>>> mapResult = mapResult0.get(threshold);
+                List<SubType> subTypes2 = usedSubTypes();      
                 for (SubType subType : subTypes2) {
                     Map<MLClassifyModel, Map<String, Map<String, Double[]>>> mapResult1 = mapResult.get(subType);
                     if (mapResult1 == null) {
@@ -678,6 +716,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             //}
                         }   
                     }
+                }
                 }
             }
             //log.debug("ri" + retindex);
@@ -1012,7 +1051,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private void getPosNegMap3(Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap, SubType subType, String commonType, String posnegType , String id,
             double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
-            Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore) {
+            Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore, Double threshold) {
         //boolean endOnly = subType.filters[0].limit == subType.filters[1].limit;
         //Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, afterbefore.before, afterbefore.after, listsize, endOnly);
         Object[] objs = subType.taMap.get(id);
@@ -1032,7 +1071,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             //log.info("g3 {}", Arrays.toString(truncArray3));
 
             List<Triple<Integer, Integer, String>> triples = getRangeLabel(list, listsize, labels, startlabels, afterbefore,
-                    start, end);
+                    start, end, threshold);
             for (Triple<Integer, Integer, String> triple : triples) {
                 start = (int) triple.getLeft();
                 end = (int) triple.getMiddle();
@@ -1074,7 +1113,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             SubType subType, String commonType, String posnegType, String id, double[] list,
             Map<String, Double> labelMap2, double[][] arrays, int listsize, Map<Integer, Integer> posneg, String[] labels,
-            Object object, AfterBeforeLimit afterbefore, SubType[] subs) {
+            Object object, AfterBeforeLimit afterbefore, SubType[] subs, Double threshold) {
         Object[] objs = subType.taMap.get(id);
         int begOfArray = (int) objs[subType.range[0]];
         int endOfArray = (int) objs[subType.range[1]];
@@ -1093,7 +1132,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             //log.info("g3 {}", Arrays.toString(truncArray3));
 
             List<Triple<Integer, Integer, String>> triples = getRangeLabel(list, listsize, labels, null, afterbefore,
-                    start, end);
+                    start, end, threshold);
             out:
             for (Triple<Integer, Integer, String> triple : triples) {
                 start = (int) triple.getLeft();
@@ -1144,7 +1183,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private List<Triple<Integer, Integer, String>> getRangeLabel(double[] list, int listsize, String[] labels, String[] startlabels,
-            AfterBeforeLimit afterbefore, boolean endOnly, int start, int end) {
+            AfterBeforeLimit afterbefore, boolean endOnly, int start, int end, Double threshold) {
         String textlabel = null;
         List<Triple<Integer, Integer, String>> triples = new ArrayList<>();
         if (end + afterbefore.after < listsize) {
@@ -1157,7 +1196,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 }
             }
             double change = list[myend + afterbefore.after] / list[myend];
-            if (change < getAggregatorsThreshold()) {
+            if (change < threshold) {
                 textlabel = labels[0];
             } else {
                 textlabel = labels[1];
@@ -1183,7 +1222,7 @@ public abstract class IndicatorAggregator extends Aggregator {
     }
 
     private List<Triple<Integer, Integer, String>> getRangeLabel(double[] list, int listsize, String[] labels, String[] startlabels,
-            AfterBeforeLimit afterbefore, int start, int end) {
+            AfterBeforeLimit afterbefore, int start, int end, Double threshold) {
         String textlabel = null;
         List<Triple<Integer, Integer, String>> triples = new ArrayList<>();
         if (end == listsize - 1) {
@@ -1198,7 +1237,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
             if (end + afterbefore.after < listsize) {
                 double change = list[myend + afterbefore.after] / list[myend];
-                if (change < getAggregatorsThreshold()) {
+                if (change < threshold) {
                     textlabel = labels[0];
                 } else {
                     textlabel = labels[1];
@@ -1226,7 +1265,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return triples;
     }
 
-    protected abstract double getAggregatorsThreshold();
+    protected abstract String getAggregatorsThreshold();
 
     /**
      * 
@@ -1244,12 +1283,13 @@ public abstract class IndicatorAggregator extends Aggregator {
      * @param afterbefore
      * 
      * returns 
+     * @param threshold TODO
      * 
      */
 
     private void getPosNegMap(Map<Pair<SubType, String>, Map<Pair<Integer, Integer>, Double>> mapMap, SubType subType, String commonType, String posnegType , String id,
             double[] list, Map<String, Double> labelMap2, double[] array, int listsize,
-            Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore) {
+            Map<Integer, Integer> posneg, String[] labels, String[] startlabels, AfterBeforeLimit afterbefore, Double threshold) {
         //Map<Integer, Integer> newPosNeg = ArraysUtil.getAcceptedRanges(posneg, afterbefore.after, listsize);
         boolean endOnly = true; // subType.filters[0].limit == subType.filters[1].limit;
         for (Entry<Integer, Integer> entry : posneg.entrySet()) {
@@ -1257,7 +1297,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             int end = entry.getValue();
             String textlabel;
             List<Triple<Integer, Integer, String>> triples = getRangeLabel(list, listsize, labels, startlabels, afterbefore,
-                    start, end);
+                    start, end, threshold);
             for (Triple triple : triples) {
                 start = (int) triple.getLeft();
                 end = (int) triple.getMiddle();
@@ -1283,6 +1323,7 @@ public abstract class IndicatorAggregator extends Aggregator {
      * 
      * @param conf
      * @param metaMap 
+     * @param threshold TODO
      * @param range
      * @param afterbefore
      * @param objectMaps
@@ -1297,7 +1338,7 @@ public abstract class IndicatorAggregator extends Aggregator {
      * 
      */
 
-    private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(MyMyConfig conf, Map<SubType, MLMeta> metaMap) {
+    private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(MyMyConfig conf, Map<SubType, MLMeta> metaMap, Double threshold) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
         for (String id : getListMap().keySet()) {
 
@@ -1354,7 +1395,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     for (int i = 0; i < posneg.length; i++) {
                         Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit);
                         // instead of posneg, take from filter
-                        getPosNegMap3(mapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, anArray, trunclist.length, map[i], subType.filters[i].texts, null, subType.afterbefore);
+                        getPosNegMap3(mapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, anArray, trunclist.length, map[i], subType.filters[i].texts, null, subType.afterbefore, threshold);
                     }
                 }
             }
@@ -1410,7 +1451,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private void doMergeLearn(MyMyConfig conf, Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             AbstractCategory cat,
-            AfterBeforeLimit afterbefore, Map<SubType, MLMeta> metaMap) {
+            AfterBeforeLimit afterbefore, Map<SubType, MLMeta> metaMap, Double threshold) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> newMapMap = new HashMap<>();
         Map<String, Double> labelMap2 = createShortLabelMap2();
         List<SubType> subTypes = getWantedSubTypes(cat, afterbefore);
@@ -1559,7 +1600,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                         //Map<Integer, Integer>[] map = rangeMap.get(i);
                         // instead of posneg, take from filter                  
                         try {
-                            getPosNegMap4(newMapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, arrays, trunclist.length, map[i], subType.filters[i].texts, null, mergeSubType.afterbefore, subs);
+                            getPosNegMap4(newMapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, arrays, trunclist.length, map[i], subType.filters[i].texts, null, mergeSubType.afterbefore, subs, threshold);
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         }
@@ -1596,7 +1637,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         return mapMap.computeIfAbsent(key, k -> new ArrayList<>());
     }
 
-    private int getTitles(int retindex, Object[] objs) {
+    private int getTitles(int retindex, Object[] objs, Double threshold) {
         // make OO of this
         List<SubType> subTypes = usedSubTypes();
         if (subTypes == null || subTypes.isEmpty()) {
@@ -1622,7 +1663,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                         String merge = subType.isMerge ? "MRG " : "";
                         objs[retindex++] = title + " " + merge + subType.getName() + Constants.WEBBR +  subType.getType() + model.getShortName() + mapType + " " + val;
                         if (model.getReturnSize() > 1) {
-                            objs[retindex++] = title + " " + merge + subType.getName() + Constants.WEBBR +  subType.getType() + model.getShortName() + mapType + " prob ";
+                            objs[retindex++] = title + " " + merge + subType.getName() + " " + threshold + Constants.WEBBR +  subType.getType() + model.getShortName() + mapType + " prob ";
                         }
                         //retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
                     }
@@ -1787,11 +1828,11 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     public abstract String getFilenamePart();
     
-    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators, String subType, String mapType, MLMeta mlmeta) {
+    public String getFilename(MLClassifyDao dao, MLClassifyModel model, String in, String out, String market, List<AbstractIndicator> indicators, String subType, String mapType, MLMeta mlmeta, Double threshold) {
         String testmarket = conf.getMLmarket();
         if (testmarket != null) {
             market = testmarket;
         }
-        return market + "_" + getName() + "_" + dao.getName() + "_" + model.getName() + "_" + getFilenamePart() + getAggregatorsThreshold() + "_" + subType + "_" + mapType + "_" + mlmeta.dimString() + in + "_" + out;
+        return market + "_" + getName() + "_" + dao.getName() + "_" + model.getName() + "_" + getFilenamePart() + threshold + "_" + subType + "_" + mapType + "_" + mlmeta.dimString() + in + "_" + out;
     }
 }

@@ -56,7 +56,9 @@ public class IndicatorChromosome extends AbstractChromosome {
     
     private int listlen;
     
-    public IndicatorChromosome(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil, int listlen) {
+    private double threshold;
+    
+    public IndicatorChromosome(MyMyConfig conf, List<String> keys, Object[] retObj, boolean b, List<String> disableList, AbstractScore evalUtil, int listlen, Double threshold) {
         this.conf = conf.copy();
         setKeys(keys);
         this.retObj = retObj;
@@ -64,6 +66,7 @@ public class IndicatorChromosome extends AbstractChromosome {
         this.disableList = disableList;
         this.evalUtil = evalUtil;
         this.listlen = listlen;
+        this.threshold = threshold;
     }
 
     public MyMyConfig getConf() {
@@ -164,7 +167,7 @@ public class IndicatorChromosome extends AbstractChromosome {
             resultList.add(change);
             resultMap.put(id, resultList);
         }
-        double finalRecommend = evalUtil.calculateResult(resultMap);
+        double finalRecommend = evalUtil.calculateResult(resultMap, threshold);
         //finalRecommend *= 0.1;
         //double reco = count * (1 - Math.abs(finalRecommend-count)/Math.max(Math.abs(finalRecommend), count));
         log.debug("Recommend {}", finalRecommend);
@@ -292,7 +295,7 @@ public class IndicatorChromosome extends AbstractChromosome {
 
     @Override
     public AbstractChromosome copy() {
-        AbstractChromosome newEval = new IndicatorChromosome(new MyMyConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil, listlen);
+        AbstractChromosome newEval = new IndicatorChromosome(new MyMyConfig(conf), new ArrayList<String>(keys), retObj, useMax, disableList, evalUtil, listlen, threshold);
         return newEval;
     }
 

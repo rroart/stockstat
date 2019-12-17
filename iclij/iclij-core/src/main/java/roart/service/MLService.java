@@ -62,7 +62,7 @@ public class MLService {
         Component component = new FindProfitComponentMLMACD();
         ComponentData componentData = component.handle(new FindProfitAction(), market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
-        return component.calculateMemory(componentData);
+        return component.calculateMemory(componentData, null);
 
     }
     
@@ -91,7 +91,7 @@ public class MLService {
         Component component = new FindProfitComponentMLIndicator();
         ComponentData componentData = component.handle(new FindProfitAction(), market, componentparam, profitdata, new ArrayList<>(), false, new HashMap<>());
         componentData.setUsedsec(time0);
-        return component.calculateMemory(componentData);
+        return component.calculateMemory(componentData, null);
     }
 
 }

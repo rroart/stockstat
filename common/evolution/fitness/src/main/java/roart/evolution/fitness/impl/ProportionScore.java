@@ -19,14 +19,15 @@ public class ProportionScore extends AbstractScore {
         this.incdec = incdec;
     }
     
-    public double calculateResult(Map<String, List<Double>> resultMap) {
+    public double calculateResult(Map<String, List<Double>> resultMap, Double threshold) {
         double result = 0;
-        double[] array = calculate(resultMap);
+        double[] array = calculate(resultMap, threshold);
         result += array[0] / array[1];
         return result;
     }
 
-    public double[] calculate(Map<String, List<Double>> resultMap) {
+    @Override
+    public double[] calculate(Map<String, List<Double>> resultMap, Double threshold) {
         double goodBuy = 0;
         long totalBuy = 0;
         List<Double> scoreSet = resultMap.values().stream().map(e -> e.get(0)).collect(Collectors.toList());
@@ -66,12 +67,12 @@ public class ProportionScore extends AbstractScore {
                     double confidence = 1 - Math.abs((score - scoreMin)/ diffScore - (change - minChange) / diffChange) ;
                     goodBuy += confidence;
                 } else {
-                    if (incdec && change > 1) {
+                    if (incdec && change > threshold) {
                         totalBuy++;
                         double confidence = 1 - Math.abs((score - scoreMin)/ diffScore - (change - minChange) / diffChange) ;
                         goodBuy += confidence;                        
                     }
-                    if (!incdec && change < 1) {
+                    if (!incdec && change < threshold) {
                         totalBuy++;
                         double confidence = 1 - Math.abs((score - scoreMin)/ diffScore - (change - minChange) / diffChange) ;
                         goodBuy += confidence;                        

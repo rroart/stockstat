@@ -30,6 +30,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.config.IclijConfig;
 import roart.service.ControlService;
@@ -45,29 +46,68 @@ public class FindProfitAction extends MarketAction {
     protected ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
         Map<Pair<String, Integer>, List<MemoryItem>> okListMap = new HashMap<>();
         Map<Pair<String, Integer>, Double> okConfMap = new HashMap<>();
+        Map<Pair<String, Integer>, List<MemoryItem>> aboveOkListMap = new HashMap<>();
+        Map<Pair<String, Integer>, Double> aboveOkConfMap = new HashMap<>();
+        Map<Pair<String, Integer>, List<MemoryItem>> belowOkListMap = new HashMap<>();
+        Map<Pair<String, Integer>, Double> belowOkConfMap = new HashMap<>();
         for(Entry<Pair<String, Integer>, List<MemoryItem>> entry : listMap.entrySet()) {
             Pair<String, Integer> keys = entry.getKey();
             List<MemoryItem> memoryList = entry.getValue();
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
             confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
-            Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
-            if (!minOpt.isPresent()) {
-                continue;
+            List<Double> aboveConfidenceList = new ArrayList<>();
+            List<Double> belowConfidenceList = new ArrayList<>();
+            for (MemoryItem memory : memoryList) {
+                Double tpConf = memory.getTpConf();
+                Double tnConf = memory.getTnConf();
+                Double fpConf = memory.getFpConf();
+                Double fnConf = memory.getFnConf();
+                Long tpSize = memory.getTpSize();
+                Long tnSize = memory.getTnSize();
+                Long fpSize = memory.getFpSize();
+                Long fnSize = memory.getFnSize();
+                Double goodTp = tpConf != null ? tpConf * tpSize : 0;
+                Double goodTn = tnConf != null ? tnConf * tnSize : 0;
+                Double goodFp = fpConf != null ? fpConf * fpSize : 0;
+                Double goodFn = fnConf != null ? fnConf * fnSize : 0;
+                Double above = goodTp + goodFn;
+                Double below = goodTn + goodFp;
+                Double aboveConfidence = above / (tpSize + fnSize);
+                Double belowConfidence = below / (tnSize + fpSize);
+                aboveConfidenceList.add(aboveConfidence);
+                belowConfidenceList.add(belowConfidence);
             }
+            Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
+            Optional<Double> aboveMinOpt = aboveConfidenceList.parallelStream().reduce(Double::min);
+            Optional<Double> belowMinOpt = belowConfidenceList.parallelStream().reduce(Double::min);
+            handleMin(market, okListMap, okConfMap, keys, memoryList, minOpt);
+            handleMin(market, aboveOkListMap, aboveOkConfMap, keys, memoryList, aboveMinOpt);
+            handleMin(market, belowOkListMap, belowOkConfMap, keys, memoryList, belowMinOpt);
+        }
+        ProfitInputData input = new ProfitInputData();
+        input.setConfMap(okConfMap);
+        input.setListMap(okListMap);
+        input.setAboveConfMap(aboveOkConfMap);
+        input.setAboveListMap(aboveOkListMap);
+        input.setBelowConfMap(belowOkConfMap);
+        input.setBelowListMap(belowOkListMap);
+        return input;
+    }
+
+    private void handleMin(Market market, Map<Pair<String, Integer>, List<MemoryItem>> okListMap,
+            Map<Pair<String, Integer>, Double> okConfMap, Pair<String, Integer> keys, List<MemoryItem> memoryList,
+            Optional<Double> minOpt) {
+        if (minOpt.isPresent()) {
             Double min = minOpt.get();
             if (min >= market.getFilter().getConfidence()) {
                 okListMap.put(keys, memoryList);
                 okConfMap.put(keys, min);
             }
         }
-        ProfitInputData input = new ProfitInputData();
-        input.setConfMap(okConfMap);
-        input.setListMap(okListMap);
-        return input;
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters) {
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             String componentName = entry.getKey();
             Component component = componentMap.get(componentName);
@@ -84,8 +124,15 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, config.wantsFindProfitMLDynamic());
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
+
+            String key = component.getThreshold();
+            aMap.put(key, "[" + parameters.getThreshold() + "]");
+            String key2 = component.getFuturedays();
+            aMap.put(key2, parameters.getFuturedays());
             
-            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null);
+            aMap.put(ConfigConstants.MISCTHRESHOLD, null);
+            
+            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters);
             component.calculateIncDec(componentData, profitdata, positions);
             if (param.getInput().isDoSave()) {
                 IncDecItem myitem = null;
@@ -130,13 +177,19 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, config.wantsFindProfitMLDynamic());
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
-            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, aMap, marketTime.subcomponent, null);
+
+            String key = component.getThreshold();
+            aMap.put(key, "[" + param.getInput().getConfig().getFindProfitThreshold() + "]");
+            String key2 = component.getFuturedays();
+            aMap.put(key2, "[" + param.getInput().getConfig().getFindProfitFuturedays() + "]");
+                        
+            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, aMap, marketTime.subcomponent, null, marketTime.parameters);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
             try {
-                memories = component.calculateMemory(componentData);
+                memories = component.calculateMemory(componentData, marketTime.parameters);
                 allMemories.addAll(memories);
            } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -146,7 +199,7 @@ public class FindProfitAction extends MarketAction {
     }
 
     public void getVerifyProfit(int days, LocalDate date, ControlService srv,
-            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset) {
+            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold) {
         log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
@@ -160,9 +213,9 @@ public class FindProfitAction extends MarketAction {
         //Set<String> j2 = resultMaps.get("" + category).keySet();
     
         VerifyProfit verify = new VerifyProfit();
-        verify.doVerify(listInc, days, true, categoryValueMap, oldDate, startoffset);
-        verify.doVerify(listDec, days, false, categoryValueMap, oldDate, startoffset);
-        verify.doVerify(listIncDec, days, false, categoryValueMap, oldDate, startoffset);
+        verify.doVerify(listInc, days, true, categoryValueMap, oldDate, startoffset, threshold);
+        verify.doVerify(listDec, days, false, categoryValueMap, oldDate, startoffset, threshold);
+        verify.doVerify(listIncDec, days, false, categoryValueMap, oldDate, startoffset, threshold);
         //return verify.getTrend(days, categoryValueMap);
     }
 
@@ -223,7 +276,7 @@ public class FindProfitAction extends MarketAction {
     
     @Override
     public Boolean[] getBooleans() {
-        return new Boolean[] { null };
+        return new Boolean[] { true, false };
     }
     
     @Override
@@ -264,6 +317,16 @@ public class FindProfitAction extends MarketAction {
     @Override
     public int getPriority(IclijConfig srv) {
         return getPriority(srv, IclijConfigConstants.FINDPROFIT);
+    }
+
+    @Override
+    protected String getFuturedays0(IclijConfig conf) {
+        return conf.getFindProfitFuturedays();
+    }
+
+    @Override
+    public String getThreshold(IclijConfig conf) {
+        return conf.getFindProfitThreshold();
     }
 
 }

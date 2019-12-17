@@ -44,7 +44,7 @@ public class MemoryItem {
     
     private Long size;
     
-    private Double threshold;
+    private String parameters;
     
     private Long tp;
     
@@ -114,8 +114,8 @@ public class MemoryItem {
         if (testaccuracy != null) {
             ret += "Test accuracy " + testaccuracy + "\n";
         }
-        if (threshold != null) {
-            ret += "Threshold " + threshold + "\n";
+        if (parameters != null) {
+            ret += "Threshold " + parameters + "\n";
         }
         ret += "Confidence " + nullToEmpty(confidence) + " (positives/size : " + positives + "/" + size + ")\n";
         if (learnConfidence != null) {
@@ -288,12 +288,12 @@ public class MemoryItem {
         this.size = size;
     }
     
-    public Double getThreshold() {
-        return threshold;
+    public String getParameters() {
+        return parameters;
     }
     
-    public void setThreshold(Double threshold) {
-        this.threshold = threshold;
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
     
     public Long getTp() {
@@ -492,7 +492,7 @@ public class MemoryItem {
         memory.setSize(getSize());
         memory.setSubcomponent(getSubcomponent());
         memory.setTestaccuracy(getTestaccuracy());
-        memory.setThreshold(getThreshold());
+        memory.setParameters(getParameters());
         memory.setTn(getTn());
         memory.setTnConf(getTnConf());
         memory.setTnProb(getTnProb());
@@ -555,7 +555,7 @@ public class MemoryItem {
         memoryItem.setSize(memory.getSize());
         memoryItem.setSubcomponent(memory.getSubcomponent());
         memoryItem.setTestaccuracy(memory.getTestaccuracy());
-        memoryItem.setThreshold(memory.getThreshold());
+        memoryItem.setParameters(memory.getParameters());
         memoryItem.setTn(memory.getTn());
         memoryItem.setTnConf(memory.getTnConf());
         memoryItem.setTnProb(memory.getTnProb());

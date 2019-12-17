@@ -37,6 +37,7 @@ import roart.iclij.config.IclijConfig;
 import roart.common.config.MyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentMLMACD;
@@ -52,6 +53,7 @@ import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
 import roart.iclij.model.Trend;
 import roart.iclij.service.IclijServiceList;
@@ -294,7 +296,7 @@ public class ServiceUtil {
                 for (Component component : componentMap.values()) {
                     List<String> subcomponents = component.getSubComponents(market, param, null);
                     for (String subcomponent : subcomponents) {
-                        Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), action.getName(), component.getPipeline(), false, bool, subcomponent, action);
+                        Map<String, Object> anUpdateMap = loadConfig(param, market, market.getConfig().getMarket(), action.getName(), component.getPipeline(), false, bool, subcomponent, action, null);
                         updateMarketMap.get(market.getConfig().getMarket() + " " + booleanTexts.get(bool)).putAll(anUpdateMap);
                         updateMap.putAll(anUpdateMap);
                     }
@@ -643,7 +645,7 @@ public class ServiceUtil {
             } catch (ParseException e) {
                 log.error(Constants.EXCEPTION, e);
             }            
-            findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, listIncDec, startoffset);
+            findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold());
             /*
             List<MapList> inc = new ArrayList<>();
             List<MapList> dec = new ArrayList<>();
@@ -1093,11 +1095,11 @@ public class ServiceUtil {
         return allMemoryItems;
     }
 
-    public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve, Boolean buy, String subcomponent, MarketAction marketaction) throws Exception {
+    public static Map<String, Object> loadConfig(ComponentData param, Market market, String marketName, String action, String component, boolean evolve, Boolean buy, String subcomponent, MarketAction marketaction, Parameters parameters) throws Exception {
         LocalDate date = param.getInput().getEnddate();
         LocalDate olddate = date.minusDays(2 * marketaction.getTime(market));
         List<ConfigItem> filterConfigs = new ArrayList<>();
-        List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, olddate, date);
+        List<ConfigItem> configs = IclijDbDao.getAllConfigs(market.getConfig().getMarket(), action, component, subcomponent, JsonUtil.convert(parameters), olddate, date);
         for (ConfigItem config : configs) {
             if (buy != null && config.getBuy() != null && buy != config.getBuy()) {
                 continue;

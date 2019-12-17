@@ -14,6 +14,7 @@ import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;
 
@@ -31,13 +32,13 @@ public class DatasetComponent extends ComponentML {
 
     @Override
     public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata,
-            List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
+            List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         DatasetData param = new DatasetData(componentparam);
 
         int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
         param.setFuturedays(futuredays);
 
-        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         //Map resultMaps = param.getResultMap();
         //handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
@@ -46,7 +47,7 @@ public class DatasetComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, String subcomponent) {
+            List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
         return null;
     }
 
@@ -70,7 +71,7 @@ public class DatasetComponent extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData param) throws Exception {
+    public List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception {
         return null;
     }
 
@@ -87,6 +88,16 @@ public class DatasetComponent extends ComponentML {
     @Override
     public int getPriority(IclijConfig srv) {
         return 0;
+    }
+
+    @Override
+    public String getThreshold() {
+        return null;
+    }
+
+    @Override
+    public String getFuturedays() {
+        return null;
     }
 
 }

@@ -21,6 +21,7 @@ import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.model.ConfigItem;
+import roart.iclij.model.Parameters;
 import roart.result.model.ResultItem;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
@@ -28,7 +29,7 @@ import roart.util.ServiceUtil;
 public abstract class ComponentNoML extends Component {
 
     @Override
-    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket) {
+    protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters) {
         if (evolve) {
             String confStr = param.getInput().getConfig().getEvolveIndicatorrecommenderEvolutionConfig();
             if (confStr != null) {
@@ -46,11 +47,11 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action) throws Exception {
+    protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception {
         Map<String, Object> map = new HashMap<>();
         String marketName = market.getConfig().getMarket();
         String component = getPipeline();
-        Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent, action);
+        Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent, action, parameters);
         map.putAll(configMap);
         return map;
     }

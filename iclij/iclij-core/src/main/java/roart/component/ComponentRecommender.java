@@ -48,6 +48,7 @@ import roart.evolution.fitness.impl.ProportionScore;
 import roart.executor.MyExecutors;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.service.ControlService;
 import roart.service.RecommenderService;
 import roart.service.model.ProfitData;
@@ -115,14 +116,14 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
     
         RecommenderData param = new RecommenderData(componentparam);        
         
         int futuredays = (int) param.getService().conf.getTestIndicatorRecommenderComplexFutureDays();
         param.setFuturedays(futuredays);
 
-        handle2(action, market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket);
+        handle2(action, market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket, parameters);
 
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, Object> resultMap2 = (Map<String, Object>) resultMap.get(PipelineConstants.RESULT);
@@ -314,7 +315,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
@@ -326,7 +327,7 @@ public class ComponentRecommender extends ComponentNoML {
 	}
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action);
+            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action, parameters);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -392,12 +393,12 @@ public class ComponentRecommender extends ComponentNoML {
     }
     
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
+    public List<MemoryItem> calculateMemory(ComponentData componentparam, Parameters parameters) throws Exception {
         RecommenderData param = (RecommenderData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             AbstractScore eval = new ProportionScore(i == 0);
-            getMemories(param, memoryList, eval, i);
+            getMemories(param, memoryList, eval, i, parameters);
         }
         return memoryList;
     }
@@ -424,7 +425,7 @@ public class ComponentRecommender extends ComponentNoML {
         return changeSet;
     }
 
-    public void getMemories(RecommenderData param, List<MemoryItem> memoryList, AbstractScore eval, int position) throws Exception {
+    public void getMemories(RecommenderData param, List<MemoryItem> memoryList, AbstractScore eval, int position, Parameters parameters) throws Exception {
         Map<String, List<Double>> resultMap = new HashMap<>();
         for (String key : param.getCategoryValueMap().keySet()) {
             if (param.getRecommendBuySell() == null) {
@@ -448,12 +449,13 @@ public class ComponentRecommender extends ComponentNoML {
             Double change = null;
             if (mainList != null) {
                 Double valFuture = mainList.get(mainList.size() - 1);
-                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays());
+                Double valNow = mainList.get(mainList.size() - 1 - parameters.getFuturedays());
                 if (valFuture != null && valNow != null) {
                     if (valNow == 0.0) {
                         log.error("Value for division is 0.0 for key {}", key);
                         continue;
                     }
+                    boolean aboveThreshold = (valFuture / valNow) >= parameters.getThreshold();
                     change = valFuture / valNow;
                     List<Double> list = new ArrayList<>();
                     list.add(score);
@@ -463,7 +465,7 @@ public class ComponentRecommender extends ComponentNoML {
             }
         }
         
-        double[] resultArray = eval.calculate(resultMap);
+        double[] resultArray = eval.calculate(resultMap, parameters.getThreshold());
         double goodBuy = resultArray[0];
         long totalBuy = (long) resultArray[1];
         MemoryItem memory = new MemoryItem();
@@ -475,6 +477,7 @@ public class ComponentRecommender extends ComponentNoML {
         memory.setFuturedate(param.getFutureDate());
         memory.setComponent(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
         memory.setSubcomponent(null);
+        memory.setParameters(JsonUtil.convert(parameters));
         memory.setDescription("rec " + position + " " + eval.name());
         memory.setCategory(param.getCategoryTitle());
         memory.setPositives((long) goodBuy);
@@ -863,6 +866,16 @@ public class ComponentRecommender extends ComponentNoML {
     @Override
     public int getPriority(IclijConfig srv) {
         return 0;
+    }
+
+    @Override
+    public String getThreshold() {
+        return ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD;
+    }
+
+    @Override
+    public String getFuturedays() {
+        return ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS;
     }
 
 }

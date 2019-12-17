@@ -13,11 +13,12 @@ import roart.component.model.ComponentData;
 import roart.config.Market;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
 public abstract class MLAggregatorChromosome extends ConfigMapChromosome {
-    public MLAggregatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent);
+    public MLAggregatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters) {
+        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent, parameters);
     }
 
     protected abstract MLAggregatorChromosome getNewChromosome(ComponentData newparam);

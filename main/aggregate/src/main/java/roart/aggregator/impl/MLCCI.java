@@ -165,7 +165,7 @@ public class MLCCI extends IndicatorAggregator {
     }
     
     @Override
-    protected double getAggregatorsThreshold() {
+    protected String getAggregatorsThreshold() {
         return conf.getMLCCIThreshold();
     }
     

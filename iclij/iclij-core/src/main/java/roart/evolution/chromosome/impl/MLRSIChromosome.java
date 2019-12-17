@@ -31,6 +31,7 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.service.ControlService;
 import roart.service.MLService;
 import roart.service.model.ProfitData;
@@ -38,13 +39,13 @@ import roart.util.ServiceUtil;
 
 public class MLRSIChromosome extends MLAggregatorChromosome {
 
-    public MLRSIChromosome(MarketAction action, ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(action, param, profitdata, confList, market, positions, component, buy, subcomponent);
+    public MLRSIChromosome(MarketAction action, ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters) {
+        super(action, param, profitdata, confList, market, positions, component, buy, subcomponent, parameters);
     }
 
     @Override
     protected MLAggregatorChromosome getNewChromosome(ComponentData newparam) {
-        return new MLRSIChromosome(action, newparam, profitdata, confList, market, positions, componentName, buy, subcomponent);
+        return new MLRSIChromosome(action, newparam, profitdata, confList, market, positions, componentName, buy, subcomponent, parameters);
     }
     
 

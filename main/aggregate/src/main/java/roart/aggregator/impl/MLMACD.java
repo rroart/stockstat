@@ -271,7 +271,7 @@ public class MLMACD extends IndicatorAggregator {
     }
 
     @Override
-    protected double getAggregatorsThreshold() {
+    protected String getAggregatorsThreshold() {
         return conf.getMLMACDThreshold();
     }
     

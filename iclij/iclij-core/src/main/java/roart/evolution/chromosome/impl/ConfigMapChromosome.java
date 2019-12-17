@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import roart.action.FindProfitAction;
@@ -33,6 +34,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
+import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
@@ -44,6 +46,7 @@ import roart.evolution.species.Individual;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
@@ -75,8 +78,10 @@ public class ConfigMapChromosome extends AbstractChromosome {
     protected String subcomponent;
 
     protected Boolean buy;
+
+    protected Parameters parameters;
     
-    public ConfigMapChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent) {
+    public ConfigMapChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters) {
         this.action = action;
         this.confList = confList;
         this.param = param;
@@ -86,6 +91,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
         this.componentName = componentName;
         this.subcomponent = subcomponent;
         this.buy = buy;
+        this.parameters = parameters;
     }
 
     public Map<String, Object> getMap() {
@@ -152,12 +158,18 @@ public class ConfigMapChromosome extends AbstractChromosome {
             map.put(confName, d);
             return;
         }
+        if (type == String.class) {
+            Double d = (range[0]) + rand.nextDouble() * (range[1] - range[0]);
+            d = MathUtil.round(d, range[2].intValue());
+            map.put(confName, "[" + d + "]");
+            return;
+        }
         log.error("Unknown type for {}", confName);
     }
 
     @Override
     public Individual crossover(AbstractChromosome other) {
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent, parameters);
         Random rand = new Random();
         for (int conf = 0; conf < confList.size(); conf++) {
             String confName = confList.get(conf);
@@ -216,12 +228,20 @@ public class ConfigMapChromosome extends AbstractChromosome {
             map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
-            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent, null);
+
+            String key = component.getThreshold();
+            map.put(key, "[" + parameters.getThreshold() + "]");
+            String key2 = component.getFuturedays();
+            map.put(key2, parameters.getFuturedays());
+
+            map.put(ConfigConstants.MISCTHRESHOLD, null);
+            
+            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
             //componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
             try {
-                memories = component.calculateMemory(componentData);
+                memories = component.calculateMemory(componentData, parameters);
                 if (memories == null || memories.isEmpty()) {
                     int jj = 0;
                 }
@@ -241,7 +261,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
             component.enableDisable(componentData, positions, param.getConfigValueMap());
 
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null);
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
             component.calculateIncDec(componentData2, profitdata, positions);
 
             List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
@@ -262,7 +282,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }            
-                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset);
+                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold());
             }
 
             if (true) {
@@ -362,7 +382,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, confList, newparam, profitdata, market, positions, componentName, buy, subcomponent);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, confList, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters);
         chromosome.map = new HashMap<>(this.map);
         return chromosome;
     }

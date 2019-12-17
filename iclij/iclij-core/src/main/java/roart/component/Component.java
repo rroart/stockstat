@@ -41,6 +41,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
@@ -81,13 +82,13 @@ public abstract class Component {
         valueMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);
     }
     
-    public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket);
+    public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters);
     
-    public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent);
+    public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters);
 
     protected abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
 
-    public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
+    public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         try {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
         } catch (ParseException e) {
@@ -106,7 +107,7 @@ public abstract class Component {
         this.enable(valueMap);
         this.subenable(valueMap, subcomponent);
         try {
-            Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket, action);
+            Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket, action, parameters);
             valueMap.putAll(loadValues);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -116,7 +117,7 @@ public abstract class Component {
         Map<String, Object> scoreMap = new HashMap<>();
         if (evolve) {   
             long time0 = System.currentTimeMillis();
-            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null);
+            evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters);
             if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction())) {
                 Double score = null;
                 String description = null;
@@ -127,9 +128,11 @@ public abstract class Component {
                             .mapToDouble(e -> (Double) e)
                             .max()
                             .orElse(-1);
-                    description = scoreMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics().toString();
+                    if (scoreMap.size() > 1) {
+                        description = scoreMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics().toString();
+                    }
                 }
-                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket, description);
+                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters);
                 param.getTimings().add(timing);
            }
         }
@@ -162,11 +165,11 @@ public abstract class Component {
                 try {
                     List<MemoryItem> memories = null;
                     try {
-                        memories = calculateMemory(param);
+                        memories = calculateMemory(param, parameters);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
-                    if (memories != null) {
+                    if (memories != null && memories.size() > 1) {
                         DoubleSummaryStatistics summary = memories.stream().mapToDouble(MemoryItem::getConfidence).filter(Objects::nonNull).summaryStatistics();
                         score = summary.getAverage();
                         description = summary.toString();
@@ -175,7 +178,7 @@ public abstract class Component {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
-            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent, mlmarket, description);
+            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent, mlmarket, description, parameters);
             param.getTimings().add(timing);
         }
     }
@@ -195,7 +198,7 @@ public abstract class Component {
         log.info("Disable {}", disableML);
     }
 
-    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description) {
+    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description, Parameters parameters) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setBuy(buy);
@@ -208,6 +211,7 @@ public abstract class Component {
         timing.setDate(param.getFutureDate());
         timing.setScore(score);
         timing.setSubcomponent(subcomponent);
+        timing.setParameters(JsonUtil.convert(parameters));
         timing.setDescription(description);
         try {
             timing.save();
@@ -218,7 +222,7 @@ public abstract class Component {
         return null;
     }
     
-    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket);
+    protected abstract Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters);
 
     public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata);
     
@@ -244,11 +248,11 @@ public abstract class Component {
 
     public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions);
 
-    public abstract List<MemoryItem> calculateMemory(ComponentData param) throws Exception;
+    public abstract List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception;
 
     public abstract String getPipeline();
     
-    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action) throws Exception;
+    protected abstract Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception;
 
     protected abstract EvolutionConfig getImproveEvolutionConfig(IclijConfig config);
     
@@ -277,7 +281,7 @@ public abstract class Component {
             param.setScoreMap(scoreMap);
             param.setFutureDate(LocalDate.now());
             // fix mlmarket;
-            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent, null, null);
+            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent, null, null, null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);
             if (false) {
@@ -342,12 +346,12 @@ public abstract class Component {
         }
     }
 
-    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList, Boolean buy, String subcomponent, MarketAction action) {
+    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList, Boolean buy, String subcomponent, MarketAction action, Parameters parameters) {
         List<String> config = new ArrayList<>();
         
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action);
+            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action, parameters);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -381,10 +385,12 @@ public abstract class Component {
     public abstract List<String> getSubComponents(Market market, ComponentData componentData, String mlmarket);
 
     public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) throws Exception {
+        Parameters parameters = new Parameters();
+        parameters.setThreshold(1.0);
         List<String> subComponents = getSubComponents(market, param, null);
         for(String subComponent : subComponents) {
-            ComponentData componentData = handle(action, market, param, profitdata, new ArrayList<>(), false, new HashMap<>(), subComponent, null);
-            calculateMemory(componentData);
+            ComponentData componentData = handle(action, market, param, profitdata, new ArrayList<>(), false, new HashMap<>(), subComponent, null, parameters);
+            calculateMemory(componentData, parameters);
         }
         return null;
     }
@@ -411,7 +417,9 @@ public abstract class Component {
             return result;
         } else {
             result[0] = acc;
-            result[1] = testAccuracies.stream().mapToDouble(e -> e).summaryStatistics().toString();
+            if (testAccuracies.size() > 1) {
+                result[1] = testAccuracies.stream().mapToDouble(e -> e).summaryStatistics().toString();
+            }
             result[2] = null;
             if (param.getResultMeta().size() > 1) {
                 List<ResultMeta> metalist = param.getResultMeta()
@@ -420,7 +428,7 @@ public abstract class Component {
                 .collect(Collectors.toList());
                 result[2] = "";
                 for(ResultMeta meta : metalist) {
-                    result[2] = result[2] + meta.getSubType() + meta.getSubSubType() + " ";
+                    result[2] = result[2] + meta.getThreshold().toString() + " " + meta.getSubType() + meta.getSubSubType() + " ";
                 }
             }
             return result;
@@ -434,5 +442,8 @@ public abstract class Component {
         return value != null ? value : 0;
     }
     
+    public abstract String getThreshold();
+    
+    public abstract String getFuturedays();
 }
 

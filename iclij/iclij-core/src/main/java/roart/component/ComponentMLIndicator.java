@@ -35,6 +35,7 @@ import roart.evolution.chromosome.impl.MLIndicatorChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.MLService;
@@ -43,9 +44,6 @@ import roart.util.ServiceUtilConstants;
 
 public abstract class ComponentMLIndicator extends ComponentML {
     private Logger log = LoggerFactory.getLogger(this.getClass());
-
-    private static final String INC = "Inc";
-    private static final String DEC = "Dec";
 
     @Override
     public void enable(Map<String, Object> valueMap) {
@@ -100,16 +98,16 @@ public abstract class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
 
         MLIndicatorData param = new MLIndicatorData(componentparam);
 
         int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
         param.setFuturedays(futuredays);
-        double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
-        param.setThreshold(threshold);
+        //double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
+        //param.setThreshold(threshold);
 
-        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         //Map resultMaps = param.getResultMap();
         //handleMLMeta(param, resultMaps);
         //Map<String, Object> resultMap = param.getResultMap();
@@ -154,17 +152,17 @@ public abstract class ComponentMLIndicator extends ComponentML {
                     }
                     boolean increase = false;
                     //System.out.println(okConfMap.keySet());
-                    Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
+                    //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
                     //keyPair = ComponentMLAggregator.getRealKeys(keyPair, keyset);
                     //System.out.println(okListMap.keySet());
-                    if (tfpn.equals(INC)) {
+                    if (tfpn.equals(Constants.ABOVE)) {
                         increase = true;
-                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getConfMap().get(keyPair), profitdata.getInputdata().getListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
-                    if (tfpn.equals(DEC)) {
+                    if (tfpn.equals(Constants.BELOW)) {
                         increase = false;
-                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getConfMap().get(keyPair), profitdata.getInputdata().getListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                 }                        
@@ -190,7 +188,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
@@ -198,8 +196,8 @@ public abstract class ComponentMLIndicator extends ComponentML {
         if (gotThree) {
             confList.addAll(getThreeConfList());
         }
-        ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent);
-        loadme(param, chromosome, market, confList, buy, subcomponent, action);
+        ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent, parameters);
+        loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }
 
@@ -244,7 +242,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
+    public List<MemoryItem> calculateMemory(ComponentData componentparam, Parameters parameters) throws Exception {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         List<MemoryItem> memoryList = new ArrayList<>();
         Map<String, Object> resultMap = param.getResultMap();
@@ -298,7 +296,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
                 if (valFuture == null || valNow == null) {
                     continue;
                 }
-                boolean incThreshold = (valFuture / valNow - 1) >= param.getThreshold();
+                boolean aboveThreshold = (valFuture / valNow) >= meta.getThreshold();
                 List<Object> list = (List<Object>) aResultMap.get(key);
                 if (list == null) {
                     continue;
@@ -315,9 +313,9 @@ public abstract class ComponentMLIndicator extends ComponentML {
                     }
                 }
                 total++;
-                if (incdec.equals(ServiceUtilConstants.INC)) {
+                if (incdec.equals(Constants.ABOVE)) {
                     incSize++;
-                    if (incThreshold) {
+                    if (aboveThreshold) {
                         goodTP++;
                         if (returnSize > 1 && incdecProb != null) {
                             goodTPprob += incdecProb;
@@ -328,9 +326,9 @@ public abstract class ComponentMLIndicator extends ComponentML {
                             goodFPprob += (1 - incdecProb);                                    }
                     }
                 }
-                if (incdec.equals(ServiceUtilConstants.DEC)) {
+                if (incdec.equals(Constants.BELOW)) {
                     decSize++;
-                    if (!incThreshold) {
+                    if (!aboveThreshold) {
                         goodTN++;
                         if (returnSize > 1 && incdecProb != null) {
                             goodTNprob += incdecProb;
@@ -355,7 +353,8 @@ public abstract class ComponentMLIndicator extends ComponentML {
             memory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
             memory.setDescription(getShort(meta.getMlName()) + withComma(getShort(meta.getModelName())) + withComma(meta.getSubType()) + withComma(meta.getSubSubType()));
             memory.setTestaccuracy(testaccuracy);
-            //memory.setPositives(goodInc);
+            memory.setParameters(JsonUtil.convert(parameters));
+           //memory.setPositives(goodInc);
             memory.setTp(goodTP);
             memory.setFp(goodFP);
             memory.setTn(goodTN);
@@ -377,13 +376,13 @@ public abstract class ComponentMLIndicator extends ComponentML {
             Integer tpClassOrig = 0;
             Integer tnClassOrig = 0;
             if (countMapClass != null) {
-                tpClassOrig = countMapClass.containsKey(ServiceUtilConstants.INC) ? countMapClass.get(ServiceUtilConstants.INC) : 0;
-                tnClassOrig = countMapClass.containsKey(ServiceUtilConstants.DEC) ? countMapClass.get(ServiceUtilConstants.DEC) : 0;
+                tpClassOrig = countMapClass.containsKey(Constants.ABOVE) ? countMapClass.get(Constants.ABOVE) : 0;
+                tnClassOrig = countMapClass.containsKey(Constants.BELOW) ? countMapClass.get(Constants.BELOW) : 0;
             }
             //Integer fpClassOrig = goodTP - ;
             //Integer fnClassOrig = countMapClass.containsKey(FN) ? countMapClass.get(FN) : 0;
-            Integer tpSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.INC) ? countMapLearn.get(ServiceUtilConstants.INC) : 0;
-            Integer tnSizeOrig = countMapLearn.containsKey(ServiceUtilConstants.DEC) ? countMapLearn.get(ServiceUtilConstants.DEC) : 0;
+            Integer tpSizeOrig = countMapLearn.containsKey(Constants.ABOVE) ? countMapLearn.get(Constants.ABOVE) : 0;
+            Integer tnSizeOrig = countMapLearn.containsKey(Constants.BELOW) ? countMapLearn.get(Constants.BELOW) : 0;
             //Integer fpSizeOrig = countMapLearn.containsKey(FP) ? countMapLearn.get(FP) : 0;
             //Integer fnSizeOrig = countMapLearn.containsKey(FN) ? countMapLearn.get(FN) : 0;
             int keys = 2;
@@ -508,5 +507,16 @@ public abstract class ComponentMLIndicator extends ComponentML {
         list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASSTOCHRSI);
         return list;
     }
+    
+    @Override
+    public String getThreshold() {
+        return ConfigConstants.AGGREGATORSINDICATORTHRESHOLD;
+    }
+    
+    @Override
+    public String getFuturedays() {
+        return ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS;
+    }
+    
 }
 

@@ -79,7 +79,7 @@ public class Memory implements Serializable {
     private Long size;
 
     @Column
-    private Double threshold;
+    private String parameters;
 
     @Column
     private Long tp;
@@ -275,12 +275,12 @@ public class Memory implements Serializable {
         this.size = size;
     }
 
-    public Double getThreshold() {
-        return threshold;
+    public String getParameters() {
+        return parameters;
     }
 
-    public void setThreshold(Double threshold) {
-        this.threshold = threshold;
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 
     public Long getTp() {

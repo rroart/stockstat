@@ -17,6 +17,14 @@ public class ProfitInputData {
     
     private Map<Pair<String, Integer>, List<MemoryItem>> listMap;
     
+    private Map<Pair<String, Integer>, Double> aboveConfMap;
+    
+    private Map<Pair<String, Integer>, List<MemoryItem>> aboveListMap;
+    
+    private Map<Pair<String, Integer>, Double> belowConfMap;
+    
+    private Map<Pair<String, Integer>, List<MemoryItem>> belowListMap;
+    
     Map<String, String> nameMap;
 
     public Map<String, Map<String, Object>> getResultMaps() {
@@ -41,6 +49,38 @@ public class ProfitInputData {
 
     public void setListMap(Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
         this.listMap = listMap;
+    }
+
+    public Map<Pair<String, Integer>, Double> getAboveConfMap() {
+        return aboveConfMap;
+    }
+
+    public void setAboveConfMap(Map<Pair<String, Integer>, Double> aboveConfMap) {
+        this.aboveConfMap = aboveConfMap;
+    }
+
+    public Map<Pair<String, Integer>, List<MemoryItem>> getAboveListMap() {
+        return aboveListMap;
+    }
+
+    public void setAboveListMap(Map<Pair<String, Integer>, List<MemoryItem>> aboveListMap) {
+        this.aboveListMap = aboveListMap;
+    }
+
+    public Map<Pair<String, Integer>, Double> getBelowConfMap() {
+        return belowConfMap;
+    }
+
+    public void setBelowConfMap(Map<Pair<String, Integer>, Double> belowConfMap) {
+        this.belowConfMap = belowConfMap;
+    }
+
+    public Map<Pair<String, Integer>, List<MemoryItem>> getBelowListMap() {
+        return belowListMap;
+    }
+
+    public void setBelowListMap(Map<Pair<String, Integer>, List<MemoryItem>> belowListMap) {
+        this.belowListMap = belowListMap;
     }
 
     public Map<String, String> getNameMap() {

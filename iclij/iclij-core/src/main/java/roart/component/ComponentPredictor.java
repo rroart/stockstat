@@ -43,6 +43,7 @@ import roart.evolution.species.Individual;
 import roart.gene.ml.impl.TensorflowPredictorLSTMConfigGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.MLService;
@@ -111,7 +112,7 @@ public abstract class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         //log.info("Component not impl {}", this.getClass().getName());
         
         PredictorData param = new PredictorData(componentparam);
@@ -131,7 +132,7 @@ public abstract class ComponentPredictor extends ComponentML {
         param.setFuturedays(futuredays);
         */
 
-        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket);
+        handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         
         Map<String, Object> maps = param.getResultMap();
         
@@ -179,16 +180,16 @@ public abstract class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapChromosome chromosome = new PredictorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.PREDICTOR, buy, subcomponent);
-        loadme(param, chromosome, market, confList, buy, subcomponent, action);
+        loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }
 
     @Override
-    public List<MemoryItem> calculateMemory(ComponentData componentparam) throws Exception {
+    public List<MemoryItem> calculateMemory(ComponentData componentparam, Parameters parameters) throws Exception {
         PredictorData param = (PredictorData) componentparam;
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) param.getResultMap().get("result");
         List<MemoryItem> memoryList = new ArrayList<>();
@@ -203,7 +204,7 @@ public abstract class ComponentPredictor extends ComponentML {
                 List<Double> mainList = resultList.get(0);
                 if (mainList != null) {
                     Double valFuture = mainList.get(mainList.size() - 1);
-                    Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays());
+                    Double valNow = mainList.get(mainList.size() - 1 - parameters.getFuturedays());
                     List<Double> predFutureList = resultMap.get(key);
                     if (predFutureList == null) {
                         continue;
@@ -212,15 +213,16 @@ public abstract class ComponentPredictor extends ComponentML {
                     if (valFuture != null && valNow != null && predFuture != null) {
                         System.out.println("vals " + valNow + " " + valFuture + " " + predFuture);
                         total++;
-                        if (predFuture > valNow) {
+                        //boolean aboveThreshold = (predFuture / valNow) >= parameters.getThreshold();
+                        if (predFuture > valNow * parameters.getThreshold()) {
                             totalInc++;
-                            if (valFuture > valNow) {
+                            if (valFuture > valNow * parameters.getThreshold()) {
                                 goodInc++;
                             }
                         }
-                        if (predFuture < valNow) {
+                        if (predFuture < valNow * parameters.getThreshold()) {
                             totalDec++;
-                            if (valFuture < valNow) {
+                            if (valFuture < valNow * parameters.getThreshold()) {
                                 goodDec++;
                             }
                         }
@@ -237,6 +239,7 @@ public abstract class ComponentPredictor extends ComponentML {
             incMemory.setFuturedate(param.getFutureDate());
             incMemory.setComponent(PipelineConstants.PREDICTOR);
             incMemory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
+            incMemory.setParameters(JsonUtil.convert(parameters));
             incMemory.setDescription("inc");
             incMemory.setCategory(param.getCategoryTitle());
             incMemory.setPositives(goodInc);
@@ -254,6 +257,7 @@ public abstract class ComponentPredictor extends ComponentML {
             decMemory.setFuturedate(param.getFutureDate());
             decMemory.setComponent(PipelineConstants.PREDICTOR);
             decMemory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
+            decMemory.setParameters(JsonUtil.convert(parameters));
             decMemory.setDescription("dec");
             decMemory.setCategory(param.getCategoryTitle());
             decMemory.setPositives(goodDec);
@@ -469,11 +473,22 @@ public abstract class ComponentPredictor extends ComponentML {
             return result;
         } else {
             result[0] = acc;
-            result[1] = testAccuracies.stream().mapToDouble(e -> e).summaryStatistics().toString();
+            if (testAccuracies.size() > 1) {
+                result[1] = testAccuracies.stream().mapToDouble(e -> e).summaryStatistics().toString();
+            }
             result[2] = null;
             return result;
         }
     }
 
+    @Override
+    public String getThreshold() {
+        return null;
+    }
+
+    @Override
+    public String getFuturedays() {
+        return ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS;
+    }
 }
 

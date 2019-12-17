@@ -34,7 +34,7 @@ public class PredictorChromosome extends ConfigMapChromosome {
     private TensorflowPredictorLSTMConfigGene config;
     
     public PredictorChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent);
+        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent, null);
     }
 
     public TensorflowPredictorLSTMConfigGene getConfig() {

@@ -421,7 +421,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
                 String value = values.iterator().next();
                 // Do something with the value                              
                 try {
-                    controlService.getIclijConf().setMLMarket(value);
+                    controlService.getIclijConf().setMlmarket(value);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -438,7 +438,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
             public void buttonClick(ClickEvent event) {
                 try {
                     Notification.show("Request sent");
-                    controlService.getIclijConf().setMLmarket(null);
+                    controlService.getIclijConf().setMlmarket(null);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -917,10 +917,12 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(TimingItem::getRecord).setCaption("Record");
         table.addColumn(TimingItem::getDate).setCaption("Date");
         table.addColumn(TimingItem::getMarket).setCaption("Market");
+        table.addColumn(TimingItem::getMlmarket).setCaption("ML market");
         table.addColumn(TimingItem::getAction).setCaption("Action");
         table.addColumn(TimingItem::isEvolve).setCaption("Evolve");
         table.addColumn(TimingItem::getComponent).setCaption("Component");
         table.addColumn(TimingItem::getSubcomponent).setCaption("Subcomponent");
+        table.addColumn(TimingItem::getParameters).setCaption("Threshold");
         table.addColumn(TimingItem::getMytime).setCaption("Time");
         table.addColumn(TimingItem::getScore).setCaption("Score");
         table.addColumn(TimingItem::getBuy).setCaption("Buy");
@@ -980,7 +982,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(MemoryItem::getFuturedate).setCaption("Futuredate");
         table.addColumn(MemoryItem::getPositives).setCaption("Positives");
         table.addColumn(MemoryItem::getSize).setCaption("Size");
-        table.addColumn(MemoryItem::getThreshold).setCaption("Threshold");
+        table.addColumn(MemoryItem::getParameters).setCaption("Threshold");
         table.addColumn(MemoryItem::getTp).setCaption("Tp");
         table.addColumn(MemoryItem::getTpSize).setCaption("TpSize");
         table.addColumn(MemoryItem::getTpConf).setCaption("TpConf");

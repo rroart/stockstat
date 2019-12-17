@@ -35,6 +35,8 @@ public class IclijConfigConstants {
     public static final String CROSSTESTPREDICTOR = "crosstest.predictor";
     public static final String CROSSTESTPREDICTOREVOLUTIONCONFIG = "crosstest.predictor.evolutionconfig";
     public static final String CROSSTESTPREDICTORMLCONFIG = "crosstest.predictor.mlconfig";
+    public static final String CROSSTESTFUTUREDAYS = "crosstest.futuredays";
+    public static final String CROSSTESTTHRESHOLD = "crosstest.threshold";
     public static final String DATASET = "dataset";
     public static final String DATASETINDICATORRECOMMENDER = "dataset.indicatorrecommender";
     public static final String DATASETINDICATORRECOMMENDEREVOLUTIONCONFIG = "dataset.indicatorrecommender.evolutionconfig";
@@ -103,6 +105,8 @@ public class IclijConfigConstants {
     public static final String EVOLVEPREDICTOR = "evolve.predictor";
     public static final String EVOLVEPREDICTOREVOLUTIONCONFIG = "evolve.predictor.evolutionconfig";
     public static final String EVOLVEPREDICTORMLCONFIG = "evolve.predictor.mlconfig";
+    public static final String EVOLVEFUTUREDAYS = "evolve.futuredays";
+    public static final String EVOLVETHRESHOLD = "evolve.threshold";
     public static final String MISCSHUTDOWNHOUR = "misc.shutdownhour";
     public static final String MPSERVERCPU = "mp.server.cpu";
     public static final String MPCLIENTCPU = "mp.client.cpu";
@@ -134,6 +138,9 @@ public class IclijConfigConstants {
     public static final String FINDPROFITPREDICTOR = "findprofit.predictor";
     public static final String FINDPROFITPREDICTOREVOLUTIONCONFIG = "findprofit.predictor.evolutionconfig";
     public static final String FINDPROFITPREDICTORMLCONFIG = "findprofit.predictor.mlconfig";
+    public static final String FINDPROFITFUTUREDAYS = "findprofit.futuredays";
+    public static final String FINDPROFITTHRESHOLD = "findprofit.threshold";
+    public static final String FINDPROFITMANUALTHRESHOLD = "findprofit.manualthreshold";
     public static final String IMPROVEPROFIT = "improveprofit";
     public static final String IMPROVEPROFITAUTORUN = "improveprofit.autorun";
     public static final String IMPROVEPROFITFITNESSMINIMUM = "improveprofit.fitnessminimum";
@@ -188,6 +195,8 @@ public class IclijConfigConstants {
     public static final String MACHINELEARNINGPREDICTOR = "machinelearning.predictor";
     public static final String MACHINELEARNINGPREDICTOREVOLUTIONCONFIG = "machinelearning.predictor.evolutionconfig";
     public static final String MACHINELEARNINGPREDICTORMLCONFIG = "machinelearning.predictor.mlconfig";
+    public static final String MACHINELEARNINGFUTUREDAYS = "machinelearning.futuredays";
+    public static final String MACHINELEARNINGTHRESHOLD = "machinelearning.threshold";
     public static final String SINGLEMARKETEVOLVEFIRSTONLY = "singlemarket.evolvefirstonly";
     public static final String SINGLEMARKETLOOPS = "singlemarket.loops";
     public static final String SINGLEMARKETLOOPINTERVAL = "singlemarket.loopinterval";

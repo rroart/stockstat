@@ -23,6 +23,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
+import roart.iclij.model.Parameters;
 import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
@@ -56,7 +57,7 @@ public class EvolveAction extends MarketAction {
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Map<String, List<Integer>> listComponent, Map<String, Component> componentMap,
-            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config) {
+            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -79,8 +80,16 @@ public class EvolveAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
+
+            String key = component.getThreshold();
+            aMap.put(key, "[" + parameters.getThreshold() + "]");
+            String key2 = component.getFuturedays();
+            aMap.put(key2, parameters.getFuturedays());
+
+            aMap.put(ConfigConstants.MISCTHRESHOLD, null);
+            
             List<Integer> positions = null;
-            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null);
+            ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -157,6 +166,16 @@ public class EvolveAction extends MarketAction {
     @Override
     public int getPriority(IclijConfig srv) {
         return getPriority(srv, IclijConfigConstants.EVOLVE);
+    }
+
+    @Override
+    protected String getFuturedays0(IclijConfig conf) {
+        return conf.getEvolveFuturedays();
+    }
+
+    @Override
+    public String getThreshold(IclijConfig conf) {
+        return conf.getEvolveThreshold();
     }
 
 }
