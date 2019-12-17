@@ -34,6 +34,7 @@ import roart.action.MarketAction;
 import roart.action.WebData;
 import roart.action.UpdateDBAction;
 import roart.iclij.config.IclijConfig;
+import roart.common.config.ConfigConstants;
 import roart.common.config.MyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
@@ -779,6 +780,7 @@ public class ServiceUtil {
             srv.conf.setMarket(market);
         }
         Component.disabler(srv.conf.getConfigValueMap());
+        srv.conf.getConfigValueMap().put(ConfigConstants.MISCTHRESHOLD, null);
         Map<String, Map<String, Object>> result = srv.getContent();
         Integer cat = (Integer) result.get("meta").get("wantedcat");
         Map<String, List<List<Double>>> listMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
