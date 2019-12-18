@@ -178,10 +178,11 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
 
+            Parameters parameters = marketTime.parameters;
             String key = component.getThreshold();
-            aMap.put(key, "[" + param.getInput().getConfig().getFindProfitThreshold() + "]");
+            aMap.put(key, "[" + parameters.getThreshold() + "]");
             String key2 = component.getFuturedays();
-            aMap.put(key2, "[" + param.getInput().getConfig().getFindProfitFuturedays() + "]");
+            aMap.put(key2, parameters.getFuturedays());
                         
             ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, aMap, marketTime.subcomponent, null, marketTime.parameters);
             dataMap.put(entry.getKey(), componentData);
