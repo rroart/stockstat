@@ -428,7 +428,7 @@ public abstract class Component {
                 .collect(Collectors.toList());
                 result[2] = "";
                 for(ResultMeta meta : metalist) {
-                    result[2] = result[2] + meta.getThreshold().toString() + " " + meta.getSubType() + meta.getSubSubType() + " " + meta.getCountMap();
+                    result[2] = result[2] + meta.getThreshold().toString() + " " + meta.getSubType() + meta.getSubSubType() + " " + meta.getClassifyMap();
                 }
             }
             return result;
