@@ -1196,7 +1196,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 }
             }
             double change = list[myend + afterbefore.after] / list[myend];
-            if (change < threshold) {
+            if (change > threshold) {
                 textlabel = labels[0];
             } else {
                 textlabel = labels[1];
@@ -1237,7 +1237,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
             if (end + afterbefore.after < listsize) {
                 double change = list[myend + afterbefore.after] / list[myend];
-                if (change < threshold) {
+                if (change > threshold) {
                     textlabel = labels[0];
                 } else {
                     textlabel = labels[1];
