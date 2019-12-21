@@ -409,11 +409,11 @@ public abstract class IndicatorAggregator extends Aggregator {
                             }
                             if (countMap2 == null) {
                                 log.info("No classified result");
-                                testCount++;
-                                continue;
                             }
 
-                            addEventRow(subType, countMap2);
+                            if (countMap2 != null) {
+                                addEventRow(subType, countMap2);
+                            }
                             handleResultMeta(testCount, offsetMap, countMap);
                             testCount++;
                         }
@@ -568,14 +568,14 @@ public abstract class IndicatorAggregator extends Aggregator {
                 }
                 if (countMap2 == null) {
                     log.info("No classified result");
-		    testCount++;
-                    continue;
                 }
 
                 accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
                 lossMap.put(mldao.getName() + model.getName(), result.getLoss());
 
-                addEventRow(subType, countMap2);
+                if (countMap2 != null) {
+                    addEventRow(subType, countMap2);
+                }
                 Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
                 handleResultMeta(testCount, offsetMap, countMap2);
 		handleResultMetaAccuracy(testCount, result);
