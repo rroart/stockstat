@@ -379,7 +379,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             meta[0] = mldao.getName();
                             meta[1] = model.getName();
                             meta[2] = model.getReturnSize();
-                            meta[3] = subType.getType();
+                            meta[3] = subType.getType() + subType.isMerge;
                             meta[4] = mapType;
                             meta[5] = countMap;
                             meta[6] = threshold;
@@ -388,7 +388,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setMlName(mldao.getName());
                             resultMeta.setModelName(model.getName());
                             resultMeta.setReturnSize(model.getReturnSize());
-                            resultMeta.setSubType(subType.getType());
+                            resultMeta.setSubType(subType.getType() + subType.isMerge);
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
                             resultMeta.setThreshold(threshold);
@@ -543,7 +543,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 		meta[0] = mldao.getName();
 		meta[1] = model.getName();
 		meta[2] = model.getReturnSize();
-		meta[3] = subType.getType();
+		meta[3] = subType.getType() + subType.isMerge;
 		meta[4] = mapType;
                 meta[5] = countMap;
                 meta[10] = threshold;
@@ -552,7 +552,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 		resultMeta.setMlName(mldao.getName());
 		resultMeta.setModelName(model.getName());
 		resultMeta.setReturnSize(model.getReturnSize());
-		resultMeta.setSubType(subType.getType());
+		resultMeta.setSubType(subType.getType() + subType.isMerge);
 		resultMeta.setSubSubType(mapType);
 		resultMeta.setLearnMap(countMap);
 		resultMeta.setThreshold(threshold);
