@@ -71,6 +71,10 @@ public class MLIndicator extends Aggregator {
 
     private static final String MYTITLE = "comb";
 
+    private static final int cats = 2;
+    
+    private static final double interval = 0.01;
+    
     @Override
     public Map<String, Object> getResultMap() {
         return new HashMap<>();
@@ -193,10 +197,7 @@ public class MLIndicator extends Aggregator {
                 double change = list[0][newlistidx]/list[0][curlistidx];
 
                 // cat 1.0 is for >= threshold, 2.0 is for belov
-                cat = 2.0;
-                if (change > threshold) {
-                    cat = 1.0;
-                }
+                cat = getCat(change, threshold);
             }
             mapGetter4(mergedCatMap, id).add(new ImmutablePair(merged, cat));
             //retMap.put(id, new ImmutablePair(merged, cat));
@@ -250,10 +251,7 @@ public class MLIndicator extends Aggregator {
                     double change = list[0][newlistidx]/list[0][curlistidx];
 
                     // cat 1.0 is for >= threshold, 2.0 is for belov
-                    cat = 2.0;
-                    if (change > threshold) {
-                        cat = 1.0;
-                    }
+		    cat = getCat(change, threshold);
                 }
                 mapGetter4(mergedCatArrayMap, id).add(new ImmutablePair(arr, cat));
             //retMap.put(id, new ImmutablePair(arr, cat));
@@ -465,10 +463,10 @@ public class MLIndicator extends Aggregator {
                     resultMeta1.setThreshold(threshold);
                     getResultMetas().add(resultMeta1);
                     log.info("len {}", arrayLength);
-                    String filename = getFilename(mldao, model, "" + arrayLength, "2", conf.getMarket(), indicators, threshold);
+                    String filename = getFilename(mldao, model, "" + arrayLength, "" + cats, conf.getMarket(), indicators, threshold);
                     String path = model.getPath();
                     boolean mldynamic = conf.wantMLDynamic();
-                    LearnTestClassifyResult result = mldao.learntestclassify(nnconfigs, this, learnMap, model, arrayLength, 2, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
+                    LearnTestClassifyResult result = mldao.learntestclassify(nnconfigs, this, learnMap, model, arrayLength, cats, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                     if (result == null) {
                         continue;
                     }
@@ -565,10 +563,10 @@ public class MLIndicator extends Aggregator {
                     log.info("len {}", arrayLength);
                     //LearnTestClassifyResult result = mldao.learntestclassify(this, map1, model, arrayLength, key, MYTITLE, 2, mapTime, map, labelMapShort);
                     boolean conv2d = true;
-                    String filename = getFilename(mldao, model, "" + arrayLength, "4", conf.getMarket(), indicators, threshold);
+                    String filename = getFilename(mldao, model, "" + arrayLength, "" + cats, conf.getMarket(), indicators, threshold);
                     String path = model.getPath();
                     boolean mldynamic = conf.wantMLDynamic();
-                    Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, learnMap, model, arrayLength, 4, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
+                    Callable callable = new MLClassifyLearnTestPredictCallable(nnconfigs, mldao, this, learnMap, model, arrayLength, cats, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta);  
                     Future<LearnTestClassifyResult> future = MyExecutors.run(callable, 1);
                     futureList.add(future);
                     futureMap.put(future, new FutureMap(mldao, model, resultMetaArray.size() - 1));
@@ -774,9 +772,18 @@ public class MLIndicator extends Aggregator {
     }
 
     public static Map<Double, String> createLabelMapShort() {
+	if (cats == 2) {
+	    Map<Double, String> labelMap1 = new HashMap<>();
+	    labelMap1.put(1.0, Constants.ABOVE);
+	    labelMap1.put(2.0, Constants.BELOW);
+	    return labelMap1;
+	}
         Map<Double, String> labelMap1 = new HashMap<>();
-        labelMap1.put(1.0, Constants.ABOVE);
-        labelMap1.put(2.0, Constants.BELOW);
+        int halfcat = cats / 2;
+        for (int i = 1; i <= halfcat; i++) {
+            labelMap1.put((double) (halfcat + 1 - i), Constants.ABOVE + i);
+            labelMap1.put((double) (halfcat + i), Constants.BELOW + i);
+        }
         return labelMap1;
     }
 
@@ -986,6 +993,16 @@ public class MLIndicator extends Aggregator {
             market = testmarket;
         }
         return market + "_" + getName() + "_" + dao.getName() + "_" +  model.getName() + "_" + getFilenamePart(indicators) + conf.getAggregatorsIndicatorFuturedays() + "_" + threshold + "_" + in + "_" + out;
+    }
+    
+    private double getCat(double change, double threshold) {
+        int halfcat = cats / 2;
+        for (double cat = cats; cat > 1; cat--) {
+            if (change > threshold + interval * (cat - 1 - halfcat)) {
+                return cats + 1 - cat;
+            }
+        }
+        return cats;
     }
 }
 
