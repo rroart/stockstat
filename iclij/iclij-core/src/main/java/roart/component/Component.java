@@ -246,7 +246,7 @@ public abstract class Component {
         */
     }
 
-    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions);
+    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above);
 
     public abstract List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception;
 

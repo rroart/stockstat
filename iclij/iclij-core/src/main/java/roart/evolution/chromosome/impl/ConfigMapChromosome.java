@@ -256,13 +256,21 @@ public class ConfigMapChromosome extends AbstractChromosome {
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
             Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
+            /*
+            Map<String, List<Integer>> aboveListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getAboveListMap());
+            Map<String, List<Integer>> belowListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getBelowListMap());
+            Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
+            listComponentMap.put(null, listComponent);
+            listComponentMap.put(true, aboveListComponent);
+            listComponentMap.put(false, belowListComponent);
+            */
             inputdata.setNameMap(new HashMap<>());
             List<Integer> positions = listComponent.get(componentName);
 
             component.enableDisable(componentData, positions, param.getConfigValueMap());
 
             ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, positions);
+            component.calculateIncDec(componentData2, profitdata, positions, buy);
 
             List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
             List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());

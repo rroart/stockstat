@@ -42,6 +42,16 @@ public class FindProfitAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    //@Override
+    public List<MemoryItem> getMarketMemory2(Market market) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days) {
+        return marketMemory;
+    }
+
     @Override
     protected ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
         Map<Pair<String, Integer>, List<MemoryItem>> okListMap = new HashMap<>();
@@ -72,10 +82,17 @@ public class FindProfitAction extends MarketAction {
                 Double goodFn = fnConf != null ? fnConf * fnSize : 0;
                 Double above = goodTp + goodFn;
                 Double below = goodTn + goodFp;
-                Double aboveConfidence = above / (tpSize + fnSize);
-                Double belowConfidence = below / (tnSize + fpSize);
-                aboveConfidenceList.add(aboveConfidence);
-                belowConfidenceList.add(belowConfidence);
+                if (above == null || tpSize == null || fnSize == null) {
+                    int jj = 0;
+                }
+                if (tpSize != null && fnSize != null && above > 0 && (tpSize + fnSize) > 0) {
+                    Double aboveConfidence = above / (tpSize + fnSize);
+                    aboveConfidenceList.add(aboveConfidence);
+                }
+                if (tnSize != null && fpSize != null && below > 0 && (tnSize + fpSize) > 0) {
+                    Double belowConfidence = below / (tnSize + fpSize);
+                    belowConfidenceList.add(belowConfidence);
+                }
             }
             Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
             Optional<Double> aboveMinOpt = aboveConfidenceList.parallelStream().reduce(Double::min);
@@ -108,6 +125,9 @@ public class FindProfitAction extends MarketAction {
 
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters) {
+        if (param.getUpdateMap() == null) {
+            param.setUpdateMap(new HashMap<>());
+        }
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             String componentName = entry.getKey();
             Component component = componentMap.get(componentName);
@@ -133,7 +153,7 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
             ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters);
-            component.calculateIncDec(componentData, profitdata, positions);
+            component.calculateIncDec(componentData, profitdata, positions, buy);
             if (param.getInput().isDoSave()) {
                 IncDecItem myitem = null;
                 try {

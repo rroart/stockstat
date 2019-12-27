@@ -52,6 +52,10 @@ public class DatasetAction extends MarketAction {
         ProfitInputData input = new ProfitInputData();
         input.setConfMap(badConfMap);
         input.setListMap(badListMap);
+        input.setAboveConfMap(badConfMap);
+        input.setAboveListMap(badListMap);
+        input.setBelowConfMap(badConfMap);
+        input.setBelowListMap(badListMap);
         return input;
     }
 

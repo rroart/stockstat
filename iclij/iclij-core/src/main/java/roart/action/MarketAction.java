@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -407,12 +408,13 @@ public abstract class MarketAction extends Action {
         Map<String, ComponentData> dataMap = new HashMap<>();
         myData.memoryItems = getMemItems(marketTime, myData, param, config, evolve, dataMap);
         Market market = marketTime.market;
-        List<MemoryItem> marketMemory = getMarketMemory(marketTime.market);
+        LocalDate prevdate = getPrevDate(param, market);
+        LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * getTime(market));
+        List<MemoryItem> marketMemory = getMarketMemory(marketTime.market, getName(), marketTime.componentName, marketTime.subcomponent, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
         if (marketMemory == null) {
             myData.profitData = new ProfitData();
         }
         marketMemory.addAll(myData.memoryItems);
-        LocalDate prevdate = getPrevDate(param, market);
         List<MemoryItem> currentList = filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getTime(market));
         // or make a new object instead of the object array. use this as a pair
         //System.out.println(currentList.get(0).getRecord());
@@ -423,7 +425,13 @@ public abstract class MarketAction extends Action {
         ProfitData profitdata = new ProfitData();
         profitdata.setInputdata(inputdata);
         Map<String, List<Integer>> listComponent = createComponentPositionListMap(inputdata.getListMap());
-       
+        Map<String, List<Integer>> aboveListComponent = createComponentPositionListMap(inputdata.getAboveListMap());
+        Map<String, List<Integer>> belowListComponent = createComponentPositionListMap(inputdata.getBelowListMap());
+        Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
+        listComponentMap.put(null, listComponent);
+        listComponentMap.put(true, aboveListComponent);
+        listComponentMap.put(false, belowListComponent);
+        
         Map<String, Component> componentMap = new HashMap<>();
         componentMap.put(marketTime.componentName, marketTime.component);
 
@@ -434,7 +442,7 @@ public abstract class MarketAction extends Action {
 
         param.setTimings(new ArrayList<>());
         
-        handleComponent(this, market, profitdata, param, listComponent, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters);
+        handleComponent(this, market, profitdata, param, listComponentMap.get(marketTime.buy), componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters);
         
         if (!isDataset()) {
         filterIncDecs(param, market, profitdata, maps, true);
@@ -560,6 +568,16 @@ public abstract class MarketAction extends Action {
         List<MemoryItem> marketMemory = null;
         try {
             marketMemory = IclijDbDao.getAll(market.getConfig().getMarket());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return marketMemory;
+    }
+
+    public List<MemoryItem> getMarketMemory(Market market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) {
+        List<MemoryItem> marketMemory = null;
+        try {
+            marketMemory = IclijDbDao.getAllMemories(market.getConfig().getMarket(), action, component, subcomponent, parameters, startDate, endDate);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

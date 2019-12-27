@@ -116,7 +116,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions, Boolean above) {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         if (positions == null) {
             return;
@@ -155,15 +155,19 @@ public abstract class ComponentMLIndicator extends ComponentML {
                     //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
                     //keyPair = ComponentMLAggregator.getRealKeys(keyPair, keyset);
                     //System.out.println(okListMap.keySet());
+                    if (above == null || above == true) {
                     if (tfpn.equals(Constants.ABOVE)) {
                         increase = true;
                         IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
+                    }
+                    if (above == null || above == false) {
                     if (tfpn.equals(Constants.BELOW)) {
                         increase = false;
                         IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
+                    }
                     }
                 }                        
             }

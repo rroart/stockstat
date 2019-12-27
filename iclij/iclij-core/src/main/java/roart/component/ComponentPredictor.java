@@ -140,7 +140,7 @@ public abstract class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above) {
         PredictorData param = (PredictorData) componentparam;
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());

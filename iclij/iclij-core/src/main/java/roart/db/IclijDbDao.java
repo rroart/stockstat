@@ -30,6 +30,13 @@ public class IclijDbDao {
         return list;
     }
 
+    public static List<MemoryItem> getAllMemories(String market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) throws Exception {
+        long time0 = System.currentTimeMillis();
+        List<MemoryItem> list =  MemoryItem.getAll(market, action, component, subcomponent, parameters, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));
+        log.info("MemoryItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return list;
+    }
+
     public static List<TimingItem> getAllTiming() throws Exception {
         long time0 = System.currentTimeMillis();
         List<TimingItem> list = TimingItem.getAll();        

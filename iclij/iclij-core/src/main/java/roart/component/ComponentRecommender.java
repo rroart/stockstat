@@ -141,7 +141,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above) {
         RecommenderData param = (RecommenderData) componentparam;
         //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
         Map resultMaps = (Map) param.getResultMap();
@@ -215,7 +215,7 @@ public class ComponentRecommender extends ComponentNoML {
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getAboveListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
             incdec.setIncrease(true);
         }
         for (MyElement element : bottomList) {
@@ -227,7 +227,7 @@ public class ComponentRecommender extends ComponentNoML {
             String recommendation = "recommend sell";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getBelowListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
             incdec.setIncrease(false);
         }
     }

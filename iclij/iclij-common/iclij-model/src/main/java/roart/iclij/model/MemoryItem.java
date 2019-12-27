@@ -570,4 +570,15 @@ public class MemoryItem {
         return memoryItem;
     }
 
+    public static List<MemoryItem> getAll(String market, String action, String component, String subcomponent,
+            String parameters, Date startDate, Date endDate) throws Exception {
+        List<Memory> configs = Memory.getAll(market, action, component, subcomponent, parameters, startDate, endDate);
+        List<MemoryItem> configItems = new ArrayList<>();
+        for (Memory config : configs) {
+            MemoryItem memoryItem = getMemoryItem(config);
+            configItems.add(memoryItem);
+        }
+        return configItems;
+    }
+
 }
