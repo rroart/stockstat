@@ -234,6 +234,9 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
             MLClassifyModel model, int size, int classes, List<Triple<String, Object, Double>> classifyMap,
             Map<Double, String> shortMap, String path, String filename, NeuralNetCommand neuralnetcommand, MLMeta mlmeta, boolean classify) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
+        if (neuralnetcommand.isMldynamic()) {
+            return result;
+        }
         if (neuralnetcommand.isMlclassify() && (classifyMap == null || classifyMap.isEmpty())) {
             result.setCatMap(new HashMap<>());
             return result;
