@@ -33,6 +33,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.pipeline.PipelineConstants;
@@ -375,29 +376,29 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 continue;
                             }
                             // make OO of this, create object
-                            Object[] meta = new Object[11];
-                            meta[0] = mldao.getName();
-                            meta[1] = model.getName();
-                            meta[2] = model.getReturnSize();
-                            meta[3] = subType.getType() + subType.isMerge;
-                            meta[4] = mapType;
-                            meta[5] = countMap;
-                            meta[6] = threshold;
+                            Object[] meta = new Object[ResultMetaConstants.SIZE];
+                            meta[ResultMetaConstants.MLNAME] = mldao.getName();
+                            meta[ResultMetaConstants.MODELNAME] = model.getName();
+                            meta[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
+                            meta[ResultMetaConstants.SUBTYPE] = subType.getType() + mergeTxt(subType);
+                            meta[ResultMetaConstants.SUBSUBTYPE] = mapType;
+                            meta[ResultMetaConstants.LEARNMAP] = countMap;
+                            meta[ResultMetaConstants.THRESHOLD] = threshold;
                             resultMetaArray.add(meta);
                             ResultMeta resultMeta = new ResultMeta();
                             resultMeta.setMlName(mldao.getName());
                             resultMeta.setModelName(model.getName());
                             resultMeta.setReturnSize(model.getReturnSize());
-                            resultMeta.setSubType(subType.getType() + subType.isMerge);
+                            resultMeta.setSubType(subType.getType() + mergeTxt(subType));
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
                             resultMeta.setThreshold(threshold);
                             getResultMetas().add(resultMeta);
                             accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
                             lossMap.put(mldao.getName() + model.getName(), result.getLoss());
-                            meta[6] = result.getAccuracy();
+                            meta[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
-                            meta[9] = result.getLoss();
+                            meta[ResultMetaConstants.LOSS] = result.getLoss();
                             resultMeta.setLoss(result.getLoss());
                             
                             Map<String, Double[]> classifyResult = result.getCatMap();
@@ -414,7 +415,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                             if (countMap2 != null) {
                                 addEventRow(subType, countMap2);
                             }
-                            handleResultMeta(testCount, offsetMap, countMap);
+                            log.info("Nowcount {}", resultMetaArray.size());
+                            handleResultMeta(testCount, offsetMap, countMap, classifyResult);
                             testCount++;
                         }
                         mapResult1.put(model, mapResult2);
@@ -539,20 +541,20 @@ public abstract class IndicatorAggregator extends Aggregator {
                     continue;
                 }
 		// make OO of this, create object
-		Object[] meta = new Object[11];
-		meta[0] = mldao.getName();
-		meta[1] = model.getName();
-		meta[2] = model.getReturnSize();
-		meta[3] = subType.getType() + subType.isMerge;
-		meta[4] = mapType;
-                meta[5] = countMap;
-                meta[10] = threshold;
+		Object[] meta = new Object[ResultMetaConstants.SIZE];
+		meta[ResultMetaConstants.MLNAME] = mldao.getName();
+		meta[ResultMetaConstants.MODELNAME] = model.getName();
+		meta[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
+		meta[ResultMetaConstants.SUBTYPE] = subType.getType() + mergeTxt(subType);
+		meta[ResultMetaConstants.SUBSUBTYPE] = mapType;
+                meta[ResultMetaConstants.LEARNMAP] = countMap;
+                meta[ResultMetaConstants.THRESHOLD] = threshold;
 		resultMetaArray.add(meta);
 		ResultMeta resultMeta = new ResultMeta();
 		resultMeta.setMlName(mldao.getName());
 		resultMeta.setModelName(model.getName());
 		resultMeta.setReturnSize(model.getReturnSize());
-		resultMeta.setSubType(subType.getType() + subType.isMerge);
+		resultMeta.setSubType(subType.getType() + mergeTxt(subType));
 		resultMeta.setSubSubType(mapType);
 		resultMeta.setLearnMap(countMap);
 		resultMeta.setThreshold(threshold);
@@ -577,7 +579,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     addEventRow(subType, countMap2);
                 }
                 Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
-                handleResultMeta(testCount, offsetMap, countMap2);
+                handleResultMeta(testCount, offsetMap, countMap2, classifyResult);
 		handleResultMetaAccuracy(testCount, result);
                 testCount++;
             }
@@ -648,9 +650,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     private void handleResultMetaAccuracy(int testCount, LearnTestClassifyResult result) {
         Object[] meta = resultMetaArray.get(testCount);
         ResultMeta resultMeta = getResultMetas().get(testCount);
-        meta[6] = result.getAccuracy();
+        meta[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
         resultMeta.setTestAccuracy(result.getAccuracy());
-        meta[9] = result.getLoss();
+        meta[ResultMetaConstants.LOSS] = result.getLoss();
         resultMeta.setLoss(result.getLoss());
     }
 
@@ -757,7 +759,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             continue;
                         }
                         addEventRow(subType, countMap);
-                        handleResultMeta(testCount, offsetMap, countMap);
+                        handleResultMeta(testCount, offsetMap, countMap, classifyResult);
                         testCount++;
                     }
                     mapResult1.put(model, mapResult2);
@@ -789,12 +791,15 @@ public abstract class IndicatorAggregator extends Aggregator {
         return classifyResult;
     }
 
-    private void handleResultMeta(int testCount, Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap, Map<String, Long> countMap) {
+    private void handleResultMeta(int testCount, Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap, Map<String, Long> countMap, Map<String, Double[]> classifyMap) {
         Object[] meta = resultMetaArray.get(testCount);
-        meta[7] = countMap;
-        meta[8] = transformOffsetMap(offsetMap);
+        meta[ResultMetaConstants.LEARNMAP] = countMap;
+        meta[ResultMetaConstants.CLASSIFYMAP] = classifyMap;
+        meta[ResultMetaConstants.OFFSETMAP] = transformOffsetMap(offsetMap);
         ResultMeta resultMeta = getResultMetas().get(testCount);
-        resultMeta.setClassifyMap(countMap);
+        resultMeta.setOffsetMap((Map) meta[ResultMetaConstants.OFFSETMAP]);
+        resultMeta.setClassifyMap(classifyMap);
+        resultMeta.setLearnMap(countMap);
     }
 
     private Map<String, double[]> transformOffsetMap(Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap) {
@@ -802,6 +807,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         for (Entry<String, List<Pair<double[], Pair<Object, Double>>>> entry : offsetMap.entrySet()) {
             map.put(entry.getKey(), entry.getValue().get(0).getLeft());
         }
+        log.info("OffsetMap {}", map.keySet());
         return map;
     }
 
@@ -1660,7 +1666,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                         } catch (Exception e) {
                             log.error("Exception fix later, refactor", e);
                         }
-                        String merge = subType.isMerge ? "MRG " : "";
+                        String merge = mergeTxt(subType);
                         objs[retindex++] = title + " " + merge + subType.getName() + Constants.WEBBR +  subType.getType() + model.getShortName() + mapType + " " + val;
                         if (model.getReturnSize() > 1) {
                             objs[retindex++] = title + " " + merge + subType.getName() + " " + threshold + Constants.WEBBR +  subType.getType() + model.getShortName() + mapType + " prob ";
@@ -1671,6 +1677,10 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
         }
         return retindex;
+    }
+
+    private String mergeTxt(SubType subType) {
+        return subType.isMerge ? "MRG" : "";
     }
 
     protected List<SubType> usedSubTypes() {
