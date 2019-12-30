@@ -111,6 +111,11 @@ export class MainEffects {
 	var param = new Object();
 	param['market'] = config['market'];
 	param['config'] = getMyConfig(config, param['market'], date);
+	var neuralnetcommand = new Object();
+	neuralnetcommand['mllearn'] = false;
+	neuralnetcommand['mlclassify'] = true;
+	neuralnetcommand['mldynamic'] = false;
+	param['neuralnetcommand'] = neuralnetcommand;
         return this.service.retrieve('/getcontent', param).pipe(
           map(res => new ActionNewtab(res.list)),
           catchError(error => of(new ActionError({ error })))

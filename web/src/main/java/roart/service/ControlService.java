@@ -99,9 +99,9 @@ public class ControlService {
         param.setWebpath(EurekaConstants.GETCONTENT);
         MyMyConfig aConf = new MyMyConfig(conf);
         NeuralNetCommand neuralnetcommand = new NeuralNetCommand();
-        neuralnetcommand.setMllearn(true);
+        neuralnetcommand.setMllearn(false);
         neuralnetcommand.setMlclassify(true);
-        neuralnetcommand.setMldynamic(aConf.wantMLDynamic());
+        neuralnetcommand.setMldynamic(false);
         param.setNeuralnetcommand(neuralnetcommand);
         new CoreThread(ui, param).start();
         //Queues.clientQueue.add(param);

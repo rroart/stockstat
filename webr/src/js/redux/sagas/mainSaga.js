@@ -57,9 +57,9 @@ export function* fetchContent(action) {
     console.log("herecontent");
     console.log(serviceparam.market);
     var neuralnetcommand = new NeuralNetCommand();
-    neuralnetcommand.mllearn = true;
+    neuralnetcommand.mllearn = false;
     neuralnetcommand.mlclassify = true;
-    neuralnetcommand.mldynamic = config.get('configValueMap').get('machinelearning.mldynamic');
+    neuralnetcommand.mldynamic = false;
     serviceparam.neuralnetcommand = neuralnetcommand;
     let result = yield call(Client.fetchApi.search, "/getcontent", serviceparam);
     console.log("herecontent2");
