@@ -22,6 +22,7 @@ import roart.iclij.config.MLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.constants.ResultMetaConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -129,7 +130,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
             int jj = 0;
         }
         for (List meta : param.getResultMetaArray()) {
-            int returnSize = (int) meta.get(2);
+            int returnSize = (int) meta.get(ResultMetaConstants.RETURNSIZE);
 
             if (positions == null) {
                 int jj = 0;
@@ -252,10 +253,13 @@ public abstract class ComponentMLIndicator extends ComponentML {
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         int resultIndex = 0;
-        int count = 0;
-        for (ResultMeta meta : param.getResultMeta()) {
+        int newResultIndex = 0;
+        for (int count = 0; count < param.getResultMeta().size(); count++) {
+            ResultMeta meta = param.getResultMeta().get(count);
+            resultIndex = newResultIndex;
             MemoryItem memory = new MemoryItem();
             int returnSize = (int) meta.getReturnSize();
+            newResultIndex += returnSize;
             Double testaccuracy = (Double) meta.getTestAccuracy();
             Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.getOffsetMap();
             //Map<String, double[]> offsetMap = (Map<String, double[]>) meta.get(8);
@@ -435,8 +439,6 @@ public abstract class ComponentMLIndicator extends ComponentML {
                 System.out.println(memory);
             }
             memoryList.add(memory);
-            resultIndex += returnSize;
-            count++;
         }
         return memoryList;
         /*
