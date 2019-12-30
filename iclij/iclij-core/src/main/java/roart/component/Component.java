@@ -428,11 +428,11 @@ public abstract class Component {
                 .collect(Collectors.toList());
                 result[2] = "";
                 for(ResultMeta meta : metalist) {
-                    result[2] = result[2] + meta.getThreshold().toString() + " " + meta.getSubType() + meta.getSubSubType() + " " + meta.getClassifyMap() + " " + meta.getLearnMap();
+                    result[2] = result[2] + meta.getThreshold().toString() + " " + meta.getSubType() + meta.getSubSubType() + " " + meta.getLearnMap();
                 }
             }
             if (param.getResultMeta().size() == 1) {
-                result[2] = param.getResultMeta().get(0).getThreshold().toString() + " " + param.getResultMeta().get(0).getClassifyMap() + " " + param.getResultMeta().get(0).getLearnMap();
+                result[2] = param.getResultMeta().get(0).getThreshold().toString() + " " + param.getResultMeta().get(0).getLearnMap();
             }
             return result;
         }
