@@ -2,8 +2,10 @@ package roart.component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -11,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
+import roart.common.constants.ResultMetaConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -23,6 +26,7 @@ import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtilConstants;
 
@@ -68,7 +72,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         int resultIndex = 0;
         int count = 0;
         for (List meta : param.getResultMetaArray()) {
-            int returnSize = (int) meta.get(2);
+            int returnSize = (int) meta.get(ResultMetaConstants.RETURNSIZE);
 
             if (positions == null) {
                 int jj = 0;
@@ -123,12 +127,15 @@ public abstract class ComponentMLAggregator extends ComponentML {
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         List<MemoryItem> memoryList = new ArrayList<>();
         int resultIndex = 0;
-        int count = 0;
-        for (List meta : param.getResultMetaArray()) {
+        int newResultIndex = 0;
+        for (int count = 0; count < param.getResultMetaArray().size(); count++) {
+            List meta = param.getResultMetaArray().get(count);
+            resultIndex = newResultIndex;
             MemoryItem memory = new MemoryItem();
-            int returnSize = (int) meta.get(2);
-            Double testaccuracy = (Double) meta.get(6);
-            Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.get(8);
+            int returnSize = (int) meta.get(ResultMetaConstants.RETURNSIZE);
+            newResultIndex += returnSize;
+            Double testaccuracy = (Double) meta.get(ResultMetaConstants.TESTACCURACY);
+            Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.get(ResultMetaConstants.OFFSETMAP);
             /*
             Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
             Map<String, Integer> countMapClass = (Map<String, Integer>) meta.get(7);
@@ -148,8 +155,15 @@ public abstract class ComponentMLAggregator extends ComponentML {
             double goodFPprob = 0;
             double goodTNprob = 0;
             double goodFNprob = 0;
+            Map<Double, String> labelMap = createLabelMapShort();
+            Map<String, List<Double>> classifyMap = (Map<String, List<Double>>) meta.get(ResultMetaConstants.CLASSIFYMAP);
             //int size = param.getResultMap().values().iterator().next().size();
-            for (String key : param.getCategoryValueMap().keySet()) {
+            if (classifyMap == null) {
+                int jj = 0;
+                continue;
+            }
+            for (Entry<String, List<Double>> entry : classifyMap.entrySet()) {
+                String key = entry.getKey();
                 if (key.equals("VIX")) {
                     int jj = 0;
                 }
@@ -166,6 +180,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     int jj = 0;
                 }
                 String tfpn = (String) list.get(resultIndex);
+                tfpn = labelMap.get(entry.getValue().get(0));
                 if (tfpn == null) {
                     continue;
                 }
@@ -190,7 +205,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 }
                 if (valFuture != null && valNow != null) {
                     //System.out.println("vals " + key + " " + valNow + " " + valFuture);
-                    boolean aboveThreshold = (valFuture / valNow) >= (Double) meta.get(10);
+                    boolean aboveThreshold = (valFuture / valNow) >= (Double) meta.get(ResultMetaConstants.THRESHOLD);
                     total++;
                     if (tfpn.equals(ServiceUtilConstants.TP)) {
                         tpSize++;
@@ -239,8 +254,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setFuturedate(param.getFutureDate());
             memory.setComponent(getPipeline());
             memory.setCategory(param.getCategoryTitle());
-            memory.setSubcomponent(meta.get(0) + " " + meta.get(1));
-            memory.setDescription(getShort((String) meta.get(0)) + withComma(getShort((String) meta.get(1))) + withComma(meta.get(3)) + withComma(meta.get(4)));
+            memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
+            memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
             memory.setTestaccuracy(testaccuracy);
             memory.setParameters(JsonUtil.convert(parameters));
             //memory.setPositives(goodInc);
@@ -354,8 +369,6 @@ public abstract class ComponentMLAggregator extends ComponentML {
             if (param.isDoPrint()) {
                 System.out.println(memory);
             }
-            resultIndex += returnSize;
-            count++;
         }
         return memoryList;
     }
@@ -408,6 +421,15 @@ public abstract class ComponentMLAggregator extends ComponentML {
         component = component != null ? component.substring(0, 3) : component;
         val.setDescription(val.getDescription() + component + " " + memory.getSubcomponent() + " " + memory.getDescription() + ", ");
         return val;
+    }
+
+    public static Map<Double, String> createLabelMapShort() {
+        Map<Double, String> labelMap1 = new HashMap<>();
+        labelMap1.put(1.0, Constants.TP);
+        labelMap1.put(2.0, Constants.FP);
+        labelMap1.put(3.0, Constants.TN);
+        labelMap1.put(4.0, Constants.FN);
+        return labelMap1;
     }
 
 }
