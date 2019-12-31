@@ -87,6 +87,7 @@ class Classify:
             predicted = predicted.tolist()
             return predicted, problist
         if classify and not self.zero(myobj):
+            print("Classify", array.shape)
             (intlist, problist) = classifier.predict(array)
             intlist = np.array(intlist)
             intlist = intlist + 1
@@ -311,6 +312,7 @@ class Classify:
         else:
             mydim = train.shape[1:]
         #print(mydim)
+        print("Shapes ", train.shape, traincat.shape, mydim)
         return train, traincat, test, testcat, mydim
     
     def do_learntestinner(self, myobj, classifier, train, traincat, test, testcat, classify):
