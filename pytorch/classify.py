@@ -10,7 +10,7 @@ from datetime import datetime
 from werkzeug.wrappers import Response
 import shutil
 
-from multiprocessing import Queue
+#from multiprocessing import Queue
 
 import importlib
 
@@ -51,11 +51,12 @@ class Classify:
         return Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist }), mimetype='application/json')
         
     def do_classifyinner(self, myobj, model, classify):
+        dev = self.getdev()
         array = np.array(myobj.classifyarray, dtype='f')
         #array = myobj.classifyarray
         intlist = []
         problist = []
-        array = torch.FloatTensor(array)
+        array = torch.FloatTensor(array).to(dev)
         #print("rrayshape")
         #print(array.shape)
         #probs = torch.softmax(predictions, dim=1)
@@ -70,9 +71,9 @@ class Classify:
         if not classify:
             #print("l",len(array))
             if myobj.modelInt == 1:
-                predicted = torch.empty((len(array), 0))
+                predicted = torch.empty((len(array), 0)).to(dev)
             else:
-                predicted = torch.empty((len(array), 1, 0))
+                predicted = torch.empty((len(array), 1, 0)).to(dev)
             #print(predicted)
             #print(myobj.size, myobj.classes)
             #print("pred", predicted.shape, predicted)
@@ -88,7 +89,7 @@ class Classify:
                 #print("m", mypredicted)
                 intlist = _.tolist()
                 intlist = np.array(intlist)
-                intlist = torch.FloatTensor(intlist)
+                intlist = torch.FloatTensor(intlist).to(dev)
                 #print(type(predicted), predicted.shape)
                 if myobj.modelInt == 1:
                     #print(intlist.shape)
@@ -136,7 +137,8 @@ class Classify:
         Model = importlib.import_module('model.' + modelname)
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
         myobj.size = size
-        model = Model.Net(myobj, config, classify)
+        dev = self.getdev()
+        model = Model.Net(myobj, config, classify, dev)
         #testcat = torch.LongTensor(testcat)
         (accuracy_score, loss) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
         global dictclass
@@ -153,10 +155,12 @@ class Classify:
         if classify:
             labels = labels.long()
         v_x = inputs
-        v_y = labels
+        dev = self.getdev()
+        v_y = labels.to(dev)
         for i in range(model.config.steps):
             model.train()
             model.observe(v_x, v_y)
+            torch.cuda.empty_cache()
 
     def getSlideOld(self, inputs, labels, myobj):
             #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
@@ -238,9 +242,10 @@ class Classify:
         return inputs, labels
 
     def getSlide(self, inputs, labels, myobj, config):
+        dev = self.getdev()
         #input = torch.from_numpy(np.array([[[0,1,2,3,4,5,6,7,8,9,10],[10,11,12,13,14,15,16,17,18,19,20]]]))
         #inputs = torch.from_numpy(inputs)
-        inputs = torch.FloatTensor(inputs)
+        inputs = torch.FloatTensor(inputs).to(dev)
         size = inputs.size()
         if  hasattr(config, 'slide_stride'):
             sliding_window_stride = config.slide_stride
@@ -379,12 +384,14 @@ class Classify:
         
     def do_learntestinner(self, myobj, model, config, train, traincat, test, testcat, classify):
         print(model)
+        dev = self.getdev()
+        print("Device", dev)
 
         #net.train()
 
-        v_x = torch.FloatTensor(train)
+        v_x = torch.FloatTensor(train).to(dev)
         #v_y = torch.LongTensor(traincat).reshape(-1, 1)
-        v_y = torch.FloatTensor(traincat)
+        v_y = torch.FloatTensor(traincat).to(dev)
         #.reshape(-1, 1)
         #print(traincat)
         #print(v_y)
@@ -393,12 +400,12 @@ class Classify:
         model.eval()
 
         if not classify:
-            tv_x = torch.FloatTensor(test)
+            tv_x = torch.FloatTensor(test).to(dev)
             #print("test", test)
             y_hat = model(tv_x)
-            loss = model.bce(y_hat, testcat)
+            loss = model.bce(y_hat, testcat.to(dev))
             #print(testcat)
-            tv_y = torch.FloatTensor(testcat)
+            tv_y = torch.FloatTensor(testcat).to(dev)
             #print("losss", loss.item())
             #print(tv_y.size(), tv_y)
             #print(y_hat.size(),y_hat)
@@ -408,11 +415,10 @@ class Classify:
         accuracy_score = 0
 
         #print("test", len(test), len(testcat), testcat.shape, test)
-        tv_x = torch.FloatTensor(test)
+        tv_x = torch.FloatTensor(test).to(dev)
         #print(type(testcat), testcat.shape)
         #tv_y = testcat
-        tv_y = torch.LongTensor(testcat)
-        
+        tv_y = torch.LongTensor(testcat).to(dev)
         y_hat = model(tv_x)
         #print("yhat", y_hat)
         #print(testcat)
@@ -521,7 +527,11 @@ class Classify:
             checkpoint = torch.load(self.getpath(myobj) + myobj.filename + ".pt")
             model = checkpoint['model']
         else:
-            model = Model.Net(myobj, config, classify)
+            dev = self.getdev()
+            model = Model.Net(myobj, config, classify, dev)
+        if torch.cuda.is_available():
+            model.cuda()
+        #model.share_memory()
         #myobj.size, myobj.classes, dim, layers)
         #testcat = torch.LongTensor(testcat)
         accuracy_score = None
@@ -544,9 +554,10 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "loss": loss}), mimetype='application/json'))
+        return(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "loss": loss, "gpu" : self.hasgpu()}), mimetype='application/json'))
 
     def do_dataset(self, queue, request):
+        torch.cuda.empty_cache()
         dt = datetime.now()
         timestamp = dt.timestamp()
         #print(request.get_data(as_text=True))
@@ -559,7 +570,12 @@ class Classify:
         myobj.trainingarray = train
         myobj.trainingcatarray = traincat
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
-        model = Model.Net(myobj, config, classify)
+        dev = self.getdev()
+        model = Model.Net(myobj, config, classify, dev)
+        if torch.cuda.is_available():
+            model.cuda()
+            #cudnn.benchmark = True
+        #model.share_memory()
         classifier = model
         print("model", modelname)
         (accuracy_score, loss) = self.do_learntestinner(myobj, classifier, model, train, traincat, test, testcat, classify)
@@ -571,7 +587,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"accuracy": accuracy_score, "loss": loss, "classify" : classify}), mimetype='application/json'))
+        return(Response(json.dumps({"accuracy": accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
         
     def getpath(self, myobj):
@@ -582,4 +598,19 @@ class Classify:
     def do_filename(self, queue, request):
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         exists = self.exists(myobj)
-        queue.put(Response(json.dumps({"exists": exists}), mimetype='application/json'))
+        return(Response(json.dumps({"exists": exists}), mimetype='application/json'))
+
+    def hasgpu(self):
+        return torch.cuda.is_available()
+    
+    def getpu(self):
+        if torch.cuda.is_available():  
+            return "cuda:0" 
+        else:  
+            return "cpu"  
+
+    def getdev(self):
+        return torch.device(self.getpu())
+
+    def hasgpu(self):
+        return torch.cuda.is_available()

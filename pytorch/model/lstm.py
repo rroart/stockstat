@@ -2,14 +2,15 @@ import torch.nn as nn
 import torch
 
 class Net(nn.Module):
-  def __init__(self, myobj, config, classify):
+  def __init__(self, myobj, config, classify, dev):
     super(Net, self).__init__()
     
     # Defining some parameters
     self.myobj = myobj
     self.config = config
     self.classify = classify
-        
+    self.dev = dev
+    
     self.rnn = nn.LSTM(self.myobj.size, self.config.hidden, self.config.layers, batch_first=True)   
     # Fully connected layer
     if classify:
@@ -29,8 +30,8 @@ class Net(nn.Module):
 
   def forward(self, x):
     batches = x.size(0)
-    h0 = torch.zeros([self.config.layers, batches, self.config.hidden])
-    c0 = torch.zeros([self.config.layers, batches, self.config.hidden])
+    h0 = torch.zeros([self.config.layers, batches, self.config.hidden], device = self.dev)
+    c0 = torch.zeros([self.config.layers, batches, self.config.hidden], device = self.dev)
     (x, _) = self.rnn(x, (h0, c0))
     #c0
     x = x[:,-1,:]  # Keep only the output of the last iteration. Before shape (6,3,50), after shape (6,50)

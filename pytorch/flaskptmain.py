@@ -3,7 +3,7 @@
 from flask import Flask, request
 
 import sys
-from multiprocessing import Process, Queue
+#from torch.multiprocessing import Process, Queue
 
 import json
 from werkzeug.wrappers import Response
@@ -46,9 +46,8 @@ def do_learntestclassify():
         import classify
         cl = classify.Classify()
         try:
-            cl.do_learntestclassify(queue, request)
+            return cl.do_learntestclassify(queue, request)
         except:
-            queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None}), mimetype='application/json'))
             import sys,traceback
             traceback.print_exc(file=sys.stdout)
             print("\n")
@@ -57,6 +56,9 @@ def do_learntestclassify():
             f.write(request.get_data(as_text=True))
             traceback.print_exc(file=f)
             f.close()
+            memory = "CUDA out of memory" in traceback.format_exc()
+            return(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "gpu" : hasgpu, "memory" : memory }), mimetype='application/json'))
+    return classifyrunner(None, request)
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
     process.start()
@@ -88,9 +90,8 @@ def do_dataset():
         import classify
         cl = classify.Classify()
         try:
-            cl.do_dataset(queue, request)
+            return cl.do_dataset(queue, request)
         except:
-            queue.put(Response(json.dumps({"accuracy": None, "loss": None}), mimetype='application/json'))
             import sys,traceback
             traceback.print_exc(file=sys.stdout)
             print("\n")
@@ -99,6 +100,9 @@ def do_dataset():
             f.write(request.get_data(as_text=True))
             traceback.print_exc(file=f)
             f.close()
+            memory = "CUDA out of memory" in traceback.format_exc()
+            return(Response(json.dumps({"accuracy": None, "loss": None, "gpu" : hasgpu, "memory" : memory }), mimetype='application/json'))
+    return classifyrunner(None, request)
     queue = Queue()
     process = Process(target=classifyrunner, args=(queue, request))
     process.start()
@@ -111,7 +115,8 @@ def do_filename():
     def filenamerunner(queue, request):
         import classify
         cl = classify.Classify()
-        cl.do_filename(queue, request)
+        return cl.do_filename(queue, request)
+    return filenamerunner(None, request)
     queue = Queue()
     process = Process(target=filenamerunner, args=(queue, request))
     process.start()

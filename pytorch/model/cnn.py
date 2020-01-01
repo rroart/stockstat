@@ -2,13 +2,14 @@ import torch.nn as nn
 import torch
 
 class Net(nn.Module):
-    def __init__(self, myobj, config, classify):
+    def __init__(self, myobj, config, classify, dev):
         super(Net, self).__init__()
 
         # Defining some parameters
         self.myobj = myobj
         self.config = config
         self.classify = classify
+        self.dev = dev
 
         #https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/02-intermediate/convolutional_neural_network/main.py
         #print("MO",myobj.size)
@@ -52,6 +53,8 @@ class Net(nn.Module):
         #     nn.MaxPool2d(kernel_size=2, stride=2))
         #print("O12", o1, o2)
         #print("P12", p1, p2)
+        self.r1 = nn.ReLU()
+        self.b1 = nn.BatchNorm1d(64)
         self.fc1 = nn.Linear(c2 * p2, 64)
         self.fc2 = nn.Linear(64, myobj.classes)
 
@@ -101,9 +104,7 @@ class Net(nn.Module):
         #bn2 = nn.BatchNorm1d(32)
         #out = bn2(out)
         #out = r2(out)
-        r1 = nn.ReLU()
         #print("oo", out.shape)
-        b1 = nn.BatchNorm1d(64)
 
         #print("oo", out.shape)
         out = out.view(out.size(0), -1)
@@ -112,9 +113,9 @@ class Net(nn.Module):
         #print("oo", out.shape)
         out = self.fc1(out)
         #print("oo", out.shape)
-        out = b1(out)
+        out = self.b1(out)
         #print("oo", out.shape)
-        out = r1(out)
+        out = self.r1(out)
         
         #print("oo", out.shape)
         if self.classify:
@@ -130,7 +131,7 @@ class Net(nn.Module):
     def init_hidden(self, batch_size):
         # This method generates the first hidden state of zeros which we'll use in the forward pass
         # We'll send the tensor holding the hidden state to the device we specified earlier as well
-        hidden = torch.zeros(self.config.layers, batch_size, self.config.hidden)
+        hidden = torch.zeros(self.config.layers, batch_size, self.config.hidden).to(self.dev)
         return hidden
 
 
