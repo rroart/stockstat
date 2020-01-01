@@ -374,6 +374,7 @@ public class MLIndicator extends Aggregator {
             }
             MLMeta mlmeta1 = new MLMeta();
             mlmeta1.dim1 = arrayLength;
+            //mlmeta1.dim2 = arrayLength;
             mlmeta1.dim3 = arrayLength;
             mlmeta1.classify = true;
             mlmeta1.features = true;
@@ -529,7 +530,7 @@ public class MLIndicator extends Aggregator {
                     log.error("Models size is {}", mldao.getModels().size());
                 }
                 for (MLClassifyModel model : mldao.getModels()) {          
-                    if (mlmeta.dim3 == null && model.isFourDimensional()) {
+                    if ((mlmeta.dim3 == null) == model.isFourDimensional()) {
                         continue;
                     }
                     List<Triple<String, Object, Double>> learnMap = transformLearnClassifyMap(mergedCatMap, true, mlmeta, model);
