@@ -204,6 +204,8 @@ public class FindProfitAction extends MarketAction {
             String key2 = component.getFuturedays();
             aMap.put(key2, parameters.getFuturedays());
                         
+            aMap.put(ConfigConstants.MISCTHRESHOLD, null);
+            
             ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, aMap, marketTime.subcomponent, null, marketTime.parameters);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
