@@ -108,6 +108,10 @@ public class LearnTestClassify {
     
     private Boolean zero;
     
+    private Boolean gpu;
+    
+    private Boolean memory;
+    
     public TensorflowDNNConfig getTensorflowDNNConfig() {
         return tensorflowDNNConfig;
     }
@@ -438,6 +442,22 @@ public class LearnTestClassify {
 
     public void setZero(Boolean zero) {
         this.zero = zero;
+    }
+
+    public Boolean getGpu() {
+        return gpu;
+    }
+
+    public void setGpu(Boolean gpu) {
+        this.gpu = gpu;
+    }
+
+    public Boolean getMemory() {
+        return memory;
+    }
+
+    public void setMemory(Boolean memory) {
+        this.memory = memory;
     }
 
 }
