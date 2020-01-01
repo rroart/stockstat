@@ -367,7 +367,7 @@ public class MLIndicator extends Aggregator {
             mlmeta.classify = true;
             mlmeta.features = true;
             boolean multi = neuralnetcommand.isMldynamic() || (neuralnetcommand.isMlclassify() && !neuralnetcommand.isMllearn());
-            if (multi /*conf.wantMLMP()*/) {
+            if (false /*multi*/ /*conf.wantMLMP()*/) {
                 doLearnTestClassifyFuture(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta, neuralnetcommand, threshold);
             } else {
                 doLearnTestClassify(nnConfigs, conf, dayIndicatorMap, mergedCatMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta, neuralnetcommand, threshold);

@@ -107,6 +107,7 @@ class Classify:
             predicted = predicted.tolist()
             return predicted, problist
         else:
+            print("Classify", array.shape)
             predictions = model(array)
             #print(type(predictions))
             #print("predictions")
@@ -371,6 +372,7 @@ class Classify:
             mydim = train.shape[1:]
             #print("mydim2", mydim)
         #print("mydim", mydim)
+        print("Shapes", train.shape, traincat.shape, mydim)
         return train, traincat, test, testcat, mydim
         #print("classes")
         #print(myobj.classes)

@@ -211,7 +211,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         if (conf.wantML()) {
             Map<Double, String> labelMapShort = createLabelMapShort();
             boolean multi = neuralnetcommand.isMldynamic() || (neuralnetcommand.isMlclassify() && !neuralnetcommand.isMllearn());
-            if (multi /*conf.wantMLMP()*/) {
+            if (false /*multi*/ /*conf.wantMLMP()*/) {
                 doLearnTestClassifyFuture(nnConfigs, conf, mapMap, mapResult, labelMapShort, metaMap, neuralnetcommand, threshold);
             } else {
                 doLearnTestClassify(nnConfigs, conf, mapMap, mapResult, labelMapShort, metaMap, neuralnetcommand, threshold);
