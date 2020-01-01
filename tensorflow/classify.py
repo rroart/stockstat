@@ -86,8 +86,9 @@ class Classify:
             #print("predarray", predicted.shape, predicted)
             predicted = predicted.tolist()
             return predicted, problist
-        if classify and not self.zero(myobj):
+        else:
             (intlist, problist) = classifier.predict(array)
+        if classify and not self.zero(myobj):
             intlist = np.array(intlist)
             intlist = intlist + 1
             intlist = intlist.tolist()
@@ -491,7 +492,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "loss": loss }), mimetype='application/json'))
+        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "loss": loss, "gpu" : self.hasgpu() }), mimetype='application/json'))
 
     def do_dataset(self, queue, request):
         dt = datetime.now()
@@ -511,6 +512,7 @@ class Classify:
         model = Model.Model(myobj, config, classify)
         #print("classez2", myobj.classes)
         print(model)
+        self.printgpus()
         classifier = model
         (accuracy_score, loss) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
         myobj.classifyarray = train
@@ -529,7 +531,7 @@ class Classify:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"accuracy": accuracy_score, "loss": loss, "classify" : classify }), mimetype='application/json'))
+        queue.put(Response(json.dumps({"accuracy": accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getpath(self, myobj):
@@ -541,3 +543,16 @@ class Classify:
         myobj = json.loads(request.get_data(as_text=True), object_hook=lt.LearnTest)
         exists = self.exists(myobj)
         queue.put(Response(json.dumps({"exists": exists}), mimetype='application/json'))
+
+    def printgpus(self):
+        #from tensorflow.python.client import device_lib
+        #print(device_lib.list_local_devices())
+        from keras import backend as K
+        gpus = K.tensorflow_backend._get_available_gpus()
+        print(type(gpus))
+        print("GPUs", gpus)
+
+    def hasgpu(self):
+        from keras import backend as K
+        gpus = K.tensorflow_backend._get_available_gpus()
+        return len(gpus) > 0

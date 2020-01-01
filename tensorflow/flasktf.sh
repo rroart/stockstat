@@ -1,10 +1,13 @@
 #!/bin/bash
 
-if [ -d ~/tensorflow ]; then
-    source ~/tensorflow/bin/activate
-fi
+#if [ -d ~/tensorflow ]; then
+#    source ~/tensorflow/bin/activate
+#fi
 
 rm -rf /tmp/tf*
+
+eval "$(conda shell.bash hook)"
+conda activate tf
 
 PYTHON3=`command -v python3.6`
 PYTHON3=`command -v python3`
