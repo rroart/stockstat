@@ -289,18 +289,20 @@ public abstract class ComponentMLIndicator extends ComponentML {
                 if (mainList == null) {
                     continue;
                 }
+                /*
                 if (offsetMap == null) {
                     log.info("Offset map null, skipping rest");
-                    continue;
+                    //continue;
                 }
-                List<Double> off = offsetMap.get(key);
+                List<Double> off = null; offsetMap.get(key);
                 if (off == null) {
                     log.error("The offset should not be null for {}", key);
-                    continue;
+                    //continue;
                 }
                 int offsetZero = (int) Math.round(off.get(0));
-                Double valFuture = mainList.get(mainList.size() - 1 - param.getLoopoffset() - offsetZero);
-                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays() - param.getLoopoffset() - offsetZero);
+                */
+                Double valFuture = mainList.get(mainList.size() - 1 - param.getLoopoffset());
+                Double valNow = mainList.get(mainList.size() - 1 - param.getFuturedays() - param.getLoopoffset());
                 if (valFuture == null || valNow == null) {
                     continue;
                 }
