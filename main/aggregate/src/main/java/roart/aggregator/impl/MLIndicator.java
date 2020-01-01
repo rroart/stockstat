@@ -377,7 +377,7 @@ public class MLIndicator extends Aggregator {
             mlmeta1.dim3 = arrayLength;
             mlmeta1.classify = true;
             mlmeta1.features = true;
-            if (multi /*conf.wantMLMP()*/) {
+            if (false /*multi*/ /*conf.wantMLMP()*/) {
                 doLearnTestClassifyFuture(nnConfigs, conf, dayIndicatorMap, mergedCatArrayMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta1, neuralnetcommand, threshold);
             } else {
                 doLearnTestClassify(nnConfigs, conf, dayIndicatorMap, mergedCatArrayMap, mapResult, arrayLength, labelMapShort, indicators, mlmeta1, neuralnetcommand, threshold);
