@@ -25,6 +25,7 @@ import roart.common.ml.PytorchGRUConfig;
 import roart.common.ml.PytorchLSTMConfig;
 import roart.common.ml.PytorchMLPConfig;
 import roart.common.ml.PytorchRNNConfig;
+import roart.common.util.InetUtil;
 import roart.eureka.util.EurekaUtil;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
@@ -39,14 +40,15 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
 
     private MyMyConfig conf;
 
-    private String pytorchServer;
+    private List<String> pytorchServers;
 
     private List<MLClassifyModel>  mymodels;
 
     public MLClassifyPytorchAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();
-        pytorchServer = conf.getPytorchServer();
+        String serverString = conf.getPytorchServer();
+        pytorchServers = new InetUtil().getServers(serverString);
     }
 
     private void findModels() {
@@ -129,7 +131,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/learntest");
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/learntest");
         return test.getAccuracy();
     }
 
@@ -159,7 +161,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/eval");
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/eval");
         return test.getAccuracy();
     }
 
@@ -188,7 +190,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/classify");
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -259,6 +261,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         param.setPath(path);
         param.setFilename(filename);
         param.setNeuralnetcommand(neuralnetcommand);
+        for (String pytorchServer : pytorchServers) {
         try {
             LearnTestClassify ret = null;
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/filename");
@@ -266,8 +269,10 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             if (!exists && (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMlclassify())) {
                 return result;
             }
+            break;
         } catch (Exception e) {
             log.error("Exception", e);
+        }
         }
         Object[] trainingArray = new Object[learnMap.size()];
         Object[] trainingCatArray = new Object[learnMap.size()];
@@ -299,11 +304,23 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
             }
         }
         LearnTestClassify ret = null;
+        for (String pytorchServer : pytorchServers) {
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/learntestclassify");
+            boolean exception = ret.getException() != null && ret.getException();
+            boolean gpu = ret.getGpu() != null && ret.getGpu();
+            boolean memory = ret.getMemory() != null && ret.getMemory();
+            if (exception) {
+                if (gpu && memory) {
+                    log.error("CUDA out of memory for {}", filename);
+                } else {
+                    break;
+                }
+            }
         } catch (Exception e) {
             log.error("Exception", e);
             return result;
+        }
         }
         result.setAccuracy(ret.getAccuracy());
         result.setLoss(ret.getLoss());
@@ -339,11 +356,23 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         param.setDataset(dataset);
         param.setZero(true);
         LearnTestClassify ret = null;
+        for (String pytorchServer : pytorchServers) {
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/dataset");
+            boolean exception = ret.getException() != null && ret.getException();
+            boolean gpu = ret.getGpu() != null && ret.getGpu();
+            boolean memory = ret.getMemory() != null && ret.getMemory();
+            if (exception) {
+                if (gpu && memory) {
+                    log.error("CUDA out of memory for {}", dataset);
+                } else {
+                    break;
+                }
+            }
         } catch (Exception e) {
             log.error("Exception", e);
             return result;
+        }
         }
         result.setAccuracy(ret.getAccuracy());
         result.setClassify(ret.getClassify());

@@ -28,6 +28,7 @@ import roart.common.ml.TensorflowLIRConfig;
 import roart.common.ml.TensorflowLSTMConfig;
 import roart.common.ml.TensorflowMLPConfig;
 import roart.common.ml.TensorflowRNNConfig;
+import roart.common.util.InetUtil;
 import roart.eureka.util.EurekaUtil;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
@@ -42,14 +43,15 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
 
     private MyMyConfig conf;
 
-    private String tensorflowServer;
+    private List<String> tensorflowServers;
 
     private List<MLClassifyModel>  mymodels;
 
     public MLClassifyTensorflowAccess(MyMyConfig conf) {
         this.conf = conf;
         findModels();
-        tensorflowServer = conf.getTensorflowServer();
+        String serverString = conf.getTensorflowServer();
+        tensorflowServers = new InetUtil().getServers(serverString);
     }
 
     private void findModels() {
@@ -150,7 +152,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntest");
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/learntest");
         return test.getAccuracy();
     }
 
@@ -180,7 +182,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/eval");
+        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/eval");
         return test.getAccuracy();
     }
 
@@ -209,7 +211,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/classify");
+            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -280,6 +282,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.setPath(path);
         param.setFilename(filename);
         param.setNeuralnetcommand(neuralnetcommand);
+        for (String tensorflowServer : tensorflowServers) {
         try {
             LearnTestClassify ret = null;
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/filename");
@@ -287,8 +290,10 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             if (!exists && (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMlclassify())) {
                 return result;
             }
+            break;
         } catch (Exception e) {
             log.error("Exception", e);
+        }
         }
         Object[] trainingArray = new Object[learnMap.size()];
         Object[] trainingCatArray = new Object[learnMap.size()];
@@ -320,11 +325,24 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             }
         }
         LearnTestClassify ret = null;
+        for (String tensorflowServer : tensorflowServers) {
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
+            boolean exception = ret.getException() != null && ret.getException();
+            boolean gpu = ret.getGpu() != null && ret.getGpu();
+            boolean memory = ret.getMemory() != null && ret.getMemory();
+            if (exception) {
+                if (gpu && memory) {
+                    // not yet occurred
+                    log.error("CUDA out of memory for {}", filename);
+                } else {
+                    break;
+                }
+            }
         } catch (Exception e) {
             log.error("Exception", e);
             return result;
+        }
         }
         result.setAccuracy(ret.getAccuracy());
         result.setLoss(ret.getLoss());
@@ -360,11 +378,24 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.setDataset(dataset);
         param.setZero(true);
         LearnTestClassify ret = null;
+        for (String tensorflowServer : tensorflowServers) {
         try {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/dataset");
+            boolean exception = ret.getException() != null && ret.getException();
+            boolean gpu = ret.getGpu() != null && ret.getGpu();
+            boolean memory = ret.getMemory() != null && ret.getMemory();
+            if (exception) {
+                if (gpu && memory) {
+                    // not yet occurred
+                    log.error("CUDA out of memory for {}", dataset);
+                } else {
+                    break;
+                }
+            }
         } catch (Exception e) {
             log.error("Exception", e);
             return result;
+        }
         }
         result.setAccuracy(ret.getAccuracy());
         result.setClassify(ret.getClassify());

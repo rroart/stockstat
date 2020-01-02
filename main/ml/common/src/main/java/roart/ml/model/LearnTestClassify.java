@@ -112,6 +112,8 @@ public class LearnTestClassify {
     
     private Boolean memory;
     
+    private Boolean exception;
+    
     public TensorflowDNNConfig getTensorflowDNNConfig() {
         return tensorflowDNNConfig;
     }
@@ -458,6 +460,14 @@ public class LearnTestClassify {
 
     public void setMemory(Boolean memory) {
         this.memory = memory;
+    }
+
+    public Boolean getException() {
+        return exception;
+    }
+
+    public void setException(Boolean exception) {
+        this.exception = exception;
     }
 
 }
