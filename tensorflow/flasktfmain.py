@@ -56,8 +56,9 @@ def do_learntestclassify():
         try:
             cl.do_learntestclassify(queue, request)
         except:
-            queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True }), mimetype='application/json'))
             import sys,traceback
+            cudnn = "0 successful operations" in traceback.format_exc()
+            queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "cudnn" : cudnn }), mimetype='application/json'))
             traceback.print_exc(file=sys.stdout)
             print("\n")
             import random
@@ -98,8 +99,9 @@ def do_dataset():
         try:
             cl.do_dataset(queue, request)
         except:
-            queue.put(Response(json.dumps({"accuracy": None, "loss": None, "exception" : True }), mimetype='application/json'))
             import sys,traceback
+            cudnn = "0 successful operations" in traceback.format_exc()
+            queue.put(Response(json.dumps({"accuracy": None, "loss": None, "exception" : True, "cudnn" : cudnn }), mimetype='application/json'))
             traceback.print_exc(file=sys.stdout)
             print("\n")
             import random

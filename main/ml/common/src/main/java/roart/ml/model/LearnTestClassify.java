@@ -114,6 +114,8 @@ public class LearnTestClassify {
     
     private Boolean exception;
     
+    private Boolean cudnn;
+    
     public TensorflowDNNConfig getTensorflowDNNConfig() {
         return tensorflowDNNConfig;
     }
@@ -468,6 +470,14 @@ public class LearnTestClassify {
 
     public void setException(Boolean exception) {
         this.exception = exception;
+    }
+
+    public Boolean getCudnn() {
+        return cudnn;
+    }
+
+    public void setCudnn(Boolean cudnn) {
+        this.cudnn = cudnn;
     }
 
 }

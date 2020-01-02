@@ -330,11 +330,11 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
-            boolean memory = ret.getMemory() != null && ret.getMemory();
+            boolean cudnn = ret.getCudnn() != null && ret.getCudnn();
             if (exception) {
-                if (gpu && memory) {
+                if (gpu && cudnn) {
                     // not yet occurred
-                    log.error("CUDA out of memory for {}", filename);
+                    log.error("CUDNN initialization for {}", filename);
                 } else {
                     break;
                 }
@@ -383,11 +383,10 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/dataset");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
-            boolean memory = ret.getMemory() != null && ret.getMemory();
+            boolean cudnn = ret.getCudnn() != null && ret.getCudnn();
             if (exception) {
-                if (gpu && memory) {
-                    // not yet occurred
-                    log.error("CUDA out of memory for {}", dataset);
+                if (gpu && cudnn) {
+                    log.error("CUDNN initialization for {}", dataset);
                 } else {
                     break;
                 }
