@@ -70,7 +70,8 @@ public class InetUtil {
     
     public List<String> getServers(String serverString) {
         String[] servers = serverString.split(",");
-        return Arrays.asList(servers).parallelStream().map(server -> handleServer(server)).filter(server -> server != null).collect(Collectors.toList());
+        // not parallelStream yet, pri list
+        return Arrays.asList(servers).stream().map(server -> handleServer(server)).filter(server -> server != null).collect(Collectors.toList());
     }
 
 
