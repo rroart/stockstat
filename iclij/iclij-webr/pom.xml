@@ -12,7 +12,7 @@
   <artifactId>stockstat-iclij-webr</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Stock Statistics Icli Web React</name>
+  <name>Stock Statistics Iclij Web React</name>
   <build>
     <plugins>
       <plugin>
