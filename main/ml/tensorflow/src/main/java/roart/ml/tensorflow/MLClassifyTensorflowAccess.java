@@ -336,6 +336,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
                     // not yet occurred
                     log.error("CUDNN initialization for {}", filename);
                 } else {
+                    log.info("Completed {} on {}", filename, tensorflowServer);
                     break;
                 }
             }
@@ -388,6 +389,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
                 if (gpu && cudnn) {
                     log.error("CUDNN initialization for {}", dataset);
                 } else {
+                    log.info("Completed {} on {}", dataset, tensorflowServer);
                     break;
                 }
             }
