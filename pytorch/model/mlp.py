@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 
 class Net(nn.Module):
-    def __init__(self, myobj, config, classify, dev):
+    def __init__(self, myobj, config, classify):
         super(Net, self).__init__()
 
         # Defining some parameters

@@ -2,14 +2,13 @@ import torch.nn as nn
 import torch
 
 class Net(nn.Module):
-    def __init__(self, myobj, config, classify, dev):
+    def __init__(self, myobj, config, classify):
         super(Net, self).__init__()
 
         # Defining some parameters
         self.myobj = myobj
         self.config = config
         self.classify = classify
-        self.dev = dev
         
         #Defining the layers
         # RNN Layer
@@ -35,7 +34,7 @@ class Net(nn.Module):
         batch_size = x.size(0)
 
         # Initializing hidden state for first input using method defined below
-        hidden = self.init_hidden(batch_size)
+        hidden = self.init_hidden(batch_size).to(x.device)
         #print("hidden", hidden.size(), batch_size)
 
         # Passing in the input and hidden state into the model and obtaining outputs
@@ -58,7 +57,7 @@ class Net(nn.Module):
     def init_hidden(self, batch_size):
         # This method generates the first hidden state of zeros which we'll use in the forward pass
         # We'll send the tensor holding the hidden state to the device we specified earlier as well
-        hidden = torch.zeros(self.config.layers, batch_size, self.config.hidden).to(self.dev)
+        hidden = torch.zeros(self.config.layers, batch_size, self.config.hidden)
         return hidden
 
 

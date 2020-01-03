@@ -138,8 +138,7 @@ class Classify:
         Model = importlib.import_module('model.' + modelname)
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
         myobj.size = size
-        dev = self.getdev()
-        model = Model.Net(myobj, config, classify, dev)
+        model = Model.Net(myobj, config, classify)
         #testcat = torch.LongTensor(testcat)
         (accuracy_score, loss) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
         global dictclass
@@ -529,8 +528,7 @@ class Classify:
             checkpoint = torch.load(self.getpath(myobj) + myobj.filename + ".pt")
             model = checkpoint['model']
         else:
-            dev = self.getdev()
-            model = Model.Net(myobj, config, classify, dev)
+            model = Model.Net(myobj, config, classify)
         if torch.cuda.is_available():
             model.cuda()
         #model.share_memory()
@@ -572,8 +570,7 @@ class Classify:
         myobj.trainingarray = train
         myobj.trainingcatarray = traincat
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
-        dev = self.getdev()
-        model = Model.Net(myobj, config, classify, dev)
+        model = Model.Net(myobj, config, classify)
         if torch.cuda.is_available():
             model.cuda()
             #cudnn.benchmark = True
