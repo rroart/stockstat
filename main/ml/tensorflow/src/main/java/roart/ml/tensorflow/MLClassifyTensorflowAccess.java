@@ -331,14 +331,22 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean cudnn = ret.getCudnn() != null && ret.getCudnn();
+            boolean memory = ret.getMemory() != null && ret.getMemory();
             if (exception) {
-                if (gpu && cudnn) {
-                    // not yet occurred
-                    log.error("CUDNN initialization for {}", filename);
-                } else {
-                    log.info("Completed {} on {}", filename, tensorflowServer);
-                    break;
+                if (gpu) { 
+                    if (memory) {
+                        log.error("CUDA out of memory for {}", filename);
+                        continue;
+                    }
+                    if (cudnn) {
+                        log.error("CUDNN initialization for {}", filename);
+                        continue;
+                    }
                 }
+                break;
+            } else {
+                log.info("Completed {} on {}", filename, tensorflowServer);
+                break;
             }
         } catch (Exception e) {
             log.error("Exception", e);
@@ -385,13 +393,22 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean cudnn = ret.getCudnn() != null && ret.getCudnn();
+            boolean memory = ret.getMemory() != null && ret.getMemory();
             if (exception) {
-                if (gpu && cudnn) {
-                    log.error("CUDNN initialization for {}", dataset);
-                } else {
-                    log.info("Completed {} on {}", dataset, tensorflowServer);
-                    break;
+                if (gpu) { 
+                    if (memory) {
+                        log.error("CUDA out of memory for {}", dataset);
+                        continue;
+                    }
+                    if (cudnn) {
+                        log.error("CUDNN initialization for {}", dataset);
+                        continue;
+                    }
                 }
+                break;
+            } else {
+                log.info("Completed {} on {}", dataset, tensorflowServer);
+                break;
             }
         } catch (Exception e) {
             log.error("Exception", e);

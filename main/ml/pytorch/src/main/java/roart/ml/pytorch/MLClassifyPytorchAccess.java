@@ -314,9 +314,11 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
                 if (gpu && memory) {
                     log.error("CUDA out of memory for {}", filename);
                 } else {
-                    log.info("Completed {} on {}", filename, pytorchServer);
                     break;
                 }
+            } else {
+                log.info("Completed {} on {}", filename, pytorchServer);
+                break;
             }
         } catch (Exception e) {
             log.error("Exception", e);
@@ -367,9 +369,11 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
                 if (gpu && memory) {
                     log.error("CUDA out of memory for {}", dataset);
                 } else {
-                    log.info("Completed {} on {}", dataset, pytorchServer);
                     break;
                 }
+            } else {
+                log.info("Completed {} on {}", dataset, pytorchServer);
+                break;
             }
         } catch (Exception e) {
             log.error("Exception", e);
