@@ -1667,9 +1667,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                             log.error("Exception fix later, refactor", e);
                         }
                         String merge = mergeTxt(subType);
-                        objs[retindex++] = title + " " + merge + subType.getName() + Constants.WEBBR +  subType.getType() + model.getShortName() + mapType + " " + val;
+                        objs[retindex++] = title + " " + merge + subType.getName() + " " + threshold + Constants.WEBBR +  subType.getType() + mldao.getShortName() + " " + model.getShortName() + mapType + " " + val;
                         if (model.getReturnSize() > 1) {
-                            objs[retindex++] = title + " " + merge + subType.getName() + " " + threshold + Constants.WEBBR +  subType.getType() + model.getShortName() + mapType + " prob ";
+                            objs[retindex++] = title + " " + merge + subType.getName() + " " + threshold + Constants.WEBBR +  subType.getType() + mldao.getShortName() + " " + model.getShortName() + mapType + " prob ";
                         }
                         //retindex = mldao.addTitles(objs, retindex, this, title, key, subType.getType());
                     }

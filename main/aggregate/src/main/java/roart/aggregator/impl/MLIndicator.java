@@ -903,9 +903,9 @@ public class MLIndicator extends Aggregator {
                     } catch (Exception e) {
                         log.error("Exception fix later, refactor", e);
                     }
-                    objs[retindex++] = title + " " + "mlind" + Constants.WEBBR +  model.getShortName() + mapType + " " + val;
+                    objs[retindex++] = title + " " + "mlind" + " " + threshold + Constants.WEBBR +  mldao.getShortName() + " " + model.getShortName() + mapType + " " + val;
                     if (model.getReturnSize() > 1) {
-                        objs[retindex++] = title + " " + "mlind" + " " + threshold + Constants.WEBBR +  model.getShortName() + mapType + " prob ";
+                        objs[retindex++] = title + " " + "mlind" + " " + threshold + Constants.WEBBR +  mldao.getShortName() + " " + model.getShortName() + mapType + " prob ";
                     }
                 }
             }
