@@ -46,7 +46,7 @@ public abstract class MLClassifyModel {
     
     public static String roundme(Double eval) {
         if (eval == null) {
-            return null;
+            return "";
         }
         DecimalFormat df = new DecimalFormat("#.00");
         return df.format(eval);
@@ -132,7 +132,11 @@ public abstract class MLClassifyModel {
             log.error("No ML Meta");
             return array;
         }
+        int dim = array.getClass().getName().indexOf("D");
         if (mlmeta.dim2 != null && isTwoDimensional()) {
+            if (dim != 2) {
+                int jj = 0;
+            }
             double[] newarray = new double[0];
             double[][] arrays = (double[][]) array;
             for (int i = 0; i < mlmeta.dim2; i++) {
@@ -141,11 +145,17 @@ public abstract class MLClassifyModel {
             return newarray;
         }
         if (mlmeta.dim2 == null && isThreeDimensional()) {
+            if (dim != 1) {
+                int jj = 0;
+            }
             double[][] newarray = new double[1][];
             newarray[0] = (double[]) array;
             return newarray;
         }
         if (mlmeta.dim3 != null && isFourDimensional()) {
+            if (dim != 2) {
+                int jj = 0;
+            }
             double[][][] newarray = new double[1][][];
             newarray[0] = (double[][]) array;
             return newarray;
