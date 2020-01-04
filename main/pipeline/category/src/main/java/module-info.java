@@ -17,4 +17,5 @@ module pipeline.category {
     requires model;
     requires common.model;
     requires common.config;
+    requires common.util;
 }

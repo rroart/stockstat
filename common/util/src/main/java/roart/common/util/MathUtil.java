@@ -25,4 +25,45 @@ public class MathUtil {
         return bd.doubleValue();
     }
 
+    public static Object[] round(Object[] o, int n) {
+        String hashes = StringUtils.repeat("#", n);
+        DecimalFormat df = new DecimalFormat("#." + hashes);
+        Object[] newo = new Object[o.length];
+        for (int i = 0; i < o.length; i++) {
+            if (o[i] instanceof Double) {
+                //df.setRoundingMode(RoundingMode.HALF_UP);
+                newo[i] = Double.valueOf(df.format(o[i]));
+            } else {
+                newo[i] = o[i];
+            }
+        }
+        return newo;
+    }
+
+    public static Object[] round2(Object[] o, int n) {
+        Object[] newo = new Object[o.length];
+        for (int i = 0; i < o.length; i++) {
+            if (o[i] instanceof Double) {
+                newo[i] = Precision.round((double) o[i], n);
+            } else {
+                newo[i] = o[i];
+            }
+        }
+        return newo;
+    }
+
+    public static Object[] round3(Object[] o, int n) {
+        Object[] newo = new Object[o.length];
+        for (int i = 0; i < o.length; i++) {
+            if (o[i] instanceof Double) {
+                BigDecimal bd = new BigDecimal(Double.toString((double) o[i]));
+                bd = bd.setScale(n, RoundingMode.HALF_UP);
+                newo[i] = bd.doubleValue();
+            } else {
+                newo[i] = o[i];
+            }
+        }
+        return newo;
+    }    
+    
 }

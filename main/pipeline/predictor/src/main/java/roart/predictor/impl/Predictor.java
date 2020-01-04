@@ -30,6 +30,7 @@ import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.MathUtil;
 import roart.indicator.util.IndicatorUtils;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
@@ -419,6 +420,7 @@ public abstract class Predictor extends AbstractPredictor {
         Object[] result = null;
         if (resultMap != null) {
             result = resultMap.get(id);
+            result = MathUtil.round2(result, 3);
         }
         if (result == null) {
             result = emptyField;

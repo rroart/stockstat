@@ -7,6 +7,7 @@ import java.util.Map;
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.util.MathUtil;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.impl.IndicatorATR;
 import roart.indicator.impl.IndicatorCCI;
@@ -76,7 +77,9 @@ public class CategoryPrice extends Category {
                 r.add(stock.getCurrency());
                 for (AbstractIndicator indicator : indicators) {
                     if (indicator.isEnabled() && indicator.fieldSize > 0) {
-                        r.addarr(indicator.getResultItem(stock));
+                        Object[] fields = indicator.getResultItem(stock);
+                        //fields = MathUtil.round2(fields, 3);
+                        r.addarr(fields);
                     }
                 }
            }
