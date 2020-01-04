@@ -319,7 +319,7 @@ public class FindProfitAction extends MarketAction {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        return null;
+        return new ArrayList<>();
     }
     
     @Override
