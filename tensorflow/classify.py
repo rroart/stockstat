@@ -1,5 +1,4 @@
 import learntest as lt
-import device
 import os
 
 import pandas as pd
@@ -24,9 +23,14 @@ dictclass = {}
 global count
 count = 0
 
-pu = device.get_pu()
-print("Using pu ", pu)
-
+try:
+    import device
+    pu = device.get_pu()
+    print("Using pu ", pu)
+except:
+    import sys,traceback
+    traceback.print_exc(file=sys.stdout)
+    
 class Classify:
     def do_eval(self, request):
         global dicteval
