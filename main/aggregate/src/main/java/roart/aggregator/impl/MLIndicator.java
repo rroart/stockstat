@@ -877,7 +877,7 @@ public class MLIndicator extends Aggregator {
         Object[] objs = new Object[fieldSize];
         Double[] thresholds = getThresholds(conf);
         for (Double threshold : thresholds) {
-        getTitles(retindex, objs, threshold);
+        retindex = getTitles(retindex, objs, threshold);
         }
         headrow.addarr(objs);
     }
