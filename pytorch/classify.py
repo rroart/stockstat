@@ -525,7 +525,8 @@ class Classify:
         # exists and not dynamic and wantclassify
         if exists and not self.wantDynamic(myobj) and self.wantClassify(myobj):
             print("Loading model")
-            checkpoint = torch.load(self.getpath(myobj) + myobj.filename + ".pt")
+            dev = self.getdev()
+            checkpoint = torch.load(self.getpath(myobj) + myobj.filename + ".pt", map_location = dev)
             model = checkpoint['model']
         else:
             model = Model.Net(myobj, config, classify)
