@@ -119,6 +119,10 @@ class Classify:
             #accuracy = 100 * correct / total
             #print(accuracy)
             intlist = predicted.tolist()
+            sm = torch.nn.Softmax(1)
+            probabilities = sm(predictions)
+            probability, _ = torch.max(probabilities, 1)
+            problist = probability.detach().numpy().tolist()
         del predictions
         del model
         if classify and not self.zero(myobj):
