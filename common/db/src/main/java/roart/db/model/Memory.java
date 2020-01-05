@@ -48,6 +48,9 @@ public class Memory implements Serializable {
     private Double testaccuracy;
 
     @Column
+    private Double testloss;
+
+    @Column
     private Double confidence;
 
     @Column
@@ -195,6 +198,14 @@ public class Memory implements Serializable {
 
     public void setTestaccuracy(Double testaccuracy) {
         this.testaccuracy = testaccuracy;
+    }
+
+    public Double getTestloss() {
+        return testloss;
+    }
+
+    public void setTestloss(Double testloss) {
+        this.testloss = testloss;
     }
 
     public Double getConfidence() {

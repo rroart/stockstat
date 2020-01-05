@@ -22,6 +22,8 @@ public class MemoryItem {
     
     private Double testaccuracy;
     
+    private Double testloss;
+    
     private Double confidence;
     
     private Double learnConfidence;
@@ -114,7 +116,10 @@ public class MemoryItem {
         if (testaccuracy != null) {
             ret += "Test accuracy " + testaccuracy + "\n";
         }
-        if (parameters != null) {
+        if (testloss != null) {
+            ret += "Test loss " + testloss + "\n";
+        }
+       if (parameters != null) {
             ret += "Threshold " + parameters + "\n";
         }
         ret += "Confidence " + nullToEmpty(confidence) + " (positives/size : " + positives + "/" + size + ")\n";
@@ -200,6 +205,14 @@ public class MemoryItem {
         this.testaccuracy = testaccuracy;
     }
     
+    public Double getTestloss() {
+        return testloss;
+    }
+
+    public void setTestloss(Double testloss) {
+        this.testloss = testloss;
+    }
+
     public Double getConfidence() {
         return confidence;
     }
@@ -492,6 +505,7 @@ public class MemoryItem {
         memory.setSize(getSize());
         memory.setSubcomponent(getSubcomponent());
         memory.setTestaccuracy(getTestaccuracy());
+        memory.setTestloss(getTestloss());
         memory.setParameters(getParameters());
         memory.setTn(getTn());
         memory.setTnConf(getTnConf());
@@ -555,6 +569,7 @@ public class MemoryItem {
         memoryItem.setSize(memory.getSize());
         memoryItem.setSubcomponent(memory.getSubcomponent());
         memoryItem.setTestaccuracy(memory.getTestaccuracy());
+        memoryItem.setTestloss(memory.getTestloss());
         memoryItem.setParameters(memory.getParameters());
         memoryItem.setTn(memory.getTn());
         memoryItem.setTnConf(memory.getTnConf());

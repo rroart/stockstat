@@ -261,6 +261,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
             int returnSize = (int) meta.getReturnSize();
             newResultIndex += returnSize;
             Double testaccuracy = (Double) meta.getTestAccuracy();
+            Double testloss = (Double) meta.getLoss();
             Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.getOffsetMap();
             //Map<String, double[]> offsetMap = (Map<String, double[]>) meta.get(8);
             /*
@@ -363,6 +364,7 @@ public abstract class ComponentMLIndicator extends ComponentML {
             memory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
             memory.setDescription(getShort(meta.getMlName()) + withComma(getShort(meta.getModelName())) + withComma(meta.getSubType()) + withComma(meta.getSubSubType()));
             memory.setTestaccuracy(testaccuracy);
+            memory.setTestloss(testloss);
             memory.setParameters(JsonUtil.convert(parameters));
            //memory.setPositives(goodInc);
             memory.setTp(goodTP);

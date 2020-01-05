@@ -135,6 +135,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             int returnSize = (int) meta.get(ResultMetaConstants.RETURNSIZE);
             newResultIndex += returnSize;
             Double testaccuracy = (Double) meta.get(ResultMetaConstants.TESTACCURACY);
+            Double testloss = (Double) meta.get(ResultMetaConstants.LOSS);
             Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.get(ResultMetaConstants.OFFSETMAP);
             /*
             Map<String, Integer> countMapLearn = (Map<String, Integer>) meta.get(5);
@@ -257,6 +258,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
             memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
             memory.setTestaccuracy(testaccuracy);
+            memory.setTestloss(testloss);
             memory.setParameters(JsonUtil.convert(parameters));
             //memory.setPositives(goodInc);
             memory.setTp(goodTP);

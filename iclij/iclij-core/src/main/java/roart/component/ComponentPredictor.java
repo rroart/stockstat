@@ -199,6 +199,7 @@ public abstract class ComponentPredictor extends ComponentML {
         long totalInc = 0;
         long totalDec = 0;
         for (ResultMeta meta : param.getResultMeta()) {
+            Double testloss = (Double) meta.getLoss();
             for (String key : param.getCategoryValueMap().keySet()) {
                 List<List<Double>> resultList = param.getCategoryValueMap().get(key);
                 List<Double> mainList = resultList.get(0);
@@ -239,6 +240,7 @@ public abstract class ComponentPredictor extends ComponentML {
             incMemory.setFuturedate(param.getFutureDate());
             incMemory.setComponent(PipelineConstants.PREDICTOR);
             incMemory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
+            incMemory.setTestloss(testloss);
             incMemory.setParameters(JsonUtil.convert(parameters));
             incMemory.setDescription("inc");
             incMemory.setCategory(param.getCategoryTitle());
@@ -257,6 +259,7 @@ public abstract class ComponentPredictor extends ComponentML {
             decMemory.setFuturedate(param.getFutureDate());
             decMemory.setComponent(PipelineConstants.PREDICTOR);
             decMemory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
+            decMemory.setTestloss(testloss);
             decMemory.setParameters(JsonUtil.convert(parameters));
             decMemory.setDescription("dec");
             decMemory.setCategory(param.getCategoryTitle());

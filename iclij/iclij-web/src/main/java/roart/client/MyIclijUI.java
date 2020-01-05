@@ -971,6 +971,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         table.addColumn(MemoryItem::getUsedsec).setCaption("Usedsec");
         table.addColumn(MemoryItem::getMarket).setCaption("Market");
         table.addColumn(MemoryItem::getTestaccuracy).setCaption("Testaccuracy");
+        table.addColumn(MemoryItem::getTestloss).setCaption("Testloss");
         table.addColumn(MemoryItem::getConfidence).setCaption("Confidence");
         table.addColumn(MemoryItem::getLearnConfidence).setCaption("LearnConfidence");
         table.addColumn(MemoryItem::getCategory).setCaption("Category");
