@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -187,6 +188,7 @@ public class ControlService {
             //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
             createRows(conf, table, datedstocks, categories, predictors, aggregates);
             log.info("retlist2 {}",table.size());
+            cleanRows(headrow, table);
             addOtherTables(categories);
             addOtherTables(predictors);
             addOtherTables(aggregates);
@@ -233,6 +235,33 @@ public class ControlService {
             retlist.add(list);
         }
         return retlist;
+    }
+
+    private void cleanRows(ResultItemTableRow headrow, ResultItemTable table) {
+        ResultItemTableRow sum = null;
+        if (table.rows.size() > 1) {
+            sum = table.rows.get(1);
+            log.info("Cols {}", sum.cols.size());
+        }
+        for (int j = 2; j < table.rows.size(); j++) {
+            ResultItemTableRow row = table.rows.get(j);
+            for (int i = 0; i < sum.cols.size(); i++) {
+                if (sum.cols.get(i) == null) {
+                    sum.cols.set(i, row.cols.get(i));
+                }
+            }
+        }
+        for (int i = sum.cols.size() - 1; i >= 0; i--) {
+            if (sum.cols.get(i) == null) {
+                //headrow.cols.remove(i);
+                for (ResultItemTableRow row : table.rows) {
+                    row.cols.remove(i);
+                }
+            }
+        }
+        if (table.rows.size() > 0) {
+            log.info("Cols new {}",table.rows.get(0).cols.size());
+        }
     }
 
     private Map<String, String> getIdNameMap(Map<String, List<StockItem>> stockidmap) {
@@ -377,6 +406,13 @@ public class ControlService {
             if (aggregates[i].isEnabled()) {
                 aggregates[i].addResultItemTitle(headrow);
             }
+        }
+        List<Object> duplicates = headrow.cols.stream()
+                .filter(e -> Collections.frequency(headrow.cols, e) > 1)
+                .distinct()
+                .collect(Collectors.toList());
+        if (duplicates.size() > 0) {
+            log.error("Duplicates {}", duplicates);
         }
         return headrow;
     }
