@@ -493,10 +493,12 @@ class Classify:
             #print("here0");
             if config.name == "cnn2":
                 print("cnn2 shape")
+                array = np.array(myobj.classifyarray, dtype='f')
                 print(array.shape)
                 #array = np.transpose(array, [0, 3, 2, 1])
                 array = np.transpose(array, [0, 2, 3, 1])
                 print(array.shape)
+                myobj.classifyarray = array
             (intlist, problist) = self.do_classifyinner(myobj, classifier, classify)
         #print("here00");
         #print(len(intlist))
