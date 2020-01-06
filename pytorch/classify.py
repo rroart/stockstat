@@ -286,6 +286,8 @@ class Classify:
         labels = torch.FloatTensor(labels)
         #print(inputs)
         #print(labels)
+        print("iii", inputs.shape)
+        print("lll", labels.shape)
         return inputs, labels
 
     def mytrain2(self, model, inputs, labels, myobj, config):
@@ -524,6 +526,12 @@ class Classify:
         Model = importlib.import_module('model.' + modelname)
         (train, traincat, test, testcat, size) = self.gettraintest(myobj, config, classify)
         myobj.size = size
+        if not classify:
+            if config.name == 'mlp':
+                ii = 1
+            else:
+                anarray = np.array(myobj.classifyarray, dtype='f')
+                myobj.classifyarray = anarray.reshape(anarray.shape[0], 1, anarray.shape[1])
         exists = self.exists(myobj)
         # load model if:
         # exists and not dynamic and wantclassify
