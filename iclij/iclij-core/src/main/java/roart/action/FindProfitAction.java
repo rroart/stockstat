@@ -136,6 +136,10 @@ public class FindProfitAction extends MarketAction {
             }
             List<Integer> positions = listComponent.get(componentName);
             param = dataMap.get(componentName);
+            if (param == null) {
+                log.error("Component {} not found", componentName);
+                continue;
+            }
             component.enableDisable(param, positions, param.getConfigValueMap());
 
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
