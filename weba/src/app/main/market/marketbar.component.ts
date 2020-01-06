@@ -23,7 +23,7 @@ import { selectMain } from '../main.selectors';
 import { MainState } from '../main.state';
 import { State as BaseMainState } from '../main.state';
 import { selectAuth } from '@app/core/auth/auth.selectors';
-import { ActionGetmarkets, ActionSetmarket } from '../main.actions';
+import { ActionGetmarkets, ActionSetmarket, ActionSetmlmarket } from '../main.actions';
 
 interface State extends BaseSettingsState, BaseMainState {}
 
@@ -110,17 +110,8 @@ export class MarketbarComponent implements OnInit, OnDestroy {
   this.store.dispatch(new ActionSetconfigvalue([ 'market', $event.value ]));
   //this.increment.focus();
   }
-  incrementAsync($event) {
-  console.log('incremnentas');
-  console.log($event);
-  //this.increment.focus();
-  //tick(1000);
-  this.delay(10000).then( () =>
-  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
-  this.store.dispatch(new ActionIncrement({incCount: 2})));
-  }
 
-  changemlmarket($event) {
+changemlmarket($event) {
   console.log('market');
   console.log($event);
   console.log(this);
@@ -128,7 +119,8 @@ export class MarketbarComponent implements OnInit, OnDestroy {
   this.store.dispatch(new ActionSetconfigvalue([ 'mlmarket', $event.value ]));
   //this.increment.focus();
   }
-  incrementAsync($event) {
+
+incrementAsync($event) {
   console.log('incremnentas');
   console.log($event);
   //this.increment.focus();
@@ -146,16 +138,7 @@ export class MarketbarComponent implements OnInit, OnDestroy {
   this.store.dispatch(new ActionSetconfigvalue([ 'mlmarket', null ]));
   //this.increment.focus();
   }
-  incrementAsync($event) {
-  console.log('incremnentas');
-  console.log($event);
-  //this.increment.focus();
-  //tick(1000);
-  this.delay(10000).then( () =>
-  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
-  this.store.dispatch(new ActionIncrement({incCount: 2})));
-  }
-
+  
     handleStartDateChange($event) {
     console.log($event);
     this.store.dispatch(new ActionSetstartdate({ startdate: $event.value}));

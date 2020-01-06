@@ -80,7 +80,7 @@ export const increment2 = createAction(INCREMENT2, ( count ) => ({ count }));
 export const incrementasync = createAction(INCREMENT_ASYNC, () => ({  }));
 export const getCount = createAction(GET_COUNT, () => ({ }));
 export const setmarket = createAction(SETMARKET, (market) => ({ market } ) );
-export const setmarket = createAction(SETMLMARKET, (market) => ({ market } ) );
+export const setmlmarket = createAction(SETMLMARKET, (market) => ({ market } ) );
 export const getMarkets = createAction(GETMARKETS, () => ( {} ) );
 export const setmarkets = createAction(SETMARKETS, (markets) => ( { markets } ) );
 export const setstartdate = createAction(SETSTARTDATE, (startdate) => ( { startdate } ) );
