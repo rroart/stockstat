@@ -289,8 +289,8 @@ public class ServiceUtil {
             throws Exception {
         //Market market = findProfitAction.findMarket(param);
         //String marketName = market.getConfig().getMarket();
-        List<String> componentList = getFindProfitComponents(componentInput.getConfig(), componentInput.getMarket());
         for (Market market : action.getMarkets()) {
+            List<String> componentList = getFindProfitComponents(componentInput.getConfig(), market.getConfig().getMarket());
             Map<Boolean, String> booleanTexts = action.getBooleanTexts();
             Boolean[] booleans = action.getBooleans();
             for (Boolean bool : booleans) {
