@@ -242,6 +242,8 @@ public class ControlService {
         if (table.rows.size() > 1) {
             sum = table.rows.get(1);
             log.info("Cols {}", sum.cols.size());
+        } else {
+            return;
         }
         for (int j = 2; j < table.rows.size(); j++) {
             ResultItemTableRow row = table.rows.get(j);
