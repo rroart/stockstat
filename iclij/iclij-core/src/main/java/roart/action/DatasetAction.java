@@ -178,12 +178,12 @@ public class DatasetAction extends MarketAction {
 
     @Override
     protected String getFuturedays0(IclijConfig conf) {
-        return null;
+        return "[ null ]";
     }
 
     @Override
     public String getThreshold(IclijConfig conf) {
-        return null;
+        return "[ null ]";
     }
 
 }
