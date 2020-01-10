@@ -405,6 +405,9 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
             NeuralNetCommand neuralnetcommand,
             MLMeta mlmeta, String dataset) {
         LearnTestClassifyResult result = new LearnTestClassifyResult();
+        if (neuralnetcommand.isMldynamic()) {
+            return result;
+        }
         // return if
         // persist is false and dynamic is false
         boolean persist = model.wantPersist();
