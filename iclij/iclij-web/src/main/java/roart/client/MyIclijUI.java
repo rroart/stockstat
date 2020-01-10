@@ -282,7 +282,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
     }
 
     private Button getMarketCrosstest() {
-        Button button = new Button("Get market evolve data");
+        Button button = new Button("Get market crosstest data");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {
@@ -297,7 +297,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
     }
 
     private Button getMarketDataset() {
-        Button button = new Button("Get market evolve data");
+        Button button = new Button("Get market dataset data");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 try {
@@ -604,6 +604,9 @@ public class MyIclijUI extends UI implements ViewDisplay {
         horOther2.addComponent(getMarketImprove());
         horOther2.addComponent(getMarketEvolve());
         horOther2.addComponent(getMarketMachineLearning());
+        horOther2.addComponent(getMarketCrosstest());
+        horOther2.addComponent(getMarketDataset());
+        //horOther2.addComponent(getMarketFilter());
         //horStat.addComponent(getStat());
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
