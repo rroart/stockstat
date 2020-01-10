@@ -424,6 +424,7 @@ public abstract class Component {
             if (param.getResultMeta().size() > 1) {
                 List<ResultMeta> metalist = param.getResultMeta()
                 .stream()
+                .filter(Objects::nonNull)
                 .filter(e -> e.getTestAccuracy() == acc)
                 .collect(Collectors.toList());
                 result[2] = "";
