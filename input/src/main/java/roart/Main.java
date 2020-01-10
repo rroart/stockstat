@@ -119,26 +119,26 @@ public class Main {
                 //json = json.replaceAll("\\\"\\u002F([\\u002F\\w]+)\\\":","\\\"\\\\$1\\\":");
                 //json = json.replaceAll("\\\"\\/([\\/{}?=\\w]+)\\\":","\\\"$1\\\":");
                 //System.out.println("js" + json.length());
-                System.out.println(json.length() + " " + json.substring(0, 200));
+                //System.out.println(json.length() + " " + json.substring(0, 200));
                 // remove / in /name
                 //json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
                 // for the \" to "
                 json = json.replaceAll("\\\\\"", "\\\"");
                 //json = json.replaceAll("\\\\\"([^\\\"]+)\\\\\":\\\\\"([^\\\"]+)\\\\\"","\\\"$1\\\":\\\"$2\\\"");
-                System.out.println(json.length() + " " + json.substring(0, 200));
+                //System.out.println(json.length() + " " + json.substring(0, 200));
                 // remove illegal chars
                 json = sanitizeField(json);
                 //json = json.replaceAll("\\\"\\u002F([\\u002F\\w]+)\\\"\\:","\\\"\\\\$1\\\":");
                 //json = json.replaceAll("\\\"\\/([\\/\\w]+)\\\"\\:","\\\"$1\\\":");
-                System.out.println(json.length() + " " + json.substring(0, 200));
-                System.out.println(json.substring(0,1));
+                //System.out.println(json.length() + " " + json.substring(0, 200));
+                //System.out.println(json.substring(0,1));
                 if (json.substring(0, 1).equals("\"")) {
-                    System.out.println(json.length());
+                    //System.out.println(json.length());
                     json = json.substring(1, json.length() - 1);
-                    System.out.println(json.length());
+                    //System.out.println(json.length());
                     //json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
                 }
-                System.out.println(json.substring(0,10));
+                //System.out.println(json.substring(0,10));
                 jsonNode = mapper.readTree(json);
                 XmlMapper xmlMapper = new XmlMapper();
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
