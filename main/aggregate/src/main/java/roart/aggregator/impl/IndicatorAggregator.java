@@ -1647,7 +1647,7 @@ public abstract class IndicatorAggregator extends Aggregator {
         // make OO of this
         List<SubType> subTypes = usedSubTypes();
         if (subTypes == null || subTypes.isEmpty()) {
-            subTypes = wantedSubTypes();
+            //subTypes = wantedSubTypes();
         }
         for (SubType subType : subTypes) {
             if (!subType.useDirectly) {
