@@ -122,7 +122,7 @@ class Classify:
             sm = torch.nn.Softmax(1)
             probabilities = sm(predictions)
             probability, _ = torch.max(probabilities, 1)
-            problist = probability.detach().numpy().tolist()
+            problist = probability.detach().to(torch.device("cpu")).numpy().tolist()
         del predictions
         del model
         if classify and not self.zero(myobj):
