@@ -88,6 +88,7 @@ public class RelationUtil {
         List<IncDecItem> currentIncDecs = new ArrayList<>();
         currentIncDecs.addAll(listIncDecs);
         List<Market> markets = conf.getMarkets(instance);
+        markets = findProfitAction.filterMarkets(markets);
         for (Market market : markets) {
             List<IncDecItem> marketCurrentIncDecs = ServiceUtil.getCurrentIncDecs(date, listAll, market, findProfitAction.getTime(market));
             currentIncDecs.addAll(marketCurrentIncDecs);

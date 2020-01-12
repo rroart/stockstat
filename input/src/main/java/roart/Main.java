@@ -1,9 +1,16 @@
 package roart;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,12 +23,22 @@ import roart.db.model.Stock;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +58,37 @@ public class Main {
             handleRelation(doc);
             handleMeta(doc);
             NodeList nl = handleStock(doc); 
-            handleJson(doc, argv[0]);
+            NodeList jsons = doc.getElementsByTagName(Constants.SCRIPT);
+            if (jsons.getLength() > 0) {
+                Document result = dBuilder.newDocument();
+                Element rootElement = result.createElement("list");
+                result.appendChild(rootElement);
+                List<Document> jsonlist = new ArrayList<>();
+                for (int i = 0; i < argv.length; i++) {
+                    InputStream[] inStreams = handleJson(argv[i]);
+                    for (int j = 0; j < inStreams.length; j++) {
+                        Document jsonDoc = dBuilder.parse(inStreams[j]);
+                        jsonlist.add(jsonDoc);
+                        Element subRoot = jsonDoc.getDocumentElement();
+                        Node importNode = result.importNode(subRoot, true);
+                        rootElement.appendChild(importNode);
+                    }
+                }
+                result.normalizeDocument();
+                StringWriter stringWriter = new StringWriter();
+                StreamResult xmlOutput = new StreamResult(stringWriter);
+                TransformerFactory tf = TransformerFactory.newInstance();
+                Transformer transformer = tf.newTransformer();
+                transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+                transformer.transform(new DOMSource(result), xmlOutput);
+                String filename = argv[0].replaceAll(".xml", ".json.xml");
+                Path path = Paths.get(filename);
+                Files.write(path, xmlOutput.getWriter().toString().getBytes());
+            }
             HibernateUtil.commit();
             System.out.println("Added for length " + nl.getLength());
         } catch (Exception e) {
@@ -51,8 +98,14 @@ public class Main {
         System.exit(0);
     }
 
-    private static void handleJson(Document doc, String filename) {
+    private static InputStream[] handleJson(String filename) throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        dbFactory.setValidating(false);
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        File file = new File(filename);
+        Document doc = dBuilder.parse(file);
         NodeList nl = doc.getElementsByTagName(Constants.SCRIPT);
+        InputStream[] inStreams = new ByteArrayInputStream[nl.getLength()];
         for (int i = 0 ; i < nl.getLength(); i++ ) {
             Node node = nl.item(i);
             Element elem = (Element) node;
@@ -61,22 +114,44 @@ public class Main {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = null;
             try {
-                filename = filename.replaceAll(".xml", ".json.xml");
+                // for the solidus /
                 json = json.replaceAll("\\\\u002F", "/");
                 //json = json.replaceAll("\\\"\\u002F([\\u002F\\w]+)\\\":","\\\"\\\\$1\\\":");
                 //json = json.replaceAll("\\\"\\/([\\/{}?=\\w]+)\\\":","\\\"$1\\\":");
-                json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
+                //System.out.println("js" + json.length());
+                //System.out.println(json.length() + " " + json.substring(0, 200));
+                // remove / in /name
+                //json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
+                // for the \" to "
+                json = json.replaceAll("\\\\\"", "\\\"");
+                //json = json.replaceAll("\\\\\"([^\\\"]+)\\\\\":\\\\\"([^\\\"]+)\\\\\"","\\\"$1\\\":\\\"$2\\\"");
+                //System.out.println(json.length() + " " + json.substring(0, 200));
+                // remove illegal chars
                 json = sanitizeField(json);
                 //json = json.replaceAll("\\\"\\u002F([\\u002F\\w]+)\\\"\\:","\\\"\\\\$1\\\":");
                 //json = json.replaceAll("\\\"\\/([\\/\\w]+)\\\"\\:","\\\"$1\\\":");
+                //System.out.println(json.length() + " " + json.substring(0, 200));
+                //System.out.println(json.substring(0,1));
+                if (json.substring(0, 1).equals("\"")) {
+                    //System.out.println(json.length());
+                    json = json.substring(1, json.length() - 1);
+                    //System.out.println(json.length());
+                    //json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
+                }
+                //System.out.println(json.substring(0,10));
                 jsonNode = mapper.readTree(json);
                 XmlMapper xmlMapper = new XmlMapper();
-                xmlMapper.writeValue(new File(filename), jsonNode);
+                ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                xmlMapper.writeValue(outStream, jsonNode);
+                InputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
+                inStreams[i] = inStream;
             } catch (IOException e) {
                 System.out.println("Exception " +e);
                 e.printStackTrace();
+                inStreams[i] = null;
             }
         }     
+        return inStreams;
     }
 
     private static String sanitizeField(String json) {

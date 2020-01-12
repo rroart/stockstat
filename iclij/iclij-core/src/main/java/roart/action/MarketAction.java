@@ -233,7 +233,7 @@ public abstract class MarketAction extends Action {
         return false;
     }
     
-    private List<Market> filterMarkets(List<Market> markets) {
+    public List<Market> filterMarkets(List<Market> markets) {
         List<Market> filtered = new ArrayList<>();
         for (Market market : markets) {
             Boolean dataset = market.getConfig().getDataset();
@@ -683,12 +683,13 @@ public abstract class MarketAction extends Action {
 
     public List<Market> getMarkets() {
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        List<Market> markets = null;
+        List<Market> markets = new ArrayList<>();
         try { 
             markets = IclijXMLConfig.getMarkets(instance);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        markets = filterMarkets(markets);
         return markets;
     }
 

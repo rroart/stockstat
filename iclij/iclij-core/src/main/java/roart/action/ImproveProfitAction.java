@@ -193,12 +193,12 @@ public class ImproveProfitAction extends MarketAction {
 
     @Override
     protected String getFuturedays0(IclijConfig conf) {
-        return null;
+        return conf.getFindProfitFuturedays();
     }
 
     @Override
     public String getThreshold(IclijConfig conf) {
-        return null;
+        return conf.getFindProfitThreshold();
     }
 
 }

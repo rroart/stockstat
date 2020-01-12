@@ -152,6 +152,7 @@ public class ServiceUtil {
     
     public static IclijServiceResult getContent(ComponentInput componentInput) throws Exception {
         IclijServiceResult result = new IclijServiceResult();
+        FindProfitAction findProfitAction = new FindProfitAction();
 
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig i = new IclijXMLConfig();
@@ -163,6 +164,7 @@ public class ServiceUtil {
         lists.add(getHeader("Content"));
         Map<String, Object> trendMap = new HashMap<>();
         List<Market> markets = conf.getMarkets(instance);
+        markets = findProfitAction.filterMarkets(markets);
         for (Market market : markets) {
             ComponentData param = null;
             try {
@@ -204,7 +206,6 @@ public class ServiceUtil {
             return result;
         }
         
-        FindProfitAction findProfitAction = new FindProfitAction();
         getContentTimings(date, lists, markets, findProfitAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -239,6 +240,7 @@ public class ServiceUtil {
     }
 
     public static IclijServiceResult getContentImprove(ComponentInput componentInput) throws Exception {
+        ImproveProfitAction improveProfitAction = new ImproveProfitAction();
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig i = new IclijXMLConfig();
         IclijXMLConfig conf = IclijXMLConfig.instance();
@@ -248,6 +250,7 @@ public class ServiceUtil {
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
+        markets = improveProfitAction.filterMarkets(markets);
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
@@ -259,7 +262,6 @@ public class ServiceUtil {
             return result;
         }
         
-        ImproveProfitAction improveProfitAction = new ImproveProfitAction();
         getContentTimings(date, lists, markets, improveProfitAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -287,8 +289,8 @@ public class ServiceUtil {
             throws Exception {
         //Market market = findProfitAction.findMarket(param);
         //String marketName = market.getConfig().getMarket();
-        List<String> componentList = getFindProfitComponents(componentInput.getConfig(), componentInput.getMarket());
         for (Market market : action.getMarkets()) {
+            List<String> componentList = getFindProfitComponents(componentInput.getConfig(), market.getConfig().getMarket());
             Map<Boolean, String> booleanTexts = action.getBooleanTexts();
             Boolean[] booleans = action.getBooleans();
             for (Boolean bool : booleans) {
@@ -307,6 +309,7 @@ public class ServiceUtil {
     }
 
     public static IclijServiceResult getContentEvolve(ComponentInput componentInput) throws Exception {
+        EvolveAction evolveAction = new EvolveAction();
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
@@ -314,6 +317,7 @@ public class ServiceUtil {
          List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
+        markets = evolveAction.filterMarkets(markets);
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
@@ -325,7 +329,6 @@ public class ServiceUtil {
             return result;
         }
         
-        EvolveAction evolveAction = new EvolveAction();
         getContentTimings(date, lists, markets, evolveAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -339,6 +342,7 @@ public class ServiceUtil {
     }
 
     public static IclijServiceResult getContentDataset(ComponentInput componentInput) throws Exception {
+        DatasetAction evolveAction = new DatasetAction();
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
@@ -346,6 +350,7 @@ public class ServiceUtil {
          List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
+        markets = evolveAction.filterMarkets(markets);
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
@@ -357,7 +362,6 @@ public class ServiceUtil {
             return result;
         }
         
-        DatasetAction evolveAction = new DatasetAction();
         getContentTimings(date, lists, markets, evolveAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -371,13 +375,15 @@ public class ServiceUtil {
     }
 
     public static IclijServiceResult getContentCrosstest(ComponentInput componentInput) throws Exception {
+        CrossTestAction evolveAction = new CrossTestAction();
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
-         List<IclijServiceList> lists = new ArrayList<>();
+        List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
+        markets = evolveAction.filterMarkets(markets);
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
@@ -389,7 +395,6 @@ public class ServiceUtil {
             return result;
         }
         
-        CrossTestAction evolveAction = new CrossTestAction();
         getContentTimings(date, lists, markets, evolveAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -427,13 +432,15 @@ public class ServiceUtil {
     }
 
     public static IclijServiceResult getContentMachineLearning(ComponentInput componentInput) throws Exception {
+        MachineLearningAction mlAction = new MachineLearningAction();
         LocalDate date = componentInput.getEnddate();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
-         List<IclijServiceList> lists = new ArrayList<>();
+        List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
+        markets = mlAction.filterMarkets(markets);
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(lists);
 
@@ -445,7 +452,6 @@ public class ServiceUtil {
             return result;
         }
         
-        MachineLearningAction mlAction = new MachineLearningAction();
         getContentTimings(date, lists, markets, mlAction);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();

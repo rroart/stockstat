@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,12 +160,12 @@ public class NeuralNetChromosome extends AbstractChromosome {
         }
         if (!accuracyMap.isEmpty()) {
             fitness = fitness / accuracyMap.size();
-            double max = accuracyMap.values().stream().mapToDouble(e -> (Double) e).max().orElse(-1);
-            List<Object> keys = Arrays.asList(accuracyMap.entrySet().stream().filter(entry -> max == (double) entry.getValue())
+            double max = accuracyMap.values().stream().filter(Objects::nonNull).mapToDouble(e -> (Double) e).max().orElse(-1);
+            List<Object> keys = Arrays.asList(accuracyMap.entrySet().stream().filter(entry -> entry.getValue() != null && max == (double) entry.getValue())
 .map(Map.Entry::getKey).toArray());
             log.info("Fit #{} {} {} {}", new Object[] { this.hashCode(), fitness, max, keys });
         }
-        log.info("Fit #{} {} {} {}", new Object[] { this.hashCode(), fitness, accuracyMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics(), this.toString()});
+        log.info("Fit #{} {} {} {}", new Object[] { this.hashCode(), fitness, accuracyMap.values().stream().filter(Objects::nonNull).mapToDouble(e -> (Double) e).summaryStatistics(), this.toString()});
         return fitness;
     }
 
