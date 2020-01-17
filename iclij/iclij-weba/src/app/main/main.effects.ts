@@ -27,6 +27,7 @@ import {
   ActionGetcontentEvolve,
   ActionGetcontentDataset,
   ActionGetcontentCrosstest,
+  ActionGetcontentFilter,
   ActionGetcontentMachineLearning,
   ActionGetcontentImprove,
   ActionGetSingleMarket,
@@ -97,7 +98,7 @@ export class MainEffects {
 	//const res2 = res.pipe(map(res => { return res.json(); } ));
 	//console.log(res2);
         return this.service.retrieve('/getconfig', {}).pipe(
-          map(res => new ActionSetconfig({ config: res['config'] })),
+          map(res => new ActionSetconfig({ config: res['iclijConfig'] })),
           catchError(error => of(new ActionError({ error })))
         )
 	//console.log(res);
@@ -119,9 +120,9 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getcontent', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -139,9 +140,9 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getcontentevolve', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -159,9 +160,9 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getcontentdataset', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -179,9 +180,29 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getcontentcrosstest', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getcontentfilter = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetcontentFilter>(MainActionTypes.GETCONTENTFILTER),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetcontentFilter) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getcontentfilter', param).pipe(
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -199,9 +220,9 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getcontentmachinelearning', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -219,9 +240,9 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getcontentimprove', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -239,9 +260,9 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getsinglemarket', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -262,10 +283,10 @@ export class MainEffects {
         for (i = 0; i < loops; i++) {
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
 	param['offset'] = i * config['singlemarket']['loopinterval'];
 	return this.service.retrieve('/getsinglemarket', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -284,9 +305,9 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getverify', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -304,9 +325,9 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getverify', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -324,9 +345,9 @@ export class MainEffects {
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['config'] = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getimprove', param).pipe(
-          map(res => new ActionNewtab(res.list)),
+          map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
 	}
@@ -351,7 +372,7 @@ export class MainEffects {
     	serviceparam['market'] = config['market'];
     	console.log(serviceparam['market']);
 	console.log(date);
-	serviceparam['config'] = getMyConfig(config, serviceparam['market'], date);
+	serviceparam['iclijConfig'] = getMyConfig(config, serviceparam['market'], date);
 	if (id != null) {
 	   console.log(id);
            const ids = [id];
