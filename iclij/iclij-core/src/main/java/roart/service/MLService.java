@@ -28,7 +28,7 @@ import roart.component.model.ComponentInput;
 import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
 import roart.component.model.MLMACDData;
-import roart.config.Market;
+import roart.iclij.config.Market;
 import roart.iclij.model.MemoryItem;
 import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;

@@ -17,7 +17,7 @@ import roart.component.ComponentRecommender;
 import roart.component.model.ComponentInput;
 import roart.component.model.ComponentData;
 import roart.component.model.PredictorData;
-import roart.config.Market;
+import roart.iclij.config.Market;
 import roart.iclij.model.MemoryItem;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
