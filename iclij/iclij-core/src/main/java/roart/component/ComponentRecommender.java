@@ -177,7 +177,11 @@ public class ComponentRecommender extends ComponentNoML {
         }
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         //Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
+        try {
         handleBuySell(profitdata, (ComponentData) param, keyPair, confidenceFactor, list0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         //handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list1);
         }
     }
