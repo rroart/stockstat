@@ -1,6 +1,4 @@
-package roart.config;
-
-import roart.iclij.config.MLConfigs;
+package roart.iclij.config;
 
 public class Market {
     private MarketConfig config;

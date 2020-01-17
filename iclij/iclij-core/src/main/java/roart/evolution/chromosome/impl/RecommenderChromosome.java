@@ -19,9 +19,9 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.ComponentRecommender;
 import roart.component.model.ComponentData;
-import roart.config.Market;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.iclij.config.Market;
 import roart.service.model.ProfitData;
 
 public class RecommenderChromosome extends ConfigMapChromosome {

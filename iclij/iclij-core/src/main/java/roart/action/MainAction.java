@@ -82,6 +82,9 @@ public class MainAction extends Action {
         if (IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()) {        
             getGoals().add(new ImproveProfitAction());
         }
+        if (IclijXMLConfig.getConfigInstance().wantsImproveFilterAutorun()) {        
+            getGoals().add(new ImproveFilterAction());
+        }
         if (IclijXMLConfig.getConfigInstance().wantsCrosstestAutorun()) {        
             getGoals().add(new CrossTestAction());
         }

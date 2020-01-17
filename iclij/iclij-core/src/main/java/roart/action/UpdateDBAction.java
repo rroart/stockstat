@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.Market;
+import roart.iclij.config.MarketConfig;
 import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
 import roart.common.pipeline.PipelineConstants;
@@ -19,8 +21,6 @@ import roart.component.ComponentFactory;
 import roart.component.FindProfitComponentFactory;
 import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
-import roart.config.Market;
-import roart.config.MarketConfig;
 import roart.db.IclijDbDao;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.TimingItem;

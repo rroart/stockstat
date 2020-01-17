@@ -1,4 +1,4 @@
-package roart.config;
+package roart.iclij.config;
 
 public class MarketFilter {
     private String inccategory;

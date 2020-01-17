@@ -1,4 +1,4 @@
-package roart.config;
+package roart.iclij.config;
 
 public class MarketConfig {
     private String market;
@@ -17,6 +17,8 @@ public class MarketConfig {
 
     private Short crosstime;
 
+    private Short filtertime;
+    
     private String id;
 
     private Short startoffset;
@@ -91,6 +93,14 @@ public class MarketConfig {
 
     public void setCrosstime(Short crosstime) {
         this.crosstime = crosstime;
+    }
+
+    public Short getFiltertime() {
+        return filtertime;
+    }
+
+    public void setFiltertime(Short filtertime) {
+        this.filtertime = filtertime;
     }
 
     public String getId() {

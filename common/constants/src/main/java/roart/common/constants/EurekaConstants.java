@@ -23,4 +23,5 @@ public class EurekaConstants {
     public static final String GETCONTENTMACHINELEARNING = "getcontentmachinelearning";
     public static final String GETCONTENTDATASET = "getcontentdataset";
     public static final String GETCONTENTCROSSTEST = "getcontentcrosstest";
+    public static final String GETCONTENTFILTER = "getcontentfilter";
 }

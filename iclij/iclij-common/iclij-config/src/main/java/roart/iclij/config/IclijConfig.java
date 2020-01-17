@@ -352,6 +352,114 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITPREDICTOREVOLUTIONCONFIG);
     }
 
+    public boolean wantsImproveFilterAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERAUTORUN);
+    }
+
+    public int getImproveFilterFitnessMinimum() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERFITNESSMINIMUM);
+    }
+
+    public boolean wantsImproveFilterMLMACD() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLMACD);
+    }
+
+    public boolean wantsImproveFilterMLRSI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLRSI);
+    }
+
+    public boolean wantsImproveFilterMLATR() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLATR);
+    }
+
+    public boolean wantsImproveFilterMLCCI() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLCCI);
+    }
+
+    public boolean wantsImproveFilterMLSTOCH() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLSTOCH);
+    }
+
+    public boolean wantsImproveFilterMLMulti() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLMULTI);
+    }
+
+    public boolean wantsImproveFilterMLIndicator() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLINDICATOR);
+    }
+
+    public String getImproveFilterMLMACDMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLMACDMLCONFIG);
+    }
+
+    public String getImproveFilterMLRSIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLRSIMLCONFIG);
+    }
+
+    public String getImproveFilterMLATRMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLATRMLCONFIG);
+    }
+
+    public String getImproveFilterMLCCIMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLCCIMLCONFIG);
+    }
+
+    public String getImproveFilterMLSTOCHMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLSTOCHMLCONFIG);
+    }
+
+    public String getImproveFilterMLMultiMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLMULTIMLCONFIG);
+    }
+
+    public String getImproveFilterMLIndicatorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLINDICATORMLCONFIG);
+    }
+
+    public String getImproveFilterMLMACDEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLMACDEVOLUTIONCONFIG);
+    }
+
+    public String getImproveFilterMLRSIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLRSIEVOLUTIONCONFIG);
+    }
+
+    public String getImproveFilterMLATREvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLATREVOLUTIONCONFIG);
+    }
+
+    public String getImproveFilterMLCCIEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLCCIEVOLUTIONCONFIG);
+    }
+
+    public String getImproveFilterMLSTOCHEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLSTOCHEVOLUTIONCONFIG);
+    }
+
+    public String getImproveFilterMLMultiEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLMULTIEVOLUTIONCONFIG);
+    }
+
+    public String getImproveFilterMLIndicatorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERMLINDICATOREVOLUTIONCONFIG);
+    }
+
+   public boolean wantsImproveFilterRecommender() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERRECOMMENDER);
+    }
+
+    public boolean wantsImproveFilterPredictor() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERPREDICTOR);
+    }
+
+    public String getImproveFilterPredictorMLConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERPREDICTORMLCONFIG);
+    }
+
+    public String getImproveFilterPredictorEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERPREDICTOREVOLUTIONCONFIG);
+    }
+
     public boolean wantsMachineLearningAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGAUTORUN);
     }

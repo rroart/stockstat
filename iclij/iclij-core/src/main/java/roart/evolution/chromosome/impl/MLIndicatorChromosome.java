@@ -8,9 +8,9 @@ import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.component.model.ComponentData;
-import roart.config.Market;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.iclij.config.Market;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 

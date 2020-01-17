@@ -6,7 +6,7 @@ import java.util.List;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.component.model.ComponentData;
-import roart.config.Market;
+import roart.iclij.config.Market;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 

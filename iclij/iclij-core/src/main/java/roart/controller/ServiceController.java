@@ -183,6 +183,15 @@ public class ServiceController {
         return ServiceUtil.getImproveProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
     }
 
+    @RequestMapping(value = "/improvefilter",
+            method = RequestMethod.POST)
+    public IclijServiceResult getImproveFilterMarket(@RequestBody IclijServiceParam param)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        return ServiceUtil.getImproveFilter(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
     @RequestMapping(value = "/updatedb",
             method = RequestMethod.GET)
     public void getUpdateDb()
