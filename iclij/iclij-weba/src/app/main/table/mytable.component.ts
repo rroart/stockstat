@@ -37,7 +37,8 @@ export class MytableComponent implements OnInit, OnDestroy {
 
   @Input()
   value: any;
-  
+
+  title: any;
   dataSource: any;
   displayedColumns: any;
   
@@ -60,16 +61,22 @@ export class MytableComponent implements OnInit, OnDestroy {
       map(auth => auth.isAuthenticated)
     );
     
-    const array = this.value;
+    const list = this.value;
+    this.title = list.title;
     //console.log(myarray);
-    console.log(this.value);
-         var h;
-    for (h = 0; h < array.length; h++) {
+    //console.log(lists);
+    //     var h;
+    //for (h = 0; h < lists.length; h++) {
 
-    const array2 = array[h].rows;
-    console.log(array2);
-    const head = Object.keys(array2[0])
-    const rest = array2;
+    //const list = array[h];
+    console.log(list);
+    const array = list.list;
+    console.log(array);
+    if (array === undefined || array.length == 0) {
+        return;
+    }
+    const head = Object.keys(array[0])
+    const rest = array;
     console.log("start");
     console.log(head);
     console.log(rest);
@@ -94,7 +101,7 @@ export class MytableComponent implements OnInit, OnDestroy {
     console.log(this.sort);
     this.dataSource.sort = this.sort;
     console.log(this.dataSource);
-    }
+    //}
   }
 
   ngOnDestroy(): void {

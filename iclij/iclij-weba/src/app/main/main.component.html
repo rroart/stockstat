@@ -29,14 +29,16 @@
     </ng-template>
     <p>...</p>
   </mat-tab>
-  <div *ngFor="let value of mytabs">
+  <div *ngFor="let lists of mytabs">
   <mat-tab>
     <ng-template mat-tab-label>
       <!--mat-icon>thumb_down</mat-icon-->
       Result
     </ng-template>
     <h1>before</h1>
-    <mytable [value]="value">table</mytable>
+    <div *ngFor="let list of lists">
+      <mytable [value]="list">table</mytable>
+    </div>  
     <h1>after</h1>
     <p>...</p>
   </mat-tab>
