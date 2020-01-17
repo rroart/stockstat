@@ -54,6 +54,7 @@ import roart.service.ControlService;
 import roart.service.util.ServiceUtil;
 import roart.stockutil.StockUtil;
 import roart.talib.util.TaUtil;
+import roart.common.util.JsonUtil;
 
 public class EvolutionService {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -169,12 +170,24 @@ public class EvolutionService {
             return new ArrayList<>();
         }
     }
+    
+    private Double[] getThresholds(MyMyConfig conf, String thresholdString) {
+        try {
+            Double.valueOf(thresholdString);
+            log.error("Using old format {}", thresholdString);
+            thresholdString = "[" + thresholdString + "]";
+        } catch (Exception e) {            
+        }
+        return JsonUtil.convert(thresholdString, Double[].class);
+    }
 
     private void findRecommendSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
             Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days) throws Exception {
         TaUtil tu = new TaUtil();
-        double threshold = conf.getTestIndicatorRecommenderComplexThreshold();
+        String thresholdString = conf.getTestIndicatorRecommenderComplexThreshold();
+        Double[] thresholds = getThresholds(conf, thresholdString);
+        double threshold = thresholds[0];
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());

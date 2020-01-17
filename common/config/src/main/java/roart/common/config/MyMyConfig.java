@@ -1020,8 +1020,8 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS);
     }
 
-    public Double getTestIndicatorRecommenderComplexThreshold() {
-        return (Double) getValueOrDefault(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD);
+    public String getTestIndicatorRecommenderComplexThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD);
     }
 
     public Integer getTestIndicatorRecommenderComplexIntervalDays() {
