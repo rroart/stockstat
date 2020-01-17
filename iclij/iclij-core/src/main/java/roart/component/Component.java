@@ -47,7 +47,7 @@ import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
-import roart.evolution.jenetics.Main;
+//import roart.evolution.jenetics.Main;
 
 public abstract class Component {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -454,7 +454,7 @@ public abstract class Component {
     public ComponentData improve2(MarketAction action, ComponentData param, Market market,
             ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters) {
         long time0 = System.currentTimeMillis();
-        Main main = new Main();
+        //Main main = new Main();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
         evolution.setParallel(false);
