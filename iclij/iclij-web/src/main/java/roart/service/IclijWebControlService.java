@@ -173,6 +173,13 @@ public class IclijWebControlService {
         new IclijThread(ui, param).start();
     }
 
+    public void getContentFilter(MyIclijUI ui) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setIclijConfig(getIclijConf());
+        param.setWebpath(EurekaConstants.GETCONTENTFILTER);
+        new IclijThread(ui, param).start();
+    }
+
     public void getContentCrosstest(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());

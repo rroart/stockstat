@@ -26,8 +26,9 @@ export enum MainActionTypes {
   GETEVOLVE = '[Main] Get evolve',
   GETCONTENT = '[Main] Get content',
   GETCONTENTEVOLVE = '[Main] Get content evolve',
-  GETCONTENTDATASET = '[Main] Get content crosstest',
+  GETCONTENTDATASET = '[Main] Get content dataset',
   GETCONTENTCROSSTEST = '[Main] Get content crosstest',
+  GETCONTENTFILTER = '[Main] Get content filter',
   GETCONTENTMACHINELEARNING = '[Main] Get content machine learning',
   GETCONTENTIMPROVE = '[Main] Get content improve',
   GETSINGLEMARKET = '[Main] Get single market',
@@ -211,6 +212,12 @@ export class ActionGetcontentCrosstest implements Action {
   constructor(readonly payload: { config: any }) {}
 }
 
+export class ActionGetcontentFilter implements Action {
+  readonly type = MainActionTypes.GETCONTENTFILTER;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
 export class ActionGetcontentMachineLearning implements Action {
   readonly type = MainActionTypes.GETCONTENTMACHINELEARNING;
 
@@ -285,6 +292,7 @@ export type MainActions =
   | ActionGetcontentEvolve
   | ActionGetcontentDataset
   | ActionGetcontentCrosstest
+  | ActionGetcontentFilter
   | ActionGetcontentMachineLearning
   | ActionGetcontentImprove
   | ActionGetSingleMarket

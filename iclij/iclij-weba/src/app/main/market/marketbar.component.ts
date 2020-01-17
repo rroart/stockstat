@@ -6,7 +6,7 @@ import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil, map } from 'rxjs/operators';
 import { MatButtonModule } from '@angular/material/button';
 
-import { ActionIncrement, ActionSetstartdate, ActionSetenddate, ActionGetcontent, ActionGetcontentEvolve, ActionGetcontentDataset, ActionGetcontentCrosstest, ActionGetcontentImprove, ActionGetcontentMachineLearning, ActionGetVerify, ActionGetVerifyLoop, ActionGetSingleMarket, ActionGetSingleMarketLoop, ActionGetImproveProfit, ActionSetconfigvalue } from '../main.actions';
+import { ActionIncrement, ActionSetstartdate, ActionSetenddate, ActionGetcontent, ActionGetcontentEvolve, ActionGetcontentDataset, ActionGetcontentCrosstest, ActionGetcontentFilter, ActionGetcontentImprove, ActionGetcontentMachineLearning, ActionGetVerify, ActionGetVerifyLoop, ActionGetSingleMarket, ActionGetSingleMarketLoop, ActionGetImproveProfit, ActionSetconfigvalue } from '../main.actions';
 
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -23,7 +23,7 @@ import { selectMain } from '../main.selectors';
 import { MainState } from '../main.state';
 import { State as BaseMainState } from '../main.state';
 import { selectAuth } from '@app/core/auth/auth.selectors';
-import { ActionGetmarkets, ActionSetmarket } from '../main.actions';
+import { ActionGetmarkets, ActionSetmarket, ActionSetmlmarket } from '../main.actions';
 
 interface State extends BaseSettingsState, BaseMainState {}
 
@@ -128,15 +128,6 @@ export class MarketbarComponent implements OnInit, OnDestroy {
   this.store.dispatch(new ActionSetconfigvalue([ 'mlmarket', $event.value ]));
   //this.increment.focus();
   }
-  incrementAsync($event) {
-  console.log('incremnentas');
-  console.log($event);
-  //this.increment.focus();
-  //tick(1000);
-  this.delay(10000).then( () =>
-  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
-  this.store.dispatch(new ActionIncrement({incCount: 2})));
-  }
 
   resetmlmarket($event) {
   console.log('market');
@@ -145,15 +136,6 @@ export class MarketbarComponent implements OnInit, OnDestroy {
   this.store.dispatch(new ActionSetmlmarket({ 'mlmarket': null }));
   this.store.dispatch(new ActionSetconfigvalue([ 'mlmarket', null ]));
   //this.increment.focus();
-  }
-  incrementAsync($event) {
-  console.log('incremnentas');
-  console.log($event);
-  //this.increment.focus();
-  //tick(1000);
-  this.delay(10000).then( () =>
-  //setTimeout( () => { this.router.navigate(['/']); }, 5000);
-  this.store.dispatch(new ActionIncrement({incCount: 2})));
   }
 
     handleStartDateChange($event) {
@@ -200,6 +182,11 @@ export class MarketbarComponent implements OnInit, OnDestroy {
     getContentCrosstest($event) {
     console.log($event);
     this.store.dispatch(new ActionGetcontentCrosstest(this.main.config));
+  }
+
+    getContentFilter($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetcontentFilter(this.main.config));
   }
 
     getContentImprove($event) {

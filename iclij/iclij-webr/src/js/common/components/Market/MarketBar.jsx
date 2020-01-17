@@ -118,6 +118,10 @@ class MarketBar extends PureComponent {
 	props.getcontentmachinelearning(props.main.config, props.main.market, props);
     }
     
+    getContentFilter(event, props) {
+	props.getcontentfilter(props.main.config, props.main.market, props);
+    }
+    
     getSingleMarket(event, props) {
 	props.getsinglemarket(props.main.config, props.main.market, props, false);
     }
@@ -275,6 +279,16 @@ class MarketBar extends PureComponent {
 		      }
 		      >
 		      Get crosstest data
+		    </Button>
+		  </NavItem>
+		  <NavItem eventKey={6} href="#">
+		    <Button
+		      bsStyle="primary"
+		      onClick={
+			  (e) => this.getContentFilter(e, this.props)
+		      }
+		      >
+		      Get filter data
 		    </Button>
 		  </NavItem>
 		</Nav>

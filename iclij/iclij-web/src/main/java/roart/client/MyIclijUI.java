@@ -296,6 +296,21 @@ public class MyIclijUI extends UI implements ViewDisplay {
         return button;
     }
 
+    private Button getMarketFilter() {
+        Button button = new Button("Get market filter data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayFilterResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
     private Button getMarketDataset() {
         Button button = new Button("Get market dataset data");
         button.addClickListener(new Button.ClickListener() {
@@ -606,7 +621,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         horOther2.addComponent(getMarketMachineLearning());
         horOther2.addComponent(getMarketCrosstest());
         horOther2.addComponent(getMarketDataset());
-        //horOther2.addComponent(getMarketFilter());
+        horOther2.addComponent(getMarketFilter());
         //horStat.addComponent(getStat());
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
@@ -729,6 +744,10 @@ public class MyIclijUI extends UI implements ViewDisplay {
     
     private void displayCrosstestResults() {
         controlService.getContentCrosstest(this);
+    }
+    
+    private void displayFilterResults() {
+        controlService.getContentFilter(this);
     }
     
     private void displaySingleMarket() {

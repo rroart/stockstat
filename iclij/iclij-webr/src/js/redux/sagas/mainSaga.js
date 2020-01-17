@@ -134,6 +134,28 @@ export function* fetchContentCrosstest(action) {
     yield put(mainActions.newtabMain(tab));
 }
 
+export function* fetchContentFilter(action) {
+    var serviceparam = new IclijServiceParam();
+    console.log(action);
+    const config = action.payload.config;
+    const props = action.payload.props;
+    const date = config.get('enddate');
+    serviceparam.market = config.get('market');
+    console.log(serviceparam.market);
+    serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
+    console.log("herecontent");
+    console.log(serviceparam.market);
+    let result = yield call(Client.fetchApi.search, "/getcontentfilter", serviceparam);
+    console.log("herecontent2");
+    console.log(result);
+    console.log(action);
+    const config2 = result;
+    console.log(config2);
+    const list = result.lists;
+    const tab = MyTable.getTab(result.lists, Date.now(), props);
+    yield put(mainActions.newtabMain(tab));
+}
+
 export function* fetchContentImprove(action) {
     var serviceparam = new IclijServiceParam();
     console.log(action);
@@ -384,6 +406,14 @@ function* watchGetContentCrosstest() {
     yield takeEvery(mainConstants.GETCONTENTCROSSTEST, fetchContentCrosstest);
 }
 
+function* watchGetContentFilter() {
+    console.log("watchgetcontentfilter");
+    //console.log(action);                                                      
+    //const config = null;                                                      
+    //console.log(config);                                                      
+    yield takeEvery(mainConstants.GETCONTENTFILTER, fetchContentFilter);
+}
+
 function* watchGetContentMachineLearning() {
     console.log("watchgetcontentmachinelearning");
     //console.log(action);                                                      
@@ -443,6 +473,7 @@ export const mainSaga = [
     fork(watchGetContentEvolve),
     fork(watchGetContentDataset),
     fork(watchGetContentCrosstest),
+    fork(watchGetContentFilter),
     fork(watchGetContentMachineLearning),
     fork(watchGetSingleMarket),
     fork(watchGetImproveProfit),
