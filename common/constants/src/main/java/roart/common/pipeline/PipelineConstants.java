@@ -82,4 +82,6 @@ public class PipelineConstants {
     
     public static final String CATEGORY = "category"; 
     public static final String CATEGORYTITLE = "categorytitle";
+    public static final String META = "meta";
+    public static final String WANTEDCAT = "wantedcat";
 }

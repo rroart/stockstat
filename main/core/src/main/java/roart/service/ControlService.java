@@ -200,8 +200,9 @@ public class ControlService {
             */
             if (maps != null) {
                 Map<String, Object> aMap = new HashMap<>();
-                aMap.put("wantedcat", cat);
-                maps.put("meta", aMap);
+                aMap.put(PipelineConstants.WANTEDCAT, cat);
+                maps.put(PipelineConstants.META, aMap);
+                
                 for (int i = 0; i < datareaders.length; i++) {
                     Map map = datareaders[i].getLocalResultMap();
                     maps.put(datareaders[i].pipelineName(), map);

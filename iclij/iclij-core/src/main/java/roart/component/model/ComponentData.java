@@ -318,8 +318,8 @@ public class ComponentData {
         this.resultMaps = result;
         try {
             log.info("" + result.keySet());
-            log.info("" + result.get("meta").keySet());
-            Integer cat = (Integer) result.get("meta").get("wantedcat");
+            log.info("" + result.get(PipelineConstants.META).keySet());
+            Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
         this.setCategoryValueMap(aCategoryValueMap);
         } catch (Exception e) {
