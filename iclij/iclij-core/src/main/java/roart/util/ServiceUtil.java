@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,12 +29,15 @@ import roart.action.CrossTestAction;
 import roart.action.DatasetAction;
 import roart.action.EvolveAction;
 import roart.action.FindProfitAction;
+import roart.action.ImproveFilterAction;
 import roart.action.ImproveProfitAction;
 import roart.action.MachineLearningAction;
 import roart.action.MarketAction;
 import roart.action.WebData;
 import roart.action.UpdateDBAction;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.Market;
+import roart.iclij.config.MarketFilter;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyConfig;
 import roart.common.constants.Constants;
@@ -45,8 +49,6 @@ import roart.component.ComponentMLMACD;
 import roart.component.model.ComponentInput;
 import roart.component.model.ComponentData;
 import roart.config.IclijXMLConfig;
-import roart.config.Market;
-import roart.config.MarketFilter;
 import roart.constants.IclijConstants;
 import roart.constants.IclijPipelineConstants;
 import roart.db.IclijDbDao;
@@ -479,14 +481,22 @@ public class ServiceUtil {
     }
 
     public static List<IncDecItem> getCurrentIncDecs(LocalDate date, List<IncDecItem> listAll, Market market, int days) {
+        System.out.println(market.getConfig().getMarket());
+        Map<String, Long> countMap;
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
         LocalDate olddate = date.minusDays(days);
         List<IncDecItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
+        countMap = filterListAll.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
+        System.out.println(countMap);
         List<IncDecItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
+        countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
+        System.out.println(countMap);
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
+        countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
+        System.out.println(countMap);
         currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }
@@ -529,8 +539,10 @@ public class ServiceUtil {
             subLists.add(dec);
         }
         if (!listIncDec.isEmpty()) {
+            List<Boolean> listIncDecBoolean = listIncDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+            long count = listIncDecBoolean.stream().filter(i -> i).count();                            
             IclijServiceList incDec = new IclijServiceList();
-            incDec.setTitle(market + " " + "Increase and decrease");
+            incDec.setTitle(market + " " + "Increase and decrease ( verified " + count + " / " + listIncDecBoolean.size() + " )" );
             incDec.setList(listIncDec);
             subLists.add(incDec);
         }
@@ -788,7 +800,7 @@ public class ServiceUtil {
         Component.disabler(srv.conf.getConfigValueMap());
         srv.conf.getConfigValueMap().put(ConfigConstants.MISCTHRESHOLD, null);
         Map<String, Map<String, Object>> result = srv.getContent();
-        Integer cat = (Integer) result.get("meta").get("wantedcat");
+        Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
         Map<String, List<List<Double>>> listMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
         return listMap;
     }
@@ -1024,6 +1036,77 @@ public class ServiceUtil {
         return null;
     }
 
+    public static IclijServiceResult getImproveFilter(ComponentInput componentInput) throws Exception {
+        try {
+        int loopOffset = 0;
+        int days = 0; // config.verificationDays();
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(new ArrayList<>());
+        List<IclijServiceList> retLists = result.getLists();
+
+        ComponentData param = null; 
+        try {
+            param = getParam(componentInput, days);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+
+        param.getInput().setDoSave(false);
+        //FindProfitAction findProfitAction = new FindProfitAction();
+        ImproveFilterAction improveProfitAction = new ImproveFilterAction();  
+        List<MemoryItem> allMemoryItems = new ArrayList<>(); // getMemoryItems(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
+        //IclijServiceList memories = new IclijServiceList();
+        //memories.setTitle("Memories");
+        //memories.setList(allMemoryItems);
+        Map<String, Object> updateMap = new HashMap<>();
+        Market market = improveProfitAction.findMarket(param);
+        WebData webData = improveProfitAction.getMarket(null, param, market, null, null);        
+        List<MapList> mapList = improveProfitAction.getList(webData.updateMap);
+        IclijServiceList resultMap = new IclijServiceList();
+        resultMap.setTitle("Improve Profit Info");
+        resultMap.setList(mapList);
+        retLists.add(resultMap);
+
+        //retLists.add(memories);
+
+        List<IclijServiceList> lists = new ArrayList<>();
+        Map<String, Object> timingMap = webData.timingMap;
+        for (Entry<String, Object> entry : timingMap.entrySet()) {
+            String marketName = entry.getKey();
+            List<TimingItem> list = (List<TimingItem>) entry.getValue();
+            List<IclijServiceList> subLists = getServiceList(marketName, list);
+            lists.addAll(subLists);
+        }
+
+        Map<String, Object> timingMap2 = webData.timingMap2;
+        for (Entry<String, Object> entry : timingMap2.entrySet()) {
+            String marketName = entry.getKey();
+            List<TimingItem> list = (List<TimingItem>) entry.getValue();
+            List<IclijServiceList> subLists = getServiceList(marketName + " sell", list);
+            lists.addAll(subLists);
+        }
+
+        result.setLists(lists);
+        
+        updateMap = webData.updateMap;
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        IclijServiceList updates = convert(null, updateMap);
+        lists.add(updates);
+
+        updateMap = webData.updateMap2;
+        updates = convert(null, updateMap);
+        lists.add(updates);
+
+        return result;
+        } catch (Exception e) {
+            log.error("Ex", e);
+        }
+        return null;
+    }
+
     public static List<String> getImproveProfitComponents(IclijConfig config, String market) {
         List<String> components = new ArrayList<>();
         if (config.wantsImproveProfitRecommender()) {
@@ -1053,6 +1136,40 @@ public class ServiceUtil {
             components.add(PipelineConstants.MLMULTI);
         }
        if (config.wantsImproveProfitMLIndicator()) {
+            components.add(PipelineConstants.MLINDICATOR);
+        }
+        return components;
+    }
+
+    public static List<String> getImproveFilterComponents(IclijConfig config, String market) {
+        List<String> components = new ArrayList<>();
+        if (config.wantsImproveFilterRecommender()) {
+            components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        }
+        if (config.wantsImproveFilterPredictor()) {
+            components.add(PipelineConstants.PREDICTOR);
+        }
+        if (config.wantsImproveFilterMLMACD()) {
+            components.add(PipelineConstants.MLMACD);
+        }
+        if (config.wantsImproveFilterMLRSI()) {
+            components.add(PipelineConstants.MLRSI);
+        }
+        if (wantThree(market)) {
+        if (config.wantsImproveFilterMLATR()) {
+            components.add(PipelineConstants.MLATR);
+        }
+        if (config.wantsImproveFilterMLCCI()) {
+            components.add(PipelineConstants.MLCCI);
+        }
+        if (config.wantsImproveFilterMLSTOCH()) {
+            components.add(PipelineConstants.MLSTOCH);
+        }
+        }
+        if (config.wantsImproveFilterMLMulti()) {
+            components.add(PipelineConstants.MLMULTI);
+        }
+       if (config.wantsImproveFilterMLIndicator()) {
             components.add(PipelineConstants.MLINDICATOR);
         }
         return components;
@@ -1261,5 +1378,5 @@ public class ServiceUtil {
         }
         return components;
     }
-    
+
 }
