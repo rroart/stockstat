@@ -164,9 +164,9 @@ export function* fetchEvolve(action) {
 export function* fetchMarkets() {
     console.log("heremarkets");
     //var serviceparam = new ServiceParam();
-    var serviceparam : ServiceParam;
+    var serviceparam = new ServiceParam();
     //serviceparam.market = '0';
-    console.log("heremarkets");
+    console.log("heremarkets1");
     let markets = yield call(Client.fetchApi.search, "/getmarkets", serviceparam);
     console.log("heremarkets2");
     //const markets = Client.searchsynch("/getmarkets", serviceparam, () => {});
