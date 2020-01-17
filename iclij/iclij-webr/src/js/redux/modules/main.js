@@ -31,6 +31,7 @@ const GETCONTENTIMPROVE = 'app/main/GETCONTENTIMPROVE';
 const GETCONTENTEVOLVE = 'app/main/GETCONTENTEVOLVE';
 const GETCONTENTDATASET = 'app/main/GETCONTENTDATASET';
 const GETCONTENTCROSSTEST = 'app/main/GETCONTENTCROSSTEST';
+const GETCONTENTFILTER = 'app/main/GETCONTENTFILTER';
 const GETCONTENTMACHINELEARNING = 'app/main/GETCONTENTMACHINELEARNING';
 const GETSINGLEMARKET = 'app/main/GETSINGLEMARKET'
 const GETIMPROVEPROFIT = 'app/main/GETIMPROVEPROFIT'
@@ -64,6 +65,7 @@ export const constants = {
     GETCONTENTEVOLVE,
     GETCONTENTDATASET,
     GETCONTENTCROSSTEST,
+    GETCONTENTFILTER,
     GETCONTENTMACHINELEARNING,
     GETSINGLEMARKET,
     GETIMPROVEPROFIT,
@@ -87,7 +89,7 @@ export const increment2 = createAction(INCREMENT2, ( count ) => ({ count }));
 export const incrementasync = createAction(INCREMENT_ASYNC, () => ({  }));
 export const getCount = createAction(GET_COUNT, () => ({ }));
 export const setmarket = createAction(SETMARKET, (market) => ({ market } ) );
-export const setmarket = createAction(SETMLMARKET, (market) => ({ market } ) );
+export const setmlmarket = createAction(SETMLMARKET, (market) => ({ market } ) );
 export const getMarkets = createAction(GETMARKETS, () => ( {} ) );
 export const setmarkets = createAction(SETMARKETS, (markets) => ( { markets } )
 );
@@ -101,6 +103,7 @@ export const getcontent = createAction(GETCONTENT, (config, market, props) => ( 
 export const getcontentevolve = createAction(GETCONTENTEVOLVE, (config, market, props) => ( { config, market, props } ) );
 export const getcontentdataset = createAction(GETCONTENTDATASET, (config, market, props) => ( { config, market, props } ) );
 export const getcontentcrosstest = createAction(GETCONTENTCROSSTEST, (config, market, props) => ( { config, market, props } ) );
+export const getcontentfilter = createAction(GETCONTENTFILTER, (config, market, props) => ( { config, market, props } ) );
 export const getcontentimprove = createAction(GETCONTENTIMPROVE, (config, market, props) => ( { config, market, props } ) );
 export const getcontentmachinelearning = createAction(GETCONTENTMACHINELEARNING, (config, market, props) => ( { config, market, props } ) );
 export const getsinglemarket = createAction(GETSINGLEMARKET, (config, market, props, loop) => ( { config, market, props, loop } ) );
@@ -134,6 +137,7 @@ export const actions = {
     getcontentevolve,
     getcontentdataset,
     getcontentcrosstest,
+    getcontentfilter,
     getcontentimprove,
     getcontentmachinelearning,
     getsinglemarket,
