@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset, TensorDataset
 from torch.optim import *
 import torchvision
-import matplotlib.pyplot as plt
 
 import numpy as np
 
