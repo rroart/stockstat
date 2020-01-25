@@ -48,7 +48,7 @@ import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
-import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
+//import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
 //import roart.evolution.jenetics.Main;
 
 public abstract class Component {
