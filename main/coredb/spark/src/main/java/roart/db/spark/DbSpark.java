@@ -104,7 +104,7 @@ public class DbSpark {
             Double period7 = row.getAs("period7");
             Double period8 = row.getAs("period8");
             Double period9 = row.getAs("period9");
-            retList.add(new StockItem(dbid, marketid, id, name, date, indexvalue, indexvaluelow, indexvaluehigh, price, pricelow, pricehigh, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9));			
+            retList.add(new StockItem(dbid, marketid, id, isin, name, date, indexvalue, indexvaluelow, indexvaluehigh, price, pricelow, pricehigh, volume, currency, period1, period2, period3, period4, period5, period6, period7, period8, period9));			
         }
         log.info("spark size {}", retList.size());
         log.info("time0 " + (System.currentTimeMillis() - time0));
@@ -207,6 +207,9 @@ public class DbSpark {
         List<Row> rowList = new ArrayList<>();
         for (String id : listMap.keySet()) {
             double[][] values = listMap.get(id);
+            if (values[0].length == 0) {
+                continue;
+            }
             //values = ArraysUtil.getArrayNonNullReverse(values);
 
             /*

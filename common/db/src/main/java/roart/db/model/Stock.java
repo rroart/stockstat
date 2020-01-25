@@ -35,6 +35,8 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
     @Column
     private String id;
     @Column
+    private String isin;
+    @Column
     private String name;
     @Column
     private Date date;
@@ -102,6 +104,14 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getIsin() {
+        return isin;
+    }
+
+    public void setIsin(String isin) {
+        this.isin = isin;
     }
 
     public String getMarketid() {

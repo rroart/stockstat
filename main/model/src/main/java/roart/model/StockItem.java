@@ -7,6 +7,7 @@ public class StockItem {
     private String dbid;
     private String marketid;
     private String id;
+    private String isin;
     private String name;
     private Date date;
     private Double indexvalue;
@@ -19,10 +20,11 @@ public class StockItem {
     private String currency;
     private Double[] period = new Double[9];
 
-    public StockItem(String dbid, String marketid, String id, String name, Date date, Double indexvalue, Double indexvaluelow, Double indexvaluehigh, Double price, Double pricelow, Double pricehigh, Long volume, String currency, Double period1, Double period2, Double period3, Double period4, Double period5, Double period6, Double period7, Double period8, Double period9) throws Exception {
+    public StockItem(String dbid, String marketid, String id, String isin, String name, Date date, Double indexvalue, Double indexvaluelow, Double indexvaluehigh, Double price, Double pricelow, Double pricehigh, Long volume, String currency, Double period1, Double period2, Double period3, Double period4, Double period5, Double period6, Double period7, Double period8, Double period9) throws Exception {
         this.dbid = dbid;
         this.marketid = marketid;
         this.id = id;
+        this.isin = isin;
         this.name = name;
         this.date = date;
         this.indexvalue = indexvalue;
@@ -58,6 +60,14 @@ public class StockItem {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getIsin() {
+        return isin;
+    }
+
+    public void setIsin(String isin) {
+        this.isin = isin;
     }
 
     public String getMarketid() {

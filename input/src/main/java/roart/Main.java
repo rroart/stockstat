@@ -174,6 +174,7 @@ public class Main {
             Node node = nl.item(i);
             Element elem = (Element) node;
             Element idElem = (Element) elem.getElementsByTagName(Constants.ID).item(0);
+            Element isinElem = (Element) elem.getElementsByTagName(Constants.ISIN).item(0);
             Element marketidElem = (Element) elem.getElementsByTagName(Constants.MARKETID).item(0);
             Element nameElem = (Element) elem.getElementsByTagName(Constants.NAME).item(0);
             Element dateElem = (Element) elem.getElementsByTagName(Constants.DATE).item(0);
@@ -198,6 +199,7 @@ public class Main {
             if (id == null || id.isEmpty()) {
                 continue;
             }
+            String isin = isinElem.getTextContent();
             String marketid = marketidElem.getTextContent();
             String name = nameElem.getTextContent();
             String datestr = dateElem.getTextContent();
@@ -272,6 +274,7 @@ public class Main {
             String dbid = marketid + "_" + id + "_" + datestr;
             Stock stock = Stock.ensureExistence(dbid);
             stock.setId(id);
+            stock.setIsin(isin);
             stock.setMarketid(marketid);
             stock.setName(name);
             Date date;

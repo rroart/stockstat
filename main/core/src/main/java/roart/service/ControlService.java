@@ -336,6 +336,7 @@ public class ControlService {
         for (StockItem stock : datedstocks) {
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(stock.getId());
+            row.add(stock.getIsin());
             row.add(stock.getName());
             row.add(dt.format(stock.getDate()));
             try {
@@ -395,6 +396,7 @@ public class ControlService {
     private ResultItemTableRow createHeadRow(AbstractCategory[] categories, AbstractPredictor[] predictors, Aggregator[] aggregates) {
         ResultItemTableRow headrow = new ResultItemTableRow();
         headrow.add(Constants.IMG);
+        headrow.add("ISIN");
         headrow.add("Name");
         headrow.add("Date");
         for (int i = 0; i < Constants.ALLPERIODS; i++) {
