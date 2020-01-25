@@ -199,7 +199,10 @@ public class Main {
             if (id == null || id.isEmpty()) {
                 continue;
             }
-            String isin = isinElem.getTextContent();
+            String isin = null;
+            if (isinElem != null) {
+                isin = isinElem.getTextContent();
+            }
             String marketid = marketidElem.getTextContent();
             String name = nameElem.getTextContent();
             String datestr = dateElem.getTextContent();
