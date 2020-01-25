@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.action.FindProfitAction;
 import roart.action.MarketAction;
-import roart.action.WebData;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
@@ -32,6 +31,7 @@ import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.WebData;
 import roart.service.ControlService;
 import roart.service.MLService;
 import roart.service.model.ProfitData;

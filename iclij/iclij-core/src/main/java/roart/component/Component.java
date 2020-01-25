@@ -39,6 +39,7 @@ import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.config.MarketFilter;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
@@ -47,6 +48,7 @@ import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
+import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
 //import roart.evolution.jenetics.Main;
 
 public abstract class Component {
@@ -451,66 +453,5 @@ public abstract class Component {
     
     public abstract String getFuturedays();
 
-    public ComponentData improve2(MarketAction action, ComponentData param, Market market,
-            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters) {
-        long time0 = System.currentTimeMillis();
-        //Main main = new Main();
-        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
-        OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-        evolution.setParallel(false);
-        
-        Map<String, String> retMap = new HashMap<>();
-        try {
-            ConfigMapChromosome chromosome = null;
-            Individual best = evolution.getFittest(evolutionConfig, chromosome );
-            ConfigMapChromosome bestChromosome = (ConfigMapChromosome) best.getEvaluation();
-            Map<String, Object> confMap = bestChromosome.getMap();
-            param.setUpdateMap(confMap);
-            Map<String, Double> scoreMap = new HashMap<>();
-            double score = best.getFitness();
-            //confMap.put("score", "" + score);
-            scoreMap.put("" + score, score);
-            param.setScoreMap(scoreMap);
-            param.setFutureDate(LocalDate.now());
-            // fix mlmarket;
-            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent, null, null, null);
-            param.getTimings().add(timing);
-            configSaves(param, confMap, subcomponent);
-            if (false) {
-                ConfigItem configItem = new ConfigItem();
-                configItem.setAction(param.getAction());
-                configItem.setComponent(getPipeline());
-                configItem.setDate(param.getBaseDate());
-                configItem.setId("score " + confMap.keySet());
-                configItem.setMarket(param.getMarket());
-                configItem.setRecord(LocalDate.now());
-                configItem.setValue("" + score);
-                try {
-                    configItem.save();
-                } catch (Exception e) {
-                    log.info(Constants.EXCEPTION, e);
-                }                
-            }
-            //bestChromosome.get
-            //Map<String, Object> confMap = null;
-            //String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
-            //ControlService srv = new ControlService();
-            //srv.getConfig();    
-            /*
-            List<Double> newConfidenceList = new ArrayList<>();
-            //srv.conf.getConfigValueMap().putAll(confMap);
-            List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(marketName, null, null, false, false), confMap);
-            for(MemoryItem memory : memories) {
-                newConfidenceList.add(memory.getConfidence());
-            }
-            log.info("New confidences {}", newConfidenceList);
-            retMap.put("key", newConfidenceList.toString());
-            */
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return param;
-        
-    }
 }
 

@@ -30,6 +30,7 @@ import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.WebData;
 import roart.result.model.ResultMeta;
 import roart.iclij.config.IclijConfig;
 import roart.service.model.ProfitData;

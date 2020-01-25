@@ -14,6 +14,16 @@
   <dependencies>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-common-config</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-model</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-common-util</artifactId>
       <version>0.5-SNAPSHOT</version>
     </dependency>

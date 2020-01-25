@@ -33,6 +33,7 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
+import roart.iclij.model.WebData;
 import roart.iclij.config.IclijConfig;
 import roart.service.ControlService;
 import roart.service.model.ProfitData;
