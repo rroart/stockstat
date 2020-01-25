@@ -85,6 +85,7 @@ public class DbSpark {
             String dbid = row.getAs("dbid");
             String marketid = row.getAs("marketid");
             String id = row.getAs("id");
+            String isin = row.getAs("isin");
             String name = row.getAs("name");
             Date date = row.getAs("date");
             Double indexvalue = row.getAs("indexvalue");
