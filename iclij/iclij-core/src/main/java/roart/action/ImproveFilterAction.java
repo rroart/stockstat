@@ -115,7 +115,7 @@ public class ImproveFilterAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters);
+            ComponentData componentData = null; // component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
