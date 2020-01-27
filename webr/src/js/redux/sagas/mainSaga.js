@@ -3,10 +3,11 @@ import { delay } from 'redux-saga';
 import { constants as mainConstants, actions as mainActions } from '../modules/main';
 import { Tabs, Tab } from 'react-bootstrap';
 
-import type { mainType, MyConfig, GuiSize } from '../../common/types/main'
+import type { mainType } from '../../common/types/main'
+import { MyConfig, GuiSize } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
-import type { ServiceParam, ServiceResult, NeuralNetCommand } from '../../common/types/main'
+import { ServiceParam, ServiceResult, NeuralNetCommand } from '../../common/types/main'
 import { MyTable } from '../../common/components/Table'
 
 export function* fetchMainData() {
@@ -163,8 +164,7 @@ export function* fetchEvolve(action) {
 
 export function* fetchMarkets() {
     console.log("heremarkets");
-    //var serviceparam = new ServiceParam();
-    var serviceparam = new ServiceParam();
+    const serviceparam = new ServiceParam();
     //serviceparam.market = '0';
     console.log("heremarkets1");
     let markets = yield call(Client.fetchApi.search, "/getmarkets", serviceparam);

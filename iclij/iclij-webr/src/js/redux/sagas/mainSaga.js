@@ -3,7 +3,8 @@ import { delay } from 'redux-saga';
 import { constants as mainConstants, actions as mainActions } from '../modules/main';
 import { Tabs, Tab } from 'react-bootstrap';
 
-import type { mainType, MyConfig, GuiSize } from '../../common/types/main'
+import type { mainType } from '../../common/types/main'
+import { MyConfig, GuiSize } from '../../common/types/main'
 
 import { Client, ConvertToSelect } from '../../common/components/util'
 import { ServiceParam, ServiceResult, IclijServiceParam, IclijServiceResult } from '../../common/types/main'
@@ -23,7 +24,7 @@ export function* fetchMainData() {
 
 export function* fetchConfig() {
     var serviceparam = new IclijServiceParam();
-    //serviceparam.market = '0';                                                
+    //serviceparam.market = '0';
     console.log("hereconfig");
     let config = yield call(Client.fetchApi.search, "/getconfig", serviceparam);
     console.log("hereconfig2");
@@ -286,22 +287,22 @@ export function* fetchGetVerify(action) {
 
 export function* fetchMarkets() {
     var serviceparam = new ServiceParam();
-    //serviceparam.market = '0';                                                
+    //serviceparam.market = '0';
     console.log("heremarkets");
     let markets = yield call(Client.fetchApi.search0, "/getmarkets", serviceparam);
     console.log("heremarkets2");
     //const markets = Client.searchsynch("/getmarkets", serviceparam, () => {})\
-;                                                                               
+;
     console.log(markets);
         yield put(mainActions.setmarkets(markets.markets));
-    /*                                                                          
-    Client.search("/getmarkets", serviceparam, (markets) => {                   
-    console.log("here");                                                        
-      console.log(markets);                                                     
-      console.log(this.props);                                                  
-      //this.props.setmarkets(markets.markets);                                 
-        yield put(mainActions.setmarkets(markets.markets));                     
-    });                                                                         
+    /*
+    Client.search("/getmarkets", serviceparam, (markets) => {
+    console.log("here");
+      console.log(markets);
+      console.log(this.props);
+      //this.props.setmarkets(markets.markets);
+        yield put(mainActions.setmarkets(markets.markets));
+    });
     */
 }
 
@@ -368,81 +369,81 @@ function* watchGetConfig() {
 
 function* watchGetContent() {
     console.log("watchgetcontent");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETCONTENT, fetchContent);
 }
 
 function* watchGetContentImprove() {
     console.log("watchgetimprove");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETCONTENTIMPROVE, fetchContentImprove);
 }
 
 function* watchGetContentEvolve() {
     console.log("watchgetcontentevolve");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETCONTENTEVOLVE, fetchContentEvolve);
 }
 
 function* watchGetContentDataset() {
     console.log("watchgetcontentdataset");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETCONTENTDATASET, fetchContentDataset);
 }
 
 function* watchGetContentCrosstest() {
     console.log("watchgetcontentcrosstest");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETCONTENTCROSSTEST, fetchContentCrosstest);
 }
 
 function* watchGetContentFilter() {
     console.log("watchgetcontentfilter");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETCONTENTFILTER, fetchContentFilter);
 }
 
 function* watchGetContentMachineLearning() {
     console.log("watchgetcontentmachinelearning");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETCONTENTMACHINELEARNING, fetchContentMachineLearning);
 }
 
 function* watchGetSingleMarket() {
     console.log("watchgetsinglemarket");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETSINGLEMARKET, fetchSingleMarket);
 }
 
 function* watchGetImproveProfit() {
     console.log("watchgetimproveprofit");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETIMPROVEPROFIT, fetchImproveProfit);
 }
 
 function* watchGetVerify() {
     console.log("watchgetcontent");
-    //console.log(action);                                                      
-    //const config = null;                                                      
-    //console.log(config);                                                      
+    //console.log(action);
+    //const config = null;
+    //console.log(config);
     yield takeEvery(mainConstants.GETVERIFY, fetchGetVerify);
 }
 

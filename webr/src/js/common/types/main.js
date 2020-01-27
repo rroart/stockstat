@@ -4,43 +4,45 @@ export type mainType = {
   source: string,
 }
 
-export type ServiceParam = {
-    config: object,
-    ids: string[],
-    market: string,
-    wantMaps: boolean,
-    confList: string[],
-    webpath: string,
-    guiSize: GuiSize,
-    neuralnetcommand: NeuralNetCommand,
+class ServiceParam {
+    config: object;
+    ids: string[];
+    market: string;
+    wantMaps: boolean;
+    confList: string[];
+    webpath: string;
+    guiSize: GuiSize;
+    neuralnetcommand: NeuralNetCommand;
 }
 
-export type ServiceResult = {
-    config: object,
-    markets: string[], 
-    stocks: object,
-    list: string[],
-    maps: object,
-    error: string,
+class ServiceResult {
+    config: object;
+    markets: string[];
+    stocks: object;
+    list: string[];
+    maps: object;
+    error: string;
 }
 
-export type MyConfig = {
-    configTreeMap: object,
-    configValueMap: Map,
-    text: Map,
-    deflt: Map,
-    type: Map,
-    date: object,
-    market: string,
+class MyConfig {
+    configTreeMap: object;
+    configValueMap: Map;
+    text: Map;
+    deflt: Map;
+    type: Map;
+    date: object;
+    market: string;
 }
 
-export type GuiSize = {
+class GuiSize {
     x: int;
     y: int;
 }
 
-export type NeuralNetCommand = {
+class NeuralNetCommand {
     mllearn : boolean;
     mlclassify : boolean;
     mldynamic : boolean;
 }
+
+export { ServiceParam, ServiceResult, MyConfig, GuiSize, NeuralNetCommand }
