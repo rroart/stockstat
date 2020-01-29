@@ -18,7 +18,7 @@
     <module>config</module>
     <module>fitness</module>
     <module>gene</module>
-    <module>jenetics</module>
+    <!--module>jenetics</module-->
     <!--module>constants</module-->
     <module>model</module>
   </modules>
