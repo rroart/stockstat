@@ -1,6 +1,10 @@
 package roart.evolution.algorithm;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.executor.MyExecutors;
+import roart.common.constants.Constants;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
@@ -51,7 +56,7 @@ public abstract class EvolutionAlgorithm {
         this.doParallel = doParallel;
     }
 
-    public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender) throws Exception;
+    public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender, List<String> individuals) throws Exception;
 
     protected void printmap(Map<String, Object> map) throws JsonProcessingException {
         for (String key : new ArrayList<String>()) {
@@ -175,9 +180,33 @@ public abstract class EvolutionAlgorithm {
         }
     }
 
-    protected void printmap(List<Individual> individuals) {
+    protected void printmap(List<Individual> individuals, List<String> stringIndividuals) {
         for (Individual individual : individuals) {
             log.info("Individual {}", individual);
+            if (stringIndividuals != null) {
+                stringIndividuals.add(individual.toString());
+            }
+        }
+    }
+
+    public void print(String title, List<String> individuals) {
+        Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
+        BufferedWriter writer = null;
+        try {
+            writer = Files.newBufferedWriter(path);
+            writer.write(title + "\n\n");
+            for (String individual : individuals) {
+                writer.write(individual + "\n");            
+            }
+            writer.write("\n");
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        try {
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
         }
     }
 

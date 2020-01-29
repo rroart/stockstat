@@ -1,6 +1,10 @@
 package roart.service.evolution;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -205,7 +209,9 @@ public class EvolutionService {
                 
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
     
-                Individual fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0);
+                List<String> individuals = new ArrayList<>();
+                Individual fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals);
+                evolution.print(conf.getMarket() + " " + "recommend" + " " + i, individuals);
     
                 for (String id : scoreList) {
                     ResultItemTableRow row = new ResultItemTableRow();
@@ -372,7 +378,7 @@ public class EvolutionService {
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
     
-            Individual buysell = evolution.getFittest(evolutionConfig, recommend);
+            Individual buysell = evolution.getFittest(evolutionConfig, recommend, null);
     
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(id);
@@ -641,8 +647,10 @@ public class EvolutionService {
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);
     
-            Individual best = evolution.getFittest(evolutionConfig, chromosome);
-    
+            List<String> individuals = new ArrayList<>();
+            Individual best = evolution.getFittest(evolutionConfig, chromosome, null);
+            evolution.print(conf.getMarket() + " " + ml, individuals);
+            
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
             NeuralNetConfig newnnconf = newnnconfgene.getConfig();
@@ -709,7 +717,9 @@ public class EvolutionService {
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
             evolution.setParallel(false);
     
-            Individual best = evolution.getFittest(evolutionConfig, chromosome);
+            List<String> individuals = new ArrayList<>();
+            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals);
+            evolution.print(conf.getMarket() + " " + ml, individuals);
     
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();

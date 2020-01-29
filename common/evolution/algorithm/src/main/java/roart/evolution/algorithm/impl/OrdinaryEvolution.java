@@ -21,7 +21,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
     
     @Override
-    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome) throws Exception {
+    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
         Population population = new Population(selectionSize, evolutionConfig, chromosome, false);
         if (getEvolutionConfig().getUseoldelite() && !chromosome.isEmpty()) {
@@ -32,13 +32,13 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         if (!chromosome.isAscending()) {
             Collections.reverse(population.getIndividuals());
         }
-        Individual parent = getBest(selectionSize, population, true, chromosome);
+        Individual parent = getBest(selectionSize, population, true, chromosome, individuals);
         parent.getEvaluation().transformFromNode();
         return parent;
     }
 
     private Individual getBest(int selectionSize, Population population,
-            boolean useMax, AbstractChromosome chromosome) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
+            boolean useMax, AbstractChromosome chromosome, List<String> individuals) throws JsonParseException, JsonMappingException, IOException, InterruptedException, ExecutionException {
         //printmap(population.getFittest().getConf().getConfigValueMap());
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         
@@ -63,7 +63,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
                 Collections.reverse(population.getIndividuals());
             }
         }
-        printmap(population.getIndividuals());
+        printmap(population.getIndividuals(), individuals);
         //printmap(population.getIndividuals().get(0).getConf().getConfigValueMap());
         //printmap(population.getIndividuals().get(population.size() - 1).getConf().getConfigValueMap());
         return population.getFittest();

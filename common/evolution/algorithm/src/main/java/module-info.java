@@ -9,6 +9,7 @@ module evolution.algorithm {
     exports roart.evolution.algorithm;
     exports roart.evolution.algorithm.impl;
 
+    requires common.constants;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires evolution.config;
