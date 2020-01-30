@@ -648,7 +648,7 @@ public class EvolutionService {
             evolution.setParallel(false);
     
             List<String> individuals = new ArrayList<>();
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, null);
+            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals);
             evolution.print(conf.getMarket() + " " + ml, individuals);
             
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
