@@ -203,21 +203,23 @@ export function* fetchContentMachineLearning(action) {
 
 export function* fetchSingleMarket(action) {
     var serviceparam = new IclijServiceParam();
-    console.log(action);
     const config = action.payload.config;
+    serviceparam.market = config.get('market');
+    console.log(action);
     const props = action.payload.props;
     const loop = action.payload.loop;
     const date = config.get('enddate');
+    const iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.iclijConfig = iclijConfig;
     let loops = 1
     if (loop) {
-	loops = config.singlemarket.loops;
+	loops = iclijConfig.configValueMap.get('singlemarket.loops');
     }
     var i;
     for (i = 0; i < loops; i++) {
-	serviceparam.market = config.get('market');
 	console.log(serviceparam.market);
-	serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
-	serviceparam.offset = i * config.singlemarket.loopinterval;
+	//serviceparam.offset = i * config.get('singlemarket').get('loopinterval');
+	serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('singlemarket.loopinterval');
 	console.log("herecontent");
 	console.log(serviceparam.market);
 	let result = yield call(Client.fetchApi.search, "/findprofit", serviceparam);
@@ -256,21 +258,29 @@ export function* fetchImproveProfit(action) {
 
 export function* fetchGetVerify(action) {
     var serviceparam = new IclijServiceParam();
-    console.log(action);
     const config = action.payload.config;
+    serviceparam.market = config.get('market');
+    console.log(action);
     const props = action.payload.props;
     const loop = action.payload.loop;
     const date = config.get('enddate');
+    const iclijConfig = getMyConfig(config, serviceparam.market, date);
+    serviceparam.iclijConfig = iclijConfig;
     let loops = 1
     if (loop) {
-	loops = config.verification.loops;
+	loops = iclijConfig.configValueMap.get('verification.loops');
     }
     var i;
     for (i = 0; i < loops; i++) {
-	serviceparam.market = config.get('market');
 	console.log(serviceparam.market);
-	serviceparam.iclijConfig = getMyConfig(config, serviceparam.market, date);
-	serviceparam.offset = i * config.verification.loopinterval;
+	console.log(config);
+	console.log(Object.keys(config));
+	console.log(config.get('verification'));
+	console.log(config['verification']);
+	console.log(serviceparam.iclijConfig);
+	//serviceparam.offset = i * config.get('verification').get('loopinterval');
+	console.log(serviceparam.iclijConfig.configValueMap.get('verification.loopinterval'))
+	serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('verification.loopinterval');
 	console.log("herecontent");
 	console.log(serviceparam.market);
 	let result = yield call(Client.fetchApi.search, "/getverify", serviceparam);
