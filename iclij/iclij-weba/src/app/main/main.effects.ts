@@ -261,7 +261,7 @@ export class MainEffects {
 	var param = new Object();
 	param['market'] = config['market'];
 	param['iclijConfig'] = getMyConfig(config, param['market'], date);
-        return this.service.retrieve('/getsinglemarket', param).pipe(
+        return this.service.retrieve('/findprofit', param).pipe(
           map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
@@ -278,14 +278,15 @@ export class MainEffects {
         console.log(action);
 	const config = action.payload; //.config;
 	const date = config['enddate'];
-	const loops = config['singlemarket']['loops'];
-        var i;
-        for (i = 0; i < loops; i++) {
 	var param = new Object();
 	param['market'] = config['market'];
-	param['iclijConfig'] = getMyConfig(config, param['market'], date);
-	param['offset'] = i * config['singlemarket']['loopinterval'];
-	return this.service.retrieve('/getsinglemarket', param).pipe(
+	const iclijConfig = getMyConfig(config, param['market'], date);
+	param['iclijConfig'] = iclijConfig;
+	const loops = iclijConfig['configValueMap']['singlemarket.loops'];
+        var i;
+        for (i = 0; i < loops; i++) {
+	param['offset'] = i * iclijConfig['configValueMap']['singlemarket.loopinterval'];
+	return this.service.retrieve('/findprofit', param).pipe(
           map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
@@ -322,14 +323,22 @@ export class MainEffects {
       switchMap((action: ActionGetVerifyLoop) => {
         console.log(action);
 	const config = action.payload; //.config;
+	console.log(config);
+	console.log(config['verification']);
 	const date = config['enddate'];
 	var param = new Object();
 	param['market'] = config['market'];
-	param['iclijConfig'] = getMyConfig(config, param['market'], date);
+	const iclijConfig = getMyConfig(config, param['market'], date);	
+	param['iclijConfig'] = iclijConfig;
+	const loops = iclijConfig['configValueMap']['verification.loops'];
+        var i;
+        for (i = 0; i < loops; i++) {
+	param['offset'] = i * iclijConfig['configValueMap']['verification.loopinterval'];
         return this.service.retrieve('/getverify', param).pipe(
           map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )
+	}
 	}
       )
     );
