@@ -404,6 +404,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             if (map != null) {
                 System.out.println("Keys" + map.keySet());
             }
+            return null;
         }
         MemoryItem memory = memoryList.get(0);
         IncDecItem val = map.get(key);

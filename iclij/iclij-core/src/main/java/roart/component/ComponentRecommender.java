@@ -220,7 +220,9 @@ public class ComponentRecommender extends ComponentNoML {
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
             IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getAboveListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+            if (incdec != null) {
             incdec.setIncrease(true);
+            }
         }
         for (MyElement element : bottomList) {
             if (confidenceFactor == null || element.getValue() == null) {
@@ -232,7 +234,9 @@ public class ComponentRecommender extends ComponentNoML {
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
             IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getBelowListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+            if (incdec != null) {
             incdec.setIncrease(false);
+            }
         }
     }
 
