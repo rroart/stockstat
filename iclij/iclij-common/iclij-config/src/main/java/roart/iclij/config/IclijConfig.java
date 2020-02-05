@@ -1007,6 +1007,12 @@ public class IclijConfig {
             return null;
         }
         Object retVal = configValueMap.get(key);
-        return Optional.ofNullable(retVal).orElse(deflt.get(key));
+        retVal = Optional.ofNullable(retVal).orElse(deflt.get(key));
+        Class aClass = type.get(key);
+        if (aClass != null && aClass == Double.class && retVal != null && retVal.getClass() == Integer.class) {
+            Integer i = (Integer) retVal;
+            retVal = i.doubleValue();
+        }
+        return retVal;
     }
 }
