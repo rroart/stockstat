@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,4 +64,17 @@ public class TimeUtil {
         return ChronoUnit.DAYS.between(LocalDate.now(), date);
     }
     
+    public static int getIndexEqualBefore(List<String> stockDates, String date) {
+        int dateIndex = stockDates.indexOf(date);
+        if (dateIndex < 0) {
+            dateIndex = stockDates.size() - 1;
+            for (int i = 1; i < stockDates.size(); i++) {
+                if (date.compareTo(stockDates.get(i)) < 0) {
+                    dateIndex = i - 1;
+                }
+            }
+        }
+        return dateIndex;
+    }
+
 }

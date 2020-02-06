@@ -37,6 +37,7 @@ import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
 import roart.graphcategory.GraphCategory;
@@ -136,6 +137,8 @@ public class ControlService {
             if (days == 0) {
                 days = stockdatemap.keySet().size();
             }
+            List<String> stockdates = new ArrayList<>(stockdatemap.keySet());
+            Collections.sort(stockdates);
 
             Map<String, MarketData> marketdatamap = null;
             marketdatamap = new ServiceUtil().getMarketdatamap(days, markets, conf);
@@ -172,6 +175,10 @@ public class ControlService {
 
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String mydate = dt.format(conf.getdate());
+            int dateIndex = TimeUtil.getIndexEqualBefore(stockdates, mydate);
+            if (dateIndex >= 0) {
+                mydate = stockdates.get(dateIndex);
+            }
             List<StockItem> dayStocks = stockdatemap.get(mydate);
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
                     periodText, marketdatamap, periodDataMap, datedstocklists, datareaders);
