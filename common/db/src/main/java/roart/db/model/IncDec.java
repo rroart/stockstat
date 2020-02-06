@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.query.Query;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
@@ -148,6 +150,36 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
         list = session.createQuery("from IncDec where market = :mymarket").setParameter("mymarket",  mymarket).list();
         transaction.commit();
 	}
+        return list;
+    }
+
+    @Transient
+    @Transactional
+    public static List<IncDec> getAll(String market, Date startDate, Date endDate) throws Exception {
+        List<IncDec> list = null;
+        Session session = HibernateUtil.getMyHibernateSession();
+        synchronized (HibernateUtil.class) {
+        Transaction transaction = session.beginTransaction();
+        //String queryString = "from Memory where market = :market and action = :action and component = :component";
+        String queryString = "from IncDec where market = :market";
+        if (startDate != null) {
+            queryString += " and date >= :startdate";
+        }
+        if (endDate != null) {
+            queryString += " and date <= :enddate";
+        }
+        Query query = session.createQuery(queryString);
+        query.setParameter("market", market);
+        //query.setParameter("action", action);
+        if (startDate != null) {
+            query.setParameter("startdate", startDate, TemporalType.DATE);
+        }
+        if (endDate != null) {
+            query.setParameter("enddate", endDate, TemporalType.DATE);
+        }
+        list = query.list();
+        transaction.commit();
+        }
         return list;
     }
 

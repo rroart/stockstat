@@ -509,7 +509,10 @@ public class Memory implements Serializable {
         synchronized (HibernateUtil.class) {
         Transaction transaction = session.beginTransaction();
         //String queryString = "from Memory where market = :market and action = :action and component = :component";
-        String queryString = "from Memory where market = :market and component = :component";
+        String queryString = "from Memory where market = :market";
+        if (component != null) {
+            queryString += " and component = :component";
+        }
         if (subcomponent != null) {
             queryString += " and subcomponent = :subcomponent";
         }
@@ -525,7 +528,9 @@ public class Memory implements Serializable {
         Query query = session.createQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
-        query.setParameter("component", component);
+        if (component != null) {
+            query.setParameter("component", component);
+        }
         if (subcomponent != null) {
             query.setParameter("subcomponent", subcomponent);
         }

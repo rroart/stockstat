@@ -1,5 +1,6 @@
 package roart.action;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.action.MarketAction.MarketComponentTime;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
@@ -24,6 +26,7 @@ import roart.component.Component;
 import roart.component.ComponentFactory;
 import roart.component.FindProfitComponentFactory;
 import roart.component.model.ComponentData;
+import roart.component.model.ComponentInput;
 import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
@@ -228,6 +231,28 @@ public class FindProfitAction extends MarketAction {
     }
 
     public void getVerifyProfit(int days, LocalDate date, ControlService srv,
+            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold, List<String> stockDates) {
+        log.info("Verify compare date {} with {}", oldDate, date);
+        LocalDate futureDate = date;
+        srv.conf.setdate(TimeUtil.convertDate(futureDate));
+        Component.disabler(srv.conf.getConfigValueMap());
+        Map<String, Map<String, Object>> resultMaps = srv.getContent();
+        Set<String> i = resultMaps.keySet();
+        //Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        //Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
+        Integer category = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
+        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+        //categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("Price").get(PipelineConstants.LIST);
+        //Set<String> j2 = resultMaps.get("" + category).keySet();
+    
+        VerifyProfit verify = new VerifyProfit();
+        verify.doVerify(listInc, days, true, categoryValueMap, oldDate, startoffset, threshold, stockDates);
+        verify.doVerify(listDec, days, false, categoryValueMap, oldDate, startoffset, threshold, stockDates);
+        verify.doVerify(listIncDec, days, false, categoryValueMap, oldDate, startoffset, threshold, stockDates);
+        //return verify.getTrend(days, categoryValueMap);
+    }
+
+    public void getVerifyProfit(int days, LocalDate date, ControlService srv,
             LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold) {
         log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
@@ -358,6 +383,73 @@ public class FindProfitAction extends MarketAction {
     @Override
     public String getThreshold(IclijConfig conf) {
         return conf.getFindProfitThreshold();
+    }
+
+    public WebData getVerifyMarket(ComponentInput componentInput, ComponentData param,
+            FindProfitAction findProfitAction, Market market, boolean evolve, int verificationdays) {
+        WebData myData;
+        myData = new WebData();
+        myData.incs = new ArrayList<>();
+        myData.decs = new ArrayList<>();
+        myData.updateMap = new HashMap<>();
+        myData.timingMap = new HashMap<>();
+        myData.updateMap2 = new HashMap<>();
+        myData.timingMap2 = new HashMap<>();
+        myData.memoryItems = new ArrayList<>();
+        MarketComponentTime marketTime = new MarketComponentTime();
+        marketTime.market = market;
+        marketTime.componentName = null;
+        marketTime.component = null;
+        marketTime.subcomponent = null;
+        marketTime.parameters = null;
+        //marketTime.timings = timingToDo;
+        marketTime.buy = null;
+        Map<String, ComponentData> dataMap = new HashMap<>();
+        Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
+        myData.memoryItems = new ArrayList<>();
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        LocalDate prevdate = getPrevDate(param, market);
+        String prevdateString = TimeUtil.convertDate2(prevdate);
+        int prevdateIndex = TimeUtil.getIndexEqualBefore(stockDates, prevdateString);
+        Short startoffset = market.getConfig().getStartoffset();
+        startoffset = startoffset != null ? startoffset : 0;
+        prevdateIndex = prevdateIndex - verificationdays - startoffset;
+        prevdateString = stockDates.get(prevdateIndex);
+        String olddateString = stockDates.get(prevdateIndex - getTime(market));
+        LocalDate olddate = null;
+        try {
+            prevdate = TimeUtil.convertDate(prevdateString);
+            olddate = TimeUtil.convertDate(olddateString);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        ProfitData profitdata = new ProfitData();
+        ProfitInputData inputdata = getListComponents(myData, param, componentInput.getConfig(), marketTime, evolve, market, dataMap, listComponentMap, prevdate, olddate);
+        profitdata.setInputdata(inputdata);
+        myData.profitData = profitdata;
+
+        List<IncDecItem> incdecitems = null;
+        try {
+            incdecitems = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), olddate, prevdate);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        for (IncDecItem item : incdecitems) {
+            String id = item.getId() + item.getDate().toString();
+            if (item.isIncrease()) {
+                profitdata.getBuys().put(id, item);
+            } else {
+                profitdata.getSells().put(id, item);
+            }
+        }
+        
+        setValMap(param);
+        Map<String, Map<String, Object>> maps = param.getResultMaps();
+        filterIncDecs(param, market, profitdata, maps, true);
+        filterIncDecs(param, market, profitdata, maps, false);
+        myData.incs.addAll(profitdata.getBuys().values());
+        myData.decs.addAll(profitdata.getSells().values());
+        return myData;
     }
 
 }

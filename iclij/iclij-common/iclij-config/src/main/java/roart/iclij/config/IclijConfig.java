@@ -580,6 +580,10 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL);
     }
 
+    public boolean singlemarketRerun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SINGLEMARKETRERUN);
+    }
+
     @Deprecated
     public boolean wantsImproveProfit() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT);
@@ -607,6 +611,10 @@ public class IclijConfig {
 
     public int recommendTopBottom() {
         return (Integer) getValueOrDefault(IclijConfigConstants.VERIFICATIONRECOMMENDERTOPBOTTOM);
+    }
+
+    public boolean verificationRerun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONRERUN);
     }
 
     public boolean wantEvolveRecommender() {

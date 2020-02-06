@@ -2,6 +2,7 @@ package roart.iclij.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import roart.common.util.TimeUtil;
@@ -162,6 +163,16 @@ public class IncDecItem {
         incdecItem.setRecord(TimeUtil.convertDate(incdec.getRecord()));
         incdecItem.setScore(incdec.getScore());
         return incdecItem;
+    }
+
+    public static List<IncDecItem> getAll(String market, Date startDate, Date endDate) throws Exception {
+        List<IncDec> configs = IncDec.getAll(market, startDate, endDate);
+        List<IncDecItem> configItems = new ArrayList<>();
+        for (IncDec config : configs) {
+            IncDecItem memoryItem = getIncdecItem(config);
+            configItems.add(memoryItem);
+        }
+        return configItems;
     }
 
 }

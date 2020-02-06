@@ -14,6 +14,10 @@ public class IclijConfigConstantMaps {
 
     private static final String MLCONFIG = "{ \"spark\" : { \"mlpc\" : " + ACONFIG + ", \"lor\" : " + ACONFIG + ", \"ovr\" : " + ACONFIG + ", \"lsvc\" : " + ACONFIG + " }, \"tensorflow\" : { \"dnn\" : " + ACONFIG + ",  \"lic\" : " + ACONFIG + ", \"lir\" : " + ACONFIG + ", \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"cnn2\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + " }, \"pytorch\" : { \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"cnn2\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + " }, \"gem\" : { \"ewc\" : " + ACONFIG + ", \"gem\" : " + ACONFIG + ", \"i\" : " + ACONFIG + ", \"icarl\" : " + DISABLECONFIG + ", \"mm\" : " + ACONFIG + ", \"s\" : " + ACONFIG + " } }";
 
+    private static final String MLPTCONFIG = "{ \"spark\" : { \"mlpc\" : " + DISABLECONFIG + ", \"lor\" : " + DISABLECONFIG + ", \"ovr\" : " + DISABLECONFIG + ", \"lsvc\" : " + DISABLECONFIG + " }, \"tensorflow\" : { \"dnn\" : " + DISABLECONFIG + ",  \"lic\" : " + DISABLECONFIG + ", \"lir\" : " + DISABLECONFIG + ", \"mlp\" : " + DISABLECONFIG + ", \"cnn\" : " + DISABLECONFIG + ", \"cnn2\" : " + DISABLECONFIG + ", \"rnn\" : " + DISABLECONFIG + ", \"lstm\" : " + DISABLECONFIG + ", \"gru\" : " + DISABLECONFIG + " }, \"pytorch\" : { \"mlp\" : " + ACONFIG + ", \"cnn\" : " + ACONFIG + ", \"cnn2\" : " + ACONFIG + ", \"rnn\" : " + ACONFIG + ", \"lstm\" : " + ACONFIG + ", \"gru\" : " + ACONFIG + " }, \"gem\" : { \"ewc\" : " + DISABLECONFIG + ", \"gem\" : " + DISABLECONFIG + ", \"i\" : " + DISABLECONFIG + ", \"icarl\" : " + DISABLECONFIG + ", \"mm\" : " + DISABLECONFIG + ", \"s\" : " + DISABLECONFIG + " } }";
+
+    private static final String MLDISABLECONFIG = "{ \"spark\" : { \"mlpc\" : " + DISABLECONFIG + ", \"lor\" : " + DISABLECONFIG + ", \"ovr\" : " + DISABLECONFIG + ", \"lsvc\" : " + DISABLECONFIG + " }, \"tensorflow\" : { \"dnn\" : " + DISABLECONFIG + ",  \"lic\" : " + DISABLECONFIG + ", \"lir\" : " + DISABLECONFIG + ", \"mlp\" : " + DISABLECONFIG + ", \"cnn\" : " + DISABLECONFIG + ", \"cnn2\" : " + DISABLECONFIG + ", \"rnn\" : " + DISABLECONFIG + ", \"lstm\" : " + DISABLECONFIG + ", \"gru\" : " + DISABLECONFIG + " }, \"pytorch\" : { \"mlp\" : " + DISABLECONFIG + ", \"cnn\" : " + DISABLECONFIG + ", \"cnn2\" : " + DISABLECONFIG + ", \"rnn\" : " + DISABLECONFIG + ", \"lstm\" : " + DISABLECONFIG + ", \"gru\" : " + DISABLECONFIG + " }, \"gem\" : { \"ewc\" : " + DISABLECONFIG + ", \"gem\" : " + DISABLECONFIG + ", \"i\" : " + DISABLECONFIG + ", \"icarl\" : " + DISABLECONFIG + ", \"mm\" : " + DISABLECONFIG + ", \"s\" : " + DISABLECONFIG + " } }";
+
     private static final String MLCONFIGPREDICTORLSTM = "{ \"tensorflow\" : { \"predictorlstm\" : " + ACONFIG + " } }";
 
     private static final String RECOMMENDEVOLUTIONCONFIG = "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1, \"useoldelite\" : true }";
@@ -248,6 +252,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, Boolean.class);
         map.put(IclijConfigConstants.SINGLEMARKETLOOPS, Integer.class);
         map.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, Integer.class);
+        map.put(IclijConfigConstants.SINGLEMARKETRERUN, Boolean.class);
         map.put(IclijConfigConstants.VERIFICATION, Boolean.class);
         map.put(IclijConfigConstants.VERIFICATIONSAVE, Boolean.class);
         map.put(IclijConfigConstants.VERIFICATIONRECOMMENDERTOPBOTTOM, Integer.class);
@@ -255,6 +260,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.VERIFICATIONEVOLVEFIRSTONLY, Boolean.class);
         map.put(IclijConfigConstants.VERIFICATIONLOOPS, Integer.class);
         map.put(IclijConfigConstants.VERIFICATIONLOOPINTERVAL, Integer.class);
+        map.put(IclijConfigConstants.VERIFICATIONRERUN, Boolean.class);
         map.put(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT, Boolean.class);
         map.put(IclijConfigConstants.MARKETSMARKETLISTMARKET, String.class);
         map.put(IclijConfigConstants.MARKETSMARKETLISTMARKETCONFIG, String.class);
@@ -489,12 +495,14 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, Boolean.TRUE);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPS, 5);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, 20);
+        deflt.put(IclijConfigConstants.SINGLEMARKETRERUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.VERIFICATION, Boolean.TRUE);
         deflt.put(IclijConfigConstants.VERIFICATIONSAVE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.VERIFICATIONRECOMMENDERTOPBOTTOM, 10);
         deflt.put(IclijConfigConstants.VERIFICATIONDAYS, 20);
         deflt.put(IclijConfigConstants.VERIFICATIONEVOLVEFIRSTONLY, Boolean.TRUE);
         deflt.put(IclijConfigConstants.VERIFICATIONLOOPS, 5);
+        deflt.put(IclijConfigConstants.VERIFICATIONRERUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.VERIFICATIONLOOPINTERVAL, 20);
         deflt.put(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT, Boolean.FALSE);
         //deflt.put(IclijConfigConstants.MARKETSMARKETLISTMARKETEVOLUTIONCONFIG, null);
@@ -726,6 +734,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, "machine learning threshold");
         text.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, "Single market loops with evolve first only");
         text.put(IclijConfigConstants.SINGLEMARKETLOOPS, "Single market loops");
+        text.put(IclijConfigConstants.SINGLEMARKETRERUN, "Single market rerun");
         text.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, "Single market loop interval");
         text.put(IclijConfigConstants.VERIFICATION, "Enable verification");
         text.put(IclijConfigConstants.VERIFICATIONSAVE, "Enable verification save");
@@ -734,6 +743,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.VERIFICATIONLOOPS, "Verification loops");
         text.put(IclijConfigConstants.VERIFICATIONLOOPINTERVAL, "Verification loop interval");
         text.put(IclijConfigConstants.VERIFICATIONRECOMMENDERTOPBOTTOM, "Number of entries to pick from recommender lists");
+        text.put(IclijConfigConstants.VERIFICATIONRERUN, "Verification rerun");
         text.put(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT, "Enable improve profit");
         //text.put(IclijConfigConstants.MARKETSMARKETLISTMARKETEVOLUTIONCONFIG, "Market ML evolution config");
         text.put(IclijConfigConstants.MARKETSMARKETLISTMARKETMLCONFIG, "Market ML config");
@@ -974,6 +984,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, new IclijXMLType(Boolean.class, Boolean.TRUE, "Single market loops with evolve first only"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPS, new IclijXMLType(Integer.class, 5, "Single market loops"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, new IclijXMLType(Integer.class, 20, "Single market loop interval"));
+        mymap.put(IclijConfigConstants.SINGLEMARKETRERUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Single market rerun"));
         mymap.put(IclijConfigConstants.VERIFICATION, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable verification"));
         mymap.put(IclijConfigConstants.VERIFICATIONSAVE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable verification save"));
         mymap.put(IclijConfigConstants.VERIFICATIONDAYS, new IclijXMLType(Integer.class, 20, "Verification days"));
@@ -981,6 +992,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.VERIFICATIONLOOPS, new IclijXMLType(Integer.class, 5, "Verification loops"));
         mymap.put(IclijConfigConstants.VERIFICATIONLOOPINTERVAL, new IclijXMLType(Integer.class, 20, "Verification loop interval"));
         mymap.put(IclijConfigConstants.VERIFICATIONRECOMMENDERTOPBOTTOM, new IclijXMLType(Integer.class, 10, "Number of entries to pick from recommender lists"));
+        mymap.put(IclijConfigConstants.VERIFICATIONRERUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Verification rerun"));
         mymap.put(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit"));
         //mymap.put(IclijConfigConstants.MARKETSMARKETLISTMARKETEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Market evolution config"));        
         mymap.put(IclijConfigConstants.MARKETSMARKETLISTMARKETMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "Market ML config"));        

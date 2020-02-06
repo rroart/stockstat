@@ -58,6 +58,13 @@ public class IclijDbDao {
         return list;
     }
 
+    public static List<IncDecItem> getAllIncDecs(String market, LocalDate startDate, LocalDate endDate) throws Exception {
+        long time0 = System.currentTimeMillis();
+        List<IncDecItem> list =  IncDecItem.getAll(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));
+        log.info("IncDecItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return list;
+    }
+
     public static List<ConfigItem> getAllConfigs(String market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) throws Exception {
         long time0 = System.currentTimeMillis();
         List<ConfigItem> list = ConfigItem.getAll(market, action, component, subcomponent, parameters, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
