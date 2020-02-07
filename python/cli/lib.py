@@ -17,8 +17,8 @@ nafix = 0
 
 pricetype = -1
 indextype = -2
-metaperiods = 6
-periods = 8
+metaperiods = 9
+periods = 11
 topbottom = 15
 
 filterweekend = True
@@ -40,10 +40,11 @@ def getstockmarket(stocks, market):
     return stocks.loc[(stocks.marketid == market)]
 
 def getperiodtexts(market):
-    periodtext = [ "Period1", "Period2", "Period3", "Period4", "Period5", "Period6" ]
+    periodtext = [ "Period1", "Period2", "Period3", "Period4", "Period5", "Period6", "Period7", "Period8", "Period9" ]
     mymeta = getmarketmeta(allmetas, market)
     print(len(mymeta))
-    if len(mymeta > 0):
+    print(mymeta)
+    if len(mymeta) > 0:
         for i in range(0, metaperiods):
             #print(type(getperiodtext(mymeta, i)))
             #print(getperiodtext(mymeta, i))
@@ -73,6 +74,12 @@ def getperiodtext(meta, period):
         return meta.period5.iloc[0]
     if period == 5:
         return meta.period6.iloc[0]
+    if period == 6:
+        return meta.period7.iloc[0]
+    if period == 7:
+        return meta.period8.iloc[0]
+    if period == 8:
+        return meta.period9.iloc[0]
     return None
 
 def split(df, group):
@@ -176,8 +183,14 @@ def getdforderperiod(df, period):
     if period == 5:
         ds = df.sort_values(by='period6', ascending = 0)
     if period == 6:
-        ds = df.sort_values(by='price', ascending = 0)
+        ds = df.sort_values(by='period7', ascending = 0)
     if period == 7:
+        ds = df.sort_values(by='period8', ascending = 0)
+    if period == 8:
+        ds = df.sort_values(by='period9', ascending = 0)
+    if period == 9:
+        ds = df.sort_values(by='price', ascending = 0)
+    if period == 10:
         ds = df.sort_values(by='indexvalue', ascending = 0)
     return ds
 
@@ -196,8 +209,14 @@ def getdforderperiodreverse(df, period):
     if period == 5:
         ds = df.sort_values(by='period6', ascending = 0)
     if period == 6:
-        ds = df.sort_values(by='price', ascending = 0)
+        ds = df.sort_values(by='period7', ascending = 0)
     if period == 7:
+        ds = df.sort_values(by='period8', ascending = 0)
+    if period == 8:
+        ds = df.sort_values(by='period9', ascending = 0)
+    if period == 9:
+        ds = df.sort_values(by='price', ascending = 0)
+    if period == 10:
         ds = df.sort_values(by='indexvalue', ascending = 0)
     return ds
 
@@ -215,8 +234,14 @@ def getonedfperiod(df, period):
     if period == 5:
         return df.period6
     if period == 6:
-        return df.price
+        return df.period7
     if period == 7:
+        return df.period8
+    if period == 8:
+        return df.period9
+    if period == 9:
+        return df.price
+    if period == 10:
         return df.indexvalue
     #print("should not be here")
     return None
@@ -341,8 +366,14 @@ def listperiod(list, period, index):
     if period == 5:
         return list.period6.iloc[index]
     if period == 6:
-        return list.price.iloc[index]
+        return list.period7.iloc[index]
     if period == 7:
+        return list.period8.iloc[index]
+    if period == 8:
+        return list.period9.iloc[index]
+    if period == 9:
+        return list.price.iloc[index]
+    if period == 10:
         return list.indexvalue.iloc[index]
     return None
                                         # out of use
