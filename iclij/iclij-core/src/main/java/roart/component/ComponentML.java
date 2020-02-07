@@ -296,7 +296,7 @@ public abstract class ComponentML extends Component {
     private Map<String, String> getMapOld() {
         Map<String, String> map = new HashMap<>();
         map.put(MLConstants.MLPC, ConfigConstants.MACHINELEARNINGSPARKMLMLPC);
-        map.put(MLConstants.LIR, ConfigConstants.MACHINELEARNINGSPARKMLLOR);
+        map.put(MLConstants.LOR, ConfigConstants.MACHINELEARNINGSPARKMLLOR);
         map.put(MLConstants.OVR, ConfigConstants.MACHINELEARNINGSPARKMLOVR);
         map.put(MLConstants.LSVC, ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
         map.put(MLConstants.DNN, ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
@@ -308,7 +308,7 @@ public abstract class ComponentML extends Component {
     protected Map<Pair<String, String>, String> getMap() {
         Map<Pair <String, String>, String> map = new HashMap<>();
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.MLPC), ConfigConstants.MACHINELEARNINGSPARKMLMLPC);
-        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LIR), ConfigConstants.MACHINELEARNINGSPARKMLLOR);
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LOR), ConfigConstants.MACHINELEARNINGSPARKMLLOR);
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.OVR), ConfigConstants.MACHINELEARNINGSPARKMLOVR);
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LSVC), ConfigConstants.MACHINELEARNINGSPARKMLLSVC);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.DNN), ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
@@ -352,7 +352,7 @@ public abstract class ComponentML extends Component {
     protected Map<Pair<String, String>, String> getMapPersist() {
         Map<Pair <String, String>, String> map = new HashMap<>();
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.MLPC), ConfigConstants.MACHINELEARNINGSPARKMLMLPCPERSIST);
-        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LIR), ConfigConstants.MACHINELEARNINGSPARKMLLORPERSIST);
+        map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LOR), ConfigConstants.MACHINELEARNINGSPARKMLLORPERSIST);
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.OVR), ConfigConstants.MACHINELEARNINGSPARKMLOVRPERSIST);
         map.put(new ImmutablePair(MLConstants.SPARK, MLConstants.LSVC), ConfigConstants.MACHINELEARNINGSPARKMLLSVCPERSIST);
         map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.DNN), ConfigConstants.MACHINELEARNINGTENSORFLOWDNNPERSIST);

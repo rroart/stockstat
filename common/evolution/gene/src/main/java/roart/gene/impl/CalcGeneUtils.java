@@ -74,7 +74,7 @@ public class CalcGeneUtils {
                 case MLConstants.MLPC:
                     classs = SparkMLPCConfig.class;
                     break;
-                case MLConstants.LIR:
+                case MLConstants.LOR:
                     classs = SparkLORConfig.class;
                     break;
                 case MLConstants.OVR:
