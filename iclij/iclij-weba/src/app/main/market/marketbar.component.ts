@@ -146,6 +146,7 @@ export class MarketbarComponent implements OnInit, OnDestroy {
     handleEndDateChange($event) {
     console.log($event);
     this.store.dispatch(new ActionSetenddate({ enddate: $event.value}));
+    this.store.dispatch(new ActionSetconfigvalue([ 'enddate', $event.value ]));
   }
 
     resetStartDate($event) {
@@ -156,6 +157,7 @@ export class MarketbarComponent implements OnInit, OnDestroy {
     resetEndDate($event) {
     console.log($event);
     this.store.dispatch(new ActionSetenddate({ enddate: null }));
+    this.store.dispatch(new ActionSetconfigvalue([ 'enddate', null ]));
   }
 
     getContent($event) {

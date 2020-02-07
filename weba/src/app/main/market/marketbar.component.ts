@@ -147,6 +147,7 @@ incrementAsync($event) {
     handleEndDateChange($event) {
     console.log($event);
     this.store.dispatch(new ActionSetenddate({ enddate: $event.value}));
+    this.store.dispatch(new ActionSetconfigvalue([ 'enddate', $event.value ]));
   }
 
     resetStartDate($event) {
@@ -157,6 +158,7 @@ incrementAsync($event) {
     resetEndDate($event) {
     console.log($event);
     this.store.dispatch(new ActionSetenddate({ enddate: null }));
+    this.store.dispatch(new ActionSetconfigvalue([ 'enddate', null ]));
   }
 
     getMarketData($event) {
