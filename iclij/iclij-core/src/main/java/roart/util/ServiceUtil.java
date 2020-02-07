@@ -656,7 +656,7 @@ public class ServiceUtil {
 	String type = "Verify";
         componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
         int verificationdays = componentInput.getConfig().verificationDays();
-        boolean rerun = componentInput.getConfig().singlemarketRerun();
+        boolean rerun = componentInput.getConfig().verificationRerun();
         IclijServiceResult result = getFindProfitVerify(componentInput, type, verificationdays, rerun);
         print(result);
         return result;
@@ -711,13 +711,41 @@ public class ServiceUtil {
         Map<String, Object> trendMap = new HashMap<>();
         Short mystartoffset = market.getConfig().getStartoffset();
         short startoffset = mystartoffset != null ? mystartoffset : 0;
+        int loopoffset = param.getLoopoffset() != null ? param.getLoopoffset() : 0;
         String dateString = TimeUtil.convertDate2(param.getInput().getEnddate());
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         int dateIndex = TimeUtil.getIndexEqualBefore(stockDates, dateString);
-        String aDate = stockDates.get(dateIndex);
+        String aDate = stockDates.get(dateIndex - loopoffset);
         LocalDate endDate = TimeUtil.convertDate(aDate);
-        Trend trend = findProfitAction.getTrend(param.getInput().getConfig().verificationDays(), endDate, param.getService(), startoffset);
+        Trend trend;
+        Trend trend2;
+        if (rerun) {
+            String endDateString2 = stockDates.get(dateIndex - findProfitAction.getTime(market));
+            LocalDate endDate2 = TimeUtil.convertDate(endDateString2);
+            trend = findProfitAction.getTrend(param.getInput().getConfig().verificationDays(), endDate2, param.getService(), startoffset);
+            trend2 = findProfitAction.getTrend(param.getInput().getConfig().verificationDays(), endDate, param.getService(), startoffset);
+        } else {
+            LocalDate prevdate = findProfitAction.getPrevDate(param, market);
+            String prevdateString = TimeUtil.convertDate2(prevdate);
+            int prevdateIndex = TimeUtil.getIndexEqualBefore(stockDates, prevdateString);
+            prevdateIndex = prevdateIndex - param.getLoopoffset();
+            Short startoffset2 = market.getConfig().getStartoffset();
+            startoffset2 = startoffset2 != null ? startoffset2 : 0;
+            prevdateIndex = prevdateIndex - verificationdays - startoffset2;
+            prevdateString = stockDates.get(prevdateIndex);
+            String olddateString = stockDates.get(prevdateIndex - findProfitAction.getTime(market));
+            LocalDate olddate = null;
+            try {
+                prevdate = TimeUtil.convertDate(prevdateString);
+                olddate = TimeUtil.convertDate(olddateString);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            trend = findProfitAction.getTrend(param.getInput().getConfig().verificationDays(), olddate, param.getService(), startoffset2, stockDates, loopoffset);            
+            trend2 = findProfitAction.getTrend(param.getInput().getConfig().verificationDays(), prevdate, param.getService(), startoffset2, stockDates, loopoffset);            
+         }
         trendMap.put(market.getConfig().getMarket(), trend);
+        trendMap.put(market.getConfig().getMarket() + "end", trend2);
         if (verificationdays > 0) {
             try {
                 param.setFuturedays(0);
@@ -729,7 +757,7 @@ public class ServiceUtil {
             if (rerun) {
             findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold());
             } else {
-                findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold(), stockDates);                
+                findProfitAction.getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold(), stockDates, loopoffset);                
             }
             /*
             List<MapList> inc = new ArrayList<>();

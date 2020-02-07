@@ -231,7 +231,7 @@ public class FindProfitAction extends MarketAction {
     }
 
     public void getVerifyProfit(int days, LocalDate date, ControlService srv,
-            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold, List<String> stockDates) {
+            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold, List<String> stockDates, int loopoffset) {
         log.info("Verify compare date {} with {}", oldDate, date);
         LocalDate futureDate = date;
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
@@ -246,9 +246,9 @@ public class FindProfitAction extends MarketAction {
         //Set<String> j2 = resultMaps.get("" + category).keySet();
     
         VerifyProfit verify = new VerifyProfit();
-        verify.doVerify(listInc, days, true, categoryValueMap, oldDate, startoffset, threshold, stockDates);
-        verify.doVerify(listDec, days, false, categoryValueMap, oldDate, startoffset, threshold, stockDates);
-        verify.doVerify(listIncDec, days, false, categoryValueMap, oldDate, startoffset, threshold, stockDates);
+        verify.doVerify(listInc, days, true, categoryValueMap, oldDate, startoffset, threshold, stockDates, loopoffset);
+        verify.doVerify(listDec, days, false, categoryValueMap, oldDate, startoffset, threshold, stockDates, loopoffset);
+        verify.doVerify(listIncDec, days, false, categoryValueMap, oldDate, startoffset, threshold, stockDates, loopoffset);
         //return verify.getTrend(days, categoryValueMap);
     }
 
@@ -292,6 +292,30 @@ public class FindProfitAction extends MarketAction {
         //verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
         //verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
         return verify.getTrend(days, categoryValueMap, startoffset);
+    }
+
+    public Trend getTrend(int days, LocalDate date, ControlService srv, int startoffset, List<String> stockDates, int loopoffset) {
+        //log.info("Verify compare date {} with {}", oldDate, date);
+        //LocalDate futureDate = date;
+        try {
+            srv.conf.setdate(TimeUtil.convertDate(TimeUtil.convertDate(stockDates.get(stockDates.size() - 1))));
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        Component.disabler(srv.conf.getConfigValueMap());
+        Map<String, Map<String, Object>> resultMaps = srv.getContent();
+        //Set<String> i = resultMaps.keySet();
+        //Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
+        //Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
+        Integer category = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
+        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
+        //categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("Price").get(PipelineConstants.LIST);
+        //Set<String> j2 = resultMaps.get("" + category).keySet();
+    
+        VerifyProfit verify = new VerifyProfit();
+        //verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
+        //verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
+        return verify.getTrend(days, categoryValueMap, startoffset, date, stockDates, loopoffset);
     }
 
     @Override
@@ -356,7 +380,7 @@ public class FindProfitAction extends MarketAction {
     }
     
     @Override
-    protected LocalDate getPrevDate(ComponentData param, Market market) {
+    public LocalDate getPrevDate(ComponentData param, Market market) {
         return param.getInput().getEnddate();
     }
     
@@ -411,6 +435,7 @@ public class FindProfitAction extends MarketAction {
         LocalDate prevdate = getPrevDate(param, market);
         String prevdateString = TimeUtil.convertDate2(prevdate);
         int prevdateIndex = TimeUtil.getIndexEqualBefore(stockDates, prevdateString);
+        prevdateIndex = prevdateIndex - param.getLoopoffset();
         Short startoffset = market.getConfig().getStartoffset();
         startoffset = startoffset != null ? startoffset : 0;
         prevdateIndex = prevdateIndex - verificationdays - startoffset;

@@ -47,7 +47,7 @@ public class VerifyProfit {
         }
     }
 
-    public void doVerify(List<IncDecItem> list, int days, boolean increaseNot, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold, List<String> stockDates) {
+    public void doVerify(List<IncDecItem> list, int days, boolean increaseNot, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold, List<String> stockDates, int loopoffset) {
         if (days <= 0) {
             return;
         }
@@ -58,12 +58,12 @@ public class VerifyProfit {
                 continue;
             }
             String aDate = TimeUtil.convertDate2(item.getDate());
-            int indexoffset = stockDates.size() - stockDates.indexOf(aDate);
+            int indexoffset = stockDates.size() - loopoffset - stockDates.indexOf(aDate);
             List<Double> mainList = resultList.get(0);
             log.info("Sizes {} {}", stockDates.size(), mainList.size());
             if (mainList != null) {
-                Double valFuture = mainList.get(mainList.size() - indexoffset - startoffset);
-                Double valNow = mainList.get(mainList.size() - indexoffset - startoffset + days);
+                Double valFuture = mainList.get(mainList.size() - indexoffset - startoffset + days);
+                Double valNow = mainList.get(mainList.size() - indexoffset - startoffset);
                 if (valFuture != null && valNow != null) {
                     boolean verified = (item.isIncrease() && (valFuture / valNow > threshold)) ||
                             (!item.isIncrease() && (valFuture / valNow < threshold));
@@ -94,6 +94,60 @@ public class VerifyProfit {
             if (mainList != null) {
                 Double valFuture = mainList.get(mainList.size() - 1 - startoffset);
                 Double valNow = mainList.get(mainList.size() - 1 - startoffset - days);
+                if (valFuture != null && valNow != null) {
+                    if (valFuture > valNow) {
+                        trend.up++;
+                    }
+                    if (valFuture.equals(valNow)) {
+                        trend.neutral++;
+                    }
+                    if (valFuture < valNow) {
+                        trend.down++;
+                    }
+                    incs.add(valFuture / valNow);
+                    count++;
+                } else {
+                    nocount++;
+                }
+            } else {
+                nocount2++;
+            }
+        }
+        if (count == 0) {
+            return trend;
+        }
+        trend.incProp = ((double) trend.up) / count;
+        OptionalDouble average = incs
+                .stream()
+                .mapToDouble(a -> a)
+                .average();
+        trend.incAverage = average.getAsDouble();
+        trend.min = Collections.min(incs);
+        trend.max = Collections.max(incs);
+        return trend;
+    }
+    
+    public Trend getTrend(int days, Map<String, List<List<Double>>> categoryValueMap, int startoffset, LocalDate date, List<String> stockDates, int loopoffset) {
+        Trend trend = new Trend();
+        if (days <= 0) {
+            return trend;
+        }
+        int nocount2 = 0;
+        int nocount = 0;
+        int count = 0;
+        System.out.println("si " + categoryValueMap.size());
+        String aDate = TimeUtil.convertDate2(date);
+        int indexoffset = stockDates.size() - stockDates.indexOf(aDate);
+        List<Double> incs = new ArrayList<>();
+        for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+            List<List<Double>> resultList = entry.getValue();
+            if (resultList == null || resultList.isEmpty()) {
+                continue;
+            }
+            List<Double> mainList = resultList.get(0);
+            if (mainList != null) {
+                Double valFuture = mainList.get(mainList.size() - indexoffset - startoffset + days);
+                Double valNow = mainList.get(mainList.size() - indexoffset - startoffset);
                 if (valFuture != null && valNow != null) {
                     if (valFuture > valNow) {
                         trend.up++;
