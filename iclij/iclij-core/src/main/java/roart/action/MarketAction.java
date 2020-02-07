@@ -570,7 +570,11 @@ public abstract class MarketAction extends Action {
                 Map<String, List<List>> listMap3 = getCategoryList(maps, category);
                 Map<String, IncDecItem> buysFilter = incdecFilterOnIncreaseValue(market, profitdata.getBuys(), maps, threshold, categoryMap,
                         listMap3, offsetDays, inc);
-                profitdata.setBuys(buysFilter);
+                if (inc) {
+                    profitdata.setBuys(buysFilter);
+                } else {
+                    profitdata.setSells(buysFilter);
+                }
             }
         }
     }
