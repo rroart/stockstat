@@ -32,7 +32,7 @@ function convert(list, date, props) {
 	    //columns.push({ accessor: head[i], Header: head[i], sort: true, id: 'button', Cell: ({value}) => (<a onClick={console.log('clicked value', value)}>Button</a>) });
 	    columns.push({ accessor: head[i], Header: head[i], sort: true, id: 'button', Cell: ({value}) => (<a onClick={(e) => handleButtonClick(props, e, value)}>{value}</a>) });
 	} else {
-	    columns.push({ accessor: head[i], Header: head[i], sort: true });
+	    columns.push({ accessor: head[i], Header: head[i], sort: true, Cell: ({value}) => { if (typeof value === "boolean") { return String(value) } else { return value; } } });
 	}
     }
     console.log(columns);
