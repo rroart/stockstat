@@ -348,7 +348,20 @@ public abstract class MarketAction extends Action {
                 .mapToDouble(TimingItem::getMytime)
                 .average();
     }
-
+    
+    public MarketComponentTime getMCT(String componentName, Component component, String subcomponent, Market market, double time, boolean haverun, Boolean buy, Parameters parameters) {
+        MarketComponentTime mct = new MarketComponentTime();
+        mct.componentName = componentName;
+        mct.component = component;
+        mct.subcomponent = subcomponent;
+        mct.market = market;
+        mct.time = time;
+        mct.haverun = haverun;
+        mct.buy = buy;
+        mct.parameters = parameters;
+        return mct;
+    }
+    
     public class MarketComponentTime {
         String componentName;
         Component component;
@@ -568,7 +581,7 @@ public abstract class MarketAction extends Action {
                     threshold = market.getFilter().getDecthreshold();
                 }
                 Map<String, List<List>> listMap3 = getCategoryList(maps, category);
-                Map<String, IncDecItem> buysFilter = incdecFilterOnIncreaseValue(market, profitdata.getBuys(), maps, threshold, categoryMap,
+                Map<String, IncDecItem> buysFilter = incdecFilterOnIncreaseValue(market, inc ? profitdata.getBuys() : profitdata.getSells(), maps, threshold, categoryMap,
                         listMap3, offsetDays, inc);
                 if (inc) {
                     profitdata.setBuys(buysFilter);
