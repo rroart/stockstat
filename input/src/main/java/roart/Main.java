@@ -274,12 +274,8 @@ public class Main {
             if (period9Elem != null) {
                 period9 = reformat(period9Elem.getTextContent());
             }
-            String dbid = marketid + "_" + id + "_" + datestr;
-            Stock stock = Stock.ensureExistence(dbid);
-            stock.setId(id);
-            stock.setIsin(isin);
-            stock.setMarketid(marketid);
-            stock.setName(name);
+            
+            String adatestr = datestr;
             Date date;
             SimpleDateFormat dt = new SimpleDateFormat("dd.MM.yyyy"); 
             if (datestr.length() == 13 && datestr.matches("-?\\d+")) {
@@ -287,9 +283,17 @@ public class Main {
                 date.setHours(0);
                 date.setMinutes(0);
                 date.setSeconds(0);
+                adatestr = dt.format(date);
             } else {
                 date = dt.parse(datestr);
             }
+
+            String dbid = marketid + "_" + id + "_" + adatestr;
+            Stock stock = Stock.ensureExistence(dbid);
+            stock.setId(id);
+            stock.setIsin(isin);
+            stock.setMarketid(marketid);
+            stock.setName(name);
             stock.setDate(date);
             if (indexvalue == null || indexvalue.equals("-")) {
                 stock.setIndexvalue(null);
