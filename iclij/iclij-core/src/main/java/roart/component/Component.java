@@ -430,6 +430,7 @@ public abstract class Component {
                 List<ResultMeta> metalist = param.getResultMeta()
                 .stream()
                 .filter(Objects::nonNull)
+                .filter(e -> e.getTestAccuracy() != null)
                 .filter(e -> e.getTestAccuracy() == acc)
                 .collect(Collectors.toList());
                 result[2] = "";
