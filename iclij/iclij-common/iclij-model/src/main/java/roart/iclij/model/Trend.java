@@ -15,6 +15,8 @@ public class Trend {
     
     public double max;
  
+    public String stats;
+    
     public static String roundme(Double eval) {
         if (eval == null) {
             return null;
@@ -25,6 +27,6 @@ public class Trend {
 
 
     @Override public String toString() {
-        return "D " + down + " N " + neutral + " U " + up + " prop " + roundme(incProp) + " aver " + roundme(incAverage) + " min " + roundme(min) + " max " + roundme(max);
+        return "D " + down + " N " + neutral + " U " + up + " prop " + roundme(incProp) + " aver " + roundme(incAverage) + " min " + roundme(min) + " max " + roundme(max) + " stats " + stats;
     }
 }

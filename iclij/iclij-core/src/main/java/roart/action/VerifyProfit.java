@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +125,7 @@ public class VerifyProfit {
         trend.incAverage = average.getAsDouble();
         trend.min = Collections.min(incs);
         trend.max = Collections.max(incs);
+        trend.stats = incs.stream().filter(Objects::nonNull).mapToDouble(e -> (Double) e).summaryStatistics().toString();
         return trend;
     }
     
@@ -178,6 +180,7 @@ public class VerifyProfit {
         trend.incAverage = average.getAsDouble();
         trend.min = Collections.min(incs);
         trend.max = Collections.max(incs);
+        trend.stats = incs.stream().filter(Objects::nonNull).mapToDouble(e -> (Double) e).summaryStatistics().toString();
         return trend;
     }
 }
