@@ -3,6 +3,8 @@ package roart.iclij.config;
 public class MarketConfig {
     private String market;
 
+    private String mlmarket;
+    
     private Short findtime;
     
     private Short improvetime;
@@ -37,6 +39,14 @@ public class MarketConfig {
 
     public void setMarket(String market) {
         this.market = market;
+    }
+
+    public String getMlmarket() {
+        return mlmarket;
+    }
+
+    public void setMlmarket(String mlmarket) {
+        this.mlmarket = mlmarket;
     }
 
     public Short getFindtime() {

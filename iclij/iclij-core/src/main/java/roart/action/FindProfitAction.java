@@ -116,6 +116,50 @@ public class FindProfitAction extends MarketAction {
         return input;
     }
 
+    //@Override
+    public ProfitInputData filterMemoryListMapsWithConfidence2(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
+        Map<Pair<String, Integer>, List<MemoryItem>> badListMap = new HashMap<>();
+        Map<Pair<String, Integer>, Double> badConfMap = new HashMap<>();
+        for(Pair<String, Integer> key : listMap.keySet()) {
+            List<MemoryItem> memoryList = listMap.get(key);
+            List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
+            if (confidences.isEmpty()) {
+                int jj = 0;
+                //continue;
+            }
+            confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
+            Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
+            if (!minOpt.isPresent()) {
+                int jj = 0;
+                //continue;
+            }
+            Double min = 0.0;
+            if (minOpt.isPresent()) {
+                min = minOpt.get();
+            }
+            // do the bad ones
+            // do not yet improve on the good enough ones
+            if (false /*min >= market.getConfidence()*/) {
+                continue;
+            }
+            //Optional<Double> maxOpt = confidences.parallelStream().reduce(Double::max);
+            //Double max = maxOpt.get();
+            //System.out.println("Mark " + market.getConfig().getMarket() + " " + keys[0] + " " + min + " " + max );
+            //Double conf = market.getConfidence();
+            //System.out.println(conf);
+            badListMap.put(key, listMap.get(key));
+            badConfMap.put(key, min);
+        }
+        ProfitInputData input = new ProfitInputData();
+        input.setConfMap(badConfMap);
+        input.setListMap(badListMap);
+        input.setAboveConfMap(badConfMap);
+        input.setAboveListMap(badListMap);
+        input.setBelowConfMap(badConfMap);
+        input.setBelowListMap(badListMap);
+        return input;
+    }
+
     private void handleMin(Market market, Map<Pair<String, Integer>, List<MemoryItem>> okListMap,
             Map<Pair<String, Integer>, Double> okConfMap, Pair<String, Integer> keys, List<MemoryItem> memoryList,
             Optional<Double> minOpt) {
@@ -146,6 +190,9 @@ public class FindProfitAction extends MarketAction {
                 continue;
             }
             component.enableDisable(param, positions, param.getConfigValueMap());
+
+            String mlmarket = market.getConfig().getMlmarket();
+            param.getService().conf.setMLmarket(mlmarket);
 
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
             //component.set(market, param, profitdata, positions, evolve);
