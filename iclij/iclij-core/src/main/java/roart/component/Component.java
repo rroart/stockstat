@@ -49,6 +49,7 @@ import roart.service.ControlService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
+import roart.evolution.marketfilter.gene.impl.MarketFilterGene;
 //import roart.evolution.jenetics.Main;
 
 public abstract class Component {
@@ -466,7 +467,8 @@ public abstract class Component {
         
         Map<String, String> retMap = new HashMap<>();
         try {
-            MarketFilterChromosome chromosome = null;
+            MarketFilterGene gene = new MarketFilterGene(market.getFilter());
+            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene);
             List<String> individuals = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals );
             MarketFilterChromosome bestChromosome = (MarketFilterChromosome) best.getEvaluation();

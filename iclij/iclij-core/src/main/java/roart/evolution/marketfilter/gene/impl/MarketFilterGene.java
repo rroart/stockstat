@@ -26,10 +26,14 @@ public class MarketFilterGene extends AbstractGene {
         MarketFilter myconfig = marketfilter;
         MarketFilterGene gene = this;
         myconfig.setDeccategory(gene.generateCategory());
-        myconfig.setDecdays(gene.generateDays());
+        if (random.nextBoolean()) {
+            myconfig.setDecdays(gene.generateDays());
+        }
         myconfig.setDecthreshold(gene.generateThreshold());
         myconfig.setInccategory(gene.generateCategory());
-        myconfig.setIncdays(gene.generateDays());
+        if (random.nextBoolean()) {
+            myconfig.setIncdays(gene.generateDays());
+        }
         myconfig.setIncthreshold(gene.generateThreshold());
         myconfig.setConfidence(gene.generateConfidence());
     }
@@ -51,6 +55,19 @@ public class MarketFilterGene extends AbstractGene {
         return offspring;
     }
 
+    public MarketFilterGene copy() {
+        MarketFilter newFilter = new MarketFilter();
+        newFilter.setConfidence(marketfilter.getConfidence());
+        newFilter.setDeccategory(marketfilter.getDeccategory());
+        newFilter.setDecdays(marketfilter.getDecdays());
+        newFilter.setDecthreshold(marketfilter.getDecthreshold());
+        newFilter.setInccategory(marketfilter.getInccategory());
+        newFilter.setIncdays(marketfilter.getIncdays());
+        newFilter.setIncthreshold(marketfilter.getIncthreshold());
+        newFilter.setRecordage(marketfilter.getRecordage());
+        return new MarketFilterGene(newFilter);
+    }
+    
     /*
      * private String inccategory;
     
@@ -84,5 +101,10 @@ public class MarketFilterGene extends AbstractGene {
         String[] categories = { "1w", "1m", "3m", "1y", "3y", "5y", "10y", "cy" };
         int index = random.nextInt(categories.length);
         return categories[index];
+    }
+    
+    @Override 
+    public String toString() {
+        return marketfilter.toString();
     }
 }

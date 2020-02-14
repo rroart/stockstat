@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
+import roart.action.MarketAction.MarketComponentTime;
 import roart.action.VerifyProfit;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
@@ -62,7 +63,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
 
     protected Parameters parameters;
     
-    public MarketFilterChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters) {
+    public MarketFilterChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, MarketFilterGene gene) {
         this.action = action;
         this.confList = confList;
         this.param = param;
@@ -73,10 +74,11 @@ public class MarketFilterChromosome extends AbstractChromosome {
         this.subcomponent = subcomponent;
         this.buy = buy;
         this.parameters = parameters;
+        this.gene = gene;
     }
 
     public MarketFilterChromosome(MarketFilterChromosome marketFilterChromosome) {
-        // TODO Auto-generated constructor stub
+        this(marketFilterChromosome.action, marketFilterChromosome.confList, marketFilterChromosome.param, marketFilterChromosome.profitdata, marketFilterChromosome.market, marketFilterChromosome.positions, marketFilterChromosome.componentName, marketFilterChromosome.buy, marketFilterChromosome.subcomponent, marketFilterChromosome.parameters, marketFilterChromosome.getGene().copy());
     }
 
     public MarketFilterGene getGene() {
@@ -206,8 +208,11 @@ public class MarketFilterChromosome extends AbstractChromosome {
     public double getFitness() throws JsonParseException, JsonMappingException, IOException {
         List<MemoryItem> memoryItems = null;
         WebData myData = new WebData();
+        myData.incs = new ArrayList<>();
+        myData.decs = new ArrayList<>();
         myData.updateMap = new HashMap<>();
         myData.memoryItems = new ArrayList<>();
+        myData.updateMap2 = new HashMap<>();
         //myData.profitData = new ProfitData();
         myData.timingMap = new HashMap<>();
         int b = param.getService().conf.hashCode();
@@ -217,6 +222,9 @@ public class MarketFilterChromosome extends AbstractChromosome {
         List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
         incProp = extracted(myData, listInc, listDec);
+        Map<String, Map<String, Object>> maps = param.getResultMaps();
+        action.filterIncDecs(param, market, profitdata, maps, true);
+        action.filterIncDecs(param, market, profitdata, maps, false);
 
         double memoryFitness = 0.0;
         double incdecFitness = 0.0;
@@ -316,7 +324,18 @@ public class MarketFilterChromosome extends AbstractChromosome {
             map.put(key2, parameters.getFuturedays());
 
             map.put(ConfigConstants.MISCTHRESHOLD, null);
-            
+
+	    /*
+            FindProfitAction myaction = new FindProfitAction();
+            //marketTime.;
+            MarketComponentTime marketTime = myaction.getMCT(componentName, component, subcomponent, market, 0, false, buy, parameters);
+            //marketTime.component = component;
+            myaction.getPicksFiltered(myData, param, param.getInput().getConfig(),  marketTime, evolve);                
+        
+            // plus borrow from verifyprofit
+            //myaction.filterIncDecs(param, market, profitdata, maps, true);
+            */
+            market.setFilter(gene.getMarketfilter());
             ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
             //componentData.setUsedsec(time0);
             myData.updateMap.putAll(componentData.getUpdateMap());
@@ -355,6 +374,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
 
             Short mystartoffset = market.getConfig().getStartoffset();
             short startoffset = mystartoffset != null ? mystartoffset : 0;
+            action.setValMap(param);
             VerifyProfit verify = new VerifyProfit();
             incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
             //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
@@ -379,7 +399,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
     @Override
     public Individual crossover(AbstractChromosome chromosome) {
         MarketFilterGene newNNConfig =  (MarketFilterGene) gene.crossover(((MarketFilterChromosome) chromosome).gene);
-        MarketFilterChromosome eval = new MarketFilterChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent, parameters);
+        MarketFilterChromosome eval = new MarketFilterChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
         //MarketFilterChromosome eval = new MarketFilterChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
         return new Individual(eval);
     }

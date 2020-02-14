@@ -153,7 +153,7 @@ public class DatasetAction extends MarketAction {
     }
 
     @Override
-    protected void setValMap(ComponentData param) {
+    public void setValMap(ComponentData param) {
         // empty here
     }
 

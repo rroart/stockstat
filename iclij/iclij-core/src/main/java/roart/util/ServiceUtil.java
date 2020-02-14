@@ -655,6 +655,7 @@ public class ServiceUtil {
     public static IclijServiceResult getVerify(ComponentInput componentInput) throws Exception {
 	String type = "Verify";
         componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
+        componentInput.setDoSave(false);
         int verificationdays = componentInput.getConfig().verificationDays();
         boolean rerun = componentInput.getConfig().verificationRerun();
         IclijServiceResult result = getFindProfitVerify(componentInput, type, verificationdays, rerun);
@@ -1022,6 +1023,7 @@ public class ServiceUtil {
     public static IclijServiceResult getFindProfit(ComponentInput componentInput) throws Exception {
 	String type = "FindProfit";
         int days = 0;  // config.verificationDays();
+        componentInput.setDoSave(false);
         boolean rerun = componentInput.getConfig().singlemarketRerun();
         IclijServiceResult result = getFindProfitVerify(componentInput, type, days, rerun);
         print(result);

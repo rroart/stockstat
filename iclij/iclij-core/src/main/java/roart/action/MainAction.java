@@ -98,6 +98,7 @@ public class MainAction extends Action {
                 || IclijXMLConfig.getConfigInstance().wantsFindProfitAutorun() 
                 || IclijXMLConfig.getConfigInstance().wantsEvolveAutorun()      
                 || IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()      
+                || IclijXMLConfig.getConfigInstance().wantsImproveFilterAutorun()      
                 || IclijXMLConfig.getConfigInstance().wantsCrosstestAutorun()       
                 || IclijXMLConfig.getConfigInstance().wantsDatasetAutorun();
     }
