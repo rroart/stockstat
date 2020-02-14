@@ -210,89 +210,17 @@ public class ConfigMapChromosome extends AbstractChromosome {
         myData.memoryItems = new ArrayList<>();
         //myData.profitData = new ProfitData();
         myData.timingMap = new HashMap<>();
-        double memoryFitness = 0.0;
-        double incdecFitness = 0.0;
         int b = param.getService().conf.hashCode();
         boolean c = param.getService().conf.wantIndicatorRecommender();
+        List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
+        List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
+        List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
+        Trend incProp = null;
+        incProp = extracted(myData, listInc, listDec);
+
+        double memoryFitness = 0.0;
+        double incdecFitness = 0.0;
         try {
-            int verificationdays = param.getInput().getConfig().verificationDays();
-            boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
-            Component component =  action.getComponentFactory().factory(componentName);
-            boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
-            //ProfitData profitdata = new ProfitData();
-            myData.profitData = profitdata;
-            boolean myevolve = component.wantImproveEvolve();
-            if (!param.getService().conf.wantIndicatorRecommender()) {
-                int jj = 0;
-            }
-            map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
-            map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
-            map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
-
-            String key = component.getThreshold();
-            map.put(key, "[" + parameters.getThreshold() + "]");
-            String key2 = component.getFuturedays();
-            map.put(key2, parameters.getFuturedays());
-
-            map.put(ConfigConstants.MISCTHRESHOLD, null);
-            
-            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
-            //componentData.setUsedsec(time0);
-            myData.updateMap.putAll(componentData.getUpdateMap());
-            List<MemoryItem> memories;
-            try {
-                memories = component.calculateMemory(componentData, parameters);
-                if (memories == null || memories.isEmpty()) {
-                    int jj = 0;
-                }
-                myData.memoryItems.addAll(memories);
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-
-            Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
-            myData.memoryItems.forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
-            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap);        
-            //ProfitData profitdata = new ProfitData();
-            profitdata.setInputdata(inputdata);
-            Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
-            /*
-            Map<String, List<Integer>> aboveListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getAboveListMap());
-            Map<String, List<Integer>> belowListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getBelowListMap());
-            Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
-            listComponentMap.put(null, listComponent);
-            listComponentMap.put(true, aboveListComponent);
-            listComponentMap.put(false, belowListComponent);
-            */
-            inputdata.setNameMap(new HashMap<>());
-            List<Integer> positions = listComponent.get(componentName);
-
-            component.enableDisable(componentData, positions, param.getConfigValueMap());
-
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, positions, buy);
-
-            List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
-            List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
-            List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
-            Short mystartoffset = market.getConfig().getStartoffset();
-            short startoffset = mystartoffset != null ? mystartoffset : 0;
-            VerifyProfit verify = new VerifyProfit();
-            Trend incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
-            //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
-            //log.info("trendcomp {} {}", trend, incProp);
-            if (verificationdays > 0) {
-                try {
-                    //param.setFuturedays(verificationdays);
-                    param.setFuturedays(0);
-                    param.setOffset(0);
-                    param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
-                } catch (ParseException e) {
-                    log.error(Constants.EXCEPTION, e);
-                }            
-                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold());
-            }
-
             if (true) {
                 int fitnesses = 0;
                 double fitness = 0;
@@ -363,6 +291,90 @@ public class ConfigMapChromosome extends AbstractChromosome {
         //configSaves(param, getMap());
         param.getUpdateMap().putAll(getMap());
         return incdecFitness;
+    }
+
+    public Trend extracted(WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec) {
+        Trend incProp = null;
+        try {
+            int verificationdays = param.getInput().getConfig().verificationDays();
+            boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
+            Component component =  action.getComponentFactory().factory(componentName);
+            boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
+            //ProfitData profitdata = new ProfitData();
+            myData.profitData = profitdata;
+            boolean myevolve = component.wantImproveEvolve();
+            if (!param.getService().conf.wantIndicatorRecommender()) {
+                int jj = 0;
+            }
+            map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
+            map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
+            map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
+
+            String key = component.getThreshold();
+            map.put(key, "[" + parameters.getThreshold() + "]");
+            String key2 = component.getFuturedays();
+            map.put(key2, parameters.getFuturedays());
+
+            map.put(ConfigConstants.MISCTHRESHOLD, null);
+            
+            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
+            //componentData.setUsedsec(time0);
+            myData.updateMap.putAll(componentData.getUpdateMap());
+            List<MemoryItem> memories;
+            try {
+                memories = component.calculateMemory(componentData, parameters);
+                if (memories == null || memories.isEmpty()) {
+                    int jj = 0;
+                }
+                myData.memoryItems.addAll(memories);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+
+            Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
+            myData.memoryItems.forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
+            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap);        
+            //ProfitData profitdata = new ProfitData();
+            profitdata.setInputdata(inputdata);
+            Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
+            /*
+            Map<String, List<Integer>> aboveListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getAboveListMap());
+            Map<String, List<Integer>> belowListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getBelowListMap());
+            Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
+            listComponentMap.put(null, listComponent);
+            listComponentMap.put(true, aboveListComponent);
+            listComponentMap.put(false, belowListComponent);
+            */
+            inputdata.setNameMap(new HashMap<>());
+            List<Integer> positions = listComponent.get(componentName);
+
+            component.enableDisable(componentData, positions, param.getConfigValueMap());
+
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
+            component.calculateIncDec(componentData2, profitdata, positions, buy);
+
+            Short mystartoffset = market.getConfig().getStartoffset();
+            short startoffset = mystartoffset != null ? mystartoffset : 0;
+            action.setValMap(param);
+            VerifyProfit verify = new VerifyProfit();
+            incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
+            //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
+            //log.info("trendcomp {} {}", trend, incProp);
+            if (verificationdays > 0) {
+                try {
+                    //param.setFuturedays(verificationdays);
+                    param.setFuturedays(0);
+                    param.setOffset(0);
+                    param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
+                } catch (ParseException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }            
+                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold());
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return incProp;
     }
 
     private void configSaves(ComponentData param, Map<String, Object> anUpdateMap) {
