@@ -278,6 +278,41 @@ public class ServiceUtil {
         return result;
     }
 
+    public static IclijServiceResult getContentFilter(ComponentInput componentInput) throws Exception {
+        ImproveFilterAction improveFilterAction = new ImproveFilterAction();
+        LocalDate date = componentInput.getEnddate();
+        IclijXMLConfig i = new IclijXMLConfig();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+
+        List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
+        List<IclijServiceList> lists = new ArrayList<>();
+        lists.add(getHeader("Content"));
+        List<Market> markets = conf.getMarkets(instance);
+        markets = improveFilterAction.filterMarkets(markets);
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(lists);
+
+        ComponentData param = null; 
+        try {
+            param = getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+        
+        getContentTimings(date, lists, markets, improveFilterAction);
+        Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
+        Map<String, Object> updateMap = new HashMap<>();
+        getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, improveFilterAction);
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        getContentMemoriesUpdates(componentInput, lists, updateMarketMap, improveFilterAction);
+        print(result);
+        return result;
+    }
+
     private static void getContentTimings(LocalDate date, List<IclijServiceList> lists, List<Market> markets, MarketAction action)
             throws Exception {
         List<TimingItem> listAllTimings = IclijDbDao.getAllTiming();
