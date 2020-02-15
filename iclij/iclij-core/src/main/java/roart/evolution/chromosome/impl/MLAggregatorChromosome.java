@@ -12,13 +12,14 @@ import roart.action.MarketAction;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
 public abstract class MLAggregatorChromosome extends ConfigMapChromosome {
-    public MLAggregatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters) {
-        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent, parameters);
+    public MLAggregatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene) {
+        super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene);
     }
 
     protected abstract MLAggregatorChromosome getNewChromosome(ComponentData newparam);
@@ -72,8 +73,8 @@ public abstract class MLAggregatorChromosome extends ConfigMapChromosome {
         ComponentData newparam = new ComponentData(param);
         MLAggregatorChromosome chromosome = getNewChromosome(newparam);
         Random rand = new Random();
-        for (int conf = 0; conf < confList.size(); conf++) {
-            String confName = confList.get(conf);
+        for (int conf = 0; conf < getConfList().size(); conf++) {
+            String confName = getConfList().get(conf);
             if (rand.nextBoolean()) {
                 chromosome.getMap().put(confName, this.getMap().get(confName));
             } else {

@@ -43,6 +43,7 @@ import roart.evolution.chromosome.impl.MLSTOCHChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
 import roart.gene.AbstractGene;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
@@ -103,8 +104,8 @@ public abstract class ComponentMLSTOCH extends ComponentMLAggregator {
 
     @Override
     protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent, Parameters parameters) {
-        return new MLSTOCHChromosome(action, param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent, parameters);
+            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene) {
+        return new MLSTOCHChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene);
     }
 
     @Override

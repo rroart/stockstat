@@ -22,6 +22,7 @@ import roart.component.model.ComponentMLData;
 import roart.component.model.MLAggregatorData;
 import roart.component.model.MLCCIData;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
@@ -49,7 +50,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
     public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, confList, subcomponent, parameters);
+        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
+        ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, subcomponent, parameters, gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }
@@ -376,7 +378,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
     
     protected abstract ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent, Parameters parameters);
+            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene);
 
     protected abstract int getDaysAfterLimit(ComponentData componentparam);
     

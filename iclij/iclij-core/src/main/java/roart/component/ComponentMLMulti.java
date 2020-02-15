@@ -42,6 +42,7 @@ import roart.evolution.chromosome.impl.MLMultiChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
 import roart.gene.AbstractGene;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
@@ -133,15 +134,16 @@ public abstract class ComponentMLMulti extends ComponentMLAggregator {
         if (gotThree) {
             confList.addAll(getThreeConfList());
         }
-        ConfigMapChromosome chromosome = new MLMultiChromosome(action, param, profitdata, confList, market, positions, PipelineConstants.MLMULTI, buy, subcomponent, parameters);
+        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
+        ConfigMapChromosome chromosome = new MLMultiChromosome(action, param, profitdata, market, positions, PipelineConstants.MLMULTI, buy, subcomponent, parameters, gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }
 
     @Override
     protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent, Parameters parameters) {
-        return new MLMultiChromosome(action, param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent, parameters);
+            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene) {
+        return new MLMultiChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene);
     }
 
     @Override

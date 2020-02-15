@@ -4,19 +4,20 @@ import java.util.List;
 
 import roart.action.MarketAction;
 import roart.component.model.ComponentData;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
 public class MLSTOCHChromosome extends MLAggregatorChromosome {
 
-    public MLSTOCHChromosome(MarketAction action, ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters) {
-        super(action, param, profitdata, confList, market, positions, component, buy, subcomponent, parameters);
+    public MLSTOCHChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene) {
+        super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene);
     }
 
     @Override
     protected MLAggregatorChromosome getNewChromosome(ComponentData newparam) {
-        return new MLSTOCHChromosome(action, newparam, profitdata, confList, market, positions, componentName, buy, subcomponent, parameters);
+        return new MLSTOCHChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
     }
     
 }

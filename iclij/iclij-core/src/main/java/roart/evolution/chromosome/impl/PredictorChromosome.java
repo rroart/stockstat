@@ -22,6 +22,7 @@ import roart.component.model.ComponentInput;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.AbstractGene;
+import roart.gene.impl.ConfigMapGene;
 import roart.gene.ml.impl.TensorflowPredictorLSTMConfigGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.MemoryItem;
@@ -33,8 +34,8 @@ public class PredictorChromosome extends ConfigMapChromosome {
 
     private TensorflowPredictorLSTMConfigGene config;
     
-    public PredictorChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent) {
-        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent, null);
+    public PredictorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene) {
+        super(action, param, profitdata, market, positions, component, buy, subcomponent, null, gene);
     }
 
     public TensorflowPredictorLSTMConfigGene getConfig() {
@@ -69,7 +70,7 @@ public class PredictorChromosome extends ConfigMapChromosome {
     
     @Override
     public Individual crossover(AbstractChromosome other) {
-        PredictorChromosome chromosome = new PredictorChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent);
+        PredictorChromosome chromosome = new PredictorChromosome(action, param, profitdata, market, positions, componentName, buy, subcomponent, gene);
         TensorflowPredictorLSTMConfigGene otherConfig = ((PredictorChromosome) other).config;
         AbstractGene offspring = config.crossover(otherConfig);
         chromosome.config = (TensorflowPredictorLSTMConfigGene) offspring;
@@ -96,7 +97,7 @@ public class PredictorChromosome extends ConfigMapChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        PredictorChromosome chromosome = new PredictorChromosome(action, confList, newparam, profitdata, market, positions, componentName, buy, subcomponent);
+        PredictorChromosome chromosome = new PredictorChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, gene);
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         //chromosome.config = (TensorflowPredictorLSTMConfigGene) config.copy();
         return chromosome;
