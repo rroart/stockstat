@@ -82,6 +82,13 @@ public class ServiceController {
         return ServiceUtil.getContentImprove(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
     }
 
+    @RequestMapping(value = "/" + EurekaConstants.GETCONTENTFILTER,
+            method = RequestMethod.POST)
+    public IclijServiceResult getContentFilter(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getContentFilter(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENTEVOLVE,
             method = RequestMethod.POST)
     public IclijServiceResult getContentEvolve(@RequestBody IclijServiceParam param/*@PathVariable String market*/)

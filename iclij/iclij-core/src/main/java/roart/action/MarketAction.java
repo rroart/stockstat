@@ -75,7 +75,7 @@ public abstract class MarketAction extends Action {
 
     protected abstract LocalDate getPrevDate(ComponentData param, Market market);
 
-    protected abstract void setValMap(ComponentData param);
+    public abstract void setValMap(ComponentData param);
     
     public abstract ComponentFactory getComponentFactory();
     
@@ -537,7 +537,7 @@ public abstract class MarketAction extends Action {
         return listComponent;
     }
 
-    protected void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
+    public void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
             Map<String, Map<String, Object>> maps, boolean inc) {
         List<String> dates = param.getService().getDates(param.getService().conf.getMarket());        
         String category;
@@ -683,6 +683,9 @@ public abstract class MarketAction extends Action {
                 continue;
             }
             List<List> list = listMap3.get(key);
+            if (list == null) {
+                continue;
+            }
             List<Double> list0 = list.get(0);
             Double value = null;
             if (offsetDays == null) {

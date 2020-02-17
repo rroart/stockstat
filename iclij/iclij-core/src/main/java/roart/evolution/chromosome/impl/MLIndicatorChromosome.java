@@ -10,14 +10,15 @@ import roart.common.config.MyMyConfig;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
 public class MLIndicatorChromosome extends ConfigMapChromosome {
 
-    public MLIndicatorChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters) {
-        super(action, confList, param, profitdata, market, positions, component, buy, subcomponent, parameters);
+    public MLIndicatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene) {
+        super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene);
     }
 
     @Override
@@ -48,14 +49,14 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
         list.add(ConfigConstants.AGGREGATORSINDICATORCCI);
         list.add(ConfigConstants.AGGREGATORSINDICATORSTOCH);
         list.add(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI);
-        list.retainAll(confList);
+        list.retainAll(getConfList());
         return list;
     }
 
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(action, confList, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters);
+        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
 	chromosome.getMap().putAll(getMap());
         return chromosome;
     }
@@ -63,10 +64,10 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
     @Override
     public Individual crossover(AbstractChromosome other) {
         ComponentData newparam = new ComponentData(param);
-        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(action, confList, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters);
+        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
         Random rand = new Random();
-        for (int conf = 0; conf < confList.size(); conf++) {
-            String confName = confList.get(conf);
+        for (int conf = 0; conf < getConfList().size(); conf++) {
+            String confName = getConfList().get(conf);
             if (rand.nextBoolean()) {
                 chromosome.getMap().put(confName, this.getMap().get(confName));
             } else {

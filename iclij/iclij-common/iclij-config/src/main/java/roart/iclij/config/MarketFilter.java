@@ -85,4 +85,8 @@ public class MarketFilter {
         this.recordage = recordage;
     }
     
+    @Override 
+    public String toString() {
+        return inccategory + " " + incdays + " " + incthreshold + " " + deccategory + " " + decdays + " " + decthreshold + " "  + confidence + " " + recordage;
+    }
 }

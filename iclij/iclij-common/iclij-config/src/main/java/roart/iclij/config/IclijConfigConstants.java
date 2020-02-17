@@ -230,6 +230,7 @@ public class IclijConfigConstants {
     public static final String SINGLEMARKETLOOPINTERVAL = "singlemarket.loopinterval";
     public static final String SINGLEMARKETRERUN = "singlemarket.rerun";
     public static final String VERIFICATION = "verification";
+    @Deprecated
     public static final String VERIFICATIONSAVE = "verification.save";
     public static final String VERIFICATIONDAYS = "verification.days";
     public static final String VERIFICATIONEVOLVEFIRSTONLY = "verification.evolvefirstonly";

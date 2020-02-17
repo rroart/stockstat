@@ -27,6 +27,7 @@ import roart.component.model.ComponentData;
 import roart.component.model.ComponentInput;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
@@ -39,13 +40,13 @@ import roart.util.ServiceUtil;
 
 public class MLMultiChromosome extends MLAggregatorChromosome {
 
-    public MLMultiChromosome(MarketAction action, ComponentData param, ProfitData profitdata, List<String> confList, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters) {
-        super(action, param, profitdata, confList, market, positions, component, buy, subcomponent, parameters);
+    public MLMultiChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene) {
+        super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene);
     }
 
     @Override
     protected MLAggregatorChromosome getNewChromosome(ComponentData newparam) {
-        return new MLMultiChromosome(action, newparam, profitdata, confList, market, positions, componentName, buy, subcomponent, parameters);
+        return new MLMultiChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class MLMultiChromosome extends MLAggregatorChromosome {
         list.add(ConfigConstants.AGGREGATORSMLMULTICCI);
         list.add(ConfigConstants.AGGREGATORSMLMULTISTOCH);
         list.add(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI);
-        list.retainAll(confList);
+        list.retainAll(getConfList());
         return list;
     }
     

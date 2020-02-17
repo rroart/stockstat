@@ -46,6 +46,7 @@ import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.AbstractScore;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.executor.MyExecutors;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
@@ -355,7 +356,8 @@ public class ComponentRecommender extends ComponentNoML {
             }
         }
 
-        RecommenderChromosome chromosome = new RecommenderChromosome(action, getConfList(), confList, param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent);
+        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
+        RecommenderChromosome chromosome = new RecommenderChromosome(action, getConfList(), param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent, gene);
 
         //chromosome.setConfList(confList);
         

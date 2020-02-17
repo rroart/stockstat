@@ -40,7 +40,10 @@ import roart.component.ComponentFactory;
 import roart.component.ImproveProfitComponentFactory;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
+import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
+import roart.evolution.marketfilter.gene.impl.MarketFilterGene;
 import roart.evolution.species.Individual;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
@@ -59,12 +62,10 @@ import roart.util.ServiceUtil;
 @JsonSubTypes({  
     @Type(value = MLMACDChromosome.class, name = "roart.evolution.chromosome.impl.MLMACDChromosome") })  
 public class ConfigMapChromosome extends AbstractChromosome {
-    private Map<String, Object> map = new HashMap<>();
-
+    protected ConfigMapGene gene;
+    
     protected MarketAction action;
     
-    protected List<String> confList;
-
     protected ComponentData param;
 
     protected ProfitData profitdata;
@@ -81,9 +82,8 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     protected Parameters parameters;
     
-    public ConfigMapChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters) {
+    public ConfigMapChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene) {
         this.action = action;
-        this.confList = confList;
         this.param = param;
         this.profitdata = profitdata;
         this.market = market;
@@ -92,22 +92,35 @@ public class ConfigMapChromosome extends AbstractChromosome {
         this.subcomponent = subcomponent;
         this.buy = buy;
         this.parameters = parameters;
+        this.gene = gene;
+    }
+
+    public ConfigMapChromosome(ConfigMapChromosome chromosome) {
+        this(chromosome.action, chromosome.param, chromosome.profitdata, chromosome.market, chromosome.positions, chromosome.componentName, chromosome.buy, chromosome.subcomponent, chromosome.parameters, chromosome.gene);
+    }
+
+    public ConfigMapGene getGene() {
+        return gene;
+    }
+
+    public void setGene(ConfigMapGene gene) {
+        this.gene = gene;
     }
 
     public Map<String, Object> getMap() {
-        return map;
+        return gene.getMap();
     }
 
     public void setMap(Map<String, Object> map) {
-        this.map = map;
+        gene.setMap(map);
     }
 
     public List<String> getConfList() {
-        return confList;
+        return gene.getConfList();
     }
 
     public void setConfList(List<String> confList) {
-        this.confList = confList;
+        gene.setConfList(confList);
     }
 
     public Boolean getBuy() {
@@ -119,71 +132,15 @@ public class ConfigMapChromosome extends AbstractChromosome {
     }
 
     @Override
-    public void getRandom() throws JsonParseException, JsonMappingException, IOException {
-        Random rand = new Random();
-        for (int conf = 0; conf < confList.size(); conf++) {
-            generateConfigNum(rand, conf);
-        }
-        if (!validate()) {
-            fixValidation();
-        }
-    }
-
-    @Override
     public void mutate() {
-        Random rand = new Random();
-        int conf = rand.nextInt(confList.size());
-        generateConfigNum(rand, conf);
-        if (!validate()) {
-            fixValidation();
-        }
-    }
-
-    private void generateConfigNum(Random rand, int conf) {
-        String confName = confList.get(conf);
-        Double[] range = this.param.getService().conf.getRange().get(confName);
-        Class type = this.param.getService().conf.getType().get(confName);
-        if (type == Boolean.class) {
-            Boolean b = rand.nextBoolean();
-            map.put(confName, b);
-            return;
-        }
-        if (type == Integer.class) {
-            Integer i = (range[0].intValue()) + rand.nextInt(range[1].intValue() - range[0].intValue());
-            map.put(confName, i);
-            return;
-        }
-        if (type == Double.class) {
-            Double d = (range[0]) + rand.nextDouble() * (range[1] - range[0]);
-            map.put(confName, d);
-            return;
-        }
-        if (type == String.class) {
-            Double d = (range[0]) + rand.nextDouble() * (range[1] - range[0]);
-            d = MathUtil.round(d, range[2].intValue());
-            map.put(confName, "[" + d + "]");
-            return;
-        }
-        log.error("Unknown type for {}", confName);
+        gene.mutate();
     }
 
     @Override
-    public Individual crossover(AbstractChromosome other) {
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent, parameters);
-        Random rand = new Random();
-        for (int conf = 0; conf < confList.size(); conf++) {
-            String confName = confList.get(conf);
-            if (rand.nextBoolean()) {
-                chromosome.map.put(confName, this.map.get(confName));
-            } else {
-                chromosome.map.put(confName, ((ConfigMapChromosome) other).map.get(confName));
-            }
-        }
-        if (!chromosome.validate()) {
-            chromosome.fixValidation();
-        }
-        return new Individual(chromosome);
+    public void getRandom() throws JsonParseException, JsonMappingException, IOException {
+        gene.randomize();
     }
+
 
     @Override
     public double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException {
@@ -210,89 +167,17 @@ public class ConfigMapChromosome extends AbstractChromosome {
         myData.memoryItems = new ArrayList<>();
         //myData.profitData = new ProfitData();
         myData.timingMap = new HashMap<>();
-        double memoryFitness = 0.0;
-        double incdecFitness = 0.0;
         int b = param.getService().conf.hashCode();
         boolean c = param.getService().conf.wantIndicatorRecommender();
+        List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
+        List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
+        List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
+        Trend incProp = null;
+        incProp = extracted(myData, listInc, listDec);
+
+        double memoryFitness = 0.0;
+        double incdecFitness = 0.0;
         try {
-            int verificationdays = param.getInput().getConfig().verificationDays();
-            boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
-            Component component =  action.getComponentFactory().factory(componentName);
-            boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
-            //ProfitData profitdata = new ProfitData();
-            myData.profitData = profitdata;
-            boolean myevolve = component.wantImproveEvolve();
-            if (!param.getService().conf.wantIndicatorRecommender()) {
-                int jj = 0;
-            }
-            map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
-            map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
-            map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
-
-            String key = component.getThreshold();
-            map.put(key, "[" + parameters.getThreshold() + "]");
-            String key2 = component.getFuturedays();
-            map.put(key2, parameters.getFuturedays());
-
-            map.put(ConfigConstants.MISCTHRESHOLD, null);
-            
-            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
-            //componentData.setUsedsec(time0);
-            myData.updateMap.putAll(componentData.getUpdateMap());
-            List<MemoryItem> memories;
-            try {
-                memories = component.calculateMemory(componentData, parameters);
-                if (memories == null || memories.isEmpty()) {
-                    int jj = 0;
-                }
-                myData.memoryItems.addAll(memories);
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-
-            Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
-            myData.memoryItems.forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
-            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap);        
-            //ProfitData profitdata = new ProfitData();
-            profitdata.setInputdata(inputdata);
-            Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
-            /*
-            Map<String, List<Integer>> aboveListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getAboveListMap());
-            Map<String, List<Integer>> belowListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getBelowListMap());
-            Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
-            listComponentMap.put(null, listComponent);
-            listComponentMap.put(true, aboveListComponent);
-            listComponentMap.put(false, belowListComponent);
-            */
-            inputdata.setNameMap(new HashMap<>());
-            List<Integer> positions = listComponent.get(componentName);
-
-            component.enableDisable(componentData, positions, param.getConfigValueMap());
-
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, positions, buy);
-
-            List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
-            List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
-            List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
-            Short mystartoffset = market.getConfig().getStartoffset();
-            short startoffset = mystartoffset != null ? mystartoffset : 0;
-            VerifyProfit verify = new VerifyProfit();
-            Trend incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
-            //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
-            //log.info("trendcomp {} {}", trend, incProp);
-            if (verificationdays > 0) {
-                try {
-                    //param.setFuturedays(verificationdays);
-                    param.setFuturedays(0);
-                    param.setOffset(0);
-                    param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
-                } catch (ParseException e) {
-                    log.error(Constants.EXCEPTION, e);
-                }            
-                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold());
-            }
-
             if (true) {
                 int fitnesses = 0;
                 double fitness = 0;
@@ -365,6 +250,90 @@ public class ConfigMapChromosome extends AbstractChromosome {
         return incdecFitness;
     }
 
+    public Trend extracted(WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec) {
+        Trend incProp = null;
+        try {
+            int verificationdays = param.getInput().getConfig().verificationDays();
+            boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
+            Component component =  action.getComponentFactory().factory(componentName);
+            boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
+            //ProfitData profitdata = new ProfitData();
+            myData.profitData = profitdata;
+            boolean myevolve = component.wantImproveEvolve();
+            if (!param.getService().conf.wantIndicatorRecommender()) {
+                int jj = 0;
+            }
+            gene.getMap().put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
+            gene.getMap().put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
+            gene.getMap().put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
+
+            String key = component.getThreshold();
+            gene.getMap().put(key, "[" + parameters.getThreshold() + "]");
+            String key2 = component.getFuturedays();
+            gene.getMap().put(key2, parameters.getFuturedays());
+
+            gene.getMap().put(ConfigConstants.MISCTHRESHOLD, null);
+            
+            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, gene.getMap(), subcomponent, null, parameters);
+            //componentData.setUsedsec(time0);
+            myData.updateMap.putAll(componentData.getUpdateMap());
+            List<MemoryItem> memories;
+            try {
+                memories = component.calculateMemory(componentData, parameters);
+                if (memories == null || memories.isEmpty()) {
+                    int jj = 0;
+                }
+                myData.memoryItems.addAll(memories);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+
+            Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
+            myData.memoryItems.forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
+            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap);        
+            //ProfitData profitdata = new ProfitData();
+            profitdata.setInputdata(inputdata);
+            Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
+            /*
+            Map<String, List<Integer>> aboveListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getAboveListMap());
+            Map<String, List<Integer>> belowListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getBelowListMap());
+            Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
+            listComponentMap.put(null, listComponent);
+            listComponentMap.put(true, aboveListComponent);
+            listComponentMap.put(false, belowListComponent);
+            */
+            inputdata.setNameMap(new HashMap<>());
+            List<Integer> positions = listComponent.get(componentName);
+
+            component.enableDisable(componentData, positions, param.getConfigValueMap());
+
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, gene.getMap(), subcomponent, null, parameters);
+            component.calculateIncDec(componentData2, profitdata, positions, buy);
+
+            Short mystartoffset = market.getConfig().getStartoffset();
+            short startoffset = mystartoffset != null ? mystartoffset : 0;
+            action.setValMap(param);
+            VerifyProfit verify = new VerifyProfit();
+            incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
+            //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
+            //log.info("trendcomp {} {}", trend, incProp);
+            if (verificationdays > 0) {
+                try {
+                    //param.setFuturedays(verificationdays);
+                    param.setFuturedays(0);
+                    param.setOffset(0);
+                    param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
+                } catch (ParseException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }            
+                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold());
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return incProp;
+    }
+
     private void configSaves(ComponentData param, Map<String, Object> anUpdateMap) {
         for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = entry.getKey();
@@ -388,21 +357,29 @@ public class ConfigMapChromosome extends AbstractChromosome {
     }
 
     @Override
+    public Individual crossover(AbstractChromosome chromosome) {
+        ConfigMapGene newNNConfig =  (ConfigMapGene) gene.crossover(((ConfigMapChromosome) chromosome).gene);
+        ConfigMapChromosome eval = new ConfigMapChromosome(action, param, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
+        //MarketFilterChromosome eval = new MarketFilterChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
+        return new Individual(eval);
+    }
+
+    @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, confList, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters);
-        chromosome.map = new HashMap<>(this.map);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
+        chromosome.gene = gene.copy();
         return chromosome;
     }
 
     @Override
     public boolean isEmpty() {
-        return confList == null || confList.isEmpty();
+        return gene.isEmpty();
     }
 
     @Override
     public String toString() {
-        return map.toString();
+        return gene.toString();
     }
 
 }

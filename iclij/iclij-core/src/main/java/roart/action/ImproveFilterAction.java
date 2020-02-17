@@ -97,6 +97,7 @@ public class ImproveFilterAction extends MarketAction {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
+        param.getInput().setDoSave(false);
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
             if (component == null) {
@@ -115,7 +116,7 @@ public class ImproveFilterAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            ComponentData componentData = null; // component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters);
+            ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -178,7 +179,7 @@ public class ImproveFilterAction extends MarketAction {
     }
     
     @Override
-    protected void setValMap(ComponentData param) {
+    public void setValMap(ComponentData param) {
         param.getAndSetWantedCategoryValueMap();
     }
     

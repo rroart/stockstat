@@ -43,6 +43,7 @@ import roart.evolution.chromosome.impl.MLRSIChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
 import roart.gene.AbstractGene;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
@@ -105,8 +106,8 @@ public abstract class ComponentMLRSI extends ComponentMLAggregator {
 
     @Override
     protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, List<String> confList, String subcomponent, Parameters parameters) {
-        return new MLRSIChromosome(action, param, profitdata, confList, market, positions, getPipeline(), buy, subcomponent, parameters);
+            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene) {
+        return new MLRSIChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene);
     }
 
     @Override

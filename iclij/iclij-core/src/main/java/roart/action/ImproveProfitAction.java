@@ -97,6 +97,7 @@ public class ImproveProfitAction extends MarketAction {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
+        param.getInput().setDoSave(false);
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
             if (component == null) {
@@ -178,7 +179,7 @@ public class ImproveProfitAction extends MarketAction {
     }
     
     @Override
-    protected void setValMap(ComponentData param) {
+    public void setValMap(ComponentData param) {
         param.getAndSetWantedCategoryValueMap();
     }
     

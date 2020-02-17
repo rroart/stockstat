@@ -1190,6 +1190,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
             perioddata = perioddatamap[periodtext]
             periodtuples = perioddata["text"]
             if True:
+                tuplekey = str(1) + market
                 periodtuple = periodtuples[tuplekey]
                 market = periodtuple[0]
                 indexid = periodtuple[1]

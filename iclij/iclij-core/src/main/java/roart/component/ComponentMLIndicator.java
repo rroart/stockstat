@@ -34,6 +34,7 @@ import roart.config.IclijXMLConfig;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.evolution.chromosome.impl.MLIndicatorChromosome;
 import roart.evolution.config.EvolutionConfig;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
@@ -201,7 +202,8 @@ public abstract class ComponentMLIndicator extends ComponentML {
         if (gotThree) {
             confList.addAll(getThreeConfList());
         }
-        ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent, parameters);
+        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
+        ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent, parameters, gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }

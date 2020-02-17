@@ -40,6 +40,7 @@ import roart.evolution.chromosome.impl.MLMACDChromosome;
 import roart.evolution.chromosome.impl.PredictorChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
+import roart.gene.impl.ConfigMapGene;
 import roart.gene.ml.impl.TensorflowPredictorLSTMConfigGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
@@ -183,7 +184,8 @@ public abstract class ComponentPredictor extends ComponentML {
     public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
-        ConfigMapChromosome chromosome = new PredictorChromosome(action, confList, param, profitdata, market, positions, PipelineConstants.PREDICTOR, buy, subcomponent);
+        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
+        ConfigMapChromosome chromosome = new PredictorChromosome(action, param, profitdata, market, positions, PipelineConstants.PREDICTOR, buy, subcomponent, gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }
