@@ -488,7 +488,7 @@ public abstract class ComponentPredictor extends ComponentML {
 
     @Override
     public String getThreshold() {
-        return null;
+        return "dummy";
     }
 
     @Override
