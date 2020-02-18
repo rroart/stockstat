@@ -142,6 +142,7 @@ public class Main {
                 jsonNode = mapper.readTree(json);
                 XmlMapper xmlMapper = new XmlMapper();
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                //xmlMapper.writeValue(new File("/tmp/b.xml"), jsonNode);
                 xmlMapper.writeValue(outStream, jsonNode);
                 InputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
                 inStreams[i] = inStream;
@@ -157,10 +158,16 @@ public class Main {
     private static String sanitizeField(String json) {
         final Matcher matcher = Pattern.compile(FIELD).matcher(json);
         StringBuffer sb = new StringBuffer();
+        int i = 0;
         while(matcher.find()) {
             String elementName = Pattern.compile(ILLEGAL_CHARS).matcher(matcher.group())
                     .replaceAll("").trim();
             elementName = elementName.replaceAll("[ =]", "");
+            // for starting with numeric
+            //System.out.println(elementName);
+            if (elementName.matches("^\"[0-9].*$")) {
+                elementName = elementName.replaceAll("^\"", "\"num");
+            }
             matcher.appendReplacement(sb, elementName + ":");
         }
         matcher.appendTail(sb);
