@@ -124,6 +124,8 @@ public class Main {
                 //json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
                 // for the \" to "
                 json = json.replaceAll("\\\\\"", "\\\"");
+                // for starting with numeric
+                json = json.replaceAll("(^[0-9])", "num\\0");
                 //json = json.replaceAll("\\\\\"([^\\\"]+)\\\\\":\\\\\"([^\\\"]+)\\\\\"","\\\"$1\\\":\\\"$2\\\"");
                 //System.out.println(json.length() + " " + json.substring(0, 200));
                 // remove illegal chars
