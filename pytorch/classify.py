@@ -103,6 +103,8 @@ class Classify:
                     intlist3 = intlist.reshape(intlist.shape[0], 1, 1)
                     array = torch.cat((array[:,:,1:], intlist3), 2)
                     predicted = torch.cat((predicted, intlist3), 2)
+            if not myobj.modelInt == 1:
+                predicted = predicted.reshape(predicted.shape[0], predicted.shape[2])
             #print("predarray", predicted.shape, predicted)
             predicted = predicted.tolist()
             return predicted, problist

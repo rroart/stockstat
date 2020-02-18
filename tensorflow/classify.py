@@ -87,6 +87,8 @@ class Classify:
                     intlist3 = intlist.reshape(len(intlist), 1, 1)
                     array = np.concatenate((array[:,:,1:], intlist3), axis=2)
                     predicted = np.concatenate((predicted, intlist3), axis=2)
+            if not myobj.modelInt == 3 and not myobj.modelInt == 8:
+                predicted = predicted.reshape(predicted.shape[0], predicted.shape[2])
             #print("predarray", predicted.shape, predicted)
             predicted = predicted.tolist()
             return predicted, problist
