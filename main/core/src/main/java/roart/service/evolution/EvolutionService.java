@@ -107,6 +107,9 @@ public class EvolutionService {
             if (conf.getdate() == null) {
                 new ServiceUtil().getCurrentDate(conf, stockdatemap);
             }
+            if (days == 0) {
+                days = stockdatemap.keySet().size();
+            }
     
             Map<String, MarketData> marketdatamap = null;
             marketdatamap = new ServiceUtil().getMarketdatamap(days, markets, conf);
