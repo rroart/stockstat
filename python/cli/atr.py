@@ -2,13 +2,13 @@ import talib as ta
 
 #import myutils as my
 
-class CCI:
+class ATR:
 
   def title(self):
-      return "CCI"
+      return "ATR"
 
   def names(self):
-      return [ "cci" ]
+      return [ "atr" ]
 
   def calculate(self, myma):
     l = myma[0]
@@ -17,7 +17,7 @@ class CCI:
     if len(l) < 40:
         return(None)
     if not l.isnull().all():
-        m = ta.CCI(lhigh, llow, l, timeperiod=14)
+        m = ta.ATR(lhigh, llow, l, timeperiod=14)
     else:
         return None
     lses = m

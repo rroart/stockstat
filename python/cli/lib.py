@@ -8,9 +8,14 @@ import numpy as np
 import psycopg2
 import matplotlib.pyplot as plt
 
+import myutils as my
+
+import atr
 import cci
 import macd
 import rsi
+import stoch
+import stochrsi
 
 #from sqlalchemy import create_engine
 
@@ -782,7 +787,7 @@ def getelem(id, days, stocklistperiod, period, size):
     #print("retl", retl)
     return(retl)
 
-def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, interpolate = True):
+def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True):
     scalebeginning100 = 0
     if len(ids) > 1:
         if periodtext == "price":
@@ -874,6 +879,7 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
                         print("gaga")
                         #print(l)
                         print(type(l))
+                        print("scale", scalebeginning100)
                         if scalebeginning100 == 1:
                             print("minmax")
                             print(l)
@@ -890,7 +896,12 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
                         if interpolate:
                             print(type(l))
                             l = l.interpolate(method='linear')
-                        ls.append(l)
+                            if not llow is None:
+                                llow = llow.interpolate(method='linear')
+                            if not lhigh is None:
+                                lhigh = lhigh.interpolate(method='linear')
+                            
+                        ls.append([l, llow, lhigh])
                         listdf = getelem3tup(id, days, datedstocklists, period, topbottom)
                         df = listdf
                         mynames.append(df.name)
@@ -917,83 +928,75 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
     plt.rc('axes', grid=True)
     plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
 
+    indicators = []
+    if wantatr:
+        indicators.append(atr.ATR())
+    if wantcci:
+        indicators.append(cci.CCI())
+    if wantmacd:
+        indicators.append(macd.MACD())
+    if wantrsi:
+        indicators.append(rsi.RSI())
+    if wantstoch:
+        indicators.append(stoch.STOCH())
+    if wantstochrsi:
+        indicators.append(stochrsi.STOCHRSI())
+    
     textsize = 9
     left, width = 0.1, 0.8
-    rect1 = [left, 0.5, width, 0.4]
-    rect2 = [left, 0.3, width, 0.2]
-    rect3 = [left, 0.1, width, 0.2]
+    numindicators = len(indicators)
+    rect =  [ None for x in range(numindicators + 1) ]
+    others = 0
+    for i in range(numindicators):
+        others = others + 0.4 / numindicators
+        rect[i + 1] = [left, 0.5 - others, width, 0.4 / numindicators ]
+        #rect2 = [left, 0.3, width, 0.2]
+        #rect3 = [left, 0.1, width, 0.2]
+    rect[0] = [left, 0.1 + others, width, 0.8 - others ]
     plt.ion()
     title = mynames[0].values + " " + str(olddate) + " - " + str(newdate)
     fig = plt.figure(facecolor='white')
     axescolor = '#f6f6f6'  # the axes background color
 
-    ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
-    ax2 = fig.add_axes(rect2, facecolor=axescolor, sharex=ax1)
-    #ax2t = ax2.twinx()
-    ax3 = fig.add_axes(rect3, facecolor=axescolor, sharex=ax1)
+    ax =  [ None for x in range(numindicators + 1) ]
+    ax[0] = fig.add_axes(rect[0], facecolor=axescolor)  # left, bottom, width, height
+    for i in range(numindicators):
+        ax[i + 1] = fig.add_axes(rect[i + 1], facecolor=axescolor, sharex=ax[0])
+        #ax2t = ax2.twinx()
+        #ax3 = fig.add_axes(rect3, facecolor=axescolor, sharex=ax1)
 
-    print("ll ", len(ls))
+    print("ll ", len(ls), len(ls[0]))
     #print("mynames", type(mynames), len(mynames), mynames, " ", type(mynames[0]), len(mynames[0]))
     print("daes", olddate, newdate)
-    displayax(ax1, ls, daynames2, mynames[0].values, 5, periodtext, newdate, olddate, days, title, periodtext)
-    if wantmacd:
-        for i in range(len(ls)):
-            myma = ls[i]
-            #print("tmyma ", type(myma))
-            #print(myma)
-    percentize = True      
-    if percentize:
-      if periodtext == "Price" or periodtext == "Index":
-        first = myma[0]
-        print("t1 ", type(myma))
-        myma = np.asarray(myma) * (100 / first)
-        myma = pd.Series(data = myma)
-        print("t2 ", type(myma))
-    #print("tmyma3 ", type(myma))
+    displayax(ax[0], ls[0], daynames2, mynames[0].values, 5, periodtext, newdate, olddate, days, title, periodtext)
+    myma = ls[0]
+    #print("tmyma ", type(myma))
     #print(myma)
-    if wantmacd:
-        lses = macd.getmylses(myma)
-        days2 = len(lses[1])
+    print(myma)
+    print("mym", type(myma), len(myma))
+    myma = my.fixnaarr(myma)
+    myma = my.base100(myma, periodtext)
+    #print(myma)
+    for i in range(numindicators):
+        indicator = indicators[i]
+        lses = indicator.calculate(myma)
+        print("l0", type(lses))
+        days2 = len(lses[0])
         olddate2 = daynames[days - days2]
-        #print("")
-        #print(lses[0])
-        #print("")
-        #print(lses[1])
-        #print("")
-        #print(lses[2]) 
-        #print("")
-        #print("ll ", len(lses))
-        mynames2 = ["macd", "signal", "diff"]
+        mynames2 = indicator.names()
         text = ''.join(mynames2)
-        displayax(ax2, lses, daynames2, mynames2, 3, text, newdate, olddate2, days2, "MACD")
+        title = indicator.title()
+        displayax(ax[i + 1], lses, daynames2, mynames2, 3, text, newdate, olddate2, days2, title)
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
-    if wantrsi:
+    wantrsi2 = None
+    if wantrsi2:
         rsis = []
         #for i in range(len(ls)):
         myma = ls[i]
-            #print("ere")
-            #print(myma)
-                                        #    myma = fixna(myma)
-                                        #    print(tail(myma, n=10L))
-                                        #    print("\nsize ", len(myma), "\n")
-                                        #                print(myma)
         arsi = rsi.getmyrsi(myma)
-            #print(rsi)
-            #print(unlist(rsi))
         rsis.append(arsi)
-#    days2 = len(ls[1]])
-#    olddate2 = daynames[days - days2]
-                                        #    print(" tata ")
-                                        #    print(len(lses[1]]))
-                                        #    print(" tata ")
-                                        #    print(days2)
-#    posneg = getposneg(ls)
-#    ls1 = lses[1]]
-#    ls2 = lses[2]]
-#    print("\ndays ", days2, " lastpos ", posneg[1]], " lastneg ", posneg[2]], " macd ", ls1[days2]], " signal ", ls2[days2]], "\n")
-#    mynames2 = list("macd", "signal", "diff")
         mynames = [ "rsi" ]
-        displayax(ax3, rsis, daynames2, mynames, 5, periodtext, newdate, olddate, days, "RSI")
+        #displayax(ax3, rsis, daynames2, mynames, 5, periodtext, newdate, olddate, days, "RSI")
 #    displaychart(lses, mynames2, 3, periodtext, newdate, olddate2, days2)
     plt.show()
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
@@ -1259,8 +1262,9 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
     ax.set(title = title, ylabel = ylabel)
     #ax2.legend(loc = 'upper right')
     #ax2.grid(False)
+    print("l3", len(ls), len(mynames))
     for i in range(len(mynames)):
-        #print("intc ", i, mynames[i])
+        print("intc ", i, mynames[i])
         if i == 0:
                                         #print(l$id[[1]])
                                         #print(l$name[[2]])

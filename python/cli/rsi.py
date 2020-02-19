@@ -1,9 +1,17 @@
 import talib as ta
 
-import myutils as my
+#import myutils as my
 
-def getrsi(myma):
-    lses = getmyrsi(myma)
+class RSI:
+
+  def title(self):
+      return "RSI"
+
+  def names(self):
+      return [ "rsi" ]
+
+  def getrsi(self, myma):
+    lses = self.getmyrsi(myma)
     if lses is None:
         return(None)
         #return pd.Series()
@@ -13,11 +21,14 @@ def getrsi(myma):
     return ls[keys[len(keys) - 1]]
 
 
-def getmyrsi(myma):
+  def calculate(self, myma):
                                         #    print(myma)
                                         #    print("bla\n")
-    myma = my.fixna(myma)
-    if len(myma) < 40:
+    #myma = my.fixna(myma)
+    l = myma[0]
+    llow = myma[1]
+    lhigh = myma[2]
+    if len(l) < 40:
         return(None)
     
     scalebeginning100 = 0
@@ -27,8 +38,8 @@ def getmyrsi(myma):
     
                                         #    print(myma)
     num = 14
-    if not myma.isnull().all():
-        m = ta.RSI(myma)
+    if not l.isnull().all():
+        m = ta.RSI(l)
     else:
         return None
                                         #    print(m)
@@ -39,6 +50,6 @@ def getmyrsi(myma):
     #print(myma)
     #print(m)
     
-    return(m)
+    return [m]
 
 

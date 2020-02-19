@@ -1,9 +1,17 @@
 import talib as ta
 
-import myutils as my
+#import myutils as my
 
-def getmacd(m):
-    #print(type(m))
+class MACD:
+
+  def title(self):
+      return "MACD"
+
+  def names(self):
+      return ["macd", "signal", "diff"]
+  
+  def getmacd(self, m):
+    print("mmm", type(m))
     #print(len(m))
     #print(type(m[0]))
     l = len(m) / 2
@@ -31,13 +39,16 @@ def getmacd(m):
     #print(unlist(retlist3))
     return([retlist1, retlist2, retlist3])
 
-def getmylses(myma):
+  def calculate(self, myma):
                                         #    print(myma)
                                         #    print("bla\n")
-    myma = my.fixna(myma)
+    #myma = my.fixna(myma)
     #print(myma)
     #print(len(myma))
-    if len(myma) < 40:
+    l = myma[0]
+    llow = myma[1]
+    lhigh = myma[2]
+    if len(l) < 40:
         return(None)
     
     scalebeginning100 = 0
@@ -52,8 +63,8 @@ def getmylses(myma):
     sig = 9
     #m = ta.MACD(myma, nFast=fast, nSlow=slow, nSig=sig, maType = maType, percent = False )
     #print((myma)
-    if not myma.isnull().all():
-        m = ta.MACD(myma)
+    if not l.isnull().all():
+        m = ta.MACD(l)
     else:
         return None
         #m = (pd.Series([np.NaN]), pd.Series([np.NaN]), pd.Series([np.NaN]))
@@ -69,7 +80,7 @@ def getmylses(myma):
                                         #    print(m)
                                         #    print(m)
                                         #    print("\ngrr\n")
-    lses = getmacd(m)
+    lses = self.getmacd(m)
     l = len(myma)
     #print(myma)
     #print(m)
@@ -77,10 +88,10 @@ def getmylses(myma):
     return(lses)
 
 
-def getmomhist(myma, deltadays):
+  def getmomhist(self, myma, deltadays):
     #print(type(myma))
     #print(myma.values)
-    lses = macd.getmylses(myma)
+    lses = calculate(myma)
     if lses is None:
         print("null")
         return(None)
