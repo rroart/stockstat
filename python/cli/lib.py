@@ -6,14 +6,20 @@ import pandas as pd
 #import tensorflow as tf
 import numpy as np
 import psycopg2
-import talib as ta
 import matplotlib.pyplot as plt
+
+import myutils as my
+
+import atr
+import cci
+import macd
+import rsi
+import stoch
+import stochrsi
 
 #from sqlalchemy import create_engine
 
 doprint = False
-
-nafix = 0
 
 pricetype = -1
 indextype = -2
@@ -243,6 +249,32 @@ def getonedfperiod(df, period):
         return df.price
     if period == 10:
         return df.indexvalue
+    #print("should not be here")
+    return None
+
+def getonedfperiodarr(df, period):
+    if period == 0:
+        return [ df.period1 ]
+    if period == 1:
+        return [ df.period2 ]
+    if period == 2:
+        return [ df.period3 ]
+    if period == 3:
+        return [ df.period4 ]
+    if period == 4:
+        return [ df.period5 ]
+    if period == 5:
+        return [ df.period6 ]
+    if period == 6:
+        return [ df.period7 ]
+    if period == 7:
+        return [ df.period8 ]
+    if period == 8:
+        return [ df.period9 ]
+    if period == 9:
+        return [ df.price, df.pricelow, df.pricehigh ]
+    if period == 10:
+        return [ df.indexvalue, df.indexvaluelow, df.indexvaluehigh ]
     #print("should not be here")
     return None
 
@@ -493,6 +525,13 @@ def getonedfvalue(df, atype):
         return(getonedfspecial(df, atype))
     print("should not be here")
 
+def getonedfvaluearr(df, atype):
+    if atype > 0:
+        return(getonedfperiodarr(df, atype))
+    if atype < 0:
+        return(getonedfspecialarr(df, atype))
+    print("should not be here")
+
 def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, percentize=True):
     print("0", market)
     periodtexts = getperiodtexts(market)
@@ -648,7 +687,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                         if periodtext == "Price" or periodtext == "Index":
                             first = myc.values[0]
                             myc = myc * (100 / first)
-                    rsi = getrsi(myc)
+                    rsi = rsi.getrsi(myc)
                     rsilist.append(rsi)
                     #if rsi is None:
                     #    print("App rsi none")
@@ -720,166 +759,6 @@ def displaychart(ls, mynames, topbottom, periodtext, maindate, olddate, days):
     #colours = rainbow(topbottom)
     print("g_range")
 
-def getmacd(m):
-    #print(type(m))
-    #print(len(m))
-    #print(type(m[0]))
-    l = len(m) / 2
-                                        #    print("hei\n")
-                                        #    print(l)
-                                        #    print("\nhei2\n")
-                                        #    m
-    c = 1
-    retlist1 = m[0];
-    retlist2 = m[1];
-    retlist3 = m[2];
-    #for i in range(0, l):
-    #    elem = m[i,]
-    #    first = elem[1]
-    #    second = elem[2]
-    #    if isna(first) and isna(second):
-    #        retlist1[c] = first
-    #        retlist2[c] = second
-    #        retlist3[c] = first - second
-    #        c = c + 1
-    #print(unlist(retlist1))
-    #print("")
-    #print(unlist(retlist2))
-    #print("")
-    #print(unlist(retlist3))
-    return([retlist1, retlist2, retlist3])
-
-def getmomhist(myma, deltadays):
-    #print(type(myma))
-    #print(myma.values)
-    lses = getmylses(myma)
-    if lses is None:
-        print("null")
-        return(None)
-    
-    retl = [0, 0, 0, 0]
-    ls1 = lses[0]
-    ls2 = lses[1]
-    ls3 = lses[2]
-    #print(type(ls1))
-    if doprint:
-        print(ls1.values)
-        print(ls2.values)
-        print(ls3.values)
-    #print(type(ls1))
-    #rint(ls1.keys())
-    keys1 = ls1.keys()
-    keys3 = ls3.keys()
-    last1 = len(ls1) - 1
-    last3 = len(ls3) - 1
-    r = keys1[last1]
-    retl[0] = ls1[keys1[last1]]
-    retl[1] = ls3[keys3[last3]]
-    delta = deltadays - 1
-    prevs1 = last1 - delta
-    prevs3 = last3 - delta
-    retl[2] = (ls1[keys1[last1]] - ls1[keys1[prevs1]])/delta
-    retl[3] = (ls3[keys3[last3]] - ls3[keys3[prevs3]])/delta
-    #print(mydf.id)
-     #           if mydf.id == 'VXAZN':
-    #print('vxazn')
-    #print(histc.values)
-    #print(retl)
-    return(retl)
-
-def fixna(v):
-    #print(type(v))
-    if nafix == 1:
-        return(v.dropna())
-    else:
-        return (v.interpolate(method='linear'))
-
-def getmylses(myma):
-                                        #    print(myma)
-                                        #    print("bla\n")
-    myma = fixna(myma)
-    #print(myma)
-    #print(len(myma))
-    if len(myma) < 40:
-        return(None)
-    
-    scalebeginning100 = 0
-#    if scalebeginning100 == 0:
-                                        #        this does not matter?
-                                        #        myma = fixpercent(myma)
-    
-                                        #    print(myma)
-    maType = 'EMA'
-    fast = 12
-    slow = 26
-    sig = 9
-    #m = ta.MACD(myma, nFast=fast, nSlow=slow, nSig=sig, maType = maType, percent = False )
-    #print((myma)
-    if not myma.isnull().all():
-        m = ta.MACD(myma)
-    else:
-        return None
-        #m = (pd.Series([np.NaN]), pd.Series([np.NaN]), pd.Series([np.NaN]))
-    #print(type(m))
-    #print(m.values)
-    #m = ta.MACD(myma, fast, slow, sig)
-    #print(type(m))
-    #print(m)
-    #if True:
-    #   import time
-    #   time.sleep(15)                                     
-
-                                        #    print(m)
-                                        #    print(m)
-                                        #    print("\ngrr\n")
-    lses = getmacd(m)
-    l = len(myma)
-    #print(myma)
-    #print(m)
-    
-    return(lses)
-
-
-def getrsi(myma):
-    lses = getmyrsi(myma)
-    if lses is None:
-        return(None)
-        #return pd.Series()
-    #print(type(lses), len(lses))
-    ls = lses
-    keys = ls.keys()
-    return ls[keys[len(keys) - 1]]
-
-
-def getmyrsi(myma):
-                                        #    print(myma)
-                                        #    print("bla\n")
-    myma = fixna(myma)
-    if len(myma) < 40:
-        return(None)
-    
-    scalebeginning100 = 0
-#    if scalebeginning100 == 0:
-                                        #        this does not matter?
-                                        #        myma = fixpercent(myma)
-    
-                                        #    print(myma)
-    num = 14
-    if not myma.isnull().all():
-        m = ta.RSI(myma)
-    else:
-        return None
-                                        #    print(m)
-                                        #    print(m)
-                                        #    print("\ngrr\n")
-    l = len(myma)
-#    print(myma[l])
-    #print(myma)
-    #print(m)
-    
-    return(m)
-
-
 def getmyperiodtext(market, period):
     periodtext = period
     if period >= 0:
@@ -908,7 +787,7 @@ def getelem(id, days, stocklistperiod, period, size):
     #print("retl", retl)
     return(retl)
 
-def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, interpolate = True):
+def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True):
     scalebeginning100 = 0
     if len(ids) > 1:
         if periodtext == "price":
@@ -993,10 +872,14 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
                         print("per", text, " ", id, " ", period, " ")
                         print("")
                         bigretl = getelem3(id, days, datedstocklists, period, topbottom)
-                        l = bigretl[0]
+                        l3 = bigretl[0]
+                        l = l3[0]
+                        llow = l3[1]
+                        lhigh = l3[2]
                         print("gaga")
                         #print(l)
                         print(type(l))
+                        print("scale", scalebeginning100)
                         if scalebeginning100 == 1:
                             print("minmax")
                             print(l)
@@ -1013,7 +896,12 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
                         if interpolate:
                             print(type(l))
                             l = l.interpolate(method='linear')
-                        ls.append(l)
+                            if not llow is None:
+                                llow = llow.interpolate(method='linear')
+                            if not lhigh is None:
+                                lhigh = lhigh.interpolate(method='linear')
+                            
+                        ls.append([l, llow, lhigh])
                         listdf = getelem3tup(id, days, datedstocklists, period, topbottom)
                         df = listdf
                         mynames.append(df.name)
@@ -1040,83 +928,75 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
     plt.rc('axes', grid=True)
     plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
 
+    indicators = []
+    if wantatr:
+        indicators.append(atr.ATR())
+    if wantcci:
+        indicators.append(cci.CCI())
+    if wantmacd:
+        indicators.append(macd.MACD())
+    if wantrsi:
+        indicators.append(rsi.RSI())
+    if wantstoch:
+        indicators.append(stoch.STOCH())
+    if wantstochrsi:
+        indicators.append(stochrsi.STOCHRSI())
+    
     textsize = 9
     left, width = 0.1, 0.8
-    rect1 = [left, 0.5, width, 0.4]
-    rect2 = [left, 0.3, width, 0.2]
-    rect3 = [left, 0.1, width, 0.2]
+    numindicators = len(indicators)
+    rect =  [ None for x in range(numindicators + 1) ]
+    others = 0
+    for i in range(numindicators):
+        others = others + 0.4 / numindicators
+        rect[i + 1] = [left, 0.5 - others, width, 0.4 / numindicators ]
+        #rect2 = [left, 0.3, width, 0.2]
+        #rect3 = [left, 0.1, width, 0.2]
+    rect[0] = [left, 0.1 + others, width, 0.8 - others ]
     plt.ion()
     title = mynames[0].values + " " + str(olddate) + " - " + str(newdate)
     fig = plt.figure(facecolor='white')
     axescolor = '#f6f6f6'  # the axes background color
 
-    ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
-    ax2 = fig.add_axes(rect2, facecolor=axescolor, sharex=ax1)
-    #ax2t = ax2.twinx()
-    ax3 = fig.add_axes(rect3, facecolor=axescolor, sharex=ax1)
+    ax =  [ None for x in range(numindicators + 1) ]
+    ax[0] = fig.add_axes(rect[0], facecolor=axescolor)  # left, bottom, width, height
+    for i in range(numindicators):
+        ax[i + 1] = fig.add_axes(rect[i + 1], facecolor=axescolor, sharex=ax[0])
+        #ax2t = ax2.twinx()
+        #ax3 = fig.add_axes(rect3, facecolor=axescolor, sharex=ax1)
 
-    print("ll ", len(ls))
+    print("ll ", len(ls), len(ls[0]))
     #print("mynames", type(mynames), len(mynames), mynames, " ", type(mynames[0]), len(mynames[0]))
     print("daes", olddate, newdate)
-    displayax(ax1, ls, daynames2, mynames[0].values, 5, periodtext, newdate, olddate, days, title, periodtext)
-    if wantmacd:
-        for i in range(len(ls)):
-            myma = ls[i]
-            #print("tmyma ", type(myma))
-            #print(myma)
-    percentize = True      
-    if percentize:
-      if periodtext == "Price" or periodtext == "Index":
-        first = myma[0]
-        print("t1 ", type(myma))
-        myma = np.asarray(myma) * (100 / first)
-        myma = pd.Series(data = myma)
-        print("t2 ", type(myma))
-    #print("tmyma3 ", type(myma))
+    displayax(ax[0], ls[0], daynames2, mynames[0].values, 5, periodtext, newdate, olddate, days, title, periodtext)
+    myma = ls[0]
+    #print("tmyma ", type(myma))
     #print(myma)
-    if wantmacd:
-        lses = getmylses(myma)
-        days2 = len(lses[1])
+    print(myma)
+    print("mym", type(myma), len(myma))
+    myma = my.fixnaarr(myma)
+    myma = my.base100(myma, periodtext)
+    #print(myma)
+    for i in range(numindicators):
+        indicator = indicators[i]
+        lses = indicator.calculate(myma)
+        print("l0", type(lses))
+        days2 = len(lses[0])
         olddate2 = daynames[days - days2]
-        #print("")
-        #print(lses[0])
-        #print("")
-        #print(lses[1])
-        #print("")
-        #print(lses[2]) 
-        #print("")
-        #print("ll ", len(lses))
-        mynames2 = ["macd", "signal", "diff"]
+        mynames2 = indicator.names()
         text = ''.join(mynames2)
-        displayax(ax2, lses, daynames2, mynames2, 3, text, newdate, olddate2, days2, "MACD")
+        title = indicator.title()
+        displayax(ax[i + 1], lses, daynames2, mynames2, 3, text, newdate, olddate2, days2, title)
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
-    if wantrsi:
+    wantrsi2 = None
+    if wantrsi2:
         rsis = []
         #for i in range(len(ls)):
         myma = ls[i]
-            #print("ere")
-            #print(myma)
-                                        #    myma = fixna(myma)
-                                        #    print(tail(myma, n=10L))
-                                        #    print("\nsize ", len(myma), "\n")
-                                        #                print(myma)
-        rsi = getmyrsi(myma)
-            #print(rsi)
-            #print(unlist(rsi))
-        rsis.append(rsi)
-#    days2 = len(ls[1]])
-#    olddate2 = daynames[days - days2]
-                                        #    print(" tata ")
-                                        #    print(len(lses[1]]))
-                                        #    print(" tata ")
-                                        #    print(days2)
-#    posneg = getposneg(ls)
-#    ls1 = lses[1]]
-#    ls2 = lses[2]]
-#    print("\ndays ", days2, " lastpos ", posneg[1]], " lastneg ", posneg[2]], " macd ", ls1[days2]], " signal ", ls2[days2]], "\n")
-#    mynames2 = list("macd", "signal", "diff")
+        arsi = rsi.getmyrsi(myma)
+        rsis.append(arsi)
         mynames = [ "rsi" ]
-        displayax(ax3, rsis, daynames2, mynames, 5, periodtext, newdate, olddate, days, "RSI")
+        #displayax(ax3, rsis, daynames2, mynames, 5, periodtext, newdate, olddate, days, "RSI")
 #    displaychart(lses, mynames2, 3, periodtext, newdate, olddate2, days2)
     plt.show()
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
@@ -1136,8 +1016,10 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
         periodtexts = getperiodtexts(market)
         print("days ", tableintervaldays)
         dates = MyDates.getdates(listdates, start, end)
+        print("dates", dates.start, dates.end, dates.startindex, dates.endindex)
         datedstocklists = getdatedstocklists(listdate, listdates, dates, None, tableintervaldays)
         days = dates.endindex - dates.startindex
+        print("numdays", days)
         marketdatamap[market] = [ stocks, periodtexts, datedstocklists, listdates ]
     perioddatamap = {}
     for market in markets:
@@ -1208,7 +1090,10 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
                         #print("per", text, " ", id, " ", period, " ")
                         print("Id", id)
                         bigretl = getelem3(id, days, datedstocklists, indexid, topbottom)
-                        l = bigretl[0]
+                        l3 = bigretl[0]
+                        l = l3[0]
+                        llow = l3[1]
+                        lhigh = l3[2]
                         print("gaga")
                         #print(l)
                         print(type(l))
@@ -1234,10 +1119,13 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
                         mynames.append(df.name.values[0])
                         c = c + 1
     commondays = dayls[0]
+    print("dayls",0,dayls[0])
     for i in range(1, len(dayls)):
+        print("dayls",i,dayls[i])
         commondays = intersection(commondays, dayls[i])
     #print(type(commondays), commondays)
     commondays.sort()
+    print(commondays)
     commonls = []
     for i in range(len(dayls)):
         tmpdayls = dayls[i]
@@ -1374,8 +1262,9 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
     ax.set(title = title, ylabel = ylabel)
     #ax2.legend(loc = 'upper right')
     #ax2.grid(False)
+    print("l3", len(ls), len(mynames))
     for i in range(len(mynames)):
-        #print("intc ", i, mynames[i])
+        print("intc ", i, mynames[i])
         if i == 0:
                                         #print(l$id[[1]])
                                         #print(l$name[[2]])
@@ -1417,10 +1306,15 @@ def intersection(a, b):
 def getelem3(id, days, datedstocklist, period, size):
     dayset = []
     dayset2 = []
-    retl = [ None for x in range(days) ]
+    retl1 = [ None for x in range(days) ]
+    retl2 = [ None for x in range(days) ]
+    retl3 = [ None for x in range(days) ]
     c = 0
+    print(reversed(range(days)))
     for i in reversed(range(days)):
-        retl[c] = np.NaN
+        retl1[c] = np.NaN
+        retl2[c] = np.NaN
+        retl3[c] = np.NaN
         #print("dsl")
         #print(len(datedstocklist))
         #print(len(datedstocklist[0]))
@@ -1433,7 +1327,15 @@ def getelem3(id, days, datedstocklist, period, size):
         df = l
         el = df.loc[(df.id == id)]
         if len(el) == 1:
-            retl[c] = getonedfvalue(el, period).values[0]
+            dfarr = getonedfvaluearr(el, period)
+            if len(dfarr) == 1:
+                retl1[c] = dfarr[0].values[0]
+                retl2[c] = None
+                retl3[c] = None
+            else:
+                retl1[c] = dfarr[0].values[0]
+                retl2[c] = dfarr[1].values[0]
+                retl3[c] = dfarr[2].values[0]
             #print(type(retl[c].values[0]))
             str2 = str(el.date.values[0])
             #print(type(el.date.values[0]))
@@ -1448,13 +1350,16 @@ def getelem3(id, days, datedstocklist, period, size):
             dayset.append(str2)
             dayset2.append(df.date.values[0])
             print("err2", len(el), c)
+            print(el)
         c = c + 1
-        retls = pd.Series(data = retl)
-        #print("dayset ", type(dayset), type(dayset[0]))
+    retls1 = pd.Series(data = retl1)
+    retls2 = pd.Series(data = retl2)
+    retls3 = pd.Series(data = retl3)
+    #print("dayset ", type(dayset), type(dayset[0]))
     #print("d1", str(dayset))
     #print("d2", str(dayset2))
-    print("l ", len(retls), len(dayset), len(dayset2))
-    return([retls, dayset,dayset2])
+    print("l ", len(retls1), len(dayset), len(dayset2))
+    return([ [ retls1, retls2, retls3 ], dayset,dayset2])
 
 def getelem3tup(id, days, datedstocklist, period, size):
     retl = []

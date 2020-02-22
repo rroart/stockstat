@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -15,6 +16,8 @@ import roart.evolution.species.Individual;
 import roart.evolution.species.Population;
 
 public class OrdinaryEvolution extends EvolutionAlgorithm {
+
+    public Function<AbstractChromosome, Double> fittest;
 
     public OrdinaryEvolution(EvolutionConfig evolutionConfig) {
         super(evolutionConfig);

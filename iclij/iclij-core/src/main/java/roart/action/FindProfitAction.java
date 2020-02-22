@@ -52,8 +52,8 @@ public class FindProfitAction extends MarketAction {
         return new ArrayList<>();
     }
 
-    @Override
-    public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days) {
+    //@Override
+    public List<MemoryItem> filterKeepRecent2(List<MemoryItem> marketMemory, LocalDate date, int days) {
         return marketMemory;
     }
 
