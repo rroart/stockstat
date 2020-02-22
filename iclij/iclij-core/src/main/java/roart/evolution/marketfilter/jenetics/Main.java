@@ -13,10 +13,11 @@ import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterCrossover;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterMutate;
+import roart.iclij.config.MarketFilter;
 
 public class Main {
     public void main(final String[] args) {
-        final Codec<MarketFilterChromosome, MarketFilterGene> codec = Codec.of(Genotype.of(new MarketFilterChromosome(null)),gt -> (MarketFilterChromosome) gt.getChromosome());
+        final Codec<MarketFilterChromosome, MarketFilterGene> codec = Codec.of(Genotype.of(new MarketFilterChromosome(new MarketFilter())),gt -> (MarketFilterChromosome) gt.getChromosome());
         final Engine<AnyGene<MarketFilterGene>, Double> engine = Engine
                 .builder(this::fitness, codec)
                 .alterers(

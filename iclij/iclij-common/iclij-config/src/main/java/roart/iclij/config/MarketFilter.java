@@ -89,4 +89,9 @@ public class MarketFilter {
     public String toString() {
         return inccategory + " " + incdays + " " + incthreshold + " " + deccategory + " " + decdays + " " + decthreshold + " "  + confidence + " " + recordage;
     }
+
+    public static MarketFilter newRandom(MarketFilter filter) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
