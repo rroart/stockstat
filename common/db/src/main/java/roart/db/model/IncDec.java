@@ -100,6 +100,9 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     }
 
     public void setDescription(String description) {
+        if (description.length() > 250) {
+            description = description.substring(0, 250);
+        }
         this.description = description;
     }
 
