@@ -64,7 +64,13 @@ public abstract class IndicatorAggregator extends Aggregator {
     protected static final int NEGTYPE = 1;
     protected static final int POSTYPE = 2;
     protected static final String CMNTYPESTR = "cmn";
+
+    // when the curve is in the negative below area, and goes above
+    
     protected static final String NEGTYPESTR = "neg";
+    
+    // when the curve is in the positive above area, and goes below
+    
     protected static final String POSTYPESTR = "pos";
 
     static String labelTP = "TruePositive";
@@ -72,6 +78,8 @@ public abstract class IndicatorAggregator extends Aggregator {
     static String labelTN = "TrueNegative";
     static String labelFN = "FalseNegative";
 
+    private static final String FRESH = "fresh";
+    
     protected enum MySubType { MACDHIST, MACDSIG, MACDMACD, RSI, STOCHRSI, STOCH, ATR, CCI }
 
     public static final int MULTILAYERPERCEPTRONCLASSIFIER = 1;
@@ -342,7 +350,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             String mapName = subType.getType() + mapType;
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapMap.get(subType).get("offset");
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap = mapMap.get(subType).get(mapType);
-                            Map<String, List<Pair<double[], Pair<Object, Double>>>> classifyMap = mapMap.get(subType).get("fresh");
+                            Map<String, List<Pair<double[], Pair<Object, Double>>>> classifyMap = mapMap.get(subType).get(FRESH + mapType);
                             log.debug("map name {}", mapName);
                             if (learnMap == null || learnMap.isEmpty() || classifyMap == null || classifyMap.isEmpty()) {
                                 log.error("map null and continue? {}", mapName);
@@ -415,6 +423,15 @@ public abstract class IndicatorAggregator extends Aggregator {
                             if (countMap2 != null) {
                                 addEventRow(subType, countMap2);
                             }
+                            if (countMap2 != null && !isBinary(mapTypeInt)) {
+                                Set<String> posIds = mapMap.get(subType).get(POSTYPESTR).keySet();
+                                Set<String> negIds = mapMap.get(subType).get(NEGTYPESTR).keySet();
+                                Map<String, Double[]> pos = classifyResult.entrySet().stream().filter(map -> posIds.contains(map.getKey())).collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue())); 
+                                Map<String, Double[]> neg = classifyResult.entrySet().stream().filter(map -> negIds.contains(map.getKey())).collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue())); 
+                                log.info("Pos {}", pos.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting())));
+                                log.info("Neg {}", neg.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting())));
+                            }
+                            
                             log.info("Nowcount {}", resultMetaArray.size());
                             handleResultMeta(testCount, offsetMap, countMap, classifyResult);
                             testCount++;
@@ -497,7 +514,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             String mapType = mapTypes.get(mapTypeInt);
                             String mapName = subType.getType() + mapType;
                             Map<String, List<Pair<double[], Pair<Object, Double>>>> learnMap = mapMap.get(subType).get(mapType);
-                            Map<String, List<Pair<double[], Pair<Object, Double>>>> classifyMap = mapMap.get(subType).get("fresh");
+                            Map<String, List<Pair<double[], Pair<Object, Double>>>> classifyMap = mapMap.get(subType).get(FRESH + mapType);
                             log.debug("map name {}", mapName);
                             if (learnMap == null || learnMap.isEmpty() || classifyMap == null || classifyMap.isEmpty()) {
                                 log.warn("Map null and continue? {}", mapName);
@@ -1104,12 +1121,14 @@ public abstract class IndicatorAggregator extends Aggregator {
                     mapGetter4(posnegMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                 } else {
                     //String subNameShort = subType.getType();
-                    //String freshMapName = subType.getType() + posnegType + "fresh";
+                    //String freshMapName = subType.getType() + posnegType + FRESH;
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapGetter(subtypeMap, "offset");
-                    Map<String, List<Pair<double[], Pair<Object, Double>>>> freshMap = mapGetter(subtypeMap, "fresh");
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
                     double[] doubleArray = new double[] { endOfArray - end };
                     mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
-                    mapGetter4(freshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                    mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                    mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                 }
             }
         }
@@ -1176,12 +1195,14 @@ public abstract class IndicatorAggregator extends Aggregator {
                     mapGetter4(posnegMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                 } else {
                     //String subNameShort = subType.getType();
-                    //String freshMapName = subType.getType() + posnegType + "fresh";
+                    //String freshMapName = subType.getType() + posnegType + FRESH;
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapGetter(subtypeMap, "offset");
-                    Map<String, List<Pair<double[], Pair<Object, Double>>>> freshMap = mapGetter(subtypeMap, "fresh");
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
+                    Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
                     double[] doubleArray = new double[] { endOfArray - end };
                     mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
-                    mapGetter4(freshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                    mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
+                    mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                 }
             }
         }
