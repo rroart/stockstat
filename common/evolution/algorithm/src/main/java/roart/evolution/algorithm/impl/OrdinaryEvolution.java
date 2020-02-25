@@ -17,8 +17,6 @@ import roart.evolution.species.Population;
 
 public class OrdinaryEvolution extends EvolutionAlgorithm {
 
-    public Function<AbstractChromosome, Double> fittest;
-
     public OrdinaryEvolution(EvolutionConfig evolutionConfig) {
         super(evolutionConfig);
     }

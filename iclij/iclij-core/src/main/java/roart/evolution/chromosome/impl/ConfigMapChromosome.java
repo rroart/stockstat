@@ -41,7 +41,7 @@ import roart.component.ImproveProfitComponentFactory;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
-import roart.evolution.marketfilter.gene.impl.MarketFilterGene;
+import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
