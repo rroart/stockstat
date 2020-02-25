@@ -4,22 +4,18 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>roart</groupId>
-    <artifactId>stockstat-parent</artifactId>
+    <artifactId>stockstat-iclij</artifactId>
     <relativePath>../pom.xml</relativePath>
     <version>0.5-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
-  <artifactId>stockstat-iclij</artifactId>
+  <artifactId>stockstat-iclij-evolution</artifactId>
   <version>0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Stock Statistics Iclij</name>
+  <name>Stock Statistics Iclij Evolution</name>
 <modules>
-  <module>iclij-chatbot</module>
-  <module>iclij-common</module>
-  <module>iclij-core</module>
-  <module>iclij-evolution</module>
-  <module>iclij-web</module>
-  <module>iclij-webr</module>
+  <!--module>iclij-evolution-configmap</module-->
+  <module>iclij-marketfilter</module>
 </modules>
   <build>
     <plugins>
