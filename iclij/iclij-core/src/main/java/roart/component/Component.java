@@ -539,10 +539,12 @@ public abstract class Component {
     public ComponentData improve3(MarketAction action, ComponentData param, Market market,
             ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters) {
         long time0 = System.currentTimeMillis();
+        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
         FitnessMarketFilter2 fit = new FitnessMarketFilter2(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters);
         final Codec<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome, roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene> codec = Codec.of(Genotype.of(new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome(new MarketFilter())),gt -> (roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome) gt.getChromosome());
         final Engine<AnyGene<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene>, Double> engine = Engine
                 .builder(fit::fitness, codec)
+                .populationSize(evolutionConfig.getSelect())
                 .alterers(
                         //new MeanAlterer<>(0.175),
                         new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterMutate(),
@@ -556,16 +558,16 @@ public abstract class Component {
             MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene);
             List<String> individuals = new ArrayList<>();
             final Phenotype<AnyGene<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene>, Double> pt = engine.stream()
-                    .limit(50)
+                    .limit(evolutionConfig.getGenerations())
                     .collect(EvolutionResult.toBestPhenotype());
 
             System.out.println(pt);
-            MarketFilter aConf = pt.getGenotype().getChromosome().getGene().getAllele().getAllele();
+            MarketFilter aConf = pt.genotype().chromosome().gene().allele().getAllele();
             Map<String, Object> confMap = new HashMap<>();
             confMap.put("some", JsonUtil.convert(aConf));
             param.setUpdateMap(confMap);
             Map<String, Double> scoreMap = new HashMap<>();
-            double score = pt.getFitness();
+            double score = pt.fitness();
             //confMap.put("score", "" + score);
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
