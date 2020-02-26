@@ -1,6 +1,10 @@
 package roart.component;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jenetics.AnyGene;
+import io.jenetics.Chromosome;
 import io.jenetics.Genotype;
 import io.jenetics.Phenotype;
 import io.jenetics.engine.Codec;
@@ -541,8 +546,8 @@ public abstract class Component {
         long time0 = System.currentTimeMillis();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
         FitnessMarketFilter2 fit = new FitnessMarketFilter2(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters);
-        final Codec<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome, roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene> codec = Codec.of(Genotype.of(new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome(new MarketFilter())),gt -> (roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome) gt.getChromosome());
-        final Engine<AnyGene<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene>, Double> engine = Engine
+        final Codec<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome, roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene> codec = Codec.of(Genotype.of(new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome(new MarketFilter())),gt -> (roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome) gt.chromosome());
+        final Engine<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> engine = Engine
                 .builder(fit::fitness, codec)
                 .populationSize(evolutionConfig.getSelect())
                 .alterers(
@@ -557,12 +562,16 @@ public abstract class Component {
             MarketFilterGene gene = new MarketFilterGene(market.getFilter());
             MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene);
             List<String> individuals = new ArrayList<>();
-            final Phenotype<AnyGene<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene>, Double> pt = engine.stream()
+            final EvolutionResult<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> result = engine.stream()
                     .limit(evolutionConfig.getGenerations())
-                    .collect(EvolutionResult.toBestPhenotype());
+                    .collect(EvolutionResult.toBestEvolutionResult());
+            List<Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double>> population = result.population().asList();
+            print(market.getConfig().getMarket() + " " + getPipeline() + " " + subcomponent, population);
+            List<Genotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene>> list2 = result.genotypes().asList();
+            final Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> pt = result.bestPhenotype();
 
             System.out.println(pt);
-            MarketFilter aConf = pt.genotype().chromosome().gene().allele().getAllele();
+            MarketFilter aConf = pt.genotype().chromosome().gene().allele();
             Map<String, Object> confMap = new HashMap<>();
             confMap.put("some", JsonUtil.convert(aConf));
             param.setUpdateMap(confMap);
@@ -682,5 +691,28 @@ public abstract class Component {
         
     }
     
+    public void print(String title, List<Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double>> population) {
+        Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
+        BufferedWriter writer = null;
+        try {
+            writer = Files.newBufferedWriter(path);
+            writer.write(title + "\n\n");
+            for (Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> pt : population) {
+                MarketFilter filter = pt.genotype().chromosome().gene().allele();
+                String individual = pt.fitness() + " #" + pt.hashCode() + " " + filter.toString();
+                writer.write(individual + "\n");            
+            }
+            writer.write("\n");
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        try {
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
 }
 
