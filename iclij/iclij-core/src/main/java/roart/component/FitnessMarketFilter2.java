@@ -1,6 +1,5 @@
 package roart.component;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,9 +13,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
@@ -25,8 +21,6 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
-import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
@@ -71,7 +65,8 @@ public class FitnessMarketFilter2 {
         this.parameters = parameters;
     }
 
-    public double fitness(MarketFilterChromosome chromosome) {
+    public synchronized double fitness(MarketFilterChromosome chromosome) {
+        log.info("Fitness");
         List<MemoryItem> memoryItems = null;
         WebData myData = new WebData();
         myData.incs = new ArrayList<>();
@@ -138,7 +133,7 @@ public class FitnessMarketFilter2 {
                     incdecFitness = 0;
                 }
                 log.info("Fit {} {} ( {} / {} ) {} ( {} / {} ) {} {} ( {} / {} )", incProp, fitness, countDec, sizeDec, fitness2, countInc, sizeInc, fitness3, fitness4, countDec + countInc, size);
-                log.info("Fit #{} {}", this.hashCode(), this.toString());
+                log.info("Fit #{} {}", this.hashCode(), chromosome.gene().allele().toString());
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
         } catch (Exception e) {
