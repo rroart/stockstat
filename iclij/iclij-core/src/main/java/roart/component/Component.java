@@ -1,5 +1,10 @@
 package roart.component;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +23,13 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jenetics.AnyGene;
+import io.jenetics.Chromosome;
+import io.jenetics.Genotype;
+import io.jenetics.Phenotype;
+import io.jenetics.engine.Codec;
+import io.jenetics.engine.Engine;
+import io.jenetics.engine.EvolutionResult;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
@@ -41,16 +53,21 @@ import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.config.MarketFilter;
 import roart.iclij.model.ConfigItem;
+import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
+import roart.iclij.model.Trend;
+import roart.iclij.model.WebData;
 import roart.result.model.ResultMeta;
 import roart.service.ControlService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
-import roart.evolution.marketfilter.gene.impl.MarketFilterGene;
-//import roart.evolution.jenetics.Main;
+import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
+import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
+import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterCrossover;
+import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterMutate;
 
 public abstract class Component {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -523,5 +540,179 @@ public abstract class Component {
         return param;
         
     }
+    
+    public ComponentData improve3(MarketAction action, ComponentData param, Market market,
+            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters) {
+        long time0 = System.currentTimeMillis();
+        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
+        FitnessMarketFilter2 fit = new FitnessMarketFilter2(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters);
+        final Codec<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome, roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene> codec = Codec.of(Genotype.of(new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome(new MarketFilter())),gt -> (roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome) gt.chromosome());
+        final Engine<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> engine = Engine
+                .builder(fit::fitness, codec)
+                .populationSize(evolutionConfig.getSelect())
+                .alterers(
+                        //new MeanAlterer<>(0.175),
+                        new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterMutate(),
+                        new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterCrossover<>(0.5)
+                        )
+                .build();
+        
+        Map<String, String> retMap = new HashMap<>();
+        try {
+            MarketFilterGene gene = new MarketFilterGene(market.getFilter());
+            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene);
+            List<String> individuals = new ArrayList<>();
+            final EvolutionResult<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> result = engine.stream()
+                    .limit(evolutionConfig.getGenerations())
+                    .collect(EvolutionResult.toBestEvolutionResult());
+            List<Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double>> population = result.population().asList();
+            print(market.getConfig().getMarket() + " " + getPipeline() + " " + subcomponent, population);
+            List<Genotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene>> list2 = result.genotypes().asList();
+            final Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> pt = result.bestPhenotype();
+
+            System.out.println(pt);
+            MarketFilter aConf = pt.genotype().chromosome().gene().allele();
+            Map<String, Object> confMap = new HashMap<>();
+            confMap.put("some", JsonUtil.convert(aConf));
+            param.setUpdateMap(confMap);
+            Map<String, Double> scoreMap = new HashMap<>();
+            double score = pt.fitness();
+            //confMap.put("score", "" + score);
+            scoreMap.put("" + score, score);
+            param.setScoreMap(scoreMap);
+            param.setFutureDate(LocalDate.now());
+            // fix mlmarket;
+            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null);
+            param.getTimings().add(timing);
+            configSaves(param, confMap, subcomponent);
+            if (false) {
+                ConfigItem configItem = new ConfigItem();
+                configItem.setAction(param.getAction());
+                configItem.setComponent(getPipeline());
+                configItem.setDate(param.getBaseDate());
+                configItem.setId("score " + confMap.keySet());
+                configItem.setMarket(param.getMarket());
+                configItem.setRecord(LocalDate.now());
+                configItem.setValue("" + score);
+                try {
+                    configItem.save();
+                } catch (Exception e) {
+                    log.info(Constants.EXCEPTION, e);
+                }                
+            }
+            //bestChromosome.get
+            //Map<String, Object> confMap = null;
+            //String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
+            //ControlService srv = new ControlService();
+            //srv.getConfig();    
+            /*
+            List<Double> newConfidenceList = new ArrayList<>();
+            //srv.conf.getConfigValueMap().putAll(confMap);
+            List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(marketName, null, null, false, false), confMap);
+            for(MemoryItem memory : memories) {
+                newConfidenceList.add(memory.getConfidence());
+            }
+            log.info("New confidences {}", newConfidenceList);
+            retMap.put("key", newConfidenceList.toString());
+            */
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return param;
+        
+    }
+    
+    public ComponentData improve4(MarketAction action, ComponentData param, Market market,
+            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters) {
+        long time0 = System.currentTimeMillis();
+        //Main main = new Main();
+        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
+        OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
+        evolution.setParallel(false);
+        
+        Map<String, String> retMap = new HashMap<>();
+        try {
+            MarketFilterGene gene = new MarketFilterGene(market.getFilter());
+            MarketFilterChromosome2 chromosome = new MarketFilterChromosome2(new ArrayList<>(), gene);
+            List<String> individuals = new ArrayList<>();
+            FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters);
+            evolution.fittest = fit::fitness;
+            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals );
+            MarketFilterChromosome2 bestChromosome = (MarketFilterChromosome2) best.getEvaluation();
+            evolution.print(param.getMarket() + " " + subcomponent, individuals);
+            MarketFilter aConf = bestChromosome.getGene().getMarketfilter();
+            Map<String, Object> confMap = new HashMap<>();
+            confMap.put("some", JsonUtil.convert(aConf));
+            param.setUpdateMap(confMap);
+            Map<String, Double> scoreMap = new HashMap<>();
+            double score = best.getFitness();
+            //confMap.put("score", "" + score);
+            scoreMap.put("" + score, score);
+            param.setScoreMap(scoreMap);
+            param.setFutureDate(LocalDate.now());
+            // fix mlmarket;
+            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null);
+            param.getTimings().add(timing);
+            configSaves(param, confMap, subcomponent);
+            if (false) {
+                ConfigItem configItem = new ConfigItem();
+                configItem.setAction(param.getAction());
+                configItem.setComponent(getPipeline());
+                configItem.setDate(param.getBaseDate());
+                configItem.setId("score " + confMap.keySet());
+                configItem.setMarket(param.getMarket());
+                configItem.setRecord(LocalDate.now());
+                configItem.setValue("" + score);
+                try {
+                    configItem.save();
+                } catch (Exception e) {
+                    log.info(Constants.EXCEPTION, e);
+                }                
+            }
+            //bestChromosome.get
+            //Map<String, Object> confMap = null;
+            //String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
+            //ControlService srv = new ControlService();
+            //srv.getConfig();    
+            /*
+            List<Double> newConfidenceList = new ArrayList<>();
+            //srv.conf.getConfigValueMap().putAll(confMap);
+            List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(marketName, null, null, false, false), confMap);
+            for(MemoryItem memory : memories) {
+                newConfidenceList.add(memory.getConfidence());
+            }
+            log.info("New confidences {}", newConfidenceList);
+            retMap.put("key", newConfidenceList.toString());
+            */
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return param;
+        
+    }
+    
+    public void print(String title, List<Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double>> population) {
+        Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
+        BufferedWriter writer = null;
+        try {
+            writer = Files.newBufferedWriter(path);
+            writer.write(title + "\n\n");
+            for (Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> pt : population) {
+                MarketFilter filter = pt.genotype().chromosome().gene().allele();
+                String individual = pt.fitness() + " #" + pt.hashCode() + " " + filter.toString();
+                writer.write(individual + "\n");            
+            }
+            writer.write("\n");
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        try {
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
 }
 

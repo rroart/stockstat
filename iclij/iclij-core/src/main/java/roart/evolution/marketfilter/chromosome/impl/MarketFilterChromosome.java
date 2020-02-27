@@ -26,7 +26,7 @@ import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.marketfilter.gene.impl.MarketFilterGene;
+import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.evolution.species.Individual;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;

@@ -112,5 +112,6 @@
     <xmlapis.version>1.4.01</xmlapis.version>
     <spark.version>2.4.0</spark.version>
     <talib.version>0.4.0</talib.version>
+    <jenetics.version>5.2.0</jenetics.version>
   </properties>
 </project>

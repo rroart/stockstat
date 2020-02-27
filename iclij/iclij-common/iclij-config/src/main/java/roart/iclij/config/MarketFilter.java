@@ -21,6 +21,19 @@ public class MarketFilter {
         
     }
 
+    public MarketFilter(String inccategory, Integer incdays, Double incthreshold, String deccategory, Integer decdays,
+            Double decthreshold, Double confidence, Integer recordage) {
+        super();
+        this.inccategory = inccategory;
+        this.incdays = incdays;
+        this.incthreshold = incthreshold;
+        this.deccategory = deccategory;
+        this.decdays = decdays;
+        this.decthreshold = decthreshold;
+        this.confidence = confidence;
+        this.recordage = recordage;
+    }
+
     public String getInccategory() {
         return inccategory;
     }
@@ -88,10 +101,5 @@ public class MarketFilter {
     @Override 
     public String toString() {
         return inccategory + " " + incdays + " " + incthreshold + " " + deccategory + " " + decdays + " " + decthreshold + " "  + confidence + " " + recordage;
-    }
-
-    public static MarketFilter newRandom(MarketFilter filter) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

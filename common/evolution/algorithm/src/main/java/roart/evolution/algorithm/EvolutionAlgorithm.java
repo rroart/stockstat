@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,8 @@ public abstract class EvolutionAlgorithm {
     
     private boolean doParallel = true;
     
+    public Function<AbstractChromosome, Double> fittest;
+
     public EvolutionAlgorithm(EvolutionConfig evolutionConfig) {
         super();
         this.evolutionConfig = evolutionConfig;
@@ -132,7 +135,11 @@ public abstract class EvolutionAlgorithm {
         for (Individual individual : pop) {
             if (individual.getFitness() == null) {
                 long start = System.currentTimeMillis();
-                individual.recalculateScore();
+                if (fittest != null) {
+                    individual.setFitness(fittest.apply(individual.getEvaluation()));                   
+                } else {
+                    individual.recalculateScore();
+                }
                 individual.setCalculateTime(System.currentTimeMillis() - start);
             }
         }
@@ -174,10 +181,15 @@ public abstract class EvolutionAlgorithm {
         @Override
         public Object call() throws Exception {
             long start = System.currentTimeMillis();
-            individual.recalculateScore();
+            if (fittest != null) {
+                individual.setFitness(fittest.apply(individual.getEvaluation()));
+            } else {
+                individual.recalculateScore();
+            }
             individual.setCalculateTime(System.currentTimeMillis() - start);
             return null;
         }
+
     }
 
     protected void printmap(List<Individual> individuals, List<String> stringIndividuals) {

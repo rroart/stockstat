@@ -1,4 +1,4 @@
-package roart.evolution.marketfilter.gene.impl;
+package roart.evolution.marketfilter.genetics.gene.impl;
 
 import java.util.Random;
 

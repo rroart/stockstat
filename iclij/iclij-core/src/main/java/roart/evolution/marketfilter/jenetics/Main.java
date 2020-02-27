@@ -21,7 +21,7 @@ public class Main {
         final Engine<AnyGene<MarketFilterGene>, Double> engine = Engine
                 .builder(this::fitness, codec)
                 .alterers(
-                        new MeanAlterer<>(0.175),
+                        //new MeanAlterer<>(0.175),
                         new MarketFilterMutate(),
                         new MarketFilterCrossover<>(0.5)
                         )

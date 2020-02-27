@@ -1,4 +1,4 @@
-package roart.evolution.marketfilter.gene.impl;
+package roart.evolution.marketfilter.genetics.gene.impl;
 
 import roart.iclij.config.MarketFilter;
 import roart.common.util.RandomUtil;
