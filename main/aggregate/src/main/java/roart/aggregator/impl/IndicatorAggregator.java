@@ -424,12 +424,18 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 addEventRow(subType, countMap2);
                             }
                             if (countMap2 != null && !isBinary(mapTypeInt)) {
-                                Set<String> posIds = mapMap.get(subType).get(POSTYPESTR).keySet();
-                                Set<String> negIds = mapMap.get(subType).get(NEGTYPESTR).keySet();
-                                Map<String, Double[]> pos = classifyResult.entrySet().stream().filter(map -> posIds.contains(map.getKey())).collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue())); 
-                                Map<String, Double[]> neg = classifyResult.entrySet().stream().filter(map -> negIds.contains(map.getKey())).collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue())); 
-                                log.info("Pos {}", pos.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting())));
-                                log.info("Neg {}", neg.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting())));
+                                Map<String, List<Pair<double[], Pair<Object, Double>>>> posMap = mapMap.get(subType).get(POSTYPESTR);
+                                if (posMap != null) {
+                                    Set<String> posIds = posMap.keySet();
+                                    Map<String, Double[]> pos = classifyResult.entrySet().stream().filter(map -> posIds.contains(map.getKey())).collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue())); 
+                                    log.info("Pos {}", pos.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting())));
+                                }
+                                Map<String, List<Pair<double[], Pair<Object, Double>>>> negMap = mapMap.get(subType).get(NEGTYPESTR);
+                                if (negMap != null) {
+                                    Set<String> negIds = negMap.keySet();
+                                    Map<String, Double[]> neg = classifyResult.entrySet().stream().filter(map -> negIds.contains(map.getKey())).collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue())); 
+                                    log.info("Neg {}", neg.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e[0]), Collectors.counting())));
+                                }
                             }
                             
                             log.info("Nowcount {}", resultMetaArray.size());
