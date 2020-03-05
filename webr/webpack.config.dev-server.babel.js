@@ -65,6 +65,8 @@ webpackConfig.plugins.push(
   new webpack.DefinePlugin({
     __CONFIG__: JSON.stringify(config.get('app')),
     'process.env': {
+      MYSERVER: JSON.stringify(process.env.MYSERVER),
+      MYPORT: JSON.stringify(process.env.MYPORT),
       NODE_ENV: JSON.stringify('development'),
     },
   }),

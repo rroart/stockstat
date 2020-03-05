@@ -2,11 +2,19 @@
 
 function getPort() {
     console.log(process.env.NODE_ENV);
-    if (process.env.NODE_ENV == "production") {
-        return 12345;
-    } else {
-        return 22345;
+    if (typeof process.env.MYPORT !== 'undefined') {
+	return process.env.MYPORT;
     }
+    return 80;
+}
+
+function getHost() {
+    console.log("pppp");
+    console.log(process.env);
+    if (typeof process.env.MYSERVER !== 'undefined') {
+	return process.env.MYSERVER;
+    }
+    return "localhost";
 }
 
 function search(query, serviceparam, cb) {
@@ -19,7 +27,7 @@ function search(query, serviceparam, cb) {
   }).then(checkStatus);
     console.log(bla);
 */
-    return fetch(`http://localhost:` + getPort() + query, {
+    return fetch("http://" + getHost() + ":" + getPort() + query, {
       method: "POST",
       headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
       body: JSON.stringify(serviceparam),
@@ -32,7 +40,7 @@ function search(query, serviceparam, cb) {
 
 function searchsynch(query, serviceparam) {
     console.log(JSON.stringify(serviceparam));
-    fetch(`http://localhost:` + getPort() + query, {
+    fetch("http://" + getHost() + ":" + getPort() + query, {
       method: "POST",
       headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
       body: JSON.stringify(serviceparam),
@@ -61,7 +69,7 @@ const fetchApi = {
     search(query, serviceparam) {
 	console.log(query);
 	console.log(JSON.stringify(serviceparam));
-	return fetch(`http://localhost:` + getPort() + query, {
+	return fetch("http://" + getHost() + ":" + getPort() + query, {
 	    method: "POST",
 	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
 	    body: JSON.stringify(serviceparam),

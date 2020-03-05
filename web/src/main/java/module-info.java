@@ -24,7 +24,6 @@ module web {
     requires vaadin.server;
     requires vaadin.shared;
     requires spring.boot;
-    requires eureka.client;
     requires spring.context;
     requires vaadin.spring;
     requires myexecutor;

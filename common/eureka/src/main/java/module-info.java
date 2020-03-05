@@ -10,8 +10,8 @@ module common.eureka {
 
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
-    requires eureka.client;
     requires slf4j.api;
     requires spring.core;
     requires spring.web;
+    requires common.constants;
 }

@@ -89,7 +89,7 @@ public class ClientRunner implements Runnable {
                         ServiceResult result = null;
                         try {
                             ServiceParam param = Queues.clientQueue.poll();
-                            result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), param.getWebpath());
+                            result = EurekaUtil.sendCMe(ServiceResult.class, param, param.getWebpath());
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         } catch (Error e) {
@@ -186,7 +186,7 @@ public class ClientRunner implements Runnable {
     public String getAppName() {
         return EurekaConstants.STOCKSTAT;
     }
-
+    
     // not yet
     /*
     public static void abort() {

@@ -42,7 +42,7 @@ public class ControlService {
     public void getConfig() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
         conf = result.getConfig();
         Map<String, Object> map = conf.getConfigValueMap();
         for (String key : map.keySet()) {
@@ -75,7 +75,7 @@ public class ControlService {
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETMARKETS);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
     }
 
@@ -83,7 +83,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setMarket(market);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETSTOCKS);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETSTOCKS);
         return result.getStocks();   	
     }
 
@@ -105,7 +105,7 @@ public class ControlService {
         param.setNeuralnetcommand(neuralnetcommand);
         new CoreThread(ui, param).start();
         //Queues.clientQueue.add(param);
-        //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
+        //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENT);
         /*
         for (Object o : (List)((List)result.list2)) {
 			//for (Object o : (List)((List)result.list).get(0)) {
@@ -131,7 +131,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setGuiSize(guiSize);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
         return result.getList();
     }
 
@@ -153,7 +153,7 @@ public class ControlService {
         param.setConfig(conf);
         param.setIds(idset);
         param.setGuiSize(guiSize);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH2);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
         return result.getList();
     }
 
@@ -170,14 +170,14 @@ public class ControlService {
     public List getContentStat() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTSTAT);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.SETCONFIG);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.SETCONFIG);
         getConfig();
     }
 
@@ -262,7 +262,7 @@ public class ControlService {
 
         @Override
         public void run() {
-            result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), param.getWebpath());
+            result = EurekaUtil.sendCMe(ServiceResult.class, param, param.getWebpath());
             ui.access(() -> {
                 VerticalLayout layout = new VerticalLayout();
                 layout.setCaption("Results");
