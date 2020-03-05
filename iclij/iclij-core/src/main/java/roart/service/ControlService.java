@@ -34,8 +34,8 @@ public class ControlService {
     public void getConfig() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
-        //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
+        //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
         conf = new MyMyConfig(result.getConfig());
         Map<String, Object> map = conf.getConfigValueMap();
         for (String key : map.keySet()) {
@@ -67,7 +67,7 @@ public class ControlService {
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETMARKETS);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
     }
     
@@ -75,7 +75,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setMarket(market);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETSTOCKS);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETSTOCKS);
         return result.getStocks();   	
     }
     
@@ -84,7 +84,7 @@ public class ControlService {
         param.setConfig(conf);
         param.setWantMaps(true);
         param.setMarket(market);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETDATES);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETDATES);
         return (List<String>) result.getMaps().get(PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
     }
    /**
@@ -107,9 +107,9 @@ public class ControlService {
         neuralnetcommand.setMlclassify(conf.wantMLClassify());
         neuralnetcommand.setMldynamic(conf.wantMLDynamic());
         param.setNeuralnetcommand(neuralnetcommand);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENT);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENT);
         return result.getMaps();
-        //ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
+        //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
 	/*
         for (Object o : (List)((List)result.list2)) {
 			//for (Object o : (List)((List)result.list).get(0)) {
@@ -133,7 +133,7 @@ public class ControlService {
     public List getContentGraph() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
         return result.getList();
     }
 
@@ -153,7 +153,7 @@ public class ControlService {
     	ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setIds(idset);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH2);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
         return result.getList();
     }
 
@@ -170,14 +170,14 @@ public class ControlService {
     public List getContentStat() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTSTAT);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.SETCONFIG);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.SETCONFIG);
         getConfig();
     }
 
@@ -185,7 +185,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setConfList(disableList);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVERECOMMENDER);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
             updateMap.putAll(result.getMaps().get("update"));
@@ -207,7 +207,7 @@ public class ControlService {
         // where is this reset?
         neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVENN);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         if (doSet) {
             updateMap.putAll(result.getMaps().get("update"));
             scoreMap.putAll(result.getMaps().get("score"));

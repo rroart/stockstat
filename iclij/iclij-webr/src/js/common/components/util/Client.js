@@ -2,20 +2,36 @@
 
 function getPort() {
     console.log(process.env.NODE_ENV);
-    if (process.env.NODE_ENV == "production") {
-	return 12346;
-    } else {
-	return 22346;
+    if (typeof process.env.MYPORT !== 'undefined') {
+        return process.env.MYPORT;
     }
+    return 80;
 }
 
-function getPort0() {
-    console.log(process.env.NODE_ENV);
-    if (process.env.NODE_ENV == "production") {
-	return 12345;
-    } else {
-	return 22345;
+function getHost() {
+    console.log("pppp");
+    console.log(process.env);
+    if (typeof process.env.MYSERVER !== 'undefined') {
+        return process.env.MYSERVER;
     }
+    return "localhost";
+}
+
+function getIPort() {
+    console.log(process.env.NODE_ENV);
+    if (typeof process.env.MYIPORT !== 'undefined') {
+        return process.env.MYIPORT;
+    }
+    return 80;
+}
+
+function getIHost() {
+    console.log("pppp");
+    console.log(process.env);
+    if (typeof process.env.MYISERVER !== 'undefined') {
+        return process.env.MYISERVER;
+    }
+    return "localhost";
 }
 
 function search(query, serviceparam, cb) {
@@ -28,7 +44,7 @@ function search(query, serviceparam, cb) {
   }).then(checkStatus);
     console.log(bla);
 */
-    return fetch(`http://localhost:22346` + query, {
+    return fetch("http://" + getIHost() + ":" + getIPort() + query, {
       method: "POST",
       headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
       body: JSON.stringify(serviceparam),
@@ -41,7 +57,7 @@ function search(query, serviceparam, cb) {
 
 function searchsynch(query, serviceparam) {
     console.log(JSON.stringify(serviceparam));
-    fetch(`http://localhost:` + getPort() + query, {
+    fetch("http://" + getIHost() + ":" + getIPort() + query, {
       method: "POST",
       headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
       body: JSON.stringify(serviceparam),
@@ -70,7 +86,7 @@ const fetchApi = {
     search(query, serviceparam) {
 	console.log(query);
 	console.log(JSON.stringify(serviceparam));
-	return fetch(`http://localhost:` + getPort() + query, {
+	return fetch("http://" + getIHost() + ":" + getIPort() + query, {
 	    method: "POST",
 	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
 	    body: JSON.stringify(serviceparam),
@@ -83,7 +99,7 @@ const fetchApi = {
     search0(query, serviceparam) {
 	console.log(query);
 	console.log(JSON.stringify(serviceparam));
-	return fetch(`http://localhost:` + getPort0() + query, {
+	return fetch("http://" + getHost() + ":" + getPort() + query, {
 	    method: "POST",
 	    headers: { 'Accept': 'application/json;charset=utf-8', 'Content-Type': 'application/json', },
 	    body: JSON.stringify(serviceparam),

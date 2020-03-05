@@ -25,7 +25,6 @@ public class IclijController implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws InterruptedException {
             System.out.println("Using profile " + activeProfile);
-        EurekaUtil.initEurekaClient(activeProfile);
         SocketUtil.mylisten();
 	}
 
