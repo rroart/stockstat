@@ -80,7 +80,7 @@ public class IclijXMLConfig {
             if (configFile == null) {
                 configFile = "iclij.xml";
             }
-            configFile = "../conf/ + configFile;
+            configFile = "../conf/" + configFile;
             //config = new PropertiesConfiguration(ConfigConstants.PROPFILE);
             configxml = new XMLConfiguration();
             Parameters params = new Parameters();
