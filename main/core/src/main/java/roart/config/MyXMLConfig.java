@@ -63,11 +63,16 @@ public class MyXMLConfig {
 
     public MyXMLConfig() {
         try {
+            String configFile = System.getProperty("config");
+            if (configFile == null) {
+                configFile = ConfigConstants.CONFIGFILE;
+            }
+            String f2 = System.getenv("s");
             Parameters params = new Parameters();
             FileBasedConfigurationBuilder<XMLConfiguration> fileBuilder =
                     new FileBasedConfigurationBuilder<>(XMLConfiguration.class)
-                    .configure(params.fileBased().setFileName("../conf/" + ConfigConstants.CONFIGFILE));
-            InputStream stream = new FileInputStream(new File("../conf/" + ConfigConstants.CONFIGFILE));         
+                    .configure(params.fileBased().setFileName("../conf/" + configFile));
+            InputStream stream = new FileInputStream(new File("../conf/" + configFile));         
             configxml = fileBuilder.getConfiguration();
             configxml.read(stream);
         } catch (Exception e) {
