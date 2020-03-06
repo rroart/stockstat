@@ -40,7 +40,6 @@ public class IclijController implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {	    
 	    System.out.println("Using profile " + activeProfile);
-	    EurekaUtil.initEurekaClient(activeProfile);
 	    try {
 	        MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { IclijXMLConfig.getConfigInstance().mpServerCpu() } );

@@ -88,7 +88,7 @@ public class IclijWebControlService {
     public void getConfig() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), EurekaConstants.GETCONFIG);
+        IclijServiceResult result = EurekaUtil.sendIMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
         iclijConf = result.getIclijConfig();
         Map<String, Object> map = iclijConf.getConfigValueMap();
         for (Entry<String, Object> entry : map.entrySet()) {
@@ -120,7 +120,7 @@ public class IclijWebControlService {
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, EurekaConstants.STOCKSTAT, EurekaConstants.GETMARKETS);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
     }
 
@@ -128,7 +128,7 @@ public class IclijWebControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setMarket(market);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETSTOCKS);
+        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETSTOCKS);
         return result.getStocks();   	
     }
 
@@ -258,7 +258,7 @@ public class IclijWebControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setGuiSize(guiSize);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH);
+        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
         return result.getList();
     }
 
@@ -280,7 +280,7 @@ public class IclijWebControlService {
         param.setConfig(conf);
         param.setIds(idset);
         param.setGuiSize(guiSize);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTGRAPH2);
+        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
         return result.getList();
     }
 
@@ -297,21 +297,21 @@ public class IclijWebControlService {
     public List getContentStat() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETCONTENTSTAT);
+        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.SETCONFIG);
+        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.SETCONFIG);
         getConfig();
     }
 
     public List<ResultItem> getTestRecommender(boolean doSet) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendMe(ServiceResult.class, param, getAppName(), EurekaConstants.GETEVOLVERECOMMENDER);
+        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             conf = result.getConfig();
         }
@@ -346,7 +346,7 @@ public class IclijWebControlService {
 
         @Override
         public void run() {
-            IclijServiceResult result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), param.getWebpath(), objectMapper);
+            IclijServiceResult result = EurekaUtil.sendIMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
             ui.access(() -> {
                 VerticalLayout layout = new VerticalLayout();
                 layout.setCaption("Results");

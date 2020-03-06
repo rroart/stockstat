@@ -87,7 +87,7 @@ public class ClientRunner implements Runnable {
                         IclijServiceResult result = null;
                         try {
                             IclijServiceParam param = IclijQueues.clientQueue.poll();
-                            result = EurekaUtil.sendMe(IclijServiceResult.class, param, getAppName(), param.getWebpath());
+                            result = EurekaUtil.sendIMe(IclijServiceResult.class, param, param.getWebpath());
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         } catch (Error e) {
@@ -188,7 +188,7 @@ public class ClientRunner implements Runnable {
     public String getAppName() {
         return EurekaConstants.ICLIJ;
     }
-
+    
     // not yet
     /*
     public static void abort() {

@@ -113,11 +113,6 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-      <version>${springcloud.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-commons</artifactId>
       <version>${springcloud.version}</version>
     </dependency>
@@ -125,17 +120,6 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-context</artifactId>
       <version>${springcloud.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.netflix.eureka</groupId>
-      <artifactId>eureka-client</artifactId>
-      <version>${eurekaclient.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>servlet-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <!-- spark wants older jackson, 2.8 incompatible -->
     <dependency>

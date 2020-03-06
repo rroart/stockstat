@@ -1,6 +1,12 @@
 package roart.common.constants;
 
 public class EurekaConstants {
+    public static final String MYSERVER = "myserver";
+    public static final String MYPORT = "myport";
+    public static final String MYISERVER = "myiserver";
+    public static final String MYIPORT = "myiport";
+    public static final String LOCALHOST = "localhost";
+    public static final String HTTP = "80";
     public static final String STOCKSTAT = "STOCKSTAT";
     public static final String ICLIJ = "iclij";
     public static final String CONFIGURE = "configure";

@@ -284,7 +284,6 @@ public class ServiceController implements CommandLineRunner {
     @Override
     public void run(String... args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {        
         System.out.println("Using profile " + activeProfile);
-        EurekaUtil.initEurekaClient(activeProfile);
         MyExecutors.initThreads("dev".equals(activeProfile));
         MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
     }

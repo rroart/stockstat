@@ -20,7 +20,6 @@ module iclij.core {
     requires commons.configuration2;
     requires commons.math3;
     requires deductive;
-    requires eureka.client;
     requires guava;
     requires iclij.common.config;
     requires iclij.common.constants;

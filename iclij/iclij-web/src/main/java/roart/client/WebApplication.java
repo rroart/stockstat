@@ -32,7 +32,6 @@ public class WebApplication implements CommandLineRunner {
         @Override
         public void run(String... args) throws InterruptedException {
             System.out.println("Using profile " + activeProfile);
-            EurekaUtil.initEurekaClient(activeProfile);
         }
 
         @Bean(name = "OBJECT_MAPPER_BEAN")
