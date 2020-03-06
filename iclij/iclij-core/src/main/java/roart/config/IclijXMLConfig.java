@@ -52,9 +52,6 @@ public class IclijXMLConfig {
 
     protected static IclijXMLConfig instance = null;
 
-    public static String configFile = "../conf/iclij.xml";
-    //public static String configFile = "/tmp/iclij.xml";
-
     public static IclijXMLConfig instance() {
         if (instance == null) {
             instance = new IclijXMLConfig();
@@ -79,6 +76,11 @@ public class IclijXMLConfig {
 
     public IclijXMLConfig() {
         try {
+            String configFile = System.getProperty("config");
+            if (configFile == null) {
+                configFile = "iclij.xml";
+            }
+            configFile = "../conf/ + configFile;
             //config = new PropertiesConfiguration(ConfigConstants.PROPFILE);
             configxml = new XMLConfiguration();
             Parameters params = new Parameters();
