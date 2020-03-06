@@ -17,13 +17,13 @@ java -jar stockstat-iclij-web-0.5-SNAPSHOT.jar 2>&1 | tee /tmp/iclijweb.out > /d
 java -jar stockstat-web-0.5-SNAPSHOT.jar 2>&1 | tee /tmp/web.out > /dev/null 2>&1 &
 
 cd ../tensorflow
-./flasktf.sh 2>&1 | tee /tmp/flasktf.out &
+./flasktf.sh 8000 2>&1 | tee /tmp/flasktf.out &
 
 cd ../pytorch
-./flaskpt.sh 2>&1 | tee /tmp/flaskpt.out &
+./flaskpt.sh 8010 2>&1 | tee /tmp/flaskpt.out &
 
 cd ../gem
-./flaskgem.sh 2>&1 | tee /tmp/flaskgem.out &
+./flaskgem.sh 8040 2>&1 | tee /tmp/flaskgem.out &
 
 cd ../webr/docroot
 http-server -p $WEBR &
