@@ -128,7 +128,7 @@ def argstr():
     if len(sys.argv) > 1 and sys.argv[1].isnumeric():
         return sys.argv[1]
     else:
-        return 80
+        return str(80)
 
 if __name__ == '__main__':
 #    queue = Queue()
