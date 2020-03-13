@@ -575,6 +575,4 @@ class Classify:
         print("GPUs", gpus)
 
     def hasgpu(self):
-        from keras import backend as K
-        gpus = K.tensorflow_backend._get_available_gpus()
-        return len(gpus) > 0
+        return tf.test.is_gpu_available()
