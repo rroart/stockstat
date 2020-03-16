@@ -63,6 +63,7 @@
 	<include>*</include>
       </includes>
       <outputDirectory>bin</outputDirectory>
+      <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/../tensorflow</directory>
@@ -70,6 +71,7 @@
 	<include>**</include>
       </includes>
       <outputDirectory>tensorflow</outputDirectory>
+      <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/../pytorch</directory>
@@ -77,6 +79,7 @@
 	<include>**</include>
       </includes>
       <outputDirectory>pytorch</outputDirectory>
+      <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/../gemservice</directory>
@@ -84,6 +87,7 @@
 	<include>**</include>
       </includes>
       <outputDirectory>gem</outputDirectory>
+      <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
       <directory>${project.basedir}/../python/pd</directory>
@@ -119,6 +123,10 @@
       <includes>
         <include>**</include>
       </includes>
+      <excludes>
+	<exclude>cloud/**</exclude>
+	<exclude>terraform/**</exclude>
+      </excludes>
       <outputDirectory>docker</outputDirectory>
     </fileSet>
     <fileSet>
@@ -128,6 +136,7 @@
       </includes>
       <excludes>
 	<exclude>src/**</exclude>
+	<exclude>node_modules/**</exclude>
       </excludes>
       <outputDirectory>webr</outputDirectory>
     </fileSet>
@@ -138,6 +147,7 @@
       </includes>
       <excludes>
 	<exclude>src/**</exclude>
+	<exclude>node_modules/**</exclude>
       </excludes>
       <outputDirectory>iclij-webr</outputDirectory>
     </fileSet>
