@@ -1,0 +1,22 @@
+apiVersion: skaffold/v2alpha4
+kind: Config
+metadata:
+  #name: core
+build:
+  artifacts:
+  - image: dbclone
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/dbclone/Dockerfile
+      buildArgs:
+        mydump: '{{.MYDUMP}}'
+deploy:
+  kubectl:
+    manifests:
+    - dbclone/deployment.yaml
+    - postgresql/deployment.yaml
+#portForward:
+#  - resourceType: deployment
+#    resourceName: core
+#    port: 80
+#    localPort: 80
