@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbclone
+  labels:
+    app: dbclone
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dbclone
+  template:
+    metadata:
+      labels:
+        app: dbclone
+    spec:
+      containers:
+      - name: dbclone
+        image: dbclone
+        #imagePullPolicy: Never

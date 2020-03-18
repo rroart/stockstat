@@ -1,0 +1,34 @@
+apiVersion: skaffold/v2alpha4
+kind: Config
+metadata:
+  #name: core
+build:
+  artifacts:
+  - image: tensorflowdata
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/tensorflowdata/Dockerfile
+  - image: tensorflow
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/tensorflow/Dockerfile
+  - image: pytorchdata
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/pytorchdata/Dockerfile
+  - image: pytorch
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/pytorch/Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - tensorflowdata/deployment.yaml
+    - pytorchdata/deployment.yaml
+    - tensorflow/deployment.yaml
+    - pytorch/deployment.yaml
+#portForward:
+#  - resourceType: deployment
+#    resourceName: core
+#    port: 80
+#    localPort: 80

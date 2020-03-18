@@ -64,9 +64,9 @@
 	      <execution>
 		<!-- the wget goal actually binds itself to this phase by default -->
 		<phase>process-resources</phase>
-		<goals>
+		<!--goals>
 		  <goal>wget</goal>
-		</goals>
+		</goals-->
 		<configuration>
 		  <url>http://central.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.4.12.v20180830/jetty-runner-9.4.12.v20180830.jar</url>
 		  <outputFileName>jetty-runner-9.4.12.v20180830.jar</outputFileName>

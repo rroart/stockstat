@@ -1,0 +1,29 @@
+apiVersion: skaffold/v2alpha4
+kind: Config
+metadata:
+  name: core
+build:
+  artifacts:
+  - image: core
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/core/Dockerfile
+      buildArgs:
+        mywebport: '80'
+  - image: icore
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/iclij-core/Dockerfile
+      buildArgs:
+        mywebport: '80'
+        myserver: '{{.CORESERVER}}'
+deploy:
+  kubectl:
+    manifests:
+    - core/deployment.yaml
+    - icore/deployment.yaml
+#portForward:
+#  - resourceType: deployment
+#    resourceName: core
+#    port: 80
+#    localPort: 80

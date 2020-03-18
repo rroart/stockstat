@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tensorflow
+  labels:
+    app: tensorflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tensorflow
+  template:
+    metadata:
+      labels:
+        app: tensorflow
+    spec:
+      initContainers:
+      - name: tensorflowinit
+        image: tensorflowdata
+        command: ["/bin/sh", "-c", "cp -R /data/* /newdata/"]
+        volumeMounts:
+        - name: tensorflowdatavol
+          mountPath: /newdata
+      containers:
+      - name: tensorflow
+        image: tensorflow
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: tensorflowdatavol
+          mountPath: /data
+      volumes:
+      - name: tensorflowdatavol
+        persistentVolumeClaim:
+          claimName: tensorflowdatapv
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tensorflow
+  labels:
+    app: tensorflow
+spec:
+#  type: NodePort
+#  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: tensorflow
+  sessionAffinity: None  
+status:
+  loadBalancer: {}    
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress-tf
+spec:
+  rules:
+  - host: $MYTF
+    http:
+      paths:
+      - backend:
+          serviceName: tensorflow
+          servicePort: 80

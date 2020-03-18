@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pytorch
+  labels:
+    app: pytorch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pytorch
+  template:
+    metadata:
+      labels:
+        app: pytorch
+    spec:
+      initContainers:
+      - name: pytorchinit
+        image: pytorchdata
+        command: ["/bin/sh", "-c", "cp -R /data/* /newdata/"]
+        volumeMounts:
+        - name: pytorchdatavol
+          mountPath: /newdata
+      containers:
+      - name: pytorch
+        image: pytorch
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: pytorchdatavol
+          mountPath: /data
+      volumes:
+      - name: pytorchdatavol
+        persistentVolumeClaim:
+          claimName: pytorchdatapv
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pytorch
+  labels:
+    app: pytorch
+spec:
+  #type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: pytorch
+  sessionAffinity: None  
+status:
+  loadBalancer: {}    
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress-pt
+spec:
+  rules:
+  - host: $MYPT
+    http:
+      paths:
+      - backend:
+          serviceName: pytorch
+          servicePort: 80
