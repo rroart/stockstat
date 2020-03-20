@@ -8,6 +8,8 @@ build:
     context: ../../..
     docker:
       dockerfile: docker/cloud/tensorflowdata/Dockerfile
+      buildArgs:
+        mydata: '{{.MYTFDATA}}'
   - image: tensorflow
     context: ../../..
     docker:
@@ -16,6 +18,8 @@ build:
     context: ../../..
     docker:
       dockerfile: docker/cloud/pytorchdata/Dockerfile
+      buildArgs:
+        mydata: '{{.MYPTDATA}}'
   - image: pytorch
     context: ../../..
     docker:
