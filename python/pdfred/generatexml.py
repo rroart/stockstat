@@ -35,7 +35,7 @@ for list in lists:
         name.text = ticker
         name = ET.SubElement(row, 'name')
         name.text = myname
-        index = ET.SubElement(row, 'index')
+        index = ET.SubElement(row, 'indexvalue')
         index.text = str(framerow[1])
         if index.text == 'nan':
             index.text = '-'
