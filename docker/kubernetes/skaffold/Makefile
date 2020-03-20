@@ -1,5 +1,5 @@
 VERSION = 0.5-SNAPSHOT
-SUBDIRS = tensorflowdata pytorchdata tensorflow pytorch pd postgresql webr iwebr core icore dbclone
+SUBDIRS = tensorflowdata pytorchdata tensorflow pytorch pdfred postgresql webr iwebr core icore dbclone
 
 all: $(SUBDIRS)
 $(SUBDIRS):

@@ -1,0 +1,20 @@
+apiVersion: skaffold/v2alpha4
+kind: Config
+metadata:
+  #name: core
+build:
+  artifacts:
+  - image: pdfred
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/pdfred/Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - pdfred/deployment.yaml
+    - postgresql/deployment.yaml
+#portForward:
+#  - resourceType: deployment
+#    resourceName: core
+#    port: 80
+#    localPort: 80
