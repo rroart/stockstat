@@ -18,16 +18,3 @@ spec:
       - name: pdfred
         image: pdfred
         #imagePullPolicy: Never
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: pdfred
-  labels:
-    app: pdfred
-spec:
-  selector:
-    app: pdfred
-  sessionAffinity: None  
-status:
-  loadBalancer: {}    
