@@ -1,7 +1,5 @@
-apiVersion: skaffold/v2alpha4
+apiVersion: skaffold/v2beta1
 kind: Config
-metadata:
-  #name: core
 build:
   artifacts:
   - image: dbclone
@@ -15,8 +13,3 @@ deploy:
     manifests:
     - dbclone/deployment.yaml
     - postgresql/deployment.yaml
-#portForward:
-#  - resourceType: deployment
-#    resourceName: core
-#    port: 80
-#    localPort: 80
