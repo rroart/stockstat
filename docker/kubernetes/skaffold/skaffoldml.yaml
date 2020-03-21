@@ -1,13 +1,13 @@
-apiVersion: skaffold/v2alpha4
+apiVersion: skaffold/v2beta1
 kind: Config
-metadata:
-  #name: core
 build:
   artifacts:
   - image: tensorflowdata
     context: ../../..
     docker:
       dockerfile: docker/cloud/tensorflowdata/Dockerfile
+      buildArgs:
+        mydata: '{{.MYTFDATA}}'
   - image: tensorflow
     context: ../../..
     docker:
@@ -16,6 +16,8 @@ build:
     context: ../../..
     docker:
       dockerfile: docker/cloud/pytorchdata/Dockerfile
+      buildArgs:
+        mydata: '{{.MYPTDATA}}'
   - image: pytorch
     context: ../../..
     docker:
@@ -27,8 +29,3 @@ deploy:
     - pytorchdata/deployment.yaml
     - tensorflow/deployment.yaml
     - pytorch/deployment.yaml
-#portForward:
-#  - resourceType: deployment
-#    resourceName: core
-#    port: 80
-#    localPort: 80

@@ -1,7 +1,5 @@
-apiVersion: skaffold/v2alpha4
+apiVersion: skaffold/v2beta1
 kind: Config
-metadata:
-  #name: core
 build:
   artifacts:
   - image: webr
@@ -9,23 +7,18 @@ build:
     docker:
       dockerfile: docker/cloud/webr/Dockerfile
       buildArgs:
-        mywebport: '80'
         myserver: '{{.MYSERVER}}'
+        mywebport: "80"
   - image: iwebr
     context: ../../..
     docker:
       dockerfile: docker/cloud/iclij-webr/Dockerfile
       buildArgs:
-        mywebport: '80'
-        myserver: '{{.MYSERVER}}'
         myiserver: '{{.MYISERVER}}'
+        myserver: '{{.MYSERVER}}'
+        mywebport: "80"
 deploy:
   kubectl:
     manifests:
     - webr/deployment.yaml
     - iwebr/deployment.yaml
-#portForward:
-#  - resourceType: deployment
-#    resourceName: core
-#    port: 80
-#    localPort: 80

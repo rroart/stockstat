@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pdfred
+  labels:
+    app: pdfred
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pdfred
+  template:
+    metadata:
+      labels:
+        app: pdfred
+    spec:
+      containers:
+      - name: pdfred
+        image: pdfred
+        #imagePullPolicy: Never
