@@ -668,11 +668,11 @@ public class IclijXMLConfig {
             }
             MarketFilter marketFilter = getConfig(configMap, "filter", MarketFilter.class, config);
             MLConfigs mlConfigs = getConfig(configMap, "mlconfig", MLConfigs.class, config);
-            MLConfigs defaultMlConfigs = getDefaultMlConfigs(config, mapper, text);
-            defaultMlConfigs.merge(mlConfigs);
+            //MLConfigs defaultMlConfigs = getDefaultMlConfigs(config, mapper, text);
+            //defaultMlConfigs.merge(mlConfigs);
             market.setConfig(marketConfig);
             market.setFilter(marketFilter);
-            market.setMlconfig(defaultMlConfigs);
+            market.setMlconfig(mlConfigs);
             //String text2 = (String) config.getConfigValueMap().get(text);
             //MarketConfig market = mapper.readValue(text2, new TypeReference<MarketConfig>(){});
             retList.add(market);
