@@ -23,8 +23,8 @@
     <autorun enable="$EVOLVE"/>
   </evolve>
   <findprofit priority="10">
-    <!--threshold>[ 1.05 ]</threshold>
-    <futuredays>$FUTUREDAYS</futuredays-->
+    <threshold>$THRESHOLD</threshold>
+    <futuredays>$FUTUREDAYS</futuredays>
     <autorun enable="$FINDPROFIT"/>
     <mldynamic enable='false'/>
     <recommender enable='true'/>
@@ -88,9 +88,8 @@
   </improvefilter>
   <machinelearning priority="0">
     <autorun enable="$ML"/>
-    <!--threshold>[ 0.90, 0.95, 1.0, 1.05, 1.10 ]</threshold-->
-    <!--threshold>[ 1.05 ]</threshold>
-    <futuredays>[ 20 ]</futuredays-->
+    <threshold>$THRESHOLD</threshold>
+    <futuredays>$FUTUREDAYS</futuredays>
     <mlmacd enable='true'>
     </mlmacd>
     <mlrsi enable='true'>
