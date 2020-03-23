@@ -8,9 +8,9 @@ public class MetaItem {
     private String[] period = new String[Constants.PERIODS];
     private String priority;
     private String reset;
-    private boolean lhc;
+    private Boolean lhc;
 
-    public MetaItem(String marketid, String period1, String period2, String period3, String period4, String period5, String period6, String period7, String period8, String period9, String priority, String reset, boolean lhc) {
+    public MetaItem(String marketid, String period1, String period2, String period3, String period4, String period5, String period6, String period7, String period8, String period9, String priority, String reset, Boolean lhc) {
         this.marketid = marketid;
         this.period[0] = period1;
         this.period[1] = period2;
@@ -62,11 +62,11 @@ public class MetaItem {
         this.reset = reset;
     }
 
-    public boolean isLhc() {
+    public Boolean isLhc() {
         return lhc;
     }
 
-    public void setLhc(boolean lhc) {
+    public void setLhc(Boolean lhc) {
         this.lhc = lhc;
     }
 
