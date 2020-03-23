@@ -1,5 +1,6 @@
 package roart.db.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,12 +9,13 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
+import roart.common.model.MetaItem;
 import roart.db.common.DbAccess;
 import roart.db.hibernate.DbHibernateAccess;
+import roart.db.model.Meta;
 import roart.db.model.Stock;
 import roart.db.spark.DbSpark;
 import roart.db.spark.DbSparkAccess;
-import roart.model.MetaItem;
 import roart.model.StockItem;
 import roart.stockutil.StockUtil;
 
@@ -79,6 +81,18 @@ public class DbDao {
 
     public static List<String> getMarkets() throws Exception {
         return Stock.getMarkets();
+    }
+
+    public static List<MetaItem> getMetas() throws Exception {
+        long time0 = System.currentTimeMillis();
+        List<Meta> metas = Meta.getAll();
+                List<MetaItem> metaitems = new ArrayList<>();
+                for (Meta meta : metas) {
+                        MetaItem metaItem = new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
+                        metaitems.add(metaItem);
+                }
+                log.info("time0 " + (System.currentTimeMillis() - time0));
+                return metaitems;
     }
 
     public static MetaItem getById(String market, MyMyConfig conf) throws Exception {

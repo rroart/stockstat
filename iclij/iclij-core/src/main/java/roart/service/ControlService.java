@@ -4,6 +4,7 @@ import roart.common.config.ConfigTreeMap;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
+import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
@@ -69,6 +70,13 @@ public class ControlService {
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
+    }
+    
+    public List<MetaItem> getMetas() {
+        ServiceParam param = new ServiceParam();
+        param.setConfig(conf);
+        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMETAS);
+        return result.getMetas();     
     }
     
     public Map<String, String> getStocks(String market) {

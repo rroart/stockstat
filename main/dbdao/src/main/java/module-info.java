@@ -19,4 +19,5 @@ module dbdao {
     requires coredb.hibernate;
     requires stockutil;
     requires common.constants;
+    requires common.model;
 }

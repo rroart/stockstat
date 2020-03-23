@@ -30,6 +30,7 @@ public class Constants {
     public static final String PERIOD9 = "period9";
     public static final String PRIORITY = "priority";
     public static final String RESET = "reset";
+    public static final String LHC = "lhc";
     // public static final String RECORD = "record";
     public static final String TYPE = "type";
     public static final String VALUE = "value";

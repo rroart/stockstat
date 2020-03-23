@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import roart.common.config.MyConfig;
+import roart.common.model.MetaItem;
 import roart.result.model.ResultItem;
 
 public class ServiceResult {
     private MyConfig config;
     
     private List<String> markets;
+    
+    private List<MetaItem> metas;
     
     private Map<String, String> stocks;
     
@@ -37,6 +40,14 @@ public class ServiceResult {
 
     public void setMarkets(List<String> markets) {
         this.markets = markets;
+    }
+
+    public List<MetaItem> getMetas() {
+        return metas;
+    }
+
+    public void setMetas(List<MetaItem> metas) {
+        this.metas = metas;
     }
 
     public Map<String, String> getStocks() {

@@ -2,8 +2,8 @@ package roart.db.dao.util;
 
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
 import roart.db.dao.DbDao;
-import roart.model.MetaItem;
 import roart.stockutil.MetaDao;
 
 import org.slf4j.Logger;

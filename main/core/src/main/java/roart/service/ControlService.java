@@ -36,6 +36,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
+import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
@@ -69,6 +70,15 @@ public class ControlService {
     public List<String> getMarkets() {
         try {
             return DbDao.getMarkets();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new ArrayList<>();
+    }
+
+    public List<MetaItem> getMetas() {
+        try {
+            return DbDao.getMetas();
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

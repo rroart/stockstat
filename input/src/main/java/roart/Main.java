@@ -497,6 +497,7 @@ public class Main {
             Element period9Elem = (Element) elem.getElementsByTagName(Constants.PERIOD9).item(0);
             Element orderElem = (Element) elem.getElementsByTagName(Constants.PRIORITY).item(0);
             Element resetElem = (Element) elem.getElementsByTagName(Constants.RESET).item(0);
+            Element lhcElem = (Element) elem.getElementsByTagName(Constants.LHC).item(0);
             String marketid = marketidElem.getTextContent();
             String period1 = null;
             if (period1Elem != null) {
@@ -542,6 +543,10 @@ public class Main {
             if (resetElem != null) {
                 reset = reformat(resetElem.getTextContent());
             }
+            String lhc = null;
+            if (lhcElem != null) {
+                lhc = reformat(lhcElem.getTextContent());
+            }            
             Meta meta = Meta.ensureExistence(marketid);
             if (period1 == null || period1.equals("-")) {
                 meta.setPeriod1(null);
@@ -597,6 +602,11 @@ public class Main {
                 meta.setReset(null);
             } else {
                 meta.setReset(new String(reset));
+            }
+            if (lhc == null) {
+                meta.setLhc(false);
+            } else {
+                meta.setLhc(Boolean.getBoolean(reset));
             }
 
         }

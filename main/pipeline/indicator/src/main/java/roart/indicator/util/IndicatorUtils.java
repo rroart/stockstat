@@ -30,7 +30,7 @@ import roart.indicator.impl.IndicatorSTOCH;
 import roart.indicator.impl.IndicatorSTOCHRSI;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
-import roart.model.MetaItem;
+import roart.common.model.MetaItem;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.data.ExtraData;
