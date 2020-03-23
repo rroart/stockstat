@@ -19,6 +19,7 @@ public class EurekaConstants {
     public static final String GETCONTENTGRAPH = "getcontentgraph";
     public static final String GETCONTENTGRAPH2 = "getcontentgraph2";
     public static final String GETMARKETS = "getmarkets";
+    public static final String GETMETAS = "getmetas";
     public static final String GETSTOCKS = "getstocks";
     public static final String GETDATES = "getdates";
     public static final String SETCONFIG = "setconfig";

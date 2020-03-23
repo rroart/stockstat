@@ -10,6 +10,7 @@ module stockutil {
 
     requires common.config;
     requires common.constants;
+    requires common.model;
     requires common.util;
     requires commons.lang;
     requires commons.math3;

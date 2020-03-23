@@ -51,7 +51,9 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
     private String priority;
     @Column
     private String reset;
-
+    @Column
+    private boolean lhc;
+    
     public String getMarketid() {
         return marketid;
     }
@@ -146,6 +148,14 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
 
     public void setReset(String reset) {
         this.reset = reset;
+    }
+
+    public boolean isLhc() {
+        return lhc;
+    }
+
+    public void setLhc(boolean lhc) {
+        this.lhc = lhc;
     }
 
     @Transient

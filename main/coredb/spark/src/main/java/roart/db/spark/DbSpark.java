@@ -2,8 +2,8 @@ package roart.db.spark;
 
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
 import roart.common.util.ArraysUtil;
-import roart.model.MetaItem;
 import roart.model.StockItem;
 import roart.pipeline.common.Calculatable;
 import roart.spark.SparkSessionUtil;
@@ -138,7 +138,8 @@ public class DbSpark {
                 String period9 = row.getAs("period9");
                 String priority = row.getAs("priority");
                 String reset = row.getAs("reset");
-                return new MetaItem(marketid, period1, period2, period3, period4, period5, period6, period7, period8, period9, priority, reset);
+                boolean lhc = row.getAs("lhc");
+                return new MetaItem(marketid, period1, period2, period3, period4, period5, period6, period7, period8, period9, priority, reset, lhc);
             }
         }
         return null;

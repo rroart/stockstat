@@ -1,7 +1,7 @@
 package roart.stockutil;
 
 import roart.common.constants.CategoryConstants;
-import roart.model.MetaItem;
+import roart.common.model.MetaItem;
 import roart.model.data.MarketData;
 
 public class MetaUtil {

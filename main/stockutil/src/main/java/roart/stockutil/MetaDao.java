@@ -1,6 +1,6 @@
 package roart.stockutil;
 
-import roart.model.MetaItem;
+import roart.common.model.MetaItem;
 
 /**
  * 

@@ -117,7 +117,22 @@ public class ServiceController implements CommandLineRunner {
         return result;
     }
 
-    @RequestMapping(value = "/" + EurekaConstants.GETDATES,
+    @RequestMapping(value = "/" + EurekaConstants.GETMETAS,
+            method = RequestMethod.POST)
+    public ServiceResult getMetas(@RequestBody ServiceParam param)
+            throws Exception {
+        ServiceResult result = new ServiceResult();
+        try {
+            result.setMetas(getInstance().getMetas());
+            log.info("Metasize {}", result.getMetas().size());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            result.setError(e.getMessage());
+        }
+        return result;
+    }
+
+     @RequestMapping(value = "/" + EurekaConstants.GETDATES,
             method = RequestMethod.POST)
     public ServiceResult getDates(@RequestBody ServiceParam param)
             throws Exception {

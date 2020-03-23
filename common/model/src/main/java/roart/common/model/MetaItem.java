@@ -1,4 +1,4 @@
-package roart.model;
+package roart.common.model;
 
 import roart.common.constants.Constants;
 
@@ -8,8 +8,9 @@ public class MetaItem {
     private String[] period = new String[Constants.PERIODS];
     private String priority;
     private String reset;
+    private boolean lhc;
 
-    public MetaItem(String marketid, String period1, String period2, String period3, String period4, String period5, String period6, String period7, String period8, String period9, String priority, String reset) {
+    public MetaItem(String marketid, String period1, String period2, String period3, String period4, String period5, String period6, String period7, String period8, String period9, String priority, String reset, boolean lhc) {
         this.marketid = marketid;
         this.period[0] = period1;
         this.period[1] = period2;
@@ -22,6 +23,15 @@ public class MetaItem {
         this.period[8] = period9;
         this.priority = priority;
         this.reset = reset;
+        this.lhc = lhc;
+    }
+
+    public String getMarketid() {
+        return marketid;
+    }
+
+    public void setMarketid(String marketid) {
+        this.marketid = marketid;
     }
 
     public String getperiod(int i) {
@@ -50,6 +60,14 @@ public class MetaItem {
 
     public void setReset(String reset) {
         this.reset = reset;
+    }
+
+    public boolean isLhc() {
+        return lhc;
+    }
+
+    public void setLhc(boolean lhc) {
+        this.lhc = lhc;
     }
 
 }

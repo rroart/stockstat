@@ -24,4 +24,5 @@ module pipeline.indicator {
     requires ml.common;
     requires com.fasterxml.jackson.databind;
     requires common.util;
+    requires common.model;
 }

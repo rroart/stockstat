@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
-import roart.model.MetaItem;
+import roart.common.model.MetaItem;
 import roart.model.StockItem;
 import roart.pipeline.common.Calculatable;
 

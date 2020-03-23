@@ -1,10 +1,10 @@
 package roart.db.hibernate;
 
 import roart.common.config.MyConfig;
+import roart.common.model.MetaItem;
 import roart.common.util.ArraysUtil;
 import roart.db.model.Meta;
 import roart.db.model.Stock;
-import roart.model.MetaItem;
 import roart.model.StockItem;
 import roart.pipeline.common.Calculatable;
 
@@ -36,12 +36,24 @@ public class DbHibernate {
 		return stockitems;
     }
 
+    public static List<MetaItem> getAll() throws Exception {
+        long time0 = System.currentTimeMillis();
+        List<Meta> metas = Meta.getAll();
+        List<MetaItem> metaitems = new ArrayList<>();
+        for (Meta meta : metas) {
+            MetaItem metaItem = new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
+            metaitems.add(metaItem);
+        }
+        log.info("time0 " + (System.currentTimeMillis() - time0));
+        return metaitems;
+    }
+
     public static MetaItem getMarket(String market) throws Exception {
 		Meta meta = Meta.getById(market);
 		if (meta == null) {
 		    return null;
 		}
-		return new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset());
+		return new MetaItem(meta.getMarketid(), meta.getPeriod1(), meta.getPeriod2(), meta.getPeriod3(), meta.getPeriod4(), meta.getPeriod5(), meta.getPeriod6(), meta.getPeriod7(), meta.getPeriod8(), meta.getPeriod9(), meta.getPriority(), meta.getReset(), meta.isLhc());
     }
     
     @Deprecated
