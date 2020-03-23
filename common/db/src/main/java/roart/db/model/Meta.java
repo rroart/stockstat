@@ -1,12 +1,7 @@
 package roart.db.model;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-//import org.hibernate.annotations.Index;
-
-
-
-
+import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,11 +10,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
-import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "Meta")
@@ -52,7 +44,7 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
     @Column
     private String reset;
     @Column
-    private boolean lhc;
+    private Boolean lhc;
     
     public String getMarketid() {
         return marketid;
@@ -150,11 +142,11 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
         this.reset = reset;
     }
 
-    public boolean isLhc() {
+    public Boolean isLhc() {
         return lhc;
     }
 
-    public void setLhc(boolean lhc) {
+    public void setLhc(Boolean lhc) {
         this.lhc = lhc;
     }
 
