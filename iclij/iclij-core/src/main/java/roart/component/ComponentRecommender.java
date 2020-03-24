@@ -326,14 +326,13 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree) {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
         List<String> confList = buy ? getBuy() : getSell();      
 	Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
-	boolean gotThree = anythingHere(listMap, 3);
-	if (gotThree) {
+	if (wantThree) {
 	    confList.addAll(buy ? getConfListThreeBuy() : getConfListThreeSell());
 	}
         Map<String, Object> map = null;

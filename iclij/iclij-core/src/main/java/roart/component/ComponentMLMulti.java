@@ -126,12 +126,11 @@ public abstract class ComponentMLMulti extends ComponentMLAggregator {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
-        boolean gotThree = anythingHere(listMap, 3);
-        if (gotThree) {
+        if (wantThree) {
             confList.addAll(getThreeConfList());
         }
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);

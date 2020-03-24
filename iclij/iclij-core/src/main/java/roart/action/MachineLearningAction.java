@@ -72,7 +72,7 @@ public class MachineLearningAction extends MarketAction {
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
             Map<String, List<Integer>> listComponent, Map<String, Component> componentMap,
-            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters) {
+            Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree) {
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             String componentName = entry.getKey();
             Component component = componentMap.get(componentName);
@@ -130,8 +130,8 @@ public class MachineLearningAction extends MarketAction {
     }
 
     @Override
-    protected List<String> getProfitComponents(IclijConfig config, String marketName) {
-        return ServiceUtil.getMachineLearningComponents(config, marketName);
+    protected List<String> getProfitComponents(IclijConfig config, boolean wantThree) {
+        return ServiceUtil.getMachineLearningComponents(config, wantThree);
     }
 
     @Override

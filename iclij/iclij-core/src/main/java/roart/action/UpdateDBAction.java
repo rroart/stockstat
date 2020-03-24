@@ -15,6 +15,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
 import roart.iclij.config.MarketConfig;
 import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
 import roart.common.util.TimeUtil;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.ComponentFactory;
@@ -24,6 +25,7 @@ import roart.config.IclijXMLConfig;
 import roart.db.IclijDbDao;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.TimingItem;
+import roart.service.ControlService;
 import roart.util.ServiceUtil;
 
 public class UpdateDBAction extends Action {
@@ -90,6 +92,7 @@ public class UpdateDBAction extends Action {
     
     private List<MemoryItem> findMarketComponentsToCheck(List<Market> markets) {
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        List<MetaItem> metas = new ControlService().getMetas();        
         List<MemoryItem> toCheck = new ArrayList<>();
         for (Market market : markets) {
             List<MemoryItem> marketMemory = null;
@@ -102,7 +105,9 @@ public class UpdateDBAction extends Action {
                 log.error("Marketmemory null for {}", market.getConfig().getMarket());
                 continue;
             }
-            for (String component : ServiceUtil.getFindProfitComponents(instance, market.getConfig().getMarket())) {
+            MetaItem meta = new FindProfitAction().findMeta(metas, market.getConfig().getMarket());
+            boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
+            for (String component : ServiceUtil.getFindProfitComponents(instance, wantThree)) {
                 List<MemoryItem> marketComponents = marketMemory.stream().filter(m -> component.equals(m.getComponent())).collect(Collectors.toList());
                 Collections.sort(marketComponents, (o1, o2) -> (o2.getRecord().compareTo(o1.getRecord())));
                 if (marketComponents == null || marketComponents.isEmpty()) {
