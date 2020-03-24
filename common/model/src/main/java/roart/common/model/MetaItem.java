@@ -10,6 +10,10 @@ public class MetaItem {
     private String reset;
     private Boolean lhc;
 
+    public MetaItem() {
+        super();
+    }
+    
     public MetaItem(String marketid, String period1, String period2, String period3, String period4, String period5, String period6, String period7, String period8, String period9, String priority, String reset, Boolean lhc) {
         this.marketid = marketid;
         this.period[0] = period1;

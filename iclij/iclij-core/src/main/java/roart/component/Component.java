@@ -105,7 +105,7 @@ public abstract class Component {
     
     public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters);
     
-    public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters);
+    public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree);
 
     protected abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
 

@@ -93,7 +93,7 @@ public class ImproveFilterAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -148,8 +148,8 @@ public class ImproveFilterAction extends MarketAction {
     }
     
     @Override
-    protected List<String> getProfitComponents(IclijConfig config, String marketName) {
-        return ServiceUtil.getImproveFilterComponents(config, marketName);
+    protected List<String> getProfitComponents(IclijConfig config, boolean wantThree) {
+        return ServiceUtil.getImproveFilterComponents(config, wantThree);
     }
 
     @Override

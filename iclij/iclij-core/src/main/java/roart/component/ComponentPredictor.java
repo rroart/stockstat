@@ -181,7 +181,7 @@ public abstract class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);

@@ -41,6 +41,7 @@ import roart.iclij.config.MarketFilter;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyConfig;
 import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -329,8 +330,12 @@ public class ServiceUtil {
         //Market market = findProfitAction.findMarket(param);
         //String marketName = market.getConfig().getMarket();
         long time0 = System.currentTimeMillis();
+        List<MetaItem> metas = param.getService().getMetas();
         for (Market market : action.getMarkets()) {
-            List<String> componentList = getFindProfitComponents(componentInput.getConfig(), market.getConfig().getMarket());
+            String marketName = market.getConfig().getMarket();
+            MetaItem meta = action.findMeta(metas, marketName);
+            boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
+            List<String> componentList = getFindProfitComponents(componentInput.getConfig(), wantThree);
             Map<Boolean, String> booleanTexts = action.getBooleanTexts();
             Boolean[] booleans = action.getBooleans();
             for (Boolean bool : booleans) {
@@ -1070,7 +1075,7 @@ public class ServiceUtil {
         return result;
     }
 
-    public static List<String> getFindProfitComponents(IclijConfig config, String market) {
+    public static List<String> getFindProfitComponents(IclijConfig config, boolean wantThree) {
         List<String> components = new ArrayList<>();
         if (config.wantsFindProfitRecommender()) {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
@@ -1084,7 +1089,7 @@ public class ServiceUtil {
         if (config.wantsFindProfitMLRSI()) {
             components.add(PipelineConstants.MLRSI);
         }
-        if (wantThree(market)) {
+        if (wantThree) {
         if (config.wantsFindProfitMLATR()) {
             components.add(PipelineConstants.MLATR);
         }
@@ -1246,7 +1251,7 @@ public class ServiceUtil {
         return null;
     }
 
-    public static List<String> getImproveProfitComponents(IclijConfig config, String market) {
+    public static List<String> getImproveProfitComponents(IclijConfig config, boolean wantThree) {
         List<String> components = new ArrayList<>();
         if (config.wantsImproveProfitRecommender()) {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
@@ -1260,7 +1265,7 @@ public class ServiceUtil {
         if (config.wantsImproveProfitMLRSI()) {
             components.add(PipelineConstants.MLRSI);
         }
-        if (wantThree(market)) {
+        if (wantThree) {
         if (config.wantsImproveProfitMLATR()) {
             components.add(PipelineConstants.MLATR);
         }
@@ -1280,7 +1285,7 @@ public class ServiceUtil {
         return components;
     }
 
-    public static List<String> getImproveFilterComponents(IclijConfig config, String market) {
+    public static List<String> getImproveFilterComponents(IclijConfig config, boolean wantThree) {
         List<String> components = new ArrayList<>();
         if (config.wantsImproveFilterRecommender()) {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
@@ -1294,7 +1299,7 @@ public class ServiceUtil {
         if (config.wantsImproveFilterMLRSI()) {
             components.add(PipelineConstants.MLRSI);
         }
-        if (wantThree(market)) {
+        if (wantThree) {
         if (config.wantsImproveFilterMLATR()) {
             components.add(PipelineConstants.MLATR);
         }
@@ -1416,7 +1421,7 @@ public class ServiceUtil {
         return updateMap;
     }
 
-    public static List<String> getEvolveComponents(IclijConfig config, String market) {
+    public static List<String> getEvolveComponents(IclijConfig config, boolean wantThree) {
         List<String> components = new ArrayList<>();
         if (config.wantsEvolveRecommender()) {
             components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
@@ -1430,7 +1435,7 @@ public class ServiceUtil {
         if (config.wantsEvolveMLRSI()) {
             components.add(PipelineConstants.MLRSI);
         }
-        if (wantThree(market)) {
+        if (wantThree) {
         if (config.wantsEvolveMLATR()) {
             components.add(PipelineConstants.MLATR);
         }
@@ -1450,13 +1455,13 @@ public class ServiceUtil {
         return components;
     }
 
-    public static List<String> getDatasetComponents(IclijConfig config, String market) {
+    public static List<String> getDatasetComponents() {
         List<String> components = new ArrayList<>();
         components.add(PipelineConstants.DATASET);
         return components;
     }
 
-    public static List<String> getCrosstestComponents(IclijConfig config, String market) {
+    public static List<String> getCrosstestComponents(IclijConfig config, boolean wantThree) {
         List<String> components = new ArrayList<>();
         if (config.wantsCrosstestPredictor()) {
             components.add(PipelineConstants.PREDICTOR);
@@ -1467,7 +1472,7 @@ public class ServiceUtil {
         if (config.wantsCrosstestMLRSI()) {
             components.add(PipelineConstants.MLRSI);
         }
-        if (wantThree(market)) {
+        if (wantThree) {
         if (config.wantsCrosstestMLATR()) {
             components.add(PipelineConstants.MLATR);
         }
@@ -1487,7 +1492,7 @@ public class ServiceUtil {
         return components;
     }
 
-    public static List<String> getMachineLearningComponents(IclijConfig config, String market) {
+    public static List<String> getMachineLearningComponents(IclijConfig config, boolean wantThree) {
         List<String> components = new ArrayList<>();
         if (config.wantsMachineLearningPredictor()) {
             components.add(PipelineConstants.PREDICTOR);
@@ -1498,7 +1503,7 @@ public class ServiceUtil {
         if (config.wantsMachineLearningMLRSI()) {
             components.add(PipelineConstants.MLRSI);
         }
-        if (wantThree(market)) {
+        if (wantThree) {
         if (config.wantsMachineLearningMLATR()) {
             components.add(PipelineConstants.MLATR);
         }

@@ -47,7 +47,7 @@ public class DatasetComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters) {
+            List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree) {
         return null;
     }
 
