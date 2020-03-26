@@ -60,7 +60,7 @@ public class InetUtil {
         String server = serverurl.substring(7);
         String[] serversplit = server.split(":");
         String host = serversplit[0];
-        Integer port = Integer.valueOf(serversplit[1]);
+        Integer port = serversplit.length > 1 ? Integer.valueOf(serversplit[1]) : 80;
         boolean up = checkMe(host, port, 500);
         if (up) {
             return serverurl;
