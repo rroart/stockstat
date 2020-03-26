@@ -312,7 +312,7 @@ public class NeuralNetChromosome extends AbstractChromosome {
         
         List<String> foundkeys = new ArrayList<>();
         for (String key : keys) {
-            System.out.println(conf.getValueOrDefault(key));
+            //System.out.println(conf.getValueOrDefault(key));
             if (!Boolean.TRUE.equals(conf.getConfigValueMap().get(key))) {
                 continue;
             }
