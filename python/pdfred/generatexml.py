@@ -7,7 +7,7 @@ from datetime import datetime
 marketidname = 'fred'
 
 reader = dr.Datareader()
-lists = reader.my(2, 90)
+lists = reader.my(2, 180)
 market = ET.Element('market')
 rows = ET.SubElement(market, 'rows')
 for list in lists:
