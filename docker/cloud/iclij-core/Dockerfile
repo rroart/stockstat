@@ -21,14 +21,16 @@ ARG myserver
 ARG myport
 ARG mywebport
 ARG myiconfig
+ARG mydbserver
 ENV MYSERVER ${myserver}
 ENV MYPORT ${myport}
 ENV MYWEBPORT ${mywebport}
 ENV MYICONFIG ${myiconfig}
+ENV MYDBSERVER ${mydbserver}
 RUN mkdir /usr/local/conf
 ADD docker/cloud/iclij-core/${myiconfig} /usr/local/conf
 WORKDIR /usr/local/bin
 COPY --from=0 /usr/local/bin/stockstat-iclij-core-0.5-SNAPSHOT.jar .
 RUN ln -s /tmp /usr/local/logs
-CMD java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://postgresql-12-centos7:5432/stockstat -jar /usr/local/bin/stockstat-iclij-core-0.5-SNAPSHOT.jar
+CMD java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:5432/stockstat -jar /usr/local/bin/stockstat-iclij-core-0.5-SNAPSHOT.jar
 
