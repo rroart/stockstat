@@ -18,13 +18,15 @@ FROM openjdk:10-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 ARG mywebport
 ARG myconfig
+ARG mydbserver
 ENV MYWEBPORT ${mywebport}
 ENV MYCONFIG ${myconfig}
+ENV MYDBSERVER ${mydbserver}
 RUN mkdir /usr/local/conf
 ADD docker/cloud/core/${myconfig} /usr/local/conf
 WORKDIR /usr/local/bin
 COPY --from=0 /usr/local/bin/stockstat-core-0.5-SNAPSHOT.jar .
 RUN ln -s /tmp /usr/local/logs
 USER root
-CMD SPARK_DRIVER_HOST=`hostname -i` java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://postgresql-12-centos7:5432/stockstat -jar /usr/local/bin/stockstat-core-0.5-SNAPSHOT.jar
+CMD SPARK_DRIVER_HOST=`hostname -i` java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:5432/stockstat -jar /usr/local/bin/stockstat-core-0.5-SNAPSHOT.jar
 
