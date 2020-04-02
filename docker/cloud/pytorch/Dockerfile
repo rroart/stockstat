@@ -3,6 +3,8 @@ MAINTAINER <roart@nvg.ntnu.no>
 
 ARG PYTHON_VERSION=3.7
 ARG WITH_TORCHVISION=0
+ARG myport
+ENV MYPORT ${myport}
 
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential cmake git curl ca-certificates libjpeg-dev libpng-dev && rm -rf /var/lib/apt/lists/*
 RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
@@ -34,4 +36,4 @@ ADD pytorch/ /usr/local/pytorch/
 
 WORKDIR /usr/local/pytorch
 
-CMD ./flaskpt.sh
+CMD ./flaskpt.sh ${MYPORT}

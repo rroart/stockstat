@@ -1,0 +1,17 @@
+export STOCKSTATTMPL=config/core/stockstat.xml.tmpl
+export SPARK=false
+export SPARKMASTER=spark://spark:7077
+export SPARKPATH=/data/spark
+export TENSORFLOW=true
+export TENSORFLOWSERVER=http://tensorflow.ml.local
+export TENSORFLOWPATH=/tmp
+export PYTORCH=true
+export PYTORCHSERVER=http://pytorch.ml.local
+export PYTORCHPATH=/tmp
+export GEM=false
+export GEMSERVER=http://gem
+export GEMPATH=/data/gem
+export THRESHOLD="[ 1.0 ]"
+export FUTUREDAYS="[ 10 ]"
+export MACHINELEARNING=false
+export PREDICTORS=false
