@@ -38,6 +38,6 @@ WORKDIR /usr/local/pdfred
 #ENV SPARK_MASTER_HOST 127.0.0.1
 
 CMD /usr/bin/python3 /usr/local/pdfred/generatexml.py; \
-    java -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVER} -jar /usr/local/bin/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar /tmp/fred.xml; \
+    java -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar /tmp/fred.xml; \
     echo finished; \
     while true; do sleep 3600; done 
