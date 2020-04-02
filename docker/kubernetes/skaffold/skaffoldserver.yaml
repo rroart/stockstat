@@ -11,6 +11,8 @@ build:
       buildArgs:
         mywebport: "80"
         mydbserver: '{{.MYDBSERVER}}'
+        myconfig: '{{.MYCONFIG}}'
+        myenv: '{{.MYENV}}'
   - image: icore
     context: ../../..
     docker:
@@ -19,6 +21,8 @@ build:
         myserver: '{{.CORESERVER}}'
         mywebport: "80"
         mydbserver: '{{.MYDBSERVER}}'
+        myconfig: '{{.MYICONFIG}}'
+        myenv: '{{.MYIENV}}'
 deploy:
   kubectl:
     manifests:
