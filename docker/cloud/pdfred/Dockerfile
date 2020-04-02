@@ -19,7 +19,11 @@ FROM openjdk:11-jdk
 MAINTAINER <roart@nvg.ntnu.no>
 
 ARG mydbserver
+ARG mydbserverport=5432
+ARG mydbserverdb=stockstat
 ENV MYDBSERVER ${mydbserver}
+ENV MYDBSERVERPORT ${mydbserverport}
+ENV MYDBSERVERDB ${mydbserverdb}
 
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3 python3-pip
@@ -34,6 +38,6 @@ WORKDIR /usr/local/pdfred
 #ENV SPARK_MASTER_HOST 127.0.0.1
 
 CMD /usr/bin/python3 /usr/local/pdfred/generatexml.py; \
-    java -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/stockstat -jar /usr/local/bin/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar /tmp/fred.xml; \
+    java -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVER} -jar /usr/local/bin/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar /tmp/fred.xml; \
     echo finished; \
     while true; do sleep 3600; done 
