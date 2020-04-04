@@ -51,5 +51,5 @@ WORKDIR /usr/local/bin
 COPY --from=0 /usr/local/bin/stockstat-iclij-core-0.5-SNAPSHOT.jar .
 COPY --from=1 /tmp/iclij.xml /usr/local/conf/
 RUN ln -s /tmp /usr/local/logs
-CMD java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-iclij-core-0.5-SNAPSHOT.jar
+CMD java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-iclij-core-0.5-SNAPSHOT.jar --spring.profiles.active=docker
 
