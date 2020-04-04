@@ -53,5 +53,5 @@ COPY --from=0 /usr/local/bin/stockstat-core-0.5-SNAPSHOT.jar .
 COPY --from=1 /tmp/stockstat.xml /usr/local/conf/
 RUN ln -s /tmp /usr/local/logs
 USER root
-CMD SPARK_DRIVER_HOST=`hostname -i` java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-core-0.5-SNAPSHOT.jar
+CMD SPARK_DRIVER_HOST=`hostname -i` java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-core-0.5-SNAPSHOT.jar --spring.profiles.active=docker
 
