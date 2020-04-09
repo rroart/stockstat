@@ -894,16 +894,16 @@ public class ServiceUtil {
         //retLists.add(memories);
 
         List<IclijServiceList> lists = new ArrayList<>();
-        Map<String, Object> timingMap = webData.getTimingMap();
-        for (Entry<String, Object> entry : timingMap.entrySet()) {
+        Map<String, List<TimingItem>> timingMap = webData.getTimingMap();
+        for (Entry<String, List<TimingItem>> entry : timingMap.entrySet()) {
             String marketName = entry.getKey();
             List<TimingItem> list = (List<TimingItem>) entry.getValue();
             List<IclijServiceList> subLists = getServiceList(marketName, list);
             lists.addAll(subLists);
         }
 
-        Map<String, Object> timingMap2 = webData.getTimingMap2();
-        for (Entry<String, Object> entry : timingMap2.entrySet()) {
+        Map<String, List<TimingItem>> timingMap2 = webData.getTimingMap2();
+        for (Entry<String, List<TimingItem>> entry : timingMap2.entrySet()) {
             String marketName = entry.getKey();
             List<TimingItem> list = (List<TimingItem>) entry.getValue();
             List<IclijServiceList> subLists = getServiceList(marketName + " sell", list);

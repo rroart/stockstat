@@ -450,7 +450,7 @@ public abstract class MarketAction extends Action {
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
         myData.setProfitData(profitdata);
 
-        Map<String, Object> timingMap = new HashMap<>();
+        Map<String, List<TimingItem>> timingMap = new HashMap<>();
         timingMap.put(market.getConfig().getMarket(), param.getTimings());
         if (marketTime.buy == null || marketTime.buy) {
             myData.setTimingMap(timingMap);

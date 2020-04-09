@@ -10,7 +10,7 @@ public class WebDataJson {
     
     private List<IncDecItem> decs;
     
-    private Map<String, Object> timingMap;
+    private Map<String, List<TimingItem>> timingMap;
     
     private Map<String, Object> updateMap;
     
@@ -42,11 +42,11 @@ public class WebDataJson {
         this.decs = decs;
     }
 
-    public Map<String, Object> getTimingMap() {
+    public Map<String, List<TimingItem>> getTimingMap() {
         return timingMap;
     }
 
-    public void setTimingMap(Map<String, Object> timingMap) {
+    public void setTimingMap(Map<String, List<TimingItem>> timingMap) {
         this.timingMap = timingMap;
     }
 

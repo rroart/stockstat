@@ -18,9 +18,9 @@ public class WebData {
     
     private Map<String, Object> updateMap2;
     
-    private Map<String, Object> timingMap;
+    private Map<String, List<TimingItem>> timingMap;
     
-    private Map<String, Object> timingMap2;
+    private Map<String, List<TimingItem>> timingMap2;
     
     public WebData() {
         super();
@@ -74,19 +74,19 @@ public class WebData {
         this.updateMap2 = updateMap2;
     }
 
-    public Map<String, Object> getTimingMap() {
+    public Map<String, List<TimingItem>> getTimingMap() {
         return timingMap;
     }
 
-    public void setTimingMap(Map<String, Object> timingMap) {
+    public void setTimingMap(Map<String, List<TimingItem>> timingMap) {
         this.timingMap = timingMap;
     }
 
-    public Map<String, Object> getTimingMap2() {
+    public Map<String, List<TimingItem>> getTimingMap2() {
         return timingMap2;
     }
 
-    public void setTimingMap2(Map<String, Object> timingMap2) {
+    public void setTimingMap2(Map<String, List<TimingItem>> timingMap2) {
         this.timingMap2 = timingMap2;
     }
         
