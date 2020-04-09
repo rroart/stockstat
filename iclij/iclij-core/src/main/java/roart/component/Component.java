@@ -236,7 +236,9 @@ public abstract class Component {
         timing.setParameters(JsonUtil.convert(parameters));
         timing.setDescription(description);
         try {
-            timing.save();
+            if (true || param.isDoSave()) {
+                timing.save();
+            }
             return timing;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

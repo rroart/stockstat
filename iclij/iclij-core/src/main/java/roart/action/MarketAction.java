@@ -116,7 +116,7 @@ public abstract class MarketAction extends Action {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<Market> markets = new MarketUtil().getMarkets((((MarketAction) parent).isDataset()));
+        List<Market> markets = new MarketUtil().getMarkets(actionData.isDataset());
         ComponentData param = null;
         try {
             param = ComponentData.getParam(input, 0);
