@@ -52,16 +52,6 @@ public class DatasetComponent extends ComponentML {
     }
 
     @Override
-    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
-        return null;
-    }
-
-    @Override
-    public String getLocalMLConfig(ComponentData componentdata) {
-        return null;
-    }
-
-    @Override
     public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
         return null;
     }
@@ -83,11 +73,6 @@ public class DatasetComponent extends ComponentML {
     @Override
     protected List<String> getConfList() {
         return null;
-    }
-
-    @Override
-    public int getPriority(IclijConfig srv) {
-        return 0;
     }
 
     @Override

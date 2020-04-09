@@ -6,37 +6,49 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.action.Action;
-import roart.action.ServiceAction;
 import roart.common.pipeline.PipelineConstants;
 
-public abstract class ComponentFactory {
+public class ComponentFactory {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public abstract Component factory(String component);
-    
-    @Deprecated
-    public ServiceAction factory(String market, String component) {
-        ServiceAction serviceAction = null;
+    public Component factory(String component) {
         switch (component) {
         case PipelineConstants.AGGREGATORRECOMMENDERINDICATOR:
-            serviceAction = new ServiceAction(market, ServiceAction.Task.RECOMMENDER);
-            break;
+            return new ComponentRecommender();
         case PipelineConstants.PREDICTOR:
-            serviceAction = new ServiceAction(market, ServiceAction.Task.PREDICTOR);
-            break;
+            return new ComponentPredictor();
         case PipelineConstants.MLMACD:
-            serviceAction = new ServiceAction(market, ServiceAction.Task.MLMACD);
-            break;
+            return new ComponentMLMACD();
+        case PipelineConstants.MLRSI:
+            return new ComponentMLRSI();
+        case PipelineConstants.MLATR:
+            return new ComponentMLATR();
+        case PipelineConstants.MLCCI:
+            return new ComponentMLCCI();
+        case PipelineConstants.MLSTOCH:
+            return new ComponentMLSTOCH();
+        case PipelineConstants.MLMULTI:
+            return new ComponentMLMulti();
         case PipelineConstants.MLINDICATOR:
-            serviceAction = new ServiceAction(market, ServiceAction.Task.MLINDICATOR);
-            break;
+            return new ComponentMLIndicator();
         default:
-            log.error("Non-existing component");
-        }
-        return serviceAction;
+            return null;
+        }        
     }
 
-    public abstract List<Component> getAllComponents();
-    
+    public List<Component> getAllComponents() {
+        List<Component> list = new ArrayList<>();
+        list.add(new ComponentRecommender());
+        list.add(new ComponentPredictor());
+        list.add(new ComponentMLMACD());
+        list.add(new ComponentMLRSI());
+        list.add(new ComponentMLATR());
+        list.add(new ComponentMLCCI());
+        list.add(new ComponentMLSTOCH());
+        list.add(new ComponentMLMulti());
+        list.add(new ComponentMLIndicator());
+
+        return list;
+    }
+
 }

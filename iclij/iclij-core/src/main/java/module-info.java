@@ -17,7 +17,6 @@ module iclij.core {
     requires common.service;
     requires common.util;
     requires commons;
-    requires commons.configuration2;
     requires commons.math3;
     requires deductive;
     requires guava;
@@ -25,6 +24,7 @@ module iclij.core {
     requires iclij.common.constants;
     requires iclij.common.model;
     requires iclij.common.service;
+    requires iclij.common.util;
     requires java.xml;
     requires javax.servlet.api;
     requires math;

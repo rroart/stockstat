@@ -9,19 +9,23 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 
 public class ProfitData {
-    ProfitInputData inputdata;
+    private ProfitInputData inputdata;
     
-    MyMyConfig conf;
+    private MyMyConfig conf;
 
-    List<Integer> positions;
+    private List<Integer> positions;
     
-    Map<String, IncDecItem> buys = new HashMap<>();
+    private Map<String, IncDecItem> buys = new HashMap<>();
     
-    Map<String, IncDecItem> sells = new HashMap<>();
+    private Map<String, IncDecItem> sells = new HashMap<>();
     
-    Map<Object[], Double> confMap;
+    private Map<Object[], Double> confMap;
     
-    Map<Object[], List<MemoryItem>> listMap;
+    private Map<Object[], List<MemoryItem>> listMap;
+    
+    public ProfitData() {
+        super();
+    }
     
     public ProfitInputData getInputdata() {
         return inputdata;

@@ -2,7 +2,7 @@ package roart.action;
 
 import org.junit.Test;
 
-import roart.config.IclijXMLConfig;
+import roart.iclij.config.IclijXMLConfig;
 
 public class UpdateDBActionTest {
     

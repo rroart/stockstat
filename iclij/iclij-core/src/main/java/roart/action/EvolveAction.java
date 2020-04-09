@@ -5,19 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.config.ConfigConstants;
 import roart.component.Component;
-import roart.component.ComponentFactory;
-import roart.component.EvolveComponentFactory;
 import roart.component.model.ComponentData;
-import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -25,13 +21,16 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
-import roart.iclij.config.IclijConfig;
+import roart.iclij.model.action.EvolveActionData;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
-import roart.util.ServiceUtil;
 
 public class EvolveAction extends MarketAction {
 
+    public EvolveAction() {
+        setActionData(new EvolveActionData());
+    }
+    
     @Override
     protected ProfitInputData filterMemoryListMapsWithConfidence(Market market,
             Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
@@ -121,27 +120,6 @@ public class EvolveAction extends MarketAction {
     }
 
     @Override
-    public String getName() {
-        return IclijConstants.EVOLVE;
-    }
-
-    @Override
-    protected List<String> getProfitComponents(IclijConfig config, boolean wantThree) {
-        return ServiceUtil.getEvolveComponents(config, wantThree);
-    }
-
-    @Override
-    public Short getTime(Market market) {
-        return market.getConfig().getEvolvetime();
-    }
-
-    @Override
-    public Boolean[] getBooleans() {
-        //return new Boolean[] { false, true };
-        return new Boolean[] { null };
-    }
-
-    @Override
     protected boolean getEvolve(Component component, ComponentData param) {
         return true;
     }
@@ -164,11 +142,6 @@ public class EvolveAction extends MarketAction {
     }
 
     @Override
-    public ComponentFactory getComponentFactory() {
-        return new EvolveComponentFactory();
-    }
-
-    @Override
     public int getPriority(IclijConfig srv) {
         return getPriority(srv, IclijConfigConstants.EVOLVE);
     }
@@ -178,9 +151,5 @@ public class EvolveAction extends MarketAction {
         return conf.getEvolveFuturedays();
     }
 
-    @Override
-    public String getThreshold(IclijConfig conf) {
-        return conf.getEvolveThreshold();
-    }
 
 }

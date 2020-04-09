@@ -14,14 +14,15 @@ import roart.common.constants.Constants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.RecommenderData;
-import roart.config.IclijXMLConfig;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.util.MiscUtil;
 import roart.result.model.ResultItem;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
@@ -51,7 +52,7 @@ public abstract class ComponentNoML extends Component {
         Map<String, Object> map = new HashMap<>();
         String marketName = market.getConfig().getMarket();
         String component = getPipeline();
-        Map<String, Object> configMap  = ServiceUtil.loadConfig(param, market, marketName, param.getAction(), component, false, buy, subcomponent, action, parameters);
+        Map<String, Object> configMap  = new MiscUtil().loadConfig(param.getService(), param.getInput(), market, marketName, param.getAction(), component, false, buy, subcomponent, action.getActionData(), parameters);
         map.putAll(configMap);
         return map;
     }
@@ -87,11 +88,6 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
-        return null;
-    }
-    
-    @Override
     protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
         /*
         ObjectMapper mapper = new ObjectMapper();
@@ -121,13 +117,6 @@ public abstract class ComponentNoML extends Component {
     @Override
     public List<String>[] enableDisable(ComponentData param, List<Integer> positions) {
         return new ArrayList[] { new ArrayList<String>(), new ArrayList<String>() };
-    }
-
-    @Override
-    public List<String> getSubComponents(Market market, ComponentData componentData, String mlmarket) {
-        List<String> list = new ArrayList<>();
-        list.add("");
-        return list;
     }
 
     @Override

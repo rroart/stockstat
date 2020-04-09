@@ -47,6 +47,17 @@ public class EurekaUtil {
         String url = "http://" + getIHostname() + ":" + getIPort() + "/" + path;
         return sendMeInner(myclass, param, url, objectMapper);
     }
+    
+    public static <T> T sendAMe(Class<T> myclass, Object param, String path) {
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        String url = "http://" + getAHostname() + ":" + getAPort() + "/" + path;
+        return sendMeInner(myclass, param, url, objectMapper);
+    }
+    
+    public static <T> T sendAMe(Class<T> myclass, Object param, String path, ObjectMapper objectMapper) {
+        String url = "http://" + getAHostname() + ":" + getAPort() + "/" + path;
+        return sendMeInner(myclass, param, url, objectMapper);
+    }
     public static <T> T sendMe(Class<T> myclass, Object param, String url) {
         return sendMeInner(myclass, param, url, null);
     }
@@ -75,6 +86,28 @@ public class EurekaUtil {
         T result = regr.getBody();
         log.info("resultme " + regr.getHeaders().size() + " " + regr.toString());
         return result;
+    }
+
+    public static String getAHostname() {
+        String hostname = System.getenv(EurekaConstants.MYASERVER.toUpperCase());
+        if (hostname == null) {
+            hostname = System.getProperty(EurekaConstants.MYASERVER);
+        }
+        if (hostname == null) {
+            hostname = EurekaConstants.LOCALHOST;
+        }
+        return hostname;
+    }
+    
+    public static String getAPort() {
+        String port = System.getenv(EurekaConstants.MYAPORT.toUpperCase());
+        if (port == null) {
+            port = System.getProperty(EurekaConstants.MYAPORT);
+        }
+        if (port == null) {
+            port = EurekaConstants.HTTP;
+        }
+        return port;
     }
 
     public static String getIHostname() {

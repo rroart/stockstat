@@ -10,33 +10,32 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.component.Component;
-import roart.component.ComponentFactory;
-import roart.component.ImproveProfitComponentFactory;
 import roart.component.model.ComponentData;
-import roart.config.IclijXMLConfig;
-import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
-import roart.iclij.config.IclijConfig;
+import roart.iclij.model.action.ImproveProfitActionData;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
-import roart.util.ServiceUtil;
 
 public class ImproveProfitAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
+    
+    public ImproveProfitAction() {
+        setActionData(new ImproveProfitActionData());
+    }
     
     private List<Market> getMarkets(IclijConfig instance) {
         List<Market> markets = null;
@@ -142,26 +141,6 @@ public class ImproveProfitAction extends MarketAction {
         return null;
     }
     
-    @Override
-    public String getName() {
-        return IclijConstants.IMPROVEPROFIT;
-    }
-    
-    @Override
-    protected List<String> getProfitComponents(IclijConfig config, boolean wantThree) {
-        return ServiceUtil.getImproveProfitComponents(config, wantThree);
-    }
-
-    @Override
-    public Short getTime(Market market) {
-        return market.getConfig().getImprovetime();
-    }
-    
-    @Override
-    public Boolean[] getBooleans() {
-        return new Boolean[] { false, true };
-    }
-    
     @Override 
     protected boolean getEvolve(Component component, ComponentData param) {
         return true;
@@ -184,11 +163,6 @@ public class ImproveProfitAction extends MarketAction {
     }
     
     @Override
-    public ComponentFactory getComponentFactory() {
-        return new ImproveProfitComponentFactory();
-    }
-
-    @Override
     public int getPriority(IclijConfig srv) {
         return getPriority(srv, IclijConfigConstants.IMPROVEPROFIT);
     }
@@ -196,11 +170,6 @@ public class ImproveProfitAction extends MarketAction {
     @Override
     protected String getFuturedays0(IclijConfig conf) {
         return conf.getFindProfitFuturedays();
-    }
-
-    @Override
-    public String getThreshold(IclijConfig conf) {
-        return conf.getFindProfitThreshold();
     }
 
 }

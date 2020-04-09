@@ -9,8 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,41 +17,26 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
-import roart.iclij.config.EvolveMLConfig;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.config.MLConfigs;
-import roart.iclij.config.Market;
-import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.RecommendConstants;
-import roart.common.ml.TensorflowPredictorLSTMConfig;
+import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
-import roart.component.model.ComponentInput;
-import roart.component.model.PredictorData;
 import roart.component.model.ComponentData;
 import roart.component.model.RecommenderData;
-import roart.common.pipeline.PipelineConstants;
-import roart.config.IclijXMLConfig;
-import roart.evolution.chromosome.impl.ConfigMapChromosome;
-import roart.evolution.chromosome.impl.MLMACDChromosome;
 import roart.evolution.chromosome.impl.RecommenderChromosome;
-import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.AbstractScore;
 import roart.evolution.fitness.impl.ProportionScore;
-import roart.executor.MyExecutors;
 import roart.gene.impl.ConfigMapGene;
+import roart.iclij.config.MLConfigs;
+import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.service.ControlService;
-import roart.service.RecommenderService;
+import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
-import roart.util.ServiceUtil;
 
 public class ComponentRecommender extends ComponentNoML {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -337,7 +320,7 @@ public class ComponentRecommender extends ComponentNoML {
 	}
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(componentparam, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action, parameters);
+            map = new MiscUtil().loadConfig(componentparam.getService(), componentparam.getInput(), market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action.getActionData(), parameters);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -805,44 +788,6 @@ public class ComponentRecommender extends ComponentNoML {
         }
     }
     
-    class RecommenderCallable implements Callable {
-        private ControlService srv;
-       
-        private ComponentInput componentInput;
-        
-        private List<String> disableList;
-        
-        public RecommenderCallable(ControlService srv, ComponentInput componentInput, List<String> aList) {
-            super();
-            this.srv = srv;
-            this.componentInput = componentInput;
-            this.disableList = aList;
-        }
-
-        public ControlService getSrv() {
-            return srv;
-        }
-
-        public void setSrv(ControlService srv) {
-            this.srv = srv;
-        }
-
-        public List<String> getDisableList() {
-            return disableList;
-        }
-
-        public void setDisableList(List<String> disableList) {
-            this.disableList = disableList;
-        }
-
-        @Override
-        public List<MemoryItem> call() throws Exception {
-            
-             return new RecommenderService().doRecommender(componentInput, disableList);
-        }
-
-    }
-    
     class BuySellList implements Comparable<Double> {
         String id;
         Double change;
@@ -855,16 +800,6 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata, String mlmarket) {
-        return null;
-    }
-
-    @Override
-    public String getLocalMLConfig(ComponentData componentdata) {
-        return null;
-    }
-
-    @Override
     public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
         return null;
     }
@@ -872,11 +807,6 @@ public class ComponentRecommender extends ComponentNoML {
     @Override
     public String getPipeline() {
         return PipelineConstants.AGGREGATORRECOMMENDERINDICATOR;
-    }
-
-    @Override
-    public int getPriority(IclijConfig srv) {
-        return 0;
     }
 
     @Override

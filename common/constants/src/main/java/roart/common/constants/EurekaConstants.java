@@ -2,9 +2,11 @@ package roart.common.constants;
 
 public class EurekaConstants {
     public static final String MYSERVER = "myserver";
-    public static final String MYPORT = "myport";
+    public static final String MYASERVER = "myaserver";
     public static final String MYISERVER = "myiserver";
+    public static final String MYPORT = "myport";
     public static final String MYIPORT = "myiport";
+    public static final String MYAPORT = "myaport";
     public static final String LOCALHOST = "localhost";
     public static final String HTTP = "80";
     public static final String STOCKSTAT = "STOCKSTAT";
@@ -31,4 +33,5 @@ public class EurekaConstants {
     public static final String GETCONTENTDATASET = "getcontentdataset";
     public static final String GETCONTENTCROSSTEST = "getcontentcrosstest";
     public static final String GETCONTENTFILTER = "getcontentfilter";
+    public static final String ACTION = "action";
 }

@@ -31,6 +31,10 @@ public class IncDecItem {
     // not saved
     private String verificationComment;
     
+    public IncDecItem() {
+        super();
+    }
+    
     public LocalDate getRecord() {
         return record;
     }

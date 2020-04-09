@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -14,45 +13,31 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
+import roart.common.pipeline.PipelineConstants;
+import roart.common.util.JsonUtil;
+import roart.common.util.TimeUtil;
+import roart.component.model.ComponentData;
+import roart.component.model.ComponentMLData;
+import roart.component.model.PredictorData;
+import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.PredictorChromosome;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
-import roart.common.config.MyMyConfig;
-import roart.common.constants.Constants;
-import roart.common.ml.TensorflowPredictorLSTMConfig;
-import roart.common.pipeline.PipelineConstants;
-import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
-import roart.component.model.ComponentInput;
-import roart.component.model.ComponentMLData;
-import roart.component.model.ComponentData;
-import roart.component.model.PredictorData;
-import roart.evolution.algorithm.impl.OrdinaryEvolution;
-import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.chromosome.impl.ConfigMapChromosome;
-import roart.evolution.chromosome.impl.MLMACDChromosome;
-import roart.evolution.chromosome.impl.PredictorChromosome;
-import roart.evolution.config.EvolutionConfig;
-import roart.evolution.species.Individual;
-import roart.gene.impl.ConfigMapGene;
-import roart.gene.ml.impl.TensorflowPredictorLSTMConfigGene;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.service.ControlService;
+import roart.iclij.util.MLUtil;
 import roart.result.model.ResultMeta;
-import roart.service.ControlService;
-import roart.service.MLService;
-import roart.service.PredictorService;
 import roart.service.model.ProfitData;
-import roart.util.ServiceUtil;
 
-public abstract class ComponentPredictor extends ComponentML {
+public class ComponentPredictor extends ComponentML {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
@@ -339,17 +324,6 @@ public abstract class ComponentPredictor extends ComponentML {
     }
 
     @Override
-    public EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata) {
-        String localEvolve = componentdata.getInput().getConfig().getFindProfitPredictorEvolutionConfig();
-        return JsonUtil.convert(localEvolve, EvolutionConfig.class);
-    }
-
-    @Override
-    public String getLocalMLConfig(ComponentData componentdata) {
-        return componentdata.getInput().getConfig().getFindProfitPredictorMLConfig();
-    }
-
-    @Override
     public MLConfigs getOverrideMLConfig(ComponentData componentdata) {
         return getDisableNonLSTM();
     }
@@ -372,25 +346,7 @@ public abstract class ComponentPredictor extends ComponentML {
         return new ArrayList[] { new ArrayList<String>(), new ArrayList<String>() };
     }
 
-    @Override
-    public List<String> getSubComponents(Market market, ComponentData componentData, String mlmarket) {
-        List<String> subComponents = new ArrayList<>();
-        Map<String, Pair<String, String>> revMap = getMapRev();
-        Map<String, EvolveMLConfig> mlConfigs = getMLConfig(market, componentData, mlmarket);
-        for (Entry<String, EvolveMLConfig> entry : mlConfigs.entrySet()) {
-            EvolveMLConfig mlConfig = entry.getValue();
-            if (mlConfig.getEnable()) {
-                String key = entry.getKey();
-                Pair<String, String> subComponent = revMap.get(key);
-                subComponents.add(subComponent.getLeft() + " " + subComponent.getRight());
-            } else {
-                int jj = 0;
-            }
-        }
-        return subComponents;
-    }
-
-    @Override
+    //@Override
     protected Map<String, String> getMlMap() {
         Map<String, String> map = new HashMap<>();
         map.put(MLConstants.TENSORFLOW, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW);
@@ -400,59 +356,19 @@ public abstract class ComponentPredictor extends ComponentML {
 
     @Override
     protected Map<Pair<String, String>, String> getMap() {
-        Map<Pair <String, String>, String> map = new HashMap<>();
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU);
-        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP);
-        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN);
-        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM);
-        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU);
-        return map;
+        return new MLUtil().getMapPred();
     }
 
     @Override
     protected List<String> getOtherList() {
-        List<String> map = new ArrayList<>();
-        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWDNN);
-        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLIC);
-        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWMLP);
-        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN);
-        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWCNN2);
-        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWRNN);
-        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWLSTM);
-        map.add(ConfigConstants.MACHINELEARNINGTENSORFLOWGRU);
-        map.add(ConfigConstants.MACHINELEARNINGPYTORCHMLP);
-        map.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN);
-        map.add(ConfigConstants.MACHINELEARNINGPYTORCHCNN2);
-        map.add(ConfigConstants.MACHINELEARNINGPYTORCHRNN);
-        map.add(ConfigConstants.MACHINELEARNINGPYTORCHLSTM);
-        map.add(ConfigConstants.MACHINELEARNINGPYTORCHGRU);
-        return map;
+        return new MLUtil().getOtherListPred();
     }
 
     @Override
     protected Map<Pair<String, String>, String> getMapPersist() {
-        Map<Pair <String, String>, String> map = new HashMap<>();
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LIR), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRPERSIST);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLPPERSIST);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNNPERSIST);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTMPERSIST);
-        map.put(new ImmutablePair(MLConstants.TENSORFLOW, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRUPERSIST);
-        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.MLP), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLPPERSIST);
-        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.RNN), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNNPERSIST);
-        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.LSTM), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTMPERSIST);
-        map.put(new ImmutablePair(MLConstants.PYTORCH, MLConstants.GRU), ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRUPERSIST);
-        return map;
+        return new MLUtil().getMapPersistPred();
     }
 
-    @Override
-    Map<String, EvolveMLConfig> getMLConfigs(MLConfigs mlConfig) {
-        return mlConfig.getAllPredictors();
-    }
-    
     @Override
     public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
         Object[] result = new Object[3];

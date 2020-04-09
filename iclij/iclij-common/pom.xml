@@ -18,6 +18,7 @@
   <module>iclij-config</module>
   <module>iclij-model</module>
   <module>iclij-service</module>
+  <module>iclij-util</module>
 </modules>
   <build>
     <plugins>

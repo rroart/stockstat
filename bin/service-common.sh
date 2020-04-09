@@ -8,6 +8,7 @@ cd ../lib
 #java -jar stockstat-eureka-0.5-SNAPSHOT.jar 2>&1 | tee /tmp/eureka.out > /dev/null 2>&1 &
 $COMMAND "$JAVA10 $DB $COREDEBUG -jar stockstat-core-0.5-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/core$OUTNAME.out $REDIRECT" &
 $COMMAND "java $DB $ICOREDEBUG -jar stockstat-iclij-core-0.5-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclij$OUTNAME.out $REDIRECT" &
+$COMMAND "java $DB $IWEBCOREDEBUG -jar stockstat-iclij-webcore-0.5-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijwebcore$OUTNAME.out $REDIRECT" &
 $COMMAND "java -jar $IWEBDEBUG stockstat-iclij-web-0.5-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijweb$OUTNAME.out $REDIRECT" &
 $COMMAND "java -jar $WEBDEBUG stockstat-web-0.5-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/web$OUTNAME.out $REDIRECT" &
 
