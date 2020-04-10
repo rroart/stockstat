@@ -7,7 +7,6 @@
  */
 module common.model {
     exports roart.common.model;
-    exports roart.common.model.ml;
     exports roart.common.pipeline.model;
     exports roart.result.model;
     requires common.constants;
