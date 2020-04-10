@@ -24,6 +24,10 @@ def hasgpu():
     
 app = Flask(__name__)
 
+@app.route('/', methods=['GET'])
+def healthcheck():
+    return(Response())
+
 @app.route('/eval', methods=['POST'])
 def do_eval():
     return cl.do_eval(request)
