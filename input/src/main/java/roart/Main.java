@@ -606,7 +606,7 @@ public class Main {
             if (lhc == null) {
                 meta.setLhc(false);
             } else {
-                meta.setLhc(Boolean.getBoolean(reset));
+                meta.setLhc(Boolean.valueOf(lhc));
             }
 
         }
