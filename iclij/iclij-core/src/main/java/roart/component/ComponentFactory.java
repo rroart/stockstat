@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.pipeline.PipelineConstants;
+import roart.constants.IclijConstants;
 
 public class ComponentFactory {
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -31,6 +32,8 @@ public class ComponentFactory {
             return new ComponentMLMulti();
         case PipelineConstants.MLINDICATOR:
             return new ComponentMLIndicator();
+        case PipelineConstants.DATASET:
+            return new DatasetComponent();
         default:
             return null;
         }        
