@@ -31,7 +31,6 @@ import io.jenetics.engine.Codec;
 import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
 import roart.action.MarketAction;
-import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
@@ -59,8 +58,11 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
+import roart.iclij.model.config.ActionComponentConfig;
+import roart.iclij.util.MLUtil;
+import roart.iclij.util.MiscUtil;
 import roart.result.model.ResultMeta;
-import roart.service.ControlService;
+import roart.iclij.service.ControlService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtil;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
@@ -72,6 +74,8 @@ import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterMutate;
 public abstract class Component {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private ActionComponentConfig config;
+    
     /*
     private Market market;
 
@@ -86,22 +90,19 @@ public abstract class Component {
     private boolean evolve;
   */  
     
+    public ActionComponentConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(ActionComponentConfig config) {
+        this.config = config;
+    }
+
     private Map<String, Object> evolveMap = new HashMap<>();
     
     public abstract void enable(Map<String, Object> valueMap);
     
     public abstract void disable(Map<String, Object> valueMap);
-    
-    public static void disabler(Map<String, Object> valueMap) {
-        valueMap.put(ConfigConstants.AGGREGATORS, Boolean.FALSE);
-        valueMap.put(ConfigConstants.AGGREGATORSINDICATORRECOMMENDER, Boolean.FALSE);
-        valueMap.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.FALSE);
-        valueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
-        valueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
-        valueMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, Boolean.FALSE);
-        valueMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, Boolean.FALSE);
-        valueMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);
-    }
     
     public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters);
     
@@ -119,7 +120,7 @@ public abstract class Component {
             return;
         }
         Map<String, Object> valueMap = new HashMap<>();
-        Component.disabler(valueMap);
+        new MLUtil().disabler(valueMap);
         List<Component> allComponents = action.getComponentFactory().getAllComponents();
         for (Component component : allComponents) {
             component.disable(valueMap);
@@ -235,7 +236,9 @@ public abstract class Component {
         timing.setParameters(JsonUtil.convert(parameters));
         timing.setDescription(description);
         try {
-            timing.save();
+            if (true || param.isDoSave()) {
+                timing.save();
+            }
             return timing;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
@@ -247,12 +250,6 @@ public abstract class Component {
 
     public abstract EvolutionConfig getEvolutionConfig(ComponentData componentdata);
     
-    public abstract EvolutionConfig getLocalEvolutionConfig(ComponentData componentdata);
-    
-    public abstract Map<String, EvolveMLConfig> getMLConfig(Market market, ComponentData componentdata, String mlmarket);
-
-    public abstract String getLocalMLConfig(ComponentData componentdata);
-
     public abstract MLConfigs getOverrideMLConfig(ComponentData componentdata);
     
     public void set(Market market, ComponentData param, ProfitData profitdata, List<Integer> positions,
@@ -374,7 +371,7 @@ public abstract class Component {
         
         Map<String, Object> map = null;
         try {
-            map = ServiceUtil.loadConfig(param, market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action, parameters);
+            map = new MiscUtil().loadConfig(param.getService(), param.getInput(), market, market.getConfig().getMarket(), param.getAction(), getPipeline(), false, buy, subcomponent, action.getActionData(), parameters);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -405,12 +402,10 @@ public abstract class Component {
         }
     }
     
-    public abstract List<String> getSubComponents(Market market, ComponentData componentData, String mlmarket);
-
     public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) throws Exception {
         Parameters parameters = new Parameters();
         parameters.setThreshold(1.0);
-        List<String> subComponents = getSubComponents(market, param, null);
+        List<String> subComponents = new MLUtil().getSubComponents(market, param.getInput().getConfig(), null, getConfig());
         for(String subComponent : subComponents) {
             ComponentData componentData = handle(action, market, param, profitdata, new ArrayList<>(), false, new HashMap<>(), subComponent, null, parameters);
             calculateMemory(componentData, parameters);
@@ -463,13 +458,6 @@ public abstract class Component {
         }
     }
 
-    public abstract int getPriority(IclijConfig conf);
-
-    public int getPriority(IclijConfig conf, String key) {
-        Integer value = (Integer) conf.getConfigValueMap().get(key + "[@priority]");
-        return value != null ? value : 0;
-    }
-    
     public abstract String getThreshold();
     
     public abstract String getFuturedays();

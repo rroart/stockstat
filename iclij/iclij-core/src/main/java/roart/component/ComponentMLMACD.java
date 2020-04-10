@@ -1,59 +1,27 @@
 package roart.component;
 
-import java.text.ParseException;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import roart.action.FindProfitAction;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
-import roart.iclij.config.EvolveMLConfig;
+import roart.common.config.MyMyConfig;
+import roart.common.pipeline.PipelineConstants;
+import roart.component.model.ComponentData;
+import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.MLMACDChromosome;
+import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijConfigConstants;
-import roart.iclij.config.MLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
-import roart.common.config.MyMyConfig;
-import roart.common.constants.Constants;
-import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
-import roart.component.model.ComponentData;
-import roart.component.model.ComponentInput;
-import roart.component.model.MLIndicatorData;
-import roart.component.model.MLMACDData;
-import roart.common.pipeline.PipelineConstants;
-import roart.config.IclijXMLConfig;
-import roart.evolution.algorithm.impl.OrdinaryEvolution;
-import roart.evolution.chromosome.impl.ConfigMapChromosome;
-import roart.evolution.chromosome.impl.MLCCIChromosome;
-import roart.evolution.chromosome.impl.MLMACDChromosome;
-import roart.evolution.config.EvolutionConfig;
-import roart.evolution.species.Individual;
-import roart.gene.AbstractGene;
-import roart.gene.impl.ConfigMapGene;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.result.model.ResultMeta;
-import roart.service.ControlService;
-import roart.service.MLService;
 import roart.service.model.ProfitData;
-import roart.util.ServiceUtil;
-import roart.util.ServiceUtilConstants;
 
-public abstract class ComponentMLMACD extends ComponentMLAggregator {
+public class ComponentMLMACD extends ComponentMLAggregator {
     private Logger log = LoggerFactory.getLogger(ComponentMLMACD.class);
     @Override
     public void enable(Map<String, Object> valueMap) {

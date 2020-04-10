@@ -9,9 +9,9 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 
 public class ProfitInputData {
-    Map<String, Map<String, Object>> resultMaps;
+    private  Map<String, Map<String, Object>> resultMaps;
     
-    List<Integer> positions;
+    private List<Integer> positions;
     
     private Map<Pair<String, Integer>, Double> confMap;
     
@@ -25,8 +25,12 @@ public class ProfitInputData {
     
     private Map<Pair<String, Integer>, List<MemoryItem>> belowListMap;
     
-    Map<String, String> nameMap;
+    private Map<String, String> nameMap;
 
+    public ProfitInputData() {
+        super();
+    }
+    
     public Map<String, Map<String, Object>> getResultMaps() {
         return resultMaps;
     }

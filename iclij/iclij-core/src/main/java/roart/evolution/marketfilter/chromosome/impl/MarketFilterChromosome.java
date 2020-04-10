@@ -19,7 +19,6 @@ import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
 import roart.action.MarketAction.MarketComponentTime;
-import roart.action.VerifyProfit;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
@@ -34,6 +33,10 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
+import roart.iclij.util.MiscUtil;
+import roart.iclij.util.TrendUtil;
+import roart.iclij.util.VerifyProfit;
+import roart.iclij.util.VerifyProfitUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
@@ -208,18 +211,18 @@ public class MarketFilterChromosome extends AbstractChromosome {
     public double getFitness() throws JsonParseException, JsonMappingException, IOException {
         List<MemoryItem> memoryItems = null;
         WebData myData = new WebData();
-        myData.incs = new ArrayList<>();
-        myData.decs = new ArrayList<>();
-        myData.updateMap = new HashMap<>();
-        myData.memoryItems = new ArrayList<>();
-        myData.updateMap2 = new HashMap<>();
+        myData.setIncs(new ArrayList<>());
+        myData.setDecs(new ArrayList<>());
+        myData.setUpdateMap(new HashMap<>());
+        myData.setMemoryItems(new ArrayList<>());
+        myData.setUpdateMap2(new HashMap<>());
         //myData.profitData = new ProfitData();
-        myData.timingMap = new HashMap<>();
+        myData.setTimingMap(new HashMap<>());
         int b = param.getService().conf.hashCode();
         boolean c = param.getService().conf.wantIndicatorRecommender();
         List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
         List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
-        List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
+        List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
         incProp = extracted(myData, listInc, listDec);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
@@ -279,7 +282,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
             log.error(Constants.EXCEPTION, e);
         }
         double fitness = 0;
-        memoryItems = myData.memoryItems;
+        memoryItems = myData.getMemoryItems();
         for (MemoryItem memoryItem : memoryItems) {
             Double value = memoryItem.getConfidence();
             if (value == null) {
@@ -305,11 +308,11 @@ public class MarketFilterChromosome extends AbstractChromosome {
         Trend incProp = null;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
-            boolean evolvefirst = ServiceUtil.getEvolve(verificationdays, param);
+            boolean evolvefirst = new MiscUtil().getEvolve(verificationdays, param.getInput());
             Component component =  action.getComponentFactory().factory(componentName);
             boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
             //ProfitData profitdata = new ProfitData();
-            myData.profitData = profitdata;
+            myData.setProfitData(profitdata);
             boolean myevolve = component.wantImproveEvolve();
             if (!param.getService().conf.wantIndicatorRecommender()) {
                 int jj = 0;
@@ -338,20 +341,20 @@ public class MarketFilterChromosome extends AbstractChromosome {
             market.setFilter(gene.getMarketfilter());
             ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
             //componentData.setUsedsec(time0);
-            myData.updateMap.putAll(componentData.getUpdateMap());
+            myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
             try {
                 memories = component.calculateMemory(componentData, parameters);
                 if (memories == null || memories.isEmpty()) {
                     int jj = 0;
                 }
-                myData.memoryItems.addAll(memories);
+                myData.getMemoryItems().addAll(memories);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
 
             Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
-            myData.memoryItems.forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
+            myData.getMemoryItems().forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
             ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap);        
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
@@ -388,7 +391,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }            
-                new FindProfitAction().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold());
+                new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold());
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

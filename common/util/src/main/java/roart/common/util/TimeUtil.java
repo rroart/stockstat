@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -77,4 +78,31 @@ public class TimeUtil {
         return dateIndex;
     }
 
+    public List<String> setDates(String date, List<String> stockdates, int offset, int loopoffset, int futuredays) {
+        if (date != null) {
+            int index = stockdates.indexOf(date);
+            if (index < 0) {
+                date = null;
+            }
+        }
+        if (date == null) {
+            if (stockdates.isEmpty()) {
+                int jj = 0;
+            }
+            date = stockdates.get(stockdates.size() - 1);
+        }
+        int dateoffset = 0;
+        if (date != null) {
+            int index = stockdates.indexOf(date);
+            if (index >= 0) {
+                dateoffset = stockdates.size() - 1 - index;
+            }
+        }
+        String baseDateStr = stockdates.get(stockdates.size() - 1 - futuredays - dateoffset - offset - loopoffset);
+        String futureDateStr = stockdates.get(stockdates.size() - 1 - dateoffset - offset - loopoffset);
+        List<String> list = new ArrayList<>();
+        list.add(futureDateStr);
+        list.add(baseDateStr);
+        return list;
+    }
 }

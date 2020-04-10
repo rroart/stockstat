@@ -19,6 +19,7 @@
   <module>iclij-core</module>
   <module>iclij-evolution</module>
   <module>iclij-web</module>
+  <module>iclij-webcore</module>
   <module>iclij-webr</module>
 </modules>
   <build>

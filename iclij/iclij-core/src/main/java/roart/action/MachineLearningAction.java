@@ -5,25 +5,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
-import roart.common.constants.Constants;
-import roart.common.pipeline.PipelineConstants;
 import roart.component.Component;
-import roart.component.ComponentFactory;
-import roart.component.MachineLearningComponentFactory;
 import roart.component.model.ComponentData;
-import roart.component.model.MLIndicatorData;
-import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -31,17 +23,18 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
-import roart.result.model.ResultMeta;
-import roart.iclij.config.IclijConfig;
+import roart.iclij.model.action.MachineLearningActionData;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
-import roart.util.ServiceUtil;
-import roart.util.ServiceUtilConstants;
 
 public class MachineLearningAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    public MachineLearningAction() {
+        setActionData(new MachineLearningActionData());
+    }
+    
     @Override
     protected ProfitInputData filterMemoryListMapsWithConfidence(Market market,
             Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
@@ -125,26 +118,6 @@ public class MachineLearningAction extends MarketAction {
     }
 
     @Override
-    public String getName() {
-        return IclijConstants.MACHINELEARNING;
-    }
-
-    @Override
-    protected List<String> getProfitComponents(IclijConfig config, boolean wantThree) {
-        return ServiceUtil.getMachineLearningComponents(config, wantThree);
-    }
-
-    @Override
-    public Short getTime(Market market) {
-        return market.getConfig().getPersisttime();
-    }
-
-    @Override
-    public Boolean[] getBooleans() {
-        return new Boolean[] { null };
-    }
-
-    @Override
     protected boolean getEvolve(Component component, ComponentData param) {
         return component.wantEvolve(param.getInput().getConfig());
     }
@@ -166,11 +139,6 @@ public class MachineLearningAction extends MarketAction {
     }
     
     @Override
-    public ComponentFactory getComponentFactory() {
-        return new MachineLearningComponentFactory();
-    }
-
-    @Override
     public int getPriority(IclijConfig srv) {
         return getPriority(srv, IclijConfigConstants.MACHINELEARNING);
     }
@@ -178,11 +146,6 @@ public class MachineLearningAction extends MarketAction {
     @Override
     protected String getFuturedays0(IclijConfig conf) {
         return conf.getMachineLearningFuturedays();
-    }
-
-    @Override
-    public String getThreshold(IclijConfig conf) {
-        return conf.getMachineLearningThreshold();
     }
 
 }

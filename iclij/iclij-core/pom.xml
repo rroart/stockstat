@@ -169,6 +169,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-common-util</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-iclij-evolution-marketfilter</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
@@ -180,11 +185,6 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-db</artifactId>
-      <version>${stockstat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>roart</groupId>
-      <artifactId>stockstat-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
@@ -209,13 +209,13 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-myexecutor</artifactId>
+      <artifactId>stockstat-iclij-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-configuration2</artifactId>
-      <version>${commons.version}</version>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-myexecutor</artifactId>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-beanutils</groupId>

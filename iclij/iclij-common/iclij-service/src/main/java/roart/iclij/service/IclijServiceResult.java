@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
+import roart.iclij.model.WebData;
+import roart.iclij.model.WebDataJson;
 
 public class IclijServiceResult {
     private List<String> markets;
@@ -17,6 +19,10 @@ public class IclijServiceResult {
     private List<IclijServiceList> lists;
 
     private IclijConfig iclijConfig;
+
+    //private WebData webdata;
+
+    private WebDataJson webdatajson;
 
     public IclijServiceResult() {
         super();
@@ -69,5 +75,21 @@ public class IclijServiceResult {
     public void setIclijConfig(IclijConfig iclijConfig) {
         this.iclijConfig = iclijConfig;
     }
-    
+/*
+    public WebData getWebdata() {
+        return webdata;
+    }
+
+    public void setWebdata(WebData webdata) {
+        this.webdata = webdata;
+    }
+    */
+
+    public WebDataJson getWebdatajson() {
+        return webdatajson;
+    }
+
+    public void setWebdatajson(WebDataJson webdatajson) {
+        this.webdatajson = webdatajson;
+    }
 }

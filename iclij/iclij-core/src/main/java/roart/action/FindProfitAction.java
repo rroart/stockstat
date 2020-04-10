@@ -8,26 +8,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.action.MarketAction.MarketComponentTime;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
-import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
-import roart.component.ComponentFactory;
-import roart.component.FindProfitComponentFactory;
 import roart.component.model.ComponentData;
-import roart.component.model.ComponentInput;
-import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -35,18 +26,20 @@ import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
-import roart.iclij.config.IclijConfig;
-import roart.service.ControlService;
+import roart.iclij.model.action.FindProfitActionData;
+import roart.iclij.model.component.ComponentInput;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
-import roart.util.ServiceUtil;
 
 public class FindProfitAction extends MarketAction {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-
+    
+    public FindProfitAction() {
+        setActionData(new FindProfitActionData());
+    }
+    
     //@Override
     public List<MemoryItem> getMarketMemory2(Market market) {
         return new ArrayList<>();
@@ -231,8 +224,8 @@ public class FindProfitAction extends MarketAction {
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           
         }
-        myData.incs.addAll(profitdata.getBuys().values());
-        myData.decs.addAll(profitdata.getSells().values());
+        myData.getIncs().addAll(profitdata.getBuys().values());
+        myData.getDecs().addAll(profitdata.getSells().values());
     }
 
     public List<MemoryItem> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, MarketComponentTime marketTime, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap) {
@@ -265,7 +258,7 @@ public class FindProfitAction extends MarketAction {
             ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, aMap, marketTime.subcomponent, null, marketTime.parameters);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
-            myData.updateMap.putAll(componentData.getUpdateMap());
+            myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
             try {
                 memories = component.calculateMemory(componentData, marketTime.parameters);
@@ -275,94 +268,6 @@ public class FindProfitAction extends MarketAction {
             }
          }
         return allMemories;
-    }
-
-    public void getVerifyProfit(int days, LocalDate date, ControlService srv,
-            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold, List<String> stockDates, int loopoffset) {
-        log.info("Verify compare date {} with {}", oldDate, date);
-        LocalDate futureDate = date;
-        srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        Component.disabler(srv.conf.getConfigValueMap());
-        Map<String, Map<String, Object>> resultMaps = srv.getContent();
-        Set<String> i = resultMaps.keySet();
-        //Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        //Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
-        Integer category = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
-        //categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("Price").get(PipelineConstants.LIST);
-        //Set<String> j2 = resultMaps.get("" + category).keySet();
-    
-        VerifyProfit verify = new VerifyProfit();
-        verify.doVerify(listInc, days, true, categoryValueMap, oldDate, startoffset, threshold, stockDates, loopoffset);
-        verify.doVerify(listDec, days, false, categoryValueMap, oldDate, startoffset, threshold, stockDates, loopoffset);
-        verify.doVerify(listIncDec, days, false, categoryValueMap, oldDate, startoffset, threshold, stockDates, loopoffset);
-        //return verify.getTrend(days, categoryValueMap);
-    }
-
-    public void getVerifyProfit(int days, LocalDate date, ControlService srv,
-            LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold) {
-        log.info("Verify compare date {} with {}", oldDate, date);
-        LocalDate futureDate = date;
-        srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        Component.disabler(srv.conf.getConfigValueMap());
-        Map<String, Map<String, Object>> resultMaps = srv.getContent();
-        Set<String> i = resultMaps.keySet();
-        //Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        //Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
-        Integer category = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
-        //categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("Price").get(PipelineConstants.LIST);
-        //Set<String> j2 = resultMaps.get("" + category).keySet();
-    
-        VerifyProfit verify = new VerifyProfit();
-        verify.doVerify(listInc, days, true, categoryValueMap, oldDate, startoffset, threshold);
-        verify.doVerify(listDec, days, false, categoryValueMap, oldDate, startoffset, threshold);
-        verify.doVerify(listIncDec, days, false, categoryValueMap, oldDate, startoffset, threshold);
-        //return verify.getTrend(days, categoryValueMap);
-    }
-
-    public Trend getTrend(int days, LocalDate date, ControlService srv, int startoffset) {
-        //log.info("Verify compare date {} with {}", oldDate, date);
-        LocalDate futureDate = date;
-        srv.conf.setdate(TimeUtil.convertDate(futureDate));
-        Component.disabler(srv.conf.getConfigValueMap());
-        Map<String, Map<String, Object>> resultMaps = srv.getContent();
-        //Set<String> i = resultMaps.keySet();
-        //Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        //Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
-        Integer category = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
-        //categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("Price").get(PipelineConstants.LIST);
-        //Set<String> j2 = resultMaps.get("" + category).keySet();
-    
-        VerifyProfit verify = new VerifyProfit();
-        //verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
-        //verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
-        return verify.getTrend(days, categoryValueMap, startoffset);
-    }
-
-    public Trend getTrend(int days, LocalDate date, ControlService srv, int startoffset, List<String> stockDates, int loopoffset) {
-        //log.info("Verify compare date {} with {}", oldDate, date);
-        //LocalDate futureDate = date;
-        try {
-            srv.conf.setdate(TimeUtil.convertDate(TimeUtil.convertDate(stockDates.get(stockDates.size() - 1))));
-        } catch (ParseException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        Component.disabler(srv.conf.getConfigValueMap());
-        Map<String, Map<String, Object>> resultMaps = srv.getContent();
-        //Set<String> i = resultMaps.keySet();
-        //Map maps = (Map) resultMaps.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        //Integer category = (Integer) maps.get(PipelineConstants.CATEGORY);
-        Integer category = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
-        Map<String, List<List<Double>>> categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("" + category).get(PipelineConstants.LIST);
-        //categoryValueMap = (Map<String, List<List<Double>>>) resultMaps.get("Price").get(PipelineConstants.LIST);
-        //Set<String> j2 = resultMaps.get("" + category).keySet();
-    
-        VerifyProfit verify = new VerifyProfit();
-        //verify.doVerify(listInc, days, true, categoryValueMap, oldDate);
-        //verify.doVerify(listDec, days, false, categoryValueMap, oldDate);
-        return verify.getTrend(days, categoryValueMap, startoffset, date, stockDates, loopoffset);
     }
 
     @Override
@@ -384,26 +289,6 @@ public class FindProfitAction extends MarketAction {
     @Override
     protected Boolean getBool() {
         return true;
-    }
-    
-    @Override
-    public String getName() {
-        return IclijConstants.FINDPROFIT;
-    }
-
-    @Override
-    protected List<String> getProfitComponents(IclijConfig config, boolean wantThree) {
-        return ServiceUtil.getFindProfitComponents(config, wantThree);
-    }
-    
-    @Override
-    public Short getTime(Market market) {
-        return market.getConfig().getFindtime();
-    }
-    
-    @Override
-    public Boolean[] getBooleans() {
-        return new Boolean[] { true, false };
     }
     
     @Override
@@ -437,11 +322,6 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    public ComponentFactory getComponentFactory() {
-        return new FindProfitComponentFactory();
-    }
-
-    @Override
     public int getPriority(IclijConfig srv) {
         return getPriority(srv, IclijConfigConstants.FINDPROFIT);
     }
@@ -451,22 +331,17 @@ public class FindProfitAction extends MarketAction {
         return conf.getFindProfitFuturedays();
     }
 
-    @Override
-    public String getThreshold(IclijConfig conf) {
-        return conf.getFindProfitThreshold();
-    }
-
     public WebData getVerifyMarket(ComponentInput componentInput, ComponentData param,
-            FindProfitAction findProfitAction, Market market, boolean evolve, int verificationdays) {
+            Market market, boolean evolve, int verificationdays) {
         WebData myData;
         myData = new WebData();
-        myData.incs = new ArrayList<>();
-        myData.decs = new ArrayList<>();
-        myData.updateMap = new HashMap<>();
-        myData.timingMap = new HashMap<>();
-        myData.updateMap2 = new HashMap<>();
-        myData.timingMap2 = new HashMap<>();
-        myData.memoryItems = new ArrayList<>();
+        myData.setIncs(new ArrayList<>());
+        myData.setDecs(new ArrayList<>());
+        myData.setUpdateMap(new HashMap<>());
+        myData.setTimingMap(new HashMap<>());
+        myData.setUpdateMap2(new HashMap<>());
+        myData.setTimingMap2(new HashMap<>());
+        myData.setMemoryItems(new ArrayList<>());
         MarketComponentTime marketTime = new MarketComponentTime();
         marketTime.market = market;
         marketTime.componentName = null;
@@ -477,7 +352,7 @@ public class FindProfitAction extends MarketAction {
         marketTime.buy = null;
         Map<String, ComponentData> dataMap = new HashMap<>();
         Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
-        myData.memoryItems = new ArrayList<>();
+        myData.setMemoryItems(new ArrayList<>());
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         LocalDate prevdate = getPrevDate(param, market);
         String prevdateString = TimeUtil.convertDate2(prevdate);
@@ -487,7 +362,7 @@ public class FindProfitAction extends MarketAction {
         startoffset = startoffset != null ? startoffset : 0;
         prevdateIndex = prevdateIndex - verificationdays - startoffset;
         prevdateString = stockDates.get(prevdateIndex);
-        String olddateString = stockDates.get(prevdateIndex - getTime(market));
+        String olddateString = stockDates.get(prevdateIndex - getActionData().getTime(market));
         LocalDate olddate = null;
         try {
             prevdate = TimeUtil.convertDate(prevdateString);
@@ -498,7 +373,7 @@ public class FindProfitAction extends MarketAction {
         ProfitData profitdata = new ProfitData();
         ProfitInputData inputdata = getListComponents(myData, param, componentInput.getConfig(), marketTime, evolve, market, dataMap, listComponentMap, prevdate, olddate);
         profitdata.setInputdata(inputdata);
-        myData.profitData = profitdata;
+        myData.setProfitData(profitdata);
 
         List<IncDecItem> incdecitems = null;
         try {
@@ -519,8 +394,8 @@ public class FindProfitAction extends MarketAction {
         Map<String, Map<String, Object>> maps = param.getResultMaps();
         filterIncDecs(param, market, profitdata, maps, true);
         filterIncDecs(param, market, profitdata, maps, false);
-        myData.incs.addAll(profitdata.getBuys().values());
-        myData.decs.addAll(profitdata.getSells().values());
+        myData.getIncs().addAll(profitdata.getBuys().values());
+        myData.getDecs().addAll(profitdata.getSells().values());
         return myData;
     }
 

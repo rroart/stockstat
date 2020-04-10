@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
+import roart.constants.IclijConstants;
 import roart.iclij.model.TimingItem;
-import roart.service.ControlService;
+import roart.iclij.model.component.ComponentInput;
+import roart.iclij.service.ControlService;
 import roart.util.ServiceUtil;
 
 public class ComponentData {
@@ -85,6 +87,24 @@ public class ComponentData {
 
     public ComponentData(ComponentInput input) {
         this.input = input;
+    }
+
+    public static ComponentData getParam(ComponentInput input, int days) throws Exception {
+        ComponentData param = new ComponentData(input);
+        //param.setAction(IclijConstants.FINDPROFIT);
+        String market = input.getConfig().getMarket();
+        String mlmarket = input.getConfig().getMlmarket();
+        ControlService srv = new ControlService();
+        param.setService(srv);
+        if (market != null) {
+            srv.conf.setMarket(market);
+            param.getInput().setMarket(market);
+            srv.conf.setMLmarket(mlmarket);
+            param.getInput().setMlmarket(mlmarket);
+        }
+        // verification days, 0 or something
+        param.setOffset(days);
+        return param;
     }
 
     public ComponentInput getInput() {
@@ -247,28 +267,10 @@ public class ComponentData {
 
     public int setDates(int futuredaysNot, Integer offsetNot, String aDate) throws ParseException {
         List<String> stockdates = service.getDates(getMarket());
-	String date = aDate;
-        if (date != null) {
-            int index = stockdates.indexOf(date);
-            if (index < 0) {
-                date = null;
-            }
-        }
-        if (date == null) {
-            if (stockdates.isEmpty()) {
-                int jj = 0;
-            }
-            date = stockdates.get(stockdates.size() - 1);
-        }
-        int dateoffset = 0;
-        if (date != null) {
-            int index = stockdates.indexOf(date);
-            if (index >= 0) {
-                dateoffset = stockdates.size() - 1 - index;
-            }
-        }
-        String baseDateStr = stockdates.get(stockdates.size() - 1 - futuredays - dateoffset - offset - input.getLoopoffset());
-        String futureDateStr = stockdates.get(stockdates.size() - 1 - dateoffset - offset - input.getLoopoffset());
+        String date = aDate;
+        List<String> list = new TimeUtil().setDates(date, stockdates, offset, input.getLoopoffset(), futuredays);
+        String baseDateStr = list.get(0);
+        String futureDateStr = list.get(1);
         log.info("Base future date {} {}", baseDateStr, futureDateStr);
         this.baseDate = TimeUtil.convertDate(baseDateStr);
         this.futureDate = TimeUtil.convertDate(futureDateStr);
@@ -340,21 +342,6 @@ public class ComponentData {
         System.out.println(maps.keySet());
         Map<String, Object> aMap = (Map) maps.get(mapName);
         this.resultMap = aMap;
-        return aMap;  
-    }
-
-    // ?
-    @Deprecated
-    public Map<String, Object> getCategoryResultMap(ControlService srv, String mapName, Map<String, Object> setValueMap) throws Exception {
-        srv.conf.getConfigValueMap().putAll(setValueMap);
-        srv.conf.setdate(TimeUtil.convertDate(this.getBaseDate()));
-        service.conf.setConfigValueMap(new HashMap<>(configValueMap));
-        Map<String, Map<String, Object>> maps = srv.getContent();
-        String wantedCat = ServiceUtil.getWantedCategory(maps, mapName);
-        if (wantedCat == null) {
-            return null;
-        }
-        Map aMap = (Map) maps.get(wantedCat).get(mapName);
         return aMap;  
     }
 

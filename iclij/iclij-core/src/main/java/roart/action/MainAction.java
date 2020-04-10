@@ -10,15 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.component.model.ComponentData;
-import roart.config.IclijXMLConfig;
 import roart.iclij.config.IclijConfig;
-import roart.service.ControlService;
+import roart.iclij.config.IclijXMLConfig;
+import roart.iclij.service.ControlService;
 
 public class MainAction extends Action {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-
-    public static Action updateDBACtion;
 
     @SuppressWarnings("squid:S2189")
     @Override
@@ -39,7 +37,6 @@ public class MainAction extends Action {
         System.out.println("Got config");
         String updateDB = System.getProperty("updatedata");
         boolean doUpdateDB = !"false".equals(updateDB);
-        updateDBACtion = new UpdateDBAction();
         boolean firstRun = true;
         while (true) {
             if (firstRun) {

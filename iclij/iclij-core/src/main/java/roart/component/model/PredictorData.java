@@ -15,38 +15,5 @@ public class PredictorData extends ComponentMLData {
     public PredictorData(ComponentData param) {
         super(param);
     }
-    
-    //@Override
-    public Map<String, Object> getResultMapNot(String mapName, Map<String, Object> setValueMap) {
-        getService().conf.setConfigValueMap(new HashMap<>(getConfigValueMap()));
-        getService().conf.getConfigValueMap().putAll(setValueMap);
-        getService().conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.TRUE);
-        getService().conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGMLLEARN, Boolean.TRUE);
-        getService().conf.getConfigValueMap().put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, Boolean.TRUE);
-        if (getUpdateMap() != null) {
-            getService().conf.getConfigValueMap().putAll(getUpdateMap());
-        }
-        getService().conf.setdate(TimeUtil.convertDate(this.getBaseDate()));
-        Map<String, Map<String, Object>> maps = getService().getContent();
-        
-        // this part is different
-        String wantedCat = null;
-        try {
-            wantedCat = ServiceUtil.getWantedCategory2(maps, PipelineConstants.LSTM);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        if (wantedCat == null) {
-            return null;
-        }
-        Map map = (Map) maps.get(wantedCat + " " + PipelineConstants.LSTM.toUpperCase());
-        maps = map;
-        // end of part
-        
-        this.resultMaps = maps;
-        Map<String, Object> aMap = map; // another diff (Map) maps.get(mapName);
-        this.resultMap = aMap;
-        return aMap;  
-    }
 
 }

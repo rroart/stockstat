@@ -20,14 +20,12 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLAggregatorData;
-import roart.component.model.MLCCIData;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtilConstants;
 

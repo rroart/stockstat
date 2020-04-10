@@ -2,49 +2,36 @@ package roart.component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
-import roart.iclij.config.EvolveMLConfig;
-import roart.iclij.config.MLConfig;
-import roart.iclij.config.MLConfigs;
-import roart.iclij.config.Market;
-import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
-import roart.component.model.ComponentInput;
 import roart.component.model.MLIndicatorData;
-import roart.config.IclijXMLConfig;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.evolution.chromosome.impl.MLIndicatorChromosome;
-import roart.evolution.config.EvolutionConfig;
 import roart.gene.impl.ConfigMapGene;
+import roart.iclij.config.MLConfigs;
+import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.result.model.ResultMeta;
-import roart.service.ControlService;
-import roart.service.MLService;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtilConstants;
 
-public abstract class ComponentMLIndicator extends ComponentML {
+public class ComponentMLIndicator extends ComponentML {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
@@ -205,46 +192,6 @@ public abstract class ComponentMLIndicator extends ComponentML {
         ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent, parameters, gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
-    }
-
-    public Map<String, String> improveNot(ComponentData param, Market market, MyMyConfig conf, ProfitData profitdata, List<Integer> positions) {
-        Map<String, String> retMap = new HashMap<>();
-        List<String> permList = new ArrayList<>();
-        String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
-        //ControlService srv = new ControlService();
-        //srv.getConfig();            
-        permList.add(ConfigConstants.AGGREGATORSINDICATORMACD);
-        permList.add(ConfigConstants.AGGREGATORSINDICATORRSI);
-        Map<String, Object> confMap = new HashMap<>();
-        int size = permList.size();
-        int bitsize = (1 << size) - 1;
-        for (int i = 1; i < bitsize; i++) {
-            String key = "";
-            for (int j = 0; j < size; j++) {
-                log.info("Doing {} {}", i, j);
-                if ((i & (1 << j)) != 0) {
-                    confMap.put(permList.get(j), Boolean.TRUE);
-                    key = key + permList.get(j);
-                } else {
-                    confMap.put(permList.get(j), Boolean.FALSE);
-                }
-            }
-            try {
-                List<Double> newConfidenceList = new ArrayList<>();
-                List<MemoryItem> memories = new MLService().doMLIndicator(new ComponentInput(marketName, null, null, false, false), confMap);
-                {
-
-                }
-                for(MemoryItem memory : memories) {
-                    newConfidenceList.add(memory.getConfidence());
-                }
-                log.info("New confidences {}", newConfidenceList);
-                retMap.put(key, newConfidenceList.toString());
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-        }
-        return retMap;
     }
 
     @Override

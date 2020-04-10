@@ -5,20 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.config.ConfigConstants;
 import roart.component.Component;
-import roart.component.ComponentFactory;
-import roart.component.DatasetComponentFactory;
-import roart.component.EvolveComponentFactory;
 import roart.component.model.ComponentData;
-import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -26,13 +21,16 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
-import roart.iclij.config.IclijConfig;
+import roart.iclij.model.action.DatasetActionData;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
-import roart.util.ServiceUtil;
 
 public class DatasetAction extends MarketAction {
 
+    public DatasetAction() {
+        setActionData(new DatasetActionData());
+    }
+    
     @Override
     protected ProfitInputData filterMemoryListMapsWithConfidence(Market market,
             Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
@@ -115,27 +113,6 @@ public class DatasetAction extends MarketAction {
     }
 
     @Override
-    public String getName() {
-        return IclijConstants.DATASET;
-    }
-
-    @Override
-    protected List<String> getProfitComponents(IclijConfig config, boolean wantThree) {
-        return ServiceUtil.getDatasetComponents();
-    }
-
-    @Override
-    public Short getTime(Market market) {
-        return market.getConfig().getDatasettime();
-    }
-
-    @Override
-    public Boolean[] getBooleans() {
-        //return new Boolean[] { false, true };
-        return new Boolean[] { null };
-    }
-
-    @Override
     protected boolean getEvolve(Component component, ComponentData param) {
         return true;
     }
@@ -158,16 +135,6 @@ public class DatasetAction extends MarketAction {
     }
 
     @Override
-    public ComponentFactory getComponentFactory() {
-        return new DatasetComponentFactory();
-    }
-
-    @Override
-    public boolean isDataset() {
-        return true;
-    }
-    
-    @Override
     protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
         return null;
     }
@@ -179,11 +146,6 @@ public class DatasetAction extends MarketAction {
 
     @Override
     protected String getFuturedays0(IclijConfig conf) {
-        return "[ null ]";
-    }
-
-    @Override
-    public String getThreshold(IclijConfig conf) {
         return "[ null ]";
     }
 
