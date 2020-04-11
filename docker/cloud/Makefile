@@ -1,5 +1,5 @@
 VERSION = 0.5-SNAPSHOT
-SUBDIRS = tensorflow spark pdfred eureka web iclij-web core iclij-core
+SUBDIRS = tensorflow spark pdfred eureka web iclij-web iclij-webcore core iclij-core
 SUBDIRS = dbclone pytorchdata tensorflowdata
 SUBDIRS2 = core iclij-core
 
@@ -16,6 +16,12 @@ endif
 iclij-core:
 ifneq ($(ICLIJTMPL),)
 	rsync -a $$ICLIJTMPL iclij-core/iclij.xml.tmpl
+endif
+	$(MAKE) -C $@ -f ../Makefile iclij.xml
+
+iclij-webcore:
+ifneq ($(ICLIJTMPL),)
+	rsync -a $$ICLIJTMPL iclij-webcore/iclij.xml.tmpl
 endif
 	$(MAKE) -C $@ -f ../Makefile iclij.xml
 

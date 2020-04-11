@@ -2,7 +2,7 @@ FROM maven:3.6.3-jdk-13
 MAINTAINER <rroart@gmail.com>
 RUN mkdir /app
 WORKDIR /app
-RUN mkdir webr iclij iclij/iclij-chatbot iclij/iclij-commom iclij/iclij-core iclij/evolution iclij/iclij-web iclij/iclij-webr distribution
+RUN mkdir webr iclij iclij/iclij-chatbot iclij/iclij-commom iclij/iclij-core iclij/evolution iclij/iclij-web  iclij/iclij-webcore iclij/iclij-webr distribution
 COPY main main
 COPY input input
 COPY common common
@@ -12,6 +12,7 @@ COPY iclij/iclij-common iclij/iclij-common
 COPY iclij/iclij-core iclij/iclij-core
 COPY iclij/iclij-evolution iclij/iclij-evolution
 COPY iclij/iclij-web/pom.xml iclij/iclij-web/pom.xml
+COPY iclij/iclij-webcore/pom.xml iclij/iclij-webcore/pom.xml
 COPY iclij/iclij-webr/pom.xml iclij/iclij-webr/pom.xml
 COPY eureka eureka
 COPY web web

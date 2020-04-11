@@ -6,12 +6,20 @@ variable "repository_url_icore" {
   description = "The url of the ECR repository"
 }
 
+variable "repository_url_iwebcore" {
+  description = "The url of the ECR repository"
+}
+
 variable "region" {
   description = "The region to use"
 }
 
 variable "ecs_cluster_name" {
   description = "The cluster that we will deploy"
+}
+
+variable "ecs_service_name_iwebcore" {
+  description = "The ECS service that will be deployed"
 }
 
 variable "ecs_service_name_icore" {
@@ -42,6 +50,10 @@ variable "icore" {
 }
 
 variable "MYSERVERLOCALFQDN" {}
+
+variable "MYASERVERLOCALFQDN" {}
+
+variable "MYISERVERLOCALFQDN" {}
 
 variable "MYDBSERVERLOCALFQDN" {}
 

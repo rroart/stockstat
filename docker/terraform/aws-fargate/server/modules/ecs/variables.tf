@@ -34,6 +34,10 @@ variable "repository_name_icore" {
   description = "The name of the repository"
 }
 
+variable "repository_name_iwebcore" {
+  description = "The name of the repository"
+}
+
 variable "fargate_cpu" {
   description = "Fargate instance CPU units to provision (1 vCPU = 1024 CPU units)"
   default     = "256"
@@ -55,3 +59,5 @@ variable "app_port" {
 }
 
 variable "MYCORESERVERLOCAL" {}
+
+variable "MYICORESERVERLOCAL" {}

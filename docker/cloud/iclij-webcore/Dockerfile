@@ -13,15 +13,15 @@ COPY iclij/iclij-common iclij/iclij-common
 COPY iclij/iclij-core iclij/iclij-core
 COPY iclij/iclij-evolution iclij/iclij-evolution
 COPY iclij/iclij-web/pom.xml iclij/iclij-web/pom.xml
-COPY iclij/iclij-webcore/pom.xml iclij/iclij-webcore/pom.xml
+COPY iclij/iclij-webcore iclij/iclij-webcore
 COPY iclij/iclij-webr/pom.xml iclij/iclij-webr/pom.xml
 COPY eureka eureka
 COPY web web
 COPY webr/pom.xml webr
 COPY distribution/pom.xml distribution
 COPY pom.xml pom.xml
-RUN mvn -pl iclij/iclij-core -am install -Dmaven.test.skip=true
-RUN cp -p iclij/iclij-core/target/stockstat-iclij-core-0.5-SNAPSHOT.jar /usr/local/bin
+RUN mvn -pl iclij/iclij-webcore -am install -Dmaven.test.skip=true
+RUN cp -p iclij/iclij-webcore/target/stockstat-iclij-webcore-0.5-SNAPSHOT.jar /usr/local/bin
 
 FROM supinf/envsubst
 ARG myconfig
@@ -35,12 +35,16 @@ RUN . env.sh; envsubst < iclij.xml.tmpl > iclij.xml
 
 FROM openjdk:11-jdk
 MAINTAINER <roart@nvg.ntnu.no>
+ARG myaserver
+ARG myiserver
 ARG myserver
 ARG myport
 ARG mywebport
 ARG mydbserver
 ARG mydbserverport=5432
 ARG mydbserverdb=stockstat
+ENV MYASERVER ${myaserver}
+ENV MYISERVER ${myiserver}
 ENV MYSERVER ${myserver}
 ENV MYPORT ${myport}
 ENV MYWEBPORT ${mywebport}
@@ -49,8 +53,8 @@ ENV MYDBSERVERPORT ${mydbserverport}
 ENV MYDBSERVERDB ${mydbserverdb}
 RUN mkdir /usr/local/conf
 WORKDIR /usr/local/bin
-COPY --from=0 /usr/local/bin/stockstat-iclij-core-0.5-SNAPSHOT.jar .
+COPY --from=0 /usr/local/bin/stockstat-iclij-webcore-0.5-SNAPSHOT.jar .
 COPY --from=1 /tmp/iclij.xml /usr/local/conf/
 RUN ln -s /tmp /usr/local/logs
-CMD java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-iclij-core-0.5-SNAPSHOT.jar --spring.profiles.active=docker
+CMD java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-iclij-webcore-0.5-SNAPSHOT.jar --spring.profiles.active=docker
 
