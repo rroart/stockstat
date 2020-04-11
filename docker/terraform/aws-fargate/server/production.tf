@@ -29,8 +29,10 @@ module "ecs" {
   availability_zones = local.production_availability_zones
   repository_name_core = "core/production"
   repository_name_icore = "icore/production"
+  repository_name_iwebcore = "iwebcore/production"
   subnets_ids        = flatten(module.net.private_subnets_id)
   public_subnet_ids  =  flatten([ module.net.public_subnets_id ])
   security_groups_ids = module.net.security_groups_ids
   MYCORESERVERLOCAL  = var.MYCORESERVERLOCAL
+  MYICORESERVERLOCAL  = var.MYICORESERVERLOCAL
 }

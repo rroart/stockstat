@@ -6,6 +6,18 @@ data "aws_route53_zone" "primary_route" {
   name              = var.domain
 }
 
+resource "aws_route53_record" "iwebcore-prod" {
+  zone_id = data.aws_route53_zone.primary_route.id
+  name    = "webcore.icli.${var.domain}"
+  type    = "A"
+
+  alias {
+    name                   = module.ecs.alb_dns_name_iwebcore
+    zone_id                = module.ecs.alb_zone_id_iwebcore
+    evaluate_target_health = true
+  }
+}
+
 resource "aws_route53_record" "icore-prod" {
   zone_id = data.aws_route53_zone.primary_route.id
   name    = "core.icli.${var.domain}"

@@ -12,6 +12,12 @@ variable "domain" {
 
 variable "MYCORESERVERLOCAL" {}
 
+variable "MYICORESERVERLOCAL" {}
+
+variable "MYASERVERLOCALFQDN" {}
+
+variable "MYISERVERLOCALFQDN" {}
+
 variable "MYSERVERLOCALFQDN" {}
 
 variable "MYDBSERVERLOCALFQDN" {}

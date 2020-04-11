@@ -6,8 +6,16 @@ output "repository_url_icore" {
   value = aws_ecr_repository.stockstat_app_icore.repository_url
 }
 
+output "repository_url_iwebcore" {
+  value = aws_ecr_repository.stockstat_app_iwebcore.repository_url
+}
+
 output "cluster_name" {
   value = data.aws_ecs_cluster.cluster.cluster_name
+}
+
+output "service_name_iwebcore" {
+  value = aws_ecs_service.iwebcore.name
 }
 
 output "service_name_icore" {
@@ -16,6 +24,14 @@ output "service_name_icore" {
 
 output "service_name_core" {
   value = aws_ecs_service.core.name
+}
+
+output "alb_dns_name_iwebcore" {
+  value = aws_alb.alb_iwebcore.dns_name
+}
+
+output "alb_zone_id_iwebcore" {
+  value = aws_alb.alb_iwebcore.zone_id
 }
 
 output "alb_dns_name_icore" {
