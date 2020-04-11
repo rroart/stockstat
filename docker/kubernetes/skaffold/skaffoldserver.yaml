@@ -23,8 +23,21 @@ build:
         mydbserver: '{{.MYDBSERVER}}'
         myconfig: '{{.MYICONFIG}}'
         myenv: '{{.MYIENV}}'
+  - image: iwebcore
+    context: ../../..
+    docker:
+      dockerfile: docker/cloud/iclij-webcore/Dockerfile
+      buildArgs:
+        myaserver: '{{.ACORESERVER}}'
+        myiserver: '{{.ICORESERVER}}'
+        myserver: '{{.CORESERVER}}'
+        mywebport: "80"
+        mydbserver: '{{.MYDBSERVER}}'
+        myconfig: '{{.MYICONFIG}}'
+        myenv: '{{.MYIENV}}'
 deploy:
   kubectl:
     manifests:
     - core/deployment.yaml
     - icore/deployment.yaml
+    - iwebcore/deployment.yaml
