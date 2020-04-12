@@ -478,7 +478,7 @@ public abstract class MarketAction extends Action {
         Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
         // map subcat + posit -> list
         currentList.forEach(m -> listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
-        inputdata = filterMemoryListMapsWithConfidence(market, listMap);        
+        inputdata = filterMemoryListMapsWithConfidence(market, listMap, config);        
         Map<String, List<Integer>> listComponent = createComponentPositionListMap(inputdata.getListMap());
         Map<String, List<Integer>> aboveListComponent = createComponentPositionListMap(inputdata.getAboveListMap());
         Map<String, List<Integer>> belowListComponent = createComponentPositionListMap(inputdata.getBelowListMap());
@@ -579,7 +579,7 @@ public abstract class MarketAction extends Action {
         }
     }
 
-    protected abstract ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap);
+    protected abstract ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap, IclijConfig config);
     
     protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
         Map<String, String> nameMap = null;

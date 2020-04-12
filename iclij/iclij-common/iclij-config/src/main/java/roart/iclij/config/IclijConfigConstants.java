@@ -141,6 +141,7 @@ public class IclijConfigConstants {
     public static final String FINDPROFITFUTUREDAYS = "findprofit.futuredays";
     public static final String FINDPROFITTHRESHOLD = "findprofit.threshold";
     public static final String FINDPROFITMANUALTHRESHOLD = "findprofit.manualthreshold";
+    public static final String FINDPROFITMEMORYFILTER = "findprofit.memoryfilter";
     public static final String IMPROVEPROFIT = "improveprofit";
     public static final String IMPROVEPROFITAUTORUN = "improveprofit.autorun";
     public static final String IMPROVEPROFITFITNESSMINIMUM = "improveprofit.fitnessminimum";

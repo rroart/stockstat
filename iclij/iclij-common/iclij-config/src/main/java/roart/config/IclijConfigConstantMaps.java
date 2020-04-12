@@ -168,6 +168,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.FINDPROFITFUTUREDAYS, String.class);
         map.put(IclijConfigConstants.FINDPROFITTHRESHOLD, String.class);
         map.put(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD, Double.class);
+        map.put(IclijConfigConstants.FINDPROFITMEMORYFILTER, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, Integer.class);
         map.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.class);
@@ -380,6 +381,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.FINDPROFITFUTUREDAYS, " [ 10 ]");
         deflt.put(IclijConfigConstants.FINDPROFITTHRESHOLD, " [ 1.0 ] ");
         deflt.put(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD, 1.0);
+        deflt.put(IclijConfigConstants.FINDPROFITMEMORYFILTER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, 10);
         deflt.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, Boolean.TRUE);
@@ -595,6 +597,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.FINDPROFITFUTUREDAYS, "Find profit futuredays");
         text.put(IclijConfigConstants.FINDPROFITTHRESHOLD, "Find profit threshold");
         text.put(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD, "Find profit manual threshold");
+        text.put(IclijConfigConstants.FINDPROFITMEMORYFILTER, "Find profit memory filter");
         text.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, "Enable improve profit autorun");
         text.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, "Enable improve profit fitness minimum");
         text.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, "Enable improve profit mlindicator");
@@ -844,6 +847,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.FINDPROFITFUTUREDAYS, new IclijXMLType(String.class, " [ 10 ] ", "Find profit futuredays"));
         mymap.put(IclijConfigConstants.FINDPROFITTHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ] ", "Find profit threshold"));
         mymap.put(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD, new IclijXMLType(Double.class, 1.0, "Find profit manual threshold"));
+        mymap.put(IclijConfigConstants.FINDPROFITMEMORYFILTER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Find profit memory filter"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit autorun"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Enable improve profit fitness minimum"));
         mymap.put(IclijConfigConstants.IMPROVEPROFITMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable improve profit mlindicator"));

@@ -244,6 +244,10 @@ public class IclijConfig {
         return (Double) getValueOrDefault(IclijConfigConstants.FINDPROFITMANUALTHRESHOLD);
     }
 
+    public boolean getFindProfitMemoryFilter() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMEMORYFILTER);
+    }
+
     public boolean wantsImproveProfitAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITAUTORUN);
     }

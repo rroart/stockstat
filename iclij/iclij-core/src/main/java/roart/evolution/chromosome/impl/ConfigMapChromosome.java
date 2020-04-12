@@ -291,7 +291,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
             Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
             myData.getMemoryItems().forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
-            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap);        
+            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap, param.getInput().getConfig());        
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
             Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
