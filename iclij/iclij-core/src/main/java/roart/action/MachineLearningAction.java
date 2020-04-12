@@ -37,7 +37,7 @@ public class MachineLearningAction extends MarketAction {
     
     @Override
     protected ProfitInputData filterMemoryListMapsWithConfidence(Market market,
-            Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
+            Map<Pair<String, Integer>, List<MemoryItem>> listMap, IclijConfig config) {
         Map<Pair<String, Integer>, List<MemoryItem>> badListMap = new HashMap<>();
         Map<Pair<String, Integer>, Double> badConfMap = new HashMap<>();
         for(Pair<String, Integer> key : listMap.keySet()) {

@@ -48,7 +48,7 @@ public class ImproveProfitAction extends MarketAction {
     }
 
     @Override
-    public ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
+    public ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap, IclijConfig config) {
         Map<Pair<String, Integer>, List<MemoryItem>> badListMap = new HashMap<>();
         Map<Pair<String, Integer>, Double> badConfMap = new HashMap<>();
         for(Pair<String, Integer> key : listMap.keySet()) {
