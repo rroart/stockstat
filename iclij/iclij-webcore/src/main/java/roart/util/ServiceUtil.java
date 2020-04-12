@@ -174,6 +174,7 @@ public class ServiceUtil {
         markets = new MarketUtil().filterMarkets(markets, findProfitActionData.isDataset());
         for (Market market : markets) {
             ControlService srv = new ControlService();
+            srv.getConfig();
             srv.conf.setMarket(market.getConfig().getMarket());
             // the market may be incomplete, the exception and skip
             try {
