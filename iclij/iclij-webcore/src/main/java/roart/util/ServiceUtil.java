@@ -730,7 +730,7 @@ public class ServiceUtil {
             String basedate, String futuredate) {
         IclijServiceList header = new IclijServiceList();
         result.getLists().add(header);
-        header.setTitle(type + " " + "Market: " + componentInput.getConfig().getMarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + componentInput.getLoopoffset());
+        header.setTitle(type + " " + "Market: " + componentInput.getConfig().getMarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + componentInput.getLoopoffset() + " Threshold: " + componentInput.getConfig().getFindProfitManualThreshold());
         IclijServiceList header2 = new IclijServiceList();
         result.getLists().add(header2);
         header2.setTitle(type + " " + "ML market: " + componentInput.getConfig().getMlmarket() + " Date: " + componentInput.getConfig().getDate() + " Offset: " + componentInput.getLoopoffset());
