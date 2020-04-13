@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.pipeline.model.PipelineResultData;
+import roart.common.util.MathUtil;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
@@ -105,4 +106,8 @@ public abstract class Aggregator extends PipelineResultData {
         return map;
     }
     
+    protected Object[] round(Object[] objs, int places) {
+        return MathUtil.round3(objs, places);
+    }
+
 }

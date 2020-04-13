@@ -38,6 +38,7 @@ import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
+import roart.common.util.MathUtil;
 import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
@@ -460,6 +461,7 @@ public class ServiceUtil {
             
             IclijServiceList memories = new IclijServiceList();
             memories.setTitle("Memories " + marketName);
+            roundList3(currentList);
             memories.setList(currentList);
             lists.add(memories);
         }
@@ -498,6 +500,7 @@ public class ServiceUtil {
 
     private static List<IclijServiceList> getServiceList(String market, List<TimingItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
+        roundList2(listIncDec);
         if (!listIncDec.isEmpty()) {
             IclijServiceList incDec = new IclijServiceList();
             incDec.setTitle(market + " " + "timing" + " " + listIncDec.stream().mapToDouble(TimingItem::getMytime).summaryStatistics());
@@ -510,6 +513,9 @@ public class ServiceUtil {
     static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
             List<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
+        roundList(listInc);
+        roundList(listDec);
+        roundList(listIncDec);
         if (!listInc.isEmpty()) {
             List<Boolean> listIncBoolean = listInc.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listIncBoolean.stream().filter(i -> i).count();                            
@@ -590,6 +596,7 @@ public class ServiceUtil {
         //getMemoryItems(componentInput.getConfig(), param, verificationdays, getFindProfitComponents(componentInput.getConfig()));
         IclijServiceList memories = new IclijServiceList();
         memories.setTitle("Memories");
+        roundList3(allMemoryItems);
         memories.setList(allMemoryItems);
         Map<String, Object> updateMap = new HashMap<>();
         //param.setUpdateMap(updateMap);
@@ -977,5 +984,92 @@ public class ServiceUtil {
         return allMemoryItems;
     }
     */
+
+    private static void roundList(List<IncDecItem> list) {
+        for (IncDecItem item : list) {
+            Double score = item.getScore();
+            if (score != null) {
+                item.setScore(MathUtil.round2(score, 3));
+            }
+        }        
+    }
+
+    private static void roundList2(List<TimingItem> list) {
+        for (TimingItem item : list) {
+            Double score = item.getScore();
+            if (score != null) {
+                item.setScore(MathUtil.round2(score, 3));
+            }
+        }        
+    }
+
+    private static void roundList3(List<MemoryItem> list) {
+        for (MemoryItem item : list) {
+            Double testaccuracy = item.getTestaccuracy();
+            if (testaccuracy != null) {
+                item.setTestaccuracy(MathUtil.round2(testaccuracy, 3));
+            }
+            Double testloss = item.getTestloss();
+            if (testloss != null) {
+                item.setTestloss(MathUtil.round2(testloss, 3));
+            }
+            Double confidence = item.getConfidence();
+            if (confidence != null) {
+                item.setConfidence(MathUtil.round2(confidence, 3));
+            }
+            Double learnConfidence = item.getLearnConfidence();
+            if (learnConfidence != null) {
+                item.setLearnConfidence(MathUtil.round2(learnConfidence, 3));
+            }
+            Double tpConf = item.getTpConf();
+            if (tpConf != null) {
+                item.setTpConf(MathUtil.round2(tpConf, 3));
+            }
+            Double tpProb = item.getTpProb();
+            if (tpProb != null) {
+                item.setTpProb(MathUtil.round2(tpProb, 3));
+            }
+            Double tpProbConf = item.getTpProbConf();
+            if (tpProbConf != null) {
+                item.setTpProbConf(MathUtil.round2(tpProbConf, 3));
+            }
+            Double tnConf = item.getTnConf();
+            if (tnConf != null) {
+                item.setTnConf(MathUtil.round2(tnConf, 3));
+            }
+            Double tnProb = item.getTnProb();
+            if (tnProb != null) {
+                item.setTnProb(MathUtil.round2(tnProb, 3));
+            }
+            Double tnProbConf = item.getTnProbConf();
+            if (tnProbConf != null) {
+                item.setTnProbConf(MathUtil.round2(tnProbConf, 3));
+            }
+            Double fpConf = item.getFpConf();
+            if (fpConf != null) {
+                item.setFpConf(MathUtil.round2(fpConf, 3));
+            }
+            Double fpProb = item.getFpProb();
+            if (fpProb != null) {
+                item.setFpProb(MathUtil.round2(fpProb, 3));
+            }
+            Double fpProbConf = item.getFpProbConf();
+            if (fpProbConf != null) {
+                item.setFpProbConf(MathUtil.round2(fpProbConf, 3));
+            }
+            Double fnConf = item.getFnConf();
+            if (fnConf != null) {
+                item.setFnConf(MathUtil.round2(fnConf, 3));
+            }
+            Double fnProb = item.getFnProb();
+            if (fnProb != null) {
+                item.setFnProb(MathUtil.round2(fnProb, 3));
+            }
+            Double fnProbConf = item.getFnProbConf();
+            if (fnProbConf != null) {
+                item.setFnProbConf(MathUtil.round2(fnProbConf, 3));
+            }
+        }        
+    }
 
 }
