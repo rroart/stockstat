@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.MathUtil;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -222,6 +223,7 @@ public abstract class AbstractIndicator extends Calculatable {
         if (result == null) {
             result = emptyField;
         }
+        result = MathUtil.round(result, 3);
         return result;
     }
 

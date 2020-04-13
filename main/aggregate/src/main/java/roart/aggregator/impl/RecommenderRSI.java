@@ -91,6 +91,7 @@ public class RecommenderRSI extends Aggregator {
     @Override
     public void addResultItem(ResultItemTableRow row, StockItem stock) {
         Object[] obj = new Object[2];
+        obj = round(obj, 3);
         if (rsiMap != null) {
             obj = rsiMap.get(stock.getId());
         }

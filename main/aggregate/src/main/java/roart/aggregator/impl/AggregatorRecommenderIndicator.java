@@ -213,6 +213,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     @Override
     public void addResultItem(ResultItemTableRow row, StockItem stock) {
         Object[] arrayResult = getResultItem(stock);
+        arrayResult = round(arrayResult, 3);
         row.addarr(arrayResult);
     }
     
