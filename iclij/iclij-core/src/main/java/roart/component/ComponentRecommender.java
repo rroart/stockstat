@@ -233,6 +233,7 @@ public class ComponentRecommender extends ComponentNoML {
         incdec.setMarket(market);
         incdec.setDescription(recommendation);
         incdec.setName(nameMap.get(element.getKey()));
+        //incdec.setParameters(null);
         incdec.setScore(confidence);
         return incdec;
     }

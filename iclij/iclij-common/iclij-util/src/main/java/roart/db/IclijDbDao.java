@@ -58,9 +58,9 @@ public class IclijDbDao {
         return list;
     }
 
-    public static List<IncDecItem> getAllIncDecs(String market, LocalDate startDate, LocalDate endDate) throws Exception {
+    public static List<IncDecItem> getAllIncDecs(String market, LocalDate startDate, LocalDate endDate, String parameters) throws Exception {
         long time0 = System.currentTimeMillis();
-        List<IncDecItem> list =  IncDecItem.getAll(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));
+        List<IncDecItem> list =  IncDecItem.getAll(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate), parameters);
         log.info("IncDecItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }

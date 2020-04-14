@@ -168,6 +168,7 @@ public class ServiceUtil {
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
+        List<IncDecItem> listRel = new ArrayList<>();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         Map<String, Object> trendMap = new HashMap<>();
@@ -186,14 +187,20 @@ public class ServiceUtil {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            List<IncDecItem> currentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime());
-            List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
-            List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
-            listInc = mergeList(listInc, false);
-            listDec = mergeList(listDec, false);
-            List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
-            List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
-            lists.addAll(subLists);
+            List<IncDecItem> allCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime());
+            listRel.addAll(allCurrentIncDecs);
+            Map<String, List<IncDecItem>> currentIncDecMap = splitParam(allCurrentIncDecs);
+            for (Entry<String, List<IncDecItem>> entry : currentIncDecMap.entrySet()) {
+                String key = entry.getKey();
+                List<IncDecItem> currentIncDecs = entry.getValue();
+                List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
+                List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
+                listInc = mergeList(listInc, false);
+                listDec = mergeList(listDec, false);
+                List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
+                List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), key, listInc, listDec, listIncDec);
+                lists.addAll(subLists);
+            }
         }
         result.setLists(lists);
 
@@ -209,7 +216,7 @@ public class ServiceUtil {
         IclijServiceList trends = convert(trendMap);
         lists.add(trends);
 
-        addRelations(componentInput, lists, new ArrayList<>());
+        addRelations(componentInput, lists, listRel);
         
         new MiscUtil().print(result);
         return result;
@@ -510,7 +517,7 @@ public class ServiceUtil {
         return subLists;
     }
 
-    static List<IclijServiceList> getServiceList(String market, List<IncDecItem> listInc, List<IncDecItem> listDec,
+    static List<IclijServiceList> getServiceList(String market, String text, List<IncDecItem> listInc, List<IncDecItem> listDec,
             List<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
         roundList(listInc);
@@ -521,7 +528,7 @@ public class ServiceUtil {
             long count = listIncBoolean.stream().filter(i -> i).count();                            
             IclijServiceList inc = new IclijServiceList();
             String trendStr = "";
-            inc.setTitle(market + " " + "Increase ( verified " + count + " / " + listIncBoolean.size() + " )" + trendStr);
+            inc.setTitle(market + " " + "Increase " + text + " ( verified " + count + " / " + listIncBoolean.size() + " )" + trendStr);
             inc.setList(listInc);
             subLists.add(inc);
         }
@@ -612,15 +619,15 @@ public class ServiceUtil {
         updateMap = myData.getUpdateMap();
         allMemoryItems.addAll(myData.getMemoryItems());
         
-        List<IncDecItem> listInc = new ArrayList<>(myData.getIncs());
-        List<IncDecItem> listDec = new ArrayList<>(myData.getDecs());
-        listInc = mergeList(listInc, !rerun);
-        listDec = mergeList(listDec, !rerun);
-        List<IncDecItem> listIncDec;
+        List<IncDecItem> allListInc = new ArrayList<>(myData.getIncs());
+        List<IncDecItem> allListDec = new ArrayList<>(myData.getDecs());
+        allListInc = mergeList(allListInc, !rerun);
+        allListDec = mergeList(allListDec, !rerun);
+        List<IncDecItem> allListIncDec;
         if (rerun) {
-            listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, verificationdays > 0);
+            allListIncDec = new MiscUtil().moveAndGetCommon(allListInc, allListDec, verificationdays > 0);
         } else {
-            listIncDec = new MiscUtil().moveAndGetCommon2(listInc, listDec, verificationdays > 0);
+            allListIncDec = new MiscUtil().moveAndGetCommon2(allListInc, allListDec, verificationdays > 0);
         }
         Map<String, Object> trendMap = new HashMap<>();
         Short mystartoffset = market.getConfig().getStartoffset();
@@ -669,6 +676,14 @@ public class ServiceUtil {
         log.info("Base future date {} {}", baseDateStr, futureDateStr);
         LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
         LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
+        Map<String, List<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
+        Map<String, List<IncDecItem>> allListIncMap = splitParam(allListInc);
+        Map<String, List<IncDecItem>> allListDecMap = splitParam(allListDec);
+        for (Entry<String, List<IncDecItem>> entry : allListIncDecMap.entrySet()) {
+            String key = entry.getKey();
+            List<IncDecItem> listIncDec = entry.getValue();
+            List<IncDecItem> listInc = allListIncMap.get(key);
+            List<IncDecItem> listDec = allListDecMap.get(key);
         if (verificationdays > 0) {
             try {
                 //srv.setFuturedays(0);
@@ -697,9 +712,10 @@ public class ServiceUtil {
         }
         addHeader(componentInput, type, result, baseDateStr, futureDateStr);
         
-        List<IclijServiceList> subLists = getServiceList(srv.conf.getMarket(), listInc, listDec, listIncDec);
+        List<IclijServiceList> subLists = getServiceList(srv.conf.getMarket(), key, listInc, listDec, listIncDec);
         retLists.addAll(subLists);
-        
+        }
+    
         retLists.add(memories);
        
         {
@@ -1071,5 +1087,20 @@ public class ServiceUtil {
             }
         }        
     }
+    
+    public static Map<String, List<IncDecItem>> splitParam(List<IncDecItem> items) {
+        Map<String, List<IncDecItem>> mymap = new HashMap<String, List<IncDecItem>>();
+        for (IncDecItem item : items) {
+            String key = item.getParameters();
+            List<IncDecItem> itemlist = mymap.get(key);
+            if (itemlist == null) {
+                itemlist = new ArrayList<IncDecItem>();
+                mymap.put(item.getId(), itemlist);
+            }
+            itemlist.add(item);
+        }
+        return mymap;
+    }
+
 
 }
