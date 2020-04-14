@@ -66,4 +66,16 @@ public class MathUtil {
         return newo;
     }    
     
+    private Object[] round4(Object[] objs, int places) {
+        if (objs != null) {
+            for (int i = 0; i < objs.length; i++) {
+                Object obj = objs[i];
+                if (obj.getClass() == Double.class) {
+                    obj = MathUtil.round2((Double) obj, 3);
+                }
+            }
+        }
+        return objs;
+    }
+
 }

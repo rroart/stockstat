@@ -285,6 +285,10 @@ public abstract class ComponentML extends Component {
             return;
         }
         */
+        // in case it does not exist with the predictor
+        if (key == null) {
+            return;
+        }
         valueMap.put(key, Boolean.TRUE);
         String mlKey = new NeuralNetConfigs().getAnotherConfigMap().get(key);
         valueMap.put(mlKey, Boolean.TRUE);

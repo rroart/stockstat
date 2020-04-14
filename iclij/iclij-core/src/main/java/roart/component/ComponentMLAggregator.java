@@ -417,6 +417,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             val.setMarket(memory.getMarket());
             val.setDescription("");
             val.setName(nameMap.get(key));
+            val.setParameters(memory.getParameters());
             val.setScore(0.0);
             map.put(key, val);
         }

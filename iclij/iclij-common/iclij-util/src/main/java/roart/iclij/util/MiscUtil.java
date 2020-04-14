@@ -127,6 +127,7 @@ public class MiscUtil {
                 mergeitem.setIncrease(inc.getScore() > dec.getScore());
                 mergeitem.setMarket(inc.getMarket());
                 mergeitem.setName(inc.getName());
+                mergeitem.setParameters(inc.getParameters());
                 mergeitem.setScore(mergeitem.isIncrease() ? inc.getScore() - dec.getScore() : dec.getScore() - inc.getScore());
                 mergecommon.add(mergeitem);
             }
@@ -165,6 +166,7 @@ public class MiscUtil {
                 mergeitem.setIncrease(inc.getScore() > dec.getScore());
                 mergeitem.setMarket(inc.getMarket());
                 mergeitem.setName(inc.getName());
+                mergeitem.setParameters(inc.getParameters());
                 mergeitem.setScore(mergeitem.isIncrease() ? inc.getScore() - dec.getScore() : dec.getScore() - inc.getScore());
                 mergecommon.add(mergeitem);
             }

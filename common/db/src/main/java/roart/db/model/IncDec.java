@@ -55,6 +55,9 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     @Column
     private Date date;
 
+    @Column
+    private String parameters;
+    
     public Long getDbid() {
         return dbid;
     }
@@ -130,6 +133,14 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
         this.date = date;
     }
 
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
     @Transient
     @Transactional
     public static List<IncDec> getAll() throws Exception {
@@ -158,7 +169,7 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
 
     @Transient
     @Transactional
-    public static List<IncDec> getAll(String market, Date startDate, Date endDate) throws Exception {
+    public static List<IncDec> getAll(String market, Date startDate, Date endDate, String parameters) throws Exception {
         List<IncDec> list = null;
         Session session = HibernateUtil.getMyHibernateSession();
         synchronized (HibernateUtil.class) {
@@ -179,6 +190,9 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
         }
         if (endDate != null) {
             query.setParameter("enddate", endDate, TemporalType.DATE);
+        }
+        if (parameters != null) {
+            query.setParameter("parameters", parameters);
         }
         list = query.list();
         transaction.commit();
