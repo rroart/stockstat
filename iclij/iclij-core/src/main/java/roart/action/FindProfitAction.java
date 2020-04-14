@@ -380,7 +380,7 @@ public class FindProfitAction extends MarketAction {
 
         List<IncDecItem> incdecitems = null;
         try {
-            incdecitems = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), olddate, prevdate);
+            incdecitems = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), olddate, prevdate, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
