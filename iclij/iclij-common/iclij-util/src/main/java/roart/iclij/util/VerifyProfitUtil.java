@@ -53,7 +53,7 @@ public class VerifyProfitUtil {
 
     public void getVerifyProfit(int days, LocalDate date, ControlService srv,
             LocalDate oldDate, List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold) {
-        log.info("Verify compare date {} with {}", oldDate, date);
+        log.info("Verify compare date {} with {} threshold {}", oldDate, date, threshold);
         LocalDate futureDate = date;
         srv.conf.setdate(TimeUtil.convertDate(futureDate));
         new MLUtil().disabler(srv.conf.getConfigValueMap());

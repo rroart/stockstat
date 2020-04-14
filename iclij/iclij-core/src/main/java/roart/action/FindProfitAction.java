@@ -51,7 +51,10 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    protected ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
+    protected ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap, IclijConfig config) {
+        if (!config.getFindProfitMemoryFilter()) {
+            return filterMemoryListMapsWithConfidence2(market, listMap);
+        }
         Map<Pair<String, Integer>, List<MemoryItem>> okListMap = new HashMap<>();
         Map<Pair<String, Integer>, Double> okConfMap = new HashMap<>();
         Map<Pair<String, Integer>, List<MemoryItem>> aboveOkListMap = new HashMap<>();

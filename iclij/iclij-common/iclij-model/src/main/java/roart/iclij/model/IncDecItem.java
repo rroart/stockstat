@@ -25,6 +25,8 @@ public class IncDecItem {
 
     private Double score;
 
+    private String parameters;
+    
     // not saved
     private Boolean verified;
     
@@ -99,6 +101,14 @@ public class IncDecItem {
         this.score = score;
     }
 
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
     public Boolean getVerified() {
         return verified;
     }
@@ -117,7 +127,7 @@ public class IncDecItem {
 
     @Override
     public String toString() {
-        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + description + " " + verified + " " + verificationComment + "\n"; 
+        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + description + " " + verified + " " + verificationComment + " " + parameters + "\n"; 
     }
     
     public void save() throws Exception {
@@ -128,6 +138,7 @@ public class IncDecItem {
         incdec.setIncrease(isIncrease());
         incdec.setMarket(getMarket());
         incdec.setName(getName());
+        incdec.setParameters(getParameters());
         incdec.setRecord(TimeUtil.convertDate(getRecord()));
         incdec.setScore(getScore());
         incdec.save();
@@ -161,13 +172,14 @@ public class IncDecItem {
         incdecItem.setIncrease(incdec.isIncrease());
         incdecItem.setMarket(incdec.getMarket());
         incdecItem.setName(incdec.getName());
+        incdecItem.setParameters(incdec.getParameters());
         incdecItem.setRecord(TimeUtil.convertDate(incdec.getRecord()));
         incdecItem.setScore(incdec.getScore());
         return incdecItem;
     }
 
-    public static List<IncDecItem> getAll(String market, Date startDate, Date endDate) throws Exception {
-        List<IncDec> configs = IncDec.getAll(market, startDate, endDate);
+    public static List<IncDecItem> getAll(String market, Date startDate, Date endDate, String parameters) throws Exception {
+        List<IncDec> configs = IncDec.getAll(market, startDate, endDate, parameters);
         List<IncDecItem> configItems = new ArrayList<>();
         for (IncDec config : configs) {
             IncDecItem memoryItem = getIncdecItem(config);
