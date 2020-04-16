@@ -101,8 +101,8 @@ public class TimeUtil {
         String baseDateStr = stockdates.get(stockdates.size() - 1 - futuredays - dateoffset - offset - loopoffset);
         String futureDateStr = stockdates.get(stockdates.size() - 1 - dateoffset - offset - loopoffset);
         List<String> list = new ArrayList<>();
-        list.add(futureDateStr);
         list.add(baseDateStr);
+        list.add(futureDateStr);
         return list;
     }
 }
