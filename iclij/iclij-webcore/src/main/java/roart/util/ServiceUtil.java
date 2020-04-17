@@ -216,6 +216,7 @@ public class ServiceUtil {
         IclijServiceList trends = convert(trendMap);
         lists.add(trends);
 
+        listRel = mergeList(listRel, false);
         addRelations(componentInput, lists, listRel);
         
         new MiscUtil().print(result);
@@ -536,7 +537,7 @@ public class ServiceUtil {
             List<Boolean> listDecBoolean = listDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listDecBoolean.stream().filter(i -> i).count();                            
             IclijServiceList dec = new IclijServiceList();
-            dec.setTitle(market + " " + "Decrease ( verified " + count + " / " + listDecBoolean.size() + " )");
+            dec.setTitle(market + " " + "Decrease " + text + " ( verified " + count + " / " + listDecBoolean.size() + " )");
             dec.setList(listDec);
             subLists.add(dec);
         }
@@ -544,7 +545,7 @@ public class ServiceUtil {
             List<Boolean> listIncDecBoolean = listIncDec.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
             long count = listIncDecBoolean.stream().filter(i -> i).count();                            
             IclijServiceList incDec = new IclijServiceList();
-            incDec.setTitle(market + " " + "Increase and decrease ( verified " + count + " / " + listIncDecBoolean.size() + " )" );
+            incDec.setTitle(market + " " + "Increase and decrease " + text + "( verified " + count + " / " + listIncDecBoolean.size() + " )" );
             incDec.setList(listIncDec);
             subLists.add(incDec);
         }
@@ -737,7 +738,7 @@ public class ServiceUtil {
         List<IncDecItem> listIncDecs = new ArrayList<>(myData.getIncs());
         listIncDecs.addAll(myData.getDecs());
         
-        addRelations(componentInput, retLists, listIncDecs);
+        addRelations(componentInput, retLists, new ArrayList<>());
 
         return result;
     }
@@ -1095,7 +1096,7 @@ public class ServiceUtil {
             List<IncDecItem> itemlist = mymap.get(key);
             if (itemlist == null) {
                 itemlist = new ArrayList<IncDecItem>();
-                mymap.put(item.getId(), itemlist);
+                mymap.put(key, itemlist);
             }
             itemlist.add(item);
         }

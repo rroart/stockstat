@@ -150,6 +150,6 @@ public class RelationItem {
 
     @Override
     public String toString() {
-        return market + " " + id + " " + altId + " " + type + " " + value + " " + otherMarket + " " + otherId + " " + otherAltId;
+        return market + " " + id + " " + altId + " " + type + " " + value + " " + otherMarket + " " + otherId + " " + otherAltId + "\n";
     }
 }
