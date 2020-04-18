@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -331,9 +332,12 @@ public class ComponentData {
     }
 
     public Map<String, Object> getResultMap(String mapName, Map<String, Object> setValueMap) {
+        zerokey(configValueMap);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
+        zerokey(setValueMap);
         service.conf.getConfigValueMap().putAll(setValueMap);
         if (updateMap != null) {
+            zerokey(updateMap);
             service.conf.getConfigValueMap().putAll(updateMap);
         }
         service.conf.setdate(TimeUtil.convertDate(this.getBaseDate()));
@@ -354,6 +358,14 @@ public class ComponentData {
         this.setCategory(aCategory);
         String aCategoryTitle = (String) aMap.get(PipelineConstants.CATEGORYTITLE);
         this.setCategoryTitle(aCategoryTitle);        
+    }
+    
+    public void zerokey(Map map) {
+        Set keys = map.keySet();
+        if (map.get(null) != null) {
+            log.info("Keys {}",keys);
+            log.info("Value {}", map.get(null));            
+        }
     }
 }
     

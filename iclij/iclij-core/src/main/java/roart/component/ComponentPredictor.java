@@ -355,21 +355,6 @@ public class ComponentPredictor extends ComponentML {
     }
 
     @Override
-    protected Map<Pair<String, String>, String> getMap() {
-        return new MLUtil().getMapPred();
-    }
-
-    @Override
-    protected List<String> getOtherList() {
-        return new MLUtil().getOtherListPred();
-    }
-
-    @Override
-    protected Map<Pair<String, String>, String> getMapPersist() {
-        return new MLUtil().getMapPersistPred();
-    }
-
-    @Override
     public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
         Object[] result = new Object[3];
         ComponentMLData param = (ComponentMLData) componentparam;

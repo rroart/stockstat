@@ -5,7 +5,7 @@ package roart.iclij.model.config;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijConfig;
 
-public class CrosstestMLATRConfig extends ActionComponentConfig {
+public class CrosstestMLATRConfig extends ActionComponentConfigML {
     @Override
     public String getLocalEvolutionConfig(IclijConfig config) {
         return config.getCrosstestMLATREvolutionConfig();

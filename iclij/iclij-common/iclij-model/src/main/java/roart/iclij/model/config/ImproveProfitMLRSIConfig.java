@@ -6,7 +6,7 @@ package roart.iclij.model.config;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijConfig;
 
-public class ImproveProfitMLRSIConfig extends ActionComponentConfig {
+public class ImproveProfitMLRSIConfig extends ActionComponentConfigML {
     @Override
     public String getLocalEvolutionConfig(IclijConfig config) {
         return config.getImproveProfitMLRSIEvolutionConfig();
