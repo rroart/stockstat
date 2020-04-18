@@ -42,6 +42,9 @@ public abstract class ActionComponentConfigML extends ActionComponentConfig {
             if (mlConfig.getEnable()) {
                 String key = entry.getKey();
                 Pair<String, String> subComponent = revMap.get(key);
+                if (subComponents == null || subComponent == null) {
+                    int jj = 0;
+                }
                 subComponents.add(subComponent.getLeft() + " " + subComponent.getRight());
             } else {
                 int jj = 0;
@@ -54,7 +57,7 @@ public abstract class ActionComponentConfigML extends ActionComponentConfig {
         return new MLMapsML();
     }
 
-     private Map<String, EvolveMLConfig> getMLConfigs(MLConfigs mlConfig) {
+     protected Map<String, EvolveMLConfig> getMLConfigs(MLConfigs mlConfig) {
          return mlConfig.getAll();
      }
      
