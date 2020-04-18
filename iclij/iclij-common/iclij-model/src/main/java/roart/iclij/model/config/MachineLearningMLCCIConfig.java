@@ -6,7 +6,7 @@ package roart.iclij.model.config;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijConfig;
 
-public class MachineLearningMLCCIConfig extends ActionComponentConfig {
+public class MachineLearningMLCCIConfig extends ActionComponentConfigML {
     @Override
     public String getLocalEvolutionConfig(IclijConfig config) {
         return config.getMachineLearningMLCCIEvolutionConfig();

@@ -405,7 +405,7 @@ public abstract class Component {
     public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) throws Exception {
         Parameters parameters = new Parameters();
         parameters.setThreshold(1.0);
-        List<String> subComponents = new MLUtil().getSubComponents(market, param.getInput().getConfig(), null, getConfig());
+        List<String> subComponents = getConfig().getSubComponents(market, param.getInput().getConfig(), null);
         for(String subComponent : subComponents) {
             ComponentData componentData = handle(action, market, param, profitdata, new ArrayList<>(), false, new HashMap<>(), subComponent, null, parameters);
             calculateMemory(componentData, parameters);

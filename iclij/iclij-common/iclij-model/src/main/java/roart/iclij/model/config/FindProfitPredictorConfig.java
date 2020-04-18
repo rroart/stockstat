@@ -6,7 +6,7 @@ package roart.iclij.model.config;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijConfig;
 
-public class FindProfitPredictorConfig extends ActionComponentConfig {
+public class FindProfitPredictorConfig extends ActionComponentConfigMLPredictor {
     @Override
     public String getLocalEvolutionConfig(IclijConfig config) {
         return config.getFindProfitPredictorEvolutionConfig();
