@@ -46,7 +46,7 @@ public abstract class ComponentML extends Component {
     protected Map<String, Object> handleEvolve(Market market, String pipeline, boolean evolve, ComponentData param, String subcomponent, Map<String, Object> scoreMap, String mlmarket, Parameters parameters) {
         // special
         //String localMl = param.getInput().getConfig().getFindProfitMLIndicatorMLConfig();
-        Map<String, EvolveMLConfig> mlConfigMap = new MLUtil().getMLConfig(market, param.getInput().getConfig(), mlmarket, getConfig());
+        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket);
         // part special
         // if (param.getInput().getConfig().wantEvolveML()) {
         if (evolve) {
@@ -142,7 +142,7 @@ public abstract class ComponentML extends Component {
 
     @Override
     protected Map<String, Object> mlLoads(ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception {
-        Map<String, EvolveMLConfig> mlConfigMap = new MLUtil().getMLConfig(market, param.getInput().getConfig(), mlmarket, getConfig());
+        Map<String, EvolveMLConfig> mlConfigMap = getConfig().getMLConfig(market, param.getInput().getConfig(), mlmarket);
         return mlLoads(mlConfigMap, param, anUpdateMap, market, buy, subcomponent, mlmarket, action, parameters);
     }
 
@@ -348,15 +348,15 @@ public abstract class ComponentML extends Component {
     }
 
     protected Map<Pair<String, String>, String> getMap() {
-        return new MLUtil().getMap();
+        return getConfig().getMLMaps().getMap();
     }
 
     protected List<String> getOtherList() {
-        return new MLUtil().getOtherList();
+        return getConfig().getMLMaps().getOtherList();
     }
 
     protected Map<Pair<String, String>, String> getMapPersist() {
-        return new MLUtil().getMapPersist();
+        return getConfig().getMLMaps().getMapPersist();
     }
 
 }

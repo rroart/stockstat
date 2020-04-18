@@ -54,7 +54,6 @@ import roart.iclij.model.config.ActionComponentConfig;
 import roart.iclij.service.ControlService;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
-import roart.iclij.util.MLUtil;
 import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
 import roart.util.ServiceUtil;
@@ -274,7 +273,7 @@ public abstract class MarketAction extends Action {
 
             Double[] thresholds = getThresholds(param.getInput().getConfig());
             Integer[] futuredays = getFuturedays(param.getInput().getConfig());
-            List<String> subComponents = new MLUtil().getSubComponents(market, param.getInput().getConfig(), null, component.getConfig());
+            List<String> subComponents = component.getConfig().getSubComponents(market, param.getInput().getConfig(), null);
             for(String subComponent : subComponents) {
                 for (Integer aFutureday : futuredays) {
                     for (Double threshold : thresholds) {
