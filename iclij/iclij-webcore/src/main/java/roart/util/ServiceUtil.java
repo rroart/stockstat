@@ -217,6 +217,7 @@ public class ServiceUtil {
         lists.add(trends);
 
         listRel = mergeList(listRel, false);
+        roundList(listRel);
         addRelations(componentInput, lists, listRel);
         
         new MiscUtil().print(result);
@@ -685,6 +686,15 @@ public class ServiceUtil {
             List<IncDecItem> listIncDec = entry.getValue();
             List<IncDecItem> listInc = allListIncMap.get(key);
             List<IncDecItem> listDec = allListDecMap.get(key);
+            if (listIncDec == null) {
+                listIncDec = new ArrayList<>();
+            }
+            if (listDec == null) {
+                listDec = new ArrayList<>();
+            }
+            if (listInc == null) {
+                listInc = new ArrayList<>();
+            }
         if (verificationdays > 0) {
             try {
                 //srv.setFuturedays(0);
@@ -737,8 +747,9 @@ public class ServiceUtil {
 
         List<IncDecItem> listIncDecs = new ArrayList<>(myData.getIncs());
         listIncDecs.addAll(myData.getDecs());
-        
-        addRelations(componentInput, retLists, new ArrayList<>());
+        roundList(listIncDecs);
+                
+        addRelations(componentInput, retLists, listIncDecs);
 
         return result;
     }
