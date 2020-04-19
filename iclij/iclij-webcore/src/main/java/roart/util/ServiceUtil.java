@@ -46,6 +46,7 @@ import roart.constants.IclijPipelineConstants;
 import roart.db.IclijDbDao;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
@@ -217,6 +218,7 @@ public class ServiceUtil {
         lists.add(trends);
 
         listRel = mergeList(listRel, false);
+        roundList(listRel);
         addRelations(componentInput, lists, listRel);
         
         new MiscUtil().print(result);
@@ -314,6 +316,16 @@ public class ServiceUtil {
         for (Market market : markets) {
             List<TimingItem> currentTimings = new MiscUtil().getCurrentTimings(date, listAllTimings, market, action.getName(), action.getTime(market));
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
+            lists.addAll(subLists);
+        }
+    }
+
+    private static void getContentMLTest(LocalDate date, List<IclijServiceList> lists, List<Market> markets, MarketActionData action)
+            throws Exception {
+        List<MLMetricsItem> listAllTimings = IclijDbDao.getAllMLMetrics();
+        for (Market market : markets) {
+            List<MLMetricsItem> currentTimings = new MiscUtil().getCurrentMLMetrics(date, listAllTimings, market, action.getTime(market));
+            List<IclijServiceList> subLists = getServiceList2(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
     }
@@ -489,6 +501,7 @@ public class ServiceUtil {
         result.setLists(lists);
 
         getContentTimings(date, lists, markets, mlActionData);
+        getContentMLTest(date, lists, markets, mlActionData);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
         //getUpdateMarkets(componentInput, param, updateMarketMap, updateMap, mlActionData);
@@ -518,6 +531,17 @@ public class ServiceUtil {
         return subLists;
     }
 
+    private static List<IclijServiceList> getServiceList2(String market, List<MLMetricsItem> listTest) {
+        List<IclijServiceList> subLists = new ArrayList<>();
+        roundList4(listTest);
+        if (!listTest.isEmpty()) {
+            IclijServiceList incDec = new IclijServiceList();
+            incDec.setTitle(market + " mlstats");
+            incDec.setList(listTest);
+            subLists.add(incDec);
+        }
+        return subLists;
+    }
     static List<IclijServiceList> getServiceList(String market, String text, List<IncDecItem> listInc, List<IncDecItem> listDec,
             List<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
@@ -685,6 +709,15 @@ public class ServiceUtil {
             List<IncDecItem> listIncDec = entry.getValue();
             List<IncDecItem> listInc = allListIncMap.get(key);
             List<IncDecItem> listDec = allListDecMap.get(key);
+            if (listIncDec == null) {
+                listIncDec = new ArrayList<>();
+            }
+            if (listDec == null) {
+                listDec = new ArrayList<>();
+            }
+            if (listInc == null) {
+                listInc = new ArrayList<>();
+            }
         if (verificationdays > 0) {
             try {
                 //srv.setFuturedays(0);
@@ -737,8 +770,9 @@ public class ServiceUtil {
 
         List<IncDecItem> listIncDecs = new ArrayList<>(myData.getIncs());
         listIncDecs.addAll(myData.getDecs());
-        
-        addRelations(componentInput, retLists, new ArrayList<>());
+        roundList(listIncDecs);
+                
+        addRelations(componentInput, retLists, listIncDecs);
 
         return result;
     }
@@ -1089,6 +1123,19 @@ public class ServiceUtil {
         }        
     }
     
+    private static void roundList4(List<MLMetricsItem> list) {
+        for (MLMetricsItem item : list) {
+            Double loss = item.getLoss();
+            if (loss != null) {
+                item.setLoss(MathUtil.round2(loss, 3));
+            }
+            Double accuracy = item.getTestAccuracy();
+            if (accuracy != null) {
+                item.setTestAccuracy(MathUtil.round2(accuracy, 3));
+            }
+        }        
+    }
+
     public static Map<String, List<IncDecItem>> splitParam(List<IncDecItem> items) {
         Map<String, List<IncDecItem>> mymap = new HashMap<String, List<IncDecItem>>();
         for (IncDecItem item : items) {

@@ -53,6 +53,7 @@ import roart.iclij.config.Market;
 import roart.iclij.config.MarketFilter;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
@@ -106,7 +107,7 @@ public abstract class Component {
     
     public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters);
     
-    public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree);
+    public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests);
 
     protected abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
 
@@ -173,6 +174,7 @@ public abstract class Component {
             String description = null;
             if (IclijConstants.MACHINELEARNING.equals(param.getAction()) ) {
                 try {
+                    saveAccuracy(param);
                     Object[] result = calculateAccuracy(param);
                     score = (Double) result[0];
                     description = (String) result[1];
@@ -264,7 +266,7 @@ public abstract class Component {
         */
     }
 
-    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above);
+    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests);
 
     public abstract List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception;
 
@@ -463,7 +465,7 @@ public abstract class Component {
     public abstract String getFuturedays();
 
     public ComponentData improve2(MarketAction action, ComponentData param, Market market,
-            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters) {
+            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
         long time0 = System.currentTimeMillis();
         //Main main = new Main();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
@@ -473,7 +475,7 @@ public abstract class Component {
         Map<String, String> retMap = new HashMap<>();
         try {
             MarketFilterGene gene = new MarketFilterGene(market.getFilter());
-            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene);
+            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
             List<String> individuals = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals );
             MarketFilterChromosome bestChromosome = (MarketFilterChromosome) best.getEvaluation();
@@ -530,10 +532,10 @@ public abstract class Component {
     }
     
     public ComponentData improve3(MarketAction action, ComponentData param, Market market,
-            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters) {
+            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
         long time0 = System.currentTimeMillis();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
-        FitnessMarketFilter2 fit = new FitnessMarketFilter2(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters);
+        FitnessMarketFilter2 fit = new FitnessMarketFilter2(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, mlTests);
         final Codec<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome, roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene> codec = Codec.of(Genotype.of(new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome(new MarketFilter())),gt -> (roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome) gt.chromosome());
         final Engine<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> engine = Engine
                 .builder(fit::fitness, codec)
@@ -548,7 +550,7 @@ public abstract class Component {
         Map<String, String> retMap = new HashMap<>();
         try {
             MarketFilterGene gene = new MarketFilterGene(market.getFilter());
-            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene);
+            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
             List<String> individuals = new ArrayList<>();
             final EvolutionResult<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> result = engine.stream()
                     .limit(evolutionConfig.getGenerations())
@@ -611,7 +613,7 @@ public abstract class Component {
     }
     
     public ComponentData improve4(MarketAction action, ComponentData param, Market market,
-            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters) {
+            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
         long time0 = System.currentTimeMillis();
         //Main main = new Main();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
@@ -623,7 +625,7 @@ public abstract class Component {
             MarketFilterGene gene = new MarketFilterGene(market.getFilter());
             MarketFilterChromosome2 chromosome = new MarketFilterChromosome2(new ArrayList<>(), gene);
             List<String> individuals = new ArrayList<>();
-            FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters);
+            FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, mlTests);
             evolution.fittest = fit::fitness;
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals );
             MarketFilterChromosome2 bestChromosome = (MarketFilterChromosome2) best.getEvaluation();
@@ -699,6 +701,28 @@ public abstract class Component {
             writer.close();
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
+        }
+    }
+
+    public void saveAccuracy(ComponentData componentparam) throws Exception {
+        ComponentMLData param = (ComponentMLData) componentparam;
+        if (param.getResultMeta() == null) {
+            return;
+        }
+        for (ResultMeta meta : param.getResultMeta()) {
+            MLMetricsItem item = new MLMetricsItem();
+            item.setRecord(LocalDate.now());
+            item.setDate(param.getFutureDate());
+            item.setComponent(getPipeline());
+            item.setMarket(param.getMarket());
+            item.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
+            if (meta.getSubType() != null) {
+                item.setLocalcomponent(meta.getSubType() + meta.getSubSubType());
+            }
+            item.setTestAccuracy(meta.getTestAccuracy());
+            item.setLoss(meta.getLoss());
+            item.setThreshold(meta.getThreshold());
+            item.save();
         }
     }
 

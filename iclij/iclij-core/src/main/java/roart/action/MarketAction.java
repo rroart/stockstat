@@ -42,6 +42,7 @@ import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
@@ -439,7 +440,23 @@ public abstract class MarketAction extends Action {
 
         param.setTimings(new ArrayList<>());
         
-        handleComponent(this, market, profitdata, param, listComponentMap.get(marketTime.buy), componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters, wantThree);
+        List<TimingItem> timings = null;
+        try {
+            timings = IclijDbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.MACHINELEARNING, olddate, prevdate);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        List<MLMetricsItem> mltests = null;
+        try {
+            mltests = IclijDbDao.getAllMLMetrics(market.getConfig().getMarket(), olddate, prevdate);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        List<MLMetricsItem> mlTests = null;
+        if (config.getFindProfitMemoryFilter()) {
+        mlTests = getMLMetrics(timings, mltests, market.getFilter().getConfidence());
+        }
+        handleComponent(this, market, profitdata, param, listComponentMap.get(marketTime.buy), componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters, wantThree, mlTests);
         
         if (!getActionData().isDataset()) {
         filterIncDecs(param, market, profitdata, maps, true);
@@ -460,6 +477,55 @@ public abstract class MarketAction extends Action {
             myData.setTimingMap2(timingMap);
             myData.getUpdateMap2().putAll(param.getUpdateMap());
         }
+    }
+
+    private List<MLMetricsItem> getMLMetrics(List<TimingItem> timings, List<MLMetricsItem> mltests, Double confidence) {
+        List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
+        for (TimingItem item : timings) {
+            MLMetricsItem test = new MLMetricsItem();
+            test.setRecord(item.getRecord());
+            test.setDate(item.getDate());
+            test.setMarket(item.getMarket());
+            test.setComponent(item.getComponent());
+            test.setSubcomponent(item.getSubcomponent());
+            String param = item.getParameters();
+            Parameters parameters = JsonUtil.convert(param, Parameters.class);
+            test.setThreshold(parameters.getThreshold());
+            test.setTestAccuracy(item.getScore());
+            addNewest(returnedMLMetrics, test, confidence);
+        }
+        for (MLMetricsItem test : mltests) {
+            addNewest(returnedMLMetrics, test, confidence);
+        }
+        return returnedMLMetrics;
+    }
+
+    private void addNewest(List<MLMetricsItem> mlTests, MLMetricsItem test, Double confidence) {
+        if (test.getTestAccuracy() == null || test.getTestAccuracy() < confidence) {
+            return;
+        }
+        if (test.getThreshold() == null || test.getThreshold() != 1.0) {
+            return;
+        }
+        MLMetricsItem replace = null;
+        for (MLMetricsItem aTest : mlTests) {
+            Boolean moregeneralthan = aTest.moreGeneralThan(test);
+            if (moregeneralthan != null && moregeneralthan) {
+                replace = aTest;
+                break;
+            }
+            Boolean olderthan = aTest.olderThan(test);
+            if (olderthan != null && olderthan) {
+                replace = aTest;
+                break;
+            }
+        }
+        if (replace != null) {
+            int index = mlTests.indexOf(replace);
+            mlTests.set(index, test);
+            return;
+        }
+        mlTests.add(test);
     }
 
     protected ProfitInputData getListComponents(WebData myData, ComponentData param, IclijConfig config,
@@ -592,7 +658,7 @@ public abstract class MarketAction extends Action {
         return nameMap;
     }
     
-    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree);
+    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests);
  
     public Map<String, List<List>> getCategoryList(Map<String, Map<String, Object>> maps, String category) {
         String newCategory = null;

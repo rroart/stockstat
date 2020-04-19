@@ -29,6 +29,7 @@ import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.evolution.species.Individual;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
@@ -65,8 +66,10 @@ public class MarketFilterChromosome extends AbstractChromosome {
     protected Boolean buy;
 
     protected Parameters parameters;
+
+    private List<MLMetricsItem> mlTests;
     
-    public MarketFilterChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, MarketFilterGene gene) {
+    public MarketFilterChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, MarketFilterGene gene, List<MLMetricsItem> mlTests) {
         this.action = action;
         this.confList = confList;
         this.param = param;
@@ -78,10 +81,11 @@ public class MarketFilterChromosome extends AbstractChromosome {
         this.buy = buy;
         this.parameters = parameters;
         this.gene = gene;
+        this.mlTests = mlTests;
     }
 
     public MarketFilterChromosome(MarketFilterChromosome marketFilterChromosome) {
-        this(marketFilterChromosome.action, marketFilterChromosome.confList, marketFilterChromosome.param, marketFilterChromosome.profitdata, marketFilterChromosome.market, marketFilterChromosome.positions, marketFilterChromosome.componentName, marketFilterChromosome.buy, marketFilterChromosome.subcomponent, marketFilterChromosome.parameters, marketFilterChromosome.getGene().copy());
+        this(marketFilterChromosome.action, marketFilterChromosome.confList, marketFilterChromosome.param, marketFilterChromosome.profitdata, marketFilterChromosome.market, marketFilterChromosome.positions, marketFilterChromosome.componentName, marketFilterChromosome.buy, marketFilterChromosome.subcomponent, marketFilterChromosome.parameters, marketFilterChromosome.getGene().copy(), marketFilterChromosome.mlTests);
     }
 
     public MarketFilterGene getGene() {
@@ -224,7 +228,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
         List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
         List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
-        incProp = extracted(myData, listInc, listDec);
+        incProp = extracted(myData, listInc, listDec, mlTests);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
         action.filterIncDecs(param, market, profitdata, maps, true);
         action.filterIncDecs(param, market, profitdata, maps, false);
@@ -304,7 +308,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
         return incdecFitness;
     }
 
-    public Trend extracted(WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec) {
+    public Trend extracted(WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec, List<MLMetricsItem> mlTests) {
         Trend incProp = null;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
@@ -373,7 +377,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
             component.enableDisable(componentData, positions, param.getConfigValueMap());
 
             ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, positions, buy);
+            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests);
 
             Short mystartoffset = market.getConfig().getStartoffset();
             short startoffset = mystartoffset != null ? mystartoffset : 0;
@@ -402,7 +406,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
     @Override
     public Individual crossover(AbstractChromosome chromosome) {
         MarketFilterGene newNNConfig =  (MarketFilterGene) gene.crossover(((MarketFilterChromosome) chromosome).gene);
-        MarketFilterChromosome eval = new MarketFilterChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
+        MarketFilterChromosome eval = new MarketFilterChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene, mlTests);
         //MarketFilterChromosome eval = new MarketFilterChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
         return new Individual(eval);
     }

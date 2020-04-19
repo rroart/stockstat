@@ -8,18 +8,19 @@ import roart.common.config.ConfigConstants;
 import roart.component.model.ComponentData;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
 public class MLMACDChromosome extends MLAggregatorChromosome {
 
-    public MLMACDChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene) {
-        super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene);
+    public MLMACDChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+        super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene, mlTests);
     }
 
     @Override
     protected MLAggregatorChromosome getNewChromosome(ComponentData newparam) {
-        return new MLMACDChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
+        return new MLMACDChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene, mlTests);
     }
     
     @Override

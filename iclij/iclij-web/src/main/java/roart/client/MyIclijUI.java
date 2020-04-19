@@ -50,6 +50,7 @@ import roart.common.constants.Constants;
 import roart.eureka.util.EurekaUtil;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.RelationItem;
@@ -885,6 +886,12 @@ public class MyIclijUI extends UI implements ViewDisplay {
             ts.addComponent(table);
             return;
         }
+        if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("localcomponent")) {
+            List<MLMetricsItem> mylist = objectMapper.convertValue(list, new TypeReference<List<MLMetricsItem>>() { });
+            Grid<MLMetricsItem> table = getGridFromList7(item, mylist);
+            ts.addComponent(table);
+            return;
+        }
         if (((java.util.LinkedHashMap) list.get(0)).keySet().contains("id")) {
             List<ConfigItem> mylist = objectMapper.convertValue(list, new TypeReference<List<ConfigItem>>() { });
             Grid<ConfigItem> table = getGridFromList5(item, mylist);
@@ -896,6 +903,24 @@ public class MyIclijUI extends UI implements ViewDisplay {
         }
     }
 
+    private Grid<MLMetricsItem> getGridFromList7(IclijServiceList item, List<MLMetricsItem> mylist) {
+        Grid<MLMetricsItem> table = new Grid<>();
+        table.setCaption(item.getTitle());
+        table.addColumn(MLMetricsItem::getRecord).setCaption("Record");
+        table.addColumn(MLMetricsItem::getDate).setCaption("Date");
+        table.addColumn(MLMetricsItem::getMarket).setCaption("Market");
+        table.addColumn(MLMetricsItem::getComponent).setCaption("Component");
+        table.addColumn(MLMetricsItem::getSubcomponent).setCaption("Subcomponent");
+        table.addColumn(MLMetricsItem::getLocalcomponent).setCaption("Local component");
+        table.addColumn(MLMetricsItem::getTestAccuracy).setCaption("Test accuracy");
+        table.addColumn(MLMetricsItem::getLoss).setCaption("Loss");
+        table.addColumn(MLMetricsItem::getThreshold).setCaption("Threshold");
+        table.setWidth("90%");
+        table.setItems(mylist);
+        System.out.println("added");
+        return table;
+    }
+    
     private Grid<RelationItem> getGridFromList6(IclijServiceList item, List<RelationItem> mylist) {
         Grid<RelationItem> table = new Grid<>();
         table.setCaption(item.getTitle());
