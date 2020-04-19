@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
@@ -17,6 +18,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.query.Query;
 
 @Entity
 @Table(name = "Timing")
@@ -200,6 +202,37 @@ public class Timing implements Serializable {
     }
 
     @Transient
+    @Transactional
+    public static List<Timing> getAll(String market, String action, Date startDate, Date endDate) throws Exception {
+        List<Timing> list = null;
+        Session session = HibernateUtil.getMyHibernateSession();
+        synchronized (HibernateUtil.class) {
+        Transaction transaction = session.beginTransaction();
+        //String queryString = "from Memory where market = :market and action = :action and component = :component";
+        String queryString = "from Timing where market = :market and action = :action";
+        if (startDate != null) {
+            queryString += " and date >= :startdate";
+        }
+        if (endDate != null) {
+            queryString += " and date <= :enddate";
+        }
+        Query query = session.createQuery(queryString);
+        query.setParameter("market", market);
+        query.setParameter("action", action);
+        //query.setParameter("action", action);
+        if (startDate != null) {
+            query.setParameter("startdate", startDate, TemporalType.DATE);
+        }
+        if (endDate != null) {
+            query.setParameter("enddate", endDate, TemporalType.DATE);
+        }
+        list = query.list();
+        transaction.commit();
+        }
+        return list;
+    }
+
+   @Transient
     @Transactional
     public void save() throws Exception {
         Session session = HibernateUtil.getMyHibernateSession();

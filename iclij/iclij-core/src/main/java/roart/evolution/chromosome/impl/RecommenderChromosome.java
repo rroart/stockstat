@@ -23,6 +23,7 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.iclij.model.MLMetricsItem;
 import roart.service.model.ProfitData;
 
 public class RecommenderChromosome extends ConfigMapChromosome {
@@ -33,8 +34,8 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     
     private int listIdx;
     
-    public RecommenderChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene) {
-        super(action, param, profitdata, market, positions, component, buy, subcomponent, null, gene);
+    public RecommenderChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+        super(action, param, profitdata, market, positions, component, buy, subcomponent, null, gene, mlTests);
     }
 
     private List<Set<String>> makeSet(List<List<String>> listPerm) {
@@ -45,8 +46,8 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         return retlist;
     }
 
-    public RecommenderChromosome(MarketAction action, List<String> defaultConfList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene) {
-        super(action, param, profitdata, market, positions, component, buy, subcomponent, null, gene);
+    public RecommenderChromosome(MarketAction action, List<String> defaultConfList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+        super(action, param, profitdata, market, positions, component, buy, subcomponent, null, gene, mlTests);
         Set<String> defaultConfSet = new HashSet<>(defaultConfList);
         Set<String> confSet = new HashSet<>(gene.getConfList());
         Set<String> disableSet = new HashSet<>(defaultConfSet);
@@ -157,7 +158,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     
     @Override
     public Individual crossover(AbstractChromosome other) {
-        RecommenderChromosome chromosome = new RecommenderChromosome(action, param, profitdata, market, positions, componentName, buy, subcomponent, gene);
+        RecommenderChromosome chromosome = new RecommenderChromosome(action, param, profitdata, market, positions, componentName, buy, subcomponent, gene, mlTests);
         int idx = chromosome.listIdx ^ ((RecommenderChromosome) other).listIdx;
         chromosome.listIdx = idx;
         return new Individual(chromosome);
@@ -183,7 +184,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        RecommenderChromosome chromosome = new RecommenderChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, gene);
+        RecommenderChromosome chromosome = new RecommenderChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, gene, mlTests);
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         chromosome.listIdx = listIdx;
         return chromosome;

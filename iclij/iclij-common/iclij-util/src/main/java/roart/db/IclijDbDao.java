@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import roart.common.util.TimeUtil;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.RelationItem;
 import roart.iclij.model.TimingItem;
@@ -40,6 +41,13 @@ public class IclijDbDao {
     public static List<TimingItem> getAllTiming() throws Exception {
         long time0 = System.currentTimeMillis();
         List<TimingItem> list = TimingItem.getAll();        
+        log.info("TimingItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return list;
+    }
+
+    public static List<TimingItem> getAllTiming(String market, String action, LocalDate startDate, LocalDate endDate) throws Exception {
+        long time0 = System.currentTimeMillis();
+        List<TimingItem> list = TimingItem.getAll(market, action, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
         log.info("TimingItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }
@@ -76,6 +84,20 @@ public class IclijDbDao {
         long time0 = System.currentTimeMillis();
         List<ConfigItem> list = ConfigItem.getAll(market);        
         log.info("ConfigItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return list;
+    }
+
+    public static List<MLMetricsItem> getAllMLMetrics() throws Exception {
+        long time0 = System.currentTimeMillis();
+        List<MLMetricsItem> list = MLMetricsItem.getAll();        
+        log.info("MLMetricsItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return list;
+    }
+
+    public static List<MLMetricsItem> getAllMLMetrics(String market, LocalDate startDate, LocalDate endDate) throws Exception {
+        long time0 = System.currentTimeMillis();
+        List<MLMetricsItem> list = MLMetricsItem.getAll(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));        
+        log.info("MLMetricsItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }
 }
