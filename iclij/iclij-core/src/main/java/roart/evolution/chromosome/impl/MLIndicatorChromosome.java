@@ -12,13 +12,14 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
 public class MLIndicatorChromosome extends ConfigMapChromosome {
 
-    public MLIndicatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene) {
-        super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene);
+    public MLIndicatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+        super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene, mlTests);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
+        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene, mlTests);
 	chromosome.getMap().putAll(getMap());
         return chromosome;
     }
@@ -64,7 +65,7 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
     @Override
     public Individual crossover(AbstractChromosome other) {
         ComponentData newparam = new ComponentData(param);
-        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
+        MLIndicatorChromosome chromosome = new MLIndicatorChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene, mlTests);
         Random rand = new Random();
         for (int conf = 0; conf < getConfList().size(); conf++) {
             String confName = getConfList().get(conf);

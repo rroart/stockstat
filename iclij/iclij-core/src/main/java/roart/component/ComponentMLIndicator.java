@@ -25,6 +25,7 @@ import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.result.model.ResultMeta;
@@ -105,7 +106,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions, Boolean above) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests) {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         if (positions == null) {
             return;
@@ -123,7 +124,8 @@ public class ComponentMLIndicator extends ComponentML {
             if (positions == null) {
                 int jj = 0;
             }
-            if (positions == null || positions.contains(count)) {
+            MLMetricsItem mltest = search(mlTests, meta);
+            if (mltest != null || (mlTests == null && (positions == null || positions.contains(count)))) {
                 Pair keyPair = new ImmutablePair(PipelineConstants.MLINDICATOR, count);
                 for (String key : param.getCategoryValueMap().keySet()) {
                     List<List<Double>> resultList = param.getCategoryValueMap().get(key);
@@ -181,7 +183,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
@@ -189,7 +191,7 @@ public class ComponentMLIndicator extends ComponentML {
             confList.addAll(getThreeConfList());
         }
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent, parameters, gene);
+        ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent, parameters, gene, mlTests);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }

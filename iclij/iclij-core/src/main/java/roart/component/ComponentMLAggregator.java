@@ -24,6 +24,7 @@ import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
@@ -45,17 +46,17 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, subcomponent, parameters, gene);
+        ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, subcomponent, parameters, gene, mlTests);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions, Boolean above) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests) {
         ComponentMLData param = (ComponentMLData) componentparam;
         if (positions == null) {
             return;
@@ -77,7 +78,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
             if (positions == null) {
                 int jj = 0;
             }
-            if (positions == null || positions.contains(count)) {
+            MLMetricsItem mltest = search(mlTests, meta);
+            if (mltest != null || (mlTests == null && (positions == null || positions.contains(count)))) {
                 Pair keyPair = new ImmutablePair(getPipeline(), count);
                 for (String key : param.getCategoryValueMap().keySet()) {
                     List<List<Double>> resultList = param.getCategoryValueMap().get(key);
@@ -377,7 +379,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
     
     protected abstract ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene);
+            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests);
 
     protected abstract int getDaysAfterLimit(ComponentData componentparam);
     

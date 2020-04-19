@@ -30,6 +30,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.service.ControlService;
@@ -126,7 +127,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above, List<MLMetricsItem> mlTests) {
         PredictorData param = (PredictorData) componentparam;
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
@@ -166,11 +167,11 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        ConfigMapChromosome chromosome = new PredictorChromosome(action, param, profitdata, market, positions, PipelineConstants.PREDICTOR, buy, subcomponent, gene);
+        ConfigMapChromosome chromosome = new PredictorChromosome(action, param, profitdata, market, positions, PipelineConstants.PREDICTOR, buy, subcomponent, gene, mlTests);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         return improve(action, param, chromosome, subcomponent);
     }

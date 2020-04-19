@@ -33,6 +33,7 @@ import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.util.MiscUtil;
@@ -127,7 +128,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above, List<MLMetricsItem> mlTests) {
         RecommenderData param = (RecommenderData) componentparam;
         //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
         Map resultMaps = (Map) param.getResultMap();
@@ -310,7 +311,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
@@ -342,7 +343,7 @@ public class ComponentRecommender extends ComponentNoML {
         }
 
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        RecommenderChromosome chromosome = new RecommenderChromosome(action, getConfList(), param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent, gene);
+        RecommenderChromosome chromosome = new RecommenderChromosome(action, getConfList(), param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent, gene, mlTests);
 
         //chromosome.setConfList(confList);
         

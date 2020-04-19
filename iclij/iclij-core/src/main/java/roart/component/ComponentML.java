@@ -18,6 +18,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
@@ -32,6 +33,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.model.ConfigItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.util.MLUtil;
 import roart.iclij.util.MiscUtil;
@@ -357,6 +359,31 @@ public abstract class ComponentML extends Component {
 
     protected Map<Pair<String, String>, String> getMapPersist() {
         return getConfig().getMLMaps().getMapPersist();
+    }
+
+    protected MLMetricsItem search(List<MLMetricsItem> mlTests, List meta) {
+        if (mlTests == null) {
+            return null;
+        }
+        String mlname = (String) meta.get(ResultMetaConstants.MLNAME);
+        String modelname = (String) meta.get(ResultMetaConstants.MODELNAME);
+        String subtype = (String) meta.get(ResultMetaConstants.SUBTYPE);
+        String subsubtype = (String) meta.get(ResultMetaConstants.SUBSUBTYPE);
+        //Double testaccuracy = (Double) meta.get(ResultMetaConstants.TESTACCURACY);
+
+        String subcomponent = mlname + " " + modelname;
+        String localcomponent = null;
+        if (subtype != null) {
+            localcomponent = subtype + subsubtype;
+        }
+        for (MLMetricsItem aTest : mlTests) {
+            if (aTest.getSubcomponent().equals(subcomponent)) {
+                if (aTest.getLocalcomponent() == null || aTest.getLocalcomponent().equals(localcomponent)) {
+                    return aTest;
+                }
+            }
+        }
+        return null;
     }
 
 }

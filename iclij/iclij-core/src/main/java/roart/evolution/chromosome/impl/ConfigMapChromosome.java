@@ -45,6 +45,7 @@ import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
@@ -83,7 +84,9 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     protected Parameters parameters;
     
-    public ConfigMapChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene) {
+    protected List<MLMetricsItem> mlTests;
+    
+    public ConfigMapChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
         this.action = action;
         this.param = param;
         this.profitdata = profitdata;
@@ -94,10 +97,11 @@ public class ConfigMapChromosome extends AbstractChromosome {
         this.buy = buy;
         this.parameters = parameters;
         this.gene = gene;
+        this.mlTests = mlTests;
     }
 
     public ConfigMapChromosome(ConfigMapChromosome chromosome) {
-        this(chromosome.action, chromosome.param, chromosome.profitdata, chromosome.market, chromosome.positions, chromosome.componentName, chromosome.buy, chromosome.subcomponent, chromosome.parameters, chromosome.gene);
+        this(chromosome.action, chromosome.param, chromosome.profitdata, chromosome.market, chromosome.positions, chromosome.componentName, chromosome.buy, chromosome.subcomponent, chromosome.parameters, chromosome.gene, chromosome.mlTests);
     }
 
     public ConfigMapGene getGene() {
@@ -309,7 +313,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             component.enableDisable(componentData, positions, param.getConfigValueMap());
 
             ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, gene.getMap(), subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, positions, buy);
+            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests);
 
             Short mystartoffset = market.getConfig().getStartoffset();
             short startoffset = mystartoffset != null ? mystartoffset : 0;
@@ -360,7 +364,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
     @Override
     public Individual crossover(AbstractChromosome chromosome) {
         ConfigMapGene newNNConfig =  (ConfigMapGene) gene.crossover(((ConfigMapChromosome) chromosome).gene);
-        ConfigMapChromosome eval = new ConfigMapChromosome(action, param, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
+        ConfigMapChromosome eval = new ConfigMapChromosome(action, param, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene, mlTests);
         //MarketFilterChromosome eval = new MarketFilterChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
         return new Individual(eval);
     }
@@ -368,7 +372,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
     @Override
     public AbstractChromosome copy() {
         ComponentData newparam = new ComponentData(param);
-        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene);
+        ConfigMapChromosome chromosome = new ConfigMapChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene, mlTests);
         chromosome.gene = gene.copy();
         return chromosome;
     }

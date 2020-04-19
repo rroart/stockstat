@@ -18,6 +18,7 @@ import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
@@ -73,8 +74,8 @@ public class ComponentMLRSI extends ComponentMLAggregator {
 
     @Override
     protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene) {
-        return new MLRSIChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene);
+            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+        return new MLRSIChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
     }
 
     @Override

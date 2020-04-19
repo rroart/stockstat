@@ -2,6 +2,7 @@ package roart.iclij.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import roart.common.util.TimeUtil;
@@ -185,7 +186,17 @@ public class TimingItem {
         return timingItems;
     }
 
-    private static TimingItem getTimingItem(Timing timing) {
+   public static List<TimingItem> getAll(String market, String action, Date startDate, Date endDate) throws Exception {
+       List<Timing> configs = Timing.getAll(market, action, startDate, endDate);
+       List<TimingItem> configItems = new ArrayList<>();
+       for (Timing config : configs) {
+           TimingItem memoryItem = getTimingItem(config);
+           configItems.add(memoryItem);
+       }
+       return configItems;
+   }
+
+   private static TimingItem getTimingItem(Timing timing) {
         TimingItem timingItem = new TimingItem();
         timingItem.setAction(timing.getAction());
         timingItem.setBuy(timing.getBuy());

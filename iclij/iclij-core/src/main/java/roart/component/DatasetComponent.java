@@ -13,6 +13,7 @@ import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.config.IclijConfig;
@@ -47,7 +48,7 @@ public class DatasetComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree) {
+            List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         return null;
     }
 
@@ -57,7 +58,7 @@ public class DatasetComponent extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above) {
+    public void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests) {
     }
 
     @Override

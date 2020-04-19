@@ -25,6 +25,7 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
@@ -57,8 +58,10 @@ public class FitnessMarketFilter {
     private String subcomponent;
     
     private Parameters parameters;
+    
+    private List<MLMetricsItem> mlTests;
 
-    public FitnessMarketFilter(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters) {
+    public FitnessMarketFilter(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
         this.action = action;
         this.param = param;
         this.profitdata = profitdata;
@@ -67,6 +70,7 @@ public class FitnessMarketFilter {
         this.subcomponent = subcomponent;
         this.buy = buy;
         this.parameters = parameters;
+        this.mlTests = mlTests;
     }
 
     public double fitness(AbstractChromosome chromosome) {
@@ -85,7 +89,7 @@ public class FitnessMarketFilter {
         List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
         List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
-        incProp = extracted(chromosome, myData, listInc, listDec);
+        incProp = extracted(chromosome, myData, listInc, listDec, mlTests);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
         action.filterIncDecs(param, market, profitdata, maps, true);
         action.filterIncDecs(param, market, profitdata, maps, false);
@@ -165,7 +169,7 @@ public class FitnessMarketFilter {
         return incdecFitness;
     }
 
-    public Trend extracted(AbstractChromosome chromosome, WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec) {
+    public Trend extracted(AbstractChromosome chromosome, WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec, List<MLMetricsItem> mlTests) {
         Trend incProp = null;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
@@ -234,7 +238,7 @@ public class FitnessMarketFilter {
             component.enableDisable(componentData, positions, param.getConfigValueMap());
 
             ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, positions, buy);
+            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests);
 
             Short mystartoffset = market.getConfig().getStartoffset();
             short startoffset = mystartoffset != null ? mystartoffset : 0;
