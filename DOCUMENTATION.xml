@@ -72,7 +72,10 @@ Need to provide postgres with a database stockstat, and username/password stocks
   psql
   create database stockstat;
   create user stockstat with password 'password';
-  grant all privileges on database stockstat to stockstat;
+  #grant all privileges on database stockstat to stockstat;
+  psql stockstat
+  grant all privileges on all tables in schema public to stockstat;
+  grant all privileges on all sequences in schema public to stockstat;
 </programlisting>
 </para>
 </chapter>
@@ -1939,6 +1942,28 @@ aggregators.mlmacd
 	    </entry>
 	    <entry>
 	      Use the Machine Learning MACD
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.rsi
+	    </entry>
+	    <entry>
+	      Use the Machine Learning RSI
+	    </entry>
+	    <entry>
+	      true
+	    </entry>
+	  </row>
+	  <row>
+	    <entry>
+aggregators.multi
+	    </entry>
+	    <entry>
+	      Use the Machine Learning Multi indicator
 	    </entry>
 	    <entry>
 	      true
