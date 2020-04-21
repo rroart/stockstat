@@ -448,7 +448,7 @@ public abstract class MarketAction extends Action {
         }
         List<MLMetricsItem> mltests = null;
         try {
-            mltests = IclijDbDao.getAllMLMetrics(market.getConfig().getMarket(), olddate, prevdate);
+            mltests = IclijDbDao.getAllMLMetrics(market.getConfig().getMarket(), null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
