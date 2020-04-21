@@ -17,6 +17,8 @@ public class Population {
     
     private List<Individual> population;
     
+    private Random rnd = new Random();
+
     @Deprecated
     public Population(int populationSize) {
         this.population = new ArrayList<>();
@@ -52,7 +54,6 @@ public class Population {
     }
     
     public void shuffle() {
-        Random rnd = new Random();
         for (int i = population.size() - 1; i > 0; i--) {
             int index = rnd.nextInt(i + 1);
             Individual tmp = population.get(index);

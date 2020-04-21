@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 
 import myutils as my
 
+from datetime import datetime, timedelta
+
 import atr
 import cci
 import macd
@@ -532,7 +534,7 @@ def getonedfvaluearr(df, atype):
         return(getonedfspecialarr(df, atype))
     print("should not be here")
 
-def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, percentize=True):
+def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, percentize=True, wantchart=True):
     print("0", market)
     periodtexts = getperiodtexts(market)
     myperiodtexts = myperiodtextslist(myperiodtexts, periodtexts)
@@ -704,6 +706,8 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
             dflist.append(df)
         #print("dflist",dflist)
         mytopperiod2(dflist, period, topbottom, days, wantrise=wantrise, wantmacd=wantmacd, wantrsi=wantrsi)
+        if not wantchart:
+            return
         if reverse:
             getbottomchart(market, days, topbottom, stocklistperiod, period)
         else:
@@ -980,7 +984,10 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
     for i in range(numindicators):
         indicator = indicators[i]
         lses = indicator.calculate(myma)
-        print("l0", type(lses))
+        print("l0", type(lses), type(lses[0]))
+        lsesl = lses[0].tolist()
+        lsesr = [ round(num, 1) for num in lsesl ]
+        print(lsesr)
         days2 = len(lses[0])
         olddate2 = daynames[days - days2]
         mynames2 = indicator.names()
@@ -1376,6 +1383,18 @@ def getelem3tup(id, days, datedstocklist, period, size):
         c = c + 1
     return(retl)
 
+def gettopmonth(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays + 1) * tablemoveintervaldays
+    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
+
+def gettopweek(id, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
+    start = (numberdays + 1) * tablemoveintervaldays
+    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
+
+def gettopcy(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays + 1) * tablemoveintervaldays
+    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "cy", wantchart=False)
+
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 
@@ -1385,6 +1404,9 @@ if filterweekend:
 allmetas = getmetas(conn)
 
 plt.close('all')
+
+today = datetime.today().strftime('%Y-%m-%d')
+yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
 
 #print(len(stock))
 #print(meta)

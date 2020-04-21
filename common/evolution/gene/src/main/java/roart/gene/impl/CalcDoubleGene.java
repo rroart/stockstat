@@ -16,8 +16,7 @@ public class CalcDoubleGene extends CalcGene {
 
     @Override
     public void randomize() {
-        Random rand = new Random();
-        getWeight(rand);
+        getWeight(random);
     }
 
     private void getWeight(Random rand) {
@@ -26,11 +25,10 @@ public class CalcDoubleGene extends CalcGene {
 
     @Override
     public void mutate() {
-        Random rand = new Random();
-        int task = rand.nextInt(1);
+        int task = random.nextInt(1);
         switch (task) {
         case 0:
-            getWeight(rand);
+            getWeight(random);
             break;
         default:
             System.out.println("Too many");
@@ -50,8 +48,7 @@ public class CalcDoubleGene extends CalcGene {
     @Override
     public AbstractGene crossover(AbstractGene other) {
         CalcDoubleGene node = new CalcDoubleGene();
-        Random rand = new Random();
-        if (rand.nextBoolean()) {
+        if (random.nextBoolean()) {
             node.setWeight(weight);
         } else {
             node.setWeight(((CalcDoubleGene) other).getWeight());

@@ -35,7 +35,9 @@ public abstract class EvolutionAlgorithm {
     private EvolutionConfig evolutionConfig;
     
     private boolean doParallel = true;
-    
+
+    protected Random rand = new Random();
+
     public Function<AbstractChromosome, Double> fittest;
 
     public EvolutionAlgorithm(EvolutionConfig evolutionConfig) {
@@ -78,7 +80,6 @@ public abstract class EvolutionAlgorithm {
 
     protected void mutateList(List<Individual> population, int start, int size,
             int testRecommendMutate, boolean scoreAll, boolean doBuy) throws JsonParseException, JsonMappingException, IOException {
-        Random rand = new Random();
         List<Individual> populationCopies = new ArrayList<>(population);
         int populationSize = Math.min(size, population.size());
         int randMax = populationSize;
@@ -92,7 +93,6 @@ public abstract class EvolutionAlgorithm {
 
     protected List<Individual> crossover(int childrenNum, List<Individual> population, boolean doBuy2, AbstractChromosome recommend) throws JsonParseException, JsonMappingException, IOException {
         List<Individual> children = new ArrayList<>();
-        Random rand = new Random();
         List<Individual> populationCopies = new ArrayList<>(population);
         int populationSize = populationCopies.size();
         int randMax = populationSize;

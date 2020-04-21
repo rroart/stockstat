@@ -1,5 +1,7 @@
 package roart.gene;
 
+import java.util.Random;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 

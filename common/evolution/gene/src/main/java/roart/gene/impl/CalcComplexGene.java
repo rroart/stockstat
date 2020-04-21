@@ -140,13 +140,12 @@ public class CalcComplexGene extends CalcGene {
 
     @Override
     public void randomize() {
-        Random rand = new Random();
         //getUseminmaxthreshold(rand);
-        getUsethreshold(rand);
+        getUsethreshold(random);
         //getDivideminmaxthreshold(rand); // not
         //getChangeSignWhole(rand); // not
-        getWeight(rand);
-        getThreshold(rand);
+        getWeight(random);
+        getThreshold(random);
     }
 
     private void getThreshold(Random rand) {
@@ -187,8 +186,7 @@ public class CalcComplexGene extends CalcGene {
 
     @Override
     public void mutate() {
-        Random rand = new Random();
-        int task = rand.nextInt(3);
+        int task = random.nextInt(3);
         switch (task) {
         /*
         case 0:
@@ -196,13 +194,13 @@ public class CalcComplexGene extends CalcGene {
             break;
             */
         case 0:
-            getUsethreshold(rand);
+            getUsethreshold(random);
             break;
         case 1:
-            getWeight(rand);
+            getWeight(random);
             break;
         case 2: 
-            getThreshold(rand);
+            getThreshold(random);
             break;
             /*
         case 2:
@@ -225,18 +223,17 @@ public class CalcComplexGene extends CalcGene {
         node.setMaxMutateThresholdRange(maxMutateThresholdRange);
         node.setMinMutateThresholdRange(minMutateThresholdRange);
         node.setUseminmaxthreshold(useminmaxthreshold);
-        Random rand = new Random();
-        if (rand.nextBoolean()) {
+        if (random.nextBoolean()) {
             node.setThreshold(threshold);
         } else {
             node.setThreshold(((CalcComplexGene) other).getThreshold());
         }
-        if (rand.nextBoolean()) {
+        if (random.nextBoolean()) {
             node.setUseminmaxthreshold(useminmaxthreshold);
         } else {
             node.setUseminmaxthreshold(((CalcComplexGene) other).isUseminmaxthreshold());            
         }
-        if (rand.nextBoolean()) {
+        if (random.nextBoolean()) {
             node.setWeight(weight);
         } else {
             node.setWeight(((CalcComplexGene) other).getWeight());            
