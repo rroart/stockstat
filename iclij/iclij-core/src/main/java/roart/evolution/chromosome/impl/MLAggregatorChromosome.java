@@ -45,8 +45,7 @@ public abstract class MLAggregatorChromosome extends ConfigMapChromosome {
         if (getValidateList().isEmpty()) {
             return;
         }
-        Random rand = new Random();
-        int index = rand.nextInt(getValidateList().size());
+        int index = random.nextInt(getValidateList().size());
         getMap().put(getValidateList().get(index), true);
     }
 
@@ -73,10 +72,9 @@ public abstract class MLAggregatorChromosome extends ConfigMapChromosome {
     public Individual crossover(AbstractChromosome other) {
         ComponentData newparam = new ComponentData(param);
         MLAggregatorChromosome chromosome = getNewChromosome(newparam);
-        Random rand = new Random();
         for (int conf = 0; conf < getConfList().size(); conf++) {
             String confName = getConfList().get(conf);
-            if (rand.nextBoolean()) {
+            if (random.nextBoolean()) {
                 chromosome.getMap().put(confName, this.getMap().get(confName));
             } else {
                 chromosome.getMap().put(confName, ((ConfigMapChromosome) other).getMap().get(confName));

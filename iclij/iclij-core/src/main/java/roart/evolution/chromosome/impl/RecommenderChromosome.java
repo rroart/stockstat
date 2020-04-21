@@ -139,14 +139,12 @@ public class RecommenderChromosome extends ConfigMapChromosome {
 
     @Override
     public void getRandom() throws JsonParseException, JsonMappingException, IOException {
-        Random random = new Random();
         List<List<String>> listPerm = getBuy() ? listPermBuy : listPermSell;
         listIdx = random.nextInt(listPerm.size());
     }
     
     @Override
     public void mutate() {
-        Random random = new Random();
         int bit = random.nextInt(getBuyList().size());
         //int bit = random.nextInt(bits);
         List<List<String>> listPerm = getBuy() ? listPermBuy : listPermSell;

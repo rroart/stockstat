@@ -1,18 +1,12 @@
 package roart.gene.impl;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import roart.common.config.MyMyConfig;
 import roart.common.util.MathUtil;
-import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.species.Individual;
 import roart.gene.AbstractGene;
 
 public class ConfigMapGene extends AbstractGene {
@@ -49,9 +43,8 @@ public class ConfigMapGene extends AbstractGene {
 
     @Override
     public void randomize() {
-        Random rand = new Random();
         for (int conf = 0; conf < confList.size(); conf++) {
-            generateConfigNum(rand, conf);
+            generateConfigNum(random, conf);
         }
         /*
         if (!validate()) {
@@ -62,9 +55,8 @@ public class ConfigMapGene extends AbstractGene {
 
     @Override
     public void mutate() {
-        Random rand = new Random();
-        int conf = rand.nextInt(confList.size());
-        generateConfigNum(rand, conf);
+        int conf = random.nextInt(confList.size());
+        generateConfigNum(random, conf);
         /*
         if (!validate()) {
             fixValidation();
@@ -105,10 +97,9 @@ public class ConfigMapGene extends AbstractGene {
         ConfigMapGene newGene = new ConfigMapGene();
         newGene.conf = this.conf;
         newGene.confList = this.confList;
-        Random rand = new Random();
         for (int conf = 0; conf < confList.size(); conf++) {
             String confName = confList.get(conf);
-            if (rand.nextBoolean()) {
+            if (random.nextBoolean()) {
                 newGene.map.put(confName, this.map.get(confName));
             } else {
                 newGene.map.put(confName, ((ConfigMapGene) other).map.get(confName));

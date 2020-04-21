@@ -1,6 +1,7 @@
 package roart.evolution.chromosome;
 
 import java.io.IOException;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ import roart.evolution.species.Individual;
 public abstract class AbstractChromosome {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     
+    protected Random random = new Random();
+
     private boolean ascending = true;
     
     public void setAscending(boolean ascending) {
