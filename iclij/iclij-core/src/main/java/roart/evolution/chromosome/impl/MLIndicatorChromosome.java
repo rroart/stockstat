@@ -37,8 +37,7 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
 
     @Override
     public void fixValidation() { 
-        Random rand = new Random();
-        int index = rand.nextInt(getValidateList().size());
+        int index = random.nextInt(getValidateList().size());
         getMap().put(getValidateList().get(index), true);
     }
 
@@ -66,10 +65,9 @@ public class MLIndicatorChromosome extends ConfigMapChromosome {
     public Individual crossover(AbstractChromosome other) {
         ComponentData newparam = new ComponentData(param);
         MLIndicatorChromosome chromosome = new MLIndicatorChromosome(action, newparam, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene, mlTests);
-        Random rand = new Random();
         for (int conf = 0; conf < getConfList().size(); conf++) {
             String confName = getConfList().get(conf);
-            if (rand.nextBoolean()) {
+            if (random.nextBoolean()) {
                 chromosome.getMap().put(confName, this.getMap().get(confName));
             } else {
                 chromosome.getMap().put(confName, ((ConfigMapChromosome) other).getMap().get(confName));
