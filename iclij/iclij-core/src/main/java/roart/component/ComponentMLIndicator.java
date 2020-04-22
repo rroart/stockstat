@@ -121,11 +121,19 @@ public class ComponentMLIndicator extends ComponentML {
         for (List meta : param.getResultMetaArray()) {
             int returnSize = (int) meta.get(ResultMetaConstants.RETURNSIZE);
 
+            boolean emptyMeta = meta.get(ResultMetaConstants.MLNAME) == null;
+            
+            if (emptyMeta) {
+                resultIndex += returnSize;
+                count++;                
+            }
+            
             if (positions == null) {
                 int jj = 0;
             }
             MLMetricsItem mltest = search(mlTests, meta);
             if (mltest != null || (mlTests == null && (positions == null || positions.contains(count)))) {
+                Double score = mltest.getTestAccuracy();
                 Pair keyPair = new ImmutablePair(PipelineConstants.MLINDICATOR, count);
                 for (String key : param.getCategoryValueMap().keySet()) {
                     List<List<Double>> resultList = param.getCategoryValueMap().get(key);
@@ -149,14 +157,16 @@ public class ComponentMLIndicator extends ComponentML {
                     if (above == null || above == true) {
                     if (tfpn.equals(Constants.ABOVE)) {
                         increase = true;
-                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                     }
                     if (above == null || above == false) {
                     if (tfpn.equals(Constants.BELOW)) {
                         increase = false;
-                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
                         incdec.setIncrease(increase);
                     }
                     }
@@ -210,6 +220,10 @@ public class ComponentMLIndicator extends ComponentML {
             MemoryItem memory = new MemoryItem();
             int returnSize = (int) meta.getReturnSize();
             newResultIndex += returnSize;
+            if (meta.getMlName() == null) {
+                continue;
+            }
+            
             Double testaccuracy = (Double) meta.getTestAccuracy();
             Double testloss = (Double) meta.getLoss();
             Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.getOffsetMap();

@@ -336,10 +336,16 @@ public abstract class IndicatorAggregator extends Aggregator {
                     // map from posnegcom to map<id, result>
                     Map<String, Map<String, Double[]>> mapResult2 = new HashMap<>();
                     for (MLClassifyModel model : mldao.getModels()) {
-                        if (model.isPredictorOnly()) {
-                            continue;
-                        }
                         for (int mapTypeInt : getMapTypeList()) {
+                            Object[] meta = new Object[ResultMetaConstants.SIZE];
+                            meta[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
+                            resultMetaArray.add(meta);
+                            ResultMeta resultMeta = new ResultMeta();
+                            resultMeta.setReturnSize(model.getReturnSize());
+                            getResultMetas().add(resultMeta);
+                            if (model.isPredictorOnly()) {
+                                continue;
+                            }
                             if (!isBinary(mapTypeInt) && model.isBinary()) {
                                 continue;
                             }
@@ -384,25 +390,19 @@ public abstract class IndicatorAggregator extends Aggregator {
                                 continue;
                             }
                             // make OO of this, create object
-                            Object[] meta = new Object[ResultMetaConstants.SIZE];
                             meta[ResultMetaConstants.MLNAME] = mldao.getName();
                             meta[ResultMetaConstants.MODELNAME] = model.getName();
-                            meta[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
                             meta[ResultMetaConstants.SUBTYPE] = subType.getType() + mergeTxt(subType);
                             meta[ResultMetaConstants.SUBSUBTYPE] = mapType;
                             meta[ResultMetaConstants.LEARNMAP] = countMap;
                             meta[ResultMetaConstants.THRESHOLD] = threshold;
-                            resultMetaArray.add(meta);
-                            ResultMeta resultMeta = new ResultMeta();
                             resultMeta.setMlName(mldao.getName());
                             resultMeta.setModelName(model.getName());
-                            resultMeta.setReturnSize(model.getReturnSize());
                             resultMeta.setSubType(subType.getType() + mergeTxt(subType));
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
                             resultMeta.setThreshold(threshold);
-                            getResultMetas().add(resultMeta);
-                            accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
+                             accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
                             lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                             meta[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
