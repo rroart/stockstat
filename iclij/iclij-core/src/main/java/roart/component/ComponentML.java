@@ -249,6 +249,9 @@ public abstract class ComponentML extends Component {
         if (resultMetas != null) {
             for (ResultMeta resultMeta : resultMetas) {
                 String mlname = resultMeta.getMlName();
+                if (mlname == null) {
+                    continue;
+                }
                 String name = resultMeta.getModelName();
                 Pair<String, String> pair = new ImmutablePair(mlname, name);
                 String cnf = map.get(pair);
