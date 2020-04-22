@@ -710,6 +710,9 @@ public abstract class Component {
             return;
         }
         for (ResultMeta meta : param.getResultMeta()) {
+            if (meta.getMlName() == null) {
+                continue;
+            }
             MLMetricsItem item = new MLMetricsItem();
             item.setRecord(LocalDate.now());
             item.setDate(param.getFutureDate());
