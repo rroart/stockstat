@@ -206,7 +206,7 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
             ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null, parameters);
-            component.calculateIncDec(componentData, profitdata, positions, buy, mlTests);
+            component.calculateIncDec(componentData, profitdata, positions, buy, mlTests, parameters);
             if (param.getInput().isDoSave()) {
                 IncDecItem myitem = null;
                 try {
