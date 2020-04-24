@@ -707,10 +707,12 @@ public class ServiceUtil {
         Map<String, List<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
         Map<String, List<IncDecItem>> allListIncMap = splitParam(allListInc);
         Map<String, List<IncDecItem>> allListDecMap = splitParam(allListDec);
-        for (Entry<String, List<IncDecItem>> entry : allListIncDecMap.entrySet(
-                )) {
-            String key = entry.getKey();
-            List<IncDecItem> listIncDec = entry.getValue();
+        Set<String> allKeys = new HashSet<>();
+        allKeys.addAll(allListIncDecMap.keySet());
+        allKeys.addAll(allListDecMap.keySet());
+        allKeys.addAll(allListIncMap.keySet());
+        for (String key : allKeys) {
+            List<IncDecItem> listIncDec = allListIncDecMap.get(key);
             List<IncDecItem> listInc = allListIncMap.get(key);
             List<IncDecItem> listDec = allListDecMap.get(key);
             if (listIncDec == null) {
