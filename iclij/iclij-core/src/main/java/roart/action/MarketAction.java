@@ -481,6 +481,8 @@ public abstract class MarketAction extends Action {
 
     private List<MLMetricsItem> getMLMetrics(List<TimingItem> timings, List<MLMetricsItem> mltests, Double confidence) {
         List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
+        // don't need timings anymore
+        timings = new ArrayList<>();
         for (TimingItem item : timings) {
             MLMetricsItem test = new MLMetricsItem();
             test.setRecord(item.getRecord());
@@ -510,7 +512,8 @@ public abstract class MarketAction extends Action {
         MLMetricsItem replace = null;
         for (MLMetricsItem aTest : mlTests) {
             Boolean moregeneralthan = aTest.moreGeneralThan(test);
-            if (moregeneralthan != null && moregeneralthan) {
+            // we don't need this anymore
+            if (false && moregeneralthan != null && moregeneralthan) {
                 replace = aTest;
                 break;
             }

@@ -58,7 +58,7 @@ public class DatasetComponent extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests) {
+    public void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
     }
 
     @Override

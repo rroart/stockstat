@@ -128,7 +128,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above, List<MLMetricsItem> mlTests) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
         RecommenderData param = (RecommenderData) componentparam;
         //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
         Map resultMaps = (Map) param.getResultMap();
@@ -165,7 +165,7 @@ public class ComponentRecommender extends ComponentNoML {
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         //Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         try {
-        handleBuySell(profitdata, (ComponentData) param, keyPair, confidenceFactor, list0);
+        handleBuySell(profitdata, (ComponentData) param, keyPair, confidenceFactor, list0, parameters);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -173,7 +173,7 @@ public class ComponentRecommender extends ComponentNoML {
         }
     }
 
-    private void handleBuySell(ProfitData profitdata, ComponentData param, Pair<String, Integer> keys, Double confidenceFactor, List<MyElement> list) {
+    private void handleBuySell(ProfitData profitdata, ComponentData param, Pair<String, Integer> keys, Double confidenceFactor, List<MyElement> list, Parameters parameters) {
         int listSize = list.size();
         int recommend = param.getInput().getConfig().recommendTopBottom();
         if (listSize < recommend * 3) {
@@ -206,7 +206,7 @@ public class ComponentRecommender extends ComponentNoML {
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getAboveListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getService().conf.getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
             if (incdec != null) {
             incdec.setIncrease(true);
             }
@@ -220,7 +220,7 @@ public class ComponentRecommender extends ComponentNoML {
             String recommendation = "recommend sell";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getBelowListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getService().conf.getMarket(), null, "" + keys.getRight(), JsonUtil.convert(parameters));
             if (incdec != null) {
             incdec.setIncrease(false);
             }

@@ -266,7 +266,7 @@ public abstract class Component {
         */
     }
 
-    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests);
+    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters);
 
     public abstract List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception;
 
@@ -683,9 +683,7 @@ public abstract class Component {
     
     public void print(String title, List<Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double>> population) {
         Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
-        BufferedWriter writer = null;
-        try {
-            writer = Files.newBufferedWriter(path);
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             writer.write(title + "\n\n");
             for (Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> pt : population) {
                 MarketFilter filter = pt.genotype().chromosome().gene().allele();
@@ -693,12 +691,6 @@ public abstract class Component {
                 writer.write(individual + "\n");            
             }
             writer.write("\n");
-        } catch (IOException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        try {
-            writer.flush();
-            writer.close();
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -727,6 +719,27 @@ public abstract class Component {
             item.setThreshold(meta.getThreshold());
             item.save();
         }
+    }
+
+    protected IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
+        IncDecItem val = map.get(key);
+        if (val == null) {
+            val = new IncDecItem();
+            val.setRecord(LocalDate.now());
+            val.setDate(date);
+            val.setId(key);
+            val.setMarket(market);
+            val.setDescription("");
+            val.setName(nameMap.get(key));
+            val.setParameters(parameters);
+            val.setScore(0.0);
+            map.put(key, val);
+        }
+        val.setScore(val.getScore() + add);
+        String component = getPipeline();
+        component = component != null ? component.substring(0, 3) : component;
+        val.setDescription(val.getDescription() + component + " " + subcomponent + " " + localcomponent + ", ");
+        return val;
     }
 
 }

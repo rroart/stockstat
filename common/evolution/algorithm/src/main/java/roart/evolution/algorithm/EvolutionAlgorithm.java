@@ -203,20 +203,12 @@ public abstract class EvolutionAlgorithm {
 
     public void print(String title, List<String> individuals) {
         Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
-        BufferedWriter writer = null;
-        try {
-            writer = Files.newBufferedWriter(path);
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             writer.write(title + "\n\n");
             for (String individual : individuals) {
                 writer.write(individual + "\n");            
             }
             writer.write("\n");
-        } catch (IOException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        try {
-            writer.flush();
-            writer.close();
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
         }
