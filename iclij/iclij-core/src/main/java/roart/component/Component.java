@@ -683,9 +683,7 @@ public abstract class Component {
     
     public void print(String title, List<Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double>> population) {
         Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
-        BufferedWriter writer = null;
-        try {
-            writer = Files.newBufferedWriter(path);
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             writer.write(title + "\n\n");
             for (Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> pt : population) {
                 MarketFilter filter = pt.genotype().chromosome().gene().allele();
@@ -693,12 +691,6 @@ public abstract class Component {
                 writer.write(individual + "\n");            
             }
             writer.write("\n");
-        } catch (IOException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        try {
-            writer.flush();
-            writer.close();
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
         }

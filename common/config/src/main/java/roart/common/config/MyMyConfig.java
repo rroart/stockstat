@@ -46,7 +46,7 @@ public class MyMyConfig extends MyConfig {
                     
             //System.out.println("k " + key + " " + value + " " +classType);
             if (value.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
-                getConfigValueMap().put(key, Double.valueOf(((Integer)value).intValue()));
+                getConfigValueMap().put(key, Double.valueOf((Integer)value));
             }
         }
     }
@@ -1493,8 +1493,8 @@ public class MyMyConfig extends MyConfig {
             String cl = retVal.getClass().getName();
             Class classType = getType().get(key);
             if (retVal.getClass().isAssignableFrom(Integer.class) && classType.isAssignableFrom(Double.class)) {
-                getConfigValueMap().put(key, Double.valueOf(((Integer)retVal).intValue()));
-                retVal = Double.valueOf(((Integer)retVal).intValue());
+                getConfigValueMap().put(key, Double.valueOf((Integer)retVal));
+                retVal = Double.valueOf((Integer)retVal);
             }
         }
         //System.out.println("r " + retVal + " " + deflt.get(key));
