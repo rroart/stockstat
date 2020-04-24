@@ -266,7 +266,7 @@ public abstract class Component {
         */
     }
 
-    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests);
+    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters);
 
     public abstract List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception;
 
@@ -719,6 +719,27 @@ public abstract class Component {
             item.setThreshold(meta.getThreshold());
             item.save();
         }
+    }
+
+    protected IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
+        IncDecItem val = map.get(key);
+        if (val == null) {
+            val = new IncDecItem();
+            val.setRecord(LocalDate.now());
+            val.setDate(date);
+            val.setId(key);
+            val.setMarket(market);
+            val.setDescription("");
+            val.setName(nameMap.get(key));
+            val.setParameters(parameters);
+            val.setScore(0.0);
+            map.put(key, val);
+        }
+        val.setScore(val.getScore() + add);
+        String component = getPipeline();
+        component = component != null ? component.substring(0, 3) : component;
+        val.setDescription(val.getDescription() + component + " " + subcomponent + " " + localcomponent + ", ");
+        return val;
     }
 
 }

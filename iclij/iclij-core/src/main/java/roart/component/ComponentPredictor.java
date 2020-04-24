@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
+import roart.common.constants.ResultMetaConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
@@ -127,7 +128,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above, List<MLMetricsItem> mlTests) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
         PredictorData param = (PredictorData) componentparam;
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
@@ -135,6 +136,8 @@ public class ComponentPredictor extends ComponentML {
         Map<String, Object> resultMap = (Map<String, Object>) param.getResultMap().get("result");
         List<MyElement> list0 = new ArrayList<>();
         //List<MyElement> list1 = new ArrayList<>();
+        List meta =  param.getResultMetaArray().get(0);
+        String subcomponent = meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME);
         Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
         for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
             String key = entry.getKey();
@@ -162,7 +165,7 @@ public class ComponentPredictor extends ComponentML {
         }
         Collections.sort(list0, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
         //Collections.sort(list1, (o1, o2) -> (o2.getValue().compareTo(o1.getValue())));
-        handleBuySell(profitdata, param.getService(), param.getInput().getConfig(), keyPair, confidenceFactor, list0);
+        handleBuySell(profitdata, param.getService(), param.getInput().getConfig(), keyPair, confidenceFactor, list0, parameters, subcomponent);
         //handleBuySell(nameMap, buys, sells, okListMap, srv, config, keys, confidenceFactor, list1);
     }
     
@@ -268,7 +271,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     private void handleBuySell(ProfitData profitdata, ControlService srv, IclijConfig config, Pair<String, Integer> keys,
-            Double confidenceFactor, List<MyElement> list) {
+            Double confidenceFactor, List<MyElement> list, Parameters parameters, String subcomponent) {
         int listSize = list.size();
         int recommend = config.recommendTopBottom();
         if (listSize < recommend * 3) {
@@ -289,7 +292,7 @@ public class ComponentPredictor extends ComponentML {
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(true);
             //buys.put(element.getKey(), incdec);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(srv.conf.getdate()));
+            IncDecItem incdec = mapAdder(profitdata.getBuys(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(srv.conf.getdate()), srv.conf.getMarket(), subcomponent, null, JsonUtil.convert(parameters));
             incdec.setIncrease(true);
         }
         for (MyElement element : bottomList) {
@@ -301,7 +304,7 @@ public class ComponentPredictor extends ComponentML {
             String recommendation = "recommend sell";
             //IncDecItem incdec = getIncDec(element, confidence, recommendation, nameMap, market);
             //incdec.setIncrease(false);
-            IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getListMap().get(keys), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(srv.conf.getdate()));
+            IncDecItem incdec = mapAdder(profitdata.getSells(), element.getKey(), confidence, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(srv.conf.getdate()), srv.conf.getMarket(), subcomponent, null, JsonUtil.convert(parameters));
             incdec.setIncrease(false);
         }
     }

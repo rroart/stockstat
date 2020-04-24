@@ -377,7 +377,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
             component.enableDisable(componentData, positions, param.getConfigValueMap());
 
             ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests);
+            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters);
 
             Short mystartoffset = market.getConfig().getStartoffset();
             short startoffset = mystartoffset != null ? mystartoffset : 0;

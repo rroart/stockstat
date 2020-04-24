@@ -56,7 +56,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
         ComponentMLData param = (ComponentMLData) componentparam;
         if (positions == null) {
             return;
@@ -112,7 +112,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
                         increase = true;
                         //IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }
@@ -120,7 +120,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
                         increase = false;
                         //IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }
@@ -414,36 +414,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         }
         return keys;
     }
-    static IncDecItem mapAdder(Map<String, IncDecItem> map, String key, Double add, List<MemoryItem> memoryList, Map<String, String> nameMap, LocalDate date) {
-        if (memoryList == null) {
-            int jj = 0;
-            System.out.println("Key " + key);
-            if (map != null) {
-                System.out.println("Keys" + map.keySet());
-            }
-            return null;
-        }
-        MemoryItem memory = memoryList.get(0);
-        IncDecItem val = map.get(key);
-        if (val == null) {
-            val = new IncDecItem();
-            val.setRecord(LocalDate.now());
-            val.setDate(date);
-            val.setId(key);
-            val.setMarket(memory.getMarket());
-            val.setDescription("");
-            val.setName(nameMap.get(key));
-            val.setParameters(memory.getParameters());
-            val.setScore(0.0);
-            map.put(key, val);
-        }
-        val.setScore(val.getScore() + add);
-        String component = memory.getComponent();
-        component = component != null ? component.substring(0, 3) : component;
-        val.setDescription(val.getDescription() + component + " " + memory.getSubcomponent() + " " + memory.getDescription() + ", ");
-        return val;
-    }
-
+    
     public static Map<Double, String> createLabelMapShort() {
         Map<Double, String> labelMap1 = new HashMap<>();
         labelMap1.put(1.0, Constants.TP);
