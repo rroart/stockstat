@@ -248,6 +248,10 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITMEMORYFILTER);
     }
 
+    public boolean wantsFindProfitRerunSave() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.FINDPROFITRERUNSAVE);
+    }
+
     public boolean wantsImproveProfitAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEPROFITAUTORUN);
     }
@@ -593,6 +597,7 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT);
     }
 
+    @Deprecated
     public boolean wantVerificationSave() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONSAVE);
     }

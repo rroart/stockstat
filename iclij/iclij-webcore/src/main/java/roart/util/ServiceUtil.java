@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +130,7 @@ public class ServiceUtil {
         }
         return cat;
     }
-    
+
     public static String getWantedCategory2(Map<String, Map<String, Object>> maps, String type) throws Exception {
         System.out.println(maps.keySet());
         List<String> wantedList = new ArrayList<>();
@@ -150,7 +151,7 @@ public class ServiceUtil {
         }
         return cat;
     }
-    
+
     public static IclijServiceResult getConfig() throws Exception {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
@@ -158,7 +159,7 @@ public class ServiceUtil {
         result.setIclijConfig(instance);
         return result;
     }
-    
+
     public static IclijServiceResult getContent(ComponentInput componentInput) throws Exception {
         IclijServiceResult result = new IclijServiceResult();
         FindProfitActionData findProfitActionData = new FindProfitActionData();
@@ -220,14 +221,14 @@ public class ServiceUtil {
         listRel = mergeList(listRel, false);
         roundList(listRel);
         addRelations(componentInput, lists, listRel);
-        
+
         new MiscUtil().print(result);
         return result;
     }
 
     private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, List<IncDecItem> listIncDecs) throws Exception {
         List[] objects = new RelationUtil().method(componentInput, listIncDecs);
-        
+
         IclijServiceList incdecs = new IclijServiceList();
         incdecs.setTitle("Incdecs with relations");
         incdecs.setList(objects[0]);
@@ -262,7 +263,7 @@ public class ServiceUtil {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
-        
+
         getContentTimings(date, lists, markets, improveProfitActionData);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -297,7 +298,7 @@ public class ServiceUtil {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
-        
+
         getContentTimings(date, lists, markets, improveFilterActionData);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -332,7 +333,7 @@ public class ServiceUtil {
 
     private static void getUpdateMarkets(ComponentInput componentInput, ControlService srv,
             Map<String, Map<String, Object>> updateMarketMap, Map<String, Object> updateMap, MarketActionData actionData)
-            throws Exception {
+                    throws Exception {
         //Market market = findProfitActionData.findMarket(param);
         //String marketName = market.getConfig().getMarket();
         long time0 = System.currentTimeMillis();
@@ -366,7 +367,7 @@ public class ServiceUtil {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
-         List<IclijServiceList> lists = new ArrayList<>();
+        List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
         markets = new MarketUtil().filterMarkets(markets, evolveActionData.isDataset());
@@ -380,7 +381,7 @@ public class ServiceUtil {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
-        
+
         getContentTimings(date, lists, markets, evolveActionData);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -399,7 +400,7 @@ public class ServiceUtil {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
-         List<IclijServiceList> lists = new ArrayList<>();
+        List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         List<Market> markets = conf.getMarkets(instance);
         markets = new MarketUtil().filterMarkets(markets, datasetActionData.isDataset());
@@ -413,7 +414,7 @@ public class ServiceUtil {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
-        
+
         getContentTimings(date, lists, markets, datasetActionData);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -446,7 +447,7 @@ public class ServiceUtil {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
-        
+
         getContentTimings(date, lists, markets, crossTestActionData);
         Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
         Map<String, Object> updateMap = new HashMap<>();
@@ -462,7 +463,7 @@ public class ServiceUtil {
     private static void getContentMemoriesUpdates(ComponentInput componentInput, List<IclijServiceList> lists,
             Map<String, Map<String, Object>> updateMarketMap, MarketActionData actionData, boolean useMemory) {
         for (Market market : new MarketUtil().getMarkets(actionData.isDataset())) {
-        //for (Entry<String, Map<String, Object>> entry : updateMarketMap.entrySet()) {
+            //for (Entry<String, Map<String, Object>> entry : updateMarketMap.entrySet()) {
             String marketName = market.getConfig().getMarket();
             Map<Boolean, String> booleanTexts = actionData.getBooleanTexts();
             Boolean[] booleans = actionData.getBooleans();
@@ -478,7 +479,7 @@ public class ServiceUtil {
             }
             List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market);
             List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, componentInput.getEnddate(), actionData.getTime(market));
-            
+
             IclijServiceList memories = new IclijServiceList();
             memories.setTitle("Memories " + marketName);
             roundList3(currentList);
@@ -511,8 +512,8 @@ public class ServiceUtil {
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, mlActionData, false);
         new MiscUtil().print(result);
         return result;
-   }
-    
+    }
+
     static IclijServiceList getHeader(String title) {
         IclijServiceList header = new IclijServiceList();
         header.setTitle(title);
@@ -598,8 +599,8 @@ public class ServiceUtil {
 
     public static IclijServiceResult getVerify(ComponentInput componentInput) throws Exception {
         String type = "Verify";
-        componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
-        componentInput.setDoSave(false);
+        //componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
+        //componentInput.setDoSave(false);
         int verificationdays = componentInput.getConfig().verificationDays();
         boolean rerun = componentInput.getConfig().verificationRerun();
         IclijServiceResult result = getFindProfitVerify(componentInput, type, verificationdays, rerun);
@@ -608,6 +609,8 @@ public class ServiceUtil {
     }
 
     private static IclijServiceResult getFindProfitVerify(ComponentInput componentInput, String type, int verificationdays, boolean rerun) throws Exception {
+
+        componentInput.setDoSave(componentInput.getConfig().wantsFindProfitRerunSave());
 
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
@@ -620,9 +623,9 @@ public class ServiceUtil {
             log.error(Constants.EXCEPTION, e);
             return result;
         }
-        
+
         //FindProfitActionData findProfitActionData = new FindProfitActionData();
-	// this calculates, does not read from db
+        // this calculates, does not read from db
         List<MemoryItem> allMemoryItems = new ArrayList<>();
         //ProfitData picks = findProfitActionData.getPicks(param, allMemoryItems);
         //getMemoryItems(componentInput.getConfig(), param, verificationdays, getFindProfitComponents(componentInput.getConfig()));
@@ -643,7 +646,7 @@ public class ServiceUtil {
         }
         updateMap = myData.getUpdateMap();
         allMemoryItems.addAll(myData.getMemoryItems());
-        
+
         List<IncDecItem> allListInc = new ArrayList<>(myData.getIncs());
         List<IncDecItem> allListDec = new ArrayList<>(myData.getDecs());
         allListInc = mergeList(allListInc, !rerun);
@@ -689,7 +692,7 @@ public class ServiceUtil {
             }
             trend = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), olddate, srv, startoffset2, stockDates, loopoffset);            
             trend2 = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), prevdate, srv, startoffset2, stockDates, loopoffset);            
-         }
+        }
         trendMap.put(market.getConfig().getMarket(), trend);
         trendMap.put(market.getConfig().getMarket() + "end", trend2);
         int offset = 0;
@@ -704,9 +707,12 @@ public class ServiceUtil {
         Map<String, List<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
         Map<String, List<IncDecItem>> allListIncMap = splitParam(allListInc);
         Map<String, List<IncDecItem>> allListDecMap = splitParam(allListDec);
-        for (Entry<String, List<IncDecItem>> entry : allListIncDecMap.entrySet()) {
-            String key = entry.getKey();
-            List<IncDecItem> listIncDec = entry.getValue();
+        Set<String> allKeys = new HashSet<>();
+        allKeys.addAll(allListIncDecMap.keySet());
+        allKeys.addAll(allListDecMap.keySet());
+        allKeys.addAll(allListIncMap.keySet());
+        for (String key : allKeys) {
+            List<IncDecItem> listIncDec = allListIncDecMap.get(key);
             List<IncDecItem> listInc = allListIncMap.get(key);
             List<IncDecItem> listDec = allListDecMap.get(key);
             if (listIncDec == null) {
@@ -718,45 +724,33 @@ public class ServiceUtil {
             if (listInc == null) {
                 listInc = new ArrayList<>();
             }
-        if (verificationdays > 0) {
-            try {
-                //srv.setFuturedays(0);
-                //srv.setOffset(0);
-                //srv.setDates(0, 0, TimeUtil.convertDate2(componentInput.getEnddate()));
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }           
-            if (rerun) {
-                new VerifyProfitUtil().getVerifyProfit(verificationdays, futureDate, srv, baseDate, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold());
-            } else {
-                new VerifyProfitUtil().getVerifyProfit(verificationdays, futureDate, srv, baseDate, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold(), stockDates, loopoffset);                
+            if (verificationdays > 0) {
+                try {
+                    //srv.setFuturedays(0);
+                    //srv.setOffset(0);
+                    //srv.setDates(0, 0, TimeUtil.convertDate2(componentInput.getEnddate()));
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }           
+                if (rerun) {
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, futureDate, srv, baseDate, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold());
+                } else {
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, futureDate, srv, baseDate, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold(), stockDates, loopoffset);                
+                }
             }
-            /*
-            List<MapList> inc = new ArrayList<>();
-            List<MapList> dec = new ArrayList<>();
-            IclijServiceList incMap = new IclijServiceList();
-            incMap.setTitle("Increase verify");
-            incMap.setList(inc);
-            IclijServiceList decMap = new IclijServiceList();
-            decMap.setTitle("Decrease verify");
-            decMap.setList(dec);
-            retLists.add(incMap);
-            retLists.add(decMap);
-            */
+            addHeader(componentInput, type, result, baseDateStr, futureDateStr);
+
+            List<IclijServiceList> subLists = getServiceList(srv.conf.getMarket(), key, listInc, listDec, listIncDec);
+            retLists.addAll(subLists);
         }
-        addHeader(componentInput, type, result, baseDateStr, futureDateStr);
-        
-        List<IclijServiceList> subLists = getServiceList(srv.conf.getMarket(), key, listInc, listDec, listIncDec);
-        retLists.addAll(subLists);
-        }
-    
+
         retLists.add(memories);
-       
+
         {
             List<TimingItem> currentTimings = (List<TimingItem>) myData.getTimingMap().get(market.getConfig().getMarket());
             if (currentTimings != null) {
-            List<IclijServiceList> subLists2 = getServiceList(market.getConfig().getMarket(), currentTimings);
-            retLists.addAll(subLists2);
+                List<IclijServiceList> subLists2 = getServiceList(market.getConfig().getMarket(), currentTimings);
+                retLists.addAll(subLists2);
             }
         }
         Map<String, Map<String, Object>> mapmaps = new HashMap<>();
@@ -771,7 +765,7 @@ public class ServiceUtil {
         List<IncDecItem> listIncDecs = new ArrayList<>(myData.getIncs());
         listIncDecs.addAll(myData.getDecs());
         roundList(listIncDecs);
-                
+
         addRelations(componentInput, retLists, listIncDecs);
 
         return result;
@@ -800,7 +794,7 @@ public class ServiceUtil {
         if (market == null) {
             throw new Exception("Market null");
         }
-        */
+         */
         //LocalDate date = input.getConfig().getDate();
         ControlService srv = new ControlService();
         srv.getConfig();
@@ -831,14 +825,14 @@ public class ServiceUtil {
                 return false;
             }
             out:
-            for (int i = 0; i < array.get(0).size(); i++) {
-                for (int j = 0; j < array.size(); j++) {
-                    if (array.get(j).get(i) == null) {
-                        continue out;
+                for (int i = 0; i < array.get(0).size(); i++) {
+                    for (int j = 0; j < array.size(); j++) {
+                        if (array.get(j).get(i) == null) {
+                            continue out;
+                        }
                     }
+                    return true;
                 }
-                return true;
-            }
         }
         return false;
     }
@@ -852,7 +846,7 @@ public class ServiceUtil {
             return false;
         }
     }
-    
+
     /*
     if (config.wantsImproveProfit()) {
         ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData();  
@@ -893,7 +887,7 @@ public class ServiceUtil {
         return TimeUtil.convertDate(newDate);
     }
 
-    
+
 
     /*
     @Deprecated
@@ -906,12 +900,12 @@ public class ServiceUtil {
         resultMap.setList(mapList);
         retLists.add(resultMap);
     }
-*/
-    
+     */
+
     public static IclijServiceResult getFindProfit(ComponentInput componentInput) throws Exception {
-	String type = "FindProfit";
+        String type = "FindProfit";
         int days = 0;  // config.verificationDays();
-        componentInput.setDoSave(false);
+        //componentInput.setDoSave(false);
         boolean rerun = componentInput.getConfig().singlemarketRerun();
         IclijServiceResult result = getFindProfitVerify(componentInput, type, days, rerun);
         new MiscUtil().print(result);
@@ -920,69 +914,69 @@ public class ServiceUtil {
 
     public static IclijServiceResult getImproveProfit(ComponentInput componentInput) throws Exception {
         try {
-        int loopOffset = 0;
-        int days = 0; // config.verificationDays();
-        IclijServiceResult result = new IclijServiceResult();
-        result.setLists(new ArrayList<>());
-        List<IclijServiceList> retLists = result.getLists();
+            int loopOffset = 0;
+            int days = 0; // config.verificationDays();
+            IclijServiceResult result = new IclijServiceResult();
+            result.setLists(new ArrayList<>());
+            List<IclijServiceList> retLists = result.getLists();
 
-        ControlService srv = null; 
-        try {
-            srv = getService(componentInput, days);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
+            ControlService srv = null; 
+            try {
+                srv = getService(componentInput, days);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+                return result;
+            }
+
+            componentInput.setDoSave(false);
+            //FindProfitActionData findProfitActionData = new FindProfitActionData();
+            ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData();  
+            List<MemoryItem> allMemoryItems = new ArrayList<>(); // getMemoryItems(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
+            //IclijServiceList memories = new IclijServiceList();
+            //memories.setTitle("Memories");
+            //memories.setList(allMemoryItems);
+            Map<String, Object> updateMap = new HashMap<>();
+            Market market = new MarketUtil().findMarket(srv.conf.getMarket());
+            WebData webData = srv.getRun(IclijConstants.IMPROVEPROFIT, componentInput);
+            List<MapList> mapList = new MiscUtil().getList(webData.getUpdateMap());
+            IclijServiceList resultMap = new IclijServiceList();
+            resultMap.setTitle("Improve Profit Info");
+            resultMap.setList(mapList);
+            retLists.add(resultMap);
+
+            //retLists.add(memories);
+
+            List<IclijServiceList> lists = new ArrayList<>();
+            Map<String, List<TimingItem>> timingMap = webData.getTimingMap();
+            for (Entry<String, List<TimingItem>> entry : timingMap.entrySet()) {
+                String marketName = entry.getKey();
+                List<TimingItem> list = (List<TimingItem>) entry.getValue();
+                List<IclijServiceList> subLists = getServiceList(marketName, list);
+                lists.addAll(subLists);
+            }
+
+            Map<String, List<TimingItem>> timingMap2 = webData.getTimingMap2();
+            for (Entry<String, List<TimingItem>> entry : timingMap2.entrySet()) {
+                String marketName = entry.getKey();
+                List<TimingItem> list = (List<TimingItem>) entry.getValue();
+                List<IclijServiceList> subLists = getServiceList(marketName + " sell", list);
+                lists.addAll(subLists);
+            }
+
+            result.setLists(lists);
+
+            updateMap = webData.getUpdateMap();
+            Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+            mapmaps.put("ml", updateMap);
+            result.setMaps(mapmaps);
+            IclijServiceList updates = convert(null, updateMap);
+            lists.add(updates);
+
+            updateMap = webData.getUpdateMap2();
+            updates = convert(null, updateMap);
+            lists.add(updates);
+
             return result;
-        }
-
-        componentInput.setDoSave(false);
-        //FindProfitActionData findProfitActionData = new FindProfitActionData();
-        ImproveProfitActionData improveProfitActionData = new ImproveProfitActionData();  
-        List<MemoryItem> allMemoryItems = new ArrayList<>(); // getMemoryItems(componentInput.getConfig(), param, days, getImproveProfitComponents(componentInput.getConfig()));
-        //IclijServiceList memories = new IclijServiceList();
-        //memories.setTitle("Memories");
-        //memories.setList(allMemoryItems);
-        Map<String, Object> updateMap = new HashMap<>();
-        Market market = new MarketUtil().findMarket(srv.conf.getMarket());
-        WebData webData = srv.getRun(IclijConstants.IMPROVEPROFIT, componentInput);
-        List<MapList> mapList = new MiscUtil().getList(webData.getUpdateMap());
-        IclijServiceList resultMap = new IclijServiceList();
-        resultMap.setTitle("Improve Profit Info");
-        resultMap.setList(mapList);
-        retLists.add(resultMap);
-
-        //retLists.add(memories);
-
-        List<IclijServiceList> lists = new ArrayList<>();
-        Map<String, List<TimingItem>> timingMap = webData.getTimingMap();
-        for (Entry<String, List<TimingItem>> entry : timingMap.entrySet()) {
-            String marketName = entry.getKey();
-            List<TimingItem> list = (List<TimingItem>) entry.getValue();
-            List<IclijServiceList> subLists = getServiceList(marketName, list);
-            lists.addAll(subLists);
-        }
-
-        Map<String, List<TimingItem>> timingMap2 = webData.getTimingMap2();
-        for (Entry<String, List<TimingItem>> entry : timingMap2.entrySet()) {
-            String marketName = entry.getKey();
-            List<TimingItem> list = (List<TimingItem>) entry.getValue();
-            List<IclijServiceList> subLists = getServiceList(marketName + " sell", list);
-            lists.addAll(subLists);
-        }
-
-        result.setLists(lists);
-        
-        updateMap = webData.getUpdateMap();
-        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
-        mapmaps.put("ml", updateMap);
-        result.setMaps(mapmaps);
-        IclijServiceList updates = convert(null, updateMap);
-        lists.add(updates);
-
-        updateMap = webData.getUpdateMap2();
-        updates = convert(null, updateMap);
-        lists.add(updates);
-
-        return result;
         } catch (Exception e) {
             log.error("Ex", e);
         }
@@ -1034,7 +1028,7 @@ public class ServiceUtil {
         }
         return allMemoryItems;
     }
-    */
+     */
 
     private static void roundList(List<IncDecItem> list) {
         for (IncDecItem item : list) {
@@ -1122,7 +1116,7 @@ public class ServiceUtil {
             }
         }        
     }
-    
+
     private static void roundList4(List<MLMetricsItem> list) {
         for (MLMetricsItem item : list) {
             Double loss = item.getLoss();

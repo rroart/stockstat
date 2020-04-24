@@ -235,18 +235,10 @@ public class MiscUtil {
 
     public void print(IclijServiceResult result) {
         Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
-        BufferedWriter writer = null;
-        try {
-            writer = Files.newBufferedWriter(path);
-        } catch (IOException e) {
-            log.error(Constants.EXCEPTION, e);
-        } 
-        for (IclijServiceList item : result.getLists()) {
-            listWriter(writer, item, item.getList());            
-        }
-        try {
-            writer.flush();
-            writer.close();
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+            for (IclijServiceList item : result.getLists()) {
+                listWriter(writer, item, item.getList());            
+            }
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
         }
