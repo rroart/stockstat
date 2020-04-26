@@ -25,22 +25,8 @@ import roart.iclij.service.IclijServiceList;
 
 public class RelationUtil {
     public List[] method(ComponentInput componentInput, List<IncDecItem> listIncDecs) throws Exception {
-        LocalDate date = componentInput.getEnddate();
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
-        List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
-        /*
-        List<IclijServiceList> lists = new ArrayList<>();
-        lists.add(ServiceUtil.getHeader("Content"));
-        
-        Map<String, List<IncDecItem>> incMap = new HashMap<>();
-        Map<String, List<IncDecItem>> decMap = new HashMap<>();
-        Map<String, List<IncDecItem>> incDecMap = new HashMap<>();
-        
-        Map<Pair<String, String>, IncDecItem> incPairMap= new HashMap<>();
-        Map<Pair<String, String>, IncDecItem> decPairMap= new HashMap<>();
-        Map<Pair<String, String>, IncDecItem> incDecPairMap= new HashMap<>();
-        */
         /*
 
     rel: market, id/null
@@ -53,31 +39,7 @@ public class RelationUtil {
          
 
          */
-        /*
-        List<Market> markets = conf.getMarkets(instance);
-        for (Market market : markets) {
-            List<IncDecItem> currentIncDecs = getCurrentIncDecs(date, listAll, market);
-            List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
-            List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
-            List<IncDecItem> listIncDec = ServiceUtil.moveAndGetCommon(listInc, listDec);
-            
-            String marketName = market.getConfig().getMarket();
-            incMap.put(marketName, listInc);
-            decMap.put(marketName, listDec);
-            incDecMap.put(marketName, listIncDec);
 
-            List<IncDecItem> list = listInc;
-            Map<Pair<String, String>, IncDecItem> map = incPairMap;
-            
-            mapPutter(listInc, incPairMap);
-            mapPutter(listDec, decPairMap);
-            mapPutter(listIncDec, incDecPairMap);
-            
-            //List<IclijServiceList> subLists = ServiceUtil.getServiceList(market.getConfig().getMarket(), listInc, listDec, listIncDec);
-            //lists.addAll(subLists);
-        }
-        */
-        
         List<RelationItem> relations = IclijDbDao.getAllRelations();
         
         //List<RelationItem> foundRelations = search(listAll, relations);
@@ -85,14 +47,10 @@ public class RelationUtil {
         //List<TimingItem> listAllTimings = TimingItem.getAll();
         //List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, IclijConstants.IMPROVEPROFIT);
         //List<IncDecItem> listAll = IncDecItem.getAll();
-        List<IncDecItem> currentIncDecs = new ArrayList<>();
-        currentIncDecs.addAll(listIncDecs);
+        List<IncDecItem> currentIncDecs = listIncDecs;
+        //currentIncDecs.addAll(listIncDecs);
         List<Market> markets = conf.getMarkets(instance);
         markets = new MarketUtil().filterMarkets(markets, false);
-        for (Market market : markets) {
-            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime());
-            currentIncDecs.addAll(marketCurrentIncDecs);
-        }
         
         Set<Pair<String, String>> alreadyDone = new HashSet<>();
         List<RelationItem> alreadyFound = new ArrayList<>();
@@ -178,13 +136,17 @@ public class RelationUtil {
                 String otherid = aRelation.getOtherId();
                 if (market.equals(item.getMarket())) {
                     if (id == null || (item.getId() != null && item.getId().equals(id))) {
-                        retain.add(item);
+                        if (!retain.contains(item)) {
+                            retain.add(item);
+                        }
                         continue;
                     }
                 }
                 if (othermarket.equals(item.getMarket())) {
                     if (item.getId() != null && item.getId().equals(otherid)) {
-                        retain.add(item);
+                        if (!retain.contains(item)) {
+                            retain.add(item);
+                        }
                     }
                 }
             }

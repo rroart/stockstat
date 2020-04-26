@@ -22,6 +22,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.analysis.function.Add;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,11 +183,16 @@ public class ServiceUtil {
             srv.conf.setMarket(market.getConfig().getMarket());
             // the market may be incomplete, the exception and skip
             try {
+                String dateString = TimeUtil.convertDate2(componentInput.getEnddate());
+                List<String> stockDates = srv.getDates(market.getConfig().getMarket());
+                int dateIndex = TimeUtil.getIndexEqualBefore(stockDates, dateString);
+                String endDateString2 = stockDates.get(dateIndex);
                 Short mystartoffset = market.getConfig().getStartoffset();
                 short startoffset = mystartoffset != null ? mystartoffset : 0;
-                Trend trend = new TrendUtil().getTrend(instance.verificationDays(), date, srv, startoffset);
+                Trend trend = new TrendUtil().getTrend(instance.verificationDays(), TimeUtil.convertDate(endDateString2), srv, startoffset);
                 trendMap.put(market.getConfig().getMarket(), trend);
             } catch (Exception e) {
+                log.error("Trend exception for market {}", market.getConfig().getMarket());
                 log.error(Constants.EXCEPTION, e);
             }
             List<IncDecItem> allCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime());
@@ -611,6 +617,10 @@ public class ServiceUtil {
     private static IclijServiceResult getFindProfitVerify(ComponentInput componentInput, String type, int verificationdays, boolean rerun) throws Exception {
 
         componentInput.setDoSave(componentInput.getConfig().wantsFindProfitRerunSave());
+        LocalDate date = componentInput.getEnddate();
+        IclijXMLConfig i = new IclijXMLConfig();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         IclijServiceResult result = new IclijServiceResult();
         result.setLists(new ArrayList<>());
@@ -762,11 +772,24 @@ public class ServiceUtil {
         IclijServiceList trends = convert(trendMap);
         retLists.add(trends);
 
-        List<IncDecItem> listIncDecs = new ArrayList<>(myData.getIncs());
-        listIncDecs.addAll(myData.getDecs());
-        roundList(listIncDecs);
-
-        addRelations(componentInput, retLists, listIncDecs);
+        List<IncDecItem> currentIncDecs = new ArrayList<>();
+        List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
+        List<Market> markets = conf.getMarkets(instance);
+        markets = new MarketUtil().filterMarkets(markets, false);
+        for (Market aMarket : markets) {
+            if (rerun && !instance.wantsFindProfitRerunSave() && market.getConfig().getMarket().equals(aMarket.getConfig().getMarket()) ) {
+                List<IncDecItem> listIncDecs = new ArrayList<>();
+                listIncDecs.addAll(myData.getIncs());
+                listIncDecs.addAll(myData.getDecs());
+                listIncDecs = mergeList(listIncDecs, !rerun);
+                currentIncDecs.addAll(listIncDecs);
+                continue;
+            }
+            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, aMarket, market.getConfig().getFindtime());
+            currentIncDecs.addAll(marketCurrentIncDecs);
+        }
+        roundList(currentIncDecs);
+        addRelations(componentInput, retLists, currentIncDecs);
 
         return result;
     }
