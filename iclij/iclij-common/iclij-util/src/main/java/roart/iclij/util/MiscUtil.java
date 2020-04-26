@@ -93,16 +93,20 @@ public class MiscUtil {
         }
         LocalDate newdate = date;
         LocalDate olddate = date.minusDays(days);
-        List<IncDecItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
-        countMap = filterListAll.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
+        List<IncDecItem> filterListAll = listAll;
+        if (market != null) {
+            filterListAll = filterListAll.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
+        }
+        List<IncDecItem> currentIncDecs = filterListAll;
+        currentIncDecs = currentIncDecs.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
+        countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
         System.out.println(countMap);
-        List<IncDecItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
+        currentIncDecs = currentIncDecs.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
         countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
         System.out.println(countMap);
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
         System.out.println(countMap);
-        currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }
 
