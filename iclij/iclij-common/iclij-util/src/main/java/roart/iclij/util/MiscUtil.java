@@ -139,14 +139,17 @@ public class MiscUtil {
                 IncDecItem inc = common.stream().filter(item -> id.equals(item.getId()) && item.isIncrease()).findAny().orElse(null);
                 IncDecItem dec = common.stream().filter(item -> id.equals(item.getId()) && !item.isIncrease()).findAny().orElse(null);
                 IncDecItem mergeitem = new IncDecItem();
+                mergeitem.setComponent(inc.getComponent());
                 mergeitem.setDate(inc.getDate());
                 mergeitem.setDescription("Up: " + inc.getDescription() + " Down: " + dec.getDescription());
                 mergeitem.setId(id);
                 mergeitem.setIncrease(inc.getScore() > dec.getScore());
+                mergeitem.setLocalcomponent("Up: " + inc.getLocalcomponent() + " Down: " + dec.getLocalcomponent());
                 mergeitem.setMarket(inc.getMarket());
                 mergeitem.setName(inc.getName());
                 mergeitem.setParameters(inc.getParameters());
                 mergeitem.setScore(mergeitem.isIncrease() ? inc.getScore() - dec.getScore() : dec.getScore() - inc.getScore());
+                mergeitem.setSubcomponent(inc.getSubcomponent());
                 mergecommon.add(mergeitem);
             }
             common = mergecommon;
@@ -178,14 +181,17 @@ public class MiscUtil {
                 IncDecItem inc = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && item.isIncrease()).findAny().orElse(null);
                 IncDecItem dec = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && !item.isIncrease()).findAny().orElse(null);
                 IncDecItem mergeitem = new IncDecItem();
+                mergeitem.setComponent(inc.getComponent());
                 mergeitem.setDate(inc.getDate());
                 mergeitem.setDescription("Up: " + inc.getDescription() + " Down: " + dec.getDescription());
                 mergeitem.setId(inc.getId());
                 mergeitem.setIncrease(inc.getScore() > dec.getScore());
+                mergeitem.setLocalcomponent("Up: " + inc.getLocalcomponent() + " Down: " + dec.getLocalcomponent());
                 mergeitem.setMarket(inc.getMarket());
                 mergeitem.setName(inc.getName());
                 mergeitem.setParameters(inc.getParameters());
                 mergeitem.setScore(mergeitem.isIncrease() ? inc.getScore() - dec.getScore() : dec.getScore() - inc.getScore());
+                mergeitem.setSubcomponent(inc.getSubcomponent());
                 mergecommon.add(mergeitem);
             }
             common = mergecommon;
