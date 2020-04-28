@@ -58,6 +58,15 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     @Column
     private String parameters;
     
+    @Column
+    private String component;
+    
+    @Column
+    private String subcomponent;
+    
+    @Column
+    private String localcomponent;
+    
     public Long getDbid() {
         return dbid;
     }
@@ -139,6 +148,30 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
 
     public void setParameters(String parameters) {
         this.parameters = parameters;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public String getSubcomponent() {
+        return subcomponent;
+    }
+
+    public void setSubcomponent(String subcomponent) {
+        this.subcomponent = subcomponent;
+    }
+
+    public String getLocalcomponent() {
+        return localcomponent;
+    }
+
+    public void setLocalcomponent(String localcomponent) {
+        this.localcomponent = localcomponent;
     }
 
     @Transient

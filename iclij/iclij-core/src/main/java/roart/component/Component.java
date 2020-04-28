@@ -728,17 +728,21 @@ public abstract class Component {
             val.setRecord(LocalDate.now());
             val.setDate(date);
             val.setId(key);
+            val.setComponent(getPipeline());
+            val.setLocalcomponent("");
             val.setMarket(market);
             val.setDescription("");
             val.setName(nameMap.get(key));
             val.setParameters(parameters);
             val.setScore(0.0);
+            val.setSubcomponent(subcomponent);
             map.put(key, val);
         }
         val.setScore(val.getScore() + add);
         String component = getPipeline();
         component = component != null ? component.substring(0, 3) : component;
         val.setDescription(val.getDescription() + component + " " + subcomponent + " " + localcomponent + ", ");
+        val.setLocalcomponent(val.getLocalcomponent() + localcomponent + " ");
         return val;
     }
 
