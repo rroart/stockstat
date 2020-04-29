@@ -580,6 +580,9 @@ public class ServiceUtil {
             incDec.setList(listIncDec);
             subLists.add(incDec);
         }
+        wipeFields(listInc);
+        wipeFields(listDec);
+        wipeFields(listIncDec);
         return subLists;
     }
 
@@ -1048,6 +1051,14 @@ public class ServiceUtil {
     }
      */
 
+    private static void wipeFields(List<IncDecItem> list) {
+        for (IncDecItem item : list) {
+            item.setComponent(null);
+            item.setLocalcomponent(null);
+            item.setSubcomponent(null);
+        }
+    }
+    
     private static void roundList(List<IncDecItem> list) {
         for (IncDecItem item : list) {
             Double score = item.getScore();
