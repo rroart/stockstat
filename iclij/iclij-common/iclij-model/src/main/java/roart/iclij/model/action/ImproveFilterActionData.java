@@ -6,6 +6,7 @@ import java.util.List;
 import roart.common.pipeline.PipelineConstants;
 import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 
 public class ImproveFilterActionData extends MarketActionData {
@@ -65,4 +66,14 @@ public class ImproveFilterActionData extends MarketActionData {
         return components;
     }
     
+    @Override
+    public String getPriority() {
+        return IclijConfigConstants.IMPROVEFILTER;
+    }
+
+    @Override
+    public String getFuturedays(IclijConfig conf) {
+        return conf.getFindProfitFuturedays();
+    }
+
 }

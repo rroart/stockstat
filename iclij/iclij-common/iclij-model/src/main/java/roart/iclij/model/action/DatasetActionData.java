@@ -6,6 +6,7 @@ import java.util.List;
 import roart.common.pipeline.PipelineConstants;
 import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 
 public class DatasetActionData extends MarketActionData {
@@ -41,6 +42,16 @@ public class DatasetActionData extends MarketActionData {
         List<String> components = new ArrayList<>();
         components.add(PipelineConstants.DATASET);
         return components;
+    }
+
+    @Override
+    public String getPriority() {
+        return IclijConfigConstants.DATASET;
+    }
+
+    @Override
+    public String getFuturedays(IclijConfig conf) {
+        return "[ null ]";
     }
 
 }

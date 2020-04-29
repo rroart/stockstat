@@ -325,16 +325,6 @@ public class FindProfitAction extends MarketAction {
         param.getAndSetCategoryValueMap();
     }
 
-    @Override
-    public int getPriority(IclijConfig srv) {
-        return getPriority(srv, IclijConfigConstants.FINDPROFIT);
-    }
-
-    @Override
-    protected String getFuturedays0(IclijConfig conf) {
-        return conf.getFindProfitFuturedays();
-    }
-
     public WebData getVerifyMarket(ComponentInput componentInput, ComponentData param,
             Market market, boolean evolve, int verificationdays) {
         WebData myData;

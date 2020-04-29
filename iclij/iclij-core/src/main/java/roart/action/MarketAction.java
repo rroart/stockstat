@@ -36,6 +36,7 @@ import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.MLConfig;
 import roart.iclij.config.MLConfigs;
@@ -90,8 +91,6 @@ public abstract class MarketAction extends Action {
     public ComponentFactory getComponentFactory() {
         return new ComponentFactory();
     }
-    
-    public abstract int getPriority(IclijConfig conf);
     
     public int getPriority(IclijConfig conf, String key) {
         Integer value = (Integer) conf.getConfigValueMap().get(key + "[@priority]");
@@ -188,7 +187,9 @@ public abstract class MarketAction extends Action {
                 Map<String, Component> componentMap = getComponentMap(componentList, market);
                 Map<String, Component> componentMapFiltered = new HashMap<>();
                 for (Entry<String, Component> entry : componentMap.entrySet()) {
-                    int mypriority = getPriority(config) + entry.getValue().getConfig().getPriority(config);
+                    String mypriorityKey = actionData.getPriority() + entry.getValue().getConfig().getPriority(config);                    
+                    int aPriority = getPriority(config, mypriorityKey);
+                    int mypriority = aPriority + entry.getValue().getConfig().getPriority(config);
                     if (priority == null || (mypriority >= priority && mypriority < (priority + 9))) {
                         componentMapFiltered.put(entry.getKey(),  entry.getValue());
                     }
@@ -744,10 +745,8 @@ public abstract class MarketAction extends Action {
         return componentMap;
     }
     
-    protected abstract String getFuturedays0(IclijConfig conf);
-    
     public Integer[] getFuturedays(IclijConfig conf) {
-        String thresholdString = getFuturedays0(conf);
+        String thresholdString = actionData.getFuturedays(conf);
         try {
             Double.valueOf(thresholdString);
             log.error("Using old format {}", thresholdString);

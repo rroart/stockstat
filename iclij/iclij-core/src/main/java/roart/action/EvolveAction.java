@@ -142,15 +142,4 @@ public class EvolveAction extends MarketAction {
         param.getAndSetWantedCategoryValueMap();
     }
 
-    @Override
-    public int getPriority(IclijConfig srv) {
-        return getPriority(srv, IclijConfigConstants.EVOLVE);
-    }
-
-    @Override
-    protected String getFuturedays0(IclijConfig conf) {
-        return conf.getEvolveFuturedays();
-    }
-
-
 }

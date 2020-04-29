@@ -148,14 +148,4 @@ public class CrossTestAction extends MarketAction {
         param.getAndSetWantedCategoryValueMap();
     }
 
-    @Override
-    public int getPriority(IclijConfig srv) {
-        return getPriority(srv, IclijConfigConstants.CROSSTEST);
-    }
-
-    @Override
-    protected String getFuturedays0(IclijConfig conf) {
-        return conf.getCrosstestFuturedays();
-    }
-
 }
