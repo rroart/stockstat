@@ -176,7 +176,7 @@ public class ComponentPredictor extends ComponentML {
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
         ConfigMapChromosome chromosome = new PredictorChromosome(action, param, profitdata, market, positions, PipelineConstants.PREDICTOR, buy, subcomponent, gene, mlTests);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), null);
     }
 
     @Override

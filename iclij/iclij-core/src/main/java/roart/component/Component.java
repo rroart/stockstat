@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jenetics.AnyGene;
 import io.jenetics.Chromosome;
+import io.jenetics.Gene;
 import io.jenetics.Genotype;
 import io.jenetics.Phenotype;
 import io.jenetics.engine.Codec;
@@ -282,60 +283,33 @@ public abstract class Component {
     
     public abstract boolean wantImproveEvolve();
     
-    public ComponentData improve(MarketAction action, ComponentData param, ConfigMapChromosome chromosome, String subcomponent) {
+    // the current implementation
+    
+    public ComponentData improve(MarketAction action, ComponentData param, AbstractChromosome chromosome, String subcomponent, ChromosomeWinner winner, Boolean buy, Fitness fitness) {
         long time0 = System.currentTimeMillis();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
         OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
         evolution.setParallel(false);
+        if (fitness != null) {
+            evolution.fittest = fitness::fitness;
+        }
         
         Map<String, String> retMap = new HashMap<>();
         try {
             List<String> individuals = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals);
             evolution.print(param.getMarket() + " " + subcomponent, individuals);
-            ConfigMapChromosome bestChromosome = (ConfigMapChromosome) best.getEvaluation();
-            Map<String, Object> confMap = bestChromosome.getMap();
-            param.setUpdateMap(confMap);
-            Map<String, Double> scoreMap = new HashMap<>();
-            double score = best.getFitness();
+            Map<String, Object> confMap = new HashMap<>();
+            double score = winner.handleWinner(param, best, confMap);
             //confMap.put("score", "" + score);
+            Map<String, Double> scoreMap = new HashMap<>();
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
             param.setFutureDate(LocalDate.now());
             // fix mlmarket;
-            TimingItem timing = saveTiming(param, true, time0, score, chromosome.getBuy(), subcomponent, null, null, null);
+            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);
-            if (false) {
-                ConfigItem configItem = new ConfigItem();
-                configItem.setAction(param.getAction());
-                configItem.setComponent(getPipeline());
-                configItem.setDate(param.getBaseDate());
-                configItem.setId("score " + confMap.keySet());
-                configItem.setMarket(param.getMarket());
-                configItem.setRecord(LocalDate.now());
-                configItem.setValue("" + score);
-                try {
-                    configItem.save();
-                } catch (Exception e) {
-                    log.info(Constants.EXCEPTION, e);
-                }                
-            }
-            //bestChromosome.get
-            //Map<String, Object> confMap = null;
-            //String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
-            //ControlService srv = new ControlService();
-            //srv.getConfig();    
-            /*
-            List<Double> newConfidenceList = new ArrayList<>();
-            //srv.conf.getConfigValueMap().putAll(confMap);
-            List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(marketName, null, null, false, false), confMap);
-            for(MemoryItem memory : memories) {
-                newConfidenceList.add(memory.getConfidence());
-            }
-            log.info("New confidences {}", newConfidenceList);
-            retMap.put("key", newConfidenceList.toString());
-            */
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -464,238 +438,33 @@ public abstract class Component {
     
     public abstract String getFuturedays();
 
-    public ComponentData improve2(MarketAction action, ComponentData param, Market market,
-            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
+    // the currently used implementation for marketfilter
+    
+    
+    
+    // the implementation for jenetics
+    
+    public ComponentData improveJ(MarketAction action, ComponentData param, Market market,
+            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, EvolveJ evolveJ) {
         long time0 = System.currentTimeMillis();
-        //Main main = new Main();
+        Map<String, Object> confMap = new HashMap<>();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
-        OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-        evolution.setParallel(false);
-        
-        Map<String, String> retMap = new HashMap<>();
+        double score = evolveJ.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap,
+                evolutionConfig, getPipeline());
         try {
-            MarketFilterGene gene = new MarketFilterGene(market.getFilter());
-            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
-            List<String> individuals = new ArrayList<>();
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals );
-            MarketFilterChromosome bestChromosome = (MarketFilterChromosome) best.getEvaluation();
-            evolution.print(param.getMarket() + " " + subcomponent, individuals);
-            MarketFilter aConf = bestChromosome.getGene().getMarketfilter();
-            Map<String, Object> confMap = new HashMap<>();
-            confMap.put("some", JsonUtil.convert(aConf));
-            param.setUpdateMap(confMap);
-            Map<String, Double> scoreMap = new HashMap<>();
-            double score = best.getFitness();
-            //confMap.put("score", "" + score);
-            scoreMap.put("" + score, score);
-            param.setScoreMap(scoreMap);
-            param.setFutureDate(LocalDate.now());
             // fix mlmarket;
             TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);
-            if (false) {
-                ConfigItem configItem = new ConfigItem();
-                configItem.setAction(param.getAction());
-                configItem.setComponent(getPipeline());
-                configItem.setDate(param.getBaseDate());
-                configItem.setId("score " + confMap.keySet());
-                configItem.setMarket(param.getMarket());
-                configItem.setRecord(LocalDate.now());
-                configItem.setValue("" + score);
-                try {
-                    configItem.save();
-                } catch (Exception e) {
-                    log.info(Constants.EXCEPTION, e);
-                }                
-            }
-            //bestChromosome.get
-            //Map<String, Object> confMap = null;
-            //String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
-            //ControlService srv = new ControlService();
-            //srv.getConfig();    
-            /*
-            List<Double> newConfidenceList = new ArrayList<>();
-            //srv.conf.getConfigValueMap().putAll(confMap);
-            List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(marketName, null, null, false, false), confMap);
-            for(MemoryItem memory : memories) {
-                newConfidenceList.add(memory.getConfidence());
-            }
-            log.info("New confidences {}", newConfidenceList);
-            retMap.put("key", newConfidenceList.toString());
-            */
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         return param;
         
-    }
-    
-    public ComponentData improve3(MarketAction action, ComponentData param, Market market,
-            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
-        long time0 = System.currentTimeMillis();
-        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
-        FitnessMarketFilter2 fit = new FitnessMarketFilter2(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, mlTests);
-        final Codec<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome, roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene> codec = Codec.of(Genotype.of(new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome(new MarketFilter())),gt -> (roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome) gt.chromosome());
-        final Engine<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> engine = Engine
-                .builder(fit::fitness, codec)
-                .populationSize(evolutionConfig.getSelect())
-                .alterers(
-                        //new MeanAlterer<>(0.175),
-                        new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterMutate(),
-                        new roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterCrossover<>(0.5)
-                        )
-                .build();
-        
-        Map<String, String> retMap = new HashMap<>();
-        try {
-            MarketFilterGene gene = new MarketFilterGene(market.getFilter());
-            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
-            List<String> individuals = new ArrayList<>();
-            final EvolutionResult<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> result = engine.stream()
-                    .limit(evolutionConfig.getGenerations())
-                    .collect(EvolutionResult.toBestEvolutionResult());
-            List<Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double>> population = result.population().asList();
-            print(market.getConfig().getMarket() + " " + getPipeline() + " " + subcomponent, population);
-            List<Genotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene>> list2 = result.genotypes().asList();
-            final Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> pt = result.bestPhenotype();
-
-            System.out.println(pt);
-            MarketFilter aConf = pt.genotype().chromosome().gene().allele();
-            Map<String, Object> confMap = new HashMap<>();
-            confMap.put("some", JsonUtil.convert(aConf));
-            param.setUpdateMap(confMap);
-            Map<String, Double> scoreMap = new HashMap<>();
-            double score = pt.fitness();
-            //confMap.put("score", "" + score);
-            scoreMap.put("" + score, score);
-            param.setScoreMap(scoreMap);
-            param.setFutureDate(LocalDate.now());
-            // fix mlmarket;
-            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null);
-            param.getTimings().add(timing);
-            configSaves(param, confMap, subcomponent);
-            if (false) {
-                ConfigItem configItem = new ConfigItem();
-                configItem.setAction(param.getAction());
-                configItem.setComponent(getPipeline());
-                configItem.setDate(param.getBaseDate());
-                configItem.setId("score " + confMap.keySet());
-                configItem.setMarket(param.getMarket());
-                configItem.setRecord(LocalDate.now());
-                configItem.setValue("" + score);
-                try {
-                    configItem.save();
-                } catch (Exception e) {
-                    log.info(Constants.EXCEPTION, e);
-                }                
-            }
-            //bestChromosome.get
-            //Map<String, Object> confMap = null;
-            //String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
-            //ControlService srv = new ControlService();
-            //srv.getConfig();    
-            /*
-            List<Double> newConfidenceList = new ArrayList<>();
-            //srv.conf.getConfigValueMap().putAll(confMap);
-            List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(marketName, null, null, false, false), confMap);
-            for(MemoryItem memory : memories) {
-                newConfidenceList.add(memory.getConfidence());
-            }
-            log.info("New confidences {}", newConfidenceList);
-            retMap.put("key", newConfidenceList.toString());
-            */
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return param;
-        
-    }
-    
-    public ComponentData improve4(MarketAction action, ComponentData param, Market market,
-            ProfitData profitdata, Object object, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
-        long time0 = System.currentTimeMillis();
-        //Main main = new Main();
-        EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
-        OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
-        evolution.setParallel(false);
-        
-        Map<String, String> retMap = new HashMap<>();
-        try {
-            MarketFilterGene gene = new MarketFilterGene(market.getFilter());
-            MarketFilterChromosome2 chromosome = new MarketFilterChromosome2(new ArrayList<>(), gene);
-            List<String> individuals = new ArrayList<>();
-            FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, mlTests);
-            evolution.fittest = fit::fitness;
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals );
-            MarketFilterChromosome2 bestChromosome = (MarketFilterChromosome2) best.getEvaluation();
-            evolution.print(param.getMarket() + " " + subcomponent, individuals);
-            MarketFilter aConf = bestChromosome.getGene().getMarketfilter();
-            Map<String, Object> confMap = new HashMap<>();
-            confMap.put("some", JsonUtil.convert(aConf));
-            param.setUpdateMap(confMap);
-            Map<String, Double> scoreMap = new HashMap<>();
-            double score = best.getFitness();
-            //confMap.put("score", "" + score);
-            scoreMap.put("" + score, score);
-            param.setScoreMap(scoreMap);
-            param.setFutureDate(LocalDate.now());
-            // fix mlmarket;
-            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null);
-            param.getTimings().add(timing);
-            configSaves(param, confMap, subcomponent);
-            if (false) {
-                ConfigItem configItem = new ConfigItem();
-                configItem.setAction(param.getAction());
-                configItem.setComponent(getPipeline());
-                configItem.setDate(param.getBaseDate());
-                configItem.setId("score " + confMap.keySet());
-                configItem.setMarket(param.getMarket());
-                configItem.setRecord(LocalDate.now());
-                configItem.setValue("" + score);
-                try {
-                    configItem.save();
-                } catch (Exception e) {
-                    log.info(Constants.EXCEPTION, e);
-                }                
-            }
-            //bestChromosome.get
-            //Map<String, Object> confMap = null;
-            //String marketName = profitdata.getInputdata().getListMap().values().iterator().next().get(0).getMarket();
-            //ControlService srv = new ControlService();
-            //srv.getConfig();    
-            /*
-            List<Double> newConfidenceList = new ArrayList<>();
-            //srv.conf.getConfigValueMap().putAll(confMap);
-            List<MemoryItem> memories = new MLService().doMLMACD(new ComponentInput(marketName, null, null, false, false), confMap);
-            for(MemoryItem memory : memories) {
-                newConfidenceList.add(memory.getConfidence());
-            }
-            log.info("New confidences {}", newConfidenceList);
-            retMap.put("key", newConfidenceList.toString());
-            */
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        return param;
-        
-    }
-    
-    public void print(String title, List<Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double>> population) {
-        Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
-        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-            writer.write(title + "\n\n");
-            for (Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double> pt : population) {
-                MarketFilter filter = pt.genotype().chromosome().gene().allele();
-                String individual = pt.fitness() + " #" + pt.hashCode() + " " + filter.toString();
-                writer.write(individual + "\n");            
-            }
-            writer.write("\n");
-        } catch (IOException e) {
-            log.error(Constants.EXCEPTION, e);
-        }
     }
 
+    // a new implementation with better fitness outside of chromosome
+    
     public void saveAccuracy(ComponentData componentparam) throws Exception {
         ComponentMLData param = (ComponentMLData) componentparam;
         if (param.getResultMeta() == null) {
