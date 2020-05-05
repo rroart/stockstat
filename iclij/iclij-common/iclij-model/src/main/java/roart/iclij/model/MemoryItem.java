@@ -12,6 +12,8 @@ import roart.db.model.Memory;
 public class MemoryItem {
     //private Long id;
 
+    private String action;
+    
     private LocalDate record;
     
     private LocalDate date;
@@ -96,6 +98,7 @@ public class MemoryItem {
     @Override
     public String toString() {
         String ret = "Record " + record + "\n";
+        ret += "Action : " + action + "\n";
         ret += "Market : " + market + "\n";
         if (usedsec != null) {
             ret += "Used time: " + usedsec + " seconds.\n";
@@ -165,6 +168,14 @@ public class MemoryItem {
     }
     */
     
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     public LocalDate getRecord() {
         return record;
     }
@@ -479,6 +490,7 @@ public class MemoryItem {
     
     public void save() throws Exception {
         Memory memory = new Memory();
+        memory.setAction(getAction());
         memory.setCategory(getCategory());
         memory.setComponent(getComponent());
         memory.setConfidence(getConfidence());
@@ -543,6 +555,7 @@ public class MemoryItem {
 
     private static MemoryItem getMemoryItem(Memory memory) {
         MemoryItem memoryItem = new MemoryItem();
+        memoryItem.setAction(memory.getAction());
         memoryItem.setCategory(memory.getCategory());
         memoryItem.setComponent(memory.getComponent());
         memoryItem.setConfidence(memory.getConfidence());

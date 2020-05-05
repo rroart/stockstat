@@ -16,9 +16,9 @@ export class MainService {
     //let headers = new Headers({ 'Content-Type': 'application/json' });
     //let options = new RequestOptions({ headers: headers }); 
     let param = config;
-    console.log(`http://localhost:` + MainService.getPort() + url);
+    console.log("http://" + MainService.getIHost() + ":" + MainService.getIPort() + url);
     return this.httpClient
-      .post(`http://localhost:` + MainService.getPort() + url, param);
+      .post("http://" + MainService.getIHost() + ":" + MainService.getIPort() + url, param);
       //.pipe(
       //map((res: Response) => { res.json() } ));
       //.catch(MainService.handleError)
@@ -29,9 +29,9 @@ export class MainService {
     //let headers = new Headers({ 'Content-Type': 'application/json' });
     //let options = new RequestOptions({ headers: headers }); 
     let param = config;
-    console.log(`http://localhost:` + MainService.getPort0() + url);
+    console.log("http://" + MainService.getHost() + ":" + MainService.getPort() + url);
     return this.httpClient
-      .post(`http://localhost:` + MainService.getPort0() + url, param);
+      .post("http://" + MainService.getHost() + ":" + MainService.getPort() + url, param);
       //.pipe(
       //map((res: Response) => { res.json() } ));
       //.catch(MainService.handleError)
@@ -43,23 +43,38 @@ export class MainService {
         return Observable.throw(error || 'Server error');
     }
 
-    static getPort() {
-      console.log("devmode");
-      console.log(isDevMode());
-      if (!isDevMode()) {
-        return 12346;
-      } else {
-        return 22346;
-      }
+static getPort() {
+    console.log(process.env.NODE_ENV);
+    if (typeof process.env.MYPORT !== 'undefined') {
+        return process.env.MYPORT;
     }
+    return 80;
+}
 
-    static getPort0() {
-      console.log("devmode");
-      console.log(isDevMode());
-      if (!isDevMode()) {
-        return 12345;
-      } else {
-        return 22345;
-      }
+static getHost() {
+    console.log("pppp");
+    console.log(process.env);
+    if (typeof process.env.MYSERVER !== 'undefined') {
+        return process.env.MYSERVER;
     }
+    return "localhost";
+}
+
+static getIPort() {
+    console.log(process.env.NODE_ENV);
+    if (typeof process.env.MYIPORT !== 'undefined') {
+        return process.env.MYIPORT;
+    }
+    return 80;
+}
+
+static getIHost() {
+    console.log("pppp");
+    console.log(process.env);
+    if (typeof process.env.MYISERVER !== 'undefined') {
+        return process.env.MYISERVER;
+    }
+    return "localhost";
+}
+
 }

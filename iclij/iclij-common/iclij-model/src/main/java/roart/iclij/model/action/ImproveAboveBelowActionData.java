@@ -9,17 +9,11 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 
-public class DatasetActionData extends MarketActionData {
+public class ImproveAboveBelowActionData extends MarketActionData {
 
     @Override
-    public Short getTime(Market market) {
-        return market.getConfig().getDatasettime();
-    }
-
-    @Override
-    public Boolean[] getBooleans() {
-        //return new Boolean[] { false, true };
-        return new Boolean[] { null };
+    public String getName() {
+        return IclijConstants.IMPROVEABOVEBELOW;
     }
 
     @Override
@@ -28,30 +22,35 @@ public class DatasetActionData extends MarketActionData {
     }
 
     @Override
-    public boolean isDataset() {
-        return true;
+    public Short getTime(Market market) {
+        Short time = market.getConfig().getAbovebelowtime();
+        if (time != null) {
+            return time;
+        } else {
+            return market.getConfig().getFindtime();
+        }
     }
-    
+
     @Override
-    public String getName() {
-        return IclijConstants.DATASET;
+    public Boolean[] getBooleans() {
+        return new Boolean[] { null };
     }
 
     @Override
     public List<String> getComponents(IclijConfig config, boolean wantThree) {
         List<String> components = new ArrayList<>();
-        components.add(PipelineConstants.DATASET);
+        components.add(PipelineConstants.ABOVEBELOW);
         return components;
-    }
-
-    @Override
-    public String getPriority() {
-        return IclijConfigConstants.DATASET;
     }
 
     @Override
     public String getFuturedays(IclijConfig conf) {
         return "[ null ]";
+    }
+
+    @Override
+    public String getPriority() {
+        return IclijConfigConstants.IMPROVEABOVEBELOW;
     }
 
 }

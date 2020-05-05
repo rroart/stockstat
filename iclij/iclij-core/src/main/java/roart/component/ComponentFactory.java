@@ -34,6 +34,8 @@ public class ComponentFactory {
             return new ComponentMLIndicator();
         case PipelineConstants.DATASET:
             return new DatasetComponent();
+        case PipelineConstants.ABOVEBELOW:
+            return new AboveBelowComponent();
         default:
             return null;
         }        

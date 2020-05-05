@@ -139,14 +139,4 @@ public class MachineLearningAction extends MarketAction {
         param.getAndSetCategoryValueMap();
     }
     
-    @Override
-    public int getPriority(IclijConfig srv) {
-        return getPriority(srv, IclijConfigConstants.MACHINELEARNING);
-    }
-
-    @Override
-    protected String getFuturedays0(IclijConfig conf) {
-        return conf.getMachineLearningFuturedays();
-    }
-
 }

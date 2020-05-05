@@ -37,7 +37,7 @@ import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
 
-public class FitnessMarketFilter {
+public class FitnessMarketFilter extends Fitness {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -73,6 +73,7 @@ public class FitnessMarketFilter {
         this.mlTests = mlTests;
     }
 
+    @Override
     public double fitness(AbstractChromosome chromosome) {
         List<MemoryItem> memoryItems = null;
         WebData myData = new WebData();

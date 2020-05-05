@@ -78,7 +78,7 @@ public class PipelineConstants {
     public static final String LSTM = "lstm";
     public static final String GRU = "gru";
     public static final String DATASET = "dataset";
-    public static final String CROSSTEST = "crosstest";
+    public static final String ABOVEBELOW = "abovebelow";
     
     public static final String CATEGORY = "category"; 
     public static final String CATEGORYTITLE = "categorytitle";

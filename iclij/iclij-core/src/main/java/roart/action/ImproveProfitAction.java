@@ -163,15 +163,5 @@ public class ImproveProfitAction extends MarketAction {
         param.getAndSetWantedCategoryValueMap();
     }
     
-    @Override
-    public int getPriority(IclijConfig srv) {
-        return getPriority(srv, IclijConfigConstants.IMPROVEPROFIT);
-    }
-
-    @Override
-    protected String getFuturedays0(IclijConfig conf) {
-        return conf.getFindProfitFuturedays();
-    }
-
 }
 

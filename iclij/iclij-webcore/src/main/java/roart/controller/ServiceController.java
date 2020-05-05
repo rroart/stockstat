@@ -91,6 +91,13 @@ public class ServiceController {
         return ServiceUtil.getContentFilter(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
     }
 
+    @RequestMapping(value = "/" + EurekaConstants.GETCONTENTABOVEBELOW,
+            method = RequestMethod.POST)
+    public IclijServiceResult getContentAboveBelow(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
+            throws Exception {
+        return ServiceUtil.getContentAboveBelow(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
     @RequestMapping(value = "/" + EurekaConstants.GETCONTENTEVOLVE,
             method = RequestMethod.POST)
     public IclijServiceResult getContentEvolve(@RequestBody IclijServiceParam param/*@PathVariable String market*/)
@@ -132,6 +139,18 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
         return ServiceUtil.getFindProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+        //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
+       //IclijServiceResult ret = new IclijServiceResult();
+       //ret.setError(error);
+       //return ret;
+    }
+
+    @RequestMapping(value = "/improveabovebelow",
+            method = RequestMethod.POST)
+    public IclijServiceResult getImproveAboveBelowMarket(@RequestBody IclijServiceParam param)
+            throws Exception {
+        //MainAction.goals.add(new FindProfitAction());
+        return ServiceUtil.getImproveAboveBelow(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
         //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
        //IclijServiceResult ret = new IclijServiceResult();
        //ret.setError(error);

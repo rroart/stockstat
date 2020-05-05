@@ -468,6 +468,18 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.IMPROVEFILTERPREDICTOREVOLUTIONCONFIG);
     }
 
+    public boolean wantsImproveAbovebelowAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVEABOVEBELOWAUTORUN);
+    }
+
+    public String getImproveAbovebelowEvolutionConfig() {
+        return (String) getValueOrDefault(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG);
+    }
+
+    public int getImproveAbovebelowFitnessMinimum() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM);
+    }
+
     public boolean wantsMachineLearningAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGAUTORUN);
     }

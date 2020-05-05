@@ -33,4 +33,8 @@ public abstract class MarketActionData {
 
     public abstract List<String> getComponents(IclijConfig config, boolean wantThree);
 
+    public abstract String getFuturedays(IclijConfig conf);
+    
+    public abstract String getPriority();
+    
 }

@@ -53,6 +53,16 @@ class MarketBar extends PureComponent {
 	props.setconfigvalue([ 'mlmarket', event.value ]);
     }
     
+    resetMarket(event, props) {
+	console.log(event);
+	console.log(event.value);
+	console.log(props);
+	//this.props.setmarket({market: event.value});
+	props.setmarket(null);
+	//props.setconfigvalue([ 'market', event.value ]);
+	props.setconfigvalue([ 'market', null ]);
+    }
+    
     resetML(event, props) {
 	console.log(event);
 	console.log(event.value);
@@ -124,6 +134,10 @@ class MarketBar extends PureComponent {
 	props.getcontentfilter(props.main.config, props.main.market, props);
     }
     
+    getContentAboveBelow(event, props) {
+	props.getcontentabovebelow(props.main.config, props.main.market, props);
+    }
+    
     getSingleMarket(event, props) {
 	props.getsinglemarket(props.main.config, props.main.market, props, false);
     }
@@ -134,6 +148,10 @@ class MarketBar extends PureComponent {
     
     getImproveProfit(event, props) {
 	props.getimproveprofit(props.main.config, props.main.market, props);
+    }
+    
+    getImproveAboveBelow(event, props) {
+	props.getimproveabovebelow(props.main.config, props.main.market, props);
     }
     
     getVerify(event, props) {
@@ -180,6 +198,13 @@ class MarketBar extends PureComponent {
 		    Name
 		    <Select options="[{size:'5'}]"
 			    onChange={e => this.handleChangeML(e, this.props)}
+		      options={markets2}
+		      />
+		  </NavItem>
+		  <NavItem eventKey={1} href="#">
+		    Name
+		    <Select options="[{size:'5'}]"
+			    onChange={e => this.resetMarket(e, this.props)}
 		      options={markets2}
 		      />
 		  </NavItem>
@@ -293,6 +318,16 @@ class MarketBar extends PureComponent {
 		      Get filter data
 		    </Button>
 		  </NavItem>
+		  <NavItem eventKey={7} href="#">
+		    <Button
+		      bsStyle="primary"
+		      onClick={
+			  (e) => this.getContentAboveBelow(e, this.props)
+		      }
+		      >
+		      Get above below data
+		    </Button>
+		  </NavItem>
 		</Nav>
 	      </Navbar>
 	      <Navbar>
@@ -368,6 +403,16 @@ class MarketBar extends PureComponent {
 		      }
 		      >
 		      Run and get single improve profit data
+		    </Button>
+		  </NavItem>
+		  <NavItem eventKey={7} href="#">
+		    <Button
+		      bsStyle="primary"
+		      onClick={
+			  (e) => this.getImproveAboveBelow(e, this.props)
+		      }
+		      >
+		      Run and get single improve above below data
 		    </Button>
 		  </NavItem>
 		</Nav>

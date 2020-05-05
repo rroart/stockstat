@@ -312,6 +312,21 @@ public class MyIclijUI extends UI implements ViewDisplay {
         return button;
     }
 
+    private Button getMarketAboveBelow() {
+        Button button = new Button("Get market above below data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayAboveBelowResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
     private Button getMarketDataset() {
         Button button = new Button("Get market dataset data");
         button.addClickListener(new Button.ClickListener() {
@@ -319,6 +334,21 @@ public class MyIclijUI extends UI implements ViewDisplay {
                 try {
                     Notification.show("Request sent");
                     displayDatasetResults();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+        });
+        return button;
+    }
+
+    private Button getImproveAboveBelowMarket() {
+        Button button = new Button("Run and get single above below data");
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                try {
+                    Notification.show("Request sent");
+                    displayAboveBelowMarket();
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -614,6 +644,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         HorizontalLayout horOther = new HorizontalLayout();
         horOther.addComponent(getSingleMarket());
         horOther.addComponent(getSingleMarketLoop());
+        horOther.addComponent(getImproveAboveBelowMarket());
         horOther.addComponent(getImproveProfit());
         HorizontalLayout horOther2 = new HorizontalLayout();
         horOther2.addComponent(getMarket());
@@ -623,6 +654,7 @@ public class MyIclijUI extends UI implements ViewDisplay {
         horOther2.addComponent(getMarketCrosstest());
         horOther2.addComponent(getMarketDataset());
         horOther2.addComponent(getMarketFilter());
+        horOther2.addComponent(getMarketAboveBelow());
         //horStat.addComponent(getStat());
         //horStat.addComponent(getOverlapping());
         HorizontalLayout horDb = new HorizontalLayout();
@@ -749,6 +781,15 @@ public class MyIclijUI extends UI implements ViewDisplay {
     
     private void displayFilterResults() {
         controlService.getContentFilter(this);
+    }
+    
+    private void displayAboveBelowResults() {
+        controlService.getContentAboveBelow(this);
+    }
+    
+    private void displayAboveBelowMarket() {
+        //System.out.println("h0");
+        controlService.getImproveAboveBelowMarket(this);
     }
     
     private void displaySingleMarket() {

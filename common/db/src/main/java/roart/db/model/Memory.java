@@ -42,6 +42,9 @@ public class Memory implements Serializable {
     private Integer usedsec;
 
     @Column
+    private String action;
+    
+    @Column
     private String market;
 
     @Column
@@ -182,6 +185,14 @@ public class Memory implements Serializable {
 
     public void setUsedsec(Integer usedsec) {
         this.usedsec = usedsec;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public String getMarket() {

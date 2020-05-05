@@ -140,14 +140,4 @@ public class DatasetAction extends MarketAction {
         return null;
     }
     
-    @Override
-    public int getPriority(IclijConfig srv) {
-        return getPriority(srv, IclijConfigConstants.DATASET);
-    }
-
-    @Override
-    protected String getFuturedays0(IclijConfig conf) {
-        return "[ null ]";
-    }
-
 }

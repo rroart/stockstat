@@ -16,7 +16,12 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.component.Component;
+import roart.component.FitnessMarketFilter;
+import roart.component.MarketFilterChromosomeWinner;
 import roart.component.model.ComponentData;
+import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
+import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
+import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -116,7 +121,11 @@ public class ImproveFilterAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
+            MarketFilterGene gene = new MarketFilterGene(market.getFilter());
+            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);
+            MarketFilterChromosome2 chromosome2 = new MarketFilterChromosome2(new ArrayList<>(), gene);
+            FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, mlTests);
+            ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new MarketFilterChromosomeWinner(), chromosome.getBuy(), fit);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -163,15 +172,5 @@ public class ImproveFilterAction extends MarketAction {
         param.getAndSetWantedCategoryValueMap();
     }
     
-    @Override
-    public int getPriority(IclijConfig srv) {
-        return getPriority(srv, IclijConfigConstants.IMPROVEFILTER);
-    }
-
-    @Override
-    protected String getFuturedays0(IclijConfig conf) {
-        return conf.getFindProfitFuturedays();
-    }
-
 }
 
