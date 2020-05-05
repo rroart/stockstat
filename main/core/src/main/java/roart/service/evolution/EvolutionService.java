@@ -214,7 +214,7 @@ public class EvolutionService {
     
                 List<String> individuals = new ArrayList<>();
                 Individual fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals);
-                evolution.print(conf.getMarket() + " " + "recommend" + " " + i, individuals);
+                evolution.print(conf.getMarket() + " " + "recommend" + " " + i, null, individuals);
     
                 for (String id : scoreList) {
                     ResultItemTableRow row = new ResultItemTableRow();
@@ -652,7 +652,7 @@ public class EvolutionService {
     
             List<String> individuals = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals);
-            evolution.print(conf.getMarket() + " " + ml, individuals);
+            evolution.print(conf.getMarket() + " " + ml, null, individuals);
             
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
@@ -722,7 +722,7 @@ public class EvolutionService {
     
             List<String> individuals = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals);
-            evolution.print(conf.getMarket() + " " + ml, individuals);
+            evolution.print(conf.getMarket() + " " + ml, null, individuals);
     
             NeuralNetChromosome bestEval2 = (NeuralNetChromosome) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();

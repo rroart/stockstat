@@ -104,7 +104,11 @@ public abstract class MarketAction extends Action {
 
     public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve, Integer priority) {
         List<Market> markets = new ArrayList<>();
-        markets.add(market);
+        if (market != null) {
+            markets.add(market);
+        } else {
+            markets = new MarketUtil().getMarkets(false);
+        }
         return getMarkets(parent, param, markets, new ArrayList<>(), evolve, priority);
     }        
     

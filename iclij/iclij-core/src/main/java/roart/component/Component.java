@@ -142,7 +142,7 @@ public abstract class Component {
         if (evolve) {   
             long time0 = System.currentTimeMillis();
             evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters);
-            if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) || !IclijConstants.IMPROVEFILTER.equals(param.getAction())) {
+            if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) || !IclijConstants.IMPROVEFILTER.equals(param.getAction()) || !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction())) {
                 Double score = null;
                 String description = null;
                 if (IclijConstants.EVOLVE.equals(param.getAction()) || IclijConstants.DATASET.equals(param.getAction())) {
@@ -170,7 +170,7 @@ public abstract class Component {
             Map resultMaps2 = param.getResultMap();
             handleMLMeta(param, resultMaps2);
         }
-        if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) && !IclijConstants.IMPROVEFILTER.equals(param.getAction()) && !IclijConstants.EVOLVE.equals(param.getAction())) {
+        if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) && !IclijConstants.IMPROVEFILTER.equals(param.getAction()) && !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction()) && !IclijConstants.EVOLVE.equals(param.getAction())) {
             Double score = null;
             String description = null;
             if (IclijConstants.MACHINELEARNING.equals(param.getAction()) ) {
@@ -298,7 +298,7 @@ public abstract class Component {
         try {
             List<String> individuals = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals);
-            evolution.print(param.getMarket() + " " + subcomponent, individuals);
+            evolution.print(param.getMarket() + " " + subcomponent, fitness.titleText(), individuals);
             Map<String, Object> confMap = new HashMap<>();
             double score = winner.handleWinner(param, best, confMap);
             //confMap.put("score", "" + score);

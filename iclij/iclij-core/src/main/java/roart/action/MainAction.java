@@ -82,6 +82,9 @@ public class MainAction extends Action {
         if (IclijXMLConfig.getConfigInstance().wantsImproveFilterAutorun()) {        
             getGoals().add(new ImproveFilterAction());
         }
+        if (IclijXMLConfig.getConfigInstance().wantsImproveAbovebelowAutorun()) {        
+            getGoals().add(new ImproveAboveBelowAction());
+        }
         if (IclijXMLConfig.getConfigInstance().wantsCrosstestAutorun()) {        
             getGoals().add(new CrossTestAction());
         }
@@ -96,6 +99,7 @@ public class MainAction extends Action {
                 || IclijXMLConfig.getConfigInstance().wantsEvolveAutorun()      
                 || IclijXMLConfig.getConfigInstance().wantsImproveProfitAutorun()      
                 || IclijXMLConfig.getConfigInstance().wantsImproveFilterAutorun()      
+                || IclijXMLConfig.getConfigInstance().wantsImproveAbovebelowAutorun()      
                 || IclijXMLConfig.getConfigInstance().wantsCrosstestAutorun()       
                 || IclijXMLConfig.getConfigInstance().wantsDatasetAutorun();
     }

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.action.FindProfitAction;
+import roart.action.ImproveAboveBelowAction;
 import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
@@ -60,6 +61,24 @@ public class ServiceUtil {
         MarketAction findProfitAction = new FindProfitAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
         WebData webData = findProfitAction.getMarket(null, param, market, null, null);        
+        WebDataJson webDataJson = convert(webData);
+        result.setWebdatajson(webDataJson);
+        return result;
+    }
+
+    public static IclijServiceResult getImproveAboveBelow(ComponentInput componentInput) {
+        IclijServiceResult result = new IclijServiceResult();
+        ComponentData param = null;
+        try {
+            param = ComponentData.getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+
+        MarketAction improveAboveBelowAction = new ImproveAboveBelowAction();
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        WebData webData = improveAboveBelowAction.getMarket(null, param, market, null, null);        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;

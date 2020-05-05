@@ -8,4 +8,5 @@ public class IclijConstants {
     public static final String DATASET = "dataset";
     public static final String CROSSTEST = "crosstest";
     public static final String IMPROVEFILTER = "improvefilter";
+    public static final String IMPROVEABOVEBELOW = "improveabovebelow";
 }

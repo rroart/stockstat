@@ -6,7 +6,7 @@ import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil, map } from 'rxjs/operators';
 import { MatButtonModule } from '@angular/material/button';
 
-import { ActionIncrement, ActionSetstartdate, ActionSetenddate, ActionGetcontent, ActionGetcontentEvolve, ActionGetcontentDataset, ActionGetcontentCrosstest, ActionGetcontentFilter, ActionGetcontentImprove, ActionGetcontentMachineLearning, ActionGetVerify, ActionGetVerifyLoop, ActionGetSingleMarket, ActionGetSingleMarketLoop, ActionGetImproveProfit, ActionSetconfigvalue } from '../main.actions';
+import { ActionIncrement, ActionSetstartdate, ActionSetenddate, ActionGetcontent, ActionGetcontentEvolve, ActionGetcontentDataset, ActionGetcontentCrosstest, ActionGetcontentFilter, ActionGetcontentAboveBelow, ActionGetcontentImprove, ActionGetcontentMachineLearning, ActionGetVerify, ActionGetVerifyLoop, ActionGetSingleMarket, ActionGetSingleMarketLoop, ActionGetImproveProfit, ActionGetImproveAboveBelow, ActionSetconfigvalue } from '../main.actions';
 
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -129,6 +129,15 @@ export class MarketbarComponent implements OnInit, OnDestroy {
   //this.increment.focus();
   }
 
+  resetmarket($event) {
+  console.log('market');
+  console.log($event);
+  console.log(this);
+  this.store.dispatch(new ActionSetmarket({ 'market': null }));
+  this.store.dispatch(new ActionSetconfigvalue([ 'market', null ]));
+  //this.increment.focus();
+  }
+
   resetmlmarket($event) {
   console.log('market');
   console.log($event);
@@ -191,9 +200,19 @@ export class MarketbarComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ActionGetcontentFilter(this.main.config));
   }
 
+    getContentAboveBelow($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetcontentAboveBelow(this.main.config));
+  }
+
     getContentImprove($event) {
     console.log($event);
     this.store.dispatch(new ActionGetcontentImprove(this.main.config));
+  }
+
+    getContentImproveAboveBelow($event) {
+    console.log($event);
+    this.store.dispatch(new ActionGetcontentImproveAboveBelow(this.main.config));
   }
 
     getVerify($event) {

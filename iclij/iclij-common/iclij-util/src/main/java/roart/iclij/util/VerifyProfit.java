@@ -60,6 +60,10 @@ public class VerifyProfit {
             List<Double> mainList = resultList.get(0);
             log.info("Sizes {} {}", stockDates.size(), mainList.size());
             if (mainList != null) {
+                if (indexoffset + startoffset < days) {
+                    log.error("Recent date {}", aDate);
+                    continue;
+                }
                 Double valFuture = mainList.get(mainList.size() - indexoffset - startoffset + days);
                 Double valNow = mainList.get(mainList.size() - indexoffset - startoffset);
                 if (valFuture != null && valNow != null) {

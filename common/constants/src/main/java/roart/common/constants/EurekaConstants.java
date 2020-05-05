@@ -17,6 +17,7 @@ public class EurekaConstants {
     public static final String GETCONTENT = "getcontent";
     public static final String GETSINGLEMARKET = "findprofit";
     public static final String GETIMPROVEPROFIT = "improveprofit";
+    public static final String GETIMPROVEABOVEBELOW = "improveabovebelow";
     public static final String GETVERIFY = "getverify";
     public static final String GETCONTENTGRAPH = "getcontentgraph";
     public static final String GETCONTENTGRAPH2 = "getcontentgraph2";
@@ -33,5 +34,6 @@ public class EurekaConstants {
     public static final String GETCONTENTDATASET = "getcontentdataset";
     public static final String GETCONTENTCROSSTEST = "getcontentcrosstest";
     public static final String GETCONTENTFILTER = "getcontentfilter";
+    public static final String GETCONTENTABOVEBELOW = "getcontentabovebelow";
     public static final String ACTION = "action";
 }

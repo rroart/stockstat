@@ -29,6 +29,7 @@ export enum MainActionTypes {
   GETCONTENTDATASET = '[Main] Get content dataset',
   GETCONTENTCROSSTEST = '[Main] Get content crosstest',
   GETCONTENTFILTER = '[Main] Get content filter',
+  GETCONTENTABOVEBELOW = '[Main] Get content abovebelow',
   GETCONTENTMACHINELEARNING = '[Main] Get content machine learning',
   GETCONTENTIMPROVE = '[Main] Get content improve',
   GETSINGLEMARKET = '[Main] Get single market',
@@ -36,6 +37,7 @@ export enum MainActionTypes {
   GETVERIFY = '[Main] Get verify',
   GETVERIFYLOOP = '[Main] Get verify loop',
   GETIMPROVEPROFIT = '[Main] Get improve profit',
+  GETIMPROVEABOVEBELOW = '[Main] Get improve above below',
   NEWTAB = '[Main] New tab',
   CHANGE_ANIMATIONS_PAGE = '[Main] Change Animations Page',
   CHANGE_ANIMATIONS_PAGE_DISABLED = '[Main] Change Animations Page Disabled',
@@ -218,6 +220,12 @@ export class ActionGetcontentFilter implements Action {
   constructor(readonly payload: { config: any }) {}
 }
 
+export class ActionGetcontentAboveBelow implements Action {
+  readonly type = MainActionTypes.GETCONTENTABOVEBELOW;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
 export class ActionGetcontentMachineLearning implements Action {
   readonly type = MainActionTypes.GETCONTENTMACHINELEARNING;
 
@@ -226,6 +234,12 @@ export class ActionGetcontentMachineLearning implements Action {
 
 export class ActionGetcontentImprove implements Action {
   readonly type = MainActionTypes.GETCONTENTIMPROVE;
+
+  constructor(readonly payload: { config: any }) {}
+}
+
+export class ActionGetcontentImproveAboveBelow implements Action {
+  readonly type = MainActionTypes.GETCONTENTIMPROVEABOVEBELOW;
 
   constructor(readonly payload: { config: any }) {}
 }
@@ -293,6 +307,7 @@ export type MainActions =
   | ActionGetcontentDataset
   | ActionGetcontentCrosstest
   | ActionGetcontentFilter
+  | ActionGetcontentAboveBelow
   | ActionGetcontentMachineLearning
   | ActionGetcontentImprove
   | ActionGetSingleMarket
@@ -300,5 +315,6 @@ export type MainActions =
   | ActionGetVerify
   | ActionGetVerifyLoop
   | ActionGetImproveProfit
+  | ActionGetImproveAboveBelow
   | ActionNewtab
   | ActionMainChangeStickyHeader;
