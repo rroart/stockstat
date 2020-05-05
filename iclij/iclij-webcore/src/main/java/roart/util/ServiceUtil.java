@@ -61,6 +61,7 @@ import roart.iclij.model.action.ImproveFilterActionData;
 import roart.iclij.model.action.ImproveProfitActionData;
 import roart.iclij.model.action.MachineLearningActionData;
 import roart.iclij.model.action.FindProfitActionData;
+import roart.iclij.model.action.ImproveAboveBelowActionData;
 import roart.iclij.model.action.CrossTestActionData;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.component.ComponentInput;
@@ -196,18 +197,20 @@ public class ServiceUtil {
                 log.error(Constants.EXCEPTION, e);
             }
             List<IncDecItem> allCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime());
-            listRel.addAll(allCurrentIncDecs);
             Map<String, List<IncDecItem>> currentIncDecMap = splitParam(allCurrentIncDecs);
             for (Entry<String, List<IncDecItem>> entry : currentIncDecMap.entrySet()) {
                 String key = entry.getKey();
                 List<IncDecItem> currentIncDecs = entry.getValue();
                 List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
                 List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
-                listInc = mergeList(listInc, false);
-                listDec = mergeList(listDec, false);
+                listInc = new MiscUtil().mergeList(listInc, false);
+                listDec = new MiscUtil().mergeList(listDec, false);
                 List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
                 List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), key, listInc, listDec, listIncDec);
                 lists.addAll(subLists);
+                listRel.addAll(listInc);
+                listRel.addAll(listDec);
+                listRel.addAll(listIncDec);
             }
         }
         result.setLists(lists);
@@ -224,8 +227,6 @@ public class ServiceUtil {
         IclijServiceList trends = convert(trendMap);
         lists.add(trends);
 
-        listRel = mergeList(listRel, false);
-        roundList(listRel);
         addRelations(componentInput, lists, listRel);
 
         new MiscUtil().print(result);
@@ -313,6 +314,41 @@ public class ServiceUtil {
         mapmaps.put("ml", updateMap);
         result.setMaps(mapmaps);
         getContentMemoriesUpdates(componentInput, lists, updateMarketMap, improveFilterActionData, false);
+        new MiscUtil().print(result);
+        return result;
+    }
+
+    public static IclijServiceResult getContentAboveBelow(ComponentInput componentInput) throws Exception {
+        ImproveAboveBelowActionData improveAboveBelowActionData = new ImproveAboveBelowActionData();
+        LocalDate date = componentInput.getEnddate();
+        IclijXMLConfig i = new IclijXMLConfig();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+
+        List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
+        List<IclijServiceList> lists = new ArrayList<>();
+        lists.add(getHeader("Content"));
+        List<Market> markets = conf.getMarkets(instance);
+        markets = new MarketUtil().filterMarkets(markets, improveAboveBelowActionData.isDataset());
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(lists);
+
+        ControlService srv = null; 
+        try {
+            srv = getService(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+
+        getContentTimings(date, lists, markets, improveAboveBelowActionData);
+        Map<String, Map<String, Object>> updateMarketMap = new HashMap<>();
+        Map<String, Object> updateMap = new HashMap<>();
+        getUpdateMarkets(componentInput, srv, updateMarketMap, updateMap, improveAboveBelowActionData);
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        getContentMemoriesUpdates(componentInput, lists, updateMarketMap, improveAboveBelowActionData, false);
         new MiscUtil().print(result);
         return result;
     }
@@ -580,27 +616,10 @@ public class ServiceUtil {
             incDec.setList(listIncDec);
             subLists.add(incDec);
         }
+        wipeFields(listInc);
+        wipeFields(listDec);
+        wipeFields(listIncDec);
         return subLists;
-    }
-
-    private static List<IncDecItem> mergeList(List<IncDecItem> itemList, boolean splitid) {
-        Map<String, IncDecItem> map = new HashMap<>();
-        for (IncDecItem item : itemList) {
-            String id;
-            if (!splitid) {
-                id = item.getId();
-            } else {
-                id = item.getId() + item.getDate().toString();
-            }
-            IncDecItem getItem = map.get(id);
-            if (getItem == null) {
-                map.put(id, item);
-            } else {
-                getItem.setScore(getItem.getScore() + item.getScore());
-                getItem.setDescription(getItem.getDescription() + ", " + item.getDescription());
-            }
-        }
-        return new ArrayList<>(map.values());
     }
 
     public static IclijServiceResult getVerify(ComponentInput componentInput) throws Exception {
@@ -657,16 +676,6 @@ public class ServiceUtil {
         updateMap = myData.getUpdateMap();
         allMemoryItems.addAll(myData.getMemoryItems());
 
-        List<IncDecItem> allListInc = new ArrayList<>(myData.getIncs());
-        List<IncDecItem> allListDec = new ArrayList<>(myData.getDecs());
-        allListInc = mergeList(allListInc, !rerun);
-        allListDec = mergeList(allListDec, !rerun);
-        List<IncDecItem> allListIncDec;
-        if (rerun) {
-            allListIncDec = new MiscUtil().moveAndGetCommon(allListInc, allListDec, verificationdays > 0);
-        } else {
-            allListIncDec = new MiscUtil().moveAndGetCommon2(allListInc, allListDec, verificationdays > 0);
-        }
         Map<String, Object> trendMap = new HashMap<>();
         Short mystartoffset = market.getConfig().getStartoffset();
         short startoffset = mystartoffset != null ? mystartoffset : 0;
@@ -714,6 +723,16 @@ public class ServiceUtil {
         log.info("Base future date {} {}", baseDateStr, futureDateStr);
         LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
         LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
+        List<IncDecItem> allListInc = new ArrayList<>(myData.getIncs());
+        List<IncDecItem> allListDec = new ArrayList<>(myData.getDecs());
+        allListInc = new MiscUtil().mergeList(allListInc, !rerun);
+        allListDec = new MiscUtil().mergeList(allListDec, !rerun);
+        List<IncDecItem> allListIncDec;
+        if (rerun) {
+            allListIncDec = new MiscUtil().moveAndGetCommon(allListInc, allListDec, verificationdays > 0);
+        } else {
+            allListIncDec = new MiscUtil().moveAndGetCommon2(allListInc, allListDec, verificationdays > 0);
+        }
         Map<String, List<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
         Map<String, List<IncDecItem>> allListIncMap = splitParam(allListInc);
         Map<String, List<IncDecItem>> allListDecMap = splitParam(allListDec);
@@ -735,13 +754,6 @@ public class ServiceUtil {
                 listInc = new ArrayList<>();
             }
             if (verificationdays > 0) {
-                try {
-                    //srv.setFuturedays(0);
-                    //srv.setOffset(0);
-                    //srv.setDates(0, 0, TimeUtil.convertDate2(componentInput.getEnddate()));
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }           
                 if (rerun) {
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, futureDate, srv, baseDate, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold());
                 } else {
@@ -778,17 +790,199 @@ public class ServiceUtil {
         markets = new MarketUtil().filterMarkets(markets, false);
         for (Market aMarket : markets) {
             if (rerun && !instance.wantsFindProfitRerunSave() && market.getConfig().getMarket().equals(aMarket.getConfig().getMarket()) ) {
-                List<IncDecItem> listIncDecs = new ArrayList<>();
-                listIncDecs.addAll(myData.getIncs());
-                listIncDecs.addAll(myData.getDecs());
-                listIncDecs = mergeList(listIncDecs, !rerun);
-                currentIncDecs.addAll(listIncDecs);
+                //List<IncDecItem> listIncDecs = new ArrayList<>();
+                //listIncDecs.addAll(myData.getIncs());
+                //listIncDecs.addAll(myData.getDecs());
+                //listIncDecs = mergeList(listIncDecs, !rerun);
+                currentIncDecs.addAll(allListInc);
+                currentIncDecs.addAll(allListDec);
+                currentIncDecs.addAll(allListIncDec);
                 continue;
             }
             List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, aMarket, market.getConfig().getFindtime());
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
-        roundList(currentIncDecs);
+        //roundList(currentIncDecs);
+        addRelations(componentInput, retLists, currentIncDecs);
+
+        return result;
+    }
+
+    public static IclijServiceResult getImproveAboveBelow(ComponentInput componentInput) throws Exception {
+        String type = "Verify";
+        //componentInput.setDoSave(componentInput.getConfig().wantVerificationSave());
+        //componentInput.setDoSave(false);
+        int verificationdays = componentInput.getConfig().verificationDays();
+        boolean rerun = componentInput.getConfig().verificationRerun();
+ 
+        componentInput.setDoSave(componentInput.getConfig().wantsFindProfitRerunSave());
+        LocalDate date = componentInput.getEnddate();
+        IclijXMLConfig i = new IclijXMLConfig();
+        IclijXMLConfig conf = IclijXMLConfig.instance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+
+        IclijServiceResult result = new IclijServiceResult();
+        result.setLists(new ArrayList<>());
+        List<IclijServiceList> retLists = result.getLists();
+
+        ControlService srv = null; 
+        try {
+            srv = getService(componentInput, verificationdays);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+
+        //FindProfitActionData findProfitActionData = new FindProfitActionData();
+        // this calculates, does not read from db
+        List<MemoryItem> allMemoryItems = new ArrayList<>();
+        //ProfitData picks = findProfitActionData.getPicks(param, allMemoryItems);
+        //getMemoryItems(componentInput.getConfig(), param, verificationdays, getFindProfitComponents(componentInput.getConfig()));
+        IclijServiceList memories = new IclijServiceList();
+        memories.setTitle("Memories");
+        roundList3(allMemoryItems);
+        memories.setList(allMemoryItems);
+        Map<String, Object> updateMap = new HashMap<>();
+        //param.setUpdateMap(updateMap);
+        Market market = new MarketUtil().findMarket(srv.conf.getMarket());
+        boolean evolve = new MiscUtil().getEvolve(verificationdays, componentInput);
+        WebData myData;
+        if (rerun) {
+            myData = srv.getRun(IclijConstants.IMPROVEABOVEBELOW, componentInput);
+            //ProfitData buysells = myData.profitData; // findProfitActionData.getPicks(param, allMemoryItems);
+        } else {
+            myData = null; //srv.getVerify(IclijConstants.FINDPROFIT, componentInput);            
+        }
+        updateMap = myData.getUpdateMap();
+        allMemoryItems.addAll(myData.getMemoryItems());
+
+        Map<String, Object> trendMap = new HashMap<>();
+        Short mystartoffset = market.getConfig().getStartoffset();
+        short startoffset = mystartoffset != null ? mystartoffset : 0;
+        int loopoffset = componentInput.getLoopoffset() != null ? componentInput.getLoopoffset() : 0;
+        String dateString = TimeUtil.convertDate2(componentInput.getEnddate());
+        List<String> stockDates = srv.getDates(market.getConfig().getMarket());
+        int dateIndex = TimeUtil.getIndexEqualBefore(stockDates, dateString);
+        String aDate = stockDates.get(dateIndex - loopoffset);
+        LocalDate endDate = TimeUtil.convertDate(aDate);
+        Trend trend;
+        Trend trend2;
+        if (rerun) {
+            String endDateString2 = stockDates.get(dateIndex - market.getConfig().getFindtime());
+            LocalDate endDate2 = TimeUtil.convertDate(endDateString2);
+            trend = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), endDate2, srv, startoffset);
+            trend2 = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), endDate, srv, startoffset);
+        } else {
+            LocalDate prevdate = componentInput.getEnddate();
+            String prevdateString = TimeUtil.convertDate2(prevdate);
+            int prevdateIndex = TimeUtil.getIndexEqualBefore(stockDates, prevdateString);
+            prevdateIndex = prevdateIndex - componentInput.getLoopoffset();
+            Short startoffset2 = market.getConfig().getStartoffset();
+            startoffset2 = startoffset2 != null ? startoffset2 : 0;
+            prevdateIndex = prevdateIndex - verificationdays - startoffset2;
+            prevdateString = stockDates.get(prevdateIndex);
+            String olddateString = stockDates.get(prevdateIndex - market.getConfig().getFindtime());
+            LocalDate olddate = null;
+            try {
+                prevdate = TimeUtil.convertDate(prevdateString);
+                olddate = TimeUtil.convertDate(olddateString);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            trend = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), olddate, srv, startoffset2, stockDates, loopoffset);            
+            trend2 = new TrendUtil().getTrend(componentInput.getConfig().verificationDays(), prevdate, srv, startoffset2, stockDates, loopoffset);            
+        }
+        trendMap.put(market.getConfig().getMarket(), trend);
+        trendMap.put(market.getConfig().getMarket() + "end", trend2);
+        int offset = 0;
+        int futuredays = 0;
+        List<String> stockdates = srv.getDates(market.getConfig().getMarket());
+        List<String> list = new TimeUtil().setDates(TimeUtil.convertDate2(componentInput.getEnddate()), stockdates, offset, componentInput.getLoopoffset(), futuredays);
+        String baseDateStr = list.get(0);
+        String futureDateStr = list.get(1);
+        log.info("Base future date {} {}", baseDateStr, futureDateStr);
+        LocalDate baseDate = TimeUtil.convertDate(baseDateStr);
+        LocalDate futureDate = TimeUtil.convertDate(futureDateStr);
+        List<IncDecItem> allListInc = new ArrayList<>(myData.getIncs());
+        List<IncDecItem> allListDec = new ArrayList<>(myData.getDecs());
+        allListInc = new MiscUtil().mergeList(allListInc, !rerun);
+        allListDec = new MiscUtil().mergeList(allListDec, !rerun);
+        List<IncDecItem> allListIncDec;
+        if (rerun) {
+            allListIncDec = new MiscUtil().moveAndGetCommon(allListInc, allListDec, verificationdays > 0);
+        } else {
+            allListIncDec = new MiscUtil().moveAndGetCommon2(allListInc, allListDec, verificationdays > 0);
+        }
+        Map<String, List<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
+        Map<String, List<IncDecItem>> allListIncMap = splitParam(allListInc);
+        Map<String, List<IncDecItem>> allListDecMap = splitParam(allListDec);
+        Set<String> allKeys = new HashSet<>();
+        allKeys.addAll(allListIncDecMap.keySet());
+        allKeys.addAll(allListDecMap.keySet());
+        allKeys.addAll(allListIncMap.keySet());
+        for (String key : allKeys) {
+            List<IncDecItem> listIncDec = allListIncDecMap.get(key);
+            List<IncDecItem> listInc = allListIncMap.get(key);
+            List<IncDecItem> listDec = allListDecMap.get(key);
+            if (listIncDec == null) {
+                listIncDec = new ArrayList<>();
+            }
+            if (listDec == null) {
+                listDec = new ArrayList<>();
+            }
+            if (listInc == null) {
+                listInc = new ArrayList<>();
+            }
+            if (verificationdays > 0) {
+                if (rerun) {
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, futureDate, srv, baseDate, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold());
+                } else {
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, futureDate, srv, baseDate, listInc, listDec, listIncDec, startoffset, componentInput.getConfig().getFindProfitManualThreshold(), stockDates, loopoffset);                
+                }
+            }
+            addHeader(componentInput, type, result, baseDateStr, futureDateStr);
+
+            List<IclijServiceList> subLists = getServiceList(srv.conf.getMarket(), key, listInc, listDec, listIncDec);
+            retLists.addAll(subLists);
+        }
+
+        retLists.add(memories);
+
+        {
+            List<TimingItem> currentTimings = (List<TimingItem>) myData.getTimingMap().get(market.getConfig().getMarket());
+            if (currentTimings != null) {
+                List<IclijServiceList> subLists2 = getServiceList(market.getConfig().getMarket(), currentTimings);
+                retLists.addAll(subLists2);
+            }
+        }
+        Map<String, Map<String, Object>> mapmaps = new HashMap<>();
+        mapmaps.put("ml", updateMap);
+        result.setMaps(mapmaps);
+        IclijServiceList updates = convert(market.getConfig().getMarket(), updateMap);
+        retLists.add(updates);
+
+        IclijServiceList trends = convert(trendMap);
+        retLists.add(trends);
+
+        List<IncDecItem> currentIncDecs = new ArrayList<>();
+        List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
+        List<Market> markets = conf.getMarkets(instance);
+        markets = new MarketUtil().filterMarkets(markets, false);
+        for (Market aMarket : markets) {
+            if (rerun && !instance.wantsFindProfitRerunSave() && market.getConfig().getMarket().equals(aMarket.getConfig().getMarket()) ) {
+                //List<IncDecItem> listIncDecs = new ArrayList<>();
+                //listIncDecs.addAll(myData.getIncs());
+                //listIncDecs.addAll(myData.getDecs());
+                //listIncDecs = mergeList(listIncDecs, !rerun);
+                currentIncDecs.addAll(allListInc);
+                currentIncDecs.addAll(allListDec);
+                currentIncDecs.addAll(allListIncDec);
+                continue;
+            }
+            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, aMarket, market.getConfig().getFindtime());
+            currentIncDecs.addAll(marketCurrentIncDecs);
+        }
+        //roundList(currentIncDecs);
         addRelations(componentInput, retLists, currentIncDecs);
 
         return result;
@@ -1053,6 +1247,14 @@ public class ServiceUtil {
     }
      */
 
+    private static void wipeFields(List<IncDecItem> list) {
+        for (IncDecItem item : list) {
+            item.setComponent(null);
+            item.setLocalcomponent(null);
+            item.setSubcomponent(null);
+        }
+    }
+    
     private static void roundList(List<IncDecItem> list) {
         for (IncDecItem item : list) {
             Double score = item.getScore();

@@ -224,6 +224,9 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.IMPROVEFILTERPREDICTOR, Boolean.class);
         map.put(IclijConfigConstants.IMPROVEFILTERPREDICTOREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVEFILTERPREDICTORMLCONFIG, String.class);
+        map.put(IclijConfigConstants.IMPROVEABOVEBELOWAUTORUN, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG, String.class);
+        map.put(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM, Integer.class);
         map.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, Boolean.class);
         map.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, Boolean.class);
         map.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, String.class);
@@ -422,6 +425,9 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.IMPROVEFILTERRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.IMPROVEFILTERPREDICTOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.IMPROVEFILTERPREDICTOREVOLUTIONCONFIG, null);
+        deflt.put(IclijConfigConstants.IMPROVEABOVEBELOWAUTORUN, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG, null);
+        deflt.put(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM, 10);
         deflt.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, null);
@@ -655,6 +661,9 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.IMPROVEFILTERPREDICTOR, "Enable improve filter predictor");
         text.put(IclijConfigConstants.IMPROVEFILTERPREDICTOREVOLUTIONCONFIG, "Improve filter predictor evolution config");
         text.put(IclijConfigConstants.IMPROVEFILTERPREDICTORMLCONFIG, "Improve filter predictor ml enable");
+        text.put(IclijConfigConstants.IMPROVEABOVEBELOWAUTORUN, "Enable improve above below autorun");
+        text.put(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG, "Improve above below evolution config");
+        text.put(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM, "Improve above below fitness minimum");
         text.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, "Enable machine learning autorun");
         text.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, "Enable machine learning mlindicator");
         text.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, "machine learning mlindicator evolution config");
@@ -906,6 +915,9 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.IMPROVEFILTERPREDICTOR, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve filter predictor"));
         mymap.put(IclijConfigConstants.IMPROVEFILTERPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve filter predictor evolution config"));
         mymap.put(IclijConfigConstants.IMPROVEFILTERPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "Improve filter predictor ml enable"));
+        mymap.put(IclijConfigConstants.IMPROVEABOVEBELOWAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve above below autorun"));
+        mymap.put(IclijConfigConstants.IMPROVEABOVEBELOWEVOLUTIONCONFIG, new IclijXMLType(String.class, null, "Improve above below evolution config"));
+        mymap.put(IclijConfigConstants.IMPROVEABOVEBELOWFITNESSMINIMUM, new IclijXMLType(Integer.class, 10, "Improve above below fitness minimum"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable machine learning autorun"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOR, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable machine learning mlindicator"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGMLINDICATOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "machine learning mlindicator evolution config"));

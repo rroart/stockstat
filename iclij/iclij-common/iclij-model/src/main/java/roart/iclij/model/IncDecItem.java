@@ -27,6 +27,12 @@ public class IncDecItem {
 
     private String parameters;
     
+    private String component;
+    
+    private String subcomponent;
+    
+    private String localcomponent;
+    
     // not saved
     private Boolean verified;
     
@@ -109,6 +115,30 @@ public class IncDecItem {
         this.parameters = parameters;
     }
 
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public String getSubcomponent() {
+        return subcomponent;
+    }
+
+    public void setSubcomponent(String subcomponent) {
+        this.subcomponent = subcomponent;
+    }
+
+    public String getLocalcomponent() {
+        return localcomponent;
+    }
+
+    public void setLocalcomponent(String localcomponent) {
+        this.localcomponent = localcomponent;
+    }
+
     public Boolean getVerified() {
         return verified;
     }
@@ -127,20 +157,23 @@ public class IncDecItem {
 
     @Override
     public String toString() {
-        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + description + " " + verified + " " + verificationComment + " " + parameters + "\n"; 
+        return market + " " + record + " " + date + " " + increase + " " + id + " " + name + " " + score + " " + component + " " + subcomponent + " " + localcomponent + " " + description + " " + verified + " " + verificationComment + " " + parameters + "\n"; 
     }
     
     public void save() throws Exception {
         IncDec incdec = new IncDec();
+        incdec.setComponent(getComponent());
         incdec.setDate(TimeUtil.convertDate(getDate()));
         incdec.setDescription(getDescription());
         incdec.setId(getId());
         incdec.setIncrease(isIncrease());
+        incdec.setLocalcomponent(getLocalcomponent());
         incdec.setMarket(getMarket());
         incdec.setName(getName());
         incdec.setParameters(getParameters());
         incdec.setRecord(TimeUtil.convertDate(getRecord()));
         incdec.setScore(getScore());
+        incdec.setSubcomponent(getSubcomponent());
         incdec.save();
     }
     
@@ -166,15 +199,18 @@ public class IncDecItem {
 
     private static IncDecItem getIncdecItem(IncDec incdec) {
         IncDecItem incdecItem = new IncDecItem();
+        incdecItem.setComponent(incdec.getComponent());
         incdecItem.setDate(TimeUtil.convertDate(incdec.getDate()));
         incdecItem.setDescription(incdec.getDescription());
         incdecItem.setId(incdec.getId());
         incdecItem.setIncrease(incdec.isIncrease());
+        incdecItem.setLocalcomponent(incdec.getLocalcomponent());
         incdecItem.setMarket(incdec.getMarket());
         incdecItem.setName(incdec.getName());
         incdecItem.setParameters(incdec.getParameters());
         incdecItem.setRecord(TimeUtil.convertDate(incdec.getRecord()));
         incdecItem.setScore(incdec.getScore());
+        incdecItem.setSubcomponent(incdec.getSubcomponent());;
         return incdecItem;
     }
 

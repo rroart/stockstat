@@ -20,6 +20,8 @@ public abstract class ActionComponentConfigFactory {
             return new ImproveFilterActionComponentConfigFactory();
         case IclijConfigConstants.IMPROVEPROFIT:
             return new ImproveProfitActionComponentConfigFactory();
+        case IclijConfigConstants.IMPROVEABOVEBELOW:
+            return new ImproveAbovebelowActionComponentConfigFactory();
         case IclijConfigConstants.MACHINELEARNING:
             return new MachineLearningActionComponentConfigFactory();
         default:

@@ -28,8 +28,10 @@ import {
   ActionGetcontentDataset,
   ActionGetcontentCrosstest,
   ActionGetcontentFilter,
+  ActionGetcontentAboveBelow,
   ActionGetcontentMachineLearning,
   ActionGetcontentImprove,
+  ActionGetcontentImproveAboveBelow,
   ActionGetSingleMarket,
   ActionGetSingleMarketLoop,
   ActionGetVerify,
@@ -210,6 +212,26 @@ export class MainEffects {
     );
 
   @Effect()
+  getcontentabovebelow = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetcontentAboveBelow>(MainActionTypes.GETCONTENTABOVEBELOW),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetcontentAboveBelow) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getcontentabovebelow', param).pipe(
+          map(res => new ActionNewtab(res.lists)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
   getcontentmachinelearning = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
     this.actions$.pipe(
       ofType<ActionGetcontentMachineLearning>(MainActionTypes.GETCONTENTMACHINELEARNING),
@@ -356,6 +378,26 @@ export class MainEffects {
 	param['market'] = config['market'];
 	param['iclijConfig'] = getMyConfig(config, param['market'], date);
         return this.service.retrieve('/getimprove', param).pipe(
+          map(res => new ActionNewtab(res.lists)),
+          catchError(error => of(new ActionError({ error })))
+        )
+	}
+      )
+    );
+
+  @Effect()
+  getimproveabovebelow = ({ debounce = 500, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType<ActionGetImproveAboveBelow>(MainActionTypes.GETIMPROVEABOVEBELOW),
+      debounceTime(debounce, scheduler),
+      switchMap((action: ActionGetImproveAboveBelow) => {
+        console.log(action);
+	const config = action.payload; //.config;
+	const date = config['enddate'];
+	var param = new Object();
+	param['market'] = config['market'];
+	param['iclijConfig'] = getMyConfig(config, param['market'], date);
+        return this.service.retrieve('/getimproveabovebelow', param).pipe(
           map(res => new ActionNewtab(res.lists)),
           catchError(error => of(new ActionError({ error })))
         )

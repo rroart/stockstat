@@ -180,10 +180,24 @@ public class IclijWebControlService {
         new IclijThread(ui, param).start();
     }
 
+    public void getContentAboveBelow(MyIclijUI ui) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setIclijConfig(getIclijConf());
+        param.setWebpath(EurekaConstants.GETCONTENTABOVEBELOW);
+        new IclijThread(ui, param).start();
+    }
+
     public void getContentCrosstest(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
         param.setWebpath(EurekaConstants.GETCONTENTCROSSTEST);
+        new IclijThread(ui, param).start();
+    }
+
+    public void getImproveAboveBelowMarket(MyIclijUI ui) {
+        IclijServiceParam param = new IclijServiceParam();
+        param.setIclijConfig(getIclijConf());
+        param.setWebpath(EurekaConstants.GETIMPROVEABOVEBELOW);
         new IclijThread(ui, param).start();
     }
 

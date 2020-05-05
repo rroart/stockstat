@@ -64,6 +64,15 @@ public class ServiceController {
        //return ret;
     }
 
+    @RequestMapping(value = "action/improveabovebelow",
+            method = RequestMethod.POST)
+    public IclijServiceResult getImproveAboveBelowMarket(@RequestBody IclijServiceParam param)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        return ServiceUtil.getImproveAboveBelow(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
     @RequestMapping(value = "action/improveprofit",
             method = RequestMethod.POST)
     public IclijServiceResult getImproveProfitMarket(@RequestBody IclijServiceParam param)

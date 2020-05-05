@@ -110,6 +110,21 @@ public class MiscUtil {
         return currentIncDecs;
     }
 
+    public List<IncDecItem> getCurrentIncDecs(List<IncDecItem> listAll, String parameters) {
+        if (parameters != null) {
+            return listAll.stream().filter(m -> parameters.equals(m.getParameters())).collect(Collectors.toList());
+        }
+        return listAll;
+    }
+
+    public List<IncDecItem> getIncDecsWithComponent(List<IncDecItem> listAll, List<String> components) {
+        return listAll.stream().filter(m -> components.contains(m.getComponent())).collect(Collectors.toList());
+    }
+
+    public List<IncDecItem> getIncDecsWithSubcomponent(List<IncDecItem> listAll, List<String> subcomponents) {
+        return listAll.stream().filter(m -> subcomponents.contains(m.getSubcomponent())).collect(Collectors.toList());
+    }
+
     public List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec) {
         // and a new list for common items
         List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
@@ -139,14 +154,17 @@ public class MiscUtil {
                 IncDecItem inc = common.stream().filter(item -> id.equals(item.getId()) && item.isIncrease()).findAny().orElse(null);
                 IncDecItem dec = common.stream().filter(item -> id.equals(item.getId()) && !item.isIncrease()).findAny().orElse(null);
                 IncDecItem mergeitem = new IncDecItem();
+                mergeitem.setComponent(inc.getComponent());
                 mergeitem.setDate(inc.getDate());
                 mergeitem.setDescription("Up: " + inc.getDescription() + " Down: " + dec.getDescription());
                 mergeitem.setId(id);
                 mergeitem.setIncrease(inc.getScore() > dec.getScore());
+                mergeitem.setLocalcomponent("Up: " + inc.getLocalcomponent() + " Down: " + dec.getLocalcomponent());
                 mergeitem.setMarket(inc.getMarket());
                 mergeitem.setName(inc.getName());
                 mergeitem.setParameters(inc.getParameters());
                 mergeitem.setScore(mergeitem.isIncrease() ? inc.getScore() - dec.getScore() : dec.getScore() - inc.getScore());
+                mergeitem.setSubcomponent(inc.getSubcomponent());
                 mergecommon.add(mergeitem);
             }
             common = mergecommon;
@@ -178,14 +196,17 @@ public class MiscUtil {
                 IncDecItem inc = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && item.isIncrease()).findAny().orElse(null);
                 IncDecItem dec = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && !item.isIncrease()).findAny().orElse(null);
                 IncDecItem mergeitem = new IncDecItem();
+                mergeitem.setComponent(inc.getComponent());
                 mergeitem.setDate(inc.getDate());
                 mergeitem.setDescription("Up: " + inc.getDescription() + " Down: " + dec.getDescription());
                 mergeitem.setId(inc.getId());
                 mergeitem.setIncrease(inc.getScore() > dec.getScore());
+                mergeitem.setLocalcomponent("Up: " + inc.getLocalcomponent() + " Down: " + dec.getLocalcomponent());
                 mergeitem.setMarket(inc.getMarket());
                 mergeitem.setName(inc.getName());
                 mergeitem.setParameters(inc.getParameters());
                 mergeitem.setScore(mergeitem.isIncrease() ? inc.getScore() - dec.getScore() : dec.getScore() - inc.getScore());
+                mergeitem.setSubcomponent(inc.getSubcomponent());
                 mergecommon.add(mergeitem);
             }
             common = mergecommon;
@@ -300,5 +321,47 @@ public class MiscUtil {
         }
         return retList;
     }
+
+    public List<IncDecItem> mergeList(List<IncDecItem> itemList, boolean splitid) {
+        Map<String, IncDecItem> map = new HashMap<>();
+        for (IncDecItem item : itemList) {
+            String id;
+            if (!splitid) {
+                id = item.getId();
+            } else {
+                id = item.getId() + item.getDate().toString();
+            }
+            IncDecItem getItem = map.get(id);
+            if (getItem == null) {
+                IncDecItem mergeitem = new IncDecItem();
+                mergeitem.setComponent(item.getComponent());
+                mergeitem.setDate(item.getDate());
+                mergeitem.setDescription(item.getDescription());
+                mergeitem.setId(item.getId());
+                mergeitem.setIncrease(item.isIncrease());
+                mergeitem.setLocalcomponent(item.getLocalcomponent());
+                mergeitem.setMarket(item.getMarket());
+                mergeitem.setName(item.getName());
+                mergeitem.setParameters(item.getParameters());
+                mergeitem.setScore(item.getScore());
+                mergeitem.setSubcomponent(item.getSubcomponent());
+                map.put(id, mergeitem);
+            } else {
+                getItem.setScore(getItem.getScore() + item.getScore());
+                getItem.setDescription(getItem.getDescription() + ", " + item.getDescription());
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    public List<String> getParameters(List<IncDecItem> incdecs) {
+        return incdecs
+                .stream()
+                .map(IncDecItem::getParameters)
+                .collect(Collectors.toList())
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+     }
 
 }

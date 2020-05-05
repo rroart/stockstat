@@ -32,9 +32,11 @@ const GETCONTENTEVOLVE = 'app/main/GETCONTENTEVOLVE';
 const GETCONTENTDATASET = 'app/main/GETCONTENTDATASET';
 const GETCONTENTCROSSTEST = 'app/main/GETCONTENTCROSSTEST';
 const GETCONTENTFILTER = 'app/main/GETCONTENTFILTER';
+const GETCONTENTABOVEBELOW = 'app/main/GETCONTENTABOVEBELOW';
 const GETCONTENTMACHINELEARNING = 'app/main/GETCONTENTMACHINELEARNING';
 const GETSINGLEMARKET = 'app/main/GETSINGLEMARKET'
 const GETIMPROVEPROFIT = 'app/main/GETIMPROVEPROFIT'
+const GETIMPROVEABOVEBELOW = 'app/main/GETIMPROVEABOVEBELOW'
 const GETVERIFY = 'app/main/GETVERIFY'
 
 export const constants = {
@@ -66,9 +68,11 @@ export const constants = {
     GETCONTENTDATASET,
     GETCONTENTCROSSTEST,
     GETCONTENTFILTER,
+    GETCONTENTABOVEBELOW,
     GETCONTENTMACHINELEARNING,
     GETSINGLEMARKET,
     GETIMPROVEPROFIT,
+    GETIMPROVEABOVEBELOW,
     GETVERIFY,
 };
 
@@ -104,10 +108,12 @@ export const getcontentevolve = createAction(GETCONTENTEVOLVE, (config, market, 
 export const getcontentdataset = createAction(GETCONTENTDATASET, (config, market, props) => ( { config, market, props } ) );
 export const getcontentcrosstest = createAction(GETCONTENTCROSSTEST, (config, market, props) => ( { config, market, props } ) );
 export const getcontentfilter = createAction(GETCONTENTFILTER, (config, market, props) => ( { config, market, props } ) );
+export const getcontentabovebelow = createAction(GETCONTENTABOVEBELOW, (config, market, props) => ( { config, market, props } ) );
 export const getcontentimprove = createAction(GETCONTENTIMPROVE, (config, market, props) => ( { config, market, props } ) );
 export const getcontentmachinelearning = createAction(GETCONTENTMACHINELEARNING, (config, market, props) => ( { config, market, props } ) );
 export const getsinglemarket = createAction(GETSINGLEMARKET, (config, market, props, loop) => ( { config, market, props, loop } ) );
 export const getimproveprofit = createAction(GETIMPROVEPROFIT, (config, market, props) => ( { config, market, props } ) );
+export const getimproveabovebelow = createAction(GETIMPROVEABOVEBELOW, (config, market, props) => ( { config, market, props } ) );
 export const getverify = createAction(GETVERIFY, (config, market, props, loop) => ( { config, market, props, loop } ) );
 				      
 export const actions = {
@@ -138,10 +144,12 @@ export const actions = {
     getcontentdataset,
     getcontentcrosstest,
     getcontentfilter,
+    getcontentabovebelow,
     getcontentimprove,
     getcontentmachinelearning,
     getsinglemarket,
     getimproveprofit,
+    getimproveabovebelow,
     getverify,
 };
 

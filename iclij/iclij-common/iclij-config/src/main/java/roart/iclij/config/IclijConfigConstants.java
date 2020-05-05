@@ -199,6 +199,10 @@ public class IclijConfigConstants {
     public static final String IMPROVEFILTERPREDICTOR = "improvefilter.predictor";
     public static final String IMPROVEFILTERPREDICTOREVOLUTIONCONFIG = "improvefilter.predictor.evolutionconfig";
     public static final String IMPROVEFILTERPREDICTORMLCONFIG = "improvefilter.predictor.mlconfig";
+    public static final String IMPROVEABOVEBELOW = "improveabovebelow";
+    public static final String IMPROVEABOVEBELOWAUTORUN = "improveabovebelow.autorun";
+    public static final String IMPROVEABOVEBELOWEVOLUTIONCONFIG = "improveabovebelow.evolutionconfig";
+    public static final String IMPROVEABOVEBELOWFITNESSMINIMUM = "improveabovebelow.fitnessminimum";
     public static final String MACHINELEARNING = "machinelearning";
     public static final String MACHINELEARNINGAUTORUN = "machinelearning.autorun";
     public static final String MACHINELEARNINGMLMACD = "machinelearning.mlmacd";

@@ -21,6 +21,8 @@ public class MarketConfig {
 
     private Short filtertime;
     
+    private Short abovebelowtime;
+    
     private String id;
 
     private Short startoffset;
@@ -111,6 +113,14 @@ public class MarketConfig {
 
     public void setFiltertime(Short filtertime) {
         this.filtertime = filtertime;
+    }
+
+    public Short getAbovebelowtime() {
+        return abovebelowtime;
+    }
+
+    public void setAbovebelowtime(Short abovebelowtime) {
+        this.abovebelowtime = abovebelowtime;
     }
 
     public String getId() {
