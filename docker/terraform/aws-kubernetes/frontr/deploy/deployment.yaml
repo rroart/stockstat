@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iwebr
+  labels:
+    app: iwebr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iwebr
+  template:
+    metadata:
+      labels:
+        app: iwebr
+    spec:
+      containers:
+      - name: iwebr
+        image: iwebr
+        #imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iwebr
+  labels:
+    app: iwebr
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: iwebr
+  sessionAffinity: None  
+status:
+  loadBalancer: {}    
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress-iwebr
+spec:
+  rules:
+  - host: www.icli.stockstat.tk
+    http:
+      paths:
+      - backend:
+          serviceName: iwebr
+          servicePort: 80
