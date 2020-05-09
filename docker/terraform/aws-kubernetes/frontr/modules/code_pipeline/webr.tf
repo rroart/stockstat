@@ -135,6 +135,7 @@ resource "aws_codepipeline" "pipeline_webr" {
       configuration = {
         ClusterName = var.ecs_cluster_name
         #ServiceName = var.ecs_service_name_webr
+	ServiceName = "aWebr"
         FileName    = "imagedefinitions.json"
       }
     }

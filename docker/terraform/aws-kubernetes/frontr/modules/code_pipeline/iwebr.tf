@@ -130,6 +130,7 @@ resource "aws_codepipeline" "pipeline-iwebr" {
       configuration = {
         ClusterName = var.ecs_cluster_name
         #ServiceName = var.ecs_service_name_iwebr
+	ServiceName = "aIWebr"
         FileName    = "imagedefinitions.json"
       }
     }
