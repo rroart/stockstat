@@ -6,7 +6,7 @@ import {Http, Response, Headers, RequestOptions} from '@angular/http';
 
 import { isDevMode } from '@angular/core';
 
-//import { Stock } from './stock-market.model';
+import { environment as myenv } from '@env/myenvironment';
 
 @Injectable()
 export class MainService {
@@ -44,35 +44,35 @@ export class MainService {
     }
 
 static getPort() {
-    console.log(process.env.NODE_ENV);
-    if (typeof process.env.MYPORT !== 'undefined') {
-        return process.env.MYPORT;
+    console.log(myenv.NODE_ENV);
+    if (typeof myenv.MYPORT !== 'undefined' && myenv.MYPORT !== '') {
+        return myenv.MYPORT;
     }
     return 80;
 }
 
 static getHost() {
     console.log("pppp");
-    console.log(process.env);
-    if (typeof process.env.MYSERVER !== 'undefined') {
-        return process.env.MYSERVER;
+    console.log(myenv);
+    if (typeof myenv.MYSERVER !== 'undefined' && myenv.MYSERVER !== '') {
+        return myenv.MYSERVER;
     }
     return "localhost";
 }
 
 static getIPort() {
-    console.log(process.env.NODE_ENV);
-    if (typeof process.env.MYIPORT !== 'undefined') {
-        return process.env.MYIPORT;
+    console.log(myenv.NODE_ENV);
+    if (typeof myenv.MYIPORT !== 'undefined' && myenv.MYIPORT !== '') {
+        return myenv.MYIPORT;
     }
     return 80;
 }
 
 static getIHost() {
     console.log("pppp");
-    console.log(process.env);
-    if (typeof process.env.MYISERVER !== 'undefined') {
-        return process.env.MYISERVER;
+    console.log(myenv);
+    if (typeof myenv.MYISERVER !== 'undefined' && myenv.MYISERVER !== '') {
+        return myenv.MYISERVER;
     }
     return "localhost";
 }
