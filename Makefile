@@ -11,7 +11,7 @@ pdf: DOCUMENTATION.pdf
 %.pdf: %.fo
 	fop $< -pdf $@
 
-SUBDIRS = core iclij-core
+SUBDIRS = core iclij-core weba iclij-weba
 
 core:
 	mkdir -p conf
@@ -26,6 +26,12 @@ ifneq ($(ICLIJTMPL),)
 	rsync -a $$ICLIJTMPL conf/iclij.xml.tmpl
 endif
 	$(MAKE) -C conf -f ../Makefile iclij.xml
+
+weba:
+	weba/scripts/genenv.sh
+
+iclij-weba:
+	iclij/iclij-weba/scripts/genenv.sh
 
 %.xml: %.xml.tmpl
 	envsubst < $< > $@

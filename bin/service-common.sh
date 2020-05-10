@@ -26,3 +26,9 @@ $COMMAND "http-server -p $WEBR" &
 
 cd ../../iclij-webr/docroot
 $COMMAND "http-server -p $IWEBR" &
+
+cd ../weba/dist
+$COMMAND "http-server -p $WEBA" &
+
+cd ../../iclij-weba/dist
+$COMMAND "http-server -p $IWEBA" &
