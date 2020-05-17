@@ -106,13 +106,13 @@ public abstract class Component {
     
     public abstract void disable(Map<String, Object> valueMap);
     
-    public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters);
+    public abstract ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters);
     
-    public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests);
+    public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests);
 
     protected abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
 
-    public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
+    public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         try {
             param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
         } catch (ParseException e) {
@@ -214,8 +214,8 @@ public abstract class Component {
     protected void subdisable(Map<String, Object> valueMap, String subcomponent) {        
     }
 
-    public void enableDisable(ComponentData param, List<Integer> positions, Map<String, Object> valueMap) {
-        List<String>[] enableDisable = enableDisable(param, positions);
+    public void enableDisable(ComponentData param, Memories positions, Map<String, Object> valueMap, Boolean above) {
+        List<String>[] enableDisable = enableDisable(param, positions, above);
         List<String> enableML = enableDisable[0];
         List<String> disableML = enableDisable[1];
         enableDisable(valueMap, enableML, true);
@@ -267,7 +267,7 @@ public abstract class Component {
         */
     }
 
-    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters);
+    public abstract void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters);
 
     public abstract List<MemoryItem> calculateMemory(ComponentData param, Parameters parameters) throws Exception;
 
@@ -370,7 +370,7 @@ public abstract class Component {
 
     }
     
-    public abstract List<String>[] enableDisable(ComponentData param, List<Integer> positions);
+    public abstract List<String>[] enableDisable(ComponentData param, Memories positions, Boolean above);
 
     public void enableDisable(Map<String, Object> map, List<String> list, boolean bool) {
         for (String key : list) {
@@ -378,6 +378,9 @@ public abstract class Component {
         }
     }
     
+    /*
+    // ?
+    @Deprecated
     public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap) throws Exception {
         Parameters parameters = new Parameters();
         parameters.setThreshold(1.0);
@@ -388,6 +391,7 @@ public abstract class Component {
         }
         return null;
     }
+    */
     
     public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
         Object[] result = new Object[3];
@@ -509,9 +513,9 @@ public abstract class Component {
         }
         val.setScore(val.getScore() + add);
         String component = getPipeline();
-        component = component != null ? component.substring(0, 3) : component;
+        component = component != null ? component.substring(0, 3) : "";
         val.setDescription(val.getDescription() + component + " " + subcomponent + " " + localcomponent + ", ");
-        val.setLocalcomponent(val.getLocalcomponent() + localcomponent + " ");
+        val.setLocalcomponent(val.getLocalcomponent().isEmpty() ? localcomponent : val.getLocalcomponent() + " " + localcomponent);
         return val;
     }
 

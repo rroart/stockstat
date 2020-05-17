@@ -13,7 +13,9 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,7 @@ import roart.common.util.MathUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
+import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
@@ -74,7 +77,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
     protected Market market;
 
-    protected List<Integer> positions;
+    protected Memories positions;
 
     protected String componentName;
 
@@ -86,7 +89,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
     
     protected List<MLMetricsItem> mlTests;
     
-    public ConfigMapChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+    public ConfigMapChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
         this.action = action;
         this.param = param;
         this.profitdata = profitdata;
@@ -279,7 +282,8 @@ public class ConfigMapChromosome extends AbstractChromosome {
 
             gene.getMap().put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, gene.getMap(), subcomponent, null, parameters);
+            Memories listMap = new Memories(market);
+            ComponentData componentData = component.handle(action, market, param, profitdata, new Memories(market), myevolve /*evolve && evolvefirst*/, gene.getMap(), subcomponent, null, parameters);
             //componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
@@ -293,27 +297,15 @@ public class ConfigMapChromosome extends AbstractChromosome {
                 log.error(Constants.EXCEPTION, e);
             }
 
-            Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
-            myData.getMemoryItems().forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
-            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap, param.getInput().getConfig());        
-            //ProfitData profitdata = new ProfitData();
+            listMap.method(myData.getMemoryItems());
+            ProfitInputData inputdata = listMap.method(param.getInput().getConfig(), new ImproveProfitAction());        
             profitdata.setInputdata(inputdata);
-            Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
-            /*
-            Map<String, List<Integer>> aboveListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getAboveListMap());
-            Map<String, List<Integer>> belowListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getBelowListMap());
-            Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
-            listComponentMap.put(null, listComponent);
-            listComponentMap.put(true, aboveListComponent);
-            listComponentMap.put(false, belowListComponent);
-            */
             inputdata.setNameMap(new HashMap<>());
-            List<Integer> positions = listComponent.get(componentName);
 
-            component.enableDisable(componentData, positions, param.getConfigValueMap());
+            //component.enableDisable(componentData, positions, param.getConfigValueMap(), buy);
 
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, gene.getMap(), subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters);
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters);
+            component.calculateIncDec(componentData2, profitdata, listMap, buy, mlTests, parameters);
 
             Short mystartoffset = market.getConfig().getStartoffset();
             short startoffset = mystartoffset != null ? mystartoffset : 0;

@@ -63,10 +63,16 @@ public class Memory implements Serializable {
     private String category;
 
     @Column
+    private String type;
+    
+    @Column
     private String component;
 
     @Column
     private String subcomponent;
+
+    @Column
+    private String localcomponent;
 
     @Column
     private String description;
@@ -86,6 +92,18 @@ public class Memory implements Serializable {
     @Column
     private Long size;
 
+    @Column
+    private Long abovepositives;
+    
+    @Column
+    private Long abovesize;
+    
+    @Column
+    private Long belowpositives;
+    
+    @Column
+    private Long belowsize;
+    
     @Column
     private String parameters;
 
@@ -243,6 +261,14 @@ public class Memory implements Serializable {
         this.category = category;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getComponent() {
         return component;
     }
@@ -257,6 +283,14 @@ public class Memory implements Serializable {
 
     public void setSubcomponent(String subcomponent) {
         this.subcomponent = subcomponent;
+    }
+
+    public String getLocalcomponent() {
+        return localcomponent;
+    }
+
+    public void setLocalcomponent(String localcomponent) {
+        this.localcomponent = localcomponent;
     }
 
     public String getInfo() {
@@ -297,6 +331,38 @@ public class Memory implements Serializable {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    public Long getAbovepositives() {
+        return abovepositives;
+    }
+
+    public void setAbovepositives(Long abovepositives) {
+        this.abovepositives = abovepositives;
+    }
+
+    public Long getAbovesize() {
+        return abovesize;
+    }
+
+    public void setAbovesize(Long abovesize) {
+        this.abovesize = abovesize;
+    }
+
+    public Long getBelowpositives() {
+        return belowpositives;
+    }
+
+    public void setBelowpositives(Long belowpositives) {
+        this.belowpositives = belowpositives;
+    }
+
+    public Long getBelowsize() {
+        return belowsize;
+    }
+
+    public void setBelowsize(Long belowsize) {
+        this.belowsize = belowsize;
     }
 
     public String getParameters() {

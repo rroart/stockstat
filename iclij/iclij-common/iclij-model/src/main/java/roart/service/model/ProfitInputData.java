@@ -3,7 +3,7 @@ package roart.service.model;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
@@ -13,17 +13,17 @@ public class ProfitInputData {
     
     private List<Integer> positions;
     
-    private Map<Pair<String, Integer>, Double> confMap;
+    private Map<Triple<String, String, String>, Double> confMap;
     
-    private Map<Pair<String, Integer>, List<MemoryItem>> listMap;
+    private Map<Triple<String, String, String>, List<MemoryItem>> listMap;
     
-    private Map<Pair<String, Integer>, Double> aboveConfMap;
+    private Map<Triple<String, String, String>, Double> aboveConfMap;
     
-    private Map<Pair<String, Integer>, List<MemoryItem>> aboveListMap;
+    private Map<Triple<String, String, String>, List<MemoryItem>> aboveListMap;
     
-    private Map<Pair<String, Integer>, Double> belowConfMap;
+    private Map<Triple<String, String, String>, Double> belowConfMap;
     
-    private Map<Pair<String, Integer>, List<MemoryItem>> belowListMap;
+    private Map<Triple<String, String, String>, List<MemoryItem>> belowListMap;
     
     private Map<String, String> nameMap;
 
@@ -39,51 +39,51 @@ public class ProfitInputData {
         this.resultMaps = resultMaps;
     }
 
-    public Map<Pair<String, Integer>, Double> getConfMap() {
+    public Map<Triple<String, String, String>, Double> getConfMap() {
         return confMap;
     }
 
-    public void setConfMap(Map<Pair<String, Integer>, Double> confMap) {
+    public void setConfMap(Map<Triple<String, String, String>, Double> confMap) {
         this.confMap = confMap;
     }
 
-    public Map<Pair<String, Integer>, List<MemoryItem>> getListMap() {
+    public Map<Triple<String, String, String>, List<MemoryItem>> getListMap() {
         return listMap;
     }
 
-    public void setListMap(Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
+    public void setListMap(Map<Triple<String, String, String>, List<MemoryItem>> listMap) {
         this.listMap = listMap;
     }
 
-    public Map<Pair<String, Integer>, Double> getAboveConfMap() {
+    public Map<Triple<String, String, String>, Double> getAboveConfMap() {
         return aboveConfMap;
     }
 
-    public void setAboveConfMap(Map<Pair<String, Integer>, Double> aboveConfMap) {
+    public void setAboveConfMap(Map<Triple<String, String, String>, Double> aboveConfMap) {
         this.aboveConfMap = aboveConfMap;
     }
 
-    public Map<Pair<String, Integer>, List<MemoryItem>> getAboveListMap() {
+    public Map<Triple<String, String, String>, List<MemoryItem>> getAboveListMap() {
         return aboveListMap;
     }
 
-    public void setAboveListMap(Map<Pair<String, Integer>, List<MemoryItem>> aboveListMap) {
+    public void setAboveListMap(Map<Triple<String, String, String>, List<MemoryItem>> aboveListMap) {
         this.aboveListMap = aboveListMap;
     }
 
-    public Map<Pair<String, Integer>, Double> getBelowConfMap() {
+    public Map<Triple<String, String, String>, Double> getBelowConfMap() {
         return belowConfMap;
     }
 
-    public void setBelowConfMap(Map<Pair<String, Integer>, Double> belowConfMap) {
+    public void setBelowConfMap(Map<Triple<String, String, String>, Double> belowConfMap) {
         this.belowConfMap = belowConfMap;
     }
 
-    public Map<Pair<String, Integer>, List<MemoryItem>> getBelowListMap() {
+    public Map<Triple<String, String, String>, List<MemoryItem>> getBelowListMap() {
         return belowListMap;
     }
 
-    public void setBelowListMap(Map<Pair<String, Integer>, List<MemoryItem>> belowListMap) {
+    public void setBelowListMap(Map<Triple<String, String, String>, List<MemoryItem>> belowListMap) {
         this.belowListMap = belowListMap;
     }
 

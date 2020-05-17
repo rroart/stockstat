@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -17,6 +19,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
+import roart.component.Memories;
 import roart.component.ComponentRecommender;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -34,7 +37,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
     
     private int listIdx;
     
-    public RecommenderChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+    public RecommenderChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, Memories positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
         super(action, param, profitdata, market, positions, component, buy, subcomponent, null, gene, mlTests);
     }
 
@@ -46,7 +49,7 @@ public class RecommenderChromosome extends ConfigMapChromosome {
         return retlist;
     }
 
-    public RecommenderChromosome(MarketAction action, List<String> defaultConfList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+    public RecommenderChromosome(MarketAction action, List<String> defaultConfList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
         super(action, param, profitdata, market, positions, component, buy, subcomponent, null, gene, mlTests);
         Set<String> defaultConfSet = new HashSet<>(defaultConfList);
         Set<String> confSet = new HashSet<>(gene.getConfList());

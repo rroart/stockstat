@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
@@ -27,13 +28,14 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtilConstants;
 
 public abstract class ComponentMLAggregator extends ComponentML {
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         MLAggregatorData param = new MLAggregatorData(componentparam);
 
         int daysafterzero = getDaysAfterLimit(componentparam);
@@ -46,7 +48,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
@@ -56,10 +58,10 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories memories, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
         ComponentMLData param = (ComponentMLData) componentparam;
-        if (positions == null) {
-            return;
+        if (memories == null) {
+            //return;
         }
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
@@ -67,7 +69,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         System.out.println("a " + resultMap.keySet());
         System.out.println("b " + param.getCategoryValueMap().keySet());
         System.out.println("d " + profitdata.getInputdata().getConfMap().keySet());
-        for (Pair<String, Integer> key : profitdata.getInputdata().getConfMap().keySet()) {
+        for (Triple<String, String, String> key : profitdata.getInputdata().getConfMap().keySet()) {
             System.out.println("e " + key);
         }
         int resultIndex = 0;
@@ -82,11 +84,16 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 count++;
                 continue;
             }
-            if (positions == null) {
+            if (memories == null) {
                 int jj = 0;
             }
+            
+            Pair<String, String> paircount = new MiscUtil().getComponentPair(meta);
             MLMetricsItem mltest = search(mlTests, meta);
-            if (mltest != null || (mlTests == null && (positions == null || positions.contains(count)))) {
+            
+            //if memory.learnconf > mltest then..above.
+            
+            if (mltest != null && (memories == null || memories.contains(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
                 Pair keyPair = new ImmutablePair(getPipeline(), count);
                 for (String key : param.getCategoryValueMap().keySet()) {
@@ -150,6 +157,14 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 continue;
             }
             
+            String subtype = (String) meta.get(ResultMetaConstants.SUBTYPE);
+            String subsubtype = (String) meta.get(ResultMetaConstants.SUBSUBTYPE);
+
+            String localcomponent = null;
+            if (subtype != null) {
+                localcomponent = subtype + subsubtype;
+            }
+
             Double testaccuracy = (Double) meta.get(ResultMetaConstants.TESTACCURACY);
             Double testloss = (Double) meta.get(ResultMetaConstants.LOSS);
             Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.get(ResultMetaConstants.OFFSETMAP);
@@ -264,6 +279,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 }
             }
             //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
+            memory.setAction(param.getAction());
             memory.setMarket(param.getMarket());
             memory.setRecord(LocalDate.now());
             memory.setDate(param.getBaseDate());
@@ -273,6 +289,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setComponent(getPipeline());
             memory.setCategory(param.getCategoryTitle());
             memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
+            memory.setLocalcomponent(localcomponent);
             memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
             memory.setTestaccuracy(testaccuracy);
             memory.setTestloss(testloss);
@@ -380,7 +397,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             memory.setPositives(goodTP + goodTN + goodFP + goodFN);
             memory.setConfidence(conf);
             memory.setLearnConfidence(learnConfidence);
-            memory.setPosition(count);
+            //memory.setPosition(count);
             if (param.isDoSave()) {
                 memory.save();
             }
@@ -393,7 +410,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
     }
     
     protected abstract ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests);
+            Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests);
 
     protected abstract int getDaysAfterLimit(ComponentData componentparam);
     

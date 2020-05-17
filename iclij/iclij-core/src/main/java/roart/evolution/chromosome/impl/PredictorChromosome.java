@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -11,6 +13,7 @@ import roart.action.MarketAction;
 import roart.common.config.MyMyConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
@@ -27,7 +30,7 @@ public class PredictorChromosome extends ConfigMapChromosome {
 
     private TensorflowPredictorLSTMConfigGene config;
     
-    public PredictorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+    public PredictorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, Memories positions, String component, Boolean buy, String subcomponent, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
         super(action, param, profitdata, market, positions, component, buy, subcomponent, null, gene, mlTests);
     }
 

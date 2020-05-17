@@ -10,11 +10,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.component.Component;
+import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -37,11 +39,11 @@ public class MachineLearningAction extends MarketAction {
     }
     
     @Override
-    protected ProfitInputData filterMemoryListMapsWithConfidence(Market market,
-            Map<Pair<String, Integer>, List<MemoryItem>> listMap, IclijConfig config) {
-        Map<Pair<String, Integer>, List<MemoryItem>> badListMap = new HashMap<>();
-        Map<Pair<String, Integer>, Double> badConfMap = new HashMap<>();
-        for(Pair<String, Integer> key : listMap.keySet()) {
+    public ProfitInputData filterMemoryListMapsWithConfidence(Market market,
+            Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config) {
+        Map<Triple<String, String, String>, List<MemoryItem>> badListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> badConfMap = new HashMap<>();
+        for(Triple<String, String, String> key : listMap.keySet()) {
             List<MemoryItem> memoryList = listMap.get(key);
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
             confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
@@ -65,7 +67,7 @@ public class MachineLearningAction extends MarketAction {
 
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
-            Map<String, List<Integer>> listComponent, Map<String, Component> componentMap,
+            Memories listComponent, Map<String, Component> componentMap,
             Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             String componentName = entry.getKey();
@@ -73,7 +75,7 @@ public class MachineLearningAction extends MarketAction {
             if (component == null) {
                 continue;
             }
-            List<Integer> positions = listComponent.get(componentName);
+            Memories positions = listComponent;
             //if (dataMap.containsKey(componentName)) {
             //    param = dataMap.get(componentName);
             //}

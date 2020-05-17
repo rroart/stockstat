@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
+import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
@@ -18,7 +21,7 @@ import roart.service.model.ProfitData;
 
 public class MLIndicatorChromosome extends ConfigMapChromosome {
 
-    public MLIndicatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+    public MLIndicatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, Memories positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
         super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene, mlTests);
     }
 

@@ -100,7 +100,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         //log.info("Component not impl {}", this.getClass().getName());
         
         PredictorData param = new PredictorData(componentparam);
@@ -128,7 +128,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
         PredictorData param = (PredictorData) componentparam;
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
@@ -170,7 +170,7 @@ public class ComponentPredictor extends ComponentML {
     }
     
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
@@ -223,6 +223,7 @@ public class ComponentPredictor extends ComponentML {
             }
             //System.out.println("tot " + total + " " + goodInc + " " + goodDec);
             MemoryItem incMemory = new MemoryItem();
+            incMemory.setAction(param.getAction());
             incMemory.setMarket(param.getMarket());
             incMemory.setRecord(LocalDate.now());
             incMemory.setDate(param.getBaseDate());
@@ -242,6 +243,7 @@ public class ComponentPredictor extends ComponentML {
                 incMemory.save();
             }
             MemoryItem decMemory = new MemoryItem();
+            decMemory.setAction(param.getAction());
             decMemory.setMarket(param.getMarket());
             decMemory.setRecord(LocalDate.now());
             decMemory.setDate(param.getBaseDate());
@@ -346,7 +348,7 @@ public class ComponentPredictor extends ComponentML {
     }
 
     @Override
-    public List<String>[] enableDisable(ComponentData param, List<Integer> positions) {
+    public List<String>[] enableDisable(ComponentData param, Memories positions, Boolean above) {
         return new ArrayList[] { new ArrayList<String>(), new ArrayList<String>() };
     }
 
