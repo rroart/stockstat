@@ -32,9 +32,13 @@ public class MemoryItem {
     
     private String category;
     
+    private String type;
+    
     private String component;
     
     private String subcomponent;
+    
+    private String localcomponent;
     
     private String description;
     
@@ -47,6 +51,14 @@ public class MemoryItem {
     private Long positives;
     
     private Long size;
+    
+    private Long abovepositives;
+    
+    private Long abovesize;
+    
+    private Long belowpositives;
+    
+    private Long belowsize;
     
     private String parameters;
     
@@ -103,12 +115,18 @@ public class MemoryItem {
         if (usedsec != null) {
             ret += "Used time: " + usedsec + " seconds.\n";
         }
+        if (type != null) {
+            ret += type;
+        }
         ret += component + " : " + category + " : " + date + " futuredays " + futuredays + " " + futuredate + "\n";
         if (position != null) {
-            ret += "Position : " + position + "\n";
+            //ret += "Position : " + position + "\n";
         }
         if (subcomponent != null) {
             ret += subcomponent + "\n";
+        }
+        if (localcomponent != null) {
+            ret += localcomponent + "\n";
         }
         if (description != null) {
             ret += description + "\n";
@@ -126,6 +144,8 @@ public class MemoryItem {
             ret += "Threshold " + parameters + "\n";
         }
         ret += "Confidence " + nullToEmpty(confidence) + " (positives/size : " + positives + "/" + size + ")\n";
+        ret += "AboveConfidence " + " (positives/size : " + abovepositives + "/" + abovesize + ")\n";
+        ret += "BelowConfidence " + " (positives/size : " + belowpositives + "/" + belowsize + ")\n";
         if (learnConfidence != null) {
             ret += "Learning confidence " + nullToEmpty(learnConfidence) + "\n";
         }
@@ -248,6 +268,14 @@ public class MemoryItem {
         this.category = category;
     }
     
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getComponent() {
         return component;
     }
@@ -264,6 +292,14 @@ public class MemoryItem {
         this.subcomponent = subcomponent;
     }
     
+    public String getLocalcomponent() {
+        return localcomponent;
+    }
+
+    public void setLocalcomponent(String localcomponent) {
+        this.localcomponent = localcomponent;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -312,6 +348,38 @@ public class MemoryItem {
         this.size = size;
     }
     
+    public Long getAbovepositives() {
+        return abovepositives;
+    }
+
+    public void setAbovepositives(Long abovepositives) {
+        this.abovepositives = abovepositives;
+    }
+
+    public Long getAbovesize() {
+        return abovesize;
+    }
+
+    public void setAbovesize(Long abovesize) {
+        this.abovesize = abovesize;
+    }
+
+    public Long getBelowpositives() {
+        return belowpositives;
+    }
+
+    public void setBelowpositives(Long belowpositives) {
+        this.belowpositives = belowpositives;
+    }
+
+    public Long getBelowsize() {
+        return belowsize;
+    }
+
+    public void setBelowsize(Long belowsize) {
+        this.belowsize = belowsize;
+    }
+
     public String getParameters() {
         return parameters;
     }
@@ -491,6 +559,10 @@ public class MemoryItem {
     public void save() throws Exception {
         Memory memory = new Memory();
         memory.setAction(getAction());
+        memory.setAbovepositives(getAbovepositives());
+        memory.setAbovesize(getAbovesize());
+        memory.setBelowpositives(getBelowpositives());
+        memory.setBelowsize(getBelowsize());
         memory.setCategory(getCategory());
         memory.setComponent(getComponent());
         memory.setConfidence(getConfidence());
@@ -510,6 +582,7 @@ public class MemoryItem {
         memory.setFuturedays(getFuturedays());
         memory.setInfo(getInfo());
         memory.setLearnConfidence(getLearnConfidence());
+        memory.setLocalcomponent(getLocalcomponent());
         memory.setMarket(getMarket());
         memory.setPositives(getPositives());
         memory.setPosition(getPosition());
@@ -529,6 +602,7 @@ public class MemoryItem {
         memory.setTpProb(getTpProb());
         memory.setTpProbConf(getTpProbConf());
         memory.setTpSize(getTpSize());
+        memory.setType(getType());
         memory.setUsedsec(getUsedsec());
         memory.save();
     }
@@ -556,6 +630,10 @@ public class MemoryItem {
     private static MemoryItem getMemoryItem(Memory memory) {
         MemoryItem memoryItem = new MemoryItem();
         memoryItem.setAction(memory.getAction());
+        memoryItem.setAbovepositives(memory.getAbovepositives());
+        memoryItem.setAbovesize(memory.getAbovesize());
+        memoryItem.setBelowpositives(memory.getBelowpositives());
+        memoryItem.setBelowsize(memory.getBelowsize());
         memoryItem.setCategory(memory.getCategory());
         memoryItem.setComponent(memory.getComponent());
         memoryItem.setConfidence(memory.getConfidence());
@@ -575,6 +653,7 @@ public class MemoryItem {
         memoryItem.setFuturedays(memory.getFuturedays());
         memoryItem.setInfo(memory.getInfo());
         memoryItem.setLearnConfidence(memory.getLearnConfidence());
+        memoryItem.setLocalcomponent(memory.getLocalcomponent());
         memoryItem.setMarket(memory.getMarket());
         memoryItem.setPosition(memory.getPosition());
         memoryItem.setRecord(TimeUtil.convertDate(memory.getRecord()));
@@ -594,6 +673,7 @@ public class MemoryItem {
         memoryItem.setTpProb(memory.getTpProb());
         memoryItem.setTpProbConf(memory.getTpProbConf());
         memoryItem.setTpSize(memory.getTpSize());
+        memoryItem.setType(memory.getType());
         memoryItem.setUsedsec(memory.getUsedsec());
         return memoryItem;
     }

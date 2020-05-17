@@ -95,7 +95,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
@@ -110,7 +110,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
 
     @Override
     protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+            Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
         return new MLMultiChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
     }
 

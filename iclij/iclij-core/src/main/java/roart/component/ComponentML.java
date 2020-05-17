@@ -235,28 +235,39 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    public List<String>[] enableDisable(ComponentData param, List<Integer> positions) {
+    public List<String>[] enableDisable(ComponentData param, Memories positions, Boolean above) {
+        /*
         if (positions == null || positions.isEmpty()) {
             return new ArrayList[] { new ArrayList<String>(), new ArrayList<String>() };
         }
+        */
         List[] list = new ArrayList[2];
         List<String> enable = new ArrayList<>();
         Map<Pair<String, String>, String> map = getMap();
         Map<Pair<String, String>, String> mapPersist = getMapPersist();
         ComponentMLData paramML = (ComponentMLData) param;
-        List<ResultMeta> resultMetas = paramML.getResultMeta();
+        List<List> resultMetas = paramML.getResultMetaArray();
         int count = 0;
         if (resultMetas != null) {
-            for (ResultMeta resultMeta : resultMetas) {
-                String mlname = resultMeta.getMlName();
-                if (mlname == null) {
+            for (List meta : resultMetas) {
+                boolean emptyMeta = meta.get(ResultMetaConstants.MLNAME) == null;
+                
+                if (emptyMeta) {
+                    count++;                
                     continue;
                 }
-                String name = resultMeta.getModelName();
-                Pair<String, String> pair = new ImmutablePair(mlname, name);
+                
+                if (positions == null) {
+                    int jj = 0;
+                }
+                
+                Pair<String, String> paircount = new MiscUtil().getComponentPair(meta);
+
+                Pair<String, String> pair = new MiscUtil().getSubComponentPair(meta);
                 String cnf = map.get(pair);
                 String cnfPersist = mapPersist.get(pair);
-                if (positions == null || positions.contains(count)) {
+
+                if (positions == null || positions.contains(getPipeline(), paircount, above, null, false)) {
                     if (cnf == null) {
                         continue;
                     }
@@ -368,20 +379,10 @@ public abstract class ComponentML extends Component {
         if (mlTests == null) {
             return null;
         }
-        String mlname = (String) meta.get(ResultMetaConstants.MLNAME);
-        String modelname = (String) meta.get(ResultMetaConstants.MODELNAME);
-        String subtype = (String) meta.get(ResultMetaConstants.SUBTYPE);
-        String subsubtype = (String) meta.get(ResultMetaConstants.SUBSUBTYPE);
-        //Double testaccuracy = (Double) meta.get(ResultMetaConstants.TESTACCURACY);
-
-        String subcomponent = mlname + " " + modelname;
-        String localcomponent = null;
-        if (subtype != null) {
-            localcomponent = subtype + subsubtype;
-        }
+        Pair<String, String> pair = new MiscUtil().getComponentPair(meta);
         for (MLMetricsItem aTest : mlTests) {
-            if (aTest.getSubcomponent().equals(subcomponent)) {
-                if (aTest.getLocalcomponent() == null || aTest.getLocalcomponent().equals(localcomponent)) {
+            if (aTest.getSubcomponent().equals(pair.getLeft())) {
+                if (aTest.getLocalcomponent() == null || aTest.getLocalcomponent().equals(pair.getRight())) {
                     return aTest;
                 }
             }

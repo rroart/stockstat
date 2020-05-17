@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +102,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
     
         RecommenderData param = new RecommenderData(componentparam);        
         
@@ -128,7 +129,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
         RecommenderData param = (RecommenderData) componentparam;
         //Map resultMaps = (Map) param.getResultMap(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, new HashMap<>());
         Map resultMaps = (Map) param.getResultMap();
@@ -179,12 +180,12 @@ public class ComponentRecommender extends ComponentNoML {
         if (listSize < recommend * 3) {
             return;
         }
-        for (Pair<String, Integer> key : profitdata.getInputdata().getConfMap().keySet()) {
+        for (Triple<String, String, String> key : profitdata.getInputdata().getConfMap().keySet()) {
             try {
                 Object keyone = key.getRight();
                 String keyonetext = "";
                 if (keyone != null) {
-                    keyonetext = "" + (int)key.getRight();
+                    keyonetext = "" + key.getMiddle() + " " + key.getRight();
                 }
                 System.out.println("e " + ((String)key.getLeft()) + " " + keyonetext);
             } catch (Exception e) {
@@ -311,7 +312,7 @@ public class ComponentRecommender extends ComponentNoML {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
@@ -343,7 +344,7 @@ public class ComponentRecommender extends ComponentNoML {
         }
 
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        RecommenderChromosome chromosome = new RecommenderChromosome(action, getConfList(), param, profitdata, market, new ArrayList<>(), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent, gene, mlTests);
+        RecommenderChromosome chromosome = new RecommenderChromosome(action, getConfList(), param, profitdata, market, new Memories(market), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent, gene, mlTests);
 
         //chromosome.setConfList(confList);
         
@@ -465,6 +466,7 @@ public class ComponentRecommender extends ComponentNoML {
         double goodBuy = resultArray[0];
         long totalBuy = (long) resultArray[1];
         MemoryItem memory = new MemoryItem();
+        memory.setAction(param.getAction());
         memory.setMarket(param.getMarket());
         memory.setRecord(LocalDate.now());
         memory.setDate(param.getBaseDate());
@@ -479,7 +481,7 @@ public class ComponentRecommender extends ComponentNoML {
         memory.setPositives((long) goodBuy);
         memory.setSize(totalBuy);
         memory.setConfidence((double) goodBuy / totalBuy);
-        memory.setPosition(position);
+        //memory.setPosition(position);
         if (param.isDoSave()) {
             memory.save();
         }

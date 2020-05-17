@@ -37,7 +37,7 @@ public class VerifyProfit {
                 if (valFuture != null && valNow != null) {
                     boolean verified = (item.isIncrease() && (valFuture / valNow > threshold)) ||
                             (!item.isIncrease() && (valFuture / valNow < threshold));
-                    item.setDate(date);
+                    //item.setDate(date);
                     item.setVerified(verified);
                     item.setVerificationComment("Change: " + Trend.roundme(valFuture / valNow) + " Old: " + valNow + " New: " + valFuture);
                 }
@@ -69,7 +69,7 @@ public class VerifyProfit {
                 if (valFuture != null && valNow != null) {
                     boolean verified = (item.isIncrease() && (valFuture / valNow > threshold)) ||
                             (!item.isIncrease() && (valFuture / valNow < threshold));
-                    item.setDate(date);
+                    //item.setDate(date);
                     item.setVerified(verified);
                     item.setVerificationComment("Change: " + Trend.roundme(valFuture / valNow) + " Old: " + valNow + " New: " + valFuture);
                 }

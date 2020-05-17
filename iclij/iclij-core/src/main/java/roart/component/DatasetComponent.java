@@ -33,7 +33,7 @@ public class DatasetComponent extends ComponentML {
 
     @Override
     public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata,
-            List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
+            Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         DatasetData param = new DatasetData(componentparam);
 
         int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
@@ -48,7 +48,7 @@ public class DatasetComponent extends ComponentML {
 
     @Override
     public ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+            Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         return null;
     }
 
@@ -58,7 +58,7 @@ public class DatasetComponent extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
     }
 
     @Override

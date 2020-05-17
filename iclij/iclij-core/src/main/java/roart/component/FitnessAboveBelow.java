@@ -11,7 +11,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
+import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
@@ -71,7 +74,7 @@ public class FitnessAboveBelow extends Fitness {
 
     private List<String> stockDates;
     
-    public FitnessAboveBelow(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, List<IncDecItem> incdecs, List<String> components, List<String> subcomponents, List<String> stockDates) {
+    public FitnessAboveBelow(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, List<IncDecItem> incdecs, List<String> components, List<String> subcomponents, List<String> stockDates) {
         this.action = action;
         this.param = param;
         this.profitdata = profitdata;
@@ -156,12 +159,11 @@ public class FitnessAboveBelow extends Fitness {
                 log.error(Constants.EXCEPTION, e2);
             }
         
-            Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
-            myData.getMemoryItems().forEach(m3 -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m3.getComponent(), m3.getPosition()), m3));
-            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap, param.getInput().getConfig());        
+            Memories listMap = new Memories(market);
+            listMap.method(myData.getMemoryItems());
+            ProfitInputData inputdata = listMap.method(param.getInput().getConfig(), new ImproveProfitAction());        
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
-            Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
         
             Short mystartoffset = market.getConfig().getStartoffset();
             short startoffset = mystartoffset != null ? mystartoffset : 0;

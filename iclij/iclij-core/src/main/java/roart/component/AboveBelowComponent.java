@@ -5,7 +5,10 @@ import java.util.Map;
 
 import roart.action.MarketAction;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
+import roart.evolution.config.EvolutionConfig;
+import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.model.MLMetricsItem;
@@ -25,14 +28,14 @@ public class AboveBelowComponent extends ComponentML {
 
     @Override
     public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata,
-            List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
+            Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
             Parameters parameters) {
         return null;
     }
 
     @Override
     public ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
+            Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
             List<MLMetricsItem> mlTests) {
         return null;
     }
@@ -43,7 +46,7 @@ public class AboveBelowComponent extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData param, ProfitData profitdata, List<Integer> positions, Boolean above,
+    public void calculateIncDec(ComponentData param, ProfitData profitdata, Memories positions, Boolean above,
             List<MLMetricsItem> mlTests, Parameters parameters) {
     }
 
@@ -70,6 +73,12 @@ public class AboveBelowComponent extends ComponentML {
     @Override
     public String getFuturedays() {
         return null;
+    }
+
+    @Override
+    protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
+        String evolveString = config.getImproveAbovebelowEvolutionConfig();
+        return JsonUtil.convert(evolveString, EvolutionConfig.class);
     }
 
 }

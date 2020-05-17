@@ -10,9 +10,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import roart.common.config.ConfigConstants;
+import roart.component.Memories;
 import roart.component.Component;
+import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -33,11 +36,11 @@ public class DatasetAction extends MarketAction {
     }
     
     @Override
-    protected ProfitInputData filterMemoryListMapsWithConfidence(Market market,
-            Map<Pair<String, Integer>, List<MemoryItem>> listMap, IclijConfig config) {
-        Map<Pair<String, Integer>, List<MemoryItem>> badListMap = new HashMap<>();
-        Map<Pair<String, Integer>, Double> badConfMap = new HashMap<>();
-        for(Pair<String, Integer> key : listMap.keySet()) {
+    public ProfitInputData filterMemoryListMapsWithConfidence(Market market,
+            Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config) {
+        Map<Triple<String, String, String>, List<MemoryItem>> badListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> badConfMap = new HashMap<>();
+        for(Triple<String, String, String> key : listMap.keySet()) {
             List<MemoryItem> memoryList = listMap.get(key);
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
             confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
@@ -61,7 +64,7 @@ public class DatasetAction extends MarketAction {
 
     @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param,
-            Map<String, List<Integer>> listComponent, Map<String, Component> componentMap,
+            Memories listComponent, Map<String, Component> componentMap,
             Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
@@ -85,7 +88,7 @@ public class DatasetAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            List<Integer> positions = null;
+            Memories positions = null;
             param.getService().conf.setDataset(true);
             ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, null, null);
             Map<String, Object> updateMap = componentData.getUpdateMap();

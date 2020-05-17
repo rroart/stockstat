@@ -7,17 +7,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
+import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
@@ -30,6 +34,7 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.FindProfitActionData;
 import roart.iclij.model.component.ComponentInput;
+import roart.iclij.util.MarketUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 
@@ -52,48 +57,58 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    protected ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap, IclijConfig config) {
-        if (true || !config.getFindProfitMemoryFilter()) {
+    public ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config) {
+        if (false && !config.getFindProfitMemoryFilter()) {
             return filterMemoryListMapsWithConfidence2(market, listMap);
         }
-        Map<Pair<String, Integer>, List<MemoryItem>> okListMap = new HashMap<>();
-        Map<Pair<String, Integer>, Double> okConfMap = new HashMap<>();
-        Map<Pair<String, Integer>, List<MemoryItem>> aboveOkListMap = new HashMap<>();
-        Map<Pair<String, Integer>, Double> aboveOkConfMap = new HashMap<>();
-        Map<Pair<String, Integer>, List<MemoryItem>> belowOkListMap = new HashMap<>();
-        Map<Pair<String, Integer>, Double> belowOkConfMap = new HashMap<>();
-        for(Entry<Pair<String, Integer>, List<MemoryItem>> entry : listMap.entrySet()) {
-            Pair<String, Integer> keys = entry.getKey();
+        Map<Triple<String, String, String>, List<MemoryItem>> okListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> okConfMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryItem>> aboveOkListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> aboveOkConfMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryItem>> belowOkListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> belowOkConfMap = new HashMap<>();
+        for(Entry<Triple<String, String, String>, List<MemoryItem>> entry : listMap.entrySet()) {
+            Triple<String, String, String> keys = entry.getKey();
             List<MemoryItem> memoryList = entry.getValue();
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
             confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
             List<Double> aboveConfidenceList = new ArrayList<>();
             List<Double> belowConfidenceList = new ArrayList<>();
+            if (true) {
             for (MemoryItem memory : memoryList) {
-                Double tpConf = memory.getTpConf();
-                Double tnConf = memory.getTnConf();
-                Double fpConf = memory.getFpConf();
-                Double fnConf = memory.getFnConf();
-                Long tpSize = memory.getTpSize();
-                Long tnSize = memory.getTnSize();
-                Long fpSize = memory.getFpSize();
-                Long fnSize = memory.getFnSize();
-                Double goodTp = tpConf != null ? tpConf * tpSize : 0;
-                Double goodTn = tnConf != null ? tnConf * tnSize : 0;
-                Double goodFp = fpConf != null ? fpConf * fpSize : 0;
-                Double goodFn = fnConf != null ? fnConf * fnSize : 0;
-                Double above = goodTp + goodFn;
-                Double below = goodTn + goodFp;
-                if (above == null || tpSize == null || fnSize == null) {
-                    int jj = 0;
-                }
-                if (tpSize != null && fnSize != null && above > 0 && (tpSize + fnSize) > 0) {
-                    Double aboveConfidence = above / (tpSize + fnSize);
+                Long above = memory.getAbovepositives();
+                Long below = memory.getBelowpositives();
+                Long abovesize = memory.getAbovesize();
+                Long belowsize = memory.getBelowsize();
+                if (above != null && abovesize !=null && above > 0 && abovesize > 0) {
+                    Double aboveConfidence = ( (double ) above) / abovesize;
                     aboveConfidenceList.add(aboveConfidence);
                 }
-                if (tnSize != null && fpSize != null && below > 0 && (tnSize + fpSize) > 0) {
-                    Double belowConfidence = below / (tnSize + fpSize);
+                if (below != null && belowsize !=null && below > 0 && belowsize > 0) {
+                    Double belowConfidence = ( (double ) below) / belowsize;
                     belowConfidenceList.add(belowConfidence);
+                }
+            }
+            } else {
+                confidences = new ArrayList<>();
+                
+                Long positives = memoryList.stream().map(MemoryItem::getPositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long size = memoryList.stream().map(MemoryItem::getSize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long above = memoryList.stream().map(MemoryItem::getAbovepositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long below = memoryList.stream().map(MemoryItem::getAbovesize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long abovesize = memoryList.stream().map(MemoryItem::getBelowpositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                Long belowsize = memoryList.stream().map(MemoryItem::getBelowsize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
+                if (size != null) {
+                    Double confidence = ( (double ) positives) / size;
+                    confidences.add(confidence);                    
+                }
+                if (abovesize != null) {
+                    Double aboveConfidence = ( (double ) above) / abovesize;
+                    aboveConfidenceList.add(aboveConfidence);                    
+                }
+                if (belowsize != null) {
+                    Double belowConfidence = ( (double ) below) / belowsize;
+                    belowConfidenceList.add(belowConfidence);                    
                 }
             }
             Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
@@ -114,10 +129,10 @@ public class FindProfitAction extends MarketAction {
     }
 
     //@Override
-    public ProfitInputData filterMemoryListMapsWithConfidence2(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap) {
-        Map<Pair<String, Integer>, List<MemoryItem>> badListMap = new HashMap<>();
-        Map<Pair<String, Integer>, Double> badConfMap = new HashMap<>();
-        for(Pair<String, Integer> key : listMap.keySet()) {
+    public ProfitInputData filterMemoryListMapsWithConfidence2(Market market, Map<Triple<String, String, String>, List<MemoryItem>> listMap) {
+        Map<Triple<String, String, String>, List<MemoryItem>> badListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> badConfMap = new HashMap<>();
+        for(Triple<String, String, String> key : listMap.keySet()) {
             List<MemoryItem> memoryList = listMap.get(key);
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
             if (confidences.isEmpty()) {
@@ -157,8 +172,8 @@ public class FindProfitAction extends MarketAction {
         return input;
     }
 
-    private void handleMin(Market market, Map<Pair<String, Integer>, List<MemoryItem>> okListMap,
-            Map<Pair<String, Integer>, Double> okConfMap, Pair<String, Integer> keys, List<MemoryItem> memoryList,
+    private void handleMin(Market market, Map<Triple<String, String, String>, List<MemoryItem>> okListMap,
+            Map<Triple<String, String, String>, Double> okConfMap, Triple<String, String, String> keys, List<MemoryItem> memoryList,
             Optional<Double> minOpt) {
         if (minOpt.isPresent()) {
             Double min = minOpt.get();
@@ -170,7 +185,7 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+    protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
@@ -180,13 +195,16 @@ public class FindProfitAction extends MarketAction {
             if (component == null) {
                 continue;
             }
-            List<Integer> positions = listComponent.get(componentName);
+            Memories positions = listComponent;
+            /*
             param = dataMap.get(componentName);
             if (param == null) {
                 log.error("Component {} not found", componentName);
                 continue;
             }
-            component.enableDisable(param, positions, param.getConfigValueMap());
+            */
+            // not yet, will need to use memoryitem data without pos and md
+            //component.enableDisable(param, positions, param.getConfigValueMap(), buy);
 
             String mlmarket = market.getConfig().getMlmarket();
             param.getService().conf.setMLmarket(mlmarket);
@@ -259,7 +277,7 @@ public class FindProfitAction extends MarketAction {
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new ArrayList<>(), evolve, aMap, marketTime.subcomponent, null, marketTime.parameters);
+            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new Memories(marketTime.market), evolve, aMap, marketTime.subcomponent, null, marketTime.parameters);
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
@@ -307,8 +325,11 @@ public class FindProfitAction extends MarketAction {
         
         try {
             evolve = false;
-            List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve, dataMap, componentMap);
-            return newMemories;
+            //List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve, dataMap, componentMap);
+            LocalDate prevdate = getPrevDate(param, marketTime.market);
+            LocalDate olddate = prevdate.minusDays(((int) MarketAction.AVERAGE_SIZE) * getActionData().getTime(marketTime.market));
+            List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, getName(), marketTime.componentName, marketTime.subcomponent, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
+            return marketMemory;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -345,7 +366,7 @@ public class FindProfitAction extends MarketAction {
         //marketTime.timings = timingToDo;
         marketTime.buy = null;
         Map<String, ComponentData> dataMap = new HashMap<>();
-        Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
+        Memories listComponentMap = new Memories(market);
         myData.setMemoryItems(new ArrayList<>());
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         LocalDate prevdate = getPrevDate(param, market);

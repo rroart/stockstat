@@ -11,15 +11,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +34,8 @@ import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
+import roart.component.FitnessAboveBelow;
+import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
@@ -58,6 +62,7 @@ import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
+import roart.iclij.util.VerifyProfitUtil;
 import roart.util.ServiceUtil;
 
 public abstract class MarketAction extends Action {
@@ -265,7 +270,7 @@ public abstract class MarketAction extends Action {
         return getActionData().isDataset();
     }
 
-    private static final int AVERAGE_SIZE = 5;
+    protected static final int AVERAGE_SIZE = 5;
 
     private List<MarketComponentTime> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings) {
         List<MarketComponentTime> marketTimes = new ArrayList<>();
@@ -428,7 +433,7 @@ public abstract class MarketAction extends Action {
         Market market = marketTime.market;
         Map<String, ComponentData> dataMap = new HashMap<>();
         ProfitData profitdata = new ProfitData();
-        Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
+        Memories listComponentMap = new Memories(market);
         myData.setMemoryItems(getMemItems(marketTime, myData, param, config, evolve, dataMap));
         LocalDate prevdate = getPrevDate(param, market);
         LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * getActionData().getTime(market));
@@ -458,10 +463,10 @@ public abstract class MarketAction extends Action {
             log.error(Constants.EXCEPTION, e);
         }
         List<MLMetricsItem> mlTests = null;
-        if (config.getFindProfitMemoryFilter()) {
+        if (true || config.getFindProfitMemoryFilter()) {
         mlTests = getMLMetrics(timings, mltests, market.getFilter().getConfidence());
         }
-        handleComponent(this, market, profitdata, param, listComponentMap.get(marketTime.buy), componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters, wantThree, mlTests);
+        handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters, wantThree, mlTests);
         
         if (!getActionData().isDataset()) {
         filterIncDecs(param, market, profitdata, maps, true);
@@ -538,63 +543,223 @@ public abstract class MarketAction extends Action {
 
     protected ProfitInputData getListComponents(WebData myData, ComponentData param, IclijConfig config,
             MarketComponentTime marketTime, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
-            Map<Boolean, Map<String, List<Integer>>> listComponentMap, LocalDate prevdate, LocalDate olddate) {
-        ProfitInputData inputdata;
+            Memories memories, LocalDate prevdate, LocalDate olddate) {
+        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, IclijConstants.IMPROVEABOVEBELOW, marketTime.componentName, marketTime.subcomponent, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
+        marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
+        if (!marketMemory.isEmpty()) {
+            int jj = 0;
+        }
+        if (marketMemory == null) {
+            myData.setProfitData(new ProfitData());
+        }
+        //marketMemory.addAll(myData.getMemoryItems());
+        List<MemoryItem> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market));
+        // map subcat + posit -> list
+        currentList = currentList.stream().filter(e -> !e.getComponent().equals(PipelineConstants.ABOVEBELOW)).collect(Collectors.toList());
+        memories.method(currentList );
+        return memories.method(config, this);
+     }
+
+    protected void getListComponentsNew(WebData myData, ComponentData param, IclijConfig config,
+            Parameters parameters, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
+            Memories listComponentMap, LocalDate prevdate, LocalDate olddate, List<IncDecItem> mylocals) {
+        ProfitInputData inputdata = null;
+        /*
         List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, getName(), marketTime.componentName, marketTime.subcomponent, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
         if (marketMemory == null) {
             myData.setProfitData(new ProfitData());
         }
         marketMemory.addAll(myData.getMemoryItems());
-        List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market));
+        */
+        
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        int verificationdays = param.getInput().getConfig().verificationDays();
+        /*
+        List<IncDecItem> allIncDecs = null;
+        try {
+            allIncDecs = IclijDbDao.getAllIncDecs();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        */
+        
+        LocalDate date = param.getInput().getEnddate();
+        String aDate = TimeUtil.convertDate2(date);
+        int index = TimeUtil.getIndexEqualBefore(stockDates, aDate);
+        int indexoffset = index - verificationdays;
+        if (indexoffset < 0) {
+            return;
+        }
+        aDate = stockDates.get(indexoffset);
+        try {
+            date = TimeUtil.convertDate(aDate);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        /*
+        List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, AVERAGE_SIZE * market.getConfig().getFindtime());
+        List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, JsonUtil.convert(parameters));              
+        List<IncDecItem> incdecsL = new MiscUtil().getIncDecLocals(incdecsP);              
+        */
+        List<IncDecItem> incdecsL = mylocals;
+        List<IncDecItem> myincs = mylocals.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
+        List<IncDecItem> mydecs = mylocals.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
+        Short mystartoffset = market.getConfig().getStartoffset();
+        short startoffset = mystartoffset != null ? mystartoffset : 0;
+        new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), stockDates, 0);
+
+        //List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market));
         // or make a new object instead of the object array. use this as a pair
         //System.out.println(currentList.get(0).getRecord());
-        Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<IncDecItem>> listMap = new HashMap<>();
         // map subcat + posit -> list
-        currentList.forEach(m -> listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
-        inputdata = filterMemoryListMapsWithConfidence(market, listMap, config);        
-        Map<String, List<Integer>> listComponent = createComponentPositionListMap(inputdata.getListMap());
-        Map<String, List<Integer>> aboveListComponent = createComponentPositionListMap(inputdata.getAboveListMap());
-        Map<String, List<Integer>> belowListComponent = createComponentPositionListMap(inputdata.getBelowListMap());
+        incdecsL.forEach(m -> new MiscUtil().listGetterAdder(listMap, new ImmutableTriple<String, String, String>(m.getComponent(), m.getSubcomponent(), m.getLocalcomponent()), m));
+        filterMemoryListMapsWithConfidenceNew(market, listMap, config, param, parameters);        
+        /*
+        Map<String, List<Pair<String, String>>> listComponent = createComponentPositionListMap(inputdata.getListMap());
+        Map<String, List<Pair<String, String>>> aboveListComponent = createComponentPositionListMap(inputdata.getAboveListMap());
+        Map<String, List<Pair<String, String>>> belowListComponent = createComponentPositionListMap(inputdata.getBelowListMap());
         listComponentMap.put(null, listComponent);
         listComponentMap.put(true, aboveListComponent);
         listComponentMap.put(false, belowListComponent);
         return inputdata;
+        */
     }
 
-    private <K, E> List<E> listGetter(Map<K, List<E>> listMap, K key) {
-        return listMap.computeIfAbsent(key, k -> new ArrayList<>());
+    private <T> void handleMin(Market market, Map<Triple<String, String, String>, List<T>> okListMap,
+            Map<Triple<String, String, String>, Double> okConfMap, Triple<String, String, String> keys, List<T> memoryList,
+            Optional<Double> minOpt) {
+        if (minOpt.isPresent()) {
+            Double min = minOpt.get();
+            if (min >= market.getFilter().getConfidence()) {
+                okListMap.put(keys, memoryList);
+                okConfMap.put(keys, min);
+            }
+        }
     }
 
-    public <K, E> void listGetterAdder(Map<K, List<E>> listMap, K key, E element) {
-        List<E> list = listGetter(listMap, key);
-        list.add(element);
+    protected void filterMemoryListMapsWithConfidenceNew(Market market, Map<Triple<String, String, String>, List<IncDecItem>> listMap, IclijConfig config, ComponentData param, Parameters parameters) {
+        Map<Triple<String, String, String>, List<MemoryItem>> okListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> okConfMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryItem>> aboveOkListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> aboveOkConfMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryItem>> belowOkListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> belowOkConfMap = new HashMap<>();
+        for(Entry<Triple<String, String, String>, List<IncDecItem>> entry : listMap.entrySet()) {
+            Triple<String, String, String> keys = entry.getKey();
+            List<IncDecItem> incdecList = entry.getValue();
+            //List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
+            //confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
+            //List<Double> aboveConfidenceList = new ArrayList<>();
+            //List<Double> belowConfidenceList = new ArrayList<>();
+            Pair<Long, Integer> abovecnt = FitnessAboveBelow.countsize(incdecList.stream().filter(e -> e.isIncrease()).collect(Collectors.toList()));
+            Pair<Long, Integer> belowcnt = FitnessAboveBelow.countsize(incdecList.stream().filter(e -> !e.isIncrease()).collect(Collectors.toList()));
+            Pair<Long, Integer> cnt = FitnessAboveBelow.countsize(incdecList);
+            {
+                MemoryItem memory = new MemoryItem();
+                memory.setAction(this.getName());
+                memory.setMarket(market.getConfig().getMarket());
+                memory.setDate(incdecList.get(0).getDate());
+                memory.setRecord(LocalDate.now());
+                memory.setUsedsec(param.getUsedsec());
+                memory.setFuturedays(param.getFuturedays());
+                memory.setFuturedate(param.getFutureDate());
+                memory.setComponent(keys.getLeft());
+                memory.setSubcomponent(keys.getMiddle());
+                memory.setLocalcomponent(keys.getRight());
+                memory.setCategory(param.getCategoryTitle());
+                /*
+                List<IncDecItem> metalist = memoryList
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .filter(e -> e.getLocalcomponent() != null)
+                        .collect(Collectors.toList());
+                        */
+                memory.setType("Confidence");
+                memory.setParameters(JsonUtil.convert(parameters));
+                if (cnt.getRight() != null) {
+                    memory.setPositives(cnt.getLeft());
+                    memory.setSize((long) cnt.getRight()); 
+                    memory.setConfidence(((double) cnt.getLeft() / cnt.getRight()));
+                }
+                if (abovecnt.getRight() != null) {
+                    memory.setAbovepositives(abovecnt.getLeft());
+                    memory.setAbovesize((long) abovecnt.getRight()); 
+                    //memory.setConfidence(((double) cnt.getLeft() / cnt.getRight()));
+                }
+                if (belowcnt.getRight() != null) {
+                    memory.setBelowpositives(belowcnt.getLeft());
+                    memory.setBelowsize((long) belowcnt.getRight()); 
+                    //memory.setConfidence(((double) cnt.getLeft() / cnt.getRight()));
+                }
+                //memory.setSize((long) incIds.size());
+                //List<Double> list = new ArrayList<>(param.getScoreMap().values());
+                try {
+                    memory.save();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+
+            }
+            List<String> incIds = incdecList.stream().filter(e -> e.isIncrease()).map(IncDecItem::getId).collect(Collectors.toList());
+            List<String> decIds = incdecList.stream().filter(e -> !e.isIncrease()).map(IncDecItem::getId).collect(Collectors.toList());
+            incIds.retainAll(decIds);
+            //long listBoolean = memoryList.stream().filter(e -> e.isIncrease()).count();
+            //long listBoolean2 = memoryList.stream().filter(e -> !e.isIncrease()).count();
+            if (!incIds.isEmpty()) {
+                MemoryItem memory = new MemoryItem();
+                memory.setAction(this.getName());
+                memory.setMarket(market.getConfig().getMarket());
+                memory.setDate(incdecList.get(0).getDate());
+                memory.setRecord(LocalDate.now());
+                memory.setUsedsec(param.getUsedsec());
+                memory.setFuturedays(param.getFuturedays());
+                memory.setFuturedate(param.getFutureDate());
+                memory.setComponent(keys.getLeft());
+                memory.setSubcomponent(keys.getMiddle());
+                memory.setLocalcomponent(keys.getRight());
+                memory.setCategory(param.getCategoryTitle());
+                /*
+                List<IncDecItem> metalist = memoryList
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .filter(e -> e.getLocalcomponent() != null)
+                        .collect(Collectors.toList());
+                        */
+                memory.setType("Both");
+                memory.setParameters(JsonUtil.convert(parameters));
+                memory.setSize((long) incIds.size());
+                //List<Double> list = new ArrayList<>(param.getScoreMap().values());
+                try {
+                    memory.save();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+            
+            /*
+            Optional<Double> minOpt = cnt.getRight() != null ? Optional.of(((double) cnt.getLeft()) / cnt.getRight()) : Optional.ofNullable(null);
+            Optional<Double> aboveMinOpt = abovecnt.getRight() != null ? Optional.of(((double) abovecnt.getLeft()) / abovecnt.getRight()) : Optional.ofNullable(null);
+            Optional<Double> belowMinOpt = belowcnt.getRight() != null ? Optional.of(((double) belowcnt.getLeft()) / belowcnt.getRight()) : Optional.ofNullable(null);
+            handleMin(market, okListMap, okConfMap, keys, new ArrayList<>(), minOpt);
+            handleMin(market, aboveOkListMap, aboveOkConfMap, keys, new ArrayList<>(), aboveMinOpt);
+            handleMin(market, belowOkListMap, belowOkConfMap, keys, new ArrayList<>(), belowMinOpt);
+            */
+        }
+        /*
+        ProfitInputData input = new ProfitInputData();
+        input.setConfMap(okConfMap);
+        input.setListMap(okListMap);
+        input.setAboveConfMap(aboveOkConfMap);
+        input.setAboveListMap(aboveOkListMap);
+        input.setBelowConfMap(belowOkConfMap);
+        input.setBelowListMap(belowOkListMap);
+        return input;
+        */
     }
 
     private <T> String nullToEmpty(T s) {
         return s != null ? "" + s : "";
-    }
-
-    public Map<String, List<Integer>> createComponentPositionListMapOld(Map<Object[], List<MemoryItem>> okListMap) {
-        Map<String, List<Integer>> listComponent = new HashMap<>();
-        for (Object[] keys : okListMap.keySet()) {
-            String component = (String) keys[0];
-            Integer position = (Integer) keys[1];
-            listGetterAdder(listComponent, component, position);
-        }
-        return listComponent;
-    }
-
-    public Map<String, List<Integer>> createComponentPositionListMap(Map<Pair<String, Integer>, List<MemoryItem>> okListMap) {
-        Map<String, List<Integer>> listComponent = new HashMap<>();
-        for (Pair<String, Integer> key : okListMap.keySet()) {
-            /*
-            String component = (String) keys[0];
-            String subcomponent = (String) keys[1];
-            Integer position = (Integer) keys[2];
-            */
-            listGetterAdder(listComponent, key.getLeft(), key.getRight());
-        }
-        return listComponent;
     }
 
     public void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
@@ -652,7 +817,7 @@ public abstract class MarketAction extends Action {
         }
     }
 
-    protected abstract ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Pair<String, Integer>, List<MemoryItem>> listMap, IclijConfig config);
+    public abstract ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config);
     
     protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
         Map<String, String> nameMap = null;
@@ -666,7 +831,7 @@ public abstract class MarketAction extends Action {
         return nameMap;
     }
     
-    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Map<String, List<Integer>> listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests);
+    protected abstract void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests);
  
     public Map<String, List<List>> getCategoryList(Map<String, Map<String, Object>> maps, String category) {
         String newCategory = null;

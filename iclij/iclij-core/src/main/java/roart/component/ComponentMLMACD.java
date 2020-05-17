@@ -72,7 +72,7 @@ public class ComponentMLMACD extends ComponentMLAggregator {
 
     @Override
     protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
-            List<Integer> positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
+            Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
         return new MLMACDChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
     }
 

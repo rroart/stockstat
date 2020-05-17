@@ -9,7 +9,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,7 @@ import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
+import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome;
 import roart.iclij.config.Market;
@@ -59,7 +62,7 @@ public class FitnessMarketFilter2 {
 
     private List<MLMetricsItem> mlTests;
 
-    public FitnessMarketFilter2(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, List<Integer> positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
+    public FitnessMarketFilter2(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
         this.action = action;
         this.param = param;
         this.profitdata = profitdata;
@@ -203,7 +206,7 @@ public class FitnessMarketFilter2 {
             //myaction.filterIncDecs(param, market, profitdata, maps, true);
             */
             market.setFilter(chromosome.getGene().getAllele());
-            ComponentData componentData = component.handle(action, market, param, profitdata, new ArrayList<>(), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
+            ComponentData componentData = component.handle(action, market, param, profitdata, new Memories(market), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
             //componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
@@ -217,24 +220,15 @@ public class FitnessMarketFilter2 {
                 log.error(Constants.EXCEPTION, e);
             }
 
-            Map<Pair<String, Integer>, List<MemoryItem>> listMap = new HashMap<>();
-            myData.getMemoryItems().forEach(m -> new ImproveProfitAction().listGetterAdder(listMap, new ImmutablePair<String, Integer>(m.getComponent(), m.getPosition()), m));
-            ProfitInputData inputdata = new ImproveProfitAction().filterMemoryListMapsWithConfidence(market, listMap, param.getInput().getConfig());        
+            Memories listMap =  new Memories(market);
+            listMap.method(myData.getMemoryItems());
+            ProfitInputData inputdata = listMap.method(param.getInput().getConfig(), new ImproveProfitAction());        
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
-            Map<String, List<Integer>> listComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getListMap());
-            /*
-            Map<String, List<Integer>> aboveListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getAboveListMap());
-            Map<String, List<Integer>> belowListComponent = new FindProfitAction().createComponentPositionListMap(inputdata.getBelowListMap());
-            Map<Boolean, Map<String, List<Integer>>> listComponentMap = new HashMap<>();
-            listComponentMap.put(null, listComponent);
-            listComponentMap.put(true, aboveListComponent);
-            listComponentMap.put(false, belowListComponent);
-            */
             inputdata.setNameMap(new HashMap<>());
-            List<Integer> positions = listComponent.get(componentName);
+            Memories positions = listMap;
 
-            component.enableDisable(componentData, positions, param.getConfigValueMap());
+            //component.enableDisable(componentData, positions, param.getConfigValueMap(), buy);
 
             ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
             component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters);

@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +32,9 @@ import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceList;
 import roart.iclij.service.IclijServiceResult;
 import roart.common.constants.Constants;
+import roart.common.constants.ResultMetaConstants;
 import roart.common.util.JsonUtil;
+import roart.common.util.TimeUtil;
 import roart.db.IclijDbDao;
 import roart.iclij.config.Market;
 
@@ -311,6 +315,22 @@ public class MiscUtil {
         return currentList;
     }
 
+    public List<MemoryItem> filterKeepRecent3(List<MemoryItem> marketMemory, LocalDate date, int days) {
+        LocalDate olddate = date.minusDays(days);
+        for (MemoryItem item : marketMemory) {
+            if (item.getRecord() == null) {
+                item.setRecord(LocalDate.now());
+            }
+        }
+        // temp workaround
+        if (date == null) {
+            return marketMemory;
+        }
+        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.isBefore(m.getDate())).collect(Collectors.toList());
+        currentList = currentList.stream().filter(m -> date.isAfter(m.getDate())).collect(Collectors.toList());
+        return currentList;
+    }
+
     public List<MapList> getList(Map<String, Object> map) {
         List<MapList> retList = new ArrayList<>();
         for (Entry<String, Object> entry : map.entrySet()) {
@@ -364,4 +384,60 @@ public class MiscUtil {
                 .collect(Collectors.toList());
      }
 
+    public List<IncDecItem> getIncDecLocals(List<IncDecItem> incdecs) {
+        List<IncDecItem> locals = new ArrayList<>();
+        for (IncDecItem item : incdecs) {
+            String localcomponent = item.getLocalcomponent();
+            String[] localcomponents = localcomponent.split(" ");
+            if (localcomponents != null && localcomponents.length > 1) {
+                for (String aLocalcomponent : localcomponents) {
+                    IncDecItem newItem = new IncDecItem();
+                    newItem.setComponent(item.getComponent());
+                    newItem.setDate(item.getDate());
+                    newItem.setDescription(item.getDescription());
+                    newItem.setId(item.getId());
+                    newItem.setIncrease(item.isIncrease());
+                    newItem.setLocalcomponent(aLocalcomponent);
+                    newItem.setMarket(item.getMarket());
+                    newItem.setName(item.getName());
+                    newItem.setParameters(item.getParameters());
+                    newItem.setRecord(item.getRecord());
+                    newItem.setScore(item.getScore());
+                    newItem.setSubcomponent(item.getSubcomponent());;
+                    locals.add(newItem);
+                }
+            } else {
+                locals.add(item);
+            }
+        }
+        return locals;
+    }
+
+    private <K, E> List<E> listGetter(Map<K, List<E>> listMap, K key) {
+        return listMap.computeIfAbsent(key, k -> new ArrayList<>());
+    }
+
+    public <K, E> void listGetterAdder(Map<K, List<E>> listMap, K key, E element) {
+        List<E> list = listGetter(listMap, key);
+        list.add(element);
+    }
+
+    public Pair<String, String> getComponentPair(List meta) {
+        String mlname = (String) meta.get(ResultMetaConstants.MLNAME);
+        String modelname = (String) meta.get(ResultMetaConstants.MODELNAME);
+        String subtype = (String) meta.get(ResultMetaConstants.SUBTYPE);
+        String subsubtype = (String) meta.get(ResultMetaConstants.SUBSUBTYPE);
+        String subcomponent = mlname + " " + modelname;
+        String localcomponent = null;
+        if (subtype != null) {
+            localcomponent = subtype + subsubtype;
+        }
+        return new ImmutablePair<>(subcomponent, localcomponent);
+    }
+
+    public Pair<String, String> getSubComponentPair(List meta) {
+        String mlname = (String) meta.get(ResultMetaConstants.MLNAME);
+        String modelname = (String) meta.get(ResultMetaConstants.MODELNAME);
+        return new ImmutablePair(mlname, modelname);
+    }
 }

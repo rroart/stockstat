@@ -28,6 +28,7 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.util.MiscUtil;
 import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
 import roart.util.ServiceUtilConstants;
@@ -88,7 +89,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, List<Integer> positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
+    public ComponentData handle(MarketAction action, Market market, ComponentData componentparam, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) { //, String pipeline, String localMl, MLConfigs overrideLSTM, boolean evolve) {
 
         MLIndicatorData param = new MLIndicatorData(componentparam);
 
@@ -106,10 +107,10 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, List<Integer> positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
         MLIndicatorData param = (MLIndicatorData) componentparam;
         if (positions == null) {
-            return;
+            //return;
         }
         Map<String, Object> resultMap = param.getResultMap();
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
@@ -131,8 +132,11 @@ public class ComponentMLIndicator extends ComponentML {
             if (positions == null) {
                 int jj = 0;
             }
+            
+            Pair<String, String> paircount = new MiscUtil().getComponentPair(meta);
+
             MLMetricsItem mltest = search(mlTests, meta);
-            if (mltest != null || (mlTests == null && (positions == null || positions.contains(count)))) {
+            if (mltest != null && (positions == null || positions.contains(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
                 Pair keyPair = new ImmutablePair(PipelineConstants.MLINDICATOR, count);
                 for (String key : param.getCategoryValueMap().keySet()) {
@@ -193,7 +197,7 @@ public class ComponentMLIndicator extends ComponentML {
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, List<Integer> positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
@@ -222,6 +226,14 @@ public class ComponentMLIndicator extends ComponentML {
             newResultIndex += returnSize;
             if (meta.getMlName() == null) {
                 continue;
+            }
+            
+            String subtype = (String) meta.getSubType();
+            String subsubtype = (String) meta.getSubSubType();
+
+            String localcomponent = null;
+            if (subtype != null) {
+                localcomponent = subtype + subsubtype;
             }
             
             Double testaccuracy = (Double) meta.getTestAccuracy();
@@ -317,6 +329,7 @@ public class ComponentMLIndicator extends ComponentML {
                 }
             }
             //System.out.println("tot " + total + " " + goodTP + " " + goodFP + " " + goodTN + " " + goodFN);
+            memory.setAction(param.getAction());
             memory.setMarket(param.getMarket());
             memory.setRecord(LocalDate.now());
             memory.setDate(param.getBaseDate());
@@ -326,6 +339,7 @@ public class ComponentMLIndicator extends ComponentML {
             memory.setComponent(PipelineConstants.MLINDICATOR);
             memory.setCategory(param.getCategoryTitle());
             memory.setSubcomponent(meta.getMlName() + " " + meta.getModelName());
+            memory.setLocalcomponent(localcomponent);
             memory.setDescription(getShort(meta.getMlName()) + withComma(getShort(meta.getModelName())) + withComma(meta.getSubType()) + withComma(meta.getSubSubType()));
             memory.setTestaccuracy(testaccuracy);
             memory.setTestloss(testloss);
@@ -399,7 +413,7 @@ public class ComponentMLIndicator extends ComponentML {
             memory.setPositives(goodTP + goodTN);
             memory.setConfidence(conf);
             memory.setLearnConfidence(learnConfidence);
-            memory.setPosition(count);
+            //memory.setPosition(count);
             if (param.isDoSave()) {
                 memory.save();
             }
