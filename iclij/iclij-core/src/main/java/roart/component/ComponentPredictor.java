@@ -132,7 +132,7 @@ public class ComponentPredictor extends ComponentML {
         PredictorData param = (PredictorData) componentparam;
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
-        Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keyPair);
+        Double confidenceFactor = 1.0; // never mind, will reimplement. profitdata.getInputdata().getConfMap().get(keyPair);
         Map<String, Object> resultMap = (Map<String, Object>) param.getResultMap().get("result");
         List<MyElement> list0 = new ArrayList<>();
         //List<MyElement> list1 = new ArrayList<>();

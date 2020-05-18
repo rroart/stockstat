@@ -137,7 +137,7 @@ public class ComponentRecommender extends ComponentNoML {
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, i);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
         //System.out.println(okListMap.get(keys));
-        Double confidenceFactor = profitdata.getInputdata().getConfMap().get(keyPair);
+        Double confidenceFactor = 1.0; // reimplement? profitdata.getInputdata().getConfMap().get(keyPair);
         //System.out.println(okConfMap.keySet());
         //System.out.println(okListMap.keySet());
         Map maps = (Map) resultMaps; //.get(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
@@ -180,6 +180,7 @@ public class ComponentRecommender extends ComponentNoML {
         if (listSize < recommend * 3) {
             return;
         }
+        /*
         for (Triple<String, String, String> key : profitdata.getInputdata().getConfMap().keySet()) {
             try {
                 Object keyone = key.getRight();
@@ -192,6 +193,7 @@ public class ComponentRecommender extends ComponentNoML {
                 log.error("grr" + key);
             }
         }
+        */
         List<MyElement> topList = list.subList(0, recommend);
         List<MyElement> bottomList = list.subList(listSize - recommend, listSize);
         Double max = list.get(0).getValue();

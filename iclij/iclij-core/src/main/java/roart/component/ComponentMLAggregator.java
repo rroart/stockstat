@@ -68,10 +68,6 @@ public abstract class ComponentMLAggregator extends ComponentML {
         System.out.println("c " + aResultMap.keySet());
         System.out.println("a " + resultMap.keySet());
         System.out.println("b " + param.getCategoryValueMap().keySet());
-        System.out.println("d " + profitdata.getInputdata().getConfMap().keySet());
-        for (Triple<String, String, String> key : profitdata.getInputdata().getConfMap().keySet()) {
-            System.out.println("e " + key);
-        }
         int resultIndex = 0;
         int count = 0;
         for (List meta : param.getResultMetaArray()) {
@@ -93,7 +89,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             
             //if memory.learnconf > mltest then..above.
             
-            if (mltest != null && (memories == null || memories.contains(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
+            if (mltest != null && (memories == null || !memories.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
                 Pair keyPair = new ImmutablePair(getPipeline(), count);
                 for (String key : param.getCategoryValueMap().keySet()) {

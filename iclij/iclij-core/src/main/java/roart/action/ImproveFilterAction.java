@@ -55,50 +55,6 @@ public class ImproveFilterAction extends MarketAction {
     }
 
     @Override
-    public ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config) {
-        Map<Triple<String, String, String>, List<MemoryItem>> badListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> badConfMap = new HashMap<>();
-        for(Triple<String, String, String> key : listMap.keySet()) {
-            List<MemoryItem> memoryList = listMap.get(key);
-            List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
-            if (confidences.isEmpty()) {
-                int jj = 0;
-                //continue;
-            }
-            confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
-            Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
-            if (!minOpt.isPresent()) {
-                int jj = 0;
-                //continue;
-            }
-            Double min = 0.0;
-            if (minOpt.isPresent()) {
-                min = minOpt.get();
-            }
-            // do the bad ones
-            // do not yet improve on the good enough ones
-            if (false /*min >= market.getConfidence()*/) {
-                continue;
-            }
-            //Optional<Double> maxOpt = confidences.parallelStream().reduce(Double::max);
-            //Double max = maxOpt.get();
-            //System.out.println("Mark " + market.getConfig().getMarket() + " " + keys[0] + " " + min + " " + max );
-            //Double conf = market.getConfidence();
-            //System.out.println(conf);
-            badListMap.put(key, listMap.get(key));
-            badConfMap.put(key, min);
-        }
-        ProfitInputData input = new ProfitInputData();
-        input.setConfMap(badConfMap);
-        input.setListMap(badListMap);
-        input.setAboveConfMap(badConfMap);
-        input.setAboveListMap(badListMap);
-        input.setBelowConfMap(badConfMap);
-        input.setBelowListMap(badListMap);
-        return input;
-    }
-
-    @Override
     protected void handleComponent(MarketAction action, Market market, ProfitData profitdata, ComponentData param, Memories listComponent, Map<String, Component> componentMap, Map<String, ComponentData> dataMap, Boolean buy, String subcomponent, WebData myData, IclijConfig config, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());

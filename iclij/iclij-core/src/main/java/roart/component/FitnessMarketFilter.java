@@ -223,9 +223,9 @@ public class FitnessMarketFilter extends Fitness {
             }
 
             Memories listMap = new Memories(market);
-            listMap.method(myData.getMemoryItems());
-            ProfitInputData inputdata = listMap.method(param.getInput().getConfig(), new ImproveProfitAction());        
+            listMap.method(myData.getMemoryItems(), param.getInput().getConfig(), new ImproveProfitAction());        
             //ProfitData profitdata = new ProfitData();
+            ProfitInputData inputdata = new ProfitInputData();
             profitdata.setInputdata(inputdata);
             inputdata.setNameMap(new HashMap<>());
             Memories positions = listMap;

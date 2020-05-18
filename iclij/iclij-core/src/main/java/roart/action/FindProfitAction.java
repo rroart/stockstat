@@ -57,16 +57,19 @@ public class FindProfitAction extends MarketAction {
     }
 
     @Override
-    public ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config) {
-        if (false && !config.getFindProfitMemoryFilter()) {
-            return filterMemoryListMapsWithConfidence2(market, listMap);
-        }
+    public Map[] filterMemoryListMapsWithConfidence(Market market, Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config) {
         Map<Triple<String, String, String>, List<MemoryItem>> okListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> okConfMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> aboveThresholdMap = new HashMap<>();
         Map<Triple<String, String, String>, List<MemoryItem>> aboveOkListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> aboveOkConfMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> aboveThresholdAboveMap = new HashMap<>();
         Map<Triple<String, String, String>, List<MemoryItem>> belowOkListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> belowOkConfMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> aboveThresholdBelowMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryItem>> badListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> belowThresholdMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryItem>> aboveBadListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> belowThresholdAboveMap = new HashMap<>();
+        Map<Triple<String, String, String>, List<MemoryItem>> belowBadListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> belowThresholdBelowMap = new HashMap<>();
         for(Entry<Triple<String, String, String>, List<MemoryItem>> entry : listMap.entrySet()) {
             Triple<String, String, String> keys = entry.getKey();
             List<MemoryItem> memoryList = entry.getValue();
@@ -114,72 +117,22 @@ public class FindProfitAction extends MarketAction {
             Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
             Optional<Double> aboveMinOpt = aboveConfidenceList.parallelStream().reduce(Double::min);
             Optional<Double> belowMinOpt = belowConfidenceList.parallelStream().reduce(Double::min);
-            handleMin(market, okListMap, okConfMap, keys, memoryList, minOpt);
-            handleMin(market, aboveOkListMap, aboveOkConfMap, keys, memoryList, aboveMinOpt);
-            handleMin(market, belowOkListMap, belowOkConfMap, keys, memoryList, belowMinOpt);
+            handleMin(market, aboveThresholdMap, belowThresholdMap, keys, minOpt);
+            handleMin(market, aboveThresholdAboveMap, belowThresholdAboveMap, keys, aboveMinOpt);
+            handleMin(market, aboveThresholdBelowMap, belowThresholdBelowMap, keys, belowMinOpt);
         }
-        ProfitInputData input = new ProfitInputData();
-        input.setConfMap(okConfMap);
-        input.setListMap(okListMap);
-        input.setAboveConfMap(aboveOkConfMap);
-        input.setAboveListMap(aboveOkListMap);
-        input.setBelowConfMap(belowOkConfMap);
-        input.setBelowListMap(belowOkListMap);
-        return input;
+        return new Map[] { aboveThresholdMap, belowThresholdMap, aboveThresholdAboveMap, belowThresholdAboveMap, aboveThresholdBelowMap, belowThresholdBelowMap };
     }
 
-    //@Override
-    public ProfitInputData filterMemoryListMapsWithConfidence2(Market market, Map<Triple<String, String, String>, List<MemoryItem>> listMap) {
-        Map<Triple<String, String, String>, List<MemoryItem>> badListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> badConfMap = new HashMap<>();
-        for(Triple<String, String, String> key : listMap.keySet()) {
-            List<MemoryItem> memoryList = listMap.get(key);
-            List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
-            if (confidences.isEmpty()) {
-                int jj = 0;
-                //continue;
-            }
-            confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
-            Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
-            if (!minOpt.isPresent()) {
-                int jj = 0;
-                //continue;
-            }
-            Double min = 0.0;
-            if (minOpt.isPresent()) {
-                min = minOpt.get();
-            }
-            // do the bad ones
-            // do not yet improve on the good enough ones
-            if (false /*min >= market.getConfidence()*/) {
-                continue;
-            }
-            //Optional<Double> maxOpt = confidences.parallelStream().reduce(Double::max);
-            //Double max = maxOpt.get();
-            //System.out.println("Mark " + market.getConfig().getMarket() + " " + keys[0] + " " + min + " " + max );
-            //Double conf = market.getConfidence();
-            //System.out.println(conf);
-            badListMap.put(key, listMap.get(key));
-            badConfMap.put(key, min);
-        }
-        ProfitInputData input = new ProfitInputData();
-        input.setConfMap(badConfMap);
-        input.setListMap(badListMap);
-        input.setAboveConfMap(badConfMap);
-        input.setAboveListMap(badListMap);
-        input.setBelowConfMap(badConfMap);
-        input.setBelowListMap(badListMap);
-        return input;
-    }
-
-    private void handleMin(Market market, Map<Triple<String, String, String>, List<MemoryItem>> okListMap,
-            Map<Triple<String, String, String>, Double> okConfMap, Triple<String, String, String> keys, List<MemoryItem> memoryList,
-            Optional<Double> minOpt) {
-        if (minOpt.isPresent()) {
-            Double min = minOpt.get();
-            if (min >= market.getFilter().getConfidence()) {
-                okListMap.put(keys, memoryList);
-                okConfMap.put(keys, min);
+    private void handleMin(Market market, Map<Triple<String, String, String>, Double> aboveThresholdMap,
+            Map<Triple<String, String, String>, Double> belowThresholdMap, Triple<String, String, String> keys,
+            Optional<Double> valOpt) {
+        if (valOpt.isPresent()) {
+            Double val = valOpt.get();
+            if (val >= market.getFilter().getConfidence()) {
+                aboveThresholdMap.put(keys, val);
+            } else {
+                belowThresholdMap.put(keys, val);               
             }
         }
     }
@@ -386,7 +339,8 @@ public class FindProfitAction extends MarketAction {
             log.error(Constants.EXCEPTION, e);
         }
         ProfitData profitdata = new ProfitData();
-        ProfitInputData inputdata = getListComponents(myData, param, componentInput.getConfig(), marketTime, evolve, market, dataMap, listComponentMap, prevdate, olddate);
+        ProfitInputData inputdata = new ProfitInputData();
+        getListComponents(myData, param, componentInput.getConfig(), marketTime, evolve, market, dataMap, listComponentMap, prevdate, olddate);
         profitdata.setInputdata(inputdata);
         myData.setProfitData(profitdata);
 
