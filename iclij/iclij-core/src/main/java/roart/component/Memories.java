@@ -21,7 +21,9 @@ public class Memories {
     
     private Market market;
     
-    private Map<Boolean, Map<String, List<Pair<String, String>>>> listComponentMap = new HashMap<>();
+    private Map<Boolean, Map<String, List<Pair<String, String>>>> aboveMap = new HashMap<>();
+
+    private Map<Boolean, Map<String, List<Pair<String, String>>>> belowMap = new HashMap<>();
 
     // or make a new object instead of the object array. use this as a pair
     //System.out.println(currentList.get(0).getRecord());
@@ -31,19 +33,30 @@ public class Memories {
         this.market = market;
     }
 
-    public ProfitInputData method(IclijConfig config, MarketAction action) {
-        ProfitInputData inputdata;
-        inputdata = action.filterMemoryListMapsWithConfidence(market, listMap, config);        
-        Map<String, List<Pair<String, String>>> listComponent = createComponentPositionListMap(inputdata.getListMap());
-        Map<String, List<Pair<String, String>>> aboveListComponent = createComponentPositionListMap(inputdata.getAboveListMap());
-        Map<String, List<Pair<String, String>>> belowListComponent = createComponentPositionListMap(inputdata.getBelowListMap());
-        listComponentMap.put(null, listComponent);
-        listComponentMap.put(true, aboveListComponent);
-        listComponentMap.put(false, belowListComponent);
-        return inputdata;
+    public void method(List<MemoryItem> currentList, IclijConfig config, MarketAction action) {
+        currentList.forEach(m -> new MiscUtil().listGetterAdder(listMap, new ImmutableTriple<String, String, String>(m.getComponent(), m.getSubcomponent(), m.getLocalcomponent()), m));
+        Map[] map = action.filterMemoryListMapsWithConfidence(market, listMap, config);        
+        Map<Triple<String, String, String>, Double> aboveThresholdMap = map[0];
+        Map<Triple<String, String, String>, Double> belowThresholdMap = map[1];
+        Map<Triple<String, String, String>, Double> aboveThresholdAboveMap = map[2];
+        Map<Triple<String, String, String>, Double> belowThresholdAboveMap = map[3];
+        Map<Triple<String, String, String>, Double> aboveThresholdBelowMap = map[4];
+        Map<Triple<String, String, String>, Double> belowThresholdBelowMap = map[5];
+        Map<String, List<Pair<String, String>>> aboveThresholdComponentMap = createComponentPositionListMap(aboveThresholdMap);
+        Map<String, List<Pair<String, String>>> aboveThresholdAboveComponentMap = createComponentPositionListMap(aboveThresholdAboveMap);
+        Map<String, List<Pair<String, String>>> aboveThresholdBelowComponentMap = createComponentPositionListMap(aboveThresholdBelowMap);
+        aboveMap.put(null, aboveThresholdComponentMap);
+        aboveMap.put(true, aboveThresholdAboveComponentMap);
+        aboveMap.put(false, aboveThresholdBelowComponentMap);
+        Map<String, List<Pair<String, String>>> belowThresholdComponentMap = createComponentPositionListMap(belowThresholdMap);
+        Map<String, List<Pair<String, String>>> belowThresholdAboveComponentMap = createComponentPositionListMap(belowThresholdAboveMap);
+        Map<String, List<Pair<String, String>>> belowThresholdBelowComponentMap = createComponentPositionListMap(belowThresholdBelowMap);
+        belowMap.put(null, belowThresholdComponentMap);
+        belowMap.put(true, belowThresholdAboveComponentMap);
+        belowMap.put(false, belowThresholdBelowComponentMap);
     }
     
-    public <T> Map<String, List<Pair<String, String>>> createComponentPositionListMap(Map<Triple<String, String, String>, List<T>> okListMap) {
+    public <T> Map<String, List<Pair<String, String>>> createComponentPositionListMap(Map<Triple<String, String, String>, T> okListMap) {
         Map<String, List<Pair<String, String>>> listComponent = new HashMap<>();
         for (Triple<String, String, String> key : okListMap.keySet()) {
             new MiscUtil().listGetterAdder(listComponent, key.getLeft(), new ImmutablePair<String, String>(key.getMiddle(), key.getRight()));
@@ -51,19 +64,15 @@ public class Memories {
         return listComponent;
     }
 
-    public void method(List<MemoryItem> currentList) {
-        currentList.forEach(m -> new MiscUtil().listGetterAdder(listMap, new ImmutableTriple<String, String, String>(m.getComponent(), m.getSubcomponent(), m.getLocalcomponent()), m));
-    }
-
-    public boolean contains(String component, Pair<String, String> pair, Boolean above, MLMetricsItem mlmetrics, boolean useThreshold) {
+    public boolean containsBelow(String component, Pair<String, String> pair, Boolean above, MLMetricsItem mlmetrics, boolean useThreshold) {
         if (!useThreshold) {
-            return true;
+            return false;
         }
-        Map<String, List<Pair<String, String>>> m = listComponentMap.get(above);
-        if (m != null) {
-            List<Pair<String, String>> n = m.get(component);
-            if ( n != null) {
-                return n.contains(pair);
+        Map<String, List<Pair<String, String>>> componentMap = belowMap.get(above);
+        if (componentMap != null) {
+            List<Pair<String, String>> sublocals = componentMap.get(component);
+            if ( sublocals != null) {
+                return sublocals.contains(pair);
             }
         }
         return false;

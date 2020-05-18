@@ -437,7 +437,8 @@ public abstract class MarketAction extends Action {
         myData.setMemoryItems(getMemItems(marketTime, myData, param, config, evolve, dataMap));
         LocalDate prevdate = getPrevDate(param, market);
         LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * getActionData().getTime(market));
-        ProfitInputData inputdata = getListComponents(myData, param, config, marketTime, evolve, market, dataMap, listComponentMap, prevdate, olddate);
+        ProfitInputData inputdata = new ProfitInputData();
+        getListComponents(myData, param, config, marketTime, evolve, market, dataMap, listComponentMap, prevdate, olddate);
         profitdata.setInputdata(inputdata);
         
         Map<String, Component> componentMap = new HashMap<>();
@@ -541,7 +542,7 @@ public abstract class MarketAction extends Action {
         mlTests.add(test);
     }
 
-    protected ProfitInputData getListComponents(WebData myData, ComponentData param, IclijConfig config,
+    protected void getListComponents(WebData myData, ComponentData param, IclijConfig config,
             MarketComponentTime marketTime, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
             Memories memories, LocalDate prevdate, LocalDate olddate) {
         List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, IclijConstants.IMPROVEABOVEBELOW, marketTime.componentName, marketTime.subcomponent, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
@@ -556,8 +557,7 @@ public abstract class MarketAction extends Action {
         List<MemoryItem> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market));
         // map subcat + posit -> list
         currentList = currentList.stream().filter(e -> !e.getComponent().equals(PipelineConstants.ABOVEBELOW)).collect(Collectors.toList());
-        memories.method(currentList );
-        return memories.method(config, this);
+        memories.method(currentList, config, this);
      }
 
     protected void getListComponentsNew(WebData myData, ComponentData param, IclijConfig config,
@@ -817,7 +817,33 @@ public abstract class MarketAction extends Action {
         }
     }
 
-    public abstract ProfitInputData filterMemoryListMapsWithConfidence(Market market, Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config);
+    public Map[] filterMemoryListMapsWithConfidence(Market market, Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config) {
+        Map<Triple<String, String, String>, List<MemoryItem>> badListMap = new HashMap<>();
+        Map<Triple<String, String, String>, Double> badConfMap = new HashMap<>();
+        for(Triple<String, String, String> key : listMap.keySet()) {
+            List<MemoryItem> memoryList = listMap.get(key);
+            List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
+            confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
+            Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
+            Double min = 0.0;
+            if (minOpt.isPresent()) {
+                min = minOpt.get();
+            }
+            // do the bad ones
+            // do not yet improve on the good enough ones
+            if (false /*min >= market.getConfidence()*/) {
+                continue;
+            }
+            //Optional<Double> maxOpt = confidences.parallelStream().reduce(Double::max);
+            //Double max = maxOpt.get();
+            //System.out.println("Mark " + market.getConfig().getMarket() + " " + keys[0] + " " + min + " " + max );
+            //Double conf = market.getConfidence();
+            //System.out.println(conf);
+            badListMap.put(key, listMap.get(key));
+            badConfMap.put(key, min);
+        }
+        return new Map[] { badConfMap, badConfMap, badConfMap, badConfMap, badConfMap, badConfMap };
+    }
     
     protected Map<String, String> getNameMap(Map<String, Map<String, Object>> maps) {
         Map<String, String> nameMap = null;

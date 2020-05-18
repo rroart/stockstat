@@ -361,8 +361,8 @@ public class MarketFilterChromosome extends AbstractChromosome {
                 log.error(Constants.EXCEPTION, e);
             }
 
-            listMap.method(myData.getMemoryItems());
-            ProfitInputData inputdata = listMap.method(param.getInput().getConfig(), new ImproveProfitAction());        
+            ProfitInputData inputdata = new ProfitInputData();
+            listMap.method(myData.getMemoryItems(), param.getInput().getConfig(), new ImproveProfitAction());        
             profitdata.setInputdata(inputdata);
             inputdata.setNameMap(new HashMap<>());
 

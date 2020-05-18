@@ -515,6 +515,9 @@ public abstract class Component {
         String component = getPipeline();
         component = component != null ? component.substring(0, 3) : "";
         val.setDescription(val.getDescription() + component + " " + subcomponent + " " + localcomponent + ", ");
+        if (val.getLocalcomponent() == null || localcomponent == null) {
+            int jj = 0;
+        }
         val.setLocalcomponent(val.getLocalcomponent().isEmpty() ? localcomponent : val.getLocalcomponent() + " " + localcomponent);
         return val;
     }

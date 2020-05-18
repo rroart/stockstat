@@ -267,7 +267,7 @@ public abstract class ComponentML extends Component {
                 String cnf = map.get(pair);
                 String cnfPersist = mapPersist.get(pair);
 
-                if (positions == null || positions.contains(getPipeline(), paircount, above, null, false)) {
+                if (positions == null || positions.containsBelow(getPipeline(), paircount, above, null, false)) {
                     if (cnf == null) {
                         continue;
                     }
@@ -381,6 +381,9 @@ public abstract class ComponentML extends Component {
         }
         Pair<String, String> pair = new MiscUtil().getComponentPair(meta);
         for (MLMetricsItem aTest : mlTests) {
+            if (!aTest.getComponent().equals(getPipeline())) {
+                continue;
+            }
             if (aTest.getSubcomponent().equals(pair.getLeft())) {
                 if (aTest.getLocalcomponent() == null || aTest.getLocalcomponent().equals(pair.getRight())) {
                     return aTest;

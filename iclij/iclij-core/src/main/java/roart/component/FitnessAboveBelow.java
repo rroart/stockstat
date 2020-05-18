@@ -160,8 +160,8 @@ public class FitnessAboveBelow extends Fitness {
             }
         
             Memories listMap = new Memories(market);
-            listMap.method(myData.getMemoryItems());
-            ProfitInputData inputdata = listMap.method(param.getInput().getConfig(), new ImproveProfitAction());        
+            ProfitInputData inputdata = new ProfitInputData();
+            listMap.method(myData.getMemoryItems(), param.getInput().getConfig(), new ImproveProfitAction());        
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
         
