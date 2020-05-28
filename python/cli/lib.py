@@ -521,14 +521,14 @@ def getbottomgraph(market, start, end, numberdays, tablemoveintervaldays, topbot
     return(gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=True, deltadays=deltadays, percentize=percentize))
 
 def getonedfvalue(df, atype):
-    if atype > 0:
+    if atype >= 0:
         return(getonedfperiod(df, atype))
     if atype < 0:
         return(getonedfspecial(df, atype))
     print("should not be here")
 
 def getonedfvaluearr(df, atype):
-    if atype > 0:
+    if atype >= 0:
         return(getonedfperiodarr(df, atype))
     if atype < 0:
         return(getonedfspecialarr(df, atype))
@@ -875,7 +875,7 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
                     if market == idmarket:
                         print("per", text, " ", id, " ", period, " ")
                         print("")
-                        bigretl = getelem3(id, days, datedstocklists, period, topbottom)
+                        bigretl = getelem3(id, days, datedstocklists, period, topbottom, text == 'cy')
                         l3 = bigretl[0]
                         l = l3[0]
                         llow = l3[1]
@@ -1096,7 +1096,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
                     if True:
                         #print("per", text, " ", id, " ", period, " ")
                         print("Id", id)
-                        bigretl = getelem3(id, days, datedstocklists, indexid, topbottom)
+                        bigretl = getelem3(id, days, datedstocklists, indexid, topbottom, text == 'cy')
                         l3 = bigretl[0]
                         l = l3[0]
                         llow = l3[1]
@@ -1310,13 +1310,17 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
 def intersection(a, b):
     return list(set(a) & set(b))
     
-def getelem3(id, days, datedstocklist, period, size):
+def getelem3(id, days, datedstocklist, period, size, handlecy):
     dayset = []
     dayset2 = []
     retl1 = [ None for x in range(days) ]
     retl2 = [ None for x in range(days) ]
     retl3 = [ None for x in range(days) ]
     c = 0
+
+    base = None
+    year = None
+    
     print(reversed(range(days)))
     for i in reversed(range(days)):
         retl1[c] = np.NaN
@@ -1337,6 +1341,8 @@ def getelem3(id, days, datedstocklist, period, size):
             dfarr = getonedfvaluearr(el, period)
             if len(dfarr) == 1:
                 retl1[c] = dfarr[0].values[0]
+                if handlecy == True:
+                    retl1[c] = 0.01 * retl1[c] + 1
                 retl2[c] = None
                 retl3[c] = None
             else:
@@ -1350,6 +1356,19 @@ def getelem3(id, days, datedstocklist, period, size):
             #print("str2", type(str2))
             dayset.append(str2)
             dayset2.append(el.date.values[0])
+            if handlecy == True:
+                mydate = pd.DatetimeIndex([el.date.values[0]])
+                myyear = mydate.year
+                if not myyear == year:
+                    if base is None:
+                        base = 1.0
+                    else:
+                        print("rr", prevNonNan(retl1, c-1))
+                        base = prevNonNan(retl1, c - 1)
+                    year = myyear
+                print(retl1[c], base)
+                retl1[c] = retl1[c] * base
+                print(2, retl1[c])
         else:
             #prev = dayset[len(dayset) - 1]
             #prev2 = dayset2[len(dayset2) - 1]
@@ -1395,13 +1414,21 @@ def gettopcy(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays + 1) * tablemoveintervaldays
     gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "cy", wantchart=False)
 
+def prevNonNan(alist, pos):
+  for i in reversed(range(pos)):
+      print("i", i)
+      if not np.isnan(alist[i]):
+          return alist[i]
+  return 0
+    
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 
-allstocks = getstocks(conn)
-if filterweekend:
-    allstocks = allstocks.loc[(allstocks.date.dt.weekday < 5)]
-allmetas = getmetas(conn)
+if not 'allstocks' in globals():
+    allstocks = getstocks(conn)
+    if filterweekend:
+        allstocks = allstocks.loc[(allstocks.date.dt.weekday < 5)]
+    allmetas = getmetas(conn)
 
 plt.close('all')
 
