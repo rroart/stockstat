@@ -299,7 +299,8 @@ export class MainEffects {
       switchMap((action: ActionGetSingleMarketLoop) => {
         console.log(action);
 	const config = action.payload; //.config;
-	const date = config['enddate'];
+	const date = config['startdate'];
+	console.log(date);
 	var param = new Object();
 	param['market'] = config['market'];
 	const iclijConfig = getMyConfig(config, param['market'], date);
@@ -347,7 +348,8 @@ export class MainEffects {
 	const config = action.payload; //.config;
 	console.log(config);
 	console.log(config['verification']);
-	const date = config['enddate'];
+	const date = config['startdate'];
+	console.log(date);
 	var param = new Object();
 	param['market'] = config['market'];
 	const iclijConfig = getMyConfig(config, param['market'], date);	

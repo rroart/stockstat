@@ -20,7 +20,6 @@ import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
-import roart.common.util.TimeUtil;
 import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome;
@@ -31,9 +30,10 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
+import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
-import roart.iclij.util.VerifyProfit;
-import roart.iclij.util.VerifyProfitUtil;
+import roart.iclij.verifyprofit.VerifyProfit;
+import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
@@ -175,7 +175,6 @@ public class FitnessMarketFilter2 {
         Trend incProp = null;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
-            boolean evolvefirst = new MiscUtil().getEvolve(verificationdays, param.getInput());
             Component component =  action.getComponentFactory().factory(componentName);
             boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
             //ProfitData profitdata = new ProfitData();
@@ -233,8 +232,7 @@ public class FitnessMarketFilter2 {
             ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
             component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters);
 
-            Short mystartoffset = market.getConfig().getStartoffset();
-            short startoffset = mystartoffset != null ? mystartoffset : 0;
+            short startoffset = new MarketUtil().getStartoffset(market);
             action.setValMap(param);
             VerifyProfit verify = new VerifyProfit();
             incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
@@ -245,11 +243,11 @@ public class FitnessMarketFilter2 {
                     //param.setFuturedays(verificationdays);
                     param.setFuturedays(0);
                     param.setOffset(0);
-                    param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
+                    param.setDates(null, null, action.getActionData(), market);
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }            
-                new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold());
+                new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold(), param, null, market);
             }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

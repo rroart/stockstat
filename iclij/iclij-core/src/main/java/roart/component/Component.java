@@ -36,7 +36,6 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLIndicatorData;
@@ -114,7 +113,7 @@ public abstract class Component {
 
     public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         try {
-            param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
+            param.setDates(null, null, action.getActionData(), market);
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         } catch (IndexOutOfBoundsException e) {

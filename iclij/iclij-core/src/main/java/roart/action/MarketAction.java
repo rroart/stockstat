@@ -62,7 +62,7 @@ import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
-import roart.iclij.util.VerifyProfitUtil;
+import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.util.ServiceUtil;
 
 public abstract class MarketAction extends Action {
@@ -175,6 +175,13 @@ public abstract class MarketAction extends Action {
                 if (stockDates == null || stockDates.isEmpty()) {
                     continue;
                 }
+                /*
+                try {
+                    param.setDates(null, stockDates, this.getActionData(), market);
+                } catch (ParseException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+                */
             }
             componentDataMap.put(marketName, param);
             LocalDate olddate = param.getInput().getEnddate();
@@ -604,9 +611,8 @@ public abstract class MarketAction extends Action {
         List<IncDecItem> incdecsL = mylocals;
         List<IncDecItem> myincs = mylocals.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
         List<IncDecItem> mydecs = mylocals.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
-        Short mystartoffset = market.getConfig().getStartoffset();
-        short startoffset = mystartoffset != null ? mystartoffset : 0;
-        new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), stockDates, 0);
+        short startoffset = new MarketUtil().getStartoffset(market);
+        new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), param, stockDates, market);
 
         //List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market));
         // or make a new object instead of the object array. use this as a pair
@@ -784,6 +790,7 @@ public abstract class MarketAction extends Action {
                 if (days != null) {
                     if (days == 0) {
                         int year = param.getInput().getEnddate().getYear();
+                        year = param.getFutureDate().getYear();
                         List<String> yearDates = new ArrayList<>();
                         for (String date : dates) {
                             int aYear = Integer.valueOf(date.substring(0, 4));

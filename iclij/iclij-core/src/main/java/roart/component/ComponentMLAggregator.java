@@ -1,5 +1,6 @@
 package roart.component;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +69,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         System.out.println("c " + aResultMap.keySet());
         System.out.println("a " + resultMap.keySet());
         System.out.println("b " + param.getCategoryValueMap().keySet());
+        List<String> stockDates = param.getService().getDates(param.getInput().getMarket());
         int resultIndex = 0;
         int count = 0;
         for (List meta : param.getResultMetaArray()) {
@@ -84,6 +86,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
                 int jj = 0;
             }
             
+            Map<String, List<Double>> offsetMap = (Map<String, List<Double>>) meta.get(ResultMetaConstants.OFFSETMAP);
+
             Pair<String, String> paircount = new MiscUtil().getComponentPair(meta);
             MLMetricsItem mltest = search(mlTests, meta);
             
@@ -106,6 +110,20 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     if (tfpn == null) {
                         continue;
                     }
+
+                    if (offsetMap == null) {
+                        log.info("Offset map null, skipping rest");
+                        continue;
+                    }
+                    List<Double> off = offsetMap.get(key);
+                    if (off == null) {
+                        log.error("The offset should not be null for {}", key);
+                        continue;
+                    }
+                    int offsetZero = (int) Math.round(off.get(0));
+                    LocalDate confdate = TimeUtil.convertDate(param.getService().conf.getdate());
+                    LocalDate date = TimeUtil.getBackEqualBefore2(confdate, offsetZero, stockDates);
+                    
                     boolean increase = false;
                     //System.out.println(okConfMap.keySet());
                     //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
@@ -115,7 +133,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
                         increase = true;
                         //IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key + date, score, profitdata.getInputdata().getNameMap(), date, param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }
@@ -123,7 +141,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
                         increase = false;
                         //IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        IncDecItem incdec = mapAdder(profitdata.getSells(), key + date, score, profitdata.getInputdata().getNameMap(), date, param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }

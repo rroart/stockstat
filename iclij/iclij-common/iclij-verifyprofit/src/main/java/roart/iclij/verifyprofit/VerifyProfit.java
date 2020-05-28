@@ -1,4 +1,4 @@
-package roart.iclij.util;
+package roart.iclij.verifyprofit;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,7 +20,8 @@ public class VerifyProfit {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public void doVerify(List<IncDecItem> list, int days, boolean increaseNot, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold) {
+    @Deprecated
+    public void doVerify(List<IncDecItem> list, int days, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold) {
         if (days <= 0) {
             return;
         }
@@ -45,10 +46,11 @@ public class VerifyProfit {
         }
     }
 
-    public void doVerify(List<IncDecItem> list, int days, boolean increaseNot, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold, List<String> stockDates, int loopoffset) {
+    public void doVerify(List<IncDecItem> list, int days, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold, List<String> stockDates) {
         if (days <= 0) {
             return;
         }
+        int indexoffsetLast = stockDates.indexOf(TimeUtil.convertDate2(date));
         for (IncDecItem item : list) {
             String id = item.getId();
             List<List<Double>> resultList = categoryValueMap.get(id);
@@ -56,7 +58,9 @@ public class VerifyProfit {
                 continue;
             }
             String aDate = TimeUtil.convertDate2(item.getDate());
-            int indexoffset = stockDates.size() - loopoffset - stockDates.indexOf(aDate);
+            int itemdateoffset = stockDates.indexOf(aDate);
+            int indexoffset = indexoffsetLast - itemdateoffset;
+            startoffset = 0;
             List<Double> mainList = resultList.get(0);
             log.info("Sizes {} {}", stockDates.size(), mainList.size());
             if (mainList != null) {
@@ -64,8 +68,8 @@ public class VerifyProfit {
                     log.error("Recent date {}", aDate);
                     continue;
                 }
-                Double valFuture = mainList.get(mainList.size() - indexoffset - startoffset + days);
-                Double valNow = mainList.get(mainList.size() - indexoffset - startoffset);
+                Double valFuture = mainList.get(mainList.size() - 1 - indexoffset - startoffset + days);
+                Double valNow = mainList.get(mainList.size() - 1 - indexoffset - startoffset);
                 if (valFuture != null && valNow != null) {
                     boolean verified = (item.isIncrease() && (valFuture / valNow > threshold)) ||
                             (!item.isIncrease() && (valFuture / valNow < threshold));
@@ -85,7 +89,6 @@ public class VerifyProfit {
         int nocount2 = 0;
         int nocount = 0;
         int count = 0;
-        System.out.println("si " + categoryValueMap.size());
         List<Double> incs = new ArrayList<>();
         for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
             List<List<Double>> resultList = entry.getValue();
@@ -130,7 +133,7 @@ public class VerifyProfit {
         return trend;
     }
     
-    public Trend getTrend(int days, Map<String, List<List<Double>>> categoryValueMap, int startoffset, LocalDate date, List<String> stockDates, int loopoffset) {
+    public Trend getTrend(int days, Map<String, List<List<Double>>> categoryValueMap, int startoffset, int loopoffset) {
         Trend trend = new Trend();
         if (days <= 0) {
             return trend;
@@ -138,9 +141,6 @@ public class VerifyProfit {
         int nocount2 = 0;
         int nocount = 0;
         int count = 0;
-        System.out.println("si " + categoryValueMap.size());
-        String aDate = TimeUtil.convertDate2(date);
-        int indexoffset = stockDates.size() - stockDates.indexOf(aDate);
         List<Double> incs = new ArrayList<>();
         for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
             List<List<Double>> resultList = entry.getValue();
@@ -149,8 +149,8 @@ public class VerifyProfit {
             }
             List<Double> mainList = resultList.get(0);
             if (mainList != null) {
-                Double valFuture = mainList.get(mainList.size() - indexoffset - startoffset + days);
-                Double valNow = mainList.get(mainList.size() - indexoffset - startoffset);
+                Double valFuture = mainList.get(mainList.size() - 1 - startoffset);
+                Double valNow = mainList.get(mainList.size() - 1 - startoffset - days);
                 if (valFuture != null && valNow != null) {
                     if (valFuture > valNow) {
                         trend.up++;

@@ -255,6 +255,7 @@ public class ControlService {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(componentInput.getConfig());
         param.setWebpath(EurekaConstants.ACTION + "/" + action);
+        param.setOffset(componentInput.getLoopoffset());
         IclijServiceResult result = EurekaUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
 
         WebDataJson dataJson = result.getWebdatajson();
@@ -267,6 +268,7 @@ public class ControlService {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(componentInput.getConfig());
         param.setWebpath(EurekaConstants.GETVERIFY);
+        param.setOffset(componentInput.getLoopoffset());
         IclijServiceResult result = EurekaUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
 
         WebDataJson dataJson = result.getWebdatajson();

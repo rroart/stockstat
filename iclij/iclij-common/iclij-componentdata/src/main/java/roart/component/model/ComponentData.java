@@ -15,10 +15,11 @@ import roart.common.config.ConfigConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
+import roart.iclij.config.Market;
 import roart.iclij.model.TimingItem;
+import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
-import roart.util.ServiceUtil;
 
 public class ComponentData {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -35,13 +36,7 @@ public class ComponentData {
     
     private String categoryTitle;
     
-    private LocalDate baseDate;
-    
-    private LocalDate futureDate;
-
-    private Integer offset;
-    
-    private Integer futuredays;
+    private ComponentTime componentTime = new ComponentTime();
     
     protected Map<String, Map<String, Object>> resultMaps;
 
@@ -72,10 +67,10 @@ public class ComponentData {
         this.service.conf.setConfigValueMap(new HashMap<>(this.service.conf.getConfigValueMap()));
         this.category = componentparam.category;
         this.categoryTitle = componentparam.categoryTitle;
-        this.baseDate = componentparam.baseDate;
-        this.futureDate = componentparam.futureDate;
-        this.offset = componentparam.offset;
-        this.futuredays = componentparam.futuredays;
+        this.setBaseDate(componentparam.getBaseDate());
+        this.setFutureDate(componentparam.getFutureDate());
+        this.setOffset(componentparam.getOffset());
+        this.setFuturedays(componentparam.getFuturedays());
         this.resultMap = componentparam.resultMap;
         this.categoryValueMap = componentparam.categoryValueMap;
         this.usedsec = componentparam.usedsec;
@@ -162,36 +157,44 @@ public class ComponentData {
         this.categoryTitle = categoryTitle;
     }
 
+    public ComponentTime getComponentTime() {
+        return componentTime;
+    }
+
+    public void setComponentTime(ComponentTime componentTime) {
+        this.componentTime = componentTime;
+    }
+
     public LocalDate getBaseDate() {
-        return baseDate;
+        return getComponentTime().getBaseDate();
     }
 
     public void setBaseDate(LocalDate baseDate) {
-        this.baseDate = baseDate;
+        getComponentTime().setBaseDate(baseDate);
     }
 
     public LocalDate getFutureDate() {
-        return futureDate;
+        return getComponentTime().getFutureDate();
     }
 
     public void setFutureDate(LocalDate futureDate) {
-        this.futureDate = futureDate;
+        getComponentTime().setFutureDate(futureDate);
     }
 
     public Integer getOffset() {
-        return offset;
+        return getComponentTime().getOffset();
     }
 
     public void setOffset(Integer offset) {
-        this.offset = offset;
+        getComponentTime().setOffset(offset);
     }
 
     public Integer getFuturedays() {
-        return futuredays;
+        return getComponentTime().getFuturedays();
     }
 
     public void setFuturedays(Integer futuredays) {
-        this.futuredays = futuredays;
+        getComponentTime().setFuturedays(futuredays);
     }
 
     public Map<String, Map<String, Object>> getResultMaps() {
@@ -266,19 +269,23 @@ public class ComponentData {
         this.timings = timings;
     }
 
-    public int setDates(int futuredaysNot, Integer offsetNot, String aDate) throws ParseException {
+    public int setDatesNot() throws ParseException {
         List<String> stockdates = service.getDates(getMarket());
-        String date = aDate;
-        List<String> list = new TimeUtil().setDates(date, stockdates, offset, input.getLoopoffset(), futuredays);
+        String date = TimeUtil.convertDate2(this.getInput().getEnddate());
+        List<String> list = new TimeUtil().setDates(date, stockdates, getComponentTime().getOffset(), input.getLoopoffset(), getComponentTime().getFuturedays());
         String baseDateStr = list.get(0);
         String futureDateStr = list.get(1);
         log.info("Base future date {} {}", baseDateStr, futureDateStr);
-        this.baseDate = TimeUtil.convertDate(baseDateStr);
-        this.futureDate = TimeUtil.convertDate(futureDateStr);
-        if (stockdates.size() - 1 - futuredays - offset < 0) {
+        this.setBaseDate(TimeUtil.convertDate(baseDateStr));
+        this.setFutureDate(TimeUtil.convertDate(futureDateStr));
+        if (stockdates.size() - 1 - getComponentTime().getFuturedays() - getComponentTime().getOffset() < 0) {
             int jj = 0;
         }
-        return offset;
+        return getComponentTime().getOffset();
+    }
+    
+    public int setDates(String aDate, List<String> stockdates, MarketActionData actionData, Market market) throws ParseException {
+        return getComponentTime().setDates(aDate, stockdates, actionData, market, getService(), getInput());
     }
     
     public void setUsedsec(long time0) {

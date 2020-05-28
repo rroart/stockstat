@@ -449,7 +449,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, " [ 1.0 ] ");
         deflt.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, Boolean.TRUE);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPS, 5);
-        deflt.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, 20);
+        deflt.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, 1);
         deflt.put(IclijConfigConstants.SINGLEMARKETRERUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.VERIFICATION, Boolean.TRUE);
         deflt.put(IclijConfigConstants.VERIFICATIONSAVE, Boolean.FALSE);
@@ -458,7 +458,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.VERIFICATIONEVOLVEFIRSTONLY, Boolean.TRUE);
         deflt.put(IclijConfigConstants.VERIFICATIONLOOPS, 5);
         deflt.put(IclijConfigConstants.VERIFICATIONRERUN, Boolean.FALSE);
-        deflt.put(IclijConfigConstants.VERIFICATIONLOOPINTERVAL, 20);
+        deflt.put(IclijConfigConstants.VERIFICATIONLOOPINTERVAL, 1);
         deflt.put(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT, Boolean.FALSE);
         //deflt.put(IclijConfigConstants.MARKETSMARKETLISTMARKETEVOLUTIONCONFIG, null);
     }
@@ -947,14 +947,14 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ]", "machine learning threshold"));
         mymap.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, new IclijXMLType(Boolean.class, Boolean.TRUE, "Single market loops with evolve first only"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPS, new IclijXMLType(Integer.class, 5, "Single market loops"));
-        mymap.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, new IclijXMLType(Integer.class, 20, "Single market loop interval"));
+        mymap.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, new IclijXMLType(Integer.class, 1, "Single market loop interval"));
         mymap.put(IclijConfigConstants.SINGLEMARKETRERUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Single market rerun"));
         mymap.put(IclijConfigConstants.VERIFICATION, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable verification"));
         mymap.put(IclijConfigConstants.VERIFICATIONSAVE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable verification save"));
         mymap.put(IclijConfigConstants.VERIFICATIONDAYS, new IclijXMLType(Integer.class, 20, "Verification days"));
         mymap.put(IclijConfigConstants.VERIFICATIONEVOLVEFIRSTONLY, new IclijXMLType(Boolean.class, Boolean.TRUE, "Verification loops with evolve first only"));
         mymap.put(IclijConfigConstants.VERIFICATIONLOOPS, new IclijXMLType(Integer.class, 5, "Verification loops"));
-        mymap.put(IclijConfigConstants.VERIFICATIONLOOPINTERVAL, new IclijXMLType(Integer.class, 20, "Verification loop interval"));
+        mymap.put(IclijConfigConstants.VERIFICATIONLOOPINTERVAL, new IclijXMLType(Integer.class, 1, "Verification loop interval"));
         mymap.put(IclijConfigConstants.VERIFICATIONRECOMMENDERTOPBOTTOM, new IclijXMLType(Integer.class, 10, "Number of entries to pick from recommender lists"));
         mymap.put(IclijConfigConstants.VERIFICATIONRERUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Verification rerun"));
         mymap.put(IclijConfigConstants.VERIFICATIONIMPROVEPROFIT, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve profit"));

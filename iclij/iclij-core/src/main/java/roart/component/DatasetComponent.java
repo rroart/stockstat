@@ -36,8 +36,8 @@ public class DatasetComponent extends ComponentML {
             Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         DatasetData param = new DatasetData(componentparam);
 
-        int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
-        param.setFuturedays(futuredays);
+        //int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
+        param.setFuturedays(0);
 
         handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         //Map resultMaps = param.getResultMap();

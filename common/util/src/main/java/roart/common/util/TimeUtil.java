@@ -8,11 +8,14 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import roart.common.constants.Constants;
 
 public class TimeUtil {
 	
@@ -64,8 +67,19 @@ public class TimeUtil {
     public static long daysSince(LocalDateTime date) {
         return ChronoUnit.DAYS.between(LocalDate.now(), date);
     }
-    
+
+    public static int getIndexEqualBefore(List<String> stockDates, LocalDate date) {
+        return getIndexEqualBefore(stockDates, TimeUtil.convertDate2(date));
+    }
+
     public static int getIndexEqualBefore(List<String> stockDates, String date) {
+        int index = Collections.binarySearch(stockDates, date);
+        if (index >= 0) {
+            return index;
+        } else {
+            return -index - 2;
+        }
+        /*
         int dateIndex = stockDates.indexOf(date);
         if (dateIndex < 0) {
             dateIndex = stockDates.size() - 1;
@@ -76,9 +90,37 @@ public class TimeUtil {
             }
         }
         return dateIndex;
+        */
     }
 
-    public List<String> setDates(String date, List<String> stockdates, int offset, int loopoffset, int futuredays) {
+    public static LocalDate getEqualBefore(List<String> stockDates, LocalDate date) {
+        return getEqualBefore(stockDates, convertDate2(date));
+    }
+    
+    public static LocalDate getEqualBefore(List<String> stockDates, String date) {
+        int index = getIndexEqualBefore(stockDates, date);
+        try {
+            return convertDate(stockDates.get(index));
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+    
+    public static int getIndexEqualAfter(List<String> stockDates, String date) {
+        int index = Collections.binarySearch(stockDates, date);
+        if (index >= 0) {
+            return index;
+        } else {
+            index = -index - 1;
+            if (index == stockDates.size()) {
+                index--;
+            }
+            return index;
+        }
+    }
+
+    public List<String> setDates(String date, List<String> stockdates, int loopoffset, int offset, int futuredays) {
         if (date != null) {
             int index = stockdates.indexOf(date);
             if (index < 0) {
@@ -98,11 +140,42 @@ public class TimeUtil {
                 dateoffset = stockdates.size() - 1 - index;
             }
         }
-        String baseDateStr = stockdates.get(stockdates.size() - 1 - futuredays - dateoffset - offset - loopoffset);
-        String futureDateStr = stockdates.get(stockdates.size() - 1 - dateoffset - offset - loopoffset);
+        String baseDateStr = stockdates.get(stockdates.size() - 1 - futuredays - dateoffset);
+        String futureDateStr = stockdates.get(stockdates.size() - 1 - dateoffset);
+        LocalDate aBaseDate = null;
+        LocalDate aFutureDate = null;
+        try {
+            aBaseDate = convertDate(baseDateStr);
+            aFutureDate = convertDate(futureDateStr);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        aBaseDate = aBaseDate.plusDays(offset + loopoffset);
+        aFutureDate = aFutureDate.plusDays(offset + loopoffset);
+        baseDateStr = convertDate2(aBaseDate);
+        futureDateStr = convertDate2(aFutureDate);
+        baseDateStr = stockdates.get(getIndexEqualAfter(stockdates, baseDateStr));
+        futureDateStr = stockdates.get(getIndexEqualAfter(stockdates, futureDateStr));
         List<String> list = new ArrayList<>();
         list.add(baseDateStr);
         list.add(futureDateStr);
         return list;
     }
+    
+    public static String getBackEqualBefore(LocalDate date, int back, List<String> stockDates) {
+        int index = getIndexEqualBefore(stockDates, TimeUtil.convertDate2(date));
+        index = index - back;
+        return stockDates.get(index);
+    }
+
+    public static LocalDate getBackEqualBefore2(LocalDate date, int back, List<String> stockDates) {
+        String str = getBackEqualBefore(date, back, stockDates);
+        try {
+            return convertDate(str);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
 }

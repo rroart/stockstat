@@ -7,6 +7,7 @@
  */
 module iclij.common.service {
     exports roart.iclij.service;
+    exports roart.iclij.model.component;
 
     requires iclij.common.config;
     requires common.config;

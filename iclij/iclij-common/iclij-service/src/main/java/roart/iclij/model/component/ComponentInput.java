@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.Market;
 
 public class ComponentInput {
 
@@ -54,7 +55,7 @@ public class ComponentInput {
             enddate = date;
         }
         this.enddate = enddate;
-        this.loopoffset = loopoffset != null ? loopoffset : 0;
+        this.loopoffset = loopoffset; // != null ? loopoffset : 0;
         this.doSave = doSave;
         if (doSave == false) {
             int jj = 0;

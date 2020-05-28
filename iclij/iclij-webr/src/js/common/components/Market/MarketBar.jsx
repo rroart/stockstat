@@ -77,6 +77,7 @@ class MarketBar extends PureComponent {
 	console.log(event);
 	console.log(props);
 	props.setstartdate(event);
+        props.setconfigvalue([ 'startdate', event ]);
     }
     
     handleEndDateChange(event, props) {
@@ -90,6 +91,7 @@ class MarketBar extends PureComponent {
 	console.log(event);
 	console.log(props);
 	props.setstartdate(null);
+        props.setconfigvalue([ 'startdate', null ]);
     }
     
     resetEndDate(event, props) {

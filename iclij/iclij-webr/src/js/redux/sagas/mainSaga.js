@@ -230,18 +230,25 @@ export function* fetchSingleMarket(action) {
     console.log(action);
     const props = action.payload.props;
     const loop = action.payload.loop;
-    const date = config.get('enddate');
+    var date = config.get('enddate');
+    let loops = 1
+    if (loop) {
+	date = config.get('startdate');
+    }
+    console.log(loop);
+    console.log(date);
     const iclijConfig = getMyConfig(config, serviceparam.market, date);
     serviceparam.iclijConfig = iclijConfig;
-    let loops = 1
     if (loop) {
 	loops = iclijConfig.configValueMap.get('singlemarket.loops');
     }
-    var i;
+    var i = 0;
     for (i = 0; i < loops; i++) {
 	console.log(serviceparam.market);
 	//serviceparam.offset = i * config.get('singlemarket').get('loopinterval');
-	serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('singlemarket.loopinterval');
+	if (loop) {
+	    serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('singlemarket.loopinterval');
+	}
 	console.log("herecontent");
 	console.log(serviceparam.market);
 	let result = yield call(Client.fetchApi.search, "/findprofit", serviceparam);
@@ -307,14 +314,19 @@ export function* fetchGetVerify(action) {
     console.log(action);
     const props = action.payload.props;
     const loop = action.payload.loop;
-    const date = config.get('enddate');
+    var date = config.get('enddate');
+    let loops = 1
+    if (loop) {
+	date = config.get('startdate');
+    }
+    console.log(loop);
+    console.log(date);
     const iclijConfig = getMyConfig(config, serviceparam.market, date);
     serviceparam.iclijConfig = iclijConfig;
-    let loops = 1
     if (loop) {
 	loops = iclijConfig.configValueMap.get('verification.loops');
     }
-    var i;
+    var i = 0;
     for (i = 0; i < loops; i++) {
 	console.log(serviceparam.market);
 	console.log(config);
@@ -324,7 +336,9 @@ export function* fetchGetVerify(action) {
 	console.log(serviceparam.iclijConfig);
 	//serviceparam.offset = i * config.get('verification').get('loopinterval');
 	console.log(serviceparam.iclijConfig.configValueMap.get('verification.loopinterval'))
-	serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('verification.loopinterval');
+	if (loop) {
+	    serviceparam.offset = i * serviceparam.iclijConfig.configValueMap.get('verification.loopinterval');
+	}
 	console.log("herecontent");
 	console.log(serviceparam.market);
 	let result = yield call(Client.fetchApi.search, "/getverify", serviceparam);

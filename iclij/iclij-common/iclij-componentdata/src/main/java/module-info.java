@@ -5,12 +5,8 @@
  * @author roart
  *
  */
-module iclij.common.model {
-    exports roart.iclij.model;
-    exports roart.iclij.model.action;
-    exports roart.iclij.model.config;
-    exports roart.iclij.model.parse;
-    exports roart.service.model;
+module iclij.common.componentdata {
+    exports roart.component.model;
 
     requires common.model;
     requires common.util;
@@ -18,7 +14,10 @@ module iclij.common.model {
     requires common.config;
     requires iclij.common.config;
     requires iclij.common.constants;
+    requires iclij.common.model;
+    requires iclij.common.service;
     requires org.apache.commons.lang3;
     requires slf4j.api;
     requires common.constants;
 }
+
