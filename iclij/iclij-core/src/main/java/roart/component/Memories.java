@@ -8,6 +8,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import roart.action.MarketAction;
 import roart.iclij.config.IclijConfig;
@@ -18,6 +20,7 @@ import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitInputData;
 
 public class Memories {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
     
     private Market market;
     
@@ -72,6 +75,7 @@ public class Memories {
         if (componentMap != null) {
             List<Pair<String, String>> sublocals = componentMap.get(component);
             if ( sublocals != null) {
+                log.info("Found and skipped {}", pair);
                 return sublocals.contains(pair);
             }
         }
