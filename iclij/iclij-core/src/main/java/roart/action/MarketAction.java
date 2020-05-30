@@ -77,6 +77,16 @@ public abstract class MarketAction extends Action {
 
     protected abstract Boolean getBool();
 
+    private Action parent;
+    
+    public Action getParent() {
+        return parent;
+    }
+
+    public void setParent(Action parent) {
+        this.parent = parent;
+    }
+
     public String getName() {
         return getActionData().getName();
     }
@@ -104,7 +114,7 @@ public abstract class MarketAction extends Action {
     
     @Override
     public void goal(Action parent, ComponentData param, Integer priority) {
-        getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
+        getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
     }
 
     public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve, Integer priority) {
@@ -139,6 +149,7 @@ public abstract class MarketAction extends Action {
         // remember and make confidence
         // memory is with date, confidence %, inc/dec, semantic item
         // find recommended picks
+        this.parent = parent;
         WebData myData = new WebData();
         myData.setIncs(new ArrayList<>());
         myData.setDecs(new ArrayList<>());
@@ -520,33 +531,17 @@ public abstract class MarketAction extends Action {
         return returnedMLMetrics;
     }
 
-    private void addNewest(List<MLMetricsItem> mlTests, MLMetricsItem test, Double confidence) {
-        if (test.getTestAccuracy() == null || test.getTestAccuracy() < confidence) {
-            return;
+    private Map<Pair<String, String>, List<MLMetricsItem>> getMLMetrics(List<MLMetricsItem> mltests, Double confidence) {
+        List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
+        for (MLMetricsItem test : mltests) {
+            addNewest(returnedMLMetrics, test, 0.0);
         }
-        if (test.getThreshold() == null || test.getThreshold() != 1.0) {
-            return;
+        Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
+        for (MLMetricsItem metric : returnedMLMetrics) {
+            Pair key = new ImmutablePair(metric.getComponent(), metric.getSubcomponent());
+            new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
         }
-        MLMetricsItem replace = null;
-        for (MLMetricsItem aTest : mlTests) {
-            Boolean moregeneralthan = aTest.moreGeneralThan(test);
-            // we don't need this anymore
-            if (false && moregeneralthan != null && moregeneralthan) {
-                replace = aTest;
-                break;
-            }
-            Boolean olderthan = aTest.olderThan(test);
-            if (olderthan != null && olderthan) {
-                replace = aTest;
-                break;
-            }
-        }
-        if (replace != null) {
-            int index = mlTests.indexOf(replace);
-            mlTests.set(index, test);
-            return;
-        }
-        mlTests.add(test);
+        return moreReturnedMLMetrics;
     }
 
     protected void getListComponents(WebData myData, ComponentData param, IclijConfig config,
