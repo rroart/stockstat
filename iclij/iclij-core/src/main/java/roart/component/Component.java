@@ -521,5 +521,34 @@ public abstract class Component {
         return val;
     }
 
+    protected IncDecItem mapAdder2(Map<String, IncDecItem> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
+        String newkey = key + date;
+        IncDecItem val = map.get(newkey);
+        if (val == null) {
+            val = new IncDecItem();
+            val.setRecord(LocalDate.now());
+            val.setDate(date);
+            val.setId(key);
+            val.setComponent(getPipeline());
+            val.setLocalcomponent("");
+            val.setMarket(market);
+            val.setDescription("");
+            val.setName(nameMap.get(key));
+            val.setParameters(parameters);
+            val.setScore(0.0);
+            val.setSubcomponent(subcomponent);
+            map.put(newkey, val);
+        }
+        val.setScore(val.getScore() + add);
+        String component = getPipeline();
+        component = component != null ? component.substring(0, 3) : "";
+        val.setDescription(val.getDescription() + component + " " + subcomponent + " " + localcomponent + ", ");
+        if (val.getLocalcomponent() == null || localcomponent == null) {
+            int jj = 0;
+        }
+        val.setLocalcomponent(val.getLocalcomponent().isEmpty() ? localcomponent : val.getLocalcomponent() + " " + localcomponent);
+        return val;
+    }
+
 }
 
