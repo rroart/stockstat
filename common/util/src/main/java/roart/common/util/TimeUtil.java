@@ -79,18 +79,6 @@ public class TimeUtil {
         } else {
             return -index - 2;
         }
-        /*
-        int dateIndex = stockDates.indexOf(date);
-        if (dateIndex < 0) {
-            dateIndex = stockDates.size() - 1;
-            for (int i = 1; i < stockDates.size(); i++) {
-                if (date.compareTo(stockDates.get(i)) < 0) {
-                    dateIndex = i - 1;
-                }
-            }
-        }
-        return dateIndex;
-        */
     }
 
     public static LocalDate getEqualBefore(List<String> stockDates, LocalDate date) {
