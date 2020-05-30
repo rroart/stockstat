@@ -15,6 +15,7 @@ import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
+import roart.populate.PopulateThread;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -43,6 +44,7 @@ public class IclijController implements CommandLineRunner {
 	    try {
 	        MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { IclijXMLConfig.getConfigInstance().mpServerCpu() } );
+            new PopulateThread().start();
             if (MainAction.wantsGoals()) {        
                 Action action = new MainAction();
                 action.goal(null, null, null);

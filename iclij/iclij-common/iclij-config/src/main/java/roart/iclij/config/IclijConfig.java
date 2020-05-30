@@ -116,6 +116,10 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.MISCSHUTDOWNHOUR);
     }
 
+    public boolean populate() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.MISCPOPULATE);
+    }
+
     public double mpServerCpu() {
         return (Double) getValueOrDefault(IclijConfigConstants.MPSERVERCPU);
     }
