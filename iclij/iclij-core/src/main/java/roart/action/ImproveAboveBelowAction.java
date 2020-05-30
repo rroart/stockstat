@@ -113,6 +113,13 @@ public class ImproveAboveBelowAction extends MarketAction {
         int verificationdays = param.getInput().getConfig().verificationDays();
         param.getInput().setDoSave(false);
 
+        try {
+            param.setFuturedays(0);
+            param.setOffset(0);
+            param.setDates(null, null, action.getActionData(), market);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         //List<MemoryItem> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
         
         for (Entry<String, Component> entry : componentMap.entrySet()) {
