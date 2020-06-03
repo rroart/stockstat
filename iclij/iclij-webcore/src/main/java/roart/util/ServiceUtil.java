@@ -912,7 +912,9 @@ public class ServiceUtil {
                 currentIncDecs.addAll(allListIncDec);
                 continue;
             }
-            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(param.getFutureDate(), listAll, aMarket, market.getConfig().getFindtime());
+            LocalDate date = param.getFutureDate();
+            date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
+            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, aMarket, market.getConfig().getFindtime());
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
         //roundList(currentIncDecs);
