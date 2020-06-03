@@ -1,5 +1,6 @@
 package roart.db.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -7,156 +8,138 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// dummy
-//import net.sf.ehcache.hibernate.EhCacheRegionFactory;
+import roart.common.constants.Constants;
+import roart.common.util.MathUtil;
 
 public class HibernateUtil {
     private static Logger log = LoggerFactory.getLogger(HibernateUtil.class);
 
-    private static SessionFactory factory = null;
-    private static Session session = null;
-    private static Transaction transaction = null;
+    private static SessionFactory factory = buildSessionFactory();
 
-    public static Session getCurrentSession() throws /*MappingException,*/ HibernateException, Exception {
-	return getHibernateSession();
+    private Session sessionRead = null;
+
+    private Transaction transactionRead = null;
+
+    private Session sessionWrite = null;
+
+    private Transaction transactionWrite = null;
+
+    public HibernateUtil(boolean write) {
+        try {
+            if (write) {
+                openSessionWrite();
+                beginTransactionWrite();
+            } else {
+                openSessionRead();
+                beginTransactionRead();
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
     }
 
-    public static Session currentSession() throws /*MappingException,*/ HibernateException, Exception {
-	return getHibernateSession();
+    /*
+    private void getSessionTransaction() throws HibernateException, Exception {
+        openSessionRead();
+        beginTransactionRead();
+    }
+     */
+
+    private void beginTransactionRead() {
+        transactionRead = sessionRead.beginTransaction();
     }
 
-    public static Session getHibernateSession() throws /*MappingException,*/ HibernateException, Exception {
-	if (factory == null) {
-		/*
-	    AnnotationConfiguration configuration = new AnnotationConfiguration();
-	    factory = configuration.configure().buildSessionFactory();*/
-		/*
-		Configuration configuration = new Configuration().configure();
-		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-				applySettings(configuration.getProperties());
-		factory = configuration.buildSessionFactory(builder.build());
-		*/
-		Configuration configuration = new Configuration().configure();
-		String connectionUrl = System.getProperty("connection.url");
-		//System.out.println("olds" + configuration.getProperties());
-		//System.out.println("curl " + connectionUrl);
-		if (connectionUrl != null) {
-		    configuration.setProperty("connection.url", connectionUrl);
-                    configuration.setProperty("hibernate.connection.url", connectionUrl);
-		}
-		//System.out.println("news" + configuration.getProperties());
-		factory = configuration.buildSessionFactory();
-	    //Object o = new net.sf.ehcache.hibernate.EhCacheRegionFactory();
-	}
-
-	if (session == null) {
-	    //Session sess = factory.openSession();
-	    session = factory.getCurrentSession();
-	}
-
-	if (session != null) {
-	    if (!session.isOpen()) {
-		session = factory.openSession();
-	    }
-	}
-
-	if (transaction == null) {
-	    transaction = session.beginTransaction();
-	}
-
-	return session;
+    private void openSessionRead() {
+        sessionRead = factory.getCurrentSession();
     }
 
-    public static Session getMyHibernateSession() throws /*MappingException,*/ HibernateException, Exception {
+    public void beginTransactionWrite() {
+        if (transactionWrite == null) {
+            transactionWrite = sessionWrite.beginTransaction();
+        }
+    }
+
+    public void openSessionWrite() throws Exception {
+        if (sessionWrite == null) {
+            sessionWrite = factory.openSession();
+        }
+    }
+
+    /*
+    private static void beginTransactionRead() {
+        if (transactionRead == null) {
+            transactionRead = sessionRead.beginTransaction();
+        }
+    }
+    */
+
+    /*
+    public void openSessionRead() throws Exception {
+        if (sessionRead == null) {
+            sessionRead = factory.openSession();
+        }
+    }
+    */
+
+    public Query createQuery(String query) {
+        return sessionRead.createQuery(query);
+    }
+
+    private static SessionFactory buildSessionFactory() {
+        SessionFactory aFactory = null;
         if (factory == null) {
-                /*
-            AnnotationConfiguration configuration = new AnnotationConfiguration();
-            factory = configuration.configure().buildSessionFactory();*/
-                /*
-                Configuration configuration = new Configuration().configure();
-                StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-                                applySettings(configuration.getProperties());
-                factory = configuration.buildSessionFactory(builder.build());
-                */
             Configuration configuration = new Configuration().configure();
             String connectionUrl = System.getProperty("connection.url");
             if (connectionUrl != null) {
                 configuration.setProperty("connection.url", connectionUrl);
                 configuration.setProperty("hibernate.connection.url", connectionUrl);
             }
-            factory = configuration.buildSessionFactory();
-                //factory = new Configuration().configure().buildSessionFactory();
-            //Object o = new net.sf.ehcache.hibernate.EhCacheRegionFactory();
+            aFactory = configuration.buildSessionFactory();
         }
-
-        if (session == null) {
-            //Session sess = factory.openSession();
-            session = factory.getCurrentSession();
-        }
-
-        if (session != null) {
-            if (!session.isOpen()) {
-                session = factory.openSession();
-            }
-        }
-
-        return session;
+        return aFactory;
     }
 
-    public static Session getMyHibernateSessionPrivate() throws /*MappingException,*/ HibernateException, Exception {
-        Session mysession = null;
-        if (factory == null) {
-                /*
-            AnnotationConfiguration configuration = new AnnotationConfiguration();
-            factory = configuration.configure().buildSessionFactory();*/
-                /*
-                Configuration configuration = new Configuration().configure();
-                StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-                                applySettings(configuration.getProperties());
-                factory = configuration.buildSessionFactory(builder.build());
-                */
-            Configuration configuration = new Configuration().configure();
-            String connectionUrl = System.getProperty("connection.url");
-            if (connectionUrl != null) {
-                configuration.setProperty("connection.url", connectionUrl);
-                configuration.setProperty("hibernate.connection.url", connectionUrl);
-            }
-            factory = configuration.buildSessionFactory();
-                //factory = new Configuration().configure().buildSessionFactory();
-            //Object o = new net.sf.ehcache.hibernate.EhCacheRegionFactory();
+    public void commit() throws HibernateException, Exception {
+        log.debug("Doing hibernate commit");
+        if (transactionWrite != null) {
+            transactionWrite.commit();
+            transactionWrite = null;
         }
-
-        if (mysession == null) {
-            //Session sess = factory.openSession();
-            mysession = factory.getCurrentSession();
+        if (sessionWrite != null && sessionWrite.isOpen()) {
+            sessionWrite.close();
+            sessionWrite = null;
         }
-
-        if (mysession != null) {
-            if (!mysession.isOpen()) {
-                mysession = factory.openSession();
-            }
-        }
-
-        return mysession;
     }
 
-    public static void commit() throws /*MappingException,*/ HibernateException, Exception {
-	log.info("Doing hibernate commit");
-	if (transaction != null) {
-	transaction.commit();
-	transaction = null;
-	}
-	if (session != null && session.isOpen()) {
-	    session.close();
-	session = null;
-	}
+    public <T> List<T> get(Query<T> query) throws Exception {
+        synchronized (sessionRead) {
+            long time = System.currentTimeMillis();
+            List<T> list = query.list();
+            transactionRead.commit();
+            String queryString = query.getQueryString();
+            log.info("Db time {}s size {} for {} ", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), list.size(), queryString.substring(0, Math.min(queryString.length(), 32)));
+            return list;
+        }
     }
 
-    public static <T> List<T> convert(List l, Class<T> type) {
-        return (List<T>)l;
+    public <T> List<T> get(String queryString) throws Exception {
+        Query<T> query = sessionRead.createQuery(queryString);
+        return get(query);
     }
 
+    public void save(Object object) {
+        sessionWrite.save(object);
+    }
+
+    public <T> T get(Class aClass, Serializable id) throws HibernateException, Exception {
+        synchronized (sessionRead) {
+            T result = (T) sessionRead.get(aClass, id);
+            transactionRead.commit();
+            return result;
+        }
+    }
 }

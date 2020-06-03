@@ -12,7 +12,17 @@
   <version>0.5-SNAPSHOT</version>
   <name>Stock Statistics Common Database</name>
   <dependencies>
-    <dependency>
+     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-constants</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-util</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+  	<dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>

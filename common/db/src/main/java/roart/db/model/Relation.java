@@ -18,6 +18,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.query.Query;
 
 @Entity
 @Table(name = "Relation")
@@ -131,47 +132,30 @@ public class Relation implements Serializable {
 
     @Transient
     @Transactional
-    public static Relation ensureExistence() throws Exception {
+    public static Relation ensureExistence(HibernateUtil hu) throws Exception {
         Relation fi = new Relation();
-        HibernateUtil.currentSession().save(fi);
+        hu.save(fi);
         return fi;
     }
 
     @Transient
     @Transactional
     public static List<Relation> getAll() throws Exception {
-	List<Relation> list = null;
-        Session session = HibernateUtil.getMyHibernateSession();
-	synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        list = session.createQuery("from Relation").list();
-        transaction.commit();
-	}
-        return list;
+        return new HibernateUtil(false).get("from Relation");
     }
 
     @Transient
     @Transactional
     public static List<Relation> getAll(String mymarket) throws Exception {
-	List<Relation> list = null;
-        Session session = HibernateUtil.getMyHibernateSession();
-	synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        list = session.createQuery("from Relation where market = :mymarket").setParameter("mymarket",  mymarket).list();
-        transaction.commit();
-	}
-        return list;
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<Relation> query = hu.createQuery("from Relation where market = :mymarket").setParameter("mymarket",  mymarket);
+        return hu.get(query);
     }
 
     @Transient
     @Transactional
     public void save() throws Exception {
-        Session session = HibernateUtil.getMyHibernateSession();
-        synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        session.save(this);
-        transaction.commit();
-        }
+        new HibernateUtil(false).save(this);
     }
 
 }
