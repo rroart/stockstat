@@ -1,4 +1,5 @@
 export ICLIJTMPL=config/icore/iclij.xml.tmpl
+export POPULATE=false
 export FUTUREDAYS="[10]"
 export THRESHOLD="[ 1.0 ]"
 export SPARK=false
