@@ -133,7 +133,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     if (tfpn.equals(Constants.TP) || tfpn.equals(Constants.FN)) {
                         increase = true;
                         //IncDecItem incdec = mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder2(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), date, param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        IncDecItem incdec = mapAdder2(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }
@@ -141,7 +141,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
                     if (tfpn.equals(Constants.TN) || tfpn.equals(Constants.FP)) {
                         increase = false;
                         //IncDecItem incdec = mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder2(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), date, param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        IncDecItem incdec = mapAdder2(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), date, mltest.getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }
