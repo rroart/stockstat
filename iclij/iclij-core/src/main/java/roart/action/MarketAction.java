@@ -291,12 +291,24 @@ public abstract class MarketAction extends Action {
     protected static final int AVERAGE_SIZE = 5;
 
     private List<MarketComponentTime> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings) {
+        List<MLMetricsItem> mltests = null;
+        try {
+            mltests = IclijDbDao.getAllMLMetrics(market.getConfig().getMarket(), null, null);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         List<MarketComponentTime> marketTimes = new ArrayList<>();
         String marketName = market.getConfig().getMarket();
+        Double confidence = market.getFilter().getConfidence();
 
         //= ServiceUtil.getFindProfitComponents(config);
         for (Entry<String, Component> entry : componentMapFiltered.entrySet()) {
             String componentName = entry.getKey();
+            boolean skipComponent = getSkipComponent(mltests, confidence, componentName);
+            if (skipComponent) {
+                log.info("Skipping component {}", componentName);
+                continue;
+            }
             Component component = entry.getValue();
             boolean evolve = getEvolve(component, param);
 
@@ -304,6 +316,11 @@ public abstract class MarketAction extends Action {
             Integer[] futuredays = getFuturedays(param.getInput().getConfig());
             List<String> subComponents = component.getConfig().getSubComponents(market, param.getInput().getConfig(), null);
             for(String subComponent : subComponents) {
+                boolean skipSubcomponent = getSkipSubComponent(mltests, confidence, componentName, subComponent);
+                if (skipSubcomponent) {
+                    log.info("Skipping component subcomponent {} {}", componentName, subComponent);
+                    continue;
+                }
                 for (Integer aFutureday : futuredays) {
                     for (Double threshold : thresholds) {
                         Parameters parameters = new Parameters();
@@ -347,6 +364,15 @@ public abstract class MarketAction extends Action {
         return marketTimes;
     }
 
+    protected boolean getSkipComponent(List<MLMetricsItem> mltests, Double confidence, String componentName) {
+        return false;
+    }
+    
+    protected boolean getSkipSubComponent(List<MLMetricsItem> mltests, Double confidence, String componentName,
+            String subComponent) {
+        return false;
+    }
+    
     private void handleFilterTimings(String action, Market market, MarketComponentTime marketTime,
             String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date, Boolean buy, List<TimingItem> timings, String subComponent, Parameters parameters) {
         if (!filterTimings.isEmpty()) {
@@ -531,7 +557,7 @@ public abstract class MarketAction extends Action {
         return returnedMLMetrics;
     }
 
-    private Map<Pair<String, String>, List<MLMetricsItem>> getMLMetrics(List<MLMetricsItem> mltests, Double confidence) {
+    protected Map<Pair<String, String>, List<MLMetricsItem>> getMLMetrics(List<MLMetricsItem> mltests, Double confidence) {
         List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
         for (MLMetricsItem test : mltests) {
             addNewest(returnedMLMetrics, test, 0.0);
@@ -542,6 +568,48 @@ public abstract class MarketAction extends Action {
             new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
         }
         return moreReturnedMLMetrics;
+    }
+
+    protected Map<String, List<MLMetricsItem>> getMLMetrics2(List<MLMetricsItem> mltests, Double confidence) {
+        List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
+        for (MLMetricsItem test : mltests) {
+            addNewest(returnedMLMetrics, test, 0.0);
+        }
+        Map<String, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
+        for (MLMetricsItem metric : returnedMLMetrics) {
+            String key = metric.getComponent();
+            new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
+        }
+        return moreReturnedMLMetrics;
+    }
+
+    private void addNewest(List<MLMetricsItem> mlTests, MLMetricsItem test, Double confidence) {
+        if (test.getTestAccuracy() == null || test.getTestAccuracy() < confidence) {
+            return;
+        }
+        if (test.getThreshold() == null || test.getThreshold() != 1.0) {
+            return;
+        }
+        MLMetricsItem replace = null;
+        for (MLMetricsItem aTest : mlTests) {
+            Boolean moregeneralthan = aTest.moreGeneralThan(test);
+            // we don't need this anymore
+            if (false && moregeneralthan != null && moregeneralthan) {
+                replace = aTest;
+                break;
+            }
+            Boolean olderthan = aTest.olderThan(test);
+            if (olderthan != null && olderthan) {
+                replace = aTest;
+                break;
+            }
+        }
+        if (replace != null) {
+            int index = mlTests.indexOf(replace);
+            mlTests.set(index, test);
+            return;
+        }
+        mlTests.add(test);
     }
 
     protected void getListComponents(WebData myData, ComponentData param, IclijConfig config,

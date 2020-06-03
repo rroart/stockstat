@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
@@ -359,6 +360,29 @@ public class FindProfitAction extends MarketAction {
         myData.getIncs().addAll(profitdata.getBuys().values());
         myData.getDecs().addAll(profitdata.getSells().values());
         return myData;
+    }
+
+    @Override
+    protected boolean getSkipComponent(List<MLMetricsItem> mltests, Double confidence, String componentName) {
+        Map<String, List<MLMetricsItem>> metricsMap = getMLMetrics2(mltests, null);
+        List<MLMetricsItem> metricsList = metricsMap.get(componentName);
+        if (metricsList == null) {
+            return false;
+        }
+        boolean skipComponent = metricsList.stream().allMatch(e -> e.getTestAccuracy() < confidence);
+        return skipComponent;
+    }
+
+    @Override
+    protected boolean getSkipSubComponent(List<MLMetricsItem> mltests, Double confidence, String componentName,
+            String subComponent) {
+        Map<Pair<String, String>, List<MLMetricsItem>> metricsMap2 = getMLMetrics(mltests, null);
+        List<MLMetricsItem> metricsList2 = metricsMap2.get(new ImmutablePair(componentName, subComponent));
+        if (metricsList2 == null) {
+            return false;
+        }        
+        boolean skipSubcomponent = metricsList2.stream().allMatch(e -> e.getTestAccuracy() < confidence);
+        return skipSubcomponent;
     }
 
 }
