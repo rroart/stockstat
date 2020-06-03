@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,17 +27,24 @@ public class PopulateThread extends Thread {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void run() {
+        try {
+            TimeUnit.SECONDS.sleep(30);
+        } catch (InterruptedException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         if (instance.populate()) {
             List<Market> markets = new MarketUtil().getMarkets(false);
             for (Market market : markets) {
+                IclijConfig config = new IclijConfig(instance);
+                config.setMarket(market.getConfig().getMarket());
                 Short populate = market.getConfig().getPopulate();
                 if (populate == null) {
                     continue;
                 }
                 ComponentData param = null;
                 try {
-                    param = ComponentData.getParam(new ComponentInput(instance, null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0);
+                    param = ComponentData.getParam(new ComponentInput(config, null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -60,9 +68,10 @@ public class PopulateThread extends Thread {
                         log.error(Constants.EXCEPTION, e);
                     }
                     if (incdecitems == null || incdecitems.isEmpty()) {
-                        ComponentInput componentInput = new ComponentInput(instance, null, null, currentDate, null, true, false, new ArrayList<>(), new HashMap<>());
+                        config.setDate(currentDate);
+                        ComponentInput componentInput = new ComponentInput(config, null, null, currentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                         ServiceUtil.getFindProfit(componentInput);
-                        if (instance.getFindProfitMemoryFilter()) {
+                        if (config.getFindProfitMemoryFilter()) {
                             ServiceUtil.getImproveAboveBelow(componentInput);
                         }
                     }
