@@ -18,7 +18,7 @@ public class FindProfitActionData extends MarketActionData {
     
     @Override
     public Boolean[] getBooleans() {
-        return new Boolean[] { true, false };
+        return new Boolean[] { null };
     }
     
     @Override
