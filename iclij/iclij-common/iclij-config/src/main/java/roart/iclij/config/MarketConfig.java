@@ -31,6 +31,8 @@ public class MarketConfig {
     
     private String[] mlmarkets;
     
+    private Short populate;
+    
     public MarketConfig() {
         super();
     }
@@ -153,6 +155,14 @@ public class MarketConfig {
 
     public void setMlmarkets(String[] mlmarkets) {
         this.mlmarkets = mlmarkets;
+    }
+
+    public Short getPopulate() {
+        return populate;
+    }
+
+    public void setPopulate(Short populate) {
+        this.populate = populate;
     }
 
 }

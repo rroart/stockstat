@@ -85,4 +85,9 @@ public class MarketUtil {
         return marketMemory;
     }
 
+    public short getStartoffset(Market market) {
+        Short startoffset = market.getConfig().getStartoffset();
+        return startoffset != null ? startoffset : 0;
+    }
+
 }

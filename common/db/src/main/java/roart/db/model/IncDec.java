@@ -6,6 +6,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.query.Query;
 
+import roart.db.thread.Queues;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -177,37 +179,20 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     @Transient
     @Transactional
     public static List<IncDec> getAll() throws Exception {
-	List<IncDec> list = null;
-        Session session = HibernateUtil.getMyHibernateSession();
-	synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        list = session.createQuery("from IncDec").list();
-        transaction.commit();
-	}
-        return list;
+	return new HibernateUtil(false).get("from IncDec");
     }
 
     @Transient
     @Transactional
     public static List<IncDec> getAll(String mymarket) throws Exception {
-	List<IncDec> list = null;
-	Session session = HibernateUtil.getMyHibernateSession();
-	synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        list = session.createQuery("from IncDec where market = :mymarket").setParameter("mymarket",  mymarket).list();
-        transaction.commit();
-	}
-        return list;
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<IncDec> query = hu.createQuery("from IncDec where market = :mymarket").setParameter("mymarket",  mymarket);
+        return hu.get(query);
     }
 
     @Transient
     @Transactional
     public static List<IncDec> getAll(String market, Date startDate, Date endDate, String parameters) throws Exception {
-        List<IncDec> list = null;
-        Session session = HibernateUtil.getMyHibernateSession();
-        synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        //String queryString = "from Memory where market = :market and action = :action and component = :component";
         String queryString = "from IncDec where market = :market";
         if (startDate != null) {
             queryString += " and date >= :startdate";
@@ -215,7 +200,8 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
         if (endDate != null) {
             queryString += " and date <= :enddate";
         }
-        Query query = session.createQuery(queryString);
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<IncDec> query = hu.createQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
         if (startDate != null) {
@@ -227,21 +213,13 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
         if (parameters != null) {
             query.setParameter("parameters", parameters);
         }
-        list = query.list();
-        transaction.commit();
-        }
-        return list;
+        return hu.get(query);
     }
 
     @Transient
     @Transactional
     public void save() throws Exception {
-        Session session = HibernateUtil.getMyHibernateSession();
-	synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        session.save(this);
-        transaction.commit();
-	}
+        Queues.queue.add(this);
     }
 
 }

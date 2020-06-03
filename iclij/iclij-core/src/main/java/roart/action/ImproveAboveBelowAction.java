@@ -38,8 +38,9 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ImproveAboveBelowActionData;
+import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
-import roart.iclij.util.VerifyProfitUtil;
+import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 
@@ -112,6 +113,13 @@ public class ImproveAboveBelowAction extends MarketAction {
         int verificationdays = param.getInput().getConfig().verificationDays();
         param.getInput().setDoSave(false);
 
+        try {
+            param.setFuturedays(0);
+            param.setOffset(0);
+            param.setDates(null, null, action.getActionData(), market);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         //List<MemoryItem> memories = findAllMarketComponentsToCheckNew(myData, param, 0, config, false, dataMap, componentMap, subcomponent, parameters, market);
         
         for (Entry<String, Component> entry : componentMap.entrySet()) {
@@ -132,20 +140,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            LocalDate date = param.getInput().getEnddate();
-            String aDate = TimeUtil.convertDate2(date);
-            int index = TimeUtil.getIndexEqualBefore(stockDates, aDate);
-            int indexoffset = index - verificationdays;
-            if (indexoffset < 0) {
-                continue;
-            }
-            aDate = stockDates.get(indexoffset);
-            try {
-                date = TimeUtil.convertDate(aDate);
-            } catch (ParseException e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-            List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime());
+            List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(param.getFutureDate(), allIncDecs, market, market.getConfig().getFindtime());
             List<String> parametersList = new MiscUtil().getParameters(incdecs);
             for (String aParameter : parametersList) {
                 List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
@@ -166,9 +161,8 @@ public class ImproveAboveBelowAction extends MarketAction {
                     myincs = new MiscUtil().mergeList(myincs, true);
                     mydecs = new MiscUtil().mergeList(mydecs, true);
                     List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
-                    Short mystartoffset = market.getConfig().getStartoffset();
-                    short startoffset = mystartoffset != null ? mystartoffset : 0;
-                    new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, 0);
+                    short startoffset = new MarketUtil().getStartoffset(market);
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param, stockDates, market);
                     score = fit.fitness(myincs, mydecs, myincdec);
 
                     {

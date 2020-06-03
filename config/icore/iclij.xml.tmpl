@@ -1,6 +1,7 @@
 <config>
   <misc>
     <shutdownhour>24</shutdownhour>
+    <populate enable="$POPULATE"/>
   </misc>
   <mp>
     <server>
@@ -88,8 +89,8 @@
   </improvefilter>
   <improveabovebelow priority="15">
     <autorun enable="$IMPROVEABOVEBELOW"/>
-    <evolutionconfig>{ "generations" : 10 }</evolutionconfig>
-    <!--evolutionconfig>{ "generations" : 10, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 4, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig-->
+    <evolutionconfig>{ "generations" : 2, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
+    <fitnessminimum>5</fitnessminimum>
   </improveabovebelow>
   <machinelearning priority="0">
     <autorun enable="$ML"/>
@@ -147,11 +148,9 @@
   </filter>
   <singlemarket>
     <loops>5</loops>
-    <loopinterval>20</loopinterval>
   </singlemarket>
   <verification>
     <loops>5</loops>
-    <loopinterval>20</loopinterval>
     <days>10</days>
     <improveprofit enable='false'/>
     <!--recommender>

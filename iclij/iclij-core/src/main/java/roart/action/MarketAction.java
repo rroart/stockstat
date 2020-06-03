@@ -62,7 +62,7 @@ import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
-import roart.iclij.util.VerifyProfitUtil;
+import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.util.ServiceUtil;
 
 public abstract class MarketAction extends Action {
@@ -76,6 +76,16 @@ public abstract class MarketAction extends Action {
     protected abstract List getAnArray();
 
     protected abstract Boolean getBool();
+
+    private Action parent;
+    
+    public Action getParent() {
+        return parent;
+    }
+
+    public void setParent(Action parent) {
+        this.parent = parent;
+    }
 
     public String getName() {
         return getActionData().getName();
@@ -104,7 +114,7 @@ public abstract class MarketAction extends Action {
     
     @Override
     public void goal(Action parent, ComponentData param, Integer priority) {
-        getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, 0, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
+        getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
     }
 
     public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve, Integer priority) {
@@ -139,6 +149,7 @@ public abstract class MarketAction extends Action {
         // remember and make confidence
         // memory is with date, confidence %, inc/dec, semantic item
         // find recommended picks
+        this.parent = parent;
         WebData myData = new WebData();
         myData.setIncs(new ArrayList<>());
         myData.setDecs(new ArrayList<>());
@@ -175,6 +186,13 @@ public abstract class MarketAction extends Action {
                 if (stockDates == null || stockDates.isEmpty()) {
                     continue;
                 }
+                /*
+                try {
+                    param.setDates(null, stockDates, this.getActionData(), market);
+                } catch (ParseException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+                */
             }
             componentDataMap.put(marketName, param);
             LocalDate olddate = param.getInput().getEnddate();
@@ -273,12 +291,24 @@ public abstract class MarketAction extends Action {
     protected static final int AVERAGE_SIZE = 5;
 
     private List<MarketComponentTime> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings) {
+        List<MLMetricsItem> mltests = null;
+        try {
+            mltests = IclijDbDao.getAllMLMetrics(market.getConfig().getMarket(), null, null);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         List<MarketComponentTime> marketTimes = new ArrayList<>();
         String marketName = market.getConfig().getMarket();
+        Double confidence = market.getFilter().getConfidence();
 
         //= ServiceUtil.getFindProfitComponents(config);
         for (Entry<String, Component> entry : componentMapFiltered.entrySet()) {
             String componentName = entry.getKey();
+            boolean skipComponent = getSkipComponent(mltests, confidence, componentName);
+            if (skipComponent) {
+                log.info("Skipping component {}", componentName);
+                continue;
+            }
             Component component = entry.getValue();
             boolean evolve = getEvolve(component, param);
 
@@ -286,6 +316,11 @@ public abstract class MarketAction extends Action {
             Integer[] futuredays = getFuturedays(param.getInput().getConfig());
             List<String> subComponents = component.getConfig().getSubComponents(market, param.getInput().getConfig(), null);
             for(String subComponent : subComponents) {
+                boolean skipSubcomponent = getSkipSubComponent(mltests, confidence, componentName, subComponent);
+                if (skipSubcomponent) {
+                    log.info("Skipping component subcomponent {} {}", componentName, subComponent);
+                    continue;
+                }
                 for (Integer aFutureday : futuredays) {
                     for (Double threshold : thresholds) {
                         Parameters parameters = new Parameters();
@@ -329,6 +364,15 @@ public abstract class MarketAction extends Action {
         return marketTimes;
     }
 
+    protected boolean getSkipComponent(List<MLMetricsItem> mltests, Double confidence, String componentName) {
+        return false;
+    }
+    
+    protected boolean getSkipSubComponent(List<MLMetricsItem> mltests, Double confidence, String componentName,
+            String subComponent) {
+        return false;
+    }
+    
     private void handleFilterTimings(String action, Market market, MarketComponentTime marketTime,
             String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date, Boolean buy, List<TimingItem> timings, String subComponent, Parameters parameters) {
         if (!filterTimings.isEmpty()) {
@@ -513,6 +557,32 @@ public abstract class MarketAction extends Action {
         return returnedMLMetrics;
     }
 
+    protected Map<Pair<String, String>, List<MLMetricsItem>> getMLMetrics(List<MLMetricsItem> mltests, Double confidence) {
+        List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
+        for (MLMetricsItem test : mltests) {
+            addNewest(returnedMLMetrics, test, 0.0);
+        }
+        Map<Pair<String, String>, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
+        for (MLMetricsItem metric : returnedMLMetrics) {
+            Pair key = new ImmutablePair(metric.getComponent(), metric.getSubcomponent());
+            new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
+        }
+        return moreReturnedMLMetrics;
+    }
+
+    protected Map<String, List<MLMetricsItem>> getMLMetrics2(List<MLMetricsItem> mltests, Double confidence) {
+        List<MLMetricsItem> returnedMLMetrics = new ArrayList<>();
+        for (MLMetricsItem test : mltests) {
+            addNewest(returnedMLMetrics, test, 0.0);
+        }
+        Map<String, List<MLMetricsItem>> moreReturnedMLMetrics = new HashMap<>();
+        for (MLMetricsItem metric : returnedMLMetrics) {
+            String key = metric.getComponent();
+            new MiscUtil().listGetterAdder(moreReturnedMLMetrics, key, metric);  
+        }
+        return moreReturnedMLMetrics;
+    }
+
     private void addNewest(List<MLMetricsItem> mlTests, MLMetricsItem test, Double confidence) {
         if (test.getTestAccuracy() == null || test.getTestAccuracy() < confidence) {
             return;
@@ -604,9 +674,8 @@ public abstract class MarketAction extends Action {
         List<IncDecItem> incdecsL = mylocals;
         List<IncDecItem> myincs = mylocals.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
         List<IncDecItem> mydecs = mylocals.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
-        Short mystartoffset = market.getConfig().getStartoffset();
-        short startoffset = mystartoffset != null ? mystartoffset : 0;
-        new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), stockDates, 0);
+        short startoffset = new MarketUtil().getStartoffset(market);
+        new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), param, stockDates, market);
 
         //List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market));
         // or make a new object instead of the object array. use this as a pair
@@ -784,6 +853,7 @@ public abstract class MarketAction extends Action {
                 if (days != null) {
                     if (days == 0) {
                         int year = param.getInput().getEnddate().getYear();
+                        year = param.getFutureDate().getYear();
                         List<String> yearDates = new ArrayList<>();
                         for (String date : dates) {
                             int aYear = Integer.valueOf(date.substring(0, 4));

@@ -49,6 +49,8 @@ public class Main {
     private static final String FIELD = "\\\"([^\\\"]+)\\\":";
     private static final String ILLEGAL_CHARS = "(i?)([^\\s=\"'a-zA-Z0-9._-])";
 
+    private static HibernateUtil hu = new HibernateUtil(false);
+
     public static void main(String[] argv) {
         try {
             File file = new File(argv[0]);
@@ -91,7 +93,7 @@ public class Main {
                 Path path = Paths.get(filename);
                 Files.write(path, xmlOutput.getWriter().toString().getBytes());
             }
-            HibernateUtil.commit();
+            hu.commit();
             System.out.println("Added for length " + nl.getLength());
         } catch (Exception e) {
             System.out.println("Exception " +e);
@@ -305,7 +307,7 @@ public class Main {
             }
 
             String dbid = marketid + "_" + id + "_" + adatestr;
-            Stock stock = Stock.ensureExistence(dbid);
+            Stock stock = Stock.ensureExistence(dbid, hu);
             stock.setId(id);
             stock.setIsin(isin);
             stock.setMarketid(marketid);
@@ -443,7 +445,7 @@ public class Main {
             if (valueElem != null) {
                 value = reformat(valueElem.getTextContent());
             }
-            Relation relation = Relation.ensureExistence();
+            Relation relation = Relation.ensureExistence(hu);
             if (altid == null || altid.equals("-")) {
                 relation.setAltId(null);
             } else {
@@ -556,7 +558,7 @@ public class Main {
             if (lhcElem != null) {
                 lhc = reformat(lhcElem.getTextContent());
             }            
-            Meta meta = Meta.ensureExistence(marketid);
+            Meta meta = Meta.ensureExistence(marketid, hu);
             if (period1 == null || period1.equals("-")) {
                 meta.setPeriod1(null);
             } else {

@@ -22,6 +22,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.query.Query;
 
+import roart.db.thread.Queues;
+
 @Entity
 @Table(name = "Memory")
 @org.hibernate.annotations.Table(appliesTo = "Memory")
@@ -544,48 +546,26 @@ public class Memory implements Serializable {
     @Transient
     @Transactional
     public static List<Memory> getAll() throws Exception {
-	List<Memory> list = null;
-        Session session = HibernateUtil.getMyHibernateSession();
-	synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        list = session.createQuery("from Memory").list();
-        transaction.commit();
-	}
-        return list;
+	return new HibernateUtil(false).get("from Memory");
     }
 
     @Transient
     @Transactional
     public static List<Memory> getAll(String mymarket) throws Exception {
-	List<Memory> list = null;
-        Session session = HibernateUtil.getMyHibernateSession();
-	synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        list = session.createQuery("from Memory where market = :mymarket").setParameter("mymarket",  mymarket).list();
-        transaction.commit();
-	}
-        return list;
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<Memory> query = hu.createQuery("from Memory where market = :mymarket").setParameter("mymarket",  mymarket);
+        return hu.get(query);
     }
 
     @Transient
     @Transactional
     public void save() throws Exception {
-        Session session = HibernateUtil.getMyHibernateSession();
-	synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        session.save(this);
-        transaction.commit();
-	}
+        Queues.queue.add(this);
     }
 
     @Transient
     @Transactional
     public static List<Memory> getAll(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) throws Exception {
-        List<Memory> list = null;
-        Session session = HibernateUtil.getMyHibernateSession();
-        synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        //String queryString = "from Memory where market = :market and action = :action and component = :component";
         String queryString = "from Memory where market = :market";
         if (component != null) {
             queryString += " and component = :component";
@@ -602,7 +582,8 @@ public class Memory implements Serializable {
         if (endDate != null) {
             queryString += " and date <= :enddate";
         }
-        Query query = session.createQuery(queryString);
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<Memory> query = hu.createQuery(queryString);
         query.setParameter("market", market);
         //query.setParameter("action", action);
         if (component != null) {
@@ -620,10 +601,7 @@ public class Memory implements Serializable {
         if (endDate != null) {
             query.setParameter("enddate", endDate, TemporalType.DATE);
         }
-        list = query.list();
-        transaction.commit();
-        }
-        return list;
+        return hu.get(query);
     }
 
     public String getDescription() {

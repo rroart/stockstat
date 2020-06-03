@@ -36,7 +36,6 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
-import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLIndicatorData;
@@ -114,7 +113,7 @@ public abstract class Component {
 
     public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         try {
-            param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
+            param.setDates(null, null, action.getActionData(), market);
         } catch (ParseException e) {
             log.error(Constants.EXCEPTION, e);
         } catch (IndexOutOfBoundsException e) {
@@ -156,7 +155,7 @@ public abstract class Component {
                         description = scoreMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics().toString();
                     }
                 }
-                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters);
+                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters, action.getParent() != null);
                 param.getTimings().add(timing);
            }
         }
@@ -203,7 +202,7 @@ public abstract class Component {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
-            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent, mlmarket, description, parameters);
+            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent, mlmarket, description, parameters, action.getParent() != null);
             param.getTimings().add(timing);
         }
     }
@@ -223,7 +222,7 @@ public abstract class Component {
         log.info("Disable {}", disableML);
     }
 
-    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description, Parameters parameters) {
+    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description, Parameters parameters, boolean save) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setBuy(buy);
@@ -239,7 +238,7 @@ public abstract class Component {
         timing.setParameters(JsonUtil.convert(parameters));
         timing.setDescription(description);
         try {
-            if (true || param.isDoSave()) {
+            if (save) {
                 timing.save();
             }
             return timing;
@@ -307,7 +306,7 @@ public abstract class Component {
             param.setScoreMap(scoreMap);
             param.setFutureDate(LocalDate.now());
             // fix mlmarket;
-            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null);
+            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);
         } catch (Exception e) {
@@ -457,7 +456,7 @@ public abstract class Component {
                 evolutionConfig, getPipeline());
         try {
             // fix mlmarket;
-            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null);
+            TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);
         } catch (Exception e) {
@@ -510,6 +509,35 @@ public abstract class Component {
             val.setScore(0.0);
             val.setSubcomponent(subcomponent);
             map.put(key, val);
+        }
+        val.setScore(val.getScore() + add);
+        String component = getPipeline();
+        component = component != null ? component.substring(0, 3) : "";
+        val.setDescription(val.getDescription() + component + " " + subcomponent + " " + localcomponent + ", ");
+        if (val.getLocalcomponent() == null || localcomponent == null) {
+            int jj = 0;
+        }
+        val.setLocalcomponent(val.getLocalcomponent().isEmpty() ? localcomponent : val.getLocalcomponent() + " " + localcomponent);
+        return val;
+    }
+
+    protected IncDecItem mapAdder2(Map<String, IncDecItem> map, String key, Double add, Map<String, String> nameMap, LocalDate date, String market, String subcomponent, String localcomponent, String parameters) {
+        String newkey = key + date;
+        IncDecItem val = map.get(newkey);
+        if (val == null) {
+            val = new IncDecItem();
+            val.setRecord(LocalDate.now());
+            val.setDate(date);
+            val.setId(key);
+            val.setComponent(getPipeline());
+            val.setLocalcomponent("");
+            val.setMarket(market);
+            val.setDescription("");
+            val.setName(nameMap.get(key));
+            val.setParameters(parameters);
+            val.setScore(0.0);
+            val.setSubcomponent(subcomponent);
+            map.put(newkey, val);
         }
         val.setScore(val.getScore() + add);
         String component = getPipeline();

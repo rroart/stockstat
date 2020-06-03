@@ -32,7 +32,7 @@ public class DbHibernate {
 			StockItem stockItem = new StockItem(stock.getDbid(), stock.getMarketid(), stock.getId(), stock.getIsin(), stock.getName(), stock.getDate(), stock.getIndexvalue(), stock.getIndexvaluelow(), stock.getIndexvaluehigh(), stock.getPrice(), stock.getPricelow(), stock.getPricehigh(), stock.getVolume(), stock.getCurrency(), stock.getPeriod1(), stock.getPeriod2(), stock.getPeriod3(), stock.getPeriod4(), stock.getPeriod5(), stock.getPeriod6(), stock.getPeriod7(), stock.getPeriod8(), stock.getPeriod9());
 			stockitems.add(stockItem);
 		}
-		log.info("time0 " + (System.currentTimeMillis() - time0));
+		log.info("time0 {}", (System.currentTimeMillis() - time0));
 		return stockitems;
     }
 
