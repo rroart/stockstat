@@ -1,5 +1,5 @@
 #!/bin/bash
-rm iclij/iclij-weba/.env
+rm -f iclij/iclij-weba/.env
 echo MYSERVER=$MYSERVER >> iclij/iclij-weba/.env
 echo MYPORT=$MYPORT >> iclij/iclij-weba/.env
 echo MYISERVER=$MYISERVER >> iclij/iclij-weba/.env

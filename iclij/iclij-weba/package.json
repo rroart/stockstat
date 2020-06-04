@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "config": "ts-node ./scripts/createmyenv.ts",  
+    "config": "ts-node ./scripts/createmyenv.ts",
     "start": "npm run config && ng serve --port 18185",
     "docker-start": "npm run config && ng serve  --host 0.0.0.0 --port 18185",
     "build": "npm run config && ng build",
