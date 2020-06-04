@@ -1,29 +1,5 @@
 package roart;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.parsers.DocumentBuilder;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
-import roart.db.model.HibernateUtil;
-import roart.db.model.Meta;
-import roart.db.model.Relation;
-import roart.db.model.Stock;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,16 +12,44 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+import roart.db.model.HibernateUtil;
+import roart.db.model.Meta;
+import roart.db.model.Relation;
+import roart.db.model.Stock;
+
 public class Main {
 
     private static final String FIELD = "\\\"([^\\\"]+)\\\":";
     private static final String ILLEGAL_CHARS = "(i?)([^\\s=\"'a-zA-Z0-9._-])";
+
+    private static HibernateUtil hu = new HibernateUtil(false);
 
     public static void main(String[] argv) {
         try {
@@ -89,7 +93,7 @@ public class Main {
                 Path path = Paths.get(filename);
                 Files.write(path, xmlOutput.getWriter().toString().getBytes());
             }
-            HibernateUtil.commit();
+            hu.commit();
             System.out.println("Added for length " + nl.getLength());
         } catch (Exception e) {
             System.out.println("Exception " +e);
@@ -139,7 +143,14 @@ public class Main {
                     //json = json.replaceAll("\\\"\\/([^\\\"]+)\\\":","\\\"$1\\\":");
                 }
                 //System.out.println(json.substring(0,10));
+                json = json.replaceAll("<a href=[^<]*>", "");
+                try {
                 jsonNode = mapper.readTree(json);
+                } catch (Exception e) {
+                    System.out.println("Exception " + e);
+                    e.printStackTrace();
+                    Files.write(Paths.get("/tmp/error" + LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() + ".txt"), json.getBytes());
+                }
                 XmlMapper xmlMapper = new XmlMapper();
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
                 //xmlMapper.writeValue(new File("/tmp/b.xml"), jsonNode);
@@ -296,7 +307,7 @@ public class Main {
             }
 
             String dbid = marketid + "_" + id + "_" + adatestr;
-            Stock stock = Stock.ensureExistence(dbid);
+            Stock stock = Stock.ensureExistence(dbid, hu);
             stock.setId(id);
             stock.setIsin(isin);
             stock.setMarketid(marketid);
@@ -434,7 +445,7 @@ public class Main {
             if (valueElem != null) {
                 value = reformat(valueElem.getTextContent());
             }
-            Relation relation = Relation.ensureExistence();
+            Relation relation = Relation.ensureExistence(hu);
             if (altid == null || altid.equals("-")) {
                 relation.setAltId(null);
             } else {
@@ -547,7 +558,7 @@ public class Main {
             if (lhcElem != null) {
                 lhc = reformat(lhcElem.getTextContent());
             }            
-            Meta meta = Meta.ensureExistence(marketid);
+            Meta meta = Meta.ensureExistence(marketid, hu);
             if (period1 == null || period1.equals("-")) {
                 meta.setPeriod1(null);
             } else {

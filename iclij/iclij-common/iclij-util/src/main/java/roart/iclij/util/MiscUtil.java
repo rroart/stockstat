@@ -42,7 +42,10 @@ public class MiscUtil {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    // ?
+    @Deprecated
     public boolean getEvolve(int verificationdays, ComponentInput componentInput) {
+        if (true) return true;
         Boolean evolvefirst;
         if (verificationdays > 0) {
             evolvefirst = componentInput.getConfig().verificationEvolveFirstOnly();

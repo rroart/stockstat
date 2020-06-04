@@ -1,12 +1,8 @@
 package roart.db.model;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-//import org.hibernate.annotations.Index;
-
-
-
-
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,11 +11,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
-import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+//import org.hibernate.annotations.Index;
+import org.hibernate.query.Query;
 
 @Entity
 @Table(name = "Stock")
@@ -276,12 +271,12 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
 
     @Transient
     @Transactional
-    public static Stock ensureExistence(String dbid) throws Exception {
+    public static Stock ensureExistence(String dbid, HibernateUtil hu) throws Exception {
         Stock fi = getByDbid(dbid);
         if (fi == null) {
             fi = new Stock();
             fi.setDbid(dbid);
-            HibernateUtil.currentSession().save(fi);
+            hu.save(fi);
         }
         return fi;
     }
@@ -289,27 +284,27 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
     @Transient
     @Transactional
     public static Stock getByDbid(String dbid) throws Exception {
-        //return (Stock) HibernateUtil.getHibernateSession().createQuery("from Stock where dbid = :dbid").setParameter("dbid", dbid).uniqueResult();
-        // this is slower:                                                  
-        return (Stock) HibernateUtil.getHibernateSession().get(Stock.class, dbid);                                           
+        return (Stock) new HibernateUtil(false).get(Stock.class, dbid);                                           
     }
 
     @Transient
     @Transactional
     public static List<Stock> getAll() throws Exception {
-        return HibernateUtil.convert(HibernateUtil.currentSession().createQuery("from Stock").list(), Stock.class);
+        return new HibernateUtil(false).get("from Stock");
     }
 
     @Transient
     @Transactional
     public static List<String> getMarkets() throws Exception {
-        return (List<String>) HibernateUtil.getHibernateSession().createQuery("select distinct (marketid) from Stock").list() ;
+        return new HibernateUtil(false).get("select distinct (marketid) from Stock");
     }
 
     @Transient
     @Transactional
     public static List<Stock> getAll(String mymarket) throws Exception {
-        return (List<Stock>) HibernateUtil.convert(HibernateUtil.currentSession().createQuery("from Stock where marketid = :mymarket").setParameter("mymarket",  mymarket).list(), Stock.class);
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<Stock> query = hu.createQuery("from Stock where marketid = :mymarket").setParameter("mymarket",  mymarket);
+        return hu.get(query);
     }
 
 }

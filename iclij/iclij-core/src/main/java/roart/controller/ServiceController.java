@@ -57,7 +57,7 @@ public class ServiceController {
     public IclijServiceResult getFindProfitMarket(@RequestBody IclijServiceParam param)
             throws Exception {
         //MainAction.goals.add(new FindProfitAction());
-        return ServiceUtil.getFindProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getFindProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
         //Map<String, IncDecItem>[] result = new FindProfitAction().getPicks(param.getIclijConfig().getMarket(), false, param.getIclijConfig().getDate(), null, param .getIclijConfig());
        //IclijServiceResult ret = new IclijServiceResult();
        //ret.setError(error);
@@ -70,7 +70,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        return ServiceUtil.getImproveAboveBelow(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getImproveAboveBelow(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
     }
 
     @RequestMapping(value = "action/improveprofit",
@@ -79,7 +79,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        return ServiceUtil.getImproveProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getImproveProfit(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
     }
 
 }

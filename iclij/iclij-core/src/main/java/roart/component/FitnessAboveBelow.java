@@ -23,7 +23,6 @@ import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
-import roart.common.util.TimeUtil;
 import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
@@ -35,9 +34,10 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
+import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
-import roart.iclij.util.VerifyProfit;
-import roart.iclij.util.VerifyProfitUtil;
+import roart.iclij.verifyprofit.VerifyProfit;
+import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
@@ -141,7 +141,6 @@ public class FitnessAboveBelow extends Fitness {
         Trend incProp1 = null;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
-            boolean evolvefirst = new MiscUtil().getEvolve(verificationdays, param.getInput());
             Component component =  action.getComponentFactory().factory(componentName);
             boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
             //ProfitData profitdata = new ProfitData();
@@ -165,8 +164,7 @@ public class FitnessAboveBelow extends Fitness {
             //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
         
-            Short mystartoffset = market.getConfig().getStartoffset();
-            short startoffset = mystartoffset != null ? mystartoffset : 0;
+            short startoffset = new MarketUtil().getStartoffset(market);
             action.setValMap(param);
             VerifyProfit verify = new VerifyProfit();
             incProp1 = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
@@ -177,11 +175,11 @@ public class FitnessAboveBelow extends Fitness {
                     //param.setFuturedays(verificationdays);
                     param.setFuturedays(0);
                     param.setOffset(0);
-                    param.setDates(0, 0, TimeUtil.convertDate2(param.getInput().getEnddate()));
+                    param.setDates(null, null, action.getActionData(), market);
                 } catch (ParseException e1) {
                     log.error(Constants.EXCEPTION, e1);
                 }            
-                new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), param.getService(), param.getBaseDate(), myincs, mydecs, myincdec, startoffset, parameters.getThreshold(), stockDates, 0);
+                new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, myincdec, startoffset, parameters.getThreshold(), param, stockDates, market);
             }
         } catch (Exception e3) {
             log.error(Constants.EXCEPTION, e3);

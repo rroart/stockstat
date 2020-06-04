@@ -1,4 +1,5 @@
 export ICLIJTMPL=config/icore/iclij.xml.tmpl
+export POPULATE=false
 export FUTUREDAYS="[10]"
 export THRESHOLD="[ 1.0 ]"
 export SPARK=false
@@ -9,6 +10,7 @@ export ML=true
 export FINDPROFIT=true
 export IMPROVEPROFIT=false
 export IMPROVEFILTER=false
+export IMPROVEABOVEBELOW=false
 export EVOLVE=false
 export CROSSTEST=false
 export DATASET=false

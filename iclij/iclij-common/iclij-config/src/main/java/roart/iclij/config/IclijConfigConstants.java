@@ -108,6 +108,7 @@ public class IclijConfigConstants {
     public static final String EVOLVEFUTUREDAYS = "evolve.futuredays";
     public static final String EVOLVETHRESHOLD = "evolve.threshold";
     public static final String MISCSHUTDOWNHOUR = "misc.shutdownhour";
+    public static final String MISCPOPULATE = "misc.populate";
     public static final String MPSERVERCPU = "mp.server.cpu";
     public static final String MPCLIENTCPU = "mp.client.cpu";
     public static final String FINDPROFIT = "findprofit";

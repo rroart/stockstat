@@ -8,7 +8,6 @@
 module iclij.common.model {
     exports roart.iclij.model;
     exports roart.iclij.model.action;
-    exports roart.iclij.model.component;
     exports roart.iclij.model.config;
     exports roart.iclij.model.parse;
     exports roart.service.model;

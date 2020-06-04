@@ -17,6 +17,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.query.Query;
+
+import roart.db.thread.Queues;
 
 @Entity
 @Table(name = "Cont")
@@ -65,38 +68,21 @@ public class Cont {
     @Transient
     @Transactional
     public static List<Cont> getAll() throws Exception {
-        List<Cont> list = null;
-        Session session = HibernateUtil.getMyHibernateSession();
-        synchronized (HibernateUtil.class) {
-        //Transaction transaction = session.beginTransaction();
-        list = session.createQuery("from Cont").list();
-        //transaction.commit();
-        }
-        return list;
+        return new HibernateUtil(false).get("from Cont");
     }
 
     @Transient
     @Transactional
     public static List<Cont> getAll(String mymarket) throws Exception {
-        List<Cont> list = null;
-        Session session = HibernateUtil.getMyHibernateSession();
-        synchronized (HibernateUtil.class) {
-        //Transaction transaction = session.beginTransaction();
-        list = session.createQuery("from Cont where market = :mymarket").setParameter("mymarket",  mymarket).list();
-        //transaction.commit();
-        }
-        return list;
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<Cont> query = hu.createQuery("from Cont where market = :mymarket").setParameter("mymarket",  mymarket);
+        return hu.get(query);
     }
 
     @Transient
     @Transactional
     public void save() throws Exception {
-        Session session = HibernateUtil.getMyHibernateSessionPrivate();
-        synchronized (HibernateUtil.class) {
-        Transaction transaction = session.beginTransaction();
-        session.save(this);
-        transaction.commit();
-        }
+        Queues.queue.add(this);
     }
 
 }

@@ -14,11 +14,13 @@
   <packaging>pom</packaging>
   <name>Stock Statistics Iclij Common</name>
 <modules>
+  <module>iclij-componentdata</module>
   <module>iclij-constants</module>
   <module>iclij-config</module>
   <module>iclij-model</module>
   <module>iclij-service</module>
   <module>iclij-util</module>
+  <module>iclij-verifyprofit</module>
 </modules>
   <build>
     <plugins>

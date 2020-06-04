@@ -1,10 +1,10 @@
 package roart.model;
 
-import roart.db.model.Cont;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import roart.db.model.Cont;
 
 public class ContItem {
     private String md5;

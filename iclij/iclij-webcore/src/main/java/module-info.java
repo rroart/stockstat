@@ -21,11 +21,14 @@ module iclij.webcore {
     requires commons.math3;
     requires deductive;
     requires guava;
+    requires iclij.common.componentdata;
     requires iclij.common.config;
     requires iclij.common.constants;
     requires iclij.common.model;
     requires iclij.common.service;
     requires iclij.common.util;
+    requires iclij.common.verifyprofit;
+    requires iclij.evolutionmarketfilter;
     requires java.xml;
     requires javax.servlet.api;
     requires math;
@@ -46,7 +49,6 @@ module iclij.webcore {
     requires evolution.config;
     requires org.apache.commons.lang3;
     requires io.jenetics.base;
-    requires iclij.evolutionmarketfilter;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

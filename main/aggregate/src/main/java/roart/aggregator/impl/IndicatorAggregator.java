@@ -321,7 +321,6 @@ public abstract class IndicatorAggregator extends Aggregator {
         List<SubType> subTypes = usedSubTypes();
         AfterBeforeLimit afterbefore = getAfterBefore();
         // map from h/m + posnegcom to map<model, results>
-        int testCount = 0;
         try {
             for (SubType subType : subTypes) {
                 if (!subType.useDirectly) {
@@ -439,8 +438,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                             }
                             
                             log.info("Nowcount {}", resultMetaArray.size());
-                            handleResultMeta(testCount, offsetMap, countMap, classifyResult);
-                            testCount++;
+                            handleResultMeta(resultMetaArray.size() - 1, offsetMap, countMap, classifyResult);
+                            //testCount++;
                         }
                         mapResult1.put(model, mapResult2);
                     }

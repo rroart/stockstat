@@ -7,6 +7,7 @@ import roart.action.MarketAction;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
+import roart.component.model.DatasetData;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
@@ -30,7 +31,16 @@ public class AboveBelowComponent extends ComponentML {
     public ComponentData handle(MarketAction action, Market market, ComponentData param, ProfitData profitdata,
             Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
             Parameters parameters) {
-        return null;
+        ComponentData componentData = new ComponentData(param);
+
+        //int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
+        componentData.setFuturedays(0);
+
+        handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
+        //Map resultMaps = param.getResultMap();
+        //handleMLMeta(param, resultMaps);
+        //Map<String, Object> resultMap = param.getResultMap();
+        return componentData;
     }
 
     @Override

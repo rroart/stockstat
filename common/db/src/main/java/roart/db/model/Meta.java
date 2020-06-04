@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.query.Query;
 
 @Entity
 @Table(name = "Meta")
@@ -152,12 +153,12 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
 
     @Transient
     @Transactional
-    public static Meta ensureExistence(String id) throws Exception {
+    public static Meta ensureExistence(String id, HibernateUtil hu) throws Exception {
         Meta fi = getById(id);
         if (fi == null) {
             fi = new Meta();
             fi.setMarketid(id);
-            HibernateUtil.currentSession().save(fi);
+            hu.save(fi);
         }
         return fi;
     }
@@ -165,27 +166,27 @@ public class Meta implements Serializable /*,Comparable<Meta>*/ {
     @Transient
     @Transactional
     public static Meta getById(String id) throws Exception {
-        //return (Meta) HibernateUtil.getHibernateSession().createQuery("from Meta where dbid = :dbid").setParameter("dbid", dbid).uniqueResult();
-        // this is slower:                                                  
-        return (Meta) HibernateUtil.getHibernateSession().get(Meta.class, id);                                           
+        return new HibernateUtil(false).get(Meta.class, id);                                           
     }
 
     @Transient
     @Transactional
     public static List<Meta> getAll() throws Exception {
-        return HibernateUtil.convert(HibernateUtil.currentSession().createQuery("from Meta").list(), Meta.class);
+        return new HibernateUtil(false).get("from Meta");
     }
 
     @Transient
     @Transactional
     public static List<String> getMarkets() throws Exception {
-        return (List<String>) HibernateUtil.getHibernateSession().createQuery("select distinct (marketid) from Meta").list() ;
+        return new HibernateUtil(false).get("select distinct (marketid) from Meta") ;
     }
 
     @Transient
     @Transactional
     public static List<Meta> getAll(String mymarket) throws Exception {
-        return (List<Meta>) HibernateUtil.convert(HibernateUtil.currentSession().createQuery("from Meta where marketid = :mymarket").setParameter("mymarket",  mymarket).list(), Meta.class);
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<Meta> query = hu.createQuery("from Meta where marketid = :mymarket").setParameter("mymarket",  mymarket);
+        return hu.get(query);
     }
 
 }
