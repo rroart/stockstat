@@ -1,5 +1,8 @@
 package roart.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +13,7 @@ import roart.action.MarketAction;
 import roart.common.constants.Constants;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
+import roart.iclij.model.TimingItem;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
@@ -48,7 +52,7 @@ public class ServiceUtil {
         return webDataJson;
     }
 
-    public static IclijServiceResult getFindProfit(ComponentInput componentInput) {
+    public static IclijServiceResult getFindProfit(ComponentInput componentInput, List<TimingItem> timingList) {
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
         try {
@@ -60,7 +64,7 @@ public class ServiceUtil {
 
         MarketAction findProfitAction = new FindProfitAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
-        WebData webData = findProfitAction.getMarket(null, param, market, null, null);        
+        WebData webData = findProfitAction.getMarket(null, param, market, null, null, timingList);        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -78,7 +82,7 @@ public class ServiceUtil {
 
         MarketAction improveAboveBelowAction = new ImproveAboveBelowAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
-        WebData webData = improveAboveBelowAction.getMarket(null, param, market, null, null);        
+        WebData webData = improveAboveBelowAction.getMarket(null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
@@ -96,7 +100,7 @@ public class ServiceUtil {
 
         MarketAction improveProfitAction = new ImproveProfitAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
-        WebData webData = improveProfitAction.getMarket(null, param, market, null, null);        
+        WebData webData = improveProfitAction.getMarket(null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
