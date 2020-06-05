@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,17 +29,24 @@ public class HibernateUtil {
 
     private Transaction transactionWrite = null;
 
-    public HibernateUtil(boolean write) {
+    public HibernateUtil(Boolean write) {
         try {
-            if (write) {
-                openSessionWrite();
-                beginTransactionWrite();
-            } else {
+            if (write == null || !write) {
                 openSessionRead();
                 beginTransactionRead();
             }
+            if (write == null || write) {
+                if (write == null) {
+                    sessionWrite = sessionRead;
+                    transactionWrite = transactionRead;
+                } else {
+                    openSessionWrite();
+                    beginTransactionWrite();
+                }
+            }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
+            //e.printStackTrace();
         }
     }
 
@@ -50,7 +58,13 @@ public class HibernateUtil {
      */
 
     private void beginTransactionRead() {
-        transactionRead = sessionRead.beginTransaction();
+        //transactionRead = sessionRead.beginTransaction();
+        transactionRead = sessionRead.getTransaction();
+        if (transactionRead.getStatus() == TransactionStatus.NOT_ACTIVE) {
+            transactionRead = sessionRead.beginTransaction();
+        }
+        //System.out.println("se" + sessionRead);
+        //System.out.println("tr" + transactionRead);
     }
 
     private void openSessionRead() {
@@ -61,6 +75,7 @@ public class HibernateUtil {
         if (transactionWrite == null) {
             transactionWrite = sessionWrite.beginTransaction();
         }
+        //System.out.println("Vars " + transactionWrite + " " + sessionWrite);
     }
 
     public void openSessionWrite() throws Exception {
@@ -105,6 +120,8 @@ public class HibernateUtil {
 
     public void commit() throws HibernateException, Exception {
         log.debug("Doing hibernate commit");
+        //System.out.println("Doing hibernate commit");
+        //System.out.println("Vars " + transactionWrite + " " + sessionWrite);
         if (transactionWrite != null) {
             transactionWrite.commit();
             transactionWrite = null;
@@ -137,8 +154,12 @@ public class HibernateUtil {
 
     public <T> T get(Class aClass, Serializable id) throws HibernateException, Exception {
         synchronized (sessionRead) {
+            //System.out.println("se" + sessionRead);
+            //System.out.println("tr" + transactionRead);
             T result = (T) sessionRead.get(aClass, id);
-            transactionRead.commit();
+            //System.out.println("se" + sessionRead);
+            //System.out.println("tr" + transactionRead);
+            //transactionRead.commit();
             return result;
         }
     }
