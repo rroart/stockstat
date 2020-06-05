@@ -140,7 +140,9 @@ public class ImproveAboveBelowAction extends MarketAction {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(param.getFutureDate(), allIncDecs, market, market.getConfig().getFindtime());
+            LocalDate date = param.getFutureDate();
+            date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
+            List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime());
             List<String> parametersList = new MiscUtil().getParameters(incdecs);
             for (String aParameter : parametersList) {
                 List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
