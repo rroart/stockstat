@@ -300,20 +300,24 @@ public abstract class MarketAction extends Action {
         }
         List<MarketComponentTime> marketTimes = new ArrayList<>();
         String marketName = market.getConfig().getMarket();
-        Double confidence = market.getFilter().getConfidence();
-
+        Double confidence = null;
+        if (!isDataset()) {
+            confidence = market.getFilter().getConfidence();
+        }
         //= ServiceUtil.getFindProfitComponents(config);
         for (Entry<String, Component> entry : componentMapFiltered.entrySet()) {
             String componentName = entry.getKey();
-            boolean skipComponent = getSkipComponent(mltests, confidence, componentName);
-            if (skipComponent) {
-                log.info("Skipping component {} {}", market.getConfig().getMarket(), componentName);
-                continue;
-            }
-            boolean skipDoneComponent = getSkipComponent(timingsdone, componentName);
-            if (false && skipDoneComponent) {
-                log.info("Skipping done component {} {}", market.getConfig().getMarket(), componentName);
-                continue;
+            if (!isDataset()) {
+                boolean skipComponent = getSkipComponent(mltests, confidence, componentName);
+                if (skipComponent) {
+                    log.info("Skipping component {} {}", market.getConfig().getMarket(), componentName);
+                    continue;
+                }
+                boolean skipDoneComponent = getSkipComponent(timingsdone, componentName);
+                if (false && skipDoneComponent) {
+                    log.info("Skipping done component {} {}", market.getConfig().getMarket(), componentName);
+                    continue;
+                }
             }
             Component component = entry.getValue();
             boolean evolve = getEvolve(component, param);
@@ -322,15 +326,17 @@ public abstract class MarketAction extends Action {
             Integer[] futuredays = getFuturedays(param.getInput().getConfig());
             List<String> subComponents = component.getConfig().getSubComponents(market, param.getInput().getConfig(), null);
             for(String subComponent : subComponents) {
-                boolean skipSubcomponent = getSkipSubComponent(mltests, confidence, componentName, subComponent);
-                if (skipSubcomponent) {
-                    log.info("Skipping component subcomponent {} {} {}", market.getConfig().getMarket(), componentName, subComponent);
-                    continue;
-                }
-                boolean skipDoneSubcomponent = getSkipSubComponent(timingsdone, componentName, subComponent);
-                if (skipDoneSubcomponent) {
-                    log.info("Skipping done component subcomponent {} {} {}", market.getConfig().getMarket(), componentName, subComponent);
-                    continue;
+                if (!isDataset()) {
+                    boolean skipSubcomponent = getSkipSubComponent(mltests, confidence, componentName, subComponent);
+                    if (skipSubcomponent) {
+                        log.info("Skipping component subcomponent {} {} {}", market.getConfig().getMarket(), componentName, subComponent);
+                        continue;
+                    }
+                    boolean skipDoneSubcomponent = getSkipSubComponent(timingsdone, componentName, subComponent);
+                    if (skipDoneSubcomponent) {
+                        log.info("Skipping done component subcomponent {} {} {}", market.getConfig().getMarket(), componentName, subComponent);
+                        continue;
+                    }
                 }
                 for (Integer aFutureday : futuredays) {
                     for (Double threshold : thresholds) {
