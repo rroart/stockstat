@@ -45,6 +45,7 @@ import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.evolution.config.EvolutionConfig;
+import roart.evolution.fitness.Fitness;
 import roart.evolution.species.Individual;
 import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
@@ -238,7 +239,7 @@ public abstract class Component {
         timing.setParameters(JsonUtil.convert(parameters));
         timing.setDescription(description);
         try {
-            if (save) {
+            if (param.isDoSave() /*|| save*/) {
                 timing.save();
             }
             return timing;

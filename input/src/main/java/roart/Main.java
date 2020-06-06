@@ -49,7 +49,7 @@ public class Main {
     private static final String FIELD = "\\\"([^\\\"]+)\\\":";
     private static final String ILLEGAL_CHARS = "(i?)([^\\s=\"'a-zA-Z0-9._-])";
 
-    private static HibernateUtil hu = new HibernateUtil(false);
+    private static HibernateUtil hu = new HibernateUtil(null);
 
     public static void main(String[] argv) {
         try {

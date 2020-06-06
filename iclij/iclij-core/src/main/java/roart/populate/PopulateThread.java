@@ -13,11 +13,13 @@ import org.slf4j.LoggerFactory;
 import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
+import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
+import roart.iclij.model.TimingItem;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.util.MarketUtil;
 import roart.util.ServiceUtil;
@@ -61,19 +63,17 @@ public class PopulateThread extends Thread {
                         log.error(Constants.EXCEPTION, e);
                     }
                     LocalDate oldDate = currentDate.minusDays(findTime);
-                    List<IncDecItem> incdecitems = null;
+                    List<TimingItem> timingitems = null;
                     try {
-                        incdecitems = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), oldDate, currentDate, null);
+                        timingitems = IclijDbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.FINDPROFIT, oldDate, currentDate);
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
-                    if (incdecitems == null || incdecitems.isEmpty()) {
-                        config.setDate(currentDate);
-                        ComponentInput componentInput = new ComponentInput(config, null, null, currentDate, null, true, false, new ArrayList<>(), new HashMap<>());
-                        ServiceUtil.getFindProfit(componentInput);
-                        if (config.getFindProfitMemoryFilter()) {
-                            ServiceUtil.getImproveAboveBelow(componentInput);
-                        }
+                    config.setDate(currentDate);
+                    ComponentInput componentInput = new ComponentInput(config, null, null, currentDate, null, true, false, new ArrayList<>(), new HashMap<>());
+                    ServiceUtil.getFindProfit(componentInput, timingitems);
+                    if (config.getFindProfitMemoryFilter() && timingitems.isEmpty()) {
+                        ServiceUtil.getImproveAboveBelow(componentInput);
                     }
                     currentDate = currentDate.plusDays(findTime);
                     date = TimeUtil.convertDate2(currentDate);
