@@ -26,6 +26,7 @@ import roart.common.constants.Constants;
 import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
+import roart.evolution.fitness.Fitness;
 import roart.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.config.Market;
 import roart.iclij.model.IncDecItem;
