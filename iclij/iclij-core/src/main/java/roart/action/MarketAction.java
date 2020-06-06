@@ -328,7 +328,7 @@ public abstract class MarketAction extends Action {
                     continue;
                 }
                 boolean skipDoneSubcomponent = getSkipSubComponent(timingsdone, componentName, subComponent);
-                if (skipDoneSubcomponent) {
+                if (false && skipDoneSubcomponent) {
                     log.info("Skipping done component subcomponent {} {} {}", market.getConfig().getMarket(), componentName, subComponent);
                     continue;
                 }
