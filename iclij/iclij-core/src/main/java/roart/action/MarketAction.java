@@ -117,14 +117,14 @@ public abstract class MarketAction extends Action {
         getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
     }
 
-    public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve, Integer priority) {
+    public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve, Integer priority, List<TimingItem> timingsdone) {
         List<Market> markets = new ArrayList<>();
         if (market != null) {
             markets.add(market);
         } else {
             markets = new MarketUtil().getMarkets(false);
         }
-        return getMarkets(parent, param, markets, new ArrayList<>(), evolve, priority);
+        return getMarkets(parent, param, markets, new ArrayList<>(), evolve, priority, timingsdone);
     }        
     
     public WebData getMarkets(Action parent, ComponentInput input, Boolean evolve, Integer priority) {
@@ -141,10 +141,10 @@ public abstract class MarketAction extends Action {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        return getMarkets(parent, param, markets, timings, evolve, priority);
+        return getMarkets(parent, param, markets, timings, evolve, priority, new ArrayList<>());
     }        
     
-    private WebData getMarkets(Action parent, ComponentData paramTemplate, List<Market> markets, List<TimingItem> timings, Boolean evolve, Integer priority) {
+    private WebData getMarkets(Action parent, ComponentData paramTemplate, List<Market> markets, List<TimingItem> timings, Boolean evolve, Integer priority, List<TimingItem> timingsdone) {
 	// test picks for aggreg recommend, predict etc
         // remember and make confidence
         // memory is with date, confidence %, inc/dec, semantic item
@@ -181,7 +181,8 @@ public abstract class MarketAction extends Action {
             //srv.getConfig();
             param.setService(srv);
             srv.conf.setMarket(market.getConfig().getMarket());
-            if (!isDataset()) {
+            boolean skipIsDataset = !timingsdone.isEmpty();
+            if (skipIsDataset || !isDataset()) {
                 List<String> stockDates = param.getService().getDates(marketName);
                 if (stockDates == null || stockDates.isEmpty()) {
                     continue;
@@ -214,14 +215,14 @@ public abstract class MarketAction extends Action {
                 Map<String, Component> componentMap = getComponentMap(componentList, market);
                 Map<String, Component> componentMapFiltered = new HashMap<>();
                 for (Entry<String, Component> entry : componentMap.entrySet()) {
-                    String mypriorityKey = actionData.getPriority() + entry.getValue().getConfig().getPriority(config);                    
+                    String mypriorityKey = actionData.getPriority();
                     int aPriority = getPriority(config, mypriorityKey);
                     int mypriority = aPriority + entry.getValue().getConfig().getPriority(config);
                     if (priority == null || (mypriority >= priority && mypriority < (priority + 9))) {
                         componentMapFiltered.put(entry.getKey(),  entry.getValue());
                     }
                 }
-                List<MarketComponentTime> marketTime = getList(getName(), componentMapFiltered, timings, market, param, currentTimings);
+                List<MarketComponentTime> marketTime = getList(getName(), componentMapFiltered, timings, market, param, currentTimings, timingsdone);
                 marketTimes.addAll(marketTime);
             } else {
                 int jj = 0;
@@ -290,7 +291,7 @@ public abstract class MarketAction extends Action {
 
     protected static final int AVERAGE_SIZE = 5;
 
-    private List<MarketComponentTime> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings) {
+    private List<MarketComponentTime> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings, List<TimingItem> timingsdone) {
         List<MLMetricsItem> mltests = null;
         try {
             mltests = IclijDbDao.getAllMLMetrics(market.getConfig().getMarket(), null, null);
@@ -306,7 +307,12 @@ public abstract class MarketAction extends Action {
             String componentName = entry.getKey();
             boolean skipComponent = getSkipComponent(mltests, confidence, componentName);
             if (skipComponent) {
-                log.info("Skipping component {}", componentName);
+                log.info("Skipping component {} {}", market.getConfig().getMarket(), componentName);
+                continue;
+            }
+            boolean skipDoneComponent = getSkipComponent(timingsdone, componentName);
+            if (false && skipDoneComponent) {
+                log.info("Skipping done component {} {}", market.getConfig().getMarket(), componentName);
                 continue;
             }
             Component component = entry.getValue();
@@ -318,7 +324,12 @@ public abstract class MarketAction extends Action {
             for(String subComponent : subComponents) {
                 boolean skipSubcomponent = getSkipSubComponent(mltests, confidence, componentName, subComponent);
                 if (skipSubcomponent) {
-                    log.info("Skipping component subcomponent {} {}", componentName, subComponent);
+                    log.info("Skipping component subcomponent {} {} {}", market.getConfig().getMarket(), componentName, subComponent);
+                    continue;
+                }
+                boolean skipDoneSubcomponent = getSkipSubComponent(timingsdone, componentName, subComponent);
+                if (skipDoneSubcomponent) {
+                    log.info("Skipping done component subcomponent {} {} {}", market.getConfig().getMarket(), componentName, subComponent);
                     continue;
                 }
                 for (Integer aFutureday : futuredays) {
@@ -1038,6 +1049,35 @@ public abstract class MarketAction extends Action {
 
     public void setActionData(MarketActionData actionData) {
         this.actionData = actionData;
+    }
+
+    protected boolean getSkipComponent(List<TimingItem> mltests, String componentName) {
+        Map<String, List<TimingItem>> metricsMap = getTiming2(mltests);
+        return metricsMap.containsKey(componentName);
+    }
+
+    protected boolean getSkipSubComponent(List<TimingItem> mltests, String componentName,
+            String subComponent) {
+        Map<Pair<String, String>, List<TimingItem>> metricsMap2 = getTiming(mltests);
+        return metricsMap2.containsKey(new ImmutablePair(componentName, subComponent));
+    }
+
+    protected Map<Pair<String, String>, List<TimingItem>> getTiming(List<TimingItem> mltests) {
+        Map<Pair<String, String>, List<TimingItem>> moreReturnedTiming = new HashMap<>();
+        for (TimingItem metric : mltests) {
+            Pair key = new ImmutablePair(metric.getComponent(), metric.getSubcomponent());
+            new MiscUtil().listGetterAdder(moreReturnedTiming, key, metric);  
+        }
+        return moreReturnedTiming;
+    }
+
+    protected Map<String, List<TimingItem>> getTiming2(List<TimingItem> mltests) {
+        Map<String, List<TimingItem>> moreReturnedTiming = new HashMap<>();
+        for (TimingItem metric : mltests) {
+            String key = metric.getComponent();
+            new MiscUtil().listGetterAdder(moreReturnedTiming, key, metric);  
+        }
+        return moreReturnedTiming;
     }
 
 }

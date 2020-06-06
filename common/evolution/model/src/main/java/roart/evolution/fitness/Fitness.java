@@ -1,4 +1,4 @@
-package roart.component;
+package roart.evolution.fitness;
 
 import roart.evolution.chromosome.AbstractChromosome;
 
