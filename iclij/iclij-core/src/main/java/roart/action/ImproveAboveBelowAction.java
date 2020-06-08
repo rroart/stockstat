@@ -142,7 +142,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             }
             LocalDate date = param.getFutureDate();
             date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
-            List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime());
+            List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
             List<String> parametersList = new MiscUtil().getParameters(incdecs);
             for (String aParameter : parametersList) {
                 List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              

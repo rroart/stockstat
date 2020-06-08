@@ -199,7 +199,7 @@ public class Timing implements Serializable {
     public static List<Timing> getAll(String market, String action, Date startDate, Date endDate) throws Exception {
         String queryString = "from Timing where market = :market and action = :action";
         if (startDate != null) {
-            queryString += " and date >= :startdate";
+            queryString += " and date > :startdate";
         }
         if (endDate != null) {
             queryString += " and date <= :enddate";

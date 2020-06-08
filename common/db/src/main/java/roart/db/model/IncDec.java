@@ -195,7 +195,7 @@ public class IncDec implements Serializable /*,Comparable<Meta>*/ {
     public static List<IncDec> getAll(String market, Date startDate, Date endDate, String parameters) throws Exception {
         String queryString = "from IncDec where market = :market";
         if (startDate != null) {
-            queryString += " and date >= :startdate";
+            queryString += " and date > :startdate";
         }
         if (endDate != null) {
             queryString += " and date <= :enddate";

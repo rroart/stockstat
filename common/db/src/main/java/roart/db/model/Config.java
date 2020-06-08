@@ -179,7 +179,7 @@ public class Config implements Serializable {
             queryString += " and parameters = :parameters";
         }
         if (startDate != null) {
-            queryString += " and date >= :startdate";
+            queryString += " and date > :startdate";
         }
         if (endDate != null) {
             queryString += " and date <= :enddate";

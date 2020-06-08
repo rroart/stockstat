@@ -201,7 +201,7 @@ public class ServiceUtil {
                 log.error("Trend exception for market {}", market.getConfig().getMarket());
                 log.error(Constants.EXCEPTION, e);
             }
-            List<IncDecItem> allCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime());
+            List<IncDecItem> allCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime(), true);
             Map<String, List<IncDecItem>> currentIncDecMap = splitParam(allCurrentIncDecs);
             for (Entry<String, List<IncDecItem>> entry : currentIncDecMap.entrySet()) {
                 String key = entry.getKey();
@@ -361,7 +361,7 @@ public class ServiceUtil {
             throws Exception {
         List<TimingItem> listAllTimings = IclijDbDao.getAllTiming();
         for (Market market : markets) {
-            List<TimingItem> currentTimings = new MiscUtil().getCurrentTimings(date, listAllTimings, market, action.getName(), action.getTime(market));
+            List<TimingItem> currentTimings = new MiscUtil().getCurrentTimings(date, listAllTimings, market, action.getName(), action.getTime(market), true);
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
@@ -371,7 +371,7 @@ public class ServiceUtil {
             throws Exception {
         List<MLMetricsItem> listAllTimings = IclijDbDao.getAllMLMetrics();
         for (Market market : markets) {
-            List<MLMetricsItem> currentTimings = new MiscUtil().getCurrentMLMetrics(date, listAllTimings, market, action.getTime(market));
+            List<MLMetricsItem> currentTimings = new MiscUtil().getCurrentMLMetrics(date, listAllTimings, market, action.getTime(market), true);
             List<IclijServiceList> subLists = getServiceList2(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
@@ -524,7 +524,7 @@ public class ServiceUtil {
                 continue;
             }
             List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market);
-            List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, componentInput.getEnddate(), actionData.getTime(market));
+            List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, componentInput.getEnddate(), actionData.getTime(market), true);
 
             IclijServiceList memories = new IclijServiceList();
             memories.setTitle("Memories " + marketName);
@@ -783,7 +783,7 @@ public class ServiceUtil {
                 currentIncDecs.addAll(allListIncDec);
                 continue;
             }
-            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(param.getFutureDate(), listAll, aMarket, market.getConfig().getFindtime());
+            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(param.getFutureDate(), listAll, aMarket, market.getConfig().getFindtime(), true);
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
         //roundList(currentIncDecs);
@@ -914,7 +914,7 @@ public class ServiceUtil {
             }
             LocalDate date = param.getFutureDate();
             date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
-            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, aMarket, market.getConfig().getFindtime());
+            List<IncDecItem> marketCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, aMarket, market.getConfig().getFindtime(), true);
             currentIncDecs.addAll(marketCurrentIncDecs);
         }
         //roundList(currentIncDecs);
