@@ -72,8 +72,15 @@ public class PopulateThread extends Thread {
                     config.setDate(currentDate);
                     ComponentInput componentInput = new ComponentInput(config, null, null, currentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                     ServiceUtil.getFindProfit(componentInput, timingitems);
-                    if (config.getFindProfitMemoryFilter() && timingitems.isEmpty()) {
-                        ServiceUtil.getImproveAboveBelow(componentInput);
+                    if (config.getFindProfitMemoryFilter()) {
+                        try {
+                            timingitems = IclijDbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, oldDate, currentDate);
+                        } catch (Exception e) {
+                            log.error(Constants.EXCEPTION, e);
+                        }
+                        if (timingitems.isEmpty()) {
+                            ServiceUtil.getImproveAboveBelow(componentInput);
+                        }
                     }
                     currentDate = currentDate.plusDays(findTime);
                     date = TimeUtil.convertDate2(currentDate);
