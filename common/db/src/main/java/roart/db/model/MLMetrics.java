@@ -157,7 +157,7 @@ public class MLMetrics implements Serializable {
     public static List<MLMetrics> getAll(String market, Date startDate, Date endDate) throws Exception {
         String queryString = "from MLMetrics where market = :market";
         if (startDate != null) {
-            queryString += " and date >= :startdate";
+            queryString += " and date > :startdate";
         }
         if (endDate != null) {
             queryString += " and date <= :enddate";
