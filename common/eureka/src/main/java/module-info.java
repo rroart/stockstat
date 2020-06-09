@@ -14,4 +14,5 @@ module common.eureka {
     requires spring.core;
     requires spring.web;
     requires common.constants;
+    requires common.util;
 }

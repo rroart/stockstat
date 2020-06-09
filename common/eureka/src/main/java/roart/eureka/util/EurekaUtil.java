@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.constants.EurekaConstants;
+import roart.common.util.MathUtil;
 
 public class EurekaUtil {
 
@@ -63,6 +64,7 @@ public class EurekaUtil {
     }
     
     public static <T> T sendMeInner(Class<T> myclass, Object param, String url, ObjectMapper objectMapper) {
+        long time = System.currentTimeMillis();
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
         Map map = new HashMap<String, String>();
         map.put("Content-Type", "application/json");
@@ -85,6 +87,7 @@ public class EurekaUtil {
         ResponseEntity<T> regr = rt.postForEntity(url, request, myclass);
         T result = regr.getBody();
         log.info("resultme " + regr.getHeaders().size() + " " + regr.toString());
+        log.info("Rq time {}s for {} ", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), url);
         return result;
     }
 
