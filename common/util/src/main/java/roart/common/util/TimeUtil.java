@@ -166,4 +166,20 @@ public class TimeUtil {
         }
     }
 
+    public static String getForwardEqualAfter(LocalDate date, int back, List<String> stockDates) {
+        int index = getIndexEqualAfter(stockDates, TimeUtil.convertDate2(date));
+        index = index + back;
+        return stockDates.get(index);
+    }
+
+    public static LocalDate getForwardEqualAfter2(LocalDate date, int back, List<String> stockDates) {
+        String str = getForwardEqualAfter(date, back, stockDates);
+        try {
+            return convertDate(str);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
 }
