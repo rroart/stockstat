@@ -79,7 +79,11 @@ public class PopulateThread extends Thread {
                             log.error(Constants.EXCEPTION, e);
                         }
                         if (timingitems.isEmpty()) {
-                            ServiceUtil.getImproveAboveBelow(componentInput);
+                            int verificationdays = param.getInput().getConfig().verificationDays();
+                            currentDate = TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
+                            config.setDate(currentDate);
+                            ComponentInput componentInput3 = new ComponentInput(config, null, null, currentDate, null, true, false, new ArrayList<>(), new HashMap<>());
+                            ServiceUtil.getImproveAboveBelow(componentInput3);
                         }
                     }
                     currentDate = currentDate.plusDays(findTime);
