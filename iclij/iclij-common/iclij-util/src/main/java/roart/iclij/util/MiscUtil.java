@@ -65,40 +65,49 @@ public class MiscUtil {
         return header;
     }
 
-    public List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action, int days) {
+    public List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action, int days, boolean inclusiveStart) {
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
+        if (inclusiveStart) {
+            days++;
+        }
         LocalDate olddate = date.minusDays(days);
         List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
         filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
-        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
+        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }
 
-    public List<MLMetricsItem> getCurrentMLMetrics(LocalDate date, List<MLMetricsItem> listAll, Market market, int days) {
+    public List<MLMetricsItem> getCurrentMLMetrics(LocalDate date, List<MLMetricsItem> listAll, Market market, int days, boolean inclusiveStart) {
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
+        if (inclusiveStart) {
+            days++;
+        }
         LocalDate olddate = date.minusDays(days);
         List<MLMetricsItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
-        List<MLMetricsItem> currentTests = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
+        List<MLMetricsItem> currentTests = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
         currentTests = currentTests.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         currentTests = currentTests.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentTests;
     }
 
-    public List<IncDecItem> getCurrentIncDecs(LocalDate date, List<IncDecItem> listAll, Market market, int days) {
+    public List<IncDecItem> getCurrentIncDecs(LocalDate date, List<IncDecItem> listAll, Market market, int days, boolean inclusiveStart) {
         System.out.println(market.getConfig().getMarket());
         Map<String, Long> countMap;
         if (date == null) {
             date = LocalDate.now();
         }
         LocalDate newdate = date;
+        if (inclusiveStart) {
+            days++;
+        }
         LocalDate olddate = date.minusDays(days);
         List<IncDecItem> filterListAll = listAll;
         if (market != null) {
@@ -108,7 +117,7 @@ public class MiscUtil {
         currentIncDecs = currentIncDecs.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
         countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
         System.out.println(countMap);
-        currentIncDecs = currentIncDecs.stream().filter(m -> olddate.compareTo(m.getDate()) <= 0).collect(Collectors.toList());
+        currentIncDecs = currentIncDecs.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
         countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
         System.out.println(countMap);
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
@@ -302,7 +311,10 @@ public class MiscUtil {
         return marketMemory;
     }
 
-    public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days) {
+    public List<MemoryItem> filterKeepRecent(List<MemoryItem> marketMemory, LocalDate date, int days, boolean inclusiveStart) {
+        if (inclusiveStart) {
+            days++;
+        }
         LocalDate olddate = date.minusDays(days);
         for (MemoryItem item : marketMemory) {
             if (item.getRecord() == null) {
@@ -313,12 +325,15 @@ public class MiscUtil {
         if (date == null) {
             return marketMemory;
         }
-        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getFuturedate()) <= 0).collect(Collectors.toList());
+        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getFuturedate()) < 0).collect(Collectors.toList());
         currentList = currentList.stream().filter(m -> date.compareTo(m.getFuturedate()) >= 0).collect(Collectors.toList());
         return currentList;
     }
 
-    public List<MemoryItem> filterKeepRecent3(List<MemoryItem> marketMemory, LocalDate date, int days) {
+    public List<MemoryItem> filterKeepRecent3(List<MemoryItem> marketMemory, LocalDate date, int days, boolean inclusiveStart) {
+        if (inclusiveStart) {
+            days++;
+        }
         LocalDate olddate = date.minusDays(days);
         for (MemoryItem item : marketMemory) {
             if (item.getRecord() == null) {
@@ -329,8 +344,8 @@ public class MiscUtil {
         if (date == null) {
             return marketMemory;
         }
-        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.isBefore(m.getDate())).collect(Collectors.toList());
-        currentList = currentList.stream().filter(m -> date.isAfter(m.getDate())).collect(Collectors.toList());
+        List<MemoryItem> currentList = marketMemory.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
+        currentList = currentList.stream().filter(m -> date.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
         return currentList;
     }
 

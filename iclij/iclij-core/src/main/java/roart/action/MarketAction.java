@@ -208,7 +208,7 @@ public abstract class MarketAction extends Action {
             if (getActionData().getTime(market) == null) {
                 continue;
             }
-            List<TimingItem> currentTimings = new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time);
+            List<TimingItem> currentTimings = new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
             List<IncDecItem> currentIncDecs = null; // ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
             if (true) {
                 List<String> componentList = getProfitComponents(config, wantThree);
@@ -641,7 +641,7 @@ public abstract class MarketAction extends Action {
             myData.setProfitData(new ProfitData());
         }
         //marketMemory.addAll(myData.getMemoryItems());
-        List<MemoryItem> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market));
+        List<MemoryItem> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market), false);
         // map subcat + posit -> list
         currentList = currentList.stream().filter(e -> !e.getComponent().equals(PipelineConstants.ABOVEBELOW)).collect(Collectors.toList());
         memories.method(currentList, config, this);
