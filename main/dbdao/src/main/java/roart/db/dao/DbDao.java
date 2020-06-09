@@ -1,6 +1,7 @@
 package roart.db.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -75,6 +76,14 @@ public class DbDao {
     public static List<StockItem> getAll(String market, MyMyConfig conf) throws Exception {
         long time0 = System.currentTimeMillis();
         List<StockItem> list = StockUtil.filterWeekend(conf, DbDao.instance(conf).getAll(market));
+        log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        return list;
+    }
+
+    public static List<String> getDates(String market, MyMyConfig conf) throws Exception {
+        long time0 = System.currentTimeMillis();
+        List<Date> dates = Stock.getDates(market);
+        List<String> list = StockUtil.filterWeekendConvert(conf, dates);
         log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }

@@ -36,6 +36,16 @@ public class TimeUtil {
         return convertDate(dt.parse(aDate));
     }
     
+    public static Date convertDate2(String aDate) throws ParseException {
+        SimpleDateFormat dt = new SimpleDateFormat(MYDATEFORMAT);
+        return dt.parse(aDate);
+    }
+    
+    public static String convertDate3(Date date) {
+        SimpleDateFormat dt = new SimpleDateFormat(MYDATEFORMAT);
+        return dt.format(date);
+    }
+
     public static LocalDate convertDate(Date date) {
         if (date == null) {
             log.error("Date null (break point)");
@@ -158,6 +168,22 @@ public class TimeUtil {
 
     public static LocalDate getBackEqualBefore2(LocalDate date, int back, List<String> stockDates) {
         String str = getBackEqualBefore(date, back, stockDates);
+        try {
+            return convertDate(str);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+            return null;
+        }
+    }
+
+    public static String getForwardEqualAfter(LocalDate date, int back, List<String> stockDates) {
+        int index = getIndexEqualAfter(stockDates, TimeUtil.convertDate2(date));
+        index = index + back;
+        return stockDates.get(index);
+    }
+
+    public static LocalDate getForwardEqualAfter2(LocalDate date, int back, List<String> stockDates) {
+        String str = getForwardEqualAfter(date, back, stockDates);
         try {
             return convertDate(str);
         } catch (ParseException e) {
