@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.util.TimeUtil;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -213,6 +214,9 @@ public class StockUtil {
         if (index >= 0) {
             if (date == null) {
                 log.error("Date is null");
+            }
+            if (datedstocklists.length == 0) {
+                int jj = 0;
             }
             datedstocklists[0] = stockdatemap.get(date);
             for (int j = 1; j < count; j++) {
@@ -1157,6 +1161,23 @@ public class StockUtil {
             if (!(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
                     calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
                 retList.add(stock);
+            }
+        }
+        return retList;
+    }
+    
+    public static List<String> filterWeekendConvert(MyMyConfig conf, List<Date> dates) {
+        boolean filter = conf.wantFilterWeekend();
+        Calendar calendar = Calendar.getInstance();
+        List<String> retList = new ArrayList<>();
+        for (Date date : dates) {
+            if (date == null) {
+                int jj = 0;
+            }
+            calendar.setTime(date);
+            if (!filter || !(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
+                    calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)) {
+                retList.add(TimeUtil.convertDate3(date));
             }
         }
         return retList;

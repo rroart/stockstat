@@ -307,4 +307,12 @@ public class Stock implements Serializable /*,Comparable<Stock>*/ {
         return hu.get(query);
     }
 
+    @Transient
+    @Transactional
+    public static List<Date> getDates(String mymarket) throws Exception {
+        HibernateUtil hu = new HibernateUtil(false);
+        Query<Date> query = hu.createQuery("select distinct(date) from Stock where marketid = :mymarket").setParameter("mymarket",  mymarket);
+        return hu.get(query);
+    }
+
 }
