@@ -36,6 +36,16 @@ public class TimeUtil {
         return convertDate(dt.parse(aDate));
     }
     
+    public static Date convertDate2(String aDate) throws ParseException {
+        SimpleDateFormat dt = new SimpleDateFormat(MYDATEFORMAT);
+        return dt.parse(aDate);
+    }
+    
+    public static String convertDate3(Date date) {
+        SimpleDateFormat dt = new SimpleDateFormat(MYDATEFORMAT);
+        return dt.format(date);
+    }
+
     public static LocalDate convertDate(Date date) {
         if (date == null) {
             log.error("Date null (break point)");

@@ -636,29 +636,23 @@ public class ControlService {
     }
 
     public void getDates(MyMyConfig conf, Map<String, Map<String, Object>> maps) {
-        List<StockItem> stocks = null;
+        List<String> dates = null;
         try {
             if ("0".equals(conf.getMarket())) {
                 int jj = 0;
             }
-            stocks = DbDao.getAll(conf.getMarket(), conf);
+            dates = DbDao.getDates(conf.getMarket(), conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        if (stocks == null) {
+        if (dates == null) {
             return;
         }
-        log.info("stocks {}", stocks.size());
+        log.info("stocks {}", dates.size());
         Set<String> markets = new HashSet<>();
         markets.add(conf.getMarket());
 
-        List<ResultItemTable> otherTables = new ArrayList<>();
-        otherTables.add(mlTimesTable);
-        otherTables.add(eventTable);
-
         try {
-            Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
-            List<String> dates = new ArrayList<>(stockdatemap.keySet());
             Collections.sort(dates);
             Map<String, Object> map = new HashMap<>();
             map.put(PipelineConstants.DATELIST, dates);
