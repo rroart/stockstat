@@ -16,6 +16,10 @@
  <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
  <logger name="org.apache.spark" level="WARN"/>
  <logger name="breeze.optimize" level="WARN"/>
+ <springProfile name="dev">
+   <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="info"/>
+ </springProfile>
+ 
  <springProfile name="default">
    <root level="INFO">
      <appender-ref ref="FILE" />
