@@ -406,7 +406,10 @@ public class MiscUtil {
         List<IncDecItem> locals = new ArrayList<>();
         for (IncDecItem item : incdecs) {
             String localcomponent = item.getLocalcomponent();
-            String[] localcomponents = localcomponent.split(" ");
+            String[] localcomponents = null;
+            if (localcomponent != null) {
+                localcomponents = localcomponent.split(" ");
+            }
             if (localcomponents != null && localcomponents.length > 1) {
                 for (String aLocalcomponent : localcomponents) {
                     IncDecItem newItem = new IncDecItem();
