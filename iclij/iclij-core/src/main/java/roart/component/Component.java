@@ -127,9 +127,13 @@ public abstract class Component {
         for (Component component : allComponents) {
             component.disable(valueMap);
         }
-        this.subdisable(valueMap, subcomponent);
+        if (subcomponent != null) {
+            this.subdisable(valueMap, subcomponent);
+        }
         this.enable(valueMap);
-        this.subenable(valueMap, subcomponent);
+        if (subcomponent != null) {
+            this.subenable(valueMap, subcomponent);
+        }
         try {
             Map<String, Object> loadValues = mlLoads(param, null, market, null, subcomponent, mlmarket, action, parameters);
             valueMap.putAll(loadValues);
@@ -163,7 +167,7 @@ public abstract class Component {
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
         long time0 = System.currentTimeMillis();
-        if (!IclijConstants.EVOLVE.equals(param.getAction()) && !IclijConstants.DATASET.equals(param.getAction())) {
+        if (!IclijConstants.EVOLVE.equals(param.getAction()) && !IclijConstants.DATASET.equals(param.getAction()) && !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction())) {
             Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
             param.setCategory(resultMaps);
             param.getAndSetCategoryValueMap();
@@ -239,7 +243,7 @@ public abstract class Component {
         timing.setParameters(JsonUtil.convert(parameters));
         timing.setDescription(description);
         try {
-            if (param.isDoSave() /*|| save*/) {
+            if (param.isDoSave() || save) {
                 timing.save();
             }
             return timing;
