@@ -150,6 +150,9 @@ public abstract class ComponentML extends Component {
 
     protected Map<String, Object> mlLoads(Map<String, EvolveMLConfig> mlConfigMap, ComponentData param, Map<String, Object> anUpdateMap, Market market, Boolean buy, String subcomponent, String mlmarket, MarketAction action, Parameters parameters) throws Exception {
         Map<String, Object> map = new HashMap<>();
+        if (mlConfigMap == null) {
+            return map;
+        }
         for (Entry<String, EvolveMLConfig> entry : mlConfigMap.entrySet()) {
             String key = entry.getKey();
             EvolveMLConfig config = entry.getValue();
