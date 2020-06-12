@@ -80,9 +80,9 @@ public class PopulateThread extends Thread {
                         }
                         if (timingitems.isEmpty()) {
                             int verificationdays = param.getInput().getConfig().verificationDays();
-                            currentDate = TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
-                            config.setDate(currentDate);
-                            ComponentInput componentInput3 = new ComponentInput(config, null, null, currentDate, null, true, false, new ArrayList<>(), new HashMap<>());
+                            LocalDate aCurrentDate = TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
+                            config.setDate(aCurrentDate);
+                            ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             ServiceUtil.getImproveAboveBelow(componentInput3);
                         }
                     }
