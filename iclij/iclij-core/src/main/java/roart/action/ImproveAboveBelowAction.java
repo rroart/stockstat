@@ -135,14 +135,15 @@ public class ImproveAboveBelowAction extends MarketAction {
             Map<String, Object> aMap = new HashMap<>();
             //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
             List<IncDecItem> allIncDecs = null;
+            LocalDate date = param.getFutureDate();
+            date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
+            LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
             try {
-                allIncDecs = IclijDbDao.getAllIncDecs();
+                allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
-            LocalDate date = param.getFutureDate();
-            date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
-            List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
+            List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
             List<String> parametersList = new MiscUtil().getParameters(incdecs);
             for (String aParameter : parametersList) {
                 List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
@@ -222,6 +223,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 }
                 //memoryList.add(memory);
             }
+            //component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           

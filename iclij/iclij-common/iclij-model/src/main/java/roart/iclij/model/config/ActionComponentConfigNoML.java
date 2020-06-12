@@ -15,7 +15,8 @@ public abstract class ActionComponentConfigNoML extends ActionComponentConfig {
     @Override
     public List<String> getSubComponents(Market market, IclijConfig config, String mlmarket) {
         List<String> list = new ArrayList<>();
-        list.add("");
+        list.add(null);
+        //list.add("");
         return list;
     }
 
