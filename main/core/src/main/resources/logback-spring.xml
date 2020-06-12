@@ -16,7 +16,7 @@
  <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
  <logger name="org.apache.spark" level="WARN"/>
  <logger name="breeze.optimize" level="WARN"/>
- <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="DEBUG"/>
+ <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="WARN"/>
  
  <springProfile name="default">
    <root level="INFO">
