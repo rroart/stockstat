@@ -348,7 +348,7 @@ public abstract class MarketAction extends Action {
                         for (Boolean buy : booleans) {
                             List<TimingItem> currentTimingFiltered = currentTimings.stream().filter(m -> m != null 
                                     && componentName.equals(m.getComponent()) 
-                                    && (subComponents == null || subComponent.equals(m.getSubcomponent())) 
+                                    && (subComponents == null || myequals(subComponent, m.getSubcomponent())) 
                                     && (m.getParameters() == null || parameterString.equals(m.getParameters())) 
                                     && (buy == null || ((m.getBuy() == null || m.getBuy() == buy)))).collect(Collectors.toList());
                             if (!currentTimingFiltered.isEmpty()) {
@@ -379,6 +379,14 @@ public abstract class MarketAction extends Action {
             }
         }
         return marketTimes;
+    }
+
+    private boolean myequals(String subComponent, String otherSubcomponent) {
+        if (subComponent == null) {
+            return otherSubcomponent == null;
+        } else {
+            return subComponent.equals(otherSubcomponent);
+        }
     }
 
     protected boolean getSkipComponent(List<MLMetricsItem> mltests, Double confidence, String componentName) {
