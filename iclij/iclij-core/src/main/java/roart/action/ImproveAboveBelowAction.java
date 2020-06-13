@@ -111,7 +111,7 @@ public class ImproveAboveBelowAction extends MarketAction {
         }
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         int verificationdays = param.getInput().getConfig().verificationDays();
-        param.getInput().setDoSave(false);
+        //param.getInput().setDoSave(false);
 
         try {
             param.setFuturedays(0);
