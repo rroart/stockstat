@@ -490,7 +490,7 @@ public abstract class MarketAction extends Action {
             if (timing.getBuy() != null && buy != timing.getBuy()) {
                 continue;
             }
-            if (action.equals(timing.getAction()) && component.equals(timing.getComponent()) && subcomponent.equals(timing.getSubcomponent()) && evolve == timing.isEvolve() && paramString == timing.getParameters()) {
+            if (action.equals(timing.getAction()) && component.equals(timing.getComponent()) && myequals(subcomponent, timing.getSubcomponent()) && evolve == timing.isEvolve() && paramString == timing.getParameters()) {
                 filterTimings.add(timing);
             }
         }
