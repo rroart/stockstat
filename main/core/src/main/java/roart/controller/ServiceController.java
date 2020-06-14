@@ -36,6 +36,7 @@ import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
 import roart.config.MyXMLConfig;
 import roart.db.dao.DbDao;
+import roart.db.thread.DatabaseThread;
 import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;
 import roart.result.model.GUISize;
@@ -309,6 +310,7 @@ public class ServiceController implements CommandLineRunner {
         System.out.println("Using profile " + activeProfile);
         MyExecutors.initThreads("dev".equals(activeProfile));
         MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
+        new DatabaseThread().start();
     }
     
 }
