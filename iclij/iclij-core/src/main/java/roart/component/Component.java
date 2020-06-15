@@ -309,7 +309,7 @@ public abstract class Component {
             Map<String, Double> scoreMap = new HashMap<>();
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
-            param.setFutureDate(LocalDate.now());
+            //param.setFutureDate(LocalDate.now());
             // fix mlmarket;
             TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);
