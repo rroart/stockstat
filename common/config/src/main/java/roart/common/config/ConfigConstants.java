@@ -101,6 +101,7 @@ public class ConfigConstants {
     public static final String MACHINELEARNINGPREDICTORSMLCONFIG = "machinelearning.predictors.mlconfig";
     public static final String MACHINELEARNINGPREDICTORSDAYS = "machinelearning.predictors.days";
     public static final String MACHINELEARNINGPREDICTORSFUTUREDAYS = "machinelearning.predictors.futuredays";
+    public static final String MACHINELEARNINGPREDICTORSTHRESHOLD = "machinelearning.predictors.threshold";
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOW = "machinelearning.predictors.tensorflow[@enable]";
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOWLIR = "machinelearning.predictors.tensorflow.lir[@enable]";
     public static final String MACHINELEARNINGPREDICTORSTENSORFLOWLIRPERSIST = "machinelearning.predictors.tensorflow.lir.persist[@enable]";

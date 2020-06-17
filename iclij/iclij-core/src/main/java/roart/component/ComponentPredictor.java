@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
+import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
@@ -30,12 +31,14 @@ import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.service.ControlService;
 import roart.iclij.util.MLUtil;
+import roart.iclij.util.MiscUtil;
 import roart.result.model.ResultMeta;
 import roart.service.model.ProfitData;
 
@@ -127,8 +130,8 @@ public class ComponentPredictor extends ComponentML {
         return param;
     }
     
-    @Override
-    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+    //@Override
+    public void calculateIncDecNot(ComponentData componentparam, ProfitData profitdata, Memories position, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
         PredictorData param = (PredictorData) componentparam;
         Pair<String, Integer> keyPair = new ImmutablePair(PipelineConstants.PREDICTOR, null);
         //keyPair = ComponentMLAggregator.getRealKeys(keyPair, profitdata.getInputdata().getConfMap().keySet());
@@ -180,6 +183,79 @@ public class ComponentPredictor extends ComponentML {
     }
 
     @Override
+    public void calculateIncDec(ComponentData componentparam, ProfitData profitdata, Memories positions, Boolean above, List<MLMetricsItem> mlTests, Parameters parameters) {
+        PredictorData param = (PredictorData) componentparam;
+        if (positions == null) {
+            //return;
+        }
+        Map<String, Object> resultMap = param.getResultMap();
+        Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
+        int resultIndex = 0;
+        int count = 0;
+        if (param.getResultMetaArray() == null) {
+            int jj = 0;
+        }
+        for (List meta : param.getResultMetaArray()) {
+            int returnSize = (int) meta.get(ResultMetaConstants.RETURNSIZE);
+
+            boolean emptyMeta = meta.get(ResultMetaConstants.MLNAME) == null;
+            
+            if (emptyMeta) {
+                resultIndex += returnSize;
+                count++;                
+            }
+            
+            if (positions == null) {
+                int jj = 0;
+            }
+            
+            MLMetricsItem mltest = search(mlTests, meta);
+            if (mltest != null) {
+                //&& (positions == null || !positions.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
+                Double score = mltest.getTestAccuracy();
+                for (String key : param.getCategoryValueMap().keySet()) {
+                    List<List<Double>> resultList = param.getCategoryValueMap().get(key);
+                    List<Double> mainList = resultList.get(0);
+                    if (mainList == null) {
+                        continue;
+                    }
+                    List<Object> list = (List<Object>) aResultMap.get(key);
+                    if (list == null) {
+                        continue;
+                    }
+                    String tfpn = (String) list.get(resultIndex);
+                    if (tfpn == null) {
+                        continue;
+                    }
+                    boolean increase = false;
+                    //System.out.println(okConfMap.keySet());
+                    //Set<Pair<String, Integer>> keyset = profitdata.getInputdata().getConfMap().keySet();
+                    //keyPair = ComponentMLAggregator.getRealKeys(keyPair, keyset);
+                    //System.out.println(okListMap.keySet());
+                    if (above == null || above == true) {
+                    if (tfpn.equals(Constants.ABOVE)) {
+                        increase = true;
+                        //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        incdec.setIncrease(increase);
+                    }
+                    }
+                    if (above == null || above == false) {
+                    if (tfpn.equals(Constants.BELOW)) {
+                        increase = false;
+                        //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
+                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        incdec.setIncrease(increase);
+                    }
+                    }
+                }                        
+            }
+
+            resultIndex += returnSize;
+            count++;
+        }
+    }
+
     public List<MemoryItem> calculateMemory(ComponentData componentparam, Parameters parameters) throws Exception {
         PredictorData param = (PredictorData) componentparam;
         Map<String, List<Double>> resultMap = (Map<String, List<Double>>) param.getResultMap().get("result");
@@ -344,6 +420,7 @@ public class ComponentPredictor extends ComponentML {
         List<String> list = new ArrayList<>();
         list.add(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS);
         list.add(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS);
+        list.add(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD);
         return list;
     }
 
@@ -360,8 +437,8 @@ public class ComponentPredictor extends ComponentML {
         return map;
     }
 
-    @Override
-    public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
+    //@Override
+    public Object[] calculateAccuracyNot(ComponentData componentparam) throws Exception {
         Object[] result = new Object[3];
         ComponentMLData param = (ComponentMLData) componentparam;
         List<Double> testAccuracies = new ArrayList<>();
@@ -395,7 +472,8 @@ public class ComponentPredictor extends ComponentML {
 
     @Override
     public String getThreshold() {
-        return "dummy";
+        return ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD;
+        //return "dummy";
     }
 
     @Override

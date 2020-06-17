@@ -863,6 +863,10 @@ public class MyMyConfig extends MyConfig {
         return (Integer) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS);
     }
 
+    public String getPredictorsThreshold() {
+        return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD);
+    }
+
     public boolean wantPredictorsTensorflow() {
         return (Boolean) getValueOrDefault(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW)
                 && wantPredictors();

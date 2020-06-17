@@ -22,15 +22,18 @@ import org.apache.commons.lang3.tuple.Triple;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.category.AbstractCategory;
+import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.constants.ResultMetaConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.MathUtil;
+import roart.common.util.JsonUtil;
 import roart.indicator.util.IndicatorUtils;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
@@ -207,8 +210,6 @@ public abstract class Predictor extends AbstractPredictor {
             //nnConfigs.getTensorflowConfig().setTensorflowPredictorLSTMConfig(lstmConfig);
         }
 
-        long time2 = System.currentTimeMillis();
-        log.info("time2 {}", (System.currentTimeMillis() - time2));
         long time1 = System.currentTimeMillis();
         log.info("listmap {} {}", listMap.size(), listMap.keySet());
         for (String id : listMap.keySet()) {
@@ -216,15 +217,21 @@ public abstract class Predictor extends AbstractPredictor {
             double[] list = list0[0];
             log.info("list {} {}", list.length, Arrays.asList(list));
         }
+        Map<Double, Map<MLClassifyModel, Map<String, Double[]>>> mapResult0 = new HashMap<>();
+        Double[] thresholds = getThresholds();
+        for (Double threshold : thresholds) {
+
         Map<MLClassifyModel, Map<String, Double[]>> mapResult = new HashMap<>();
+        mapResult0.put(threshold, mapResult);
         if (conf.wantML()) {
             if (false && conf.wantPercentizedPriceIndex()) {
-                doPredictions(conf, mapResult, base100FillListMap, truncBase100FillListMap, nnConfigs, days);
+                doPredictions(conf, mapResult, base100FillListMap, truncBase100FillListMap, nnConfigs, days, threshold);
             } else {
-                doPredictions(conf, mapResult, fillListMap, truncFillListMap, nnConfigs, days);                
+                doPredictions(conf, mapResult, fillListMap, truncFillListMap, nnConfigs, days, threshold);                
             }
         }
-        createResultMap(conf, mapResult, false && conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap);
+        }
+        createResultMap(conf, mapResult0, false && conf.wantPercentizedPriceIndex() ? base100FillListMap : fillListMap);
         log.info("time1 {}", (System.currentTimeMillis() - time1));
         handleSpentTime(conf);
 
@@ -236,7 +243,7 @@ public abstract class Predictor extends AbstractPredictor {
 
     protected abstract String getNeuralNetConfig();
 
-    private void doPredictions(MyMyConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs, int days) {
+    private void doPredictions(MyMyConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult, Map<String, Double[][]> aListMap, Map<String, double[][]> aTruncListMap, NeuralNetConfigs nnConfigs, int days, Double threshold) {
         try {
             for (MLClassifyDao mldao : mldaos) {
                 if (mldao.getModels().size() != 1) {
@@ -280,10 +287,10 @@ public abstract class Predictor extends AbstractPredictor {
                         }
                     }
                     // make OO of this, create object
-                    Object[] meta = new Object[10];
-                    meta[0] = mldao.getName();
-                    meta[1] = model.getName();
-                    meta[2] = model.getReturnSize();
+                    Object[] meta = new Object[ResultMetaConstants.SIZE];
+                    meta[ResultMetaConstants.MLNAME] = mldao.getName();
+                    meta[ResultMetaConstants.MODELNAME] = model.getName();
+                    meta[ResultMetaConstants.RETURNSIZE] = model.getReturnSize();
                     resultMetaArray.add(meta);
                     ResultMeta resultMeta = new ResultMeta();
                     resultMeta.setMlName(mldao.getName());
@@ -297,19 +304,62 @@ public abstract class Predictor extends AbstractPredictor {
                     String filename = getFilename(mldao, model, "" + conf.getPredictorsDays(), "" + conf.getPredictorsFuturedays(), conf.getMarket(), null);
                     String path = model.getPath();
                     LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, null, map, model, conf.getPredictorsDays(), conf.getPredictorsFuturedays(), mapTime, classifylist, null, path, filename, neuralnetcommand, mlmeta, false);  
-                    Map<String, Double[]> classifyResult = result.getCatMap();
-                    accuracyMap.put(mldao.getName() + model.getName(), result.getAccuracy());
                     lossMap.put(mldao.getName() + model.getName(), result.getLoss());
-                    meta[9] = result.getLoss();
+                    meta[ResultMetaConstants.LOSS] = result.getLoss();
+                    meta[ResultMetaConstants.THRESHOLD] = threshold;
                     resultMeta.setLoss(result.getLoss());
-                    mapResult.put(model, classifyResult);
-                    meta[4] = result.getAccuracy();
-                    resultMeta.setTestAccuracy(result.getAccuracy());
+                    resultMeta.setThreshold(threshold);
+                    if (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMllearn()) {
+                        neuralnetcommand.setMllearn(false);
+                        neuralnetcommand.setMlclassify(true);
+                        result = mldao.learntestclassify(nnConfigs, null, map, model, conf.getPredictorsDays(), conf.getPredictorsFuturedays(), mapTime, classifylist, null, path, filename, neuralnetcommand, mlmeta, false);  
+                    } else {
+                        
+                    }
+                    Map<String, Double[]> classifyResult = result.getCatMap();
+                    Map<String, Double[]> classifyResultNew = new HashMap<>();
+                    mapResult.put(model, classifyResultNew);
+                    double accuracy = 0;
+                    //accuracy = result.getAccuracy();
+                    accuracy = calculateAccuracy(aListMap, threshold, classifyResult, classifyResultNew);
+                    accuracyMap.put(mldao.getName() + model.getName(), accuracy);
+                    meta[ResultMetaConstants.TESTACCURACY] = accuracy;
+                    resultMeta.setTestAccuracy(accuracy);
                 }
             }
         } catch (Exception e) {
             log.error("Exception", e);
         }
+    }
+
+    private double calculateAccuracy(Map<String, Double[][]> aListMap, Double threshold,
+            Map<String, Double[]> classifyResult, Map<String, Double[]> classifyResultNew) {
+        double accuracy = 0;
+        if (classifyResult != null) {
+            int count = 0;
+            int total = 0;
+            for (Entry<String, Double[]> entry : classifyResult.entrySet()) {
+                String key = entry.getKey();
+                Double[][] v = aListMap.get(key);
+                Double[] list = v[0];
+                Double val = list[list.length - 1];
+                Double[] list2 = entry.getValue();
+                Double val2 = list2[list2.length - 1];
+                if (val != null && val2 != null) {
+                    double abovebelow = 2.0;
+                    if (val2 / val > threshold) {
+                        count++;
+                        abovebelow = 1.0;
+                    }
+                    classifyResultNew.put(key, new Double[] { abovebelow });
+                }
+                total++;
+            }
+            if (total != 0) {
+                accuracy = ( (double) count) / total;
+            }
+        }
+        return accuracy;
     }
 
     private Map<String, Double[]> getMapResult(MyMyConfig conf, MLClassifyDao mldao, int horizon, int windowsize,
@@ -331,7 +381,15 @@ public abstract class Predictor extends AbstractPredictor {
         return localMapResult;
     }
 
-    private void createResultMap(MyMyConfig conf, Map<MLClassifyModel, Map<String, Double[]>> mapResult, Map<String, Double[][]> aListMap) {
+    public static Map<Double, String> createLabelMapShort() {
+        Map<Double, String> labelMap1 = new HashMap<>();
+        labelMap1.put(1.0, Constants.ABOVE);
+        labelMap1.put(2.0, Constants.BELOW);
+        return labelMap1;
+    }
+
+    private void createResultMap(MyMyConfig conf, Map<Double, Map<MLClassifyModel, Map<String, Double[]>>> mapResult0, Map<String, Double[][]> aListMap) {
+        Map<Double, String> labelMapShort = createLabelMapShort();
         for (String id : listMap.keySet()) {
             Object[] fields = new Object[fieldSize];
             resultMap.put(id, fields);
@@ -339,9 +397,20 @@ public abstract class Predictor extends AbstractPredictor {
 
             // make OO of this
             if (conf.wantML()) {
+                Double[] thresholds = getThresholds();
+                for (Double threshold : thresholds) {
+                Map<MLClassifyModel, Map<String, Double[]>> mapResult = mapResult0.get(threshold);    
                 for (MLClassifyDao mldao : mldaos) {
                     for (MLClassifyModel model : mldao.getModels(predictorName())) {
                         Map<String, Double[]> resultMap = mapResult.get(model);
+                        Double[] aType = null;
+                        if (resultMap != null) {
+                            aType = resultMap.get(id);
+                        } else {
+                            log.info("map null  {}");
+                        }
+                        fields[retindex++] = aType != null ? labelMapShort.get(aType[0]) : null;
+                        /*
                         Double[] aType = null;
                         if (resultMap != null) {
                             aType = resultMap.get(id);
@@ -349,8 +418,10 @@ public abstract class Predictor extends AbstractPredictor {
                                 fields[retindex++] = aType[aType.length - 1];
                             }
                         }
+                        */
                     }   
                 }
+            }
             }
         }
     }
@@ -481,6 +552,22 @@ public abstract class Predictor extends AbstractPredictor {
             market = testmarket;
         }
         return market + "_" + getName() + "_" + dao.getName() + "_" +  model.getName() + "_" + conf.getPredictorsDays() + "_" + conf.getPredictorsFuturedays() + "_" + in + "_" + out;
+    }
+
+    private Double[] getThresholds() {
+        boolean gui = conf.getConfigValueMap().get(ConfigConstants.MISCTHRESHOLD) != null;
+        log.info("GUI thresholds {}", gui);
+        String thresholdString = conf.getAggregatorsIndicatorThreshold();
+        if (gui) {
+            thresholdString = conf.getThreshold();
+        }
+        try {
+            Double.valueOf(thresholdString);
+            log.error("Using old format {}", thresholdString);
+            thresholdString = "[" + thresholdString + "]";
+        } catch (Exception e) {            
+        }
+        return JsonUtil.convert(thresholdString, Double[].class);
     }
 
 }
