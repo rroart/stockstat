@@ -19,13 +19,13 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
-import roart.component.Memories;
 import roart.component.ComponentRecommender;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.MLMetricsItem;
 import roart.service.model.ProfitData;
 

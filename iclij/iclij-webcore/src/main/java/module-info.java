@@ -24,6 +24,7 @@ module iclij.webcore {
     requires iclij.common.componentdata;
     requires iclij.common.config;
     requires iclij.common.constants;
+    requires iclij.common.filter;
     requires iclij.common.model;
     requires iclij.common.service;
     requires iclij.common.util;

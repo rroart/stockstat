@@ -25,6 +25,7 @@ import roart.component.model.MLAggregatorData;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;

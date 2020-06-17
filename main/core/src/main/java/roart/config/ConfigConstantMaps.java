@@ -172,6 +172,7 @@ public class ConfigConstantMaps {
 	map.put(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS, Integer.class);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD, String.class);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRPERSIST, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRCONFIG, String.class);
@@ -544,6 +545,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORS, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS, 20);
 	deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS, 10);
+        deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD, "[ 1.0 ]");
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR, Boolean.TRUE);
         deflt.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRPERSIST, Boolean.TRUE);
@@ -913,6 +915,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, "Predictors mlconfig");
 	text.put(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS, "Predictors days");
         text.put(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS, "Predictors future days");
+        text.put(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD, "Predictors threshold");
         text.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW, "Enable Predictor Tensorflow");
         text.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR, "Enable Predictor Tensorflow LIR");
         text.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRPERSIST, "Enable Predictor Tensorflow LIR persist");
@@ -1168,6 +1171,7 @@ public class ConfigConstantMaps {
         range.put(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT, new Double[] { 1.0, 20.0 } );
         range.put(ConfigConstants.AGGREGATORSMLSTOCHTHRESHOLD, new Double[] { 0.8, 1.2 } );
         range.put(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS, new Double[] { 5.0, 20.0 } );
+        range.put(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD, new Double[] { 0.8, 1.2 } );
         range.put(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS, new Double[] { 5.0, 20.0 } );
 
         /*
@@ -1334,6 +1338,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSMLCONFIG, new XMLType( String.class, null, "Predictors mlconfig"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS, new XMLType( Integer.class, 20, "Predictors days"));
 	mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS, new XMLType( Integer.class, 10, "Predictors future days"));
+        mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD, new XMLType( String.class, 10, "Predictors threshold"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow LIR"));
         mymap.put(ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIRPERSIST, new XMLType( Boolean.class, Boolean.TRUE, "Enable Predictor Tensorflow LIR persist"));

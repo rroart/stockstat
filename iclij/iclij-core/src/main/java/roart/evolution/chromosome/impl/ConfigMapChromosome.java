@@ -37,7 +37,6 @@ import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
-import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
@@ -45,6 +44,7 @@ import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -297,7 +297,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             }
 
             ProfitInputData inputdata = new ProfitInputData();
-            listMap.method(myData.getMemoryItems(), param.getInput().getConfig(), new ImproveProfitAction());        
+            listMap.method(myData.getMemoryItems(), param.getInput().getConfig());        
             profitdata.setInputdata(inputdata);
             inputdata.setNameMap(new HashMap<>());
 

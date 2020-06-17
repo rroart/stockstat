@@ -87,7 +87,7 @@ public class ComponentTime {
                 if (end == null) {
                     endDate = stockdates.get(0);
                 } else {
-                    endDate = TimeUtil.convertDate2(input.getStartdate());
+                    endDate = TimeUtil.convertDate2(input.getEnddate()); // temp fix
                     // and differs here
                     int index = TimeUtil.getIndexEqualBefore(stockdates, endDate);
                     endDate = stockdates.get(index);

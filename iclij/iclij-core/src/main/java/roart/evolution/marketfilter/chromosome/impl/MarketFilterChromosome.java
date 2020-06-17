@@ -23,13 +23,13 @@ import roart.action.MarketAction;
 import roart.action.MarketAction.MarketComponentTime;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
-import roart.component.Memories;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.evolution.species.Individual;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
@@ -361,7 +361,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
             }
 
             ProfitInputData inputdata = new ProfitInputData();
-            listMap.method(myData.getMemoryItems(), param.getInput().getConfig(), new ImproveProfitAction());        
+            listMap.method(myData.getMemoryItems(), param.getInput().getConfig());        
             profitdata.setInputdata(inputdata);
             inputdata.setNameMap(new HashMap<>());
 

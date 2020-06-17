@@ -17,6 +17,7 @@
   <module>iclij-componentdata</module>
   <module>iclij-constants</module>
   <module>iclij-config</module>
+  <module>iclij-filter</module>
   <module>iclij-model</module>
   <module>iclij-service</module>
   <module>iclij-util</module>
