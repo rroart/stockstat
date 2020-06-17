@@ -22,13 +22,13 @@ import roart.common.constants.Constants;
 import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
-import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentTimeUtil;
 import roart.db.IclijDbDao;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
@@ -57,87 +57,6 @@ public class FindProfitAction extends MarketAction {
     //@Override
     public List<MemoryItem> filterKeepRecent2(List<MemoryItem> marketMemory, LocalDate date, int days) {
         return marketMemory;
-    }
-
-    @Override
-    public Map[] filterMemoryListMapsWithConfidence(Market market, Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config) {
-        Map<Triple<String, String, String>, List<MemoryItem>> okListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> aboveThresholdMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> aboveOkListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> aboveThresholdAboveMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> belowOkListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> aboveThresholdBelowMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> badListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> belowThresholdMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> aboveBadListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> belowThresholdAboveMap = new HashMap<>();
-        Map<Triple<String, String, String>, List<MemoryItem>> belowBadListMap = new HashMap<>();
-        Map<Triple<String, String, String>, Double> belowThresholdBelowMap = new HashMap<>();
-        for(Entry<Triple<String, String, String>, List<MemoryItem>> entry : listMap.entrySet()) {
-            Triple<String, String, String> keys = entry.getKey();
-            List<MemoryItem> memoryList = entry.getValue();
-            List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
-            confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
-            List<Double> aboveConfidenceList = new ArrayList<>();
-            List<Double> belowConfidenceList = new ArrayList<>();
-            if (true) {
-            for (MemoryItem memory : memoryList) {
-                Long above = memory.getAbovepositives();
-                Long below = memory.getBelowpositives();
-                Long abovesize = memory.getAbovesize();
-                Long belowsize = memory.getBelowsize();
-                if (above != null && abovesize !=null && above > 0 && abovesize > 0) {
-                    Double aboveConfidence = ( (double ) above) / abovesize;
-                    aboveConfidenceList.add(aboveConfidence);
-                }
-                if (below != null && belowsize !=null && below > 0 && belowsize > 0) {
-                    Double belowConfidence = ( (double ) below) / belowsize;
-                    belowConfidenceList.add(belowConfidence);
-                }
-            }
-            } else {
-                confidences = new ArrayList<>();
-                
-                Long positives = memoryList.stream().map(MemoryItem::getPositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long size = memoryList.stream().map(MemoryItem::getSize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long above = memoryList.stream().map(MemoryItem::getAbovepositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long below = memoryList.stream().map(MemoryItem::getAbovesize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long abovesize = memoryList.stream().map(MemoryItem::getBelowpositives).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                Long belowsize = memoryList.stream().map(MemoryItem::getBelowsize).filter(Objects::nonNull).collect(Collectors.summingLong(Long::longValue));
-                if (size != null) {
-                    Double confidence = ( (double ) positives) / size;
-                    confidences.add(confidence);                    
-                }
-                if (abovesize != null) {
-                    Double aboveConfidence = ( (double ) above) / abovesize;
-                    aboveConfidenceList.add(aboveConfidence);                    
-                }
-                if (belowsize != null) {
-                    Double belowConfidence = ( (double ) below) / belowsize;
-                    belowConfidenceList.add(belowConfidence);                    
-                }
-            }
-            Optional<Double> minOpt = confidences.parallelStream().reduce(Double::min);
-            Optional<Double> aboveMinOpt = aboveConfidenceList.parallelStream().reduce(Double::min);
-            Optional<Double> belowMinOpt = belowConfidenceList.parallelStream().reduce(Double::min);
-            handleMin(market, aboveThresholdMap, belowThresholdMap, keys, minOpt);
-            handleMin(market, aboveThresholdAboveMap, belowThresholdAboveMap, keys, aboveMinOpt);
-            handleMin(market, aboveThresholdBelowMap, belowThresholdBelowMap, keys, belowMinOpt);
-        }
-        return new Map[] { aboveThresholdMap, belowThresholdMap, aboveThresholdAboveMap, belowThresholdAboveMap, aboveThresholdBelowMap, belowThresholdBelowMap };
-    }
-
-    private void handleMin(Market market, Map<Triple<String, String, String>, Double> aboveThresholdMap,
-            Map<Triple<String, String, String>, Double> belowThresholdMap, Triple<String, String, String> keys,
-            Optional<Double> valOpt) {
-        if (valOpt.isPresent()) {
-            Double val = valOpt.get();
-            if (val >= market.getFilter().getConfidence()) {
-                aboveThresholdMap.put(keys, val);
-            } else {
-                belowThresholdMap.put(keys, val);               
-            }
-        }
     }
 
     @Override

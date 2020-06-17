@@ -209,6 +209,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-common-filter</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-service</artifactId>
       <version>${stockstat.version}</version>
     </dependency>

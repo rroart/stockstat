@@ -13,13 +13,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import roart.common.config.ConfigConstants;
-import roart.component.Memories;
 import roart.component.Component;
-import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;

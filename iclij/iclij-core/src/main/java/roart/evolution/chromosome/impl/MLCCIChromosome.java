@@ -5,10 +5,10 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.action.MarketAction;
-import roart.component.Memories;
 import roart.component.model.ComponentData;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;

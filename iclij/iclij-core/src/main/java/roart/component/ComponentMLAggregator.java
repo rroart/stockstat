@@ -25,6 +25,7 @@ import roart.component.model.MLAggregatorData;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
@@ -93,7 +94,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
             
             //if memory.learnconf > mltest then..above.
             
-            if (mltest != null && (memories == null || !memories.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
+            if (mltest != null) {
+                    //&& (memories == null || !memories.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
                 Pair keyPair = new ImmutablePair(getPipeline(), count);
                 for (String key : param.getCategoryValueMap().keySet()) {

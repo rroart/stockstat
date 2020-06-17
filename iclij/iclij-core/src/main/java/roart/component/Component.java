@@ -52,6 +52,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.config.MarketFilter;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -309,7 +310,7 @@ public abstract class Component {
             Map<String, Double> scoreMap = new HashMap<>();
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
-            param.setFutureDate(LocalDate.now());
+            //param.setFutureDate(LocalDate.now());
             // fix mlmarket;
             TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);

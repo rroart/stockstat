@@ -22,18 +22,23 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.math3.analysis.function.Add;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
 import roart.iclij.config.MarketFilter;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.factory.actioncomponentconfig.ComponentMap;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
+import roart.service.model.ProfitData;
+import roart.service.model.ProfitInputData;
 import roart.iclij.verifyprofit.TrendUtil;
+import roart.iclij.filter.Memories;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyConfig;
 import roart.common.constants.Constants;
@@ -53,7 +58,6 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MapList;
 import roart.iclij.model.MemoryItem;
-import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
@@ -202,6 +206,18 @@ public class ServiceUtil {
                 log.error(Constants.EXCEPTION, e);
             }
             List<IncDecItem> allCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime(), true);
+            
+            Memories memories = new Memories(market);
+            final int AVERAGE_SIZE = 5;
+            LocalDate prevdate = param.getInput().getEnddate();
+            LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * findProfitActionData.getTime(market));
+            getListComponents(null, param, instance, market, memories, prevdate, olddate, findProfitActionData);
+
+            allCurrentIncDecs = allCurrentIncDecs
+                    .stream()
+                    .filter(e -> memories.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
+                    .collect(Collectors.toList());
+            
             Map<String, List<IncDecItem>> currentIncDecMap = splitParam(allCurrentIncDecs);
             for (Entry<String, List<IncDecItem>> entry : currentIncDecMap.entrySet()) {
                 String key = entry.getKey();
@@ -237,6 +253,26 @@ public class ServiceUtil {
         new MiscUtil().print(result);
         return result;
     }
+
+    // overlaps
+    private static void getListComponents(WebData myData, ComponentData param, IclijConfig config,
+            Market market,
+            Memories memories, LocalDate prevdate, LocalDate olddate, MarketActionData actionData) {
+        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, null, olddate, prevdate);
+        marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
+        if (!marketMemory.isEmpty()) {
+            int jj = 0;
+        }
+        if (marketMemory == null) {
+            myData.setProfitData(new ProfitData());
+        }
+        int AVERAGE_SIZE = 5;
+        //marketMemory.addAll(myData.getMemoryItems());
+        List<MemoryItem> currentList = new MiscUtil().filterKeepRecent3(marketMemory, prevdate, ((int) AVERAGE_SIZE) * actionData.getTime(market), false);
+        // map subcat + posit -> list
+        currentList = currentList.stream().filter(e -> !e.getComponent().equals(PipelineConstants.ABOVEBELOW)).collect(Collectors.toList());
+        memories.method(currentList, config);
+     }
 
     private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, List<IncDecItem> listIncDecs) throws Exception {
         List[] objects = new RelationUtil().method(componentInput, listIncDecs);
@@ -656,7 +692,7 @@ public class ServiceUtil {
             return result;
         }
 
-        //FindProfitActionData findProfitActionData = new FindProfitActionData();
+        FindProfitActionData findProfitActionData = new FindProfitActionData();
         // this calculates, does not read from db
         List<MemoryItem> allMemoryItems = new ArrayList<>();
         //ProfitData picks = findProfitActionData.getPicks(param, allMemoryItems);
@@ -711,6 +747,23 @@ public class ServiceUtil {
         List<IncDecItem> allListDec = new ArrayList<>(myData.getDecs());
         allListInc = new MiscUtil().mergeList(allListInc, !rerun);
         allListDec = new MiscUtil().mergeList(allListDec, !rerun);
+
+        Memories memoryFilter = new Memories(market);
+        final int AVERAGE_SIZE = 5;
+        LocalDate prevdate = param.getInput().getEnddate();
+        LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * findProfitActionData.getTime(market));
+        getListComponents(null, param, instance, market, memoryFilter, prevdate, olddate, findProfitActionData);
+
+        allListInc = allListInc
+                .stream()
+                .filter(e -> memoryFilter.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
+                .collect(Collectors.toList());
+        allListDec = allListDec
+                .stream()
+                .filter(e -> memoryFilter.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
+                .collect(Collectors.toList());
+
+        
         List<IncDecItem> allListIncDec;
         if (rerun) {
             allListIncDec = new MiscUtil().moveAndGetCommon(allListInc, allListDec, verificationdays > 0);

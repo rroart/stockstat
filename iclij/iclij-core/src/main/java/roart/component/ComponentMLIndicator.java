@@ -24,6 +24,7 @@ import roart.evolution.chromosome.impl.MLIndicatorChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
@@ -136,7 +137,8 @@ public class ComponentMLIndicator extends ComponentML {
             Pair<String, String> paircount = new MiscUtil().getComponentPair(meta);
 
             MLMetricsItem mltest = search(mlTests, meta);
-            if (mltest != null && (positions == null || !positions.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
+            if (mltest != null) {
+                //&& (positions == null || !positions.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
                 Pair keyPair = new ImmutablePair(PipelineConstants.MLINDICATOR, count);
                 for (String key : param.getCategoryValueMap().keySet()) {
