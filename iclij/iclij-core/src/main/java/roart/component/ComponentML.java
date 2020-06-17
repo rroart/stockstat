@@ -32,6 +32,7 @@ import roart.iclij.config.EvolveMLConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.filter.Memories;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
@@ -322,19 +323,28 @@ public abstract class ComponentML extends Component {
             log.error("Key not found {}", ml);
             return;
         }
+        // disable all major MLs except our
+        // BUT: we are not predictor
         //valueMap.put(map.get(ml), Boolean.TRUE);
-        map.remove(ml);
+        //map.remove(ml);
         for (Entry<String, String> entry : map.entrySet()) {
             String disableKey = entry.getValue();
             valueMap.put(disableKey, Boolean.FALSE);
         }
+        Map<String, String> mapPredictor = new MLUtil().getMlMap();
+        for (Entry<String, String> entry : mapPredictor.entrySet()) {
+            String disableKey = entry.getValue();
+            valueMap.put(disableKey, Boolean.FALSE);
+        }
+        // disable all for the others
         for (String otherKey : getOtherList()) {
             valueMap.put(otherKey, Boolean.FALSE);
         }
+        // disable all for our major
         Map<Pair<String, String>, String> fullMap = getMap();
         for (Entry<Pair<String, String>, String> entry : fullMap.entrySet()) {
             Pair<String, String> aPair = entry.getKey();
-            if (ml.equals(aPair.getLeft())) {
+            if (true || ml.equals(aPair.getLeft())) {
                 valueMap.put(entry.getValue(), Boolean.FALSE);
             }
         }
@@ -366,10 +376,20 @@ public abstract class ComponentML extends Component {
         }
     }
 
+    /**
+     * 
+     * @return Map of pair of (major minor) to config key
+     */
+    
     protected Map<Pair<String, String>, String> getMap() {
         return getConfig().getMLMaps().getMap();
     }
 
+    /**
+     * 
+     * @return List of config keys for the other type of ML (ordinary/predictor)
+     */
+    
     protected List<String> getOtherList() {
         return getConfig().getMLMaps().getOtherList();
     }

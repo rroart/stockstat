@@ -28,12 +28,29 @@ public class MLUtil {
         return map;
     }
 
+    /**
+     * 
+     * @return Map of ML types to the config key
+     */
+    
     public Map<String, String> getMlMap() {
         Map<String, String> map = new HashMap<>();
         map.put(MLConstants.SPARK, ConfigConstants.MACHINELEARNINGSPARKML);
         map.put(MLConstants.TENSORFLOW, ConfigConstants.MACHINELEARNINGTENSORFLOW);
         map.put(MLConstants.PYTORCH, ConfigConstants.MACHINELEARNINGPYTORCH);
         map.put(MLConstants.GEM, ConfigConstants.MACHINELEARNINGGEM);
+        return map;
+    }
+
+    /**
+     * 
+     * @return Map of ML predictor types to the config key
+     */
+    
+    public Map<String, String> getMlPredictorMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put(MLConstants.TENSORFLOW, ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOW);
+        map.put(MLConstants.PYTORCH, ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCH);
         return map;
     }
 
