@@ -643,8 +643,9 @@ public class EvolutionService {
             NeuralNetConfig nnconfig = nnConfigs.getAndSetConfig(key, configValue);
             NeuralNetConfigGene nnconfigGene = NeuralNetConfigGeneFactory.get(nnconfig, key);
             NeuralNetChromosome chromosome = new NeuralNetChromosome(conf.copy(), ml, dataReaders, categories, key, nnconfigGene, catName, cat, neuralnetcommand);
+            // no, now predictor got accuracy
             if (ml.equals(PipelineConstants.PREDICTOR)) {
-                chromosome.setAscending(false);
+                //chromosome.setAscending(false);
             }
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
