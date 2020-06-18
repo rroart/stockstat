@@ -18,7 +18,7 @@ public class ImproveAboveBelowActionData extends MarketActionData {
 
     @Override
     public String getThreshold(IclijConfig conf) {
-        return "[ null ]";
+        return conf.getFindProfitThreshold();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ImproveAboveBelowActionData extends MarketActionData {
 
     @Override
     public String getFuturedays(IclijConfig conf) {
-        return "[ null ]";
+        return conf.getFindProfitFuturedays();
     }
 
     @Override
