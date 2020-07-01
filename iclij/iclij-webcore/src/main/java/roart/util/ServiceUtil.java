@@ -1347,6 +1347,10 @@ public class ServiceUtil {
             if (accuracy != null) {
                 item.setTestAccuracy(MathUtil.round2(accuracy, 3));
             }
+            Double trainaccuracy = item.getTrainAccuracy();
+            if (trainaccuracy != null) {
+                item.setTrainAccuracy(MathUtil.round2(trainaccuracy, 3));
+            }
         }        
     }
 
