@@ -479,6 +479,8 @@ public class MLIndicator extends Aggregator {
                     lossMap.put(mldao.getName() + model.getName() + threshold, result.getLoss());
                     meta1[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
                     resultMeta1.setTestAccuracy(result.getAccuracy());
+                    meta1[ResultMetaConstants.TRAINACCURACY] = result.getTrainaccuracy();
+                    resultMeta1.setTrainAccuracy(result.getTrainaccuracy());
                     meta1[ResultMetaConstants.LOSS] = result.getLoss();
                     resultMeta1.setLoss(result.getLoss());
                     mapResult.put("" + model, classifyResult);

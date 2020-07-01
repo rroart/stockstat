@@ -411,6 +411,8 @@ public abstract class IndicatorAggregator extends Aggregator {
                             lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                             meta[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
+                            meta[ResultMetaConstants.TRAINACCURACY] = result.getTrainaccuracy();
+                            resultMeta.setTrainAccuracy(result.getTrainaccuracy());
                             meta[ResultMetaConstants.LOSS] = result.getLoss();
                             resultMeta.setLoss(result.getLoss());
                             
@@ -680,6 +682,8 @@ public abstract class IndicatorAggregator extends Aggregator {
         ResultMeta resultMeta = getResultMetas().get(testCount);
         meta[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
         resultMeta.setTestAccuracy(result.getAccuracy());
+        meta[ResultMetaConstants.TRAINACCURACY] = result.getTrainaccuracy();
+        resultMeta.setTrainAccuracy(result.getTrainaccuracy());
         meta[ResultMetaConstants.LOSS] = result.getLoss();
         resultMeta.setLoss(result.getLoss());
     }
