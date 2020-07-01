@@ -26,6 +26,7 @@ public class ResultMetaConstants {
     
     public static final int THRESHOLD = 11;
     
-    public static final int SIZE = 12;
+    public static final int TRAINACCURACY = 12;
     
+    public static final int SIZE = 13;
 }

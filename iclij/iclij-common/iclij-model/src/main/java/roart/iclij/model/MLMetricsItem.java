@@ -21,6 +21,8 @@ public class MLMetricsItem {
 
     private String localcomponent;
 
+    private Double trainAccuracy;
+
     private Double testAccuracy;
 
     private Double loss;
@@ -79,6 +81,14 @@ public class MLMetricsItem {
         this.localcomponent = localcomponent;
     }
 
+    public Double getTrainAccuracy() {
+        return trainAccuracy;
+    }
+
+    public void setTrainAccuracy(Double trainAccuracy) {
+        this.trainAccuracy = trainAccuracy;
+    }
+
     public Double getTestAccuracy() {
         return testAccuracy;
     }
@@ -118,6 +128,7 @@ public class MLMetricsItem {
         mltest.setLocalcomponent(getLocalcomponent());
         mltest.setThreshold(getThreshold());
         mltest.setLoss(getLoss());
+        mltest.setTrainAccuracy(getTrainAccuracy());
         mltest.setTestAccuracy(getTestAccuracy());
         mltest.save();
     }
@@ -153,6 +164,7 @@ public class MLMetricsItem {
         mltestItem.setThreshold(mltest.getThreshold());
         mltestItem.setLoss(mltest.getLoss());
         mltestItem.setTestAccuracy(mltest.getTestAccuracy());
+        mltestItem.setTrainAccuracy(mltest.getTrainAccuracy());
         return mltestItem;
     }
     

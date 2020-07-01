@@ -52,6 +52,9 @@ public class MLMetrics implements Serializable {
     private String localcomponent;
     
     @Column
+    private Double trainAccuracy;
+    
+    @Column
     private Double testAccuracy;
     
     @Column
@@ -106,6 +109,14 @@ public class MLMetrics implements Serializable {
 
     public void setLocalcomponent(String localcomponent) {
         this.localcomponent = localcomponent;
+    }
+
+    public Double getTrainAccuracy() {
+        return trainAccuracy;
+    }
+
+    public void setTrainAccuracy(Double trainAccuracy) {
+        this.trainAccuracy = trainAccuracy;
     }
 
     public Double getTestAccuracy() {

@@ -114,6 +114,7 @@ public abstract class Component {
     protected abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
 
     public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
+        /*
         try {
             param.setDates(null, null, action.getActionData(), market);
         } catch (ParseException e) {
@@ -122,6 +123,7 @@ public abstract class Component {
             log.error(Constants.EXCEPTION, e);
             return;
         }
+        */
         Map<String, Object> valueMap = new HashMap<>();
         new MLUtil().disabler(valueMap);
         List<Component> allComponents = action.getComponentFactory().getAllComponents();
@@ -493,6 +495,7 @@ public abstract class Component {
                 item.setLocalcomponent(meta.getSubType() + meta.getSubSubType());
             }
             item.setTestAccuracy(meta.getTestAccuracy());
+            item.setTrainAccuracy(meta.getTrainAccuracy());
             item.setLoss(meta.getLoss());
             item.setThreshold(meta.getThreshold());
             item.save();

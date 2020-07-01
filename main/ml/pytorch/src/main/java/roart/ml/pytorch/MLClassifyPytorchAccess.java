@@ -326,6 +326,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         }
         }
         result.setAccuracy(ret.getAccuracy());
+        result.setTrainaccuracy(ret.getTrainaccuracy());
         result.setLoss(ret.getLoss());
         if (ret.getClassifycatarray() != null) {
             Map<String, Double[]> retMap = getCatMap(retList, classifyMap, ret, classify);
@@ -381,6 +382,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         }
         }
         result.setAccuracy(ret.getAccuracy());
+        result.setTrainaccuracy(ret.getTrainaccuracy());
         result.setClassify(ret.getClassify());
         return result;
     }
