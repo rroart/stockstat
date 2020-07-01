@@ -215,7 +215,7 @@ public class ServiceUtil {
 
             allCurrentIncDecs = allCurrentIncDecs
                     .stream()
-                    .filter(e -> memories.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
+                    .filter(e -> !memories.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
                     .collect(Collectors.toList());
             
             Map<String, List<IncDecItem>> currentIncDecMap = splitParam(allCurrentIncDecs);
@@ -756,11 +756,11 @@ public class ServiceUtil {
 
         allListInc = allListInc
                 .stream()
-                .filter(e -> memoryFilter.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
+                .filter(e -> !memoryFilter.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
                 .collect(Collectors.toList());
         allListDec = allListDec
                 .stream()
-                .filter(e -> memoryFilter.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
+                .filter(e -> !memoryFilter.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
                 .collect(Collectors.toList());
 
         

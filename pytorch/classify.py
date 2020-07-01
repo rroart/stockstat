@@ -146,7 +146,7 @@ class Classify:
         myobj.size = size
         model = Model.Net(myobj, config, classify)
         #testcat = torch.LongTensor(testcat)
-        (accuracy_score, loss) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
+        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = model
         global dicteval
@@ -155,7 +155,7 @@ class Classify:
         
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
+        return Response(json.dumps({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score)}), mimetype='application/json')
 
     def mytrain(self, model, inputs, labels, myobj, config, classify):
         if classify:
@@ -418,11 +418,17 @@ class Classify:
             #print("losss", loss.item())
             #print(tv_y.size(), tv_y)
             #print(y_hat.size(),y_hat)
-            return None, loss.item()
+            return None, loss.item(), None
             
         test_loss = 0
         accuracy_score = 0
+        train_accuracy_score = 0
 
+        y0_hat = model(v_x)
+        (max_vals0, arg_maxs0) = torch.max(y0_hat.data, dim=1)
+        num_correct0 = torch.sum(v_y==arg_maxs0.to(dtype=torch.float32))
+        acc0 = float(num_correct0) / len(v_y)
+        
         #print("test", len(test), len(testcat), testcat.shape, test)
         tv_x = torch.FloatTensor(test).to(dev)
         #print(type(testcat), testcat.shape)
@@ -444,7 +450,10 @@ class Classify:
         #y_hat_class = np.where(y_hat.detach().numpy()<0.5, 0, 1)
         #accuracy = np.sum(tv_y.reshape(-1,1) == y_hat_class) / len(testcat)
         accuracy_score = acc
- 
+        train_accuracy_score = acc0
+
+        print("Accs", acc0, acc)
+        
         #y_hat_class = np.where(y_hat.detach().numpy()<0.5, 0, 1)
         #accuracy = np.sum(testcat.reshape(-1,1) == y_hat_class) / len(testcat)
         #accuracy_score = accuracy
@@ -456,7 +465,7 @@ class Classify:
         #print(accuracy_score)
         #print(type(accuracy_score))
         print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
-        return accuracy_score, test_loss
+        return accuracy_score, test_loss, train_accuracy_score
 
     def getModel(self, myobj):
       if hasattr(myobj, 'modelInt'):  
@@ -550,9 +559,10 @@ class Classify:
         #myobj.size, myobj.classes, dim, layers)
         #testcat = torch.LongTensor(testcat)
         accuracy_score = None
+        train_accuracy_score = None
         loss = None
         if self.wantLearn(myobj):
-            (accuracy_score, loss) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
+            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, model, config, train, traincat, test, testcat, classify)
         # save model if
         # not dynamic and wantlearn
         if not self.wantDynamic(myobj) and self.wantLearn(myobj):
@@ -565,11 +575,13 @@ class Classify:
         #print(problist)
         if not accuracy_score is None:
             accuracy_score = float(accuracy_score)
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "loss": loss, "gpu" : self.hasgpu()}), mimetype='application/json'))
+        return(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "gpu" : self.hasgpu()}), mimetype='application/json'))
 
     def do_dataset(self, queue, request):
         torch.cuda.empty_cache()
@@ -592,16 +604,18 @@ class Classify:
         #model.share_memory()
         classifier = model
         print("model", modelname)
-        (accuracy_score, loss) = self.do_learntestinner(myobj, classifier, model, train, traincat, test, testcat, classify)
+        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, model, train, traincat, test, testcat, classify)
         myobj.classifyarray = train
         (intlist, problist) = self.do_classifyinner(myobj, model, classify)
         if not accuracy_score is None:
             accuracy_score = float(accuracy_score)
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        return(Response(json.dumps({"accuracy": accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
+        return(Response(json.dumps({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
         
     def getpath(self, myobj):
