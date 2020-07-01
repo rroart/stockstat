@@ -1143,7 +1143,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapGetter(subtypeMap, "offset");
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
-                    double[] doubleArray = new double[] { endOfArray - (end + 1) };
+                    double[] doubleArray = new double[] { (endOfArray - 1) - (end + 1) };
                     mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
                     mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                     mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
@@ -1224,7 +1224,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapGetter(subtypeMap, "offset");
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
-                    double[] doubleArray = new double[] { list.length - (end + 1)};
+                    double[] doubleArray = new double[] { (list.length - 1) - (end + 1)};
                     mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
                     mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                     mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
