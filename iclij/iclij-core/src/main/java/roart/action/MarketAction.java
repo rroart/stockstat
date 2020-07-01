@@ -187,6 +187,27 @@ public abstract class MarketAction extends Action {
                 if (stockDates == null || stockDates.isEmpty()) {
                     continue;
                 }
+
+                String date = null;
+                if (getActionData().getName().equals(IclijConstants.MACHINELEARNING)) {
+                    date = market.getConfig().getMldate();
+                    Short days = market.getConfig().getMldays();
+                    if (days != null) {
+                        date = stockDates.get(stockDates.size() - 1 - days);
+                    }
+                    if (date != null) {
+                        LocalDate adate = TimeUtil.getEqualBefore(stockDates, date);
+                        date = TimeUtil.convertDate2(adate);
+                    }
+                }
+                try {
+                    param.setFuturedays(0);
+                    param.setOffset(0);
+                    param.setDates(date, stockDates, getActionData(), market);
+                } catch (ParseException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+
                 /*
                 try {
                     param.setDates(null, stockDates, this.getActionData(), market);
@@ -507,7 +528,7 @@ public abstract class MarketAction extends Action {
         LocalDate prevdate = getPrevDate(param, market);
         LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * getActionData().getTime(market));
         ProfitInputData inputdata = new ProfitInputData();
-        getListComponents(myData, param, config, marketTime, evolve, market, dataMap, listComponentMap, prevdate, olddate);
+        getListComponents(myData, param, config, marketTime.parameters, evolve, market, dataMap, listComponentMap, olddate, prevdate);
         profitdata.setInputdata(inputdata);
         
         Map<String, Component> componentMap = new HashMap<>();
@@ -638,9 +659,9 @@ public abstract class MarketAction extends Action {
     }
 
     protected void getListComponents(WebData myData, ComponentData param, IclijConfig config,
-            MarketComponentTime marketTime, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
-            Memories memories, LocalDate prevdate, LocalDate olddate) {
-        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
+            Parameters parameters, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
+            Memories memories, LocalDate olddate, LocalDate prevdate) {
+        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate);
         marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
         if (!marketMemory.isEmpty()) {
             int jj = 0;
