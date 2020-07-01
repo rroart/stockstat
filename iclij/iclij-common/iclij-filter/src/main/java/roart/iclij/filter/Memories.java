@@ -27,8 +27,10 @@ public class Memories {
     
     private Market market;
     
+    // above market threshold, both/above/below key -> map of component -> sublocal list
     private Map<Boolean, Map<String, List<Pair<String, String>>>> aboveMap = new HashMap<>();
 
+    // below market threshold
     private Map<Boolean, Map<String, List<Pair<String, String>>>> belowMap = new HashMap<>();
 
     // or make a new object instead of the object array. use this as a pair
@@ -41,51 +43,6 @@ public class Memories {
 
     public void method(List<MemoryItem> currentList, IclijConfig config) {
         currentList.forEach(m -> new MiscUtil().listGetterAdder(listMap, new ImmutableTriple<String, String, String>(m.getComponent(), m.getSubcomponent(), m.getLocalcomponent()), m));
-        Map[] map = filterMemoryListMapsWithConfidence(market, listMap, config);        
-        Map<Triple<String, String, String>, Double> aboveThresholdMap = map[0];
-        Map<Triple<String, String, String>, Double> belowThresholdMap = map[1];
-        Map<Triple<String, String, String>, Double> aboveThresholdAboveMap = map[2];
-        Map<Triple<String, String, String>, Double> belowThresholdAboveMap = map[3];
-        Map<Triple<String, String, String>, Double> aboveThresholdBelowMap = map[4];
-        Map<Triple<String, String, String>, Double> belowThresholdBelowMap = map[5];
-        Map<String, List<Pair<String, String>>> aboveThresholdComponentMap = createComponentPositionListMap(aboveThresholdMap);
-        Map<String, List<Pair<String, String>>> aboveThresholdAboveComponentMap = createComponentPositionListMap(aboveThresholdAboveMap);
-        Map<String, List<Pair<String, String>>> aboveThresholdBelowComponentMap = createComponentPositionListMap(aboveThresholdBelowMap);
-        aboveMap.put(null, aboveThresholdComponentMap);
-        aboveMap.put(true, aboveThresholdAboveComponentMap);
-        aboveMap.put(false, aboveThresholdBelowComponentMap);
-        Map<String, List<Pair<String, String>>> belowThresholdComponentMap = createComponentPositionListMap(belowThresholdMap);
-        Map<String, List<Pair<String, String>>> belowThresholdAboveComponentMap = createComponentPositionListMap(belowThresholdAboveMap);
-        Map<String, List<Pair<String, String>>> belowThresholdBelowComponentMap = createComponentPositionListMap(belowThresholdBelowMap);
-        belowMap.put(null, belowThresholdComponentMap);
-        belowMap.put(true, belowThresholdAboveComponentMap);
-        belowMap.put(false, belowThresholdBelowComponentMap);
-    }
-    
-    public <T> Map<String, List<Pair<String, String>>> createComponentPositionListMap(Map<Triple<String, String, String>, T> okListMap) {
-        Map<String, List<Pair<String, String>>> listComponent = new HashMap<>();
-        for (Triple<String, String, String> key : okListMap.keySet()) {
-            new MiscUtil().listGetterAdder(listComponent, key.getLeft(), new ImmutablePair<String, String>(key.getMiddle(), key.getRight()));
-        }
-        return listComponent;
-    }
-
-    public boolean containsBelow(String component, Pair<String, String> pair, Boolean above, MLMetricsItem mlmetrics, boolean useThreshold) {
-        if (!useThreshold) {
-            return false;
-        }
-        Map<String, List<Pair<String, String>>> componentMap = belowMap.get(above);
-        if (componentMap != null) {
-            List<Pair<String, String>> sublocals = componentMap.get(component);
-            if ( sublocals != null) {
-                log.info("Found and skipped {}", pair);
-                return sublocals.contains(pair);
-            }
-        }
-        return false;
-    }
-
-    private Map[] filterMemoryListMapsWithConfidence(Market market, Map<Triple<String, String, String>,List<MemoryItem>> listMap, IclijConfig config) {
         Map<Triple<String, String, String>, List<MemoryItem>> okListMap = new HashMap<>();
         Map<Triple<String, String, String>, Double> aboveThresholdMap = new HashMap<>();
         Map<Triple<String, String, String>, List<MemoryItem>> aboveOkListMap = new HashMap<>();
@@ -102,11 +59,13 @@ public class Memories {
             Triple<String, String, String> keys = entry.getKey();
             List<MemoryItem> memoryList = entry.getValue();
             List<Double> confidences = memoryList.stream().map(MemoryItem::getConfidence).collect(Collectors.toList());
-            confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
+            confidences = confidences.stream().filter(m1 -> m1 != null && !m1.isNaN()).collect(Collectors.toList());
             List<Double> aboveConfidenceList = new ArrayList<>();
             List<Double> belowConfidenceList = new ArrayList<>();
             if (true) {
             for (MemoryItem memory : memoryList) {
+                // get count and sizes for rightly predicted above or below a threshold
+                // and add them to their respective lists
                 Long above = memory.getAbovepositives();
                 Long below = memory.getBelowpositives();
                 Long abovesize = memory.getAbovesize();
@@ -149,7 +108,41 @@ public class Memories {
             handleMin(market, aboveThresholdAboveMap, belowThresholdAboveMap, keys, aboveMinOpt);
             handleMin(market, aboveThresholdBelowMap, belowThresholdBelowMap, keys, belowMinOpt);
         }
-        return new Map[] { aboveThresholdMap, belowThresholdMap, aboveThresholdAboveMap, belowThresholdAboveMap, aboveThresholdBelowMap, belowThresholdBelowMap };
+        Map<String, List<Pair<String, String>>> aboveThresholdComponentMap = createComponentPositionListMap(aboveThresholdMap);
+        Map<String, List<Pair<String, String>>> aboveThresholdAboveComponentMap = createComponentPositionListMap(aboveThresholdAboveMap);
+        Map<String, List<Pair<String, String>>> aboveThresholdBelowComponentMap = createComponentPositionListMap(aboveThresholdBelowMap);
+        aboveMap.put(null, aboveThresholdComponentMap);
+        aboveMap.put(true, aboveThresholdAboveComponentMap);
+        aboveMap.put(false, aboveThresholdBelowComponentMap);
+        Map<String, List<Pair<String, String>>> belowThresholdComponentMap = createComponentPositionListMap(belowThresholdMap);
+        Map<String, List<Pair<String, String>>> belowThresholdAboveComponentMap = createComponentPositionListMap(belowThresholdAboveMap);
+        Map<String, List<Pair<String, String>>> belowThresholdBelowComponentMap = createComponentPositionListMap(belowThresholdBelowMap);
+        belowMap.put(null, belowThresholdComponentMap);
+        belowMap.put(true, belowThresholdAboveComponentMap);
+        belowMap.put(false, belowThresholdBelowComponentMap);
+    }
+    
+    public <T> Map<String, List<Pair<String, String>>> createComponentPositionListMap(Map<Triple<String, String, String>, T> okListMap) {
+        Map<String, List<Pair<String, String>>> listComponent = new HashMap<>();
+        for (Triple<String, String, String> key : okListMap.keySet()) {
+            new MiscUtil().listGetterAdder(listComponent, key.getLeft(), new ImmutablePair<String, String>(key.getMiddle(), key.getRight()));
+        }
+        return listComponent;
+    }
+
+    public boolean containsBelow(String component, Pair<String, String> pair, Boolean above, MLMetricsItem mlmetrics, boolean useThreshold) {
+        if (!useThreshold) {
+            return false;
+        }
+        Map<String, List<Pair<String, String>>> componentMap = belowMap.get(above);
+        if (componentMap != null) {
+            List<Pair<String, String>> sublocals = componentMap.get(component);
+            if ( sublocals != null) {
+                log.info("Found and skipped {}", pair);
+                return sublocals.contains(pair);
+            }
+        }
+        return false;
     }
 
     private void handleMin(Market market, Map<Triple<String, String, String>, Double> aboveThresholdMap,
