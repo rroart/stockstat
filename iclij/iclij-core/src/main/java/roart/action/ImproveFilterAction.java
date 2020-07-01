@@ -121,7 +121,7 @@ public class ImproveFilterAction extends MarketAction {
     @Override
     protected LocalDate getPrevDate(ComponentData param, Market market) {
         LocalDate prevdate = param.getInput().getEnddate();
-        return prevdate.minusDays(market.getConfig().getImprovetime());
+        return prevdate.minusDays(market.getConfig().getFiltertime());
     }
     
     @Override

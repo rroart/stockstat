@@ -640,7 +640,7 @@ public abstract class MarketAction extends Action {
     protected void getListComponents(WebData myData, ComponentData param, IclijConfig config,
             MarketComponentTime marketTime, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
             Memories memories, LocalDate prevdate, LocalDate olddate) {
-        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, IclijConstants.IMPROVEABOVEBELOW, marketTime.componentName, marketTime.subcomponent, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
+        List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
         marketMemory = marketMemory.stream().filter(e -> "Confidence".equals(e.getType())).collect(Collectors.toList());
         if (!marketMemory.isEmpty()) {
             int jj = 0;

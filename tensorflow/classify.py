@@ -113,7 +113,7 @@ class Classify:
         myobj.size = size
         model = Model.Model(myobj, config, classify)
         classifier = model
-        (accuracy_score, loss) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
+        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
         global dictclass
         #dictclass[str(myobj.modelInt) + myobj.period + myobj.modelname] = classifier
         #global dicteval
@@ -124,7 +124,7 @@ class Classify:
         del classifier
         dt = datetime.now()
         #print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json'))
+        queue.put(Response(json.dumps({"accuracy": float(accuracy_score), "trainaccuracy": float(train_accuracy_score)}), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getSlide(self, inputs, labels, myobj, config):
@@ -345,17 +345,20 @@ class Classify:
             #print(tv_y.size(), tv_y)
             #print(y_hat.size(),y_hat)
             #return None, loss.item()
-        
+
+        train_loss, train_accuracy_score = classifier.evaluate(train, traincat)
+
         test_loss, accuracy_score = classifier.evaluate(test, testcat)
         if isinstance(classifier, tf.keras.Model):
             print(classifier.metrics_names)
             print(classifier.summary())
+        print("Accs", train_accuracy_score, accuracy_score)
         #print("test_loss")
         #print(test_loss)
         #print(accuracy_score)
         #print(type(accuracy_score))
         #print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
-        return accuracy_score, test_loss
+        return accuracy_score, test_loss, train_accuracy_score
 
     def getModel(self, myobj):
       print(tf.__version__)
@@ -477,7 +480,7 @@ class Classify:
         accuracy_score = None
         loss = None
         if self.wantLearn(myobj):
-            (accuracy_score, loss) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
+            (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
         #print(type(classifier))
 
         #print("neuralnetcommand")
@@ -509,12 +512,14 @@ class Classify:
         classifier.tidy()
         del classifier
         if not accuracy_score is None:
-            accuracy_score = float(accuracy_score)
+            accuracy_score = float(accuracy_score) 
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "loss": loss, "gpu" : self.hasgpu() }), mimetype='application/json'))
+        queue.put(Response(json.dumps({"classifycatarray": intlist, "classifyprobarray": problist, "accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "gpu" : self.hasgpu() }), mimetype='application/json'))
 
     def do_dataset(self, queue, request):
         dt = datetime.now()
@@ -536,7 +541,7 @@ class Classify:
         print(model)
         self.printgpus()
         classifier = model
-        (accuracy_score, loss) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
+        (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)
         myobj.classifyarray = train
         (intlist, problist) = self.do_classifyinner(myobj, model, classify)
         global dictclass
@@ -549,11 +554,13 @@ class Classify:
         del classifier
         if not accuracy_score is None:
             accuracy_score = float(accuracy_score)
+        if not train_accuracy_score is None:
+            train_accuracy_score = float(train_accuracy_score)
         if not loss is None:
             loss = float(loss)
         dt = datetime.now()
         print ("millis ", (dt.timestamp() - timestamp)*1000)
-        queue.put(Response(json.dumps({"accuracy": accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
+        queue.put(Response(json.dumps({"accuracy": accuracy_score, "trainaccuracy": train_accuracy_score, "loss": loss, "classify" : classify, "gpu" : self.hasgpu() }), mimetype='application/json'))
         #return Response(json.dumps({"accuracy": float(accuracy_score)}), mimetype='application/json')
 
     def getpath(self, myobj):

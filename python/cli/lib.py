@@ -9,8 +9,10 @@ import psycopg2
 import matplotlib.pyplot as plt
 
 import myutils as my
+import pdutils as pdu
 
 from datetime import datetime, timedelta
+import time
 
 import atr
 import cci
@@ -18,6 +20,7 @@ import macd
 import rsi
 import stoch
 import stochrsi
+import adl
 
 #from sqlalchemy import create_engine
 
@@ -53,7 +56,7 @@ def getperiodtexts(market):
     print(len(mymeta))
     print(mymeta)
     if len(mymeta) > 0:
-        for i in range(0, metaperiods):
+        for i in range(metaperiods):
             #print(type(getperiodtext(mymeta, i)))
             #print(getperiodtext(mymeta, i))
             if getperiodtext(mymeta, i) is not None:
@@ -153,7 +156,21 @@ class MyDates:
         print(startdateindex)
         print(enddateindex)
         return MyDates(start, end, startdateindex, enddateindex)
-        
+
+def adls(market, period, days = 180):
+    tableintervaldays = 1
+    stocks = getstockmarket(allstocks, market)
+    listdate = split(stocks, stocks.date)
+    listdates = stocks.date.unique()
+    print("tttt", type(listdates[0]))
+    listdates.sort()
+    #print(listdates)
+    #print("days ", days, " " , tableintervaldays)
+    dates = MyDates.getdates(listdates, days, None)
+    datedstocklists = getdatedstocklists(listdate, listdates, dates, None, tableintervaldays)
+    print(adl.getadl(datedstocklists, period, days))
+    print(adl.getadl2(stocks, period, days, listdates))
+
 def getdatedstocklists(listdate, listdates, dates, numberdays, tableintervaldays):
     datedstocklists = []
     #print(len(listdate))
@@ -164,121 +181,17 @@ def getdatedstocklists(listdate, listdates, dates, numberdays, tableintervaldays
     datedstocklists.append(listdate[index])
     print("Index %d" %(dates.startindex), dates.endindex, index, len(listdate))
     if numberdays is None:
-        for j in range(dates.startindex, dates.endindex):
+        for j in range(dates.startindex, dates.endindex + 1):
             index = index - tableintervaldays
-            print(index)
+            #print(index)
             datedstocklists.append(listdate[index])
     else:
         for j in range(numberdays):
             index = index - tableintervaldays
-            print(index)
+            #print(index)
             datedstocklists.append(listdate[index])
     print(len(datedstocklists))
     return datedstocklists
-
-def getdforderperiod(df, period):
-    ds = df
-    if period == 0:
-        ds = df.sort_values(by='period1', ascending = 0)
-    if period == 1:
-        ds = df.sort_values(by='period2', ascending = 0)
-    if period == 2:
-        ds = df.sort_values(by='period3', ascending = 0)
-    if period == 3:
-        ds = df.sort_values(by='period4', ascending = 0)
-    if period == 4:
-        ds = df.sort_values(by='period5', ascending = 0)
-    if period == 5:
-        ds = df.sort_values(by='period6', ascending = 0)
-    if period == 6:
-        ds = df.sort_values(by='period7', ascending = 0)
-    if period == 7:
-        ds = df.sort_values(by='period8', ascending = 0)
-    if period == 8:
-        ds = df.sort_values(by='period9', ascending = 0)
-    if period == 9:
-        ds = df.sort_values(by='price', ascending = 0)
-    if period == 10:
-        ds = df.sort_values(by='indexvalue', ascending = 0)
-    return ds
-
-def getdforderperiodreverse(df, period):
-    ds = df
-    if period == 0:
-        ds = df.sort_values(by='period1', ascending = 0)
-    if period == 1:
-        ds = df.sort_values(by='period2', ascending = 0)
-    if period == 2:
-        ds = df.sort_values(by='period3', ascending = 0)
-    if period == 3:
-        ds = df.sort_values(by='period4', ascending = 0)
-    if period == 4:
-        ds = df.sort_values(by='period5', ascending = 0)
-    if period == 5:
-        ds = df.sort_values(by='period6', ascending = 0)
-    if period == 6:
-        ds = df.sort_values(by='period7', ascending = 0)
-    if period == 7:
-        ds = df.sort_values(by='period8', ascending = 0)
-    if period == 8:
-        ds = df.sort_values(by='period9', ascending = 0)
-    if period == 9:
-        ds = df.sort_values(by='price', ascending = 0)
-    if period == 10:
-        ds = df.sort_values(by='indexvalue', ascending = 0)
-    return ds
-
-def getonedfperiod(df, period):
-    if period == 0:
-        return df.period1
-    if period == 1:
-        return df.period2
-    if period == 2:
-        return df.period3
-    if period == 3:
-        return df.period4
-    if period == 4:
-        return df.period5
-    if period == 5:
-        return df.period6
-    if period == 6:
-        return df.period7
-    if period == 7:
-        return df.period8
-    if period == 8:
-        return df.period9
-    if period == 9:
-        return df.price
-    if period == 10:
-        return df.indexvalue
-    #print("should not be here")
-    return None
-
-def getonedfperiodarr(df, period):
-    if period == 0:
-        return [ df.period1 ]
-    if period == 1:
-        return [ df.period2 ]
-    if period == 2:
-        return [ df.period3 ]
-    if period == 3:
-        return [ df.period4 ]
-    if period == 4:
-        return [ df.period5 ]
-    if period == 5:
-        return [ df.period6 ]
-    if period == 6:
-        return [ df.period7 ]
-    if period == 7:
-        return [ df.period8 ]
-    if period == 8:
-        return [ df.period9 ]
-    if period == 9:
-        return [ df.price, df.pricelow, df.pricehigh ]
-    if period == 10:
-        return [ df.indexvalue, df.indexvaluelow, df.indexvaluehigh ]
-    #print("should not be here")
-    return None
 
 def getlistmove(datedstocklists, listid, listdate, count, tableintervaldays, stocklistperiod):
     #periodmaps = [] #matrix([], nrow = periods, ncol = (count - 1))
@@ -286,8 +199,8 @@ def getlistmove(datedstocklists, listid, listdate, count, tableintervaldays, sto
     print("ddd")
     print(count)
     print(periods)
-    for j in range(0, count):
-        for i in range(0, periods):
+    for j in range(count):
+        for i in range(periods):
             hasperiod = stocklistperiod[i][j] is not None
             #print("hasperiod")
             #print(type(hasperiod))
@@ -316,25 +229,25 @@ def getlistsorted(datedstocklists, listid, listdate, count, tableintervaldays, w
                   #matrix([], nrow = periods, ncol = count)
     #print(stocklistperiod)
     #print("count %d %d" % (count, periods))
-    for j in range(0, count):
-        for i in range(0, periods):
+    for j in range(count):
+        for i in range(periods):
             df = datedstocklists[j] # dataframe make?
             hasperiod = False
             #is.infinit
             #print(type(df))
             #print(len(df))
             #print(i)
-            d = getonedfperiod(df, i)
+            d = pdu.getonedfperiod(df, i)
             #print(d)
-            #print(type(getonedfperiod(df, i)))
-            #print(getonedfperiod(df, i))
-            hasperiod = max(getonedfperiod(df, i))
+            #print(type(pdu.getonedfperiod(df, i)))
+            #print(pdu.getonedfperiod(df, i))
+            hasperiod = max(pdu.getonedfperiod(df, i))
             if hasperiod:
                 ds = None
                 if reverse:
-                    ds = getdforderperiodreverse(df, i)
+                    ds = pdu.getdforderperiodreverse(df, i)
                 else:
-                    ds = getdforderperiod(df, i)
+                    ds = pdu.getdforderperiod(df, i)
                 tmp = ds
                 #print("tmp")
                 #print(type(tmp))
@@ -426,7 +339,7 @@ def getvalues(market, id, start, end, myperiodtexts):
     myperiodtexts = myperiodtextslist(myperiodtexts, periodtexts)
     print("here")
     print(len(myperiodtexts))
-    for i in range(0, len(myperiodtexts)):
+    for i in range(len(myperiodtexts)):
         periodtext = myperiodtexts[i]
         print(periodtexts)
         print(periodtext)
@@ -447,7 +360,7 @@ def getvalues(market, id, start, end, myperiodtexts):
         stocklistperiod = getlistsorted(datedstocklists, listid, listdate, days, tablemoveintervaldays, reverse=False)
         dflist = []
         print("here", days)
-        for j in range(0, days):
+        for j in range(days):
             df = stocklistperiod[period][j]
             if len(df) == 1:
                 name = df.name.iloc[0]
@@ -457,12 +370,14 @@ def getvalues(market, id, start, end, myperiodtexts):
             else:
                 print("err" ,len(df))
                 
-def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, wantrsi=False):
+def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, wantrsi=False, reverse=False):
     #print(type(dflist))
     print("days ", days, " ", len(dflist))
-    for j in range(0, days):
+    for j in range(days):
         print("j ", j)
         df = dflist[j]
+        if reverse:
+            df = df.iloc[::-1]
         #if df is None:
         #    continue
         #print(df.index)
@@ -470,7 +385,7 @@ def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, want
         if max > len(df):
             max = len(df)
         
-        for i in range(0, max):
+        for i in range(max):
             rsi = 0 #np.NaN
             if wantrsi:
                 rsi = df.rsic.iloc[i]
@@ -517,29 +432,15 @@ def myperiodtextslist(myperiodtexts, periodtexts):
     return(retlist)
 
 
-def getbottomgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=VALUE, macddays=180, deltadays=3, percentize=True):
-    return(gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=True, deltadays=deltadays, percentize=percentize))
-
-def getonedfvalue(df, atype):
-    if atype >= 0:
-        return(getonedfperiod(df, atype))
-    if atype < 0:
-        return(getonedfspecial(df, atype))
-    print("should not be here")
-
-def getonedfvaluearr(df, atype):
-    if atype >= 0:
-        return(getonedfperiodarr(df, atype))
-    if atype < 0:
-        return(getonedfspecialarr(df, atype))
-    print("should not be here")
+def getbottomgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=VALUE, macddays=180, deltadays=3, percentize=True, wantchart=True):
+    return(gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=True, deltadays=deltadays, percentize=percentize, wantchart=wantchart))
 
 def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, percentize=True, wantchart=True):
     print("0", market)
     periodtexts = getperiodtexts(market)
     myperiodtexts = myperiodtextslist(myperiodtexts, periodtexts)
     print ("00 " , len(myperiodtexts))
-    for i in range(0, len(myperiodtexts)):
+    for i in range(len(myperiodtexts)):
         periodtext = myperiodtexts[i]
         print("1", myperiodtexts)
         print("2", periodtexts)
@@ -572,14 +473,14 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
         if end is not None:
             headskipmacd = end
         #print(len(periodmaps))
-        for j in range(0, days):
+        for j in range(days):
             df = stocklistperiod[period][j]
             if wantrise:
                 list2 = []
                 if j < days:
                     list2 = periodmaps[period][j]
                 riselist = [ None for x in range(len(df)) ]
-                for i in range(0, len(df)):
+                for i in range(len(df)):
                     id = df.id.iloc[i]
                     rise = 0
                     if j < days:
@@ -603,7 +504,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
             idc = df.id
             namec = df.name
             datec = df.date
-            periodc = getonedfperiod(df, period)
+            periodc = pdu.getonedfperiod(df, period)
             if wantmacd:
                 momlist = []
                 histlist = []
@@ -614,7 +515,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                     el = next(x for x in listid if x.id.iloc[0] == mydf.id)
                     #print(type(el))
                     el = el.sort_values(by='date', ascending = 0)
-                    myc = getonedfvalue(el, period)
+                    myc = pdu.getonedfvalue(el, period)
                     myclen = len(myc)
                     #print(type(myc))
                     myc = myc.head(n=(myclen-headskipmacd))
@@ -681,7 +582,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                     el = el.sort_values(by='date', ascending = 0)
                     #el = listid[mydf.id]
                     #el = el[order(el.date),]
-                    myc = getonedfvalue(el, period)
+                    myc = pdu.getonedfvalue(el, period)
                     myclen = len(myc)
                     myc = myc.head(n=(myclen-headskiprsi))
                     myc = myc.tail(n=macddays)
@@ -705,7 +606,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
             print("typedf ", type(df))
             dflist.append(df)
         #print("dflist",dflist)
-        mytopperiod2(dflist, period, topbottom, days, wantrise=wantrise, wantmacd=wantmacd, wantrsi=wantrsi)
+        mytopperiod2(dflist, period, topbottom, days, wantrise=wantrise, wantmacd=wantmacd, wantrsi=wantrsi, reverse=reverse)
         if not wantchart:
             return
         if reverse:
@@ -725,7 +626,7 @@ def gettopchart(market, days, topbottom, stocklistperiod, period):
     #print(type(mainlist.id))
     keys = mainlist.id.keys()
     print("topb ", topbottom)
-    for i in range(0, topbottom):
+    for i in range(topbottom):
         l = getelem(mainlist.id[keys[i]], days, stocklistperiod, period, topbottom)
         c = c + 1
         #print("grrl ", type(l), len(l), " ", l[0], " ", l[1], " ", type(l[0]))
@@ -748,7 +649,7 @@ def getbottomchart(market, days, topbottom, stocklistperiod, period):
     len = len(mainlist)
     print(len)
     len = len + 1
-    for i in range(0, topbottom):
+    for i in range(topbottom):
         l = getelem(mainlist.id[len - i], days, stocklistperiod, period, topbottom)
         c = c + 1
         ls[c] = l
@@ -777,21 +678,30 @@ def getmyperiodtext(market, period):
 def getelem(id, days, stocklistperiod, period, size):
     retl = [ None for x in range(days) ]
     c = 0
-    for i in reversed(range(0, days)):
+    for i in reversed(range(days)):
         #print("d ", i)
         retl[c] = np.NaN
         l = stocklistperiod[period][i]
         df = l
         el = df.loc[(df.id == id)]
         if len(el) == 1:
-            retl[c] = getonedfperiod(el, period).values[0]
+            retl[c] = pdu.getonedfperiod(el, period).values[0]
         else:
             print("err1")
         c = c + 1
     #print("retl", retl)
     return(retl)
 
-def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True):
+# expressions: list of
+# expression: list of list(pair)
+# items and formula
+# items: list of item
+# item: list(pair)
+# formula: string
+
+# ( [ ( "tradcomm", "XAUUSD:CUR" ), ( "tradcomm", "XAUUSD:CUR", "Price" ) ], "\1 / \2" )
+
+def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = []):
     scalebeginning100 = 0
     if len(ids) > 1:
         if periodtext == "price":
@@ -913,6 +823,8 @@ def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=Fal
     daynames = dayset
     daynames2 = dayset2
     print("type(daynames)")
+    print(type(daynames))
+    print(len(daynames))
     print((daynames[0]))
     print((daynames2[0]))
     #print(daynames[0])
@@ -1208,7 +1120,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
 def displaychart(ls, mynames, topbottom, periodtext, maindate, olddate, days):
     ####dev.new()
     ####colours = rainbow(topbottom)
-    g_range = 0 ####range(0, ls, na.rm=True)
+    g_range = 0 ####range(ls, na.rm=True)
     print("g_range")
     print(g_range)
     plt.ion()
@@ -1257,7 +1169,7 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
     ####dev.new()
     ####colours = rainbow(topbottom)
     topbottom = len(ls)
-    #g_range = 0 ####range(0, ls, na.rm=True)
+    #g_range = 0 ####range(ls, na.rm=True)
     #print("g_range")
     #print(g_range)
     #f1, ax1 = plt.subplots(figsize = (8,4))
@@ -1338,7 +1250,7 @@ def getelem3(id, days, datedstocklist, period, size, handlecy):
         df = l
         el = df.loc[(df.id == id)]
         if len(el) == 1:
-            dfarr = getonedfvaluearr(el, period)
+            dfarr = pdu.getonedfvaluearr(el, period)
             if len(dfarr) == 1:
                 retl1[c] = dfarr[0].values[0]
                 if handlecy == True:
@@ -1406,9 +1318,17 @@ def gettopmonth(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays + 1) * tablemoveintervaldays
     gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
 
+def getbottommonth(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays + 1) * tablemoveintervaldays
+    getbottomgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
+
 def gettopweek(id, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays + 1) * tablemoveintervaldays
     gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
+
+def getbottomweek(id, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
+    start = (numberdays + 1) * tablemoveintervaldays
+    getbottomgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
 
 def gettopcy(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays + 1) * tablemoveintervaldays
@@ -1420,6 +1340,9 @@ def prevNonNan(alist, pos):
       if not np.isnan(alist[i]):
           return alist[i]
   return 0
+
+def rangei(stop):
+    return range(stop + 1)
     
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
