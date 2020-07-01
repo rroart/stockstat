@@ -108,6 +108,7 @@ public class ComponentRecommender extends ComponentNoML {
         RecommenderData param = new RecommenderData(componentparam);        
         
         int futuredays = (int) param.getService().conf.getTestIndicatorRecommenderComplexFutureDays();
+        futuredays = 0;
         param.setFuturedays(futuredays);
 
         handle2(action, market, param, profitdata, positions, evolve && param.getInput().getConfig().wantEvolveRecommender(), aMap, subcomponent, mlmarket, parameters);

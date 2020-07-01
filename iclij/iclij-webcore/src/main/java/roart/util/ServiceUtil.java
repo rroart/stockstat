@@ -192,10 +192,10 @@ public class ServiceUtil {
                 log.error(Constants.EXCEPTION, e);
                 return result;
             }
+            List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
             // the market may be incomplete, the exception and skip
             try {
                 LocalDate endDate = componentInput.getEnddate();
-                List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
                 LocalDate prevDate = TimeUtil.getEqualBefore(stockDates, endDate);
                 short startoffset = new MarketUtil().getStartoffset(market);
                 prevDate = TimeUtil.getBackEqualBefore2(prevDate, startoffset, stockDates);
@@ -207,9 +207,14 @@ public class ServiceUtil {
             }
             List<IncDecItem> allCurrentIncDecs = new MiscUtil().getCurrentIncDecs(date, listAll, market, market.getConfig().getFindtime(), true);
             
+            short startoffset = new MarketUtil().getStartoffset(market);
+            int verificationdays = 0;
+
             Memories memories = new Memories(market);
             final int AVERAGE_SIZE = 5;
             LocalDate prevdate = param.getInput().getEnddate();
+            prevdate = TimeUtil.getBackEqualBefore2(prevdate, verificationdays + startoffset, stockDates);
+            prevdate = prevdate.minusDays(findProfitActionData.getTime(market));
             LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * findProfitActionData.getTime(market));
             getListComponents(null, param, instance, market, memories, prevdate, olddate, findProfitActionData);
 
@@ -739,7 +744,6 @@ public class ServiceUtil {
         }
         trendMap.put(market.getConfig().getMarket(), trend);
         trendMap.put(market.getConfig().getMarket() + "end", trend2);
-        List<String> stockdates = param.getService().getDates(market.getConfig().getMarket());
         String baseDateStr = TimeUtil.convertDate2(param.getBaseDate());
         String futureDateStr = TimeUtil.convertDate2(param.getFutureDate());
         log.info("Base future date {} {}", baseDateStr, futureDateStr);
@@ -751,6 +755,8 @@ public class ServiceUtil {
         Memories memoryFilter = new Memories(market);
         final int AVERAGE_SIZE = 5;
         LocalDate prevdate = param.getInput().getEnddate();
+        prevdate = TimeUtil.getBackEqualBefore2(prevdate, verificationdays + startoffset, stockDates);
+        prevdate = prevdate.minusDays(findProfitActionData.getTime(market));
         LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * findProfitActionData.getTime(market));
         getListComponents(null, param, instance, market, memoryFilter, prevdate, olddate, findProfitActionData);
 
@@ -1340,6 +1346,10 @@ public class ServiceUtil {
             Double accuracy = item.getTestAccuracy();
             if (accuracy != null) {
                 item.setTestAccuracy(MathUtil.round2(accuracy, 3));
+            }
+            Double trainaccuracy = item.getTrainAccuracy();
+            if (trainaccuracy != null) {
+                item.setTrainAccuracy(MathUtil.round2(trainaccuracy, 3));
             }
         }        
     }

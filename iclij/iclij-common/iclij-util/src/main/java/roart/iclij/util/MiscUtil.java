@@ -74,6 +74,23 @@ public class MiscUtil {
             days++;
         }
         LocalDate olddate = date.minusDays(days);
+        List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getRecord() != null).collect(Collectors.toList());
+        filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
+        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getRecord()) < 0).collect(Collectors.toList());
+        currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getRecord()) >= 0).collect(Collectors.toList());
+        currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
+        return currentIncDecs;
+    }
+
+    public List<TimingItem> getCurrentTimingsNotNow(LocalDate date, List<TimingItem> listAll, Market market, String action, int days, boolean inclusiveStart) {
+        if (date == null) {
+            date = LocalDate.now();
+        }
+        LocalDate newdate = date;
+        if (inclusiveStart) {
+            days++;
+        }
+        LocalDate olddate = date.minusDays(days);
         List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
         filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
         List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());

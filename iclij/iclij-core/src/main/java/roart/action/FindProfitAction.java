@@ -232,6 +232,7 @@ public class FindProfitAction extends MarketAction {
         myData.setUpdateMap2(new HashMap<>());
         myData.setTimingMap2(new HashMap<>());
         myData.setMemoryItems(new ArrayList<>());
+        /*
         MarketComponentTime marketTime = new MarketComponentTime();
         marketTime.market = market;
         marketTime.componentName = null;
@@ -240,6 +241,7 @@ public class FindProfitAction extends MarketAction {
         marketTime.parameters = null;
         //marketTime.timings = timingToDo;
         marketTime.buy = null;
+        */
         Map<String, ComponentData> dataMap = new HashMap<>();
         Memories listComponentMap = new Memories(market);
         myData.setMemoryItems(new ArrayList<>());
@@ -253,7 +255,7 @@ public class FindProfitAction extends MarketAction {
         LocalDate olddate = prevdate.minusDays(getActionData().getTime(market));
         ProfitData profitdata = new ProfitData();
         ProfitInputData inputdata = new ProfitInputData();
-        getListComponents(myData, param, componentInput.getConfig(), marketTime, evolve, market, dataMap, listComponentMap, prevdate, olddate);
+        getListComponents(myData, param, componentInput.getConfig(), null, evolve, market, dataMap, listComponentMap, olddate, prevdate);
         profitdata.setInputdata(inputdata);
         myData.setProfitData(profitdata);
 

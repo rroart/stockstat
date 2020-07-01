@@ -14,5 +14,6 @@ module common.util {
     requires common.model;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.core;
+    requires com.google.common;
     //requires slf4j.api;
 }

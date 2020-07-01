@@ -11,6 +11,10 @@ public class MarketConfig {
     
     private Short persisttime;
 
+    private Short mldays;
+    
+    private String mldate;
+    
     private Short continuoustime;
 
     private Short evolvetime;
@@ -75,6 +79,22 @@ public class MarketConfig {
 
     public void setPersisttime(Short persisttime) {
         this.persisttime = persisttime;
+    }
+
+    public Short getMldays() {
+        return mldays;
+    }
+
+    public void setMldays(Short mldays) {
+        this.mldays = mldays;
+    }
+
+    public String getMldate() {
+        return mldate;
+    }
+
+    public void setMldate(String mldate) {
+        this.mldate = mldate;
     }
 
     public Short getContinuoustime() {

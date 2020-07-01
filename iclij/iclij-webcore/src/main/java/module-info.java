@@ -20,7 +20,6 @@ module iclij.webcore {
     requires commons.configuration2;
     requires commons.math3;
     requires deductive;
-    requires guava;
     requires iclij.common.componentdata;
     requires iclij.common.config;
     requires iclij.common.constants;

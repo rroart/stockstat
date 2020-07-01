@@ -192,7 +192,7 @@ public class FitnessAboveBelow extends Fitness {
 
         double incdecFitness = 0.0;
         try {
-            incdecFitness = fitness(myincs, mydecs, myincdec);
+            incdecFitness = fitness(myincs, mydecs, myincdec, param.getInput().getConfig().getImproveAbovebelowFitnessMinimum());
             log.info("Trend {}", incProp);
             log.info("Fit #{} {} {} ", this.hashCode(), mycomponents, mysubcomponents);
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
@@ -206,7 +206,7 @@ public class FitnessAboveBelow extends Fitness {
         return incdecFitness;
     }
 
-    public double fitness(List<IncDecItem> myincs, List<IncDecItem> mydecs, List<IncDecItem> myincdec) {
+    public double fitness(List<IncDecItem> myincs, List<IncDecItem> mydecs, List<IncDecItem> myincdec, int minimum) {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
@@ -250,7 +250,6 @@ public class FitnessAboveBelow extends Fitness {
             fitnessAll = ((double) count) / size;
         }
         incdecFitness = fitnessAll;
-        int minimum = param.getInput().getConfig().getImproveAbovebelowFitnessMinimum();
         if (minimum > 0 && size < minimum) {
             log.info("Fit sum too small {} < {}", size, minimum);
             incdecFitness = 0;

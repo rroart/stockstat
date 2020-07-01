@@ -5,6 +5,8 @@ import java.util.Map;
 public class LearnTestClassifyResult {
     private Double accuracy;
 
+    private Double trainaccuracy;
+
     private Double loss;
 
     private Map<String, Double[]> catMap;
@@ -23,6 +25,14 @@ public class LearnTestClassifyResult {
 
     public void setAccuracy(Double accuracy) {
         this.accuracy = accuracy;
+    }
+
+    public Double getTrainaccuracy() {
+        return trainaccuracy;
+    }
+
+    public void setTrainaccuracy(Double trainaccuracy) {
+        this.trainaccuracy = trainaccuracy;
     }
 
     public Double getLoss() {

@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -81,7 +82,7 @@ public class ImproveAboveBelowAction extends MarketAction {
     @Override
     protected LocalDate getPrevDate(ComponentData param, Market market) {
         LocalDate prevdate = param.getInput().getEnddate();
-        return prevdate.minusDays(market.getConfig().getImprovetime());
+        return prevdate.minusDays(getActionData().getTime(market));
     }
 
     @Override
@@ -154,6 +155,32 @@ public class ImproveAboveBelowAction extends MarketAction {
                 
                 FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, realParameters, mlTests, incdecsP, components, subcomponents, stockDates);
 
+                double scoreFilter = 0;
+                {
+                    Memories listComponent2 = new Memories(market);
+                    LocalDate olddate = prevDate.minusDays(((int) AVERAGE_SIZE) * getActionData().getTime(market));
+                    ProfitInputData inputdata = new ProfitInputData();
+                    getListComponents(myData, param, config, realParameters, evolve, market, dataMap, listComponent2, olddate, prevDate);
+
+                    List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(incdecsP);
+                    List<IncDecItem> allCurrentIncDecs = mylocals
+                            .stream()
+                            .filter(e -> !listComponent2.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
+                            .collect(Collectors.toList());
+                    List<IncDecItem> myincdecs = allCurrentIncDecs;
+                    List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
+                    List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
+
+                    myincs = new MiscUtil().mergeList(myincs, true);
+                    mydecs = new MiscUtil().mergeList(mydecs, true);
+                    List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+                    short startoffset = new MarketUtil().getStartoffset(market);
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param, stockDates, market);
+                    scoreFilter = fit.fitness(myincs, mydecs, myincdec, 0);
+
+
+                }
+                
                 double score = 0;
                 {
                     List<IncDecItem> myincdecs = incdecsP;
@@ -166,7 +193,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                     List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                     short startoffset = new MarketUtil().getStartoffset(market);
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param, stockDates, market);
-                    score = fit.fitness(myincs, mydecs, myincdec);
+                    score = fit.fitness(myincs, mydecs, myincdec, 0);
 
                     {
                         Memories listComponentMap = new Memories(market);
@@ -192,8 +219,8 @@ public class ImproveAboveBelowAction extends MarketAction {
                 AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
                 //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
 
-                ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
-                Map<String, Object> updateMap = componentData.getUpdateMap();
+                //ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
+                Map<String, Object> updateMap = new HashMap<>(); //componentData.getUpdateMap();
                 if (updateMap != null) {
                     param.getUpdateMap().putAll(updateMap);
                 }
@@ -212,8 +239,9 @@ public class ImproveAboveBelowAction extends MarketAction {
                 //memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
                 memory.setParameters(aParameter);
                 memory.setConfidence(score);
-                List<Double> list = new ArrayList<>(param.getScoreMap().values());
-                memory.setLearnConfidence(list.get(0));
+                //List<Double> list = new ArrayList<>(param.getScoreMap().values());
+                //memory.setLearnConfidence(list.get(0));
+                memory.setTestaccuracy(scoreFilter);
                 if (true || param.isDoSave()) {
                     try {
                         memory.save();

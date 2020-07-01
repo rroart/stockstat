@@ -17,6 +17,8 @@ public class ResultMeta {
     
     private Double testAccuracy;
     
+    private Double trainAccuracy;
+    
     private Map classifyMap;
 
     private Map countMap;
@@ -81,6 +83,14 @@ public class ResultMeta {
 
     public void setTestAccuracy(Double testAccuracy) {
         this.testAccuracy = testAccuracy;
+    }
+
+    public Double getTrainAccuracy() {
+        return trainAccuracy;
+    }
+
+    public void setTrainAccuracy(Double trainAccuracy) {
+        this.trainAccuracy = trainAccuracy;
     }
 
     public Map getClassifyMap() {

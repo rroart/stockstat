@@ -136,6 +136,7 @@ public class MLClassifyRandomAccess extends MLClassifyAccess {
         Object[][] classifyArray = new Object[classifyMap.size()][];
         getClassifyArray(classifyMap, retList, classifyArray);
         result.setAccuracy(random.nextDouble());
+        result.setTrainaccuracy(random.nextDouble());
         Map<String, Double[]> retMap = getCatMap(retList, classifyMap, list);
         result.setCatMap(retMap);
         return result;
