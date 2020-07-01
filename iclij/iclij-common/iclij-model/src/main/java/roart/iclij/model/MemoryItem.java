@@ -116,7 +116,7 @@ public class MemoryItem {
             ret += "Used time: " + usedsec + " seconds.\n";
         }
         if (type != null) {
-            ret += type;
+            ret += type + "\n";
         }
         ret += component + " : " + category + " : " + date + " futuredays " + futuredays + " " + futuredate + "\n";
         if (position != null) {

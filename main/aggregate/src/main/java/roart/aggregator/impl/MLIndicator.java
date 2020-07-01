@@ -439,13 +439,15 @@ public class MLIndicator extends Aggregator {
                     long count = countMap1.values().stream().distinct().count();
                     if (count == 1) {
                         log.info("Nothing to learn");
-                        continue;
+                        //testCount++;
+                        //continue;
                     }
                     //Map<String, Pair<Object, Double>> classifyMap = indicatorMap3;
                     if (classifyMap == null || classifyMap.isEmpty()) {
                         log.error("map null ");
-                        testCount++;
-                        continue;
+                        classifyMap = new ArrayList<>();
+                        //testCount++;
+                        //continue;
                     } else {
                         log.info("keyset {}", classifyMap.stream().map(Triple::getLeft).collect(Collectors.toList()));
                     }
@@ -477,6 +479,8 @@ public class MLIndicator extends Aggregator {
                     lossMap.put(mldao.getName() + model.getName() + threshold, result.getLoss());
                     meta1[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
                     resultMeta1.setTestAccuracy(result.getAccuracy());
+                    meta1[ResultMetaConstants.TRAINACCURACY] = result.getTrainaccuracy();
+                    resultMeta1.setTrainAccuracy(result.getTrainaccuracy());
                     meta1[ResultMetaConstants.LOSS] = result.getLoss();
                     resultMeta1.setLoss(result.getLoss());
                     mapResult.put("" + model, classifyResult);
