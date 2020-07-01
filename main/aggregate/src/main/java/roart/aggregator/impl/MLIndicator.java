@@ -439,13 +439,15 @@ public class MLIndicator extends Aggregator {
                     long count = countMap1.values().stream().distinct().count();
                     if (count == 1) {
                         log.info("Nothing to learn");
-                        continue;
+                        //testCount++;
+                        //continue;
                     }
                     //Map<String, Pair<Object, Double>> classifyMap = indicatorMap3;
                     if (classifyMap == null || classifyMap.isEmpty()) {
                         log.error("map null ");
-                        testCount++;
-                        continue;
+                        classifyMap = new ArrayList<>();
+                        //testCount++;
+                        //continue;
                     } else {
                         log.info("keyset {}", classifyMap.stream().map(Triple::getLeft).collect(Collectors.toList()));
                     }

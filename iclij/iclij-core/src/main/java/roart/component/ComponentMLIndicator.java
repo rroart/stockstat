@@ -95,6 +95,7 @@ public class ComponentMLIndicator extends ComponentML {
         MLIndicatorData param = new MLIndicatorData(componentparam);
 
         int futuredays = (int) param.getService().conf.getAggregatorsIndicatorFuturedays();
+        futuredays = 0;
         param.setFuturedays(futuredays);
         //double threshold = param.getService().conf.getAggregatorsIndicatorThreshold();
         //param.setThreshold(threshold);

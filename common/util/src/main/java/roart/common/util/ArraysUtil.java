@@ -2,6 +2,7 @@ package roart.common.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +10,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.CategoryConstants;
+import com.google.common.collect.Range;
 
 public class ArraysUtil {
 
@@ -47,6 +50,13 @@ public class ArraysUtil {
     
     private static int searchForwardBelowLimit(double[] array, int i, int length, double limit) {
         while (i < length && array[i] >= limit) {
+            i++;
+        }
+        return i;
+    }
+
+    private static int searchForwardInRange(double[] array, int i, int length, Range<Double> range) {
+        while (i < length && range.contains(array[i])) {
             i++;
         }
         return i;
@@ -133,6 +143,96 @@ public class ArraysUtil {
             }
         }
         return retmap;
+    }
+
+    public static Map<Integer, Integer>[] searchForwardLimit(double[] array, int maxlen, double limit, Double otherlimit) {
+        Range<Double>[] ranges;
+        if (true || otherlimit == null || limit == otherlimit) {
+            ranges = new Range[2];
+            ranges[0] = Range.atLeast(limit);
+            ranges[1] = Range.lessThan(limit);
+        } else {
+            ranges = new Range[3];
+            if (otherlimit < limit) {
+                ranges[0] = Range.atLeast(limit);
+                ranges[1] = Range.closedOpen(otherlimit, limit);
+                ranges[2] = Range.lessThan(otherlimit);
+            } else {
+                ranges[0] = Range.closedOpen(limit, otherlimit);
+                ranges[1] = Range.lessThan(limit);
+                ranges[2] = Range.atLeast(otherlimit);
+            }
+        }
+        Map<Integer, Integer>[] retmap = getRangeMap(array, maxlen, ranges);
+        for (int i = 0; i < retmap.length; i++) {
+            if (retmap[i].containsValue(maxlen - 1)) {
+                Integer key = null;
+                for (Entry<Integer, Integer> entry : retmap[i].entrySet()) {
+                    if (entry.getValue() == maxlen - 1) {
+                        key = entry.getKey();
+                    }
+                }
+                retmap[i].remove(key);
+                break;
+            }
+        }
+        if (ranges.length == 3) {
+            Collection<Integer> keys = retmap[2].keySet();
+            for (int i = 0; i < 2; i++) {
+                Map<Integer, Integer> aRetmap = retmap[i];
+                Map<Integer, Integer> newRetmap = new HashMap<>();
+                for (Entry<Integer, Integer> entry : aRetmap.entrySet()) {
+                    if (!keys.contains(entry.getValue() + 1)) {
+                        newRetmap.put(entry.getKey(), entry.getValue());
+                    }
+                }
+                retmap[i] = newRetmap;
+            }
+        }
+        return retmap;
+    }
+
+    private static Map<Integer, Integer>[] getRangeMap(double[] array, int maxlen, Range<Double>[] ranges) {
+        int length = array.length;
+        if (maxlen > 0) {
+            length = maxlen;
+        }
+        Map<Integer, Integer>[] retmap = new HashMap[ranges.length];
+        for (int i = 0; i < ranges.length; i++) {
+            retmap[i] = new HashMap<>();
+        }
+        int start = getFirstNumberIndex(array, length);
+        int index = start;
+        while (index < length) {
+            int newIndex = -1;
+            int rangeIndex = 0;
+            for (rangeIndex = 0; rangeIndex < ranges.length; rangeIndex++) {
+                Range<Double> aRange = ranges[rangeIndex];
+                newIndex = searchForwardInRange(array, index, length, aRange);
+                if (newIndex > index) {
+                    break;
+                }
+            }
+            if (newIndex > index) {
+                retmap[rangeIndex].put(index, newIndex - 1);
+                index = newIndex;
+            } else {
+                log.error("No range for {}", array[index]);
+                index++;
+            }
+        }
+        return retmap;
+    }
+
+    private static int getFirstNumberIndex(double[] array, int length) {
+        int start = 0;
+        for (int i = 0; i < length; i++) {
+            if (!Double.isNaN(array[i])) {
+                start = i;
+                break;
+            }
+        }
+        return start;
     }
 
     private Map<Integer, Integer>[] searchBackward(double[] array) {
@@ -643,6 +743,17 @@ public class ArraysUtil {
             return new double[length];
         }
         return ArrayUtils.addAll(new double[begin], ArrayUtils.subarray(array, 0, end));
+    }
+
+    public static Pair<Integer, Integer> intersect(List<Pair<Integer, Integer>> begendList) {
+        Pair<Integer, Integer> pair = begendList.get(0);
+        Range<Integer> range = Range.closed(pair.getLeft(), pair.getRight());
+        for (int i = 1; i < begendList.size(); i++) {
+            Pair<Integer, Integer> aPair = begendList.get(i);
+            Range<Integer> aRange = Range.closed(aPair.getLeft(), aPair.getRight());
+            range = range.intersection(aRange);
+        }
+        return new ImmutablePair<Integer, Integer>(range.lowerEndpoint(), range.upperEndpoint());
     }
 
 }

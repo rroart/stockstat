@@ -19,7 +19,7 @@ module iclij.core {
     requires commons;
     requires commons.math3;
     requires deductive;
-    requires guava;
+    //requires guava;
     requires iclij.common.componentdata;
     requires iclij.common.config;
     requires iclij.common.constants;

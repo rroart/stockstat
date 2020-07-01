@@ -359,7 +359,13 @@ public abstract class IndicatorAggregator extends Aggregator {
                             log.debug("map name {}", mapName);
                             if (learnMap == null || learnMap.isEmpty() || classifyMap == null || classifyMap.isEmpty()) {
                                 log.error("map null and continue? {}", mapName);
-                                continue;
+                                if (learnMap == null) {
+                                    learnMap = new HashMap<>();
+                                }
+                                if (classifyMap == null) {
+                                    classifyMap = new HashMap<>();
+                                }
+                                //continue;
                             }
 			    IndicatorUtils.filterNonExistingClassifications3(labelMapShort, learnMap);
                             
@@ -367,7 +373,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             long count = countMap.values().stream().distinct().count();
                             if (count == 1) {
                                 log.info("Nothing to learn");
-                                continue;
+                                //continue;
                             }
                             //countMap = learnMap.values().stream().collect(Collectors.groupingBy(e -> labelMapShort.get(e.getRight().getRight()), Collectors.counting()));                            
 
@@ -401,7 +407,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
                             resultMeta.setThreshold(threshold);
-                             accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
+                            accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
                             lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                             meta[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
                             resultMeta.setTestAccuracy(result.getAccuracy());
@@ -826,6 +832,9 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private Map<String, double[]> transformOffsetMap(Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap) {
         Map<String, double[]> map = new HashMap<>();
+        if (offsetMap == null) {
+            return map;
+        }
         for (Entry<String, List<Pair<double[], Pair<Object, Double>>>> entry : offsetMap.entrySet()) {
             map.put(entry.getKey(), entry.getValue().get(0).getLeft());
         }
@@ -1130,7 +1139,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapGetter(subtypeMap, "offset");
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
-                    double[] doubleArray = new double[] { endOfArray - end };
+                    double[] doubleArray = new double[] { endOfArray - (end + 1) };
                     mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
                     mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                     mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
@@ -1143,10 +1152,14 @@ public abstract class IndicatorAggregator extends Aggregator {
             Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap,
             SubType subType, String commonType, String posnegType, String id, double[] list,
             Map<String, Double> labelMap2, double[][] arrays, int listsize, Map<Integer, Integer> posneg, String[] labels,
-            Object object, AfterBeforeLimit afterbefore, SubType[] subs, Double threshold) {
+            Object object, AfterBeforeLimit afterbefore, SubType[] subs, Double threshold/*, Pair<Integer, Integer> intersect*/) {
         Object[] objs = subType.taMap.get(id);
+        /*
         int begOfArray = (int) objs[subType.range[0]];
         int endOfArray = (int) objs[subType.range[1]];
+        int intersectBegOfArray = intersect.getLeft();
+        int intersectEndOfArray = intersect.getRight() - begOfArray + 1;
+        */
         for (Entry<Integer, Integer> entry : posneg.entrySet()) {
             String textlabel;
             int start = entry.getKey();
@@ -1174,6 +1187,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                 double[][] newarrays = new double[arrays.length][afterbefore.before];
                 for (int i = 0; i < arrays.length; i++) {
                     double[] anArray = arrays[i];
+                    //anArray = ArrayUtils.subarray(anArray, intersectBegOfArray, intersectBegOfArray + intersectEndOfArray);
+                    //int newBeg = intersectBegOfArray - begOfArray;
+                    //anArray = ArrayUtils.subarray(anArray, newBeg, intersectEndOfArray + 1);
                     double[] aTruncArray = ArraysUtil.getSub(anArray, start, end);
                     if (!Arrays.stream(aTruncArray).allMatch(e -> !Double.isNaN(e))) {
                         int jj = 0;
@@ -1204,7 +1220,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> offsetMap = mapGetter(subtypeMap, "offset");
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> commonFreshMap = mapGetter(subtypeMap, FRESH + commonType);
                     Map<String, List<Pair<double[], Pair<Object, Double>>>> posnegFreshMap = mapGetter(subtypeMap, FRESH + posnegType);
-                    double[] doubleArray = new double[] { endOfArray - end };
+                    double[] doubleArray = new double[] { list.length - (end + 1)};
                     mapGetter4(offsetMap, id).add(new MutablePair(doubleArray, null));
                     mapGetter4(commonFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
                     mapGetter4(posnegFreshMap, id).add(new ImmutablePair(new double[] { start, end }, new ImmutablePair(truncArray, doublelabel)));
@@ -1218,16 +1234,16 @@ public abstract class IndicatorAggregator extends Aggregator {
             AfterBeforeLimit afterbefore, boolean endOnly, int start, int end, Double threshold) {
         String textlabel = null;
         List<Triple<Integer, Integer, String>> triples = new ArrayList<>();
-        if (end + afterbefore.after < listsize) {
+        if (end + 1 + afterbefore.after < listsize) {
             int mystart = start;
             int myend = end;
-            if (myend - mystart + 1 >= afterbefore.before) {
-                mystart = myend - afterbefore.before + 1;
+            if (myend + 1 - mystart >= afterbefore.before) {
+                mystart = myend + 1 - afterbefore.before;
                 if (mystart < 0) {
                     mystart = 0;
                 }
             }
-            double change = list[myend + afterbefore.after] / list[myend];
+            double change = list[myend + 1 + afterbefore.after] / list[myend + 1];
             if (change > threshold) {
                 textlabel = labels[0];
             } else {
@@ -1235,6 +1251,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
             triples.add(new ImmutableTriple(mystart, myend, textlabel));
         }
+	// not updated with + 1
         if (!endOnly) {
             if (start - afterbefore.before >= 0 && start + afterbefore.after < listsize) {
                 int mystart = start;
@@ -1262,13 +1279,13 @@ public abstract class IndicatorAggregator extends Aggregator {
         }
         int mystart = start;
         int myend = end;
-        if (myend - mystart + 1 >= afterbefore.before) {
-            mystart = myend - afterbefore.before + 1;
+        if (myend + 1 - mystart >= afterbefore.before) {
+            mystart = myend + 1 - afterbefore.before;
             if (mystart < 0) {
                 mystart = 0;
             }
-            if (end + afterbefore.after < listsize) {
-                double change = list[myend + afterbefore.after] / list[myend];
+            if (end + 1 + afterbefore.after < listsize) {
+                double change = list[myend + 1 + afterbefore.after] / list[myend + 1];
                 if (change > threshold) {
                     textlabel = labels[0];
                 } else {
@@ -1277,6 +1294,7 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
             triples.add(new ImmutableTriple(mystart, myend, textlabel));
         }
+	// not updated with + 1
         /*
         if (false) {
             if (start - afterbefore.before >= 0 && start + afterbefore.after < listsize) {
@@ -1373,6 +1391,9 @@ public abstract class IndicatorAggregator extends Aggregator {
     private Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> createPosNegMaps(MyMyConfig conf, Map<SubType, MLMeta> metaMap, Double threshold) {
         Map<SubType, Map<String, Map<String, List<Pair<double[], Pair<Object, Double>>>>>> mapMap = new HashMap<>();
         for (String id : getListMap().keySet()) {
+            if (id.equals("16189")) {
+                int jj = 0;
+            }
 
             double[][] list = getListMap().get(id);
             log.debug("t {}", Arrays.toString(list[0]));
@@ -1424,8 +1445,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                     log.debug("trunclist {} {}", list.length, Arrays.asList(trunclist));
 
                     double[] anArray = (double[]) taObject[subType.getArrIdx()];
+                    //anArray = createArray(anArray, begOfArray, endOfArray);
                     for (int i = 0; i < posneg.length; i++) {
-                        Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit);
+                        Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit, subType.filters[1 - i].limit);
                         // instead of posneg, take from filter
                         getPosNegMap3(mapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, anArray, trunclist.length, map[i], subType.filters[i].texts, null, subType.afterbefore, threshold);
                     }
@@ -1528,6 +1550,9 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
            // map from h/m + posnegcom to map<model, results>
             for (String id : getListMap().keySet()) {
+                if (id.equals("16189")) {
+                    int jj = 0;
+                }
                 double[][] list = getListMap().get(id);
                 log.debug("t {}", Arrays.toString(list[0]));
                 log.debug("listsize {}", list.length);
@@ -1576,6 +1601,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                 double[][] arrays = new double[mlmeta.dim2][];
                 SubType[] subs = new SubType[mlmeta.dim2];
                 int count = 0;
+                List<Pair<Integer, Integer>> begendList = new ArrayList<>();
 		for (SubType subType : subTypes) {
                     if (!subType.useMerged) {
                         continue;
@@ -1591,16 +1617,49 @@ public abstract class IndicatorAggregator extends Aggregator {
                     }
                     Map<String, Object[]> taObjectMap = subType.taMap;
                     Object[] taObject = taObjectMap.get(id);
-                    double[] anArray = (double[]) taObject[subType.getArrIdx()];
                     int begOfArray = (int) taObject[subType.range[0]];
                     int endOfArray = (int) taObject[subType.range[1]];
+                    begendList.add(new ImmutablePair(begOfArray, begOfArray + endOfArray - 1));
                     log.debug("beg end {} {} {}", id, begOfArray, endOfArray);
                     if (endOfArray <= 0) {
                         log.error("error arrayend 0");
                         //continue;
                     }
                     subs[count] = subType;
+                    if (begOfArray > 0) {
+                        //anArray = null;
+                    }
+		}
+		if (begendList.isEmpty()) {
+		    continue;
+		}
+                Pair<Integer, Integer> intersect = ArraysUtil.intersect(begendList);
+                int intersectBegOfArray = intersect.getLeft();
+                int intersectEndOfArray = intersect.getRight();
+                if (mergeSubType.afterbefore.before > intersectEndOfArray + 1 - intersectBegOfArray) {
+                    log.error("Mergetype too small");
+                    continue;
+                }
+		double[] triggerArray = null;
+		for (SubType subType : subTypes) {
+                    if (!subType.useMerged) {
+                        continue;
+                    }
+                    Map<String, Object[]> taObjectMap = subType.taMap;
+                    Object[] taObject = taObjectMap.get(id);
+                    double[] anArray = (double[]) taObject[subType.getArrIdx()];
+                    int begOfArray = (int) taObject[subType.range[0]];
+                    int endOfArray = (int) taObject[subType.range[1]];
+                    int newBeg = intersectBegOfArray - begOfArray;
+                    if (subType.afterbefore.before > endOfArray - newBeg) {
+                        log.error("Subtype too small");
+                        continue;
+                    }
+		    anArray = ArrayUtils.subarray(anArray, newBeg, endOfArray);
                     arrays[count++] = anArray;
+		    if (subType == triggerSubType) {
+			triggerArray = anArray;
+		    }
                     //double[] arr = Arrays.copyOfRange(anArray, start, end + 1);
                     //array = (double[]) ArrayUtils.addAll(array, arr);
                     //double[] trunclist = ArrayUtils.subarray(list[0], begOfArray, begOfArray + endOfArray);
@@ -1620,19 +1679,24 @@ public abstract class IndicatorAggregator extends Aggregator {
                     Object[] taObject = taObjectMap.get(id);
                     int begOfArray = (int) taObject[subType.range[0]];
                     int endOfArray = (int) taObject[subType.range[1]];
-                    log.debug("beg end {} {} {}", id, begOfArray, endOfArray);
+                    log.debug("beg end {} {} {}", id, begOfArray, intersectEndOfArray);
                     if (endOfArray <= 0) {
                         log.error("error arrayend 0");
                         continue;
                     }
-                    double[] trunclist = ArrayUtils.subarray(list[0], begOfArray, begOfArray + endOfArray);
-                    double[] anArray = (double[]) taObject[subType.getArrIdx()];
+                    double[] trunclist = ArrayUtils.subarray(list[0], intersectBegOfArray, intersectBegOfArray + intersectEndOfArray);
+                    //anArray = createArray(anArray, begOfArray, endOfArray);
                     for (int i = 0; i < posneg.length; i++) {
-                        Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(anArray, endOfArray, subType.filters[i].limit);
+                           /*
+                        if (anArray.length < intersectEndOfArray + 1 - newBeg) {
+                            int jj = 0;
+                        }
+                        */
+                        Map<Integer, Integer>[] map = ArraysUtil.searchForwardLimit(triggerArray, triggerArray.length, subType.filters[i].limit, subType.filters[1 - i].limit);
                         //Map<Integer, Integer>[] map = rangeMap.get(i);
                         // instead of posneg, take from filter                  
                         try {
-                            getPosNegMap4(newMapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, arrays, trunclist.length, map[i], subType.filters[i].texts, null, mergeSubType.afterbefore, subs, threshold);
+                            getPosNegMap4(newMapMap, subType, CMNTYPESTR, posneg[i], id, trunclist, labelMap2, arrays, trunclist.length, map[i], subType.filters[i].texts, null, mergeSubType.afterbefore, subs, threshold/*, intersect*/);
                         } catch (Exception e) {
                             log.error(Constants.EXCEPTION, e);
                         }
@@ -1641,6 +1705,11 @@ public abstract class IndicatorAggregator extends Aggregator {
             }
         }
         mapMap.putAll(newMapMap);
+    }
+
+    private double[] createArray(double[] anArray, int begOfArray, int endOfArray) {
+        double[] newArray = new double[begOfArray + endOfArray];
+        return newArray;
     }
 
     private SubType getMySubType(List<SubType> subTypes, SubType mergeSubType) {

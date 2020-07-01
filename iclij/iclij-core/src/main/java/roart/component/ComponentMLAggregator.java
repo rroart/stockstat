@@ -41,6 +41,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         MLAggregatorData param = new MLAggregatorData(componentparam);
 
         int daysafterzero = getDaysAfterLimit(componentparam);
+        daysafterzero = 0;
         param.setFuturedays(daysafterzero);
 
         handle2(action, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);

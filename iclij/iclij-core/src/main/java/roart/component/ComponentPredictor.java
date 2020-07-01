@@ -109,6 +109,7 @@ public class ComponentPredictor extends ComponentML {
         PredictorData param = new PredictorData(componentparam);
         
         int futuredays = (int) param.getService().conf.getPredictorsFuturedays();
+        futuredays = 0;
         param.setFuturedays(futuredays);
 
         /*
