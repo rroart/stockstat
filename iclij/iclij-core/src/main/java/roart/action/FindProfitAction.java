@@ -288,7 +288,7 @@ public class FindProfitAction extends MarketAction {
         Map<String, List<MLMetricsItem>> metricsMap = getMLMetrics2(mltests, null);
         List<MLMetricsItem> metricsList = metricsMap.get(componentName);
         if (metricsList == null) {
-            return false;
+            return true;
         }
         boolean skipComponent = metricsList.stream().allMatch(e -> e.getTestAccuracy() < confidence);
         return skipComponent;
@@ -300,7 +300,7 @@ public class FindProfitAction extends MarketAction {
         Map<Pair<String, String>, List<MLMetricsItem>> metricsMap2 = getMLMetrics(mltests, null);
         List<MLMetricsItem> metricsList2 = metricsMap2.get(new ImmutablePair(componentName, subComponent));
         if (metricsList2 == null) {
-            return false;
+            return true;
         }        
         boolean skipSubcomponent = metricsList2.stream().allMatch(e -> e.getTestAccuracy() < confidence);
         return skipSubcomponent;
