@@ -219,12 +219,17 @@ public class ImproveAboveBelowAction extends MarketAction {
                 AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
                 //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
 
-                //ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
-                Map<String, Object> updateMap = new HashMap<>(); //componentData.getUpdateMap();
-                if (updateMap != null) {
-                    param.getUpdateMap().putAll(updateMap);
-                }
                 MemoryItem memory = new MemoryItem();
+                if (true || score < market.getFilter().getConfidence()) {
+                    ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
+                    Map<String, Object> updateMap = componentData.getUpdateMap();
+                    if (updateMap != null) {
+                        param.getUpdateMap().putAll(updateMap);
+                    }
+                    memory.setDescription((String) updateMap.get(aParameter));
+                    List<Double> list = new ArrayList<>(param.getScoreMap().values());
+                    memory.setLearnConfidence(list.get(0));
+                }
                 memory.setAction(action.getName());
                 memory.setMarket(market.getConfig().getMarket());
                 memory.setDate(param.getBaseDate());
@@ -234,13 +239,12 @@ public class ImproveAboveBelowAction extends MarketAction {
                 memory.setFuturedate(param.getFutureDate());
                 memory.setComponent(component.getPipeline());
                 memory.setCategory(param.getCategoryTitle());
-                memory.setDescription((String) updateMap.get(aParameter));
                 //memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
                 //memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
                 memory.setParameters(aParameter);
                 memory.setConfidence(score);
-                //List<Double> list = new ArrayList<>(param.getScoreMap().values());
-                //memory.setLearnConfidence(list.get(0));
+                if (score < 0.9) {
+                }
                 memory.setTestaccuracy(scoreFilter);
                 if (true || param.isDoSave()) {
                     try {
