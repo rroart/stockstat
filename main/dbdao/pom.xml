@@ -49,7 +49,7 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-stockutil</artifactId>
+      <artifactId>stockstat-stocketl</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
     <dependency>

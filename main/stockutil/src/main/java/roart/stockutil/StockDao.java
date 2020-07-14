@@ -159,6 +159,9 @@ public class StockDao {
                     List<StockItem> stocklist = datedstocklists[i];
                     for (StockItem stock : stocklist) {
                         String stockid = stock.getId();
+                        if ("F00000ZHEV".equals(stockid)) {
+                            int jj = 0;
+                        }
                         Double[] value = StockDao.getValue(stock, periodInt);
                         mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
                     }

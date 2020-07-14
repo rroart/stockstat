@@ -17,7 +17,7 @@ module dbdao {
     requires pipeline.model;
     requires slf4j.api;
     requires coredb.hibernate;
-    requires stockutil;
+    requires stocketl;
     requires common.constants;
     requires common.model;
 }
