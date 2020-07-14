@@ -182,6 +182,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 }
                 
                 double score = 0;
+                long scoreSize = 0;
                 {
                     List<IncDecItem> myincdecs = incdecsP;
                     List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
@@ -194,7 +195,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                     short startoffset = new MarketUtil().getStartoffset(market);
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param, stockDates, market);
                     score = fit.fitness(myincs, mydecs, myincdec, 0);
-
+                    scoreSize = myincs.size() + mydecs.size() + myincdec.size();
                     {
                         Memories listComponentMap = new Memories(market);
                         LocalDate prevdate = getPrevDate(param, market);
@@ -243,6 +244,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 //memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
                 memory.setParameters(aParameter);
                 memory.setConfidence(score);
+                memory.setSize(scoreSize);
                 if (score < 0.9) {
                 }
                 memory.setTestaccuracy(scoreFilter);
