@@ -19,6 +19,7 @@ import roart.stockutil.MetaUtil;
 import roart.stockutil.StockDao;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
+import roart.etl.ValueETL;
 
 public class DataReader extends Pipeline {
     
@@ -100,67 +101,20 @@ public class DataReader extends Pipeline {
         if (e != null) {
             int jj = 0;
         }
-        zeroPrice(this.listMap, category);
+        ValueETL.zeroPrice(this.listMap, category);
         this.fillListMap = getReverseArrSparseFillHolesArr(conf, listMap);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
         this.truncFillListMap = ArraysUtil.getTruncListArr(this.fillListMap);
         if (conf.wantPercentizedPriceIndex() && MetaUtil.normalPeriod(marketData, category, categoryTitle)) {
-            this.base100ListMap = getBase100D(this.listMap);
-            this.base100FillListMap = getBase100D(this.fillListMap);
-            this.truncBase100ListMap = getBase100(this.truncListMap);
-            this.truncBase100FillListMap = getBase100(this.truncFillListMap);
+            this.base100ListMap = ValueETL.getBase100D(this.listMap);
+            this.base100FillListMap = ValueETL.getBase100D(this.fillListMap);
+            this.truncBase100ListMap = ValueETL.getBase100(this.truncListMap);
+            this.truncBase100FillListMap = ValueETL.getBase100(this.truncFillListMap);
         }
         Double[][] f = listMap.get("F00000ZHEV");
         if (f != null) {
             int jj = 0;
         }
-    }
-
-    private void zeroPrice(Map<String, Double[][]> aListMap, int category) {
-        if (category == Constants.PRICECOLUMN || category == Constants.INDEXVALUECOLUMN) {
-            for (Entry<String, Double[][]> entry : aListMap.entrySet()) {
-                Double[][] value = entry.getValue();
-                for(int i = 0; i < value[0].length; i++) {
-                    if (value[0][i] != null && value[0][i] == 0) {
-                        log.info("Value 0 for {}", entry.getKey());
-                        value[0][i] = null;
-                        value[1][i] = null;
-                        value[2][i] = null;
-                    }
-                }
-            }
-        }
-    }
-
-    private Map<String, Double[][]> getBase100D(Map<String, Double[][]> aListMap) {
-        Map<String, Double[][]> aMap = new HashMap<>();
-        for (Entry<String, Double[][]> entry : aListMap.entrySet()) {
-            Double[][] value = entry.getValue();
-            if (value != null) {
-                Double[][] newValue = new Double[value.length][];
-                for (int i = value.length - 1; i >= 0; i--) {
-                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i], value[0]);
-                }
-                aMap.put(entry.getKey(), newValue);
-            }
-        }
-        return aMap;
-    }
-
-    private Map<String, double[][]> getBase100(Map<String, double[][]> aListMap) {
-        Map<String, double[][]> aMap = new HashMap<>();
-        for (Entry<String, double[][]> entry : aListMap.entrySet()) {
-            double[][] value = entry.getValue();
-            if (value != null) {
-                double[][] newValue = new double[value.length][];
-                double first = value.length > 0 && value[0].length > 0 ? value[0][0] : 0;
-                for (int i = 0; i < value.length; i++) {
-                    newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i], first);
-                }
-                aMap.put(entry.getKey(), newValue);
-            }
-        }
-        return aMap;
     }
 
     @Override
