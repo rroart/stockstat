@@ -21,6 +21,7 @@ import rsi
 import stoch
 import stochrsi
 import adl
+import etl
 
 #from sqlalchemy import create_engine
 
@@ -1350,7 +1351,7 @@ conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password
 if not 'allstocks' in globals():
     allstocks = getstocks(conn)
     if filterweekend:
-        allstocks = allstocks.loc[(allstocks.date.dt.weekday < 5)]
+        allstocks = etl.filterweekend(allstocks)
     allmetas = getmetas(conn)
 
 plt.close('all')
