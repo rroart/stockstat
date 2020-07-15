@@ -18,6 +18,7 @@
     <module>core</module>
     <module>coredb</module>
     <module>dbdao</module>
+    <module>etl</module>
     <module>evolution</module>
     <module>ml</module>
     <module>mldao</module>

@@ -478,6 +478,7 @@ class Classify:
             test = np.transpose(test, [1, 0, 2])
             
         accuracy_score = None
+        train_accuracy_score = None
         loss = None
         if self.wantLearn(myobj):
             (accuracy_score, loss, train_accuracy_score) = self.do_learntestinner(myobj, classifier, train, traincat, test, testcat, classify)

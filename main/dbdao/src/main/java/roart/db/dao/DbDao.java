@@ -18,7 +18,7 @@ import roart.db.model.Stock;
 import roart.db.spark.DbSpark;
 import roart.db.spark.DbSparkAccess;
 import roart.model.StockItem;
-import roart.stockutil.StockUtil;
+import roart.etl.StockETL;
 
 public class DbDao {
     private static Logger log = LoggerFactory.getLogger(DbDao.class);
@@ -75,7 +75,7 @@ public class DbDao {
 
     public static List<StockItem> getAll(String market, MyMyConfig conf) throws Exception {
         long time0 = System.currentTimeMillis();
-        List<StockItem> list = StockUtil.filterWeekend(conf, DbDao.instance(conf).getAll(market));
+        List<StockItem> list = StockETL.filterWeekend(conf, DbDao.instance(conf).getAll(market));
         log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }
@@ -83,7 +83,7 @@ public class DbDao {
     public static List<String> getDates(String market, MyMyConfig conf) throws Exception {
         long time0 = System.currentTimeMillis();
         List<Date> dates = Stock.getDates(market);
-        List<String> list = StockUtil.filterWeekendConvert(conf, dates);
+        List<String> list = StockETL.filterWeekendConvert(conf, dates);
         log.info("StockItem getall {}", (System.currentTimeMillis() - time0) / 1000);
         return list;
     }

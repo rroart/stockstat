@@ -21,6 +21,7 @@ module pipeline.indicator {
     requires talib;
     requires coredb;
     requires stockutil;
+    requires stocketl;
     requires ml.common;
     requires com.fasterxml.jackson.databind;
     requires common.util;
