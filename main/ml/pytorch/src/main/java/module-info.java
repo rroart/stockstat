@@ -16,4 +16,5 @@ module ml.pytorch {
     requires pipeline.model;
     requires org.apache.commons.lang3;
     requires common.util;
+    requires spring.web;
 }
