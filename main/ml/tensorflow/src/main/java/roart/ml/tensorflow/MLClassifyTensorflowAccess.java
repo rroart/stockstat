@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.ResourceAccessException;
 
 import roart.common.config.MLConstants;
 import roart.common.config.MyMyConfig;
@@ -348,6 +349,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
                 log.info("Completed {} on {}", filename, tensorflowServer);
                 break;
             }
+        } catch (ResourceAccessException e) {
+            log.error("Exception", e);
         } catch (Exception e) {
             log.error("Exception", e);
             return result;
@@ -411,6 +414,8 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
                 log.info("Completed {} on {}", dataset, tensorflowServer);
                 break;
             }
+        } catch (ResourceAccessException e) {
+            log.error("Exception", e);
         } catch (Exception e) {
             log.error("Exception", e);
             return result;
