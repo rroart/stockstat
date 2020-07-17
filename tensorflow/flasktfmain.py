@@ -55,9 +55,9 @@ def do_learntest():
 @app.route('/learntestclassify', methods=['POST'])
 def do_learntestclassify():
     def classifyrunner(queue, request):
-        import classify
-        cl = classify.Classify()
         try:
+            import classify
+            cl = classify.Classify()
             cl.do_learntestclassify(queue, request)
         except:
             import sys,traceback
@@ -99,9 +99,9 @@ def do_learntestpredict():
 @app.route('/dataset', methods=['POST'])
 def do_dataset():
     def classifyrunner(queue, request):
-        import classify
-        cl = classify.Classify()
         try:
+            import classify
+            cl = classify.Classify()
             cl.do_dataset(queue, request)
         except:
             import sys,traceback
