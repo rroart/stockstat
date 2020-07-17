@@ -24,6 +24,7 @@ import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
+import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLMACDData;
@@ -62,6 +63,7 @@ public abstract class ComponentML extends Component {
             //param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
             Map<String, Object> aScoreMap = new HashMap<>();
+            param.getService().conf.setdate(TimeUtil.convertDate(param.getFutureDate()));
             List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap, aScoreMap);
             mlSaves(mlConfigMap, param, anUpdateMap, subcomponent, parameters);
             if (param.getUpdateMap() != null) {
