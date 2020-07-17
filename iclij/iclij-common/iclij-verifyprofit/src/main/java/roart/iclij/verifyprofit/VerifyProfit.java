@@ -62,7 +62,7 @@ public class VerifyProfit {
             int indexoffset = indexoffsetLast - itemdateoffset;
             startoffset = 0;
             List<Double> mainList = resultList.get(0);
-            log.info("Sizes {} {}", stockDates.size(), mainList.size());
+            log.debug("Sizes {} {}", stockDates.size(), mainList.size());
             if (mainList != null) {
                 if (indexoffset + startoffset < days) {
                     log.error("Recent date {}", aDate);

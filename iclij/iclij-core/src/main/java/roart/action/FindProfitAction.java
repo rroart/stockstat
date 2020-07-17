@@ -276,8 +276,8 @@ public class FindProfitAction extends MarketAction {
         
         setValMap(param);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
-        filterIncDecs(param, market, profitdata, maps, true);
-        filterIncDecs(param, market, profitdata, maps, false);
+        filterIncDecs(param, market, profitdata, maps, true, null);
+        filterIncDecs(param, market, profitdata, maps, false, null);
         myData.getIncs().addAll(profitdata.getBuys().values());
         myData.getDecs().addAll(profitdata.getSells().values());
         return myData;

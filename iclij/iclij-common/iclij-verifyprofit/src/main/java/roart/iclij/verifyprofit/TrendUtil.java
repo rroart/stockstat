@@ -19,6 +19,14 @@ public class TrendUtil {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    public Trend getTrend(int days, String date, int startoffset, List<String> stockDates, ComponentData componentData, Market market, Map<String, List<List<Double>>> categoryValueMap) {
+        //log.info("Verify compare date {} with {}", oldDate, date);
+        log.info("Use date {} with {} days", date, days);
+ 
+        VerifyProfit verify = new VerifyProfit();
+        return verify.getTrend(days, categoryValueMap, startoffset);
+    }
+
     public Trend getTrend(int days, String date, int startoffset, List<String> stockDates, ComponentData componentData, Market market) {
         //log.info("Verify compare date {} with {}", oldDate, date);
         log.info("Use date {} with {} days", date, days);

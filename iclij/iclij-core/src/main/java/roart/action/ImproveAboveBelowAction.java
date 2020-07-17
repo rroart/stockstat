@@ -37,10 +37,12 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ImproveAboveBelowActionData;
 import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
+import roart.iclij.verifyprofit.TrendUtil;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
@@ -153,6 +155,9 @@ public class ImproveAboveBelowAction extends MarketAction {
                 getComponentLists(incdecsP, components, subcomponents);
                 Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
                 
+                param.getAndSetCategoryValueMap();
+                Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
+                
                 FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, realParameters, mlTests, incdecsP, components, subcomponents, stockDates);
 
                 double scoreFilter = 0;
@@ -175,7 +180,9 @@ public class ImproveAboveBelowAction extends MarketAction {
                     mydecs = new MiscUtil().mergeList(mydecs, true);
                     List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                     short startoffset = new MarketUtil().getStartoffset(market);
-                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param, stockDates, market);
+
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, categoryValueMap);
+                    
                     scoreFilter = fit.fitness(myincs, mydecs, myincdec, 0);
 
 
@@ -193,7 +200,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                     mydecs = new MiscUtil().mergeList(mydecs, true);
                     List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                     short startoffset = new MarketUtil().getStartoffset(market);
-                    new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), param, stockDates, market);
+                    new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, param.getCategoryValueMap());
                     score = fit.fitness(myincs, mydecs, myincdec, 0);
                     scoreSize = myincs.size() + mydecs.size() + myincdec.size();
                     {
@@ -216,6 +223,13 @@ public class ImproveAboveBelowAction extends MarketAction {
                 List<String> compsub = new ArrayList<>();
                 compsub.addAll(components);
                 compsub.addAll(subcomponents);
+                
+                
+                short startoffset = new MarketUtil().getStartoffset(market);
+                int findTime = market.getConfig().getFindtime();
+                Trend trend = new TrendUtil().getTrend(verificationdays, null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates /*, findTime*/, param, market, categoryValueMap);
+                log.info("Trend {}", trend);                
+                
                 //AboveBelowGene gene = new AboveBelowGene();
                 AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
                 //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
@@ -242,6 +256,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 memory.setCategory(param.getCategoryTitle());
                 //memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
                 //memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
+                memory.setDescription("" + trend);
                 memory.setParameters(aParameter);
                 memory.setConfidence(score);
                 memory.setSize(scoreSize);
@@ -392,7 +407,8 @@ public class ImproveAboveBelowAction extends MarketAction {
         List<IncDecItem> myincs = mylocals.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
         List<IncDecItem> mydecs = mylocals.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
         short startoffset = new MarketUtil().getStartoffset(market);
-        new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), param, stockDates, market);
+        new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, new ArrayList<>(), startoffset, parameters.getThreshold(), stockDates, param.getCategoryValueMap());
+        
 
         //List<MemoryItem> currentList = new MiscUtil().filterKeepRecent(marketMemory, prevdate, ((int) AVERAGE_SIZE) * getActionData().getTime(market));
         // or make a new object instead of the object array. use this as a pair

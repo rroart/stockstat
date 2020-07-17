@@ -74,7 +74,7 @@ public class FitnessAboveBelow extends Fitness {
     private List<String> subcomponents = new ArrayList<>();
 
     private List<String> stockDates;
-    
+
     public FitnessAboveBelow(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, List<IncDecItem> incdecs, List<String> components, List<String> subcomponents, List<String> stockDates) {
         this.action = action;
         this.param = param;
@@ -108,7 +108,6 @@ public class FitnessAboveBelow extends Fitness {
         //listDec = new MiscUtil().mergeList(listDec, false);
         //List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
         
-        Trend incProp = null;
         AboveBelowChromosome my = (AboveBelowChromosome) chromosome;
         List<Boolean> genes = my.getGenes();
         
@@ -139,7 +138,6 @@ public class FitnessAboveBelow extends Fitness {
         myincs = new MiscUtil().mergeList(myincs, true);
         mydecs = new MiscUtil().mergeList(mydecs, true);
         List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
-        Trend incProp1 = null;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
             Component component =  action.getComponentFactory().factory(componentName);
@@ -166,12 +164,11 @@ public class FitnessAboveBelow extends Fitness {
             profitdata.setInputdata(inputdata);
         
             short startoffset = new MarketUtil().getStartoffset(market);
-            action.setValMap(param);
             VerifyProfit verify = new VerifyProfit();
-            incProp1 = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
             //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
             //log.info("trendcomp {} {}", trend, incProp);
             if (verificationdays > 0) {
+                /*
                 try {
                     //param.setFuturedays(verificationdays);
                     param.setFuturedays(0);
@@ -179,21 +176,20 @@ public class FitnessAboveBelow extends Fitness {
                     param.setDates(null, null, action.getActionData(), market);
                 } catch (ParseException e1) {
                     log.error(Constants.EXCEPTION, e1);
-                }            
-                new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, myincs, mydecs, myincdec, startoffset, parameters.getThreshold(), param, stockDates, market);
+                }
+                */            
+                new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, parameters.getThreshold(), stockDates, param.getCategoryValueMap());
             }
         } catch (Exception e3) {
             log.error(Constants.EXCEPTION, e3);
         }
-        incProp = incProp1;
         Map<String, Map<String, Object>> maps = param.getResultMaps();
-        action.filterIncDecs(param, market, profitdata, maps, true);
-        action.filterIncDecs(param, market, profitdata, maps, false);
+        action.filterIncDecs(param, market, profitdata, maps, true, stockDates);
+        action.filterIncDecs(param, market, profitdata, maps, false, stockDates);
 
         double incdecFitness = 0.0;
         try {
             incdecFitness = fitness(myincs, mydecs, myincdec, param.getInput().getConfig().getImproveAbovebelowFitnessMinimum());
-            log.info("Trend {}", incProp);
             log.info("Fit #{} {} {} ", this.hashCode(), mycomponents, mysubcomponents);
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
         } catch (Exception e) {
