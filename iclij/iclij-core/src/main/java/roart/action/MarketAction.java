@@ -555,8 +555,8 @@ public abstract class MarketAction extends Action {
         handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters, wantThree, mlTests);
         
         if (!getActionData().isDataset()) {
-        filterIncDecs(param, market, profitdata, maps, true);
-        filterIncDecs(param, market, profitdata, maps, false);
+        filterIncDecs(param, market, profitdata, maps, true, null);
+        filterIncDecs(param, market, profitdata, maps, false, null);
         }
         //filterDecs(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
