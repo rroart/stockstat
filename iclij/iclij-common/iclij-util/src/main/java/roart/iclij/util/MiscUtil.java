@@ -65,7 +65,7 @@ public class MiscUtil {
         return header;
     }
 
-    public List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action, int days, boolean inclusiveStart) {
+    public List<TimingItem> getCurrentTimingsRecord(LocalDate date, List<TimingItem> listAll, Market market, String action, int days, boolean inclusiveStart) {
         if (date == null) {
             date = LocalDate.now();
         }
@@ -82,7 +82,7 @@ public class MiscUtil {
         return currentIncDecs;
     }
 
-    public List<TimingItem> getCurrentTimingsNotNow(LocalDate date, List<TimingItem> listAll, Market market, String action, int days, boolean inclusiveStart) {
+    public List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action, int days, boolean inclusiveStart) {
         if (date == null) {
             date = LocalDate.now();
         }
@@ -95,6 +95,18 @@ public class MiscUtil {
         filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
         List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
+        currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
+        return currentIncDecs;
+    }
+
+    public List<TimingItem> getCurrentTimings(LocalDate date, List<TimingItem> listAll, Market market, String action) {
+        if (date == null) {
+            date = LocalDate.now();
+        }
+        LocalDate newdate = date;
+        List<TimingItem> filterListAll = listAll.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
+        filterListAll = filterListAll.stream().filter(m -> action.equals(m.getAction())).collect(Collectors.toList());
+        List<TimingItem> currentIncDecs = filterListAll.stream().filter(m -> newdate.compareTo(m.getDate()) == 0).collect(Collectors.toList());
         currentIncDecs = currentIncDecs.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
         return currentIncDecs;
     }

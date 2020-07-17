@@ -1,5 +1,6 @@
 package roart.action;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +12,12 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.common.constants.Constants;
+import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
@@ -23,12 +28,17 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.TimingItem;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.EvolveActionData;
+import roart.iclij.model.action.MachineLearningActionData;
+import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 
 public class EvolveAction extends MarketAction {
+
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public EvolveAction() {
         setActionData(new EvolveActionData());
@@ -115,6 +125,30 @@ public class EvolveAction extends MarketAction {
     @Override
     public void setValMap(ComponentData param) {
         param.getAndSetWantedCategoryValueMap();
+    }
+
+    @Override
+    protected List<TimingItem> getCurrentTimings(LocalDate olddate, List<TimingItem> timings, Market market, String name,
+            Short time, boolean b, List<String> stockDates) {
+        String mldate = ((EvolveActionData) getActionData()).getMlDate(market, stockDates);
+        String mldaysdate = ((EvolveActionData) getActionData()).getMlDays(market, stockDates);
+        if (mldate == null && mldaysdate == null) {
+            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
+        }
+        if (mldate != null) {
+            try {
+                olddate = TimeUtil.convertDate(mldate);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName());
+        }
+        try {
+            olddate = TimeUtil.convertDate(mldaysdate);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
     }
 
 }
