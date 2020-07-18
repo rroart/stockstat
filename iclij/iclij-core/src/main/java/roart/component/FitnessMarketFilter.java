@@ -96,8 +96,8 @@ public class FitnessMarketFilter extends Fitness {
         Trend incProp = null;
         incProp = extracted(chromosome, myData, listInc, listDec, mlTests);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
-        action.filterIncDecs(param, market, profitdata, maps, true);
-        action.filterIncDecs(param, market, profitdata, maps, false);
+        action.filterIncDecs(param, market, profitdata, maps, true, null);
+        action.filterIncDecs(param, market, profitdata, maps, false, null);
 
         double memoryFitness = 0.0;
         double incdecFitness = 0.0;

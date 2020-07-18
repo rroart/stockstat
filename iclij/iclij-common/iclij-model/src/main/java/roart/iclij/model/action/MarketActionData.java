@@ -37,4 +37,8 @@ public abstract class MarketActionData {
     
     public abstract String getPriority();
     
+    public String getParamDateFromConfig(Market market, List<String> stockDates) {
+        return null;
+    }
+    
 }

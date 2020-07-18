@@ -182,24 +182,14 @@ public abstract class MarketAction extends Action {
             param.setService(srv);
             srv.conf.setMarket(market.getConfig().getMarket());
             boolean skipIsDataset = !timingsdone.isEmpty();
+            List<String> stockDates = null;
             if (skipIsDataset || !isDataset()) {
-                List<String> stockDates = param.getService().getDates(marketName);
+                stockDates = param.getService().getDates(marketName);
                 if (stockDates == null || stockDates.isEmpty()) {
                     continue;
                 }
 
-                String date = null;
-                if (getActionData().getName().equals(IclijConstants.MACHINELEARNING)) {
-                    date = market.getConfig().getMldate();
-                    Short days = market.getConfig().getMldays();
-                    if (days != null) {
-                        date = stockDates.get(stockDates.size() - 1 - days);
-                    }
-                    if (date != null) {
-                        LocalDate adate = TimeUtil.getEqualBefore(stockDates, date);
-                        date = TimeUtil.convertDate2(adate);
-                    }
-                }
+                String date = getActionData().getParamDateFromConfig(market, stockDates);
                 try {
                     param.setFuturedays(0);
                     param.setOffset(0);
@@ -229,7 +219,7 @@ public abstract class MarketAction extends Action {
             if (getActionData().getTime(market) == null) {
                 continue;
             }
-            List<TimingItem> currentTimings = new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
+            List<TimingItem> currentTimings = getCurrentTimings(olddate, timings, market, getName(), time, false, stockDates);
             List<IncDecItem> currentIncDecs = null; // ServiceUtil.getCurrentIncDecs(olddate, incdecitems, market);
             if (true) {
                 List<String> componentList = getProfitComponents(config, wantThree);
@@ -306,6 +296,11 @@ public abstract class MarketAction extends Action {
         return myData;
     }
     
+    protected List<TimingItem> getCurrentTimings(LocalDate olddate, List<TimingItem> timings, Market market, String name,
+            Short time, boolean b, List<String> stockDates) {
+        return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
+    }
+
     protected boolean isDataset() {
         return getActionData().isDataset();
     }
@@ -560,8 +555,8 @@ public abstract class MarketAction extends Action {
         handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters, wantThree, mlTests);
         
         if (!getActionData().isDataset()) {
-        filterIncDecs(param, market, profitdata, maps, true);
-        filterIncDecs(param, market, profitdata, maps, false);
+        filterIncDecs(param, market, profitdata, maps, true, null);
+        filterIncDecs(param, market, profitdata, maps, false, null);
         }
         //filterDecs(param, market, profitdata, maps);
         //buys = buys.values().stream().filter(m -> olddate.compareTo(m.getRecord()) <= 0).collect(Collectors.toList());        
@@ -681,8 +676,13 @@ public abstract class MarketAction extends Action {
     }
 
     public void filterIncDecs(ComponentData param, Market market, ProfitData profitdata,
-            Map<String, Map<String, Object>> maps, boolean inc) {
-        List<String> dates = param.getService().getDates(param.getService().conf.getMarket());        
+            Map<String, Map<String, Object>> maps, boolean inc, List<String> mydates) {
+        List<String> dates;
+        if (mydates == null) {
+            dates = param.getService().getDates(param.getService().conf.getMarket());        
+        } else {
+            dates = mydates;
+        }
         String category;
         if (inc) {
             category = market.getFilter().getInccategory();

@@ -58,4 +58,14 @@ public class VerifyProfitUtil {
         verify.doVerify(listDec, days, categoryValueMap, mydate, startoffset, threshold, stockDates);
         verify.doVerify(listIncDec, days, categoryValueMap, mydate, startoffset, threshold, stockDates);
     }
+
+    public void getVerifyProfit(int days, LocalDate date,
+            List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold, List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap) {
+        log.info("Verify compare date {} with {} threshold {}", date, days, threshold);
+    
+        VerifyProfit verify = new VerifyProfit();
+        verify.doVerify(listInc, days, categoryValueMap, date, startoffset, threshold, stockDates);
+        verify.doVerify(listDec, days, categoryValueMap, date, startoffset, threshold, stockDates);
+        verify.doVerify(listIncDec, days, categoryValueMap, date, startoffset, threshold, stockDates);
+    }
 }

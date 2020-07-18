@@ -402,7 +402,7 @@ public class ServiceUtil {
             throws Exception {
         List<TimingItem> listAllTimings = IclijDbDao.getAllTiming();
         for (Market market : markets) {
-            List<TimingItem> currentTimings = new MiscUtil().getCurrentTimings(date, listAllTimings, market, action.getName(), action.getTime(market), true);
+            List<TimingItem> currentTimings = new MiscUtil().getCurrentTimingsRecord(date, listAllTimings, market, action.getName(), action.getTime(market), true);
             List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), currentTimings);
             lists.addAll(subLists);
         }
