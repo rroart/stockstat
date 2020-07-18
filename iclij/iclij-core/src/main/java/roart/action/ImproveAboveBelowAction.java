@@ -152,6 +152,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 List<String> subcomponents = new ArrayList<>();
                 getComponentLists(incdecsP, components, subcomponents);
                 Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
+                Double threshold = realParameters.getThreshold();
                 
                 FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, realParameters, mlTests, incdecsP, components, subcomponents, stockDates);
 
@@ -168,6 +169,12 @@ public class ImproveAboveBelowAction extends MarketAction {
                             .filter(e -> !listComponent2.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
                             .collect(Collectors.toList());
                     List<IncDecItem> myincdecs = allCurrentIncDecs;
+                    if (threshold != 1.0) {
+                    	myincdecs = myincdecs
+                    			.stream()
+                    			.filter(e -> e.isIncrease() == threshold > 1.0)
+                    			.collect(Collectors.toList());
+                    }
                     List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
                     List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
 
@@ -185,6 +192,12 @@ public class ImproveAboveBelowAction extends MarketAction {
                 long scoreSize = 0;
                 {
                     List<IncDecItem> myincdecs = incdecsP;
+                    if (threshold != 1.0) {
+                    	myincdecs = myincdecs
+                    			.stream()
+                    			.filter(e -> e.isIncrease() == threshold > 1.0)
+                    			.collect(Collectors.toList());
+                    }
                     List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
                     List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
                     List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
