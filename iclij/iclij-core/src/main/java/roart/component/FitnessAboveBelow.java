@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
@@ -254,7 +255,73 @@ public class FitnessAboveBelow extends Fitness {
         return incdecFitness;
     }
     
+    public Pair<Long, Integer>[] fitness2(List<IncDecItem> myincs, List<IncDecItem> mydecs, List<IncDecItem> myincdec, int minimum) {
+        double incdecFitness;
+        int fitnesses = 0;
+        double decfitness = 0;
+        Pair<Long, Integer> dec = new ImmutablePair(0, 0);
+        if (buy == null || buy == false) {
+            dec = countsize(mydecs, false);
+        }
+        if (dec.getRight() != 0) {
+            decfitness = ((double) dec.getLeft()) / dec.getRight();
+            fitnesses++;
+        }
+        Pair<Long, Integer> inc = new ImmutablePair(0, 0);
+        if (buy == null || buy == true) {
+            inc = countsize(myincs, true);
+        }
+        double incfitness = 0;
+        if (inc.getRight() != 0) {
+            incfitness = ((double) inc.getLeft()) / inc.getRight();
+            fitnesses++;
+        }
+        Pair<Long, Integer> incdecabove = new ImmutablePair(0, 0);
+        Pair<Long, Integer> incdecbelow = new ImmutablePair(0, 0);
+        if (true) {
+            incdecabove = countsize(myincdec, true);
+            incdecbelow = countsize(myincdec, false);
+            fitnesses++;
+        }
+        double incdecfitness = 0;
+        if (incdecabove.getRight() != 0) {
+            incdecfitness = ((double) incdecabove.getLeft()) / incdecabove.getRight();
+            fitnesses++;
+        }
+        
+        double fitnessAvg = 0;
+        if (fitnesses != 0) {
+            fitnessAvg = (decfitness + incfitness + incdecfitness) / fitnesses;
+        }
+        incdecFitness = fitnessAvg;
+        double fitnessAll = 0;
+        long count = dec.getLeft() + inc.getLeft() + incdecabove.getLeft();
+        int size = dec.getRight() + inc.getRight() + incdecabove.getRight();
+        if (size > 0) {
+            fitnessAll = ((double) count) / size;
+        }
+        incdecFitness = fitnessAll;
+        if (minimum > 0 && size < minimum) {
+            //log.info("Fit sum too small {} < {}", size, minimum);
+            incdecFitness = 0;
+        }
+        //log.info("Fit {} ( {} / {} ) {} ( {} / {} ) {} ( {} / {} ) {} {} ( {} / {} )", decfitness, dec.getLeft(), dec.getRight(), incfitness, inc.getLeft(), inc.getRight(), incdecfitness, incdec.getLeft(), incdec.getRight(), fitnessAvg, fitnessAll, count, size);
+        Pair<Long, Integer>[] pairs = new ImmutablePair[2];
+        pairs[0] = new ImmutablePair<Long, Integer>(inc.getLeft() + incdecabove.getLeft(), inc.getRight() + incdecabove.getRight());
+        pairs[1] = new ImmutablePair<Long, Integer>(dec.getLeft() + incdecbelow.getLeft(), dec.getRight() + incdecbelow.getRight());
+        return pairs;
+    }
+    
     public static Pair<Long, Integer> countsize(List<IncDecItem> list) {
+        List<Boolean> listBoolean = list.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+        long count = listBoolean.stream().filter(i -> i).count();                            
+        int size = listBoolean.size();
+        return new ImmutablePair(count, size);
+
+    }
+    
+    public static Pair<Long, Integer> countsize(List<IncDecItem> list, boolean above) {
+        list = list.stream().filter(e -> e.isIncrease() == above).collect(Collectors.toList());
         List<Boolean> listBoolean = list.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
         long count = listBoolean.stream().filter(i -> i).count();                            
         int size = listBoolean.size();
