@@ -159,7 +159,7 @@ public class HibernateUtil {
             T result = (T) sessionRead.get(aClass, id);
             //System.out.println("se" + sessionRead);
             //System.out.println("tr" + transactionRead);
-            //transactionRead.commit();
+            transactionRead.commit();
             return result;
         }
     }
