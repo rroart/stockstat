@@ -202,7 +202,7 @@ public abstract class Component {
                         log.error(Constants.EXCEPTION, e);
                     }
                     if (memories != null && memories.size() > 1) {
-                        DoubleSummaryStatistics summary = memories.stream().mapToDouble(MemoryItem::getConfidence).filter(Objects::nonNull).summaryStatistics();
+                        DoubleSummaryStatistics summary = memories.stream().filter(e -> e.getConfidence() != null).mapToDouble(MemoryItem::getConfidence).summaryStatistics();
                         score = summary.getAverage();
                         description = summary.toString();
                     }
