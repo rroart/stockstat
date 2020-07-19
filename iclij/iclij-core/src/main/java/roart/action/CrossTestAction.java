@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
 import roart.component.model.ComponentData;
@@ -77,6 +78,7 @@ public class CrossTestAction extends MarketAction {
                 //aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
                 //aMap.put(ConfigConstants.MISCMYDAYS, 0);
                 Memories positions = null;
+                param.getService().conf.setdate(TimeUtil.convertDate(param.getFutureDate()));
                 ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
                 Map<String, Object> updateMap = componentData.getUpdateMap();
                 if (updateMap != null) {
