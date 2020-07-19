@@ -190,6 +190,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 
                 double score = 0;
                 long scoreSize = 0;
+                Pair<Long, Integer>[] scores = null;
                 {
                     List<IncDecItem> myincdecs = incdecsP;
                     List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
@@ -203,6 +204,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                     new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, param.getCategoryValueMap());
                     score = fit.fitness(myincs, mydecs, myincdec, 0);
                     scoreSize = myincs.size() + mydecs.size() + myincdec.size();
+                    scores = fit.fitness2(myincs, mydecs, myincdec, 0);
                     {
                         Memories listComponentMap = new Memories(market);
                         LocalDate prevdate = getPrevDate(param, market);
@@ -260,6 +262,10 @@ public class ImproveAboveBelowAction extends MarketAction {
                 memory.setParameters(aParameter);
                 memory.setConfidence(score);
                 memory.setSize(scoreSize);
+                memory.setAbovepositives(scores[0].getLeft());
+                memory.setAbovesize((long) scores[0].getRight()); 
+                memory.setBelowpositives(scores[1].getLeft());
+                memory.setBelowsize((long) scores[1].getRight()); 
                 if (score < 0.9) {
                 }
                 memory.setTestaccuracy(scoreFilter);
