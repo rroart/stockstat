@@ -189,6 +189,7 @@ public class FitnessMarketFilter extends Fitness {
             map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
+            map.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
 
             String key = component.getThreshold();
             map.put(key, "[" + parameters.getThreshold() + "]");

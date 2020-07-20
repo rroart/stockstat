@@ -538,6 +538,11 @@ public class MyMyConfig extends MyConfig {
         return value != null ? value : false;
     }
 
+    public boolean wantMLCross() {
+        Boolean value =  (Boolean) getValue(ConfigConstants.MACHINELEARNINGMLCROSS);
+        return value != null ? value : false;
+    }
+
     public String getSparkMLPCConfig() {
         return (String) getValueOrDefault(ConfigConstants.MACHINELEARNINGSPARKMLMLPCCONFIG);
     }

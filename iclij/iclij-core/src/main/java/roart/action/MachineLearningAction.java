@@ -67,6 +67,7 @@ public class MachineLearningAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, false);
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, false);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
+            aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
 

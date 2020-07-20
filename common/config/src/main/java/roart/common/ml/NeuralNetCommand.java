@@ -7,6 +7,8 @@ public class NeuralNetCommand {
     
     private boolean mldynamic;
 
+    private boolean mlcross;
+    
     public boolean isMllearn() {
         return mllearn;
     }
@@ -29,6 +31,14 @@ public class NeuralNetCommand {
 
     public void setMldynamic(boolean mldynamic) {
         this.mldynamic = mldynamic;
+    }
+
+    public boolean isMlcross() {
+        return mlcross;
+    }
+
+    public void setMlcross(boolean mlcross) {
+        this.mlcross = mlcross;
     }
     
 }

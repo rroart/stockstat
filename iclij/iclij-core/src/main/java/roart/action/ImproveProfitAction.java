@@ -71,6 +71,7 @@ public class ImproveProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
+            aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             ComponentData componentData = component.improve(action, param, market, profitdata, null, buy, subcomponent, parameters, wantThree, mlTests);

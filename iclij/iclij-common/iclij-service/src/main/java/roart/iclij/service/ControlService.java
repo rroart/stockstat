@@ -124,6 +124,7 @@ public class ControlService {
         neuralnetcommand.setMllearn(conf.wantMLLearn());
         neuralnetcommand.setMlclassify(conf.wantMLClassify());
         neuralnetcommand.setMldynamic(conf.wantMLDynamic());
+        neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENT);
         return result.getMaps();
@@ -184,6 +185,7 @@ public class ControlService {
         neuralnetcommand.setMllearn(conf.wantMLLearn());
         neuralnetcommand.setMlclassify(conf.wantMLClassify());
         neuralnetcommand.setMldynamic(conf.wantMLDynamic());
+        neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "/findprofit");
         return result.getMaps();

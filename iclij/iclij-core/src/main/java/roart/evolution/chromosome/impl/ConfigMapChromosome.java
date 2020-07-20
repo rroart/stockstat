@@ -273,6 +273,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
             gene.getMap().put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
             gene.getMap().put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             gene.getMap().put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
+            gene.getMap().put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
 
             String key = component.getThreshold();
             gene.getMap().put(key, "[" + parameters.getThreshold() + "]");

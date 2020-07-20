@@ -470,11 +470,39 @@ public class MLIndicator extends Aggregator {
                     String filename = getFilename(mldao, model, "" + arrayLength, "" + cats, conf.getMarket(), indicators, threshold);
                     String path = model.getPath();
                     boolean mldynamic = conf.wantMLDynamic();
+                    if (neuralnetcommand.isMlcross()) {
+                        classifyMap = learnMap;
+                    }
                     LearnTestClassifyResult result = mldao.learntestclassify(nnconfigs, this, learnMap, model, arrayLength, cats, mapTime, classifyMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                     if (result == null) {
                         continue;
                     }
                     Map<String, Double[]> classifyResult = result.getCatMap();
+                    if (neuralnetcommand.isMlcross() && classifyResult != null && classifyMap.size() > 0) {
+                        //Map<String, Double[]> classifyResult = result.getCatMap();
+                        int cls = 0;
+                        for (Triple<String, Object, Double> triple : classifyMap) {
+                            String key = triple.getLeft();
+                            Object obj = triple.getRight();
+                            double cat;
+                            if (obj instanceof Integer) {
+                                cat = ((Integer) obj).doubleValue();
+                            } else {
+                                cat = (double) obj;
+                            }
+                            if (classifyResult == null) {
+                                int jj = 0;
+                            }
+                            Double[] result0 = classifyResult.get(key);
+                            if (result0 == null || result0[0] == null) {
+                                int jj = 0;
+                            }
+                            if (cat == result0[0].doubleValue()) {
+                                cls++;
+                            }
+                        }
+                        result.setAccuracy((( double) cls) / classifyMap.size());
+                    }
                     accuracyMap.put(mldao.getName() + model.getName() + threshold, result.getAccuracy());
                     lossMap.put(mldao.getName() + model.getName() + threshold, result.getLoss());
                     meta1[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
