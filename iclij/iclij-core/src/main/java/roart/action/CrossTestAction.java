@@ -1,5 +1,6 @@
 package roart.action;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
+import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
@@ -27,8 +29,10 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.TimingItem;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.CrossTestActionData;
+import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 
@@ -123,6 +127,30 @@ public class CrossTestAction extends MarketAction {
     @Override
     public void setValMap(ComponentData param) {
         param.getAndSetWantedCategoryValueMap();
+    }
+
+    @Override
+    protected List<TimingItem> getCurrentTimings(LocalDate olddate, List<TimingItem> timings, Market market, String name,
+            Short time, boolean b, List<String> stockDates) {
+        String mldate = ((CrossTestActionData) getActionData()).getMlDate(market, stockDates);
+        String mldaysdate = ((CrossTestActionData) getActionData()).getMlDays(market, stockDates);
+        if (mldate == null && mldaysdate == null) {
+            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
+        }
+        if (mldate != null) {
+            try {
+                olddate = TimeUtil.convertDate(mldate);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName());
+        }
+        try {
+            olddate = TimeUtil.convertDate(mldaysdate);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
     }
 
 }
