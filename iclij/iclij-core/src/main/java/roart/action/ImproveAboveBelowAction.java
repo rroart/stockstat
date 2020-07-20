@@ -304,6 +304,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, config.wantsFindProfitMLDynamic());
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
+            aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
 
             String key = component.getThreshold();
             aMap.put(key, "[" + parameters.getThreshold() + "]");
@@ -345,6 +346,7 @@ public class ImproveAboveBelowAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, config.wantsFindProfitMLDynamic());
             aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
+            aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
 
             String key = component.getThreshold();
             aMap.put(key, "[" + parameters.getThreshold() + "]");

@@ -135,6 +135,7 @@ public class ConfigConstants {
     // special two, fix
     public static final String MACHINELEARNINGMLLEARN = "machinelearning.mllearn";
     public static final String MACHINELEARNINGMLCLASSIFY = "machinelearning.mlclassify";
+    public static final String MACHINELEARNINGMLCROSS = "machinelearning.mlcross";
     public static final String INDICATORS = "indicators[@enable]";
     public static final String INDICATORSMOVE = "indicators.move[@enable]";
     public static final String INDICATORSMACD = "indicators.macd[@enable]";

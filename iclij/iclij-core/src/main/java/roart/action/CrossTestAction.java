@@ -71,6 +71,7 @@ public class CrossTestAction extends MarketAction {
                 aMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, false);
                 aMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
                 aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, false);
+                aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, true);
 
                 String key = component.getThreshold();
                 aMap.put(key, "[" + parameters.getThreshold() + "]");
@@ -79,8 +80,8 @@ public class CrossTestAction extends MarketAction {
                 
                 aMap.put(ConfigConstants.MISCTHRESHOLD, null);
                 
-                //aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
-                //aMap.put(ConfigConstants.MISCMYDAYS, 0);
+                aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+                aMap.put(ConfigConstants.MISCMYDAYS, 0);
                 Memories positions = null;
                 param.getService().conf.setdate(TimeUtil.convertDate(param.getFutureDate()));
                 ComponentData componentData = component.handle(this, market, param, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
