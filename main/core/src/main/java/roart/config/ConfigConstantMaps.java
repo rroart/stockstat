@@ -114,6 +114,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGMLLEARN, Boolean.class);
         map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, Boolean.class);
+        map.put(ConfigConstants.MACHINELEARNINGMLCROSS, Boolean.class);
 
         map.put(ConfigConstants.INDICATORS, Boolean.class);
         map.put(ConfigConstants.INDICATORSMOVE, Boolean.class);

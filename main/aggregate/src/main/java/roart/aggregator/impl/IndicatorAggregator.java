@@ -390,6 +390,9 @@ public abstract class IndicatorAggregator extends Aggregator {
                             boolean mldynamic = conf.wantMLDynamic();
                             //indicators.add(this);
                             log.info("Filename {}", filename);
+                            if (neuralnetcommand.isMlcross()) {
+                                classifyMLMap = learnMLMap;
+                            }
                             LearnTestClassifyResult result = mldao.learntestclassify(nnConfigs, this, learnMLMap, model, size, outcomes, mapTime, classifyMLMap, labelMapShort, path, filename, neuralnetcommand, mlmeta, true);  
                             if (result == null) {
                                 continue;
@@ -407,6 +410,31 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setSubSubType(mapType);
                             resultMeta.setLearnMap(countMap);
                             resultMeta.setThreshold(threshold);
+                            if (neuralnetcommand.isMlcross() && result.getCatMap() != null && classifyMLMap.size() > 0) {
+                                Map<String, Double[]> classifyResult = result.getCatMap();
+                                int cls = 0;
+                                for (Triple<String, Object, Double> triple : classifyMLMap) {
+                                    String key = triple.getLeft();
+                                    Object obj = triple.getRight();
+                                    double cat;
+                                    if (obj instanceof Integer) {
+                                        cat = ((Integer) obj).doubleValue();
+                                    } else {
+                                        cat = (double) obj;
+                                    }
+                                    if (classifyResult == null) {
+                                        int jj = 0;
+                                    }
+                                    Double[] result0 = classifyResult.get(key);
+                                    if (result0 == null || result0[0] == null) {
+                                        int jj = 0;
+                                    }
+                                    if (cat == result0[0].doubleValue()) {
+                                        cls++;
+                                    }
+                                }
+                                result.setAccuracy((( double) cls) / classifyMLMap.size());
+                            }
                             accuracyMap.put(mldao.getName() + model.getName() + subType.getType() + mapType, result.getAccuracy());
                             lossMap.put(mldao.getName() + model.getName(), result.getLoss());
                             meta[ResultMetaConstants.TESTACCURACY] = result.getAccuracy();
@@ -415,7 +443,7 @@ public abstract class IndicatorAggregator extends Aggregator {
                             resultMeta.setTrainAccuracy(result.getTrainaccuracy());
                             meta[ResultMetaConstants.LOSS] = result.getLoss();
                             resultMeta.setLoss(result.getLoss());
-                            
+
                             Map<String, Double[]> classifyResult = result.getCatMap();
                             mapResult2.put(mapType, classifyResult);
 
