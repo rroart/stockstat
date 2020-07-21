@@ -23,6 +23,7 @@ import roart.common.constants.Constants;
 import roart.component.model.ComponentData;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome;
 import roart.iclij.config.Market;
+import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -30,6 +31,7 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
+import roart.iclij.model.config.ActionComponentConfig;
 import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfit;
@@ -176,6 +178,8 @@ public class FitnessMarketFilter2 {
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
             Component component =  action.getComponentFactory().factory(componentName);
+            ActionComponentConfig config = ActionComponentConfigFactory.factoryfactory(action.getName()).factory(component.getPipeline());
+            component.setConfig(config);
             boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
             //ProfitData profitdata = new ProfitData();
             myData.setProfitData(profitdata);
@@ -187,6 +191,8 @@ public class FitnessMarketFilter2 {
             map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
             map.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
+            map.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+            map.put(ConfigConstants.MISCMYDAYS, 0);
 
             String key = component.getThreshold();
             map.put(key, "[" + parameters.getThreshold() + "]");
