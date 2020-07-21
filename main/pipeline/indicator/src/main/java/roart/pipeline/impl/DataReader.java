@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -102,7 +101,7 @@ public class DataReader extends Pipeline {
             int jj = 0;
         }
         ValueETL.zeroPrice(this.listMap, category);
-        this.fillListMap = getReverseArrSparseFillHolesArr(conf, listMap);
+        this.fillListMap = ValueETL.getReverseArrSparseFillHolesArr(conf, listMap);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
         this.truncFillListMap = ArraysUtil.getTruncListArr(this.fillListMap);
         if (conf.wantPercentizedPriceIndex() && MetaUtil.normalPeriod(marketData, category, categoryTitle)) {
@@ -120,38 +119,6 @@ public class DataReader extends Pipeline {
     @Override
     public String pipelineName() {
         return "" + this.category;
-    }
-
-    public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(MyMyConfig conf, Map<String, Double[][]> listMap) {
-        Map<String, Double[][]> retMap = new HashMap<>();
-        for (Entry<String, Double[][]> entry : listMap.entrySet()) {
-            Double[][] array = entry.getValue();
-            Double[][] newArray = new Double[array.length][];
-            if ("F00000ZHEV".equals(entry.getKey())) {
-                int jj = 0;
-            }
-            for (int i = 0; i < array.length; i ++) {
-                newArray[i] = new Double[array[i].length];
-                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf));
-            }
-            retMap.put(entry.getKey(), newArray);
-        }      
-        return retMap;
-    }
-
-    public static Map<String, Double[]> getReverseArrSparseFillHoles(MyMyConfig conf, Map<String, Double[]> listMap) {
-        Map<String, Double[]> retMap = new HashMap<>();
-        for (Entry<String, Double[]> entry : listMap.entrySet()) {
-            Double[] array = entry.getValue();
-            Double[] newArray = new Double[array.length];
-            newArray = ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf));
-            retMap.put(entry.getKey(), newArray);
-        }      
-        return retMap;
-    }
-
-    public static int maxHoleNumber(MyMyConfig conf) {
-        return conf.getMaxHoles();
     }
 
 }
