@@ -195,16 +195,11 @@ public abstract class Component {
             }
             if (IclijConstants.CROSSTEST.equals(param.getAction()) ) {
                 try {
-                    List<MemoryItem> memories = null;
-                    try {
-                        memories = calculateMemory(param, parameters);
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION, e);
-                    }
-                    if (memories != null && memories.size() > 1) {
-                        DoubleSummaryStatistics summary = memories.stream().filter(e -> e.getConfidence() != null).mapToDouble(MemoryItem::getConfidence).summaryStatistics();
-                        score = summary.getAverage();
-                        description = summary.toString();
+                    Object[] result = calculateAccuracy(param);
+                    score = (Double) result[0];
+                    description = (String) result[1];
+                    if (result[2] != null) {
+                        description =  (String) result[2] + " " + description;
                     }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);

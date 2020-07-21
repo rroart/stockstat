@@ -63,6 +63,7 @@ public class MLUtil {
         valueMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, Boolean.FALSE);
         valueMap.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, Boolean.FALSE);
         valueMap.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, Boolean.FALSE);
+        valueMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, Boolean.FALSE);
     }
 
 }
