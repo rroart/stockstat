@@ -10,6 +10,7 @@ import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
+import roart.etl.DatelistToMapETL;
 import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
@@ -36,7 +37,7 @@ public class RecommenderRSI extends Aggregator {
         }
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
-        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        this.listMap = DatelistToMapETL.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         //this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
         AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
         if (cat == null) {

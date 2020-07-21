@@ -18,6 +18,7 @@ import roart.stockutil.MetaUtil;
 import roart.stockutil.StockDao;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
+import roart.etl.DatelistToMapETL;
 import roart.etl.ValueETL;
 
 public class DataReader extends Pipeline {
@@ -95,7 +96,7 @@ public class DataReader extends Pipeline {
         }
         this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.nameMap = StockDao.getNameMap(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
-        this.listMap = StockDao.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+        this.listMap = DatelistToMapETL.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         Double[][] e = listMap.get("F00000ZHEV");
         if (e != null) {
             int jj = 0;
