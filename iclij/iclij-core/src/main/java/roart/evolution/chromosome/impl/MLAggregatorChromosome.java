@@ -2,6 +2,7 @@ package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -60,7 +61,7 @@ public abstract class MLAggregatorChromosome extends ConfigMapChromosome2 {
     @Override
     public AbstractChromosome copy() {
         MLAggregatorChromosome chromosome = getNewChromosome();
-        chromosome.getMap().putAll(getMap());
+        chromosome.getMap().putAll(new HashMap(getMap()));
         return chromosome;
     }
 
@@ -72,7 +73,7 @@ public abstract class MLAggregatorChromosome extends ConfigMapChromosome2 {
             if (random.nextBoolean()) {
                 chromosome.getMap().put(confName, this.getMap().get(confName));
             } else {
-                chromosome.getMap().put(confName, ((ConfigMapChromosome) other).getMap().get(confName));
+                chromosome.getMap().put(confName, ((ConfigMapChromosome2) other).getMap().get(confName));
             }
         }
         if (!chromosome.validate()) {

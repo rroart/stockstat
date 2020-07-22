@@ -149,6 +149,11 @@ public class ImproveProfitAction extends MarketAction {
         }
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
     }
+    
+    @Override
+    public Integer[] getFuturedays(IclijConfig conf) {
+        return new Integer[1];
+    }
 
 }
 

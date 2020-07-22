@@ -181,7 +181,8 @@ public class ComponentPredictor extends ComponentML {
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
         ConfigMapChromosome2 chromosome = new PredictorChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests, stockDates);
         return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fit);
     }
 

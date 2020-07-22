@@ -2,6 +2,7 @@ package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -87,6 +88,7 @@ public class PredictorChromosome extends ConfigMapChromosome2 {
     @Override
     public AbstractChromosome copy() {
         PredictorChromosome chromosome = new PredictorChromosome(gene);
+        chromosome.getMap().putAll(new HashMap(getMap()));
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         //chromosome.config = (TensorflowPredictorLSTMConfigGene) config.copy();
         return chromosome;

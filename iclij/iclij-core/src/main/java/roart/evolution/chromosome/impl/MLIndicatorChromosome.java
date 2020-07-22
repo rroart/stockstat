@@ -1,6 +1,7 @@
 package roart.evolution.chromosome.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -53,7 +54,7 @@ public class MLIndicatorChromosome extends ConfigMapChromosome2 {
     @Override
     public AbstractChromosome copy() {
         MLIndicatorChromosome chromosome = new MLIndicatorChromosome(gene);
-	chromosome.getMap().putAll(getMap());
+	chromosome.getMap().putAll(new HashMap(getMap()));
         return chromosome;
     }
 
