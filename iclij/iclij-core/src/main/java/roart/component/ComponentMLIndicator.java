@@ -20,6 +20,7 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.MLIndicatorData;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.evolution.chromosome.impl.MLIndicatorChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.MLConfigs;
@@ -208,9 +209,11 @@ public class ComponentMLIndicator extends ComponentML {
             confList.addAll(getThreeConfList());
         }
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        ConfigMapChromosome chromosome = new MLIndicatorChromosome(action, param, profitdata, market, positions, PipelineConstants.MLINDICATOR, buy, subcomponent, parameters, gene, mlTests);
+        ConfigMapChromosome2 chromosome = new MLIndicatorChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), null);
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests, stockDates);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fit);
     }
 
     @Override

@@ -44,6 +44,7 @@ import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.ConfigItem;
 import roart.iclij.model.IncDecItem;
@@ -52,6 +53,7 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
+import roart.iclij.model.config.ActionComponentConfig;
 import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfit;
@@ -263,6 +265,8 @@ public class ConfigMapChromosome extends AbstractChromosome {
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
             Component component =  action.getComponentFactory().factory(componentName);
+            ActionComponentConfig config = ActionComponentConfigFactory.factoryfactory(action.getName()).factory(component.getPipeline());
+            component.setConfig(config);
             boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
             //ProfitData profitdata = new ProfitData();
             myData.setProfitData(profitdata);
@@ -274,6 +278,8 @@ public class ConfigMapChromosome extends AbstractChromosome {
             gene.getMap().put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
             gene.getMap().put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
             gene.getMap().put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
+            gene.getMap().put(ConfigConstants.MISCMYTABLEDAYS, 0);
+            gene.getMap().put(ConfigConstants.MISCMYDAYS, 0);
 
             String key = component.getThreshold();
             gene.getMap().put(key, "[" + parameters.getThreshold() + "]");

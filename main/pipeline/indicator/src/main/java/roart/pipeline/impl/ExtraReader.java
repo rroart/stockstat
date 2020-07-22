@@ -21,6 +21,7 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.ArraysUtil;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
+import roart.etl.ValueETL;
 import roart.indicator.util.IndicatorUtils;
 import roart.common.constants.Constants;
 import roart.model.StockItem;
@@ -274,7 +275,7 @@ public class ExtraReader extends Pipeline {
     }
 
     public static int maxHoleNumber(MyMyConfig conf) {
-        return DataReader.maxHoleNumber(conf);
+        return ValueETL.maxHoleNumber(conf);
     }
 
     // only dup due to maxholes and lacking parametrization of string/pair

@@ -1,5 +1,6 @@
 package roart.action;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
@@ -26,8 +28,11 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.TimingItem;
 import roart.iclij.model.WebData;
+import roart.iclij.model.action.EvolveActionData;
 import roart.iclij.model.action.ImproveProfitActionData;
+import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 
@@ -121,5 +126,34 @@ public class ImproveProfitAction extends MarketAction {
         param.getAndSetWantedCategoryValueMap();
     }
     
+    @Override
+    protected List<TimingItem> getCurrentTimings(LocalDate olddate, List<TimingItem> timings, Market market, String name,
+            Short time, boolean b, List<String> stockDates) {
+        String mldate = ((ImproveProfitActionData) getActionData()).getMlDate(market, stockDates);
+        String mldaysdate = ((ImproveProfitActionData) getActionData()).getMlDays(market, stockDates);
+        if (mldate == null && mldaysdate == null) {
+            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
+        }
+        if (mldate != null) {
+            try {
+                olddate = TimeUtil.convertDate(mldate);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName());
+        }
+        try {
+            olddate = TimeUtil.convertDate(mldaysdate);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
+    }
+    
+    @Override
+    public Integer[] getFuturedays(IclijConfig conf) {
+        return new Integer[1];
+    }
+
 }
 

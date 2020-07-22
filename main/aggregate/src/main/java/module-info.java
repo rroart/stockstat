@@ -30,4 +30,5 @@ module aggregate {
     requires pipeline.indicator;
     requires pipeline.common;
     requires stockutil;
+    requires stocketl;
 }

@@ -2,6 +2,7 @@ package roart.evolution.chromosome.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -10,23 +11,17 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import roart.action.MarketAction;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.species.Individual;
 import roart.gene.impl.ConfigMapGene;
-import roart.iclij.config.Market;
-import roart.iclij.filter.Memories;
-import roart.iclij.model.MLMetricsItem;
-import roart.iclij.model.Parameters;
-import roart.service.model.ProfitData;
 
-public abstract class MLAggregatorChromosome extends ConfigMapChromosome {
-    public MLAggregatorChromosome(MarketAction action, ComponentData param, ProfitData profitdata, Market market, Memories positions, String component, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
-        super(action, param, profitdata, market, positions, component, buy, subcomponent, parameters, gene, mlTests);
+public abstract class MLAggregatorChromosome extends ConfigMapChromosome2 {
+    public MLAggregatorChromosome(ConfigMapGene gene) {
+        super(gene);
     }
 
-    protected abstract MLAggregatorChromosome getNewChromosome(ComponentData newparam);
+    protected abstract MLAggregatorChromosome getNewChromosome();
 
     @Override
     public boolean validate() {
@@ -65,22 +60,20 @@ public abstract class MLAggregatorChromosome extends ConfigMapChromosome {
     
     @Override
     public AbstractChromosome copy() {
-        ComponentData newparam = new ComponentData(param);
-        MLAggregatorChromosome chromosome = getNewChromosome(newparam);
-        chromosome.getMap().putAll(getMap());
+        MLAggregatorChromosome chromosome = getNewChromosome();
+        chromosome.getMap().putAll(new HashMap(getMap()));
         return chromosome;
     }
 
     @Override
     public Individual crossover(AbstractChromosome other) {
-        ComponentData newparam = new ComponentData(param);
-        MLAggregatorChromosome chromosome = getNewChromosome(newparam);
+        MLAggregatorChromosome chromosome = getNewChromosome();
         for (int conf = 0; conf < getConfList().size(); conf++) {
             String confName = getConfList().get(conf);
             if (random.nextBoolean()) {
                 chromosome.getMap().put(confName, this.getMap().get(confName));
             } else {
-                chromosome.getMap().put(confName, ((ConfigMapChromosome) other).getMap().get(confName));
+                chromosome.getMap().put(confName, ((ConfigMapChromosome2) other).getMap().get(confName));
             }
         }
         if (!chromosome.validate()) {

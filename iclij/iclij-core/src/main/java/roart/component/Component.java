@@ -43,7 +43,7 @@ import roart.component.model.PredictorData;
 import roart.constants.IclijConstants;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
 import roart.evolution.species.Individual;
@@ -344,7 +344,7 @@ public abstract class Component {
         }
     }
 
-    protected void loadme(ComponentData param, ConfigMapChromosome chromosome, Market market, List<String> confList, Boolean buy, String subcomponent, MarketAction action, Parameters parameters) {
+    protected void loadme(ComponentData param, ConfigMapChromosome2 chromosome, Market market, List<String> confList, Boolean buy, String subcomponent, MarketAction action, Parameters parameters) {
         List<String> config = new ArrayList<>();
         
         Map<String, Object> map = null;

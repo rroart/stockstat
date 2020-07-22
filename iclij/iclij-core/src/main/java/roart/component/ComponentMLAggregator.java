@@ -23,6 +23,7 @@ import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLAggregatorData;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
@@ -55,9 +56,11 @@ public abstract class ComponentMLAggregator extends ComponentML {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, subcomponent, parameters, gene, mlTests);
+        ConfigMapChromosome2 chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, subcomponent, parameters, gene, mlTests);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), null);
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests, stockDates);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fit);
     }
 
     @Override
@@ -426,7 +429,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         return memoryList;
     }
     
-    protected abstract ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
+    protected abstract ConfigMapChromosome2 getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests);
 
     protected abstract int getDaysAfterLimit(ComponentData componentparam);
