@@ -54,7 +54,7 @@ public class MLIndicatorChromosome extends ConfigMapChromosome2 {
     @Override
     public AbstractChromosome copy() {
         MLIndicatorChromosome chromosome = new MLIndicatorChromosome(gene);
-	chromosome.getMap().putAll(new HashMap(getMap()));
+        chromosome.gene = gene.copy();
         return chromosome;
     }
 

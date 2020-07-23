@@ -88,7 +88,7 @@ public class PredictorChromosome extends ConfigMapChromosome2 {
     @Override
     public AbstractChromosome copy() {
         PredictorChromosome chromosome = new PredictorChromosome(gene);
-        chromosome.getMap().putAll(new HashMap(getMap()));
+        chromosome.gene = gene.copy();
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         //chromosome.config = (TensorflowPredictorLSTMConfigGene) config.copy();
         return chromosome;

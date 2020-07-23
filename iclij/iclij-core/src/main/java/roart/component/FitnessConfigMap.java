@@ -63,6 +63,7 @@ public class FitnessConfigMap extends Fitness {
 
     protected Parameters parameters;
     
+    @Deprecated
     protected List<MLMetricsItem> mlTests;
     
     protected List<String> stockDates;
@@ -225,7 +226,7 @@ public class FitnessConfigMap extends Fitness {
             inputdata.setNameMap(new HashMap<>());
 
             ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, listMap, buy, mlTests, parameters);
+            component.calculateIncDec(componentData2, profitdata, listMap, buy, null, parameters);
 
             short startoffset = new MarketUtil().getStartoffset(market);
             //action.setValMap(param);
