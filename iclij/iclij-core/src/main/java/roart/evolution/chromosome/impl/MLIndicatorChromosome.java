@@ -66,7 +66,7 @@ public class MLIndicatorChromosome extends ConfigMapChromosome2 {
             if (random.nextBoolean()) {
                 chromosome.getMap().put(confName, this.getMap().get(confName));
             } else {
-                chromosome.getMap().put(confName, ((ConfigMapChromosome) other).getMap().get(confName));
+                chromosome.getMap().put(confName, ((ConfigMapChromosome2) other).getMap().get(confName));
             }
         }
         if (!chromosome.validate()) {
