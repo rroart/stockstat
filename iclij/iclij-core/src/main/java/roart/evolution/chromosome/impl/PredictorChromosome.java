@@ -23,18 +23,8 @@ import roart.iclij.model.component.ComponentInput;
 
 public class PredictorChromosome extends ConfigMapChromosome2 {
 
-    private TensorflowPredictorLSTMConfigGene config;
-    
     public PredictorChromosome(ConfigMapGene gene) {
         super(gene);
-    }
-
-    public TensorflowPredictorLSTMConfigGene getConfig() {
-        return config;
-    }
-
-    public void setConfig(TensorflowPredictorLSTMConfigGene config) {
-        this.config = config;
     }
 
     @Override
@@ -50,21 +40,19 @@ public class PredictorChromosome extends ConfigMapChromosome2 {
     }
 
     @Override
-    public void getRandom() throws JsonParseException, JsonMappingException, IOException {
-        config.randomize();
-    }
-    
-    @Override
-    public void mutate() {
-        config.mutate();
-    }
-    
-    @Override
     public Individual crossover(AbstractChromosome other) {
         PredictorChromosome chromosome = new PredictorChromosome(gene);
-        TensorflowPredictorLSTMConfigGene otherConfig = ((PredictorChromosome) other).config;
-        AbstractGene offspring = config.crossover(otherConfig);
-        chromosome.config = (TensorflowPredictorLSTMConfigGene) offspring;
+        for (int conf = 0; conf < getConfList().size(); conf++) {
+            String confName = getConfList().get(conf);
+            if (random.nextBoolean()) {
+                chromosome.getMap().put(confName, this.getMap().get(confName));
+            } else {
+                chromosome.getMap().put(confName, ((ConfigMapChromosome2) other).getMap().get(confName));
+            }
+        }
+        if (!chromosome.validate()) {
+            chromosome.fixValidation();
+        }
         return new Individual(chromosome);
     }
     
@@ -92,22 +80,6 @@ public class PredictorChromosome extends ConfigMapChromosome2 {
         //chromosome.config = new TensorflowLSTMConfig(config.getEpochs(), config.getWindowsize(), config.getHorizon());
         //chromosome.config = (TensorflowPredictorLSTMConfigGene) config.copy();
         return chromosome;
-    }
-    
-    @Override
-    public boolean validate() {
-        return ((TensorflowPredictorLSTMConfig) config.getConfig()).full == true;
-    }
-    
-    @Override
-    public void fixValidation() { 
-        ((TensorflowPredictorLSTMConfig) config.getConfig()).full = true;
-        log.error("Config full was false");
-    }
-
-    @Override
-    public String toString() {
-        return config.toString();
     }
     
 }
