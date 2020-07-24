@@ -15,9 +15,14 @@ public class ImproveFilterActionData extends MarketActionData {
 
     @Override
     public Short getTime(Market market) {
-        return market.getConfig().getFiltertime();
+        Short time = market.getConfig().getFiltertime();
+        if (time != null) {
+            return time;
+        } else {
+            return market.getConfig().getFindtime();
+        }
     }
-    
+
     @Override
     public Boolean[] getBooleans() {
         return new Boolean[] { false, true };
