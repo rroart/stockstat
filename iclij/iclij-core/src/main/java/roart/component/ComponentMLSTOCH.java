@@ -84,7 +84,7 @@ public class ComponentMLSTOCH extends ComponentMLAggregator {
         confList.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLSTOCHBUYLIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLSTOCHSELLLIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLSTOCHTHRESHOLD);
+        //confList.add(ConfigConstants.AGGREGATORSMLSTOCHTHRESHOLD);
         return confList;
     }
 

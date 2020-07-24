@@ -108,7 +108,7 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         ConfigMapChromosome2 chromosome = new MLMultiChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests, stockDates);
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
         return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fit);
     }
 
@@ -124,11 +124,13 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         list.add(ConfigConstants.AGGREGATORSMLMULTIMACD);
         list.add(ConfigConstants.AGGREGATORSMLMULTIRSI);
         list.add(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI);
-        list.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
-        list.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
-        list.add(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
+        //list.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
+        //list.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
+        //list.add(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
+        list.add(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT);
+        list.add(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
         return list;
     }
 
@@ -137,12 +139,12 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         list.add(ConfigConstants.AGGREGATORSMLMULTIATR);
         list.add(ConfigConstants.AGGREGATORSMLMULTICCI);
         list.add(ConfigConstants.AGGREGATORSMLMULTISTOCH);
-        list.add(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT);
         return list;
     }
 

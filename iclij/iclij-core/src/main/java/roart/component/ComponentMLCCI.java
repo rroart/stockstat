@@ -84,7 +84,7 @@ public class ComponentMLCCI extends ComponentMLAggregator {
         confList.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLCCISELLLIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLCCITHRESHOLD);
+        //confList.add(ConfigConstants.AGGREGATORSMLCCITHRESHOLD);
         return confList;
     }
 
