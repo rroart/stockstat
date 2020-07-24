@@ -20,7 +20,8 @@ public class ImproveProfitActionData extends MarketActionData {
     
     @Override
     public Boolean[] getBooleans() {
-        return new Boolean[] { false, true };
+        // return new Boolean[] { false, true };
+        return new Boolean[] { null };
     }
     
     @Override
