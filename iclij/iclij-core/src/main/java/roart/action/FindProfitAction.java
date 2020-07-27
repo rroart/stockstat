@@ -267,14 +267,7 @@ public class FindProfitAction extends MarketAction {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        for (IncDecItem item : incdecitems) {
-            String id = item.getId() + item.getDate().toString();
-            if (item.isIncrease()) {
-                profitdata.getBuys().put(id, item);
-            } else {
-                profitdata.getSells().put(id, item);
-            }
-        }
+        fillProfitdata(profitdata, incdecitems);
         
         setValMap(param);
         Map<String, Map<String, Object>> maps = param.getResultMaps();

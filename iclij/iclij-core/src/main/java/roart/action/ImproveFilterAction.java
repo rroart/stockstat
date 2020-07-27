@@ -67,7 +67,14 @@ public class ImproveFilterAction extends MarketAction {
         }
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         int verificationdays = param.getInput().getConfig().verificationDays();
-        param.getInput().setDoSave(false);
+        //param.getInput().setDoSave(false);
+        try {
+            param.setFuturedays(0);
+            param.setOffset(0);
+            param.setDates(null, null, action.getActionData(), market);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
             if (component == null) {
@@ -147,7 +154,7 @@ public class ImproveFilterAction extends MarketAction {
     @Override
     protected LocalDate getPrevDate(ComponentData param, Market market) {
         LocalDate prevdate = param.getInput().getEnddate();
-        return prevdate.minusDays(market.getConfig().getFiltertime());
+        return prevdate.minusDays(getActionData().getTime(market));
     }
     
     @Override
