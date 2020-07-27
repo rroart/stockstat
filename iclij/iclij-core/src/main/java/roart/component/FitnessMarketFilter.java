@@ -257,14 +257,18 @@ public class FitnessMarketFilter extends Fitness {
         myData.setUpdateMap(new HashMap<>());
         myData.setMemoryItems(new ArrayList<>());
         myData.setUpdateMap2(new HashMap<>());
-        //myData.profitData = new ProfitData();
+        this.profitdata = new ProfitData();
         myData.setTimingMap(new HashMap<>());
         
         market.setFilter(((MarketFilterChromosome2) chromosome).getGene().getMarketfilter());
         
-        Set<IncDecItem> myincdecs = new HashSet<>(incdecs);
-        List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-        List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
+        List<IncDecItem> myincdecs = new ArrayList<>(incdecs);
+        Map<String, Map<String, Object>> maps = param.getResultMaps();
+        action.fillProfitdata(profitdata, myincdecs);
+        action.filterIncDecs(param, market, profitdata, maps, true, stockDates);
+        action.filterIncDecs(param, market, profitdata, maps, false, stockDates);
+        List<IncDecItem> myincs = new ArrayList<>(profitdata.getBuys().values());
+        List<IncDecItem> mydecs = new ArrayList<>(profitdata.getSells().values());
         myincs = new MiscUtil().mergeList(myincs, true);
         mydecs = new MiscUtil().mergeList(mydecs, true);
         List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
@@ -284,10 +288,10 @@ public class FitnessMarketFilter extends Fitness {
         } catch (Exception e3) {
             log.error(Constants.EXCEPTION, e3);
         }
-        Map<String, Map<String, Object>> maps = param.getResultMaps();
-        action.filterIncDecs(param, market, profitdata, maps, true, stockDates);
-        action.filterIncDecs(param, market, profitdata, maps, false, stockDates);
 
+        //myincs = new ArrayList<>(profitdata.getBuys().values());
+        //mydecs = new ArrayList<>(profitdata.getSells().values());
+        
         double incdecFitness = 0.0;
         try {
             incdecFitness = fitness(myincs, mydecs, myincdec, param.getInput().getConfig().getImproveAbovebelowFitnessMinimum());
@@ -306,7 +310,7 @@ public class FitnessMarketFilter extends Fitness {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
-        Pair<Long, Integer> dec = new ImmutablePair(0, 0);
+        Pair<Long, Integer> dec = new ImmutablePair(Long.valueOf(0), 0);
         if (buy == null || buy == false) {
             dec = countsize(mydecs);
         }
@@ -314,7 +318,7 @@ public class FitnessMarketFilter extends Fitness {
             decfitness = ((double) dec.getLeft()) / dec.getRight();
             fitnesses++;
         }
-        Pair<Long, Integer> inc = new ImmutablePair(0, 0);
+        Pair<Long, Integer> inc = new ImmutablePair(Long.valueOf(0), 0);
         if (buy == null || buy == true) {
             inc = countsize(myincs);
         }
@@ -323,7 +327,7 @@ public class FitnessMarketFilter extends Fitness {
             incfitness = ((double) inc.getLeft()) / inc.getRight();
             fitnesses++;
         }
-        Pair<Long, Integer> incdec = new ImmutablePair(0, 0);
+        Pair<Long, Integer> incdec = new ImmutablePair(Long.valueOf(0), 0);
         if (true) {
             incdec = countsize(myincdec);
             fitnesses++;
