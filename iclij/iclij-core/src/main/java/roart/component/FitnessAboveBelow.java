@@ -175,7 +175,7 @@ public class FitnessAboveBelow extends Fitness {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
-        Pair<Long, Integer> dec = new ImmutablePair(0, 0);
+        Pair<Long, Integer> dec = new ImmutablePair(Long.valueOf(0), 0);
         if (buy == null || buy == false) {
             dec = countsize(mydecs);
         }
@@ -183,7 +183,7 @@ public class FitnessAboveBelow extends Fitness {
             decfitness = ((double) dec.getLeft()) / dec.getRight();
             fitnesses++;
         }
-        Pair<Long, Integer> inc = new ImmutablePair(0, 0);
+        Pair<Long, Integer> inc = new ImmutablePair(Long.valueOf(0), 0);
         if (buy == null || buy == true) {
             inc = countsize(myincs);
         }
@@ -192,7 +192,7 @@ public class FitnessAboveBelow extends Fitness {
             incfitness = ((double) inc.getLeft()) / inc.getRight();
             fitnesses++;
         }
-        Pair<Long, Integer> incdec = new ImmutablePair(0, 0);
+        Pair<Long, Integer> incdec = new ImmutablePair(Long.valueOf(0), 0);
         if (true) {
             incdec = countsize(myincdec);
             fitnesses++;
@@ -227,7 +227,7 @@ public class FitnessAboveBelow extends Fitness {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
-        Pair<Long, Integer> dec = new ImmutablePair(0, 0);
+        Pair<Long, Integer> dec = new ImmutablePair(Long.valueOf(0), 0);
         if (buy == null || buy == false) {
             dec = countsize(mydecs, false);
         }
@@ -235,7 +235,7 @@ public class FitnessAboveBelow extends Fitness {
             decfitness = ((double) dec.getLeft()) / dec.getRight();
             fitnesses++;
         }
-        Pair<Long, Integer> inc = new ImmutablePair(0, 0);
+        Pair<Long, Integer> inc = new ImmutablePair(Long.valueOf(0), 0);
         if (buy == null || buy == true) {
             inc = countsize(myincs, true);
         }
@@ -244,8 +244,8 @@ public class FitnessAboveBelow extends Fitness {
             incfitness = ((double) inc.getLeft()) / inc.getRight();
             fitnesses++;
         }
-        Pair<Long, Integer> incdecabove = new ImmutablePair(0, 0);
-        Pair<Long, Integer> incdecbelow = new ImmutablePair(0, 0);
+        Pair<Long, Integer> incdecabove = new ImmutablePair(Long.valueOf(0), 0);
+        Pair<Long, Integer> incdecbelow = new ImmutablePair(Long.valueOf(0), 0);
         if (true) {
             incdecabove = countsize(myincdec, true);
             incdecbelow = countsize(myincdec, false);
