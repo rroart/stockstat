@@ -31,9 +31,12 @@ import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.ml.NeuralNetTensorflowConfig;
 import roart.common.ml.TensorflowPredictorLSTMConfig;
+import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
+import roart.etl.MarketDataETL;
+import roart.etl.PeriodDataETL;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.chromosome.impl.IndicatorChromosome;
 import roart.evolution.chromosome.impl.IndicatorEvaluationNew;
@@ -72,6 +75,7 @@ public class EvolutionService {
     public List<ResultItem> getEvolveRecommender(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
+        String market = conf.getMarket();
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestIndictorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
@@ -86,6 +90,13 @@ public class EvolutionService {
             return new ArrayList<>();
         }
         log.info("stocks {}", stocks.size());
+        String[] periodText = DbDaoUtil.getPeriodText(market, conf);
+        MetaItem meta = null;
+        try {
+            meta = DbDao.getById(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         Set<String> markets = new HashSet<>();
         markets.add(conf.getMarket());
         Integer days = conf.getDays();
@@ -113,8 +124,8 @@ public class EvolutionService {
             }
     
             Map<String, MarketData> marketdatamap = null;
-            marketdatamap = new ServiceUtil().getMarketdatamap(days, markets, conf);
-            Map<String, PeriodData> periodDataMap = new ServiceUtil().getPerioddatamap(markets,
+            marketdatamap = new MarketDataETL().getMarketdatamap(days, market, conf, stocks, periodText, meta);
+            Map<String, PeriodData> periodDataMap = new PeriodDataETL().getPerioddatamap(markets,
                     marketdatamap);
     
             if (stocks.size() != marketdatamap.get(conf.getMarket()).stocks.size()) {
@@ -253,6 +264,7 @@ public class EvolutionService {
     public List<ResultItem> getEvolveRecommenderSingle(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
+        String market = conf.getMarket();
         ObjectMapper mapper = new ObjectMapper();
         EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestIndictorrecommenderEvolutionConfig(), EvolutionConfig.class);
     
@@ -267,6 +279,13 @@ public class EvolutionService {
             return new ArrayList<>();
         }
         log.info("stocks {}", stocks.size());
+        String[] periodText = DbDaoUtil.getPeriodText(market, conf);
+        MetaItem meta = null;
+        try {
+            meta = DbDao.getById(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         Set<String> markets = new HashSet<>();
         markets.add(conf.getMarket());
         Integer days = conf.getDays();
@@ -291,8 +310,8 @@ public class EvolutionService {
             }
     
             Map<String, MarketData> marketdatamap = null;
-            marketdatamap = new ServiceUtil().getMarketdatamap(days, markets, conf);
-            Map<String, PeriodData> periodDataMap = new ServiceUtil().getPerioddatamap(markets,
+            marketdatamap = new MarketDataETL().getMarketdatamap(days, market, conf, stocks, periodText, meta);
+            Map<String, PeriodData> periodDataMap = new PeriodDataETL().getPerioddatamap(markets,
                     marketdatamap);
     
             if (stocks.size() != marketdatamap.get(conf.getMarket()).stocks.size()) {
@@ -401,6 +420,7 @@ public class EvolutionService {
     public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
+        String market = conf.getMarket();
         if (conf.isDataset()) {
             ObjectMapper mapper = new ObjectMapper();
             EvolutionConfig evolutionConfig = mapper.readValue(conf.getTestMLEvolutionConfig(), EvolutionConfig.class);
@@ -442,6 +462,13 @@ public class EvolutionService {
             return new ArrayList<>();
         }
         log.info("stocks {}", stocks.size());
+        String[] periodText = DbDaoUtil.getPeriodText(market, conf);
+        MetaItem meta = null;
+        try {
+            meta = DbDao.getById(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         Set<String> markets = new HashSet<>();
         markets.add(conf.getMarket());
         Integer days = conf.getDays();
@@ -469,8 +496,8 @@ public class EvolutionService {
             }
 
             Map<String, MarketData> marketdatamap = null;
-            marketdatamap = new ServiceUtil().getMarketdatamap(days, markets, conf);
-            Map<String, PeriodData> periodDataMap = new ServiceUtil().getPerioddatamap(markets,
+            marketdatamap = new MarketDataETL().getMarketdatamap(days, market, conf, stocks, periodText, meta);
+            Map<String, PeriodData> periodDataMap = new PeriodDataETL().getPerioddatamap(markets,
                     marketdatamap);
     
             if (stocks.size() != marketdatamap.get(conf.getMarket()).stocks.size()) {
@@ -505,7 +532,6 @@ public class EvolutionService {
             if (cat == null) {
                 return new ArrayList<>();
             }
-            String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
             String catName = getCatName(cat, periodText);
             DataReader dataReader = new DataReader(conf, marketdatamap, periodDataMap, cat);
             //Pipeline[] datareaders = new Pipeline[1];

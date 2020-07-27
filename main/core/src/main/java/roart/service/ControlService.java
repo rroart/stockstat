@@ -41,6 +41,8 @@ import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
+import roart.etl.MarketDataETL;
+import roart.etl.PeriodDataETL;
 import roart.graphcategory.GraphCategory;
 import roart.graphcategory.GraphCategoryIndex;
 import roart.graphcategory.GraphCategoryPeriod;
@@ -118,9 +120,10 @@ public class ControlService {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
+        String market = conf.getMarket();
         List<StockItem> stocks = null;
         try {
-            stocks = DbDao.getAll(conf.getMarket(), conf);
+            stocks = DbDao.getAll(market, conf);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -128,6 +131,13 @@ public class ControlService {
             return null;
         }
         log.info("stocks {}", stocks.size());
+        String[] periodText = DbDaoUtil.getPeriodText(market, conf);
+        MetaItem meta = null;
+        try {
+            meta = DbDao.getById(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         
         Set<String> markets = new HashSet();
         markets.add(conf.getMarket());
@@ -151,12 +161,11 @@ public class ControlService {
             Collections.sort(stockdates);
 
             Map<String, MarketData> marketdatamap = null;
-            marketdatamap = new ServiceUtil().getMarketdatamap(days, markets, conf);
-            Map<String, PeriodData> periodDataMap = new ServiceUtil().getPerioddatamap(markets,
+            marketdatamap = new MarketDataETL().getMarketdatamap(days, market, conf, stocks, periodText, meta);
+            Map<String, PeriodData> periodDataMap = new PeriodDataETL().getPerioddatamap(markets,
                     marketdatamap);
 
             Integer cat = IndicatorUtils.getWantedCategory(stocks, marketdatamap.get(conf.getMarket()).meta);
-            String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
             String catName = EvolutionService.getCatName(cat, periodText);
 
             if (stocks.size() != marketdatamap.get(conf.getMarket()).stocks.size()) {
@@ -545,21 +554,28 @@ public class ControlService {
         try {
             log.info("mydate {}", conf.getdate());
             int days = conf.getTableDays();
+            Map<String, MarketData> marketdatamap = new HashMap<>();
+            Map<String, PeriodData> periodDataMap = new HashMap<>();
             Set<String> markets = new ServiceUtil().getMarkets(ids);
-            List<StockItem> stocks = null;
-            stocks = DbDao.getAll(conf.getMarket(), conf);
-            if (stocks == null) {
-                return new ArrayList<>();
+            for (String market : markets) {
+                List<StockItem> stocks = null;
+                stocks = DbDao.getAll(market, conf);
+                if (stocks == null) {
+                    return new ArrayList<>();
+                }
+                String[] periodText = DbDaoUtil.getPeriodText(market, conf);
+                MetaItem meta = DbDao.getById(market, conf);
+                log.info("stocks {}", stocks.size());
+                Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+
+                if (conf.getdate() == null) {
+                    new ServiceUtil().getCurrentDate(conf, stockdatemap);
+                }
+                marketdatamap.putAll(new MarketDataETL().getMarketdatamap(days,
+                        market, conf, stocks, periodText, meta));
+                periodDataMap.putAll(new PeriodDataETL().getPerioddatamap(markets,
+                        marketdatamap));
             }
-            log.info("stocks {}", stocks.size());
-            Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
-            if (conf.getdate() == null) {
-                new ServiceUtil().getCurrentDate(conf, stockdatemap);
-            }
-            Map<String, MarketData> marketdatamap = new ServiceUtil().getMarketdatamap(days,
-                    markets, conf);
-            Map<String, PeriodData> periodDataMap = new ServiceUtil().getPerioddatamap(markets,
-                    marketdatamap);
             GraphCategory[] categories = getGraphCategories(conf, null, marketdatamap, periodDataMap);
 
             for (int i = 0; i < Constants.ALLPERIODS; i++) {
