@@ -41,35 +41,7 @@ public class ImproveFilterActionData extends MarketActionData {
     @Override
     public List<String> getComponents(IclijConfig config, boolean wantThree) {
         List<String> components = new ArrayList<>();
-        if (config.wantsImproveFilterRecommender()) {
-            components.add(PipelineConstants.AGGREGATORRECOMMENDERINDICATOR);
-        }
-        if (config.wantsImproveFilterPredictor()) {
-            components.add(PipelineConstants.PREDICTOR);
-        }
-        if (config.wantsImproveFilterMLMACD()) {
-            components.add(PipelineConstants.MLMACD);
-        }
-        if (config.wantsImproveFilterMLRSI()) {
-            components.add(PipelineConstants.MLRSI);
-        }
-        if (wantThree) {
-        if (config.wantsImproveFilterMLATR()) {
-            components.add(PipelineConstants.MLATR);
-        }
-        if (config.wantsImproveFilterMLCCI()) {
-            components.add(PipelineConstants.MLCCI);
-        }
-        if (config.wantsImproveFilterMLSTOCH()) {
-            components.add(PipelineConstants.MLSTOCH);
-        }
-        }
-        if (config.wantsImproveFilterMLMulti()) {
-            components.add(PipelineConstants.MLMULTI);
-        }
-       if (config.wantsImproveFilterMLIndicator()) {
-            components.add(PipelineConstants.MLINDICATOR);
-        }
+        components.add(PipelineConstants.FILTER);
         return components;
     }
     

@@ -36,6 +36,8 @@ public class ComponentFactory {
             return new DatasetComponent();
         case PipelineConstants.ABOVEBELOW:
             return new AboveBelowComponent();
+        case PipelineConstants.FILTER:
+            return new FilterComponent();
         default:
             return null;
         }        

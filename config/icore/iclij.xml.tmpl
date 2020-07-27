@@ -11,7 +11,7 @@
       <cpu>0.5</cpu>
     </client>
   </mp>
-  <evolve priority="20">
+  <evolve priority="50">
     <indicatorrecommender enable='true'>
       <evolutionconfig>{ "generations" : 100, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
     </indicatorrecommender>
@@ -47,7 +47,7 @@
       <evolutionconfig>{ "generations" : 1, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 4, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
     </predictor>
   </findprofit>
-  <improveprofit priority="30">
+  <improveprofit priority="60">
     <autorun enable="$IMPROVEPROFIT"/>
     <recommender enable='true'/>
     <mlmacd enable='true'>
@@ -87,7 +87,7 @@
     <predictor enable='false'>
     </predictor>
   </improvefilter>
-  <improveabovebelow priority="15">
+  <improveabovebelow priority="20">
     <autorun enable="$IMPROVEABOVEBELOW"/>
     <evolutionconfig>{ "generations" : 2, "crossover" : 2, "elite" : 1, "elitecloneandmutate" : 1, "select" : 16, "mutate" : 2, "generationcreate" : 1, "useoldelite" : true }</evolutionconfig>
     <fitnessminimum>5</fitnessminimum>
@@ -110,23 +110,23 @@
     </mlmulti>
     <mlindicator enable='true'>
     </mlindicator>
-    <predictor enable='true' priority="60">
+    <predictor enable='true' priority="80">
     </predictor>
   </machinelearning>
-  <dataset priority="50">
+  <dataset priority="70">
     <autorun enable="$DATASET"/>
     <predictor enable='false'>
     </predictor>
   </dataset>
-  <crosstest priority="10">
+  <crosstest priority="40">
     <autorun enable="$CROSSTEST"/>
-    <predictor enable='true' priority="40">
+    <predictor enable='true' priority="50">
     </predictor>
     <market id="nordfund">
       <config>{ "market" : "nordfund", "persisttime" : 30, "findtime" : 7, "evolvetime" : 60, "improvetime" : 150, "startoffset" : 1 }</config>
     </market>
   </crosstest>
-  <filter priority="30">
+  <filter priority="90">
     <autorun enable="true"/>
     <recommender enable='true'/>
     <mlmacd enable='true'>
