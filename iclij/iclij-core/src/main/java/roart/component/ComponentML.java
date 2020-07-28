@@ -401,10 +401,15 @@ public abstract class ComponentML extends Component {
     }
 
     protected MLMetricsItem search(List<MLMetricsItem> mlTests, List meta) {
-        if (mlTests == null) {
-            return null;
-        }
         Pair<String, String> pair = new MiscUtil().getComponentPair(meta);
+        if (mlTests == null) {
+            MLMetricsItem test = new MLMetricsItem();
+            test.setComponent(getPipeline());
+            test.setSubcomponent(pair.getLeft());
+            test.setLocalcomponent(pair.getRight());
+            test.setTestAccuracy(1.0);
+            return test;
+        }
         for (MLMetricsItem aTest : mlTests) {
             if (!aTest.getComponent().equals(getPipeline())) {
                 continue;

@@ -61,7 +61,7 @@ public abstract class MLAggregatorChromosome extends ConfigMapChromosome2 {
     @Override
     public AbstractChromosome copy() {
         MLAggregatorChromosome chromosome = getNewChromosome();
-        chromosome.getMap().putAll(new HashMap(getMap()));
+        chromosome.gene = gene.copy();
         return chromosome;
     }
 

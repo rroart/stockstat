@@ -59,7 +59,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         ConfigMapChromosome2 chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, subcomponent, parameters, gene, mlTests);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, mlTests, stockDates);
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
         return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fit);
     }
 
@@ -98,7 +98,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             
             //if memory.learnconf > mltest then..above.
             
-            if (mltest != null) {
+            if (mlTests == null || mltest != null) {
                     //&& (memories == null || !memories.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
                 Pair keyPair = new ImmutablePair(getPipeline(), count);
@@ -127,7 +127,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
                         continue;
                     }
                     int offsetZero = (int) Math.round(off.get(0));
-                    LocalDate confdate = TimeUtil.convertDate(param.getService().conf.getdate());
+                    LocalDate confdate0 = TimeUtil.convertDate(param.getService().conf.getdate());
+                    LocalDate confdate = param.getBaseDate();
                     LocalDate date = TimeUtil.getBackEqualBefore2(confdate, offsetZero, stockDates);
                     
                     boolean increase = false;

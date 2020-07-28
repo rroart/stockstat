@@ -69,8 +69,15 @@ public class PopulateThread extends Thread {
                     } catch (Exception e) {
                         log.error(Constants.EXCEPTION, e);
                     }
-                    config.setDate(currentDate);
-                    ComponentInput componentInput = new ComponentInput(config, null, null, currentDate, null, true, false, new ArrayList<>(), new HashMap<>());
+                    LocalDate lastStockdate = TimeUtil.getBackEqualBefore2(currentDate, 0, dates);
+                    config.setDate(lastStockdate);
+                    if (!lastStockdate.isAfter(oldDate)) {
+                        currentDate = currentDate.plusDays(findTime);
+                        date = TimeUtil.convertDate2(currentDate);
+                        index = TimeUtil.getIndexEqualAfter(dates, date);                    
+                        continue;
+                    }
+                    ComponentInput componentInput = new ComponentInput(config, null, null, lastStockdate, null, true, false, new ArrayList<>(), new HashMap<>());
                     ServiceUtil.getFindProfit(componentInput, timingitems);
                     if (config.getFindProfitMemoryFilter()) {
                         try {
@@ -80,10 +87,24 @@ public class PopulateThread extends Thread {
                         }
                         if (timingitems.isEmpty()) {
                             int verificationdays = param.getInput().getConfig().verificationDays();
-                            LocalDate aCurrentDate = currentDate; //TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
+                            LocalDate aCurrentDate = lastStockdate; //TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
                             config.setDate(aCurrentDate);
                             ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
                             ServiceUtil.getImproveAboveBelow(componentInput3);
+                        }
+                    }
+                    if (config.getFindProfitMemoryFilter()) {
+                        try {
+                            timingitems = IclijDbDao.getAllTiming(market.getConfig().getMarket(), IclijConstants.IMPROVEFILTER, oldDate, currentDate);
+                        } catch (Exception e) {
+                            log.error(Constants.EXCEPTION, e);
+                        }
+                        if (timingitems.isEmpty()) {
+                            int verificationdays = param.getInput().getConfig().verificationDays();
+                            LocalDate aCurrentDate = lastStockdate; //TimeUtil.getForwardEqualAfter2(currentDate, verificationdays, dates);
+                            config.setDate(aCurrentDate);
+                            ComponentInput componentInput3 = new ComponentInput(config, null, null, aCurrentDate, null, true, false, new ArrayList<>(), new HashMap<>());
+                            ServiceUtil.getImproveFilter(componentInput3);
                         }
                     }
                     currentDate = currentDate.plusDays(findTime);
