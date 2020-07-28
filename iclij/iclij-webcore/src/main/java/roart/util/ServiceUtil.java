@@ -719,6 +719,9 @@ public class ServiceUtil {
             if (instance.getFindProfitMemoryFilter()) {
                 myData = param.getService().getRun(IclijConstants.IMPROVEABOVEBELOW, componentInput);
             }
+            if (instance.getFindProfitMemoryFilter()) {
+                myData = param.getService().getRun(IclijConstants.IMPROVEFILTER, componentInput);
+            }
             //ProfitData buysells = myData.profitData; // findProfitActionData.getPicks(param, allMemoryItems);
         } else {
             myData = param.getService().getVerify(IclijConstants.FINDPROFIT, componentInput);            

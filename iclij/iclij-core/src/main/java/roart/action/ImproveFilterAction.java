@@ -1,5 +1,6 @@
 package roart.action;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,10 +16,12 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.FitnessMarketFilter;
 import roart.component.MarketFilterChromosomeWinner;
 import roart.component.model.ComponentData;
+import roart.db.IclijDbDao;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
@@ -31,8 +34,11 @@ import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
+import roart.iclij.model.TimingItem;
 import roart.iclij.model.WebData;
+import roart.iclij.model.action.EvolveActionData;
 import roart.iclij.model.action.ImproveFilterActionData;
+import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 
@@ -59,13 +65,38 @@ public class ImproveFilterAction extends MarketAction {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
-        param.getInput().setDoSave(false);
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        int verificationdays = param.getInput().getConfig().verificationDays();
+        //param.getInput().setDoSave(false);
+        try {
+            param.setFuturedays(0);
+            param.setOffset(0);
+            param.setDates(null, null, action.getActionData(), market);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
         for (Entry<String, Component> entry : componentMap.entrySet()) {
             Component component = entry.getValue();
             if (component == null) {
                 continue;
             }
             boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
+
+            List<IncDecItem> allIncDecs = null;
+            LocalDate date = param.getFutureDate();
+            date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
+            LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
+            try {
+                allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
+            List<String> parametersList = new MiscUtil().getParameters(incdecs);
+            for (String aParameter : parametersList) {
+                List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
+
+            
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
             // 0 ok?
@@ -80,10 +111,10 @@ public class ImproveFilterAction extends MarketAction {
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             MarketFilterGene gene = new MarketFilterGene(market.getFilter());
-            MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);
+            //MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);
             MarketFilterChromosome2 chromosome2 = new MarketFilterChromosome2(new ArrayList<>(), gene);
-            FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, mlTests);
-            ComponentData componentData = component.improve(action, param, chromosome, subcomponent, new MarketFilterChromosomeWinner(), chromosome.getBuy(), fit);
+            FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, mlTests, stockDates, incdecsP);
+            ComponentData componentData = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit);
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
@@ -91,6 +122,7 @@ public class ImproveFilterAction extends MarketAction {
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           
+        }
         }
     }
 
@@ -122,7 +154,7 @@ public class ImproveFilterAction extends MarketAction {
     @Override
     protected LocalDate getPrevDate(ComponentData param, Market market) {
         LocalDate prevdate = param.getInput().getEnddate();
-        return prevdate.minusDays(market.getConfig().getFiltertime());
+        return prevdate.minusDays(getActionData().getTime(market));
     }
     
     @Override
@@ -130,5 +162,29 @@ public class ImproveFilterAction extends MarketAction {
         param.getAndSetWantedCategoryValueMap();
     }
     
+    @Override
+    protected List<TimingItem> getCurrentTimings(LocalDate olddate, List<TimingItem> timings, Market market, String name,
+            Short time, boolean b, List<String> stockDates) {
+        String mldate = ((ImproveFilterActionData) getActionData()).getMlDate(market, stockDates);
+        String mldaysdate = ((ImproveFilterActionData) getActionData()).getMlDays(market, stockDates);
+        if (mldate == null && mldaysdate == null) {
+            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
+        }
+        if (mldate != null) {
+            try {
+                olddate = TimeUtil.convertDate(mldate);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            return new MiscUtil().getCurrentTimings(olddate, timings, market, getName());
+        }
+        try {
+            olddate = TimeUtil.convertDate(mldaysdate);
+        } catch (ParseException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
+    }
+
 }
 

@@ -12,7 +12,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
-import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.evolution.chromosome.impl.MLATRChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.IclijConfig;
@@ -78,14 +78,14 @@ public class ComponentMLATR extends ComponentMLAggregator {
         confList.add(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLATRBUYLIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLATRSELLLIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLATRTHRESHOLD);
+        //confList.add(ConfigConstants.AGGREGATORSMLATRTHRESHOLD);
         return confList;
     }
 
     @Override
-    protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
+    protected ConfigMapChromosome2 getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
-        return new MLATRChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
+        return new MLATRChromosome(gene);
     }
 
     @Override

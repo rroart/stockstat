@@ -344,7 +344,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
                         continue;
                     }
                 }
-                break;
+                log.error("Tensorflow aborted?");
             } else {
                 log.info("Completed {} on {}", filename, tensorflowServer);
                 break;
@@ -409,7 +409,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
                         continue;
                     }
                 }
-                break;
+                log.error("Tensorflow aborted?");
             } else {
                 log.info("Completed {} on {}", dataset, tensorflowServer);
                 break;

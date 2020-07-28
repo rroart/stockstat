@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.util.ArraysUtil;
 
@@ -59,6 +60,38 @@ public class ValueETL {
             }
         }
         return aMap;
+    }
+
+    public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(MyMyConfig conf, Map<String, Double[][]> listMap) {
+        Map<String, Double[][]> retMap = new HashMap<>();
+        for (Entry<String, Double[][]> entry : listMap.entrySet()) {
+            Double[][] array = entry.getValue();
+            Double[][] newArray = new Double[array.length][];
+            if ("F00000ZHEV".equals(entry.getKey())) {
+                int jj = 0;
+            }
+            for (int i = 0; i < array.length; i ++) {
+                newArray[i] = new Double[array[i].length];
+                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf));
+            }
+            retMap.put(entry.getKey(), newArray);
+        }      
+        return retMap;
+    }
+
+    public static Map<String, Double[]> getReverseArrSparseFillHoles(MyMyConfig conf, Map<String, Double[]> listMap) {
+        Map<String, Double[]> retMap = new HashMap<>();
+        for (Entry<String, Double[]> entry : listMap.entrySet()) {
+            Double[] array = entry.getValue();
+            Double[] newArray = new Double[array.length];
+            newArray = ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf));
+            retMap.put(entry.getKey(), newArray);
+        }      
+        return retMap;
+    }
+
+    public static int maxHoleNumber(MyMyConfig conf) {
+        return conf.getMaxHoles();
     }
 
 }

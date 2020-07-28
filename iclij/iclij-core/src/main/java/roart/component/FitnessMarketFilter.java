@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -25,7 +27,9 @@ import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
+import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.iclij.config.Market;
+import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -33,6 +37,7 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
+import roart.iclij.model.config.ActionComponentConfig;
 import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfit;
@@ -65,7 +70,11 @@ public class FitnessMarketFilter extends Fitness {
     
     private List<MLMetricsItem> mlTests;
 
-    public FitnessMarketFilter(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
+    private List<String> stockDates;
+
+    private List<IncDecItem> incdecs;
+    
+    public FitnessMarketFilter(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, List<String> stockDates, List<IncDecItem> incdecs) {
         this.action = action;
         this.param = param;
         this.profitdata = profitdata;
@@ -75,10 +84,11 @@ public class FitnessMarketFilter extends Fitness {
         this.buy = buy;
         this.parameters = parameters;
         this.mlTests = mlTests;
+        this.stockDates = stockDates;
+        this.incdecs = incdecs;
     }
 
-    @Override
-    public double fitness(AbstractChromosome chromosome) {
+    public double fitness1(AbstractChromosome chromosome) {
         List<MemoryItem> memoryItems = null;
         WebData myData = new WebData();
         myData.setIncs(new ArrayList<>());
@@ -94,7 +104,72 @@ public class FitnessMarketFilter extends Fitness {
         List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
         List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
-        incProp = extracted(chromosome, myData, listInc, listDec, mlTests);
+        Trend incProp1 = null;
+        try {
+            int verificationdays = param.getInput().getConfig().verificationDays();
+            Component component =  action.getComponentFactory().factory(componentName);
+            ActionComponentConfig config = ActionComponentConfigFactory.factoryfactory(action.getName()).factory(component.getPipeline());
+            component.setConfig(config);
+            boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
+            //ProfitData profitdata = new ProfitData();
+            myData.setProfitData(profitdata);
+            boolean myevolve = component.wantImproveEvolve();
+            if (!param.getService().conf.wantIndicatorRecommender()) {
+                int jj2 = 0;
+            }
+            map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
+            map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
+            map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
+            map.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
+            map.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+            map.put(ConfigConstants.MISCMYDAYS, 0);
+        
+            String key = component.getThreshold();
+            map.put(key, "[" + parameters.getThreshold() + "]");
+            String key2 = component.getFuturedays();
+            map.put(key2, parameters.getFuturedays());
+        
+            map.put(ConfigConstants.MISCTHRESHOLD, null);
+        
+            market.setFilter(((MarketFilterChromosome2)chromosome).getGene().getMarketfilter());
+            ComponentData componentData = component.handle(action, market, param, profitdata, new Memories(market), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
+            //componentData.setUsedsec(time0);
+            myData.getUpdateMap().putAll(componentData.getUpdateMap());
+        
+            Memories listMap = new Memories(market);
+            listMap.method(myData.getMemoryItems(), param.getInput().getConfig());        
+            //ProfitData profitdata = new ProfitData();
+            ProfitInputData inputdata = new ProfitInputData();
+            profitdata.setInputdata(inputdata);
+            inputdata.setNameMap(new HashMap<>());
+            Memories positions = listMap;
+        
+            //component.enableDisable(componentData, positions, param.getConfigValueMap(), buy);
+        
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
+            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters);
+        
+            short startoffset = new MarketUtil().getStartoffset(market);
+            action.setValMap(param);
+            VerifyProfit verify = new VerifyProfit();
+            incProp1 = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
+            //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
+            //log.info("trendcomp {} {}", trend, incProp);
+            if (verificationdays > 0) {
+                try {
+                    //param.setFuturedays(verificationdays);
+                    param.setFuturedays(0);
+                    param.setOffset(0);
+                    param.setDates(null, null, action.getActionData(), market);
+                } catch (ParseException e1) {
+                    log.error(Constants.EXCEPTION, e1);
+                }            
+                new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold(), param, null, market);
+            }
+        } catch (Exception e3) {
+            log.error(Constants.EXCEPTION, e3);
+        }
+        incProp = incProp1;
         Map<String, Map<String, Object>> maps = param.getResultMaps();
         action.filterIncDecs(param, market, profitdata, maps, true, null);
         action.filterIncDecs(param, market, profitdata, maps, false, null);
@@ -174,89 +249,121 @@ public class FitnessMarketFilter extends Fitness {
         return incdecFitness;
     }
 
-    public Trend extracted(AbstractChromosome chromosome, WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec, List<MLMetricsItem> mlTests) {
-        Trend incProp = null;
+    @Override
+    public double fitness(AbstractChromosome chromosome) {
+        WebData myData = new WebData();
+        myData.setIncs(new ArrayList<>());
+        myData.setDecs(new ArrayList<>());
+        myData.setUpdateMap(new HashMap<>());
+        myData.setMemoryItems(new ArrayList<>());
+        myData.setUpdateMap2(new HashMap<>());
+        this.profitdata = new ProfitData();
+        myData.setTimingMap(new HashMap<>());
+        
+        market.setFilter(((MarketFilterChromosome2) chromosome).getGene().getMarketfilter());
+        
+        List<IncDecItem> myincdecs = new ArrayList<>(incdecs);
+        Map<String, Map<String, Object>> maps = param.getResultMaps();
+        action.fillProfitdata(profitdata, myincdecs);
+        action.filterIncDecs(param, market, profitdata, maps, true, stockDates);
+        action.filterIncDecs(param, market, profitdata, maps, false, stockDates);
+        List<IncDecItem> myincs = new ArrayList<>(profitdata.getBuys().values());
+        List<IncDecItem> mydecs = new ArrayList<>(profitdata.getSells().values());
+        myincs = new MiscUtil().mergeList(myincs, true);
+        mydecs = new MiscUtil().mergeList(mydecs, true);
+        List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
-            Component component =  action.getComponentFactory().factory(componentName);
-            boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
-            //ProfitData profitdata = new ProfitData();
             myData.setProfitData(profitdata);
-            boolean myevolve = component.wantImproveEvolve();
-            if (!param.getService().conf.wantIndicatorRecommender()) {
-                int jj = 0;
-            }
-            map.put(ConfigConstants.MACHINELEARNINGMLLEARN, true);
-            map.put(ConfigConstants.MACHINELEARNINGMLCLASSIFY, true);
-            map.put(ConfigConstants.MACHINELEARNINGMLDYNAMIC, true);
-            map.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
-
-            String key = component.getThreshold();
-            map.put(key, "[" + parameters.getThreshold() + "]");
-            String key2 = component.getFuturedays();
-            map.put(key2, parameters.getFuturedays());
-
-            map.put(ConfigConstants.MISCTHRESHOLD, null);
-
-            /*
-            FindProfitAction myaction = new FindProfitAction();
-            //marketTime.;
-            MarketComponentTime marketTime = myaction.getMCT(componentName, component, subcomponent, market, 0, false, buy, parameters);
-            //marketTime.component = component;
-            myaction.getPicksFiltered(myData, param, param.getInput().getConfig(),  marketTime, evolve);                
         
-            // plus borrow from verifyprofit
-            //myaction.filterIncDecs(param, market, profitdata, maps, true);
-            */
-            market.setFilter(((MarketFilterChromosome2)chromosome).getGene().getMarketfilter());
-            ComponentData componentData = component.handle(action, market, param, profitdata, new Memories(market), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
-            //componentData.setUsedsec(time0);
-            myData.getUpdateMap().putAll(componentData.getUpdateMap());
-            List<MemoryItem> memories;
-            try {
-                memories = component.calculateMemory(componentData, parameters);
-                if (memories == null || memories.isEmpty()) {
-                    int jj = 0;
-                }
-                myData.getMemoryItems().addAll(memories);
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-
             Memories listMap = new Memories(market);
-            listMap.method(myData.getMemoryItems(), param.getInput().getConfig());        
-            //ProfitData profitdata = new ProfitData();
             ProfitInputData inputdata = new ProfitInputData();
+            listMap.method(myData.getMemoryItems(), param.getInput().getConfig());        
             profitdata.setInputdata(inputdata);
-            inputdata.setNameMap(new HashMap<>());
-            Memories positions = listMap;
-
-            //component.enableDisable(componentData, positions, param.getConfigValueMap(), buy);
-
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters);
-
+        
             short startoffset = new MarketUtil().getStartoffset(market);
-            action.setValMap(param);
-            VerifyProfit verify = new VerifyProfit();
-            incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
-            //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
-            //log.info("trendcomp {} {}", trend, incProp);
             if (verificationdays > 0) {
-                try {
-                    //param.setFuturedays(verificationdays);
-                    param.setFuturedays(0);
-                    param.setOffset(0);
-                    param.setDates(null, null, action.getActionData(), market);
-                } catch (ParseException e) {
-                    log.error(Constants.EXCEPTION, e);
-                }            
-                new VerifyProfitUtil().getVerifyProfit(verificationdays, null, null, listInc, listDec, new ArrayList<>(), startoffset, parameters.getThreshold(), param, null, market);
+                new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, parameters.getThreshold(), stockDates, param.getCategoryValueMap());
             }
+        } catch (Exception e3) {
+            log.error(Constants.EXCEPTION, e3);
+        }
+
+        //myincs = new ArrayList<>(profitdata.getBuys().values());
+        //mydecs = new ArrayList<>(profitdata.getSells().values());
+        
+        double incdecFitness = 0.0;
+        try {
+            incdecFitness = fitness(myincs, mydecs, myincdec, param.getInput().getConfig().getImproveAbovebelowFitnessMinimum());
+            log.info("Fit #{} {} ", this.hashCode(), market.getFilter());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        return incProp;
+        // or rather verified incdec
+        log.info("Fit {} {}", this.componentName, incdecFitness);
+        //configSaves(param, getMap());
+        param.getUpdateMap().putAll(map);
+        return incdecFitness;
     }
 
+    public double fitness(List<IncDecItem> myincs, List<IncDecItem> mydecs, List<IncDecItem> myincdec, int minimum) {
+        double incdecFitness;
+        int fitnesses = 0;
+        double decfitness = 0;
+        Pair<Long, Integer> dec = new ImmutablePair(Long.valueOf(0), 0);
+        if (buy == null || buy == false) {
+            dec = countsize(mydecs);
+        }
+        if (dec.getRight() != 0) {
+            decfitness = ((double) dec.getLeft()) / dec.getRight();
+            fitnesses++;
+        }
+        Pair<Long, Integer> inc = new ImmutablePair(Long.valueOf(0), 0);
+        if (buy == null || buy == true) {
+            inc = countsize(myincs);
+        }
+        double incfitness = 0;
+        if (inc.getRight() != 0) {
+            incfitness = ((double) inc.getLeft()) / inc.getRight();
+            fitnesses++;
+        }
+        Pair<Long, Integer> incdec = new ImmutablePair(Long.valueOf(0), 0);
+        if (true) {
+            incdec = countsize(myincdec);
+            fitnesses++;
+        }
+        double incdecfitness = 0;
+        if (incdec.getRight() != 0) {
+            incdecfitness = ((double) incdec.getLeft()) / incdec.getRight();
+            fitnesses++;
+        }
+        
+        double fitnessAvg = 0;
+        if (fitnesses != 0) {
+            fitnessAvg = (decfitness + incfitness + incdecfitness) / fitnesses;
+        }
+        incdecFitness = fitnessAvg;
+        double fitnessAll = 0;
+        long count = dec.getLeft() + inc.getLeft() + incdec.getLeft();
+        int size = dec.getRight() + inc.getRight() + incdec.getRight();
+        if (size > 0) {
+            fitnessAll = ((double) count) / size;
+        }
+        incdecFitness = fitnessAll;
+        if (minimum > 0 && size < minimum) {
+            log.info("Fit sum too small {} < {}", size, minimum);
+            incdecFitness = 0;
+        }
+        log.info("Fit {} ( {} / {} ) {} ( {} / {} ) {} ( {} / {} ) {} {} ( {} / {} )", decfitness, dec.getLeft(), dec.getRight(), incfitness, inc.getLeft(), inc.getRight(), incdecfitness, incdec.getLeft(), incdec.getRight(), fitnessAvg, fitnessAll, count, size);
+        return incdecFitness;
+    }
+    
+    public static Pair<Long, Integer> countsize(List<IncDecItem> list) {
+        List<Boolean> listBoolean = list.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
+        long count = listBoolean.stream().filter(i -> i).count();                            
+        int size = listBoolean.size();
+        return new ImmutablePair(count, size);
+
+    }
+    
 }

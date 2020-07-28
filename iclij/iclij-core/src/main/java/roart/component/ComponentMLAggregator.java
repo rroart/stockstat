@@ -23,6 +23,7 @@ import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLAggregatorData;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.filter.Memories;
@@ -55,9 +56,11 @@ public abstract class ComponentMLAggregator extends ComponentML {
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        ConfigMapChromosome chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, subcomponent, parameters, gene, mlTests);
+        ConfigMapChromosome2 chromosome = getNewChromosome(action, market, profitdata, positions, buy, param, subcomponent, parameters, gene, mlTests);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), null);
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fit);
     }
 
     @Override
@@ -95,7 +98,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
             
             //if memory.learnconf > mltest then..above.
             
-            if (mltest != null) {
+            if (mlTests == null || mltest != null) {
                     //&& (memories == null || !memories.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
                 Pair keyPair = new ImmutablePair(getPipeline(), count);
@@ -124,7 +127,8 @@ public abstract class ComponentMLAggregator extends ComponentML {
                         continue;
                     }
                     int offsetZero = (int) Math.round(off.get(0));
-                    LocalDate confdate = TimeUtil.convertDate(param.getService().conf.getdate());
+                    LocalDate confdate0 = TimeUtil.convertDate(param.getService().conf.getdate());
+                    LocalDate confdate = param.getBaseDate();
                     LocalDate date = TimeUtil.getBackEqualBefore2(confdate, offsetZero, stockDates);
                     
                     boolean increase = false;
@@ -426,7 +430,7 @@ public abstract class ComponentMLAggregator extends ComponentML {
         return memoryList;
     }
     
-    protected abstract ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
+    protected abstract ConfigMapChromosome2 getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests);
 
     protected abstract int getDaysAfterLimit(ComponentData componentparam);

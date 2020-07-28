@@ -25,6 +25,7 @@ import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.PredictorData;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.evolution.chromosome.impl.PredictorChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.EvolveMLConfig;
@@ -178,9 +179,11 @@ public class ComponentPredictor extends ComponentML {
 	ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        ConfigMapChromosome chromosome = new PredictorChromosome(action, param, profitdata, market, positions, PipelineConstants.PREDICTOR, buy, subcomponent, gene, mlTests);
+        ConfigMapChromosome2 chromosome = new PredictorChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), null);
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fit);
     }
 
     @Override
@@ -211,7 +214,7 @@ public class ComponentPredictor extends ComponentML {
             }
             
             MLMetricsItem mltest = search(mlTests, meta);
-            if (mltest != null) {
+            if (mlTests == null || mltest != null) {
                 //&& (positions == null || !positions.containsBelow(getPipeline(), paircount, above, mltest, param.getInput().getConfig().getFindProfitMemoryFilter()))) {
                 Double score = mltest.getTestAccuracy();
                 for (String key : param.getCategoryValueMap().keySet()) {
@@ -237,7 +240,7 @@ public class ComponentPredictor extends ComponentML {
                     if (tfpn.equals(Constants.ABOVE)) {
                         increase = true;
                         //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getBuys(), key, profitdata.getInputdata().getAboveConfMap().get(keyPair), profitdata.getInputdata().getAboveListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        IncDecItem incdec = mapAdder(profitdata.getBuys(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }
@@ -245,7 +248,7 @@ public class ComponentPredictor extends ComponentML {
                     if (tfpn.equals(Constants.BELOW)) {
                         increase = false;
                         //IncDecItem incdec = ComponentMLMACD.mapAdder(profitdata.getSells(), key, profitdata.getInputdata().getBelowConfMap().get(keyPair), profitdata.getInputdata().getBelowListMap().get(keyPair), profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()));
-                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), TimeUtil.convertDate(param.getService().conf.getdate()), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
+                        IncDecItem incdec = mapAdder(profitdata.getSells(), key, score, profitdata.getInputdata().getNameMap(), param.getBaseDate(), param.getInput().getMarket(), mltest.getSubcomponent(), mltest.getLocalcomponent(), JsonUtil.convert(parameters));
                         incdec.setIncrease(increase);
                     }
                     }
@@ -421,7 +424,7 @@ public class ComponentPredictor extends ComponentML {
         List<String> list = new ArrayList<>();
         list.add(ConfigConstants.MACHINELEARNINGPREDICTORSDAYS);
         list.add(ConfigConstants.MACHINELEARNINGPREDICTORSFUTUREDAYS);
-        list.add(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD);
+        //list.add(ConfigConstants.MACHINELEARNINGPREDICTORSTHRESHOLD);
         return list;
     }
 

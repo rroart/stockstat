@@ -67,4 +67,5 @@ module core {
     requires pipeline.category;
     requires pipeline.indicator;
     requires pipeline.predictor;
+    requires stocketl;
 }

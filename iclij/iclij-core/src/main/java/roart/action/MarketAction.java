@@ -890,5 +890,16 @@ public abstract class MarketAction extends Action {
         return moreReturnedTiming;
     }
 
+    public void fillProfitdata(ProfitData profitdata, List<IncDecItem> incdecitems) {
+        for (IncDecItem item : incdecitems) {
+            String id = item.getId() + item.getDate().toString();
+            if (item.isIncrease()) {
+                profitdata.getBuys().put(id, item);
+            } else {
+                profitdata.getSells().put(id, item);
+            }
+        }
+    }
+
 }
 

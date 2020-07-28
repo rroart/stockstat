@@ -152,6 +152,7 @@ public class HibernateUtil {
         sessionWrite.save(object);
     }
 
+    // only for Main
     public <T> T get(Class aClass, Serializable id) throws HibernateException, Exception {
         synchronized (sessionRead) {
             //System.out.println("se" + sessionRead);
@@ -159,7 +160,7 @@ public class HibernateUtil {
             T result = (T) sessionRead.get(aClass, id);
             //System.out.println("se" + sessionRead);
             //System.out.println("tr" + transactionRead);
-            transactionRead.commit();
+            //transactionRead.commit();
             return result;
         }
     }

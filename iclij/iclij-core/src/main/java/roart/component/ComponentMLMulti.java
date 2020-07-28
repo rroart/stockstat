@@ -13,6 +13,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.evolution.chromosome.impl.MLMultiChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.IclijConfig;
@@ -104,15 +105,17 @@ public class ComponentMLMulti extends ComponentMLAggregator {
             confList.addAll(getThreeConfList());
         }
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        ConfigMapChromosome chromosome = new MLMultiChromosome(action, param, profitdata, market, positions, PipelineConstants.MLMULTI, buy, subcomponent, parameters, gene, mlTests);
+        ConfigMapChromosome2 chromosome = new MLMultiChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), null);
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fit);
     }
 
     @Override
-    protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
+    protected ConfigMapChromosome2 getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
-        return new MLMultiChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
+        return new MLMultiChromosome(gene);
     }
 
     @Override
@@ -121,11 +124,13 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         list.add(ConfigConstants.AGGREGATORSMLMULTIMACD);
         list.add(ConfigConstants.AGGREGATORSMLMULTIRSI);
         list.add(ConfigConstants.AGGREGATORSMLMULTISTOCHRSI);
-        list.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
-        list.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
-        list.add(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
+        //list.add(ConfigConstants.AGGREGATORSMLMACDDAYSBEFOREZERO);
+        //list.add(ConfigConstants.AGGREGATORSMLMACDDAYSAFTERZERO);
+        //list.add(ConfigConstants.AGGREGATORSMLRSIDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLRSIDAYSAFTERLIMIT);
+        list.add(ConfigConstants.AGGREGATORSMLMULTIDAYSBEFORELIMIT);
+        list.add(ConfigConstants.AGGREGATORSMLMULTIDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLMULTITHRESHOLD);
         return list;
     }
 
@@ -134,12 +139,12 @@ public class ComponentMLMulti extends ComponentMLAggregator {
         list.add(ConfigConstants.AGGREGATORSMLMULTIATR);
         list.add(ConfigConstants.AGGREGATORSMLMULTICCI);
         list.add(ConfigConstants.AGGREGATORSMLMULTISTOCH);
-        list.add(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
-        list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLATRDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLATRDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLCCIDAYSAFTERLIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSBEFORELIMIT);
+        //list.add(ConfigConstants.AGGREGATORSMLSTOCHDAYSAFTERLIMIT);
         return list;
     }
 

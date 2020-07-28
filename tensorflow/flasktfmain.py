@@ -39,18 +39,41 @@ def do_classify():
 @app.route('/learntest', methods=['POST'])
 def do_learntest():
     def classifyrunner(queue, request):
-        import classify
-        cl = classify.Classify()
-        cl.do_learntest(queue, request)
-    queue = Queue()
-    process = Process(target=classifyrunner, args=(queue, request))
-    process.start()
-    result = queue.get()
-    process.join()
+       try:
+           import classify
+           cl = classify.Classify()
+           cl.do_learntest(queue, request) 
+       except:
+            import sys,traceback
+            memory = "CUDA error: out of memory" in traceback.format_exc()
+            cudnn = "0 successful operations" in traceback.format_exc()
+            queue.put(Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : memory, "cudnn" : cudnn }), mimetype='application/json'))
+            traceback.print_exc(file=sys.stdout)
+            print("\n")
+            import random
+            f = open("/tmp/outtf" + argstr() + str(random.randint(1000,9999)) + ".txt", "w")
+            f.write(request.get_data(as_text=True))
+            traceback.print_exc(file=f)
+            f.close()
+    aqueue = Queue()
+    process = Process(target=classifyrunner, args=(aqueue, request))
+    try:
+        import queue
+        process.start()
+        while True:
+            try:
+                result = aqueue.get(timeout=timeout)
+                break
+            except queue.Empty as e:
+                if not process.is_alive():
+                    print("Process died")
+                    result = Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }), mimetype='application/json')
+                    break
+    except Exception as e:
+        print(e)
+        import sys,traceback
+        traceback.print_exc(file=sys.stdout)
     return result
-    import classify
-    cl = classify.Classify()
-    return cl.do_learntest(request)
 
 @app.route('/learntestclassify', methods=['POST'])
 def do_learntestclassify():
@@ -71,11 +94,24 @@ def do_learntestclassify():
             f.write(request.get_data(as_text=True))
             traceback.print_exc(file=f)
             f.close()
-    queue = Queue()
-    process = Process(target=classifyrunner, args=(queue, request))
-    process.start()
-    result = queue.get()
-    process.join()
+    aqueue = Queue()
+    process = Process(target=classifyrunner, args=(aqueue, request))
+    try:
+        import queue
+        process.start()
+        while True:
+            try:
+                result = aqueue.get(timeout=timeout)
+                break
+            except queue.Empty as e:
+                if not process.is_alive():
+                    print("Process died")
+                    result = Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }), mimetype='application/json')
+                    break
+    except Exception as e:
+        print(e)
+        import sys,traceback
+        traceback.print_exc(file=sys.stdout)
     return result
 
 @app.route('/predictone', methods=['POST'])
@@ -115,15 +151,25 @@ def do_dataset():
             f.write(request.get_data(as_text=True))
             traceback.print_exc(file=f)
             f.close()
-    queue = Queue()
-    process = Process(target=classifyrunner, args=(queue, request))
-    process.start()
-    result = queue.get()
-    process.join()
+    aqueue = Queue()
+    process = Process(target=classifyrunner, args=(aqueue, request))
+    try:
+        import queue
+        process.start()
+        while True:
+            try:
+                result = aqueue.get(timeout=timeout)
+                break
+            except queue.Empty as e:
+                if not process.is_alive():
+                    print("Process died")
+                    result = Response(json.dumps({"classifycatarray": None, "classifyprobarray": None, "accuracy": None, "loss": None, "exception" : True, "gpu" : hasgpu, "memory" : False, "cudnn" : False }), mimetype='application/json')
+                    break
+    except Exception as e:
+        print(e)
+        import sys,traceback
+        traceback.print_exc(file=sys.stdout)
     return result
-    import classify
-    cl = classify.Classify()
-    return cl.do_learntest(request)
 
 @app.route('/filename', methods=['POST'])
 def do_filename():
@@ -145,6 +191,7 @@ def argstr():
         return str(80)
 
 if __name__ == '__main__':
+    timeout = 60
     queue = Queue()
     process = Process(target=hasgpurunner, args=(queue, None))
     process.start()

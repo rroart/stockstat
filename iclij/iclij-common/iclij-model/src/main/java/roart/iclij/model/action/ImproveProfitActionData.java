@@ -1,9 +1,11 @@
 package roart.iclij.model.action;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.TimeUtil;
 import roart.constants.IclijConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -18,7 +20,8 @@ public class ImproveProfitActionData extends MarketActionData {
     
     @Override
     public Boolean[] getBooleans() {
-        return new Boolean[] { false, true };
+        // return new Boolean[] { false, true };
+        return new Boolean[] { null };
     }
     
     @Override
@@ -76,4 +79,29 @@ public class ImproveProfitActionData extends MarketActionData {
         return conf.getFindProfitFuturedays();
     }
 
+    @Override
+    public String getParamDateFromConfig(Market market, List<String> stockDates) {
+        String date = getMlDate(market, stockDates);
+        if (date == null) {
+            date = getMlDays(market, stockDates);
+        }
+        return date;
+    }
+
+    public String getMlDate(Market market, List<String> stockDates) {
+        String date = market.getConfig().getMldate();
+        if (date != null) {
+            LocalDate adate = TimeUtil.getEqualBefore(stockDates, date);
+            date = TimeUtil.convertDate2(adate);
+        }
+        return date;
+    }
+
+    public String getMlDays(Market market, List<String> stockDates) {
+        Short days = market.getConfig().getMldays();
+        if (days != null) {
+            return stockDates.get(stockDates.size() - 1 - days);
+        }
+        return null;
+    }
 }

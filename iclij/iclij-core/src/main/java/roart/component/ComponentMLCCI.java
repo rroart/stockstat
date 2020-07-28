@@ -12,7 +12,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
-import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.evolution.chromosome.impl.MLCCIChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.IclijConfig;
@@ -72,9 +72,9 @@ public class ComponentMLCCI extends ComponentMLAggregator {
     }
 
     @Override
-    protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
+    protected ConfigMapChromosome2 getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
-        return new MLCCIChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
+        return new MLCCIChromosome(gene);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ComponentMLCCI extends ComponentMLAggregator {
         confList.add(ConfigConstants.AGGREGATORSMLCCIDAYSBEFORELIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLCCIBUYLIMIT);
         confList.add(ConfigConstants.AGGREGATORSMLCCISELLLIMIT);
-        confList.add(ConfigConstants.AGGREGATORSMLCCITHRESHOLD);
+        //confList.add(ConfigConstants.AGGREGATORSMLCCITHRESHOLD);
         return confList;
     }
 

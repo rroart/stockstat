@@ -12,7 +12,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
-import roart.evolution.chromosome.impl.ConfigMapChromosome;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.evolution.chromosome.impl.MLMACDChromosome;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.IclijConfig;
@@ -72,9 +72,9 @@ public class ComponentMLMACD extends ComponentMLAggregator {
     }
 
     @Override
-    protected ConfigMapChromosome getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
+    protected ConfigMapChromosome2 getNewChromosome(MarketAction action, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, ComponentData param, String subcomponent, Parameters parameters, ConfigMapGene gene, List<MLMetricsItem> mlTests) {
-        return new MLMACDChromosome(action, param, profitdata, market, positions, getPipeline(), buy, subcomponent, parameters, gene, mlTests);
+        return new MLMACDChromosome(gene);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ComponentMLMACD extends ComponentMLAggregator {
         confList.add(ConfigConstants.AGGREGATORSMLMACDHISTOGRAMML);
         confList.add(ConfigConstants.AGGREGATORSMLMACDMACDML);
         confList.add(ConfigConstants.AGGREGATORSMLMACDSIGNALML);
-        confList.add(ConfigConstants.AGGREGATORSMLMACDTHRESHOLD);
+        //confList.add(ConfigConstants.AGGREGATORSMLMACDTHRESHOLD);
         return confList;
     }
 
