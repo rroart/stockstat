@@ -205,6 +205,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                     score = fit.fitness(myincs, mydecs, myincdec, 0);
                     scoreSize = myincs.size() + mydecs.size() + myincdec.size();
                     scores = fit.fitness2(myincs, mydecs, myincdec, 0);
+                    scoreSize = (long) scores[0].getRight() + scores[1].getRight();
                     {
                         Memories listComponentMap = new Memories(market);
                         LocalDate prevdate = getPrevDate(param, market);
