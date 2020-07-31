@@ -1307,10 +1307,11 @@ def gettopcy(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "cy", wantchart=False)
 
 def prevNonNan(alist, pos):
+  l = pos
   for i in range(pos):
-      print("i", i)
-      if not np.isnan(alist[i]):
-          return alist[i]
+      #print("i", i)
+      if not alist[l - i] is None and not np.isnan(alist[l - i]):
+          return alist[l - i]
   return 0
 
 def rangei(stop):
