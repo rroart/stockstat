@@ -178,19 +178,22 @@ def getdatedstocklists(listdate, listdates, dates, numberdays, tableintervaldays
     #print(len(datedstocklists))
     #print(type(listdate[index]))
     #print("days0 ", days)
-    index = dates.endindex
-    datedstocklists.append(listdate[index])
+    index = dates.startindex
+    #datedstocklists.append(listdate[index])
     print("Index %d" %(dates.startindex), dates.endindex, index, len(listdate))
+    print(listdates[index])
+    print(listdate[index])
+    print(listdate[dates.endindex])
     if numberdays is None:
         for j in range(dates.startindex, dates.endindex + 1):
-            index = index - tableintervaldays
             #print(index)
             datedstocklists.append(listdate[index])
+            index = index + tableintervaldays
     else:
-        for j in range(numberdays):
-            index = index - tableintervaldays
+        for j in range(numberdays + 1):
             #print(index)
             datedstocklists.append(listdate[index])
+            index = index + tableintervaldays
     print(len(datedstocklists))
     return datedstocklists
 
@@ -229,7 +232,9 @@ def getlistsorted(datedstocklists, listid, listdate, count, tableintervaldays, w
     stocklistperiod = [[0 for x in range(count)] for y in range(periods)]
                   #matrix([], nrow = periods, ncol = count)
     #print(stocklistperiod)
-    #print("count %d %d" % (count, periods))
+    print("count %d %d" % (count, periods))
+    print(datedstocklists[0])
+    print(datedstocklists[1])
     for j in range(count):
         for i in range(periods):
             df = datedstocklists[j] # dataframe make?
@@ -356,8 +361,9 @@ def getvalues(market, id, start, end, myperiodtexts):
         listdates.sort()
         listid = split(stocks, stocks.id)
         dates = MyDates.getdates(listdates, start, end)
+        print(dates)
         datedstocklists = getdatedstocklists(listdate, listdates, dates, None, tablemoveintervaldays)
-        days = dates.endindex - dates.startindex
+        days = dates.endindex - dates.startindex + 1
         stocklistperiod = getlistsorted(datedstocklists, listid, listdate, days, tablemoveintervaldays, reverse=False)
         dflist = []
         print("here", days)
@@ -679,7 +685,7 @@ def getmyperiodtext(market, period):
 def getelem(id, days, stocklistperiod, period, size):
     retl = [ None for x in range(days) ]
     c = 0
-    for i in reversed(range(days)):
+    for i in range(days):
         #print("d ", i)
         retl[c] = np.NaN
         l = stocklistperiod[period][i]
@@ -1233,9 +1239,9 @@ def getelem3(id, days, datedstocklist, period, size, handlecy):
 
     base = None
     year = None
-    
-    print(reversed(range(days)))
-    for i in reversed(range(days)):
+
+    print(range(days))
+    for i in range(days):
         retl1[c] = np.NaN
         retl2[c] = np.NaN
         retl3[c] = np.NaN
@@ -1303,7 +1309,7 @@ def getelem3(id, days, datedstocklist, period, size, handlecy):
 def getelem3tup(id, days, datedstocklist, period, size):
     retl = []
     c = 0
-    for i in reversed(range(days)):
+    for i in range(days):
         retl.append(np.NaN)
         l = datedstocklist[i]
         df = l
@@ -1336,7 +1342,7 @@ def gettopcy(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "cy", wantchart=False)
 
 def prevNonNan(alist, pos):
-  for i in reversed(range(pos)):
+  for i in range(pos):
       print("i", i)
       if not np.isnan(alist[i]):
           return alist[i]
