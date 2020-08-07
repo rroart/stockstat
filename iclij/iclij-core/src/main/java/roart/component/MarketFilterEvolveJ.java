@@ -13,7 +13,9 @@ import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
 import roart.common.util.JsonUtil;
+import roart.common.util.MetaUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome;
@@ -32,9 +34,12 @@ public class MarketFilterEvolveJ extends EvolveJ {
     public double evolve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
             String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
             EvolutionConfig evolutionConfig, String pipeline) {
+        List<MetaItem> metas = param.getService().getMetas();
+        MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+        List<String> categories = new MetaUtil().getCategories(meta);
         double score = -1;
         FitnessMarketFilter2 fit = new FitnessMarketFilter2(action, new ArrayList<>(), param, profitdata, market, null, pipeline, buy, subcomponent, parameters, mlTests);
-        final Codec<MarketFilterChromosome, MarketFilterGene> codec = Codec.of(Genotype.of(new MarketFilterChromosome(new MarketFilter())),gt -> (MarketFilterChromosome) gt.chromosome());
+        final Codec<MarketFilterChromosome, MarketFilterGene> codec = Codec.of(Genotype.of(new MarketFilterChromosome(new MarketFilter(categories))),gt -> (MarketFilterChromosome) gt.chromosome());
         final Engine<MarketFilterGene, Double> engine = Engine
                 .builder(fit::fitness, codec)
                 .populationSize(evolutionConfig.getSelect())
