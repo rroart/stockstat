@@ -1,5 +1,7 @@
 package roart.iclij.config;
 
+import java.util.List;
+
 public class MarketFilter {
     private String inccategory;
     
@@ -17,8 +19,14 @@ public class MarketFilter {
 
     private Integer recordage;
     
+    public List<String> categories;
+    
     public MarketFilter() {
         
+    }
+
+    public MarketFilter(List<String> categories) {
+        this.categories = categories;
     }
 
     public MarketFilter(String inccategory, Integer incdays, Double incthreshold, String deccategory, Integer decdays,

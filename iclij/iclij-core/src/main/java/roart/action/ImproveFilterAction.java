@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
+import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.FitnessMarketFilter;
@@ -110,7 +112,10 @@ public class ImproveFilterAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            MarketFilterGene gene = new MarketFilterGene(market.getFilter());
+            List<MetaItem> metas = param.getService().getMetas();
+            MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+            List<String> categories = new MetaUtil().getCategories(meta);
+            MarketFilterGene gene = new MarketFilterGene(market.getFilter(), categories);
             //MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);
             MarketFilterChromosome2 chromosome2 = new MarketFilterChromosome2(new ArrayList<>(), gene);
             FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, mlTests, stockDates, incdecsP);
