@@ -806,7 +806,7 @@ public abstract class MarketAction extends Action {
                     value = curValue / oldValue;
                 }
             }
-            if (value == null) {
+            if (value == null || threshold == null) {
                 continue;
             }
             if (inc && value < threshold) {
