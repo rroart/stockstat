@@ -54,14 +54,12 @@ import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaUtil;
 
 public class MLIndicator extends Aggregator {
 
-    Map<String, PeriodData> periodDataMap;
     String key;
     Map<String, Double[][]> listMap;
     Object[] emptyField;
@@ -108,10 +106,9 @@ public class MLIndicator extends Aggregator {
 
     List<MLClassifyDao> mldaos = new ArrayList<>();
 
-    public MLIndicator(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, 
-            String title, int category, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    public MLIndicator(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, String title, 
+            int category, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category);
-        this.periodDataMap = periodDataMap;
         this.key = title;
         makeMapTypes();
         if (conf.wantML()) {
@@ -847,10 +844,6 @@ public class MLIndicator extends Aggregator {
         Set<Pair<String, String>> ids = new HashSet<>();
         ids.add(pair);
         String periodstr = key;
-        PeriodData perioddata = periodDataMap.get(periodstr);
-        if (perioddata == null) {
-            log.info("key {} : {}", key, periodDataMap.keySet());
-        }
         Object[] result = resultMap.get(id);
         if (result == null) {
             result = emptyField;

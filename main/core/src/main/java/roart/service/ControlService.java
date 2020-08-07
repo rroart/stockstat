@@ -52,6 +52,7 @@ import roart.indicator.util.IndicatorUtils;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
+import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.pipeline.common.predictor.AbstractPredictor;
@@ -120,99 +121,41 @@ public class ControlService {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
-        String market = conf.getMarket();
-        List<StockItem> stocks = null;
-        try {
-            stocks = DbDao.getAll(market, conf);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        if (stocks == null) {
-            return null;
-        }
-        log.info("stocks {}", stocks.size());
-        String[] periodText = DbDaoUtil.getPeriodText(market, conf);
-        MetaItem meta = null;
-        try {
-            meta = DbDao.getById(market, conf);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
+        StockData stockData = getStockData(conf);
+        if (stockData == null) {
+            return new ArrayList<>();
         }
         
-        Set<String> markets = new HashSet();
-        markets.add(conf.getMarket());
-        Integer days = conf.getDays();
-
         ResultItemTable table = new ResultItemTable();
         List<ResultItemTable> otherTables = new ArrayList<>();
         otherTables.add(mlTimesTable);
         otherTables.add(eventTable);
 
         try {
-            Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
-            Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
-            if (conf.getdate() == null) {
-                new ServiceUtil().getCurrentDate(conf, stockdatemap);
-            }
-            if (days == 0) {
-                days = stockdatemap.keySet().size();
-            }
-            List<String> stockdates = new ArrayList<>(stockdatemap.keySet());
-            Collections.sort(stockdates);
-
-            Map<String, MarketData> marketdatamap = null;
-            marketdatamap = new MarketDataETL().getMarketdatamap(days, market, conf, stocks, periodText, meta);
-            Map<String, PeriodData> periodDataMap = new PeriodDataETL().getPerioddatamap(markets,
-                    marketdatamap);
-
-            Integer cat = IndicatorUtils.getWantedCategory(stocks, marketdatamap.get(conf.getMarket()).meta);
-            String catName = EvolutionService.getCatName(cat, periodText);
-
-            if (stocks.size() != marketdatamap.get(conf.getMarket()).stocks.size()) {
-                log.error("Sizes {} {}", stocks.size(), marketdatamap.get(conf.getMarket()).stocks.size());
-            }
-            // temp hack
-            Map<String, String> idNameMap = getIdNameMap(stockidmap);
-
-            // the main list, based on freshest or specific date.
-
-            /*
-             * For all days with intervals
-             * Make stock lists based on the intervals
-             */
-
-            List<StockItem>[] datedstocklists = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), 2, conf.getTableMoveIntervalDays());
-
-            List<StockItem> datedstocks = datedstocklists[0];
-            if (datedstocks == null) {
-                return new ArrayList<>();
-            }
-            log.info("Datestocksize {}", datedstocks.size());
-
-            Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stocks,
-                    periodText, marketdatamap, periodDataMap);
+            Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
+                    stockData.marketdatamap);
 
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String mydate = dt.format(conf.getdate());
-            int dateIndex = TimeUtil.getIndexEqualBefore(stockdates, mydate);
+            int dateIndex = TimeUtil.getIndexEqualBefore(stockData.stockdates, mydate);
             if (dateIndex >= 0) {
-                mydate = stockdates.get(dateIndex);
+                mydate = stockData.stockdates.get(dateIndex);
             }
-            List<StockItem> dayStocks = stockdatemap.get(mydate);
+            List<StockItem> dayStocks = stockData.stockdatemap.get(mydate);
             AbstractCategory[] categories = new ServiceUtil().getCategories(conf, dayStocks,
-                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders);
-            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, dayStocks,
-                    periodText, marketdatamap, periodDataMap, datedstocklists, datareaders, categories, neuralnetcommand);
+                    stockData.periodText, datareaders);
+            AbstractPredictor[] predictors = new ServiceUtil().getPredictors(conf, stockData.periodText,
+                    stockData.marketdatamap, stockData.datedstocklists, datareaders, categories, neuralnetcommand);
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
             
-            Aggregator[] aggregates = getAggregates(conf, stocks,
-                    periodText, marketdatamap, periodDataMap, categories, datareaders, disableList, idNameMap, catName, cat, neuralnetcommand);
+            Aggregator[] aggregates = getAggregates(conf, stockData.periodText,
+                    stockData.marketdatamap, categories, datareaders, disableList, stockData.idNameMap, stockData.catName, stockData.cat, neuralnetcommand);
 
             ResultItemTableRow headrow = createHeadRow(categories, predictors, aggregates);
             table.add(headrow);
             //log.info("sizes " + stocks.size() + " " + datedstocks.size() + " " + datedstocksoffset.size());
-            createRows(conf, table, datedstocks, categories, predictors, aggregates);
+            createRows(conf, table, stockData.datedstocks, categories, predictors, aggregates);
             log.info("retlist2 {}",table.size());
             cleanRows(headrow, table);
             addOtherTables(categories);
@@ -226,7 +169,7 @@ public class ControlService {
             */
             if (maps != null) {
                 Map<String, Object> aMap = new HashMap<>();
-                aMap.put(PipelineConstants.WANTEDCAT, cat);
+                aMap.put(PipelineConstants.WANTEDCAT, stockData.cat);
                 maps.put(PipelineConstants.META, aMap);
                 
                 for (int i = 0; i < datareaders.length; i++) {
@@ -262,6 +205,105 @@ public class ControlService {
             retlist.add(list);
         }
         return retlist;
+    }
+
+    public StockData getStockData(MyMyConfig conf) {
+        String market = conf.getMarket();
+        return getStockData(conf, market);
+    }
+
+    public StockData getStockData(MyMyConfig conf, String market) {
+        List<StockItem> stocks = null;
+        try {
+            stocks = DbDao.getAll(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        if (stocks == null) {
+            return null;
+        }
+        log.info("stocks {}", stocks.size());
+        String[] periodText = DbDaoUtil.getPeriodText(market, conf);
+        MetaItem meta = null;
+        try {
+            meta = DbDao.getById(market, conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+
+        Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
+        Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
+        if (conf.getdate() == null) {
+            try {
+                new ServiceUtil().getCurrentDate(conf, stockdatemap);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+
+        Integer days = conf.getDays();
+
+        if (days == 0) {
+            days = stockdatemap.keySet().size();
+        }
+        List<String> stockdates = new ArrayList<>(stockdatemap.keySet());
+        Collections.sort(stockdates);
+
+        Map<String, MarketData> marketdatamap = null;
+        try {
+            marketdatamap = new MarketDataETL().getMarketdatamap(days, market, conf, stocks, periodText, meta);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+
+        Integer cat = null;
+        try {
+            cat = IndicatorUtils.getWantedCategory(stocks, marketdatamap.get(market).meta);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        
+        if (cat == null) {
+            return null;
+        }
+        
+        String catName = EvolutionService.getCatName(cat, periodText);
+
+        if (stocks.size() != marketdatamap.get(market).stocks.size()) {
+            log.error("Sizes {} {}", stocks.size(), marketdatamap.get(market).stocks.size());
+        }
+        // temp hack
+        Map<String, String> idNameMap = getIdNameMap(stockidmap);
+
+        // the main list, based on freshest or specific date.
+
+        /*
+         * For all days with intervals
+         * Make stock lists based on the intervals
+         */
+
+        List<StockItem>[] datedstocklists = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), 2, conf.getTableMoveIntervalDays());
+
+        List<StockItem> datedstocks = datedstocklists[0];
+        if (datedstocks == null) {
+            return null;
+        }
+        log.info("Datestocksize {}", datedstocks.size());
+
+        StockData stockData = new StockData();
+        stockData.marketdatamap = marketdatamap;
+        stockData.periodText = periodText;
+        stockData.datedstocklists = datedstocklists;
+        stockData.stockdates = stockdates;
+        stockData.stockidmap = stockidmap;
+        stockData.stockdatemap = stockdatemap;
+        stockData.idNameMap = idNameMap;
+        stockData.cat = cat;
+        stockData.catName = catName;
+        stockData.datedstocks = datedstocks;
+        stockData.days = days;
+        
+        return stockData;
     }
 
     private void cleanRows(ResultItemTableRow headrow, ResultItemTable table) {
@@ -448,20 +490,20 @@ public class ControlService {
         return headrow;
     }
 
-    private Aggregator[] getAggregates(MyMyConfig conf, List<StockItem> stocks,
-            String[] periodText,
+    private Aggregator[] getAggregates(MyMyConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
+            AbstractCategory[] categories,
+            Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         Aggregator[] aggregates = new Aggregator[9];
-        aggregates[0] = new AggregatorRecommenderIndicator(conf, catName, stocks, marketdatamap, periodDataMap, categories, datareaders, disableList);
-        aggregates[1] = new RecommenderRSI(conf, catName, stocks, marketdatamap, periodDataMap, categories);
-        aggregates[2] = new MLMACD(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[3] = new MLRSI(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[4] = new MLATR(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[5] = new MLCCI(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[6] = new MLSTOCH(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[7] = new MLMulti(conf, catName, stocks, periodDataMap, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[8] = new MLIndicator(conf, catName, marketdatamap, periodDataMap, catName, cat, categories, datareaders, neuralnetcommand);
+        aggregates[0] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList);
+        aggregates[1] = new RecommenderRSI(conf, catName, marketdatamap, categories);
+        aggregates[2] = new MLMACD(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[3] = new MLRSI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[4] = new MLATR(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[5] = new MLCCI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[6] = new MLSTOCH(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[7] = new MLMulti(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[8] = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, datareaders, neuralnetcommand);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSMACD));
@@ -497,37 +539,24 @@ public class ControlService {
         List<ResultItem> retlist = new ArrayList<>();
         try {
             log.info("mydate {}", conf.getdate());
-            List<StockItem> stocks = DbDao.getAll(conf.getMarket(), conf);
-            log.info("stocks {}", stocks.size());
-            String[] periodText = DbDaoUtil.getPeriodText(conf.getMarket(), conf);
-            Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
-            Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
-            if (conf.getdate() == null) {
-                new ServiceUtil().getCurrentDate(conf, stockdatemap);
+            log.info("mydate {}", conf.getDays());
+            StockData stockData = new ControlService().getStockData(conf);
+            if (stockData == null) {
+                return new ArrayList<>();
             }
-
             // sort based on date
-            for (Entry<String, List<StockItem>> entry : stockidmap.entrySet()) {
+            for (Entry<String, List<StockItem>> entry : stockData.stockidmap.entrySet()) {
                 List<StockItem> stocklist = entry.getValue();
                 stocklist.sort(StockUtil.StockDateComparator);
             }
 
-            int days = conf.getTableDays();
+            List<StockItem>[] datedstocklistsmove = StockUtil.getDatedstocklists(stockData.stockdatemap, conf.getdate(), stockData.days, conf.getTableMoveIntervalDays());
 
-            // the main list, based on freshest or specific date.
-
-            /*
-             * For all days with intervals
-             * Make stock lists based on the intervals
-             */
-
-            List<StockItem>[] datedstocklistsmove = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), days, conf.getTableMoveIntervalDays());
-
-            List<StockItem>[][] stocklistPeriod = StockUtil.getListSorted(datedstocklistsmove, days);
-
+            List<StockItem>[][] stocklistPeriod = StockUtil.getListSorted(datedstocklistsmove, stockData.days);
+            
             GraphCategoryPeriodTopBottom[] categories = new GraphCategoryPeriodTopBottom[Constants.PERIODS];
             for (int i = 0; i < Constants.PERIODS; i++) {
-                categories[i] = new GraphCategoryPeriodTopBottom(conf, i, periodText[i], stocklistPeriod);
+                categories[i] = new GraphCategoryPeriodTopBottom(conf, i, stockData.periodText[i], stocklistPeriod);
             }
 
             for (GraphCategory category : categories) {
@@ -553,26 +582,17 @@ public class ControlService {
         List<ResultItem> retlist = new ArrayList<>();
         try {
             log.info("mydate {}", conf.getdate());
-            int days = conf.getTableDays();
             Map<String, MarketData> marketdatamap = new HashMap<>();
             Map<String, PeriodData> periodDataMap = new HashMap<>();
+            Map<String, StockData> stockDataMap = new HashMap<>();
             Set<String> markets = new ServiceUtil().getMarkets(ids);
             for (String market : markets) {
-                List<StockItem> stocks = null;
-                stocks = DbDao.getAll(market, conf);
-                if (stocks == null) {
+                StockData stockData = getStockData(conf, market);
+                if (stockData == null) {
                     return new ArrayList<>();
                 }
-                String[] periodText = DbDaoUtil.getPeriodText(market, conf);
-                MetaItem meta = DbDao.getById(market, conf);
-                log.info("stocks {}", stocks.size());
-                Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
-
-                if (conf.getdate() == null) {
-                    new ServiceUtil().getCurrentDate(conf, stockdatemap);
-                }
-                marketdatamap.putAll(new MarketDataETL().getMarketdatamap(days,
-                        market, conf, stocks, periodText, meta));
+                stockDataMap.put(market, stockData);
+                marketdatamap.putAll(stockData.marketdatamap);
                 periodDataMap.putAll(new PeriodDataETL().getPerioddatamap(markets,
                         marketdatamap));
             }

@@ -39,11 +39,9 @@ import roart.ml.dao.MLClassifyDao;
 import roart.ml.dao.MLClassifyLearnTestPredictCallable;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.ml.common.MLClassifyModel;
-import roart.model.StockItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
-import roart.model.data.PeriodData;
 import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaConstants;
@@ -61,8 +59,8 @@ public class MLMACD extends IndicatorAggregator {
         return objectMap;
     }
 
-    public MLMACD(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, PeriodData> periodDataMap, 
-            String title, int category, AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    public MLMACD(MyMyConfig conf, String string, String title, int category, 
+            AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
     }
 
