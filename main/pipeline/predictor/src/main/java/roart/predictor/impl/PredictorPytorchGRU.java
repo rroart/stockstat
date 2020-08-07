@@ -7,13 +7,12 @@ import roart.common.config.MyMyConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
 
 public class PredictorPytorchGRU extends PytorchPredictor {
 
-    public PredictorPytorchGRU(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, String title, int category, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        super(conf, string, category, neuralnetcommand, marketdatamap, periodDataMap, categories, datareaders);
+    public PredictorPytorchGRU(MyMyConfig conf, String string, Map<String, MarketData> marketdatamap, String title, int category, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+        super(conf, string, category, neuralnetcommand, marketdatamap, categories, datareaders);
     }
 
     @Override

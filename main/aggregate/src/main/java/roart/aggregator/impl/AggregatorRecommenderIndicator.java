@@ -33,7 +33,6 @@ import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.talib.util.TaUtil;
 import roart.pipeline.common.aggregate.Aggregator;
 
@@ -44,8 +43,8 @@ public class AggregatorRecommenderIndicator extends Aggregator {
     Map<String, Map<String, Double[]>> resultMap;
     public List<String> disableList;
  
-    public AggregatorRecommenderIndicator(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders, List<String> disableList) throws Exception {
+    public AggregatorRecommenderIndicator(MyMyConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories,
+            Pipeline[] datareaders, List<String> disableList) throws Exception {
         super(conf, index, 0);
         this.disableList = disableList;
         if (!isEnabled()) {

@@ -178,31 +178,31 @@ public class NeuralNetChromosome extends AbstractChromosome {
             PipelineResultData pipelineData = null;
             if (ml.equals(PipelineConstants.MLMULTI)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMULTIMLCONFIG, value);
-                pipelineData = new MLMulti(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
+                pipelineData = new MLMulti(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLSTOCH)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLSTOCHMLCONFIG, value);
-                pipelineData = new MLSTOCH(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
+                pipelineData = new MLSTOCH(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLCCI)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLCCIMLCONFIG, value);
-                pipelineData = new MLCCI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
+                pipelineData = new MLCCI(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLATR)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLATRMLCONFIG, value);
-                pipelineData = new MLATR(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
+                pipelineData = new MLATR(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLRSI)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLRSIMLCONFIG, value);
-                pipelineData = new MLRSI(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
+                pipelineData = new MLRSI(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLMACD)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSMLMACDMLCONFIG, value);
-                pipelineData = new MLMACD(conf, catName, null, null, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
+                pipelineData = new MLMACD(conf, catName, catName, cat, categories, new HashMap<>(), dataReaders, neuralnetcommand);
             } 
             if (ml.equals(PipelineConstants.MLINDICATOR)) {
                 conf.getConfigValueMap().put(ConfigConstants.AGGREGATORSINDICATORMLCONFIG, value);
-                pipelineData = new MLIndicator(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                pipelineData = new MLIndicator(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
             }
             if (ml.equals(PipelineConstants.DATASET)) {
                 conf.getConfigValueMap().put(ConfigConstants.DATASETMLCONFIG, value);
@@ -217,39 +217,39 @@ public class NeuralNetChromosome extends AbstractChromosome {
                 for (String key : foundkeys) {
                     switch (key) {
                     case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLIR:
-                        pipelineData = new PredictorTensorflowLIR(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        pipelineData = new PredictorTensorflowLIR(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
                         break;
 
                     case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWMLP:
-                        pipelineData = new PredictorTensorflowMLP(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        pipelineData = new PredictorTensorflowMLP(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
                         break;
 
                     case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWRNN:
-                        pipelineData = new PredictorTensorflowRNN(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        pipelineData = new PredictorTensorflowRNN(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
                         break;
 
                     case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWGRU:
-                        pipelineData = new PredictorTensorflowGRU(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        pipelineData = new PredictorTensorflowGRU(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
                         break;
 
                     case ConfigConstants.MACHINELEARNINGPREDICTORSTENSORFLOWLSTM:
-                        pipelineData = new PredictorTensorflowLSTM(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        pipelineData = new PredictorTensorflowLSTM(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
                         break;
 
                     case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHMLP:
-                        pipelineData = new PredictorPytorchMLP(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        pipelineData = new PredictorPytorchMLP(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
                         break;
 
                     case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHRNN:
-                        pipelineData = new PredictorPytorchRNN(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        pipelineData = new PredictorPytorchRNN(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
                         break;
 
                     case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHGRU:
-                        pipelineData = new PredictorPytorchGRU(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        pipelineData = new PredictorPytorchGRU(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
                         break;
 
                     case ConfigConstants.MACHINELEARNINGPREDICTORSPYTORCHLSTM:
-                        pipelineData = new PredictorPytorchLSTM(conf, catName, null, null, catName, cat, categories, dataReaders, neuralnetcommand);
+                        pipelineData = new PredictorPytorchLSTM(conf, catName, null, catName, cat, categories, dataReaders, neuralnetcommand);
                         break;
                     }
                 }
