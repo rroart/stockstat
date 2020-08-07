@@ -347,11 +347,15 @@ def myperiodtextslist(myperiodtexts, periodtexts):
 #    
     return retlist
 
-def getvalues(market, id, start, end, myperiodtexts):
+def getvalues(myid, start, end):
+#def getvalues(market, id, start, end, myperiodtexts):
+    market = myid[0]
+    id = myid[1]
+    periodtext = myid[2]
     stockdata = StockData(market, allstocks, start, end)
     #stocks = stockdata.stocks
     #stocks = stocks.loc[(stocks.id == id)]
-    myperiodtexts = myperiodtextslist(myperiodtexts, stockdata.periodtexts)
+    myperiodtexts = myperiodtextslist( [ periodtext ], stockdata.periodtexts)
     print("here")
     print(len(myperiodtexts))
     for i in range(len(myperiodtexts)):
@@ -692,7 +696,9 @@ def getelem(id, days, stocklistperiod, period, size):
 
 # ( [ ( "tradcomm", "XAUUSD:CUR" ), ( "tradcomm", "XAUUSD:CUR", "Price" ) ], "\1 / \2" )
 
-def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = []):
+def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = []):
+#def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = []):
+    periodtext = ids[0][2]
     scalebeginning100 = 0
     if len(ids) > 1:
         if periodtext == "price":
@@ -1225,6 +1231,8 @@ def getelem3(id, days, datedstocklist, period, size, handlecy):
             dfarr = pdu.getonedfvaluearr(el, period)
             if len(dfarr) == 1:
                 retl1[c] = dfarr[0].values[0]
+                #dfarr[0].values[0] = dfarr[0].values[0] * 0.01 + 1
+                #print("pppp")
                 if handlecy == True:
                     retl1[c] = 0.01 * retl1[c] + 1
                 retl2[c] = None
