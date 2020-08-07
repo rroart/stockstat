@@ -226,7 +226,8 @@ public class MLIndicator extends Aggregator {
             for (String id : ids) {
                 double[][] arr = new double[days][];
                 for (int j = 0; j < days; j++) {
-                    Map<String, Double[]> indicatorMap = dayIndicatorMap.get(start + fut);
+                    int mykey = start + j;
+                    Map<String, Double[]> indicatorMap = dayIndicatorMap.get(mykey);
                     if (indicatorMap == null) {
                         continue out;
                     }
@@ -235,7 +236,7 @@ public class MLIndicator extends Aggregator {
                         continue out;
                     }
                     double[] merged = ArraysUtil.convert(anArray);
-                    arr[j] = merged;
+                    arr[days - 1 - j] = merged;
                 }
                 Double[][] list = listList.get(0).get(id);
                 listlen = list[0].length;
