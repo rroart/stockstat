@@ -1,5 +1,6 @@
 package roart.common.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,9 @@ public class MetaUtil {
     }
 
     public List<String> getCategories(MetaItem meta) {
+        if (meta == null) {
+            return new ArrayList<>();
+        }
         return Arrays.asList(meta.getPeriod()).stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
     
