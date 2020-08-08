@@ -105,6 +105,9 @@ public class MarketFilterGene extends AbstractGene {
 
     protected String generateCategory() {
         //String[] categories = { "1w", "1m", "3m", "1y", "3y", "5y", "10y", "cy" };
+        if (categories.isEmpty()) {
+            return null;
+        }
         int index = random.nextInt(categories.size());
         return categories.get(index);
     }
