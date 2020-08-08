@@ -17,14 +17,13 @@ import roart.pipeline.Pipeline;
 import roart.stockutil.MetaUtil;
 import roart.stockutil.StockDao;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.etl.DatelistToMapETL;
 import roart.etl.ValueETL;
 
 public class DataReader extends Pipeline {
     
-    Map<String, MarketData> marketdatamap;
-    Map<String, PeriodData> periodDataMap;
+    private Map<String, MarketData> marketdatamap;
+
     // listMap is as originally read
     // fill is with smaller holes filled, too big will zero out older parts (if price, remove 0)
     // trunc is with all nulls removed
@@ -71,11 +70,18 @@ public class DataReader extends Pipeline {
         return map;
     }
     
-    public DataReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, int category) throws Exception {
+    public DataReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category) throws Exception {
         super(conf, category);
-        this.marketdatamap = marketdatamap;
-        this.periodDataMap = periodDataMap;
+        this.setMarketdatamap(marketdatamap);
         readData(conf, marketdatamap, category);        
+    }
+
+    public Map<String, MarketData> getMarketdatamap() {
+        return marketdatamap;
+    }
+
+    public void setMarketdatamap(Map<String, MarketData> marketdatamap) {
+        this.marketdatamap = marketdatamap;
     }
 
     private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category) throws Exception {

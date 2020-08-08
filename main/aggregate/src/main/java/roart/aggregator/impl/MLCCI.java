@@ -16,8 +16,6 @@ import roart.common.constants.Constants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.pipeline.PipelineConstants;
 import roart.ml.dao.MLClassifyDao;
-import roart.model.StockItem;
-import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
 import roart.talib.util.TaConstants;
 
@@ -34,8 +32,8 @@ public class MLCCI extends IndicatorAggregator {
         return objectMap;
     }
 
-    public MLCCI(MyMyConfig conf, String string, List<StockItem> stocks, Map<String, PeriodData> periodDataMap, 
-            String title, int category, AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
+    public MLCCI(MyMyConfig conf, String string, String title, int category, 
+            AbstractCategory[] categories, Map<String, String> idNameMap, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
         super(conf, string, category, title, idNameMap, categories, datareaders, neuralnetcommand);
     }
 

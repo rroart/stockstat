@@ -17,7 +17,6 @@ import roart.common.constants.Constants;
 import roart.model.StockItem;
 import roart.result.model.ResultItemTableRow;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.stockutil.StockDao;
 import roart.pipeline.common.aggregate.Aggregator;
 
@@ -29,8 +28,7 @@ public class RecommenderRSI extends Aggregator {
     Map<String, Double[][]> listMap;
     Map<String, double[][]> truncListMap;
 
-    public RecommenderRSI(MyMyConfig conf, String index, List<StockItem> stocks, Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap, AbstractCategory[] categories) throws Exception {
+    public RecommenderRSI(MyMyConfig conf, String index, Map<String, MarketData> marketdatamap, AbstractCategory[] categories) throws Exception {
         super(conf, index, 0);
         if (!isEnabled()) {
             return;

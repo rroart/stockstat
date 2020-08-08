@@ -1,6 +1,9 @@
 package roart.evolution.marketfilter.genetics.gene.impl;
 
 import roart.iclij.config.MarketFilter;
+
+import java.util.List;
+
 import roart.common.util.RandomUtil;
 import roart.gene.AbstractGene;
 
@@ -9,8 +12,11 @@ public class MarketFilterGene extends AbstractGene {
     
     private MarketFilter marketfilter;
 
-    public MarketFilterGene(MarketFilter marketfilter) {
+    private List<String> categories;
+
+    public MarketFilterGene(MarketFilter marketfilter, List<String> categories) {
         this.marketfilter = marketfilter;
+        this.categories = categories;
     }
 
     public MarketFilter getMarketfilter() {
@@ -50,7 +56,7 @@ public class MarketFilterGene extends AbstractGene {
     
     @Override
     public AbstractGene crossover(AbstractGene other) {
-        MarketFilterGene offspring = new MarketFilterGene(marketfilter);
+        MarketFilterGene offspring = new MarketFilterGene(marketfilter, categories);
         offspring.crossover((MarketFilterGene) other);
         return offspring;
     }
@@ -65,7 +71,7 @@ public class MarketFilterGene extends AbstractGene {
         newFilter.setIncdays(marketfilter.getIncdays());
         newFilter.setIncthreshold(marketfilter.getIncthreshold());
         newFilter.setRecordage(marketfilter.getRecordage());
-        return new MarketFilterGene(newFilter);
+        return new MarketFilterGene(newFilter, categories);
     }
     
     /*
@@ -98,9 +104,12 @@ public class MarketFilterGene extends AbstractGene {
     }
 
     protected String generateCategory() {
-        String[] categories = { "1w", "1m", "3m", "1y", "3y", "5y", "10y", "cy" };
-        int index = random.nextInt(categories.length);
-        return categories[index];
+        //String[] categories = { "1w", "1m", "3m", "1y", "3y", "5y", "10y", "cy" };
+        if (categories.isEmpty()) {
+            return null;
+        }
+        int index = random.nextInt(categories.size());
+        return categories.get(index);
     }
     
     @Override 

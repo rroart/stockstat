@@ -653,7 +653,7 @@ public abstract class MarketAction extends Action {
         mlTests.add(test);
     }
 
-    protected void getListComponents(WebData myData, ComponentData param, IclijConfig config,
+    public void getListComponents(WebData myData, ComponentData param, IclijConfig config,
             Parameters parameters, Boolean evolve, Market market, Map<String, ComponentData> dataMap,
             Memories memories, LocalDate olddate, LocalDate prevdate) {
         List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, IclijConstants.IMPROVEABOVEBELOW, null, null, JsonUtil.convert(parameters), olddate, prevdate);
@@ -806,7 +806,7 @@ public abstract class MarketAction extends Action {
                     value = curValue / oldValue;
                 }
             }
-            if (value == null) {
+            if (value == null || threshold == null) {
                 continue;
             }
             if (inc && value < threshold) {

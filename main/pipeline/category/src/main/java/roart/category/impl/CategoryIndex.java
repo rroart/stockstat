@@ -2,7 +2,6 @@ package roart.category.impl;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
@@ -21,22 +20,13 @@ import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.predictor.impl.PredictorTensorflowLSTM;
 import roart.result.model.ResultItemTableRow;
 import roart.stockutil.StockDao;
-import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.stockutil.StockUtil;
 
 public class CategoryIndex extends Category {
 
-    Map<String, MarketData> marketdatamap;
-    Map<String, PeriodData> periodDataMap;
-
     public CategoryIndex(MyMyConfig conf, String string, List<StockItem> stocks,
-            Map<String, MarketData> marketdatamap,
-            Map<String, PeriodData> periodDataMap,
             Pipeline[] datareaders) throws Exception {
         super(conf, string, stocks, datareaders);
-        this.marketdatamap = marketdatamap;
-        this.periodDataMap = periodDataMap;
         period = Constants.INDEXVALUECOLUMN;
         createResultMap(conf, stocks);
         indicators.add(new IndicatorMACD(conf, getTitle() + " MACD", getTitle(), Constants.INDEXVALUECOLUMN, datareaders, false));

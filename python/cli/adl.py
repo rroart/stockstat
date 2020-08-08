@@ -10,11 +10,11 @@ def getadl(datedstocklists, period, days):
         days = len(datedstocklists)
     adl = [ 0 for x in range(days - 1) ]
 
-    k = days - 1
+    #k = days - 1
     for i in range(days - 1):
         #print(i)
-        df = datedstocklists[k - i]
-        df2 = datedstocklists[k - (i + 1)]
+        df = datedstocklists[1 + i]
+        df2 = datedstocklists[1 + i + 1]
         ids = df.id.tolist()
         #print("ids", len(ids))
         ids2 = df2.id.tolist()

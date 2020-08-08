@@ -41,7 +41,6 @@ import roart.ml.dao.MLClassifyDao;
 import roart.ml.model.LearnTestClassifyResult;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.ResultItemTableRow;
@@ -49,13 +48,12 @@ import roart.result.model.ResultMeta;
 
 public abstract class Predictor extends AbstractPredictor {
 
-    public Predictor(MyMyConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap, Map<String, PeriodData> periodDataMap, AbstractCategory[] categories, Pipeline[] datareaders) {
+    public Predictor(MyMyConfig conf, String string, int category, NeuralNetCommand neuralnetcommand, Map<String, MarketData> marketdatamap, AbstractCategory[] categories, Pipeline[] datareaders) {
         super(conf, string, category, neuralnetcommand);
         if (!isEnabled()) {
             return;
         }
         this.marketdatamap = marketdatamap;
-        this.periodDataMap = periodDataMap;
         this.key = title;
         this.categories = categories;
         this.datareaders = datareaders;
@@ -81,11 +79,9 @@ public abstract class Predictor extends AbstractPredictor {
         if (conf.wantOtherStats()) {
             eventTableRows = new ArrayList<>();
         }
-        //calculate(); //conf, marketdatamap, periodDataMap, category, categories);        
     }
 
     Map<String, MarketData> marketdatamap;
-    Map<String, PeriodData> periodDataMap;
     String key;
     protected Map<String, Double[][]> listMap;
     protected Map<String, Double[][]> fillListMap;
@@ -150,7 +146,6 @@ public abstract class Predictor extends AbstractPredictor {
     // make an oo version of this
     @Override
     public void calculate() throws Exception { // MyMyConfig conf, Map<String, MarketData> marketdatamap,
-        // Map<String, PeriodData> periodDataMap, int category2, AbstractCategory[] categories) throws Exception {
         if (!isEnabled()) {
             return;
         }
@@ -484,10 +479,6 @@ public abstract class Predictor extends AbstractPredictor {
         Set<Pair<String, String>> ids = new HashSet<>();
         ids.add(pair);
         String periodstr = key;
-        PeriodData perioddata = periodDataMap.get(periodstr);
-        if (perioddata == null) {
-            log.info("key {} {}", key, periodDataMap.keySet());
-        }
         Object[] result = null;
         if (resultMap != null) {
             result = resultMap.get(id);
