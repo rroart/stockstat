@@ -141,6 +141,8 @@ public class AboveBelowComponent extends ComponentML {
                     prevdate = prevdate.minusDays(action.getActionData().getTime(market));
                     LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * action.getActionData().getTime(market));
                     
+                    // making separate memories the components and subcomponents
+                    
                     getListComponentsNew(myData, param, realParameters, evolve, market, listComponentMap, prevdate, olddate, mylocals, action);
                     /*
                     // todo make memories of confidence
@@ -167,6 +169,8 @@ public class AboveBelowComponent extends ComponentML {
             AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
             //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
 
+            // Making a memory for the last findtime period
+            
             MemoryItem memory = new MemoryItem();
             if (true || score < market.getFilter().getConfidence()) {
                 componentData = this.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
