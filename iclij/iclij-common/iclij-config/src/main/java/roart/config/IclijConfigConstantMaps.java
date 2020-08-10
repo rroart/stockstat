@@ -255,6 +255,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, String.class);
         map.put(IclijConfigConstants.MACHINELEARNINGFUTUREDAYS, String.class);
         map.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, String.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTAUTORUN, Boolean.class);
+        map.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, Boolean.class);
         map.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, Boolean.class);
         map.put(IclijConfigConstants.SINGLEMARKETLOOPS, Integer.class);
         map.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, Integer.class);
@@ -449,6 +451,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG, null);
         deflt.put(IclijConfigConstants.MACHINELEARNINGFUTUREDAYS, " [ 10 ] ");
         deflt.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, " [ 1.0 ] ");
+        deflt.put(IclijConfigConstants.SIMULATEINVESTAUTORUN, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, Boolean.TRUE);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPS, 5);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, 1);
@@ -694,6 +698,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, "machine learning predictor ml enabled");
         text.put(IclijConfigConstants.MACHINELEARNINGFUTUREDAYS, "machine learning futuredays");
         text.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, "machine learning threshold");
+        text.put(IclijConfigConstants.SIMULATEINVESTAUTORUN, "Enable simulate invest autorun");
+        text.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, "Enable improve simulate invest autorun");
         text.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, "Single market loops with evolve first only");
         text.put(IclijConfigConstants.SINGLEMARKETLOOPS, "Single market loops");
         text.put(IclijConfigConstants.SINGLEMARKETRERUN, "Single market rerun");
@@ -949,6 +955,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.MACHINELEARNINGPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "machine learning predictor ml enable"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGFUTUREDAYS, new IclijXMLType(String.class, " [ 10 ]", "machine learning futuredays"));
         mymap.put(IclijConfigConstants.MACHINELEARNINGTHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ]", "machine learning threshold"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable simulate invest autorun"));
+        mymap.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve simulate invest autorun"));
         mymap.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, new IclijXMLType(Boolean.class, Boolean.TRUE, "Single market loops with evolve first only"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPS, new IclijXMLType(Integer.class, 5, "Single market loops"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPINTERVAL, new IclijXMLType(Integer.class, 1, "Single market loop interval"));

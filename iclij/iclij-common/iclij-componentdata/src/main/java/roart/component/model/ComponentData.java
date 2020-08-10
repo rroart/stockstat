@@ -322,6 +322,8 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
+        setValueMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+        setValueMap.put(ConfigConstants.MISCMYDAYS, 0);
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();

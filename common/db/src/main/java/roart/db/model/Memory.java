@@ -567,6 +567,9 @@ public class Memory implements Serializable {
     @Transactional
     public static List<Memory> getAll(String market, String action, String component, String subcomponent, String parameters, Date startDate, Date endDate) throws Exception {
         String queryString = "from Memory where market = :market";
+        if (action != null) {
+            queryString += " and action = :action";
+        }
         if (component != null) {
             queryString += " and component = :component";
         }
@@ -585,7 +588,9 @@ public class Memory implements Serializable {
         HibernateUtil hu = new HibernateUtil(false);
         Query<Memory> query = hu.createQuery(queryString);
         query.setParameter("market", market);
-        //query.setParameter("action", action);
+        if (action != null) {
+            query.setParameter("action", action);
+        }
         if (component != null) {
             query.setParameter("component", component);
         }

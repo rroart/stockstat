@@ -26,4 +26,13 @@ public class MetaUtil {
         return Arrays.asList(meta.getPeriod()).stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
     
+    public Integer getCategory(MetaItem meta, String name) {
+        for (int i = 0; i < meta.getPeriod().length; i++) {
+            if (name.equals(meta.getPeriod()[i])) {
+                return i;
+            }
+        }
+        return null;
+    }
+    
 }
