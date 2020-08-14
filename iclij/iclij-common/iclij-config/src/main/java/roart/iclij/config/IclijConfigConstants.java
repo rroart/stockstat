@@ -169,6 +169,7 @@ public class IclijConfigConstants {
     public static final String IMPROVEPROFITMLINDICATOR = "improveprofit.mlindicator";
     public static final String IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG = "improveprofit.mlindicator.evolutionconfig";
     public static final String IMPROVEPROFITMLINDICATORMLCONFIG = "improveprofit.mlindicator.mlconfig";
+    public static final String IMPROVEPROFITMLINDICATOREXTRA = "improveprofit.mlindicator.extra";
     public static final String IMPROVEPROFITPREDICTOR = "improveprofit.predictor";
     public static final String IMPROVEPROFITPREDICTOREVOLUTIONCONFIG = "improveprofit.predictor.evolutionconfig";
     public static final String IMPROVEPROFITPREDICTORMLCONFIG = "improveprofit.predictor.mlconfig";
@@ -232,6 +233,11 @@ public class IclijConfigConstants {
     public static final String MACHINELEARNINGPREDICTORMLCONFIG = "machinelearning.predictor.mlconfig";
     public static final String MACHINELEARNINGFUTUREDAYS = "machinelearning.futuredays";
     public static final String MACHINELEARNINGTHRESHOLD = "machinelearning.threshold";
+    public static final String SIMULATEINVEST = "simulateinvest";
+    public static final String SIMULATEINVESTAUTORUN = "simulateinvest.autorun";
+    public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
+    public static final String IMPROVESIMULATEINVESTAUTORUN = "improvesimulateinvest.autorun";
+    public static final String IMPROVESIMULATEINVESTEVOLUTIONCONFIG = "improvesimulateinvest.evolutionconfig";
     public static final String SINGLEMARKETEVOLVEFIRSTONLY = "singlemarket.evolvefirstonly";
     public static final String SINGLEMARKETLOOPS = "singlemarket.loops";
     public static final String SINGLEMARKETLOOPINTERVAL = "singlemarket.loopinterval";

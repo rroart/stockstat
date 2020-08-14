@@ -80,6 +80,8 @@ public class PipelineConstants {
     public static final String DATASET = "dataset";
     public static final String ABOVEBELOW = "abovebelow";
     public static final String FILTER = "filter";
+    public static final String SIMULATEINVEST = "simulateinvest";
+    public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
     
     public static final String CATEGORY = "category"; 
     public static final String CATEGORYTITLE = "categorytitle";

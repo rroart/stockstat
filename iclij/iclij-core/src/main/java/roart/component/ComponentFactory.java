@@ -38,6 +38,10 @@ public class ComponentFactory {
             return new AboveBelowComponent();
         case PipelineConstants.FILTER:
             return new FilterComponent();
+        case PipelineConstants.SIMULATEINVEST:
+            return new SimulateInvestComponent();
+        case PipelineConstants.IMPROVESIMULATEINVEST:
+            return new ImproveSimulateInvestComponent();
         default:
             return null;
         }        

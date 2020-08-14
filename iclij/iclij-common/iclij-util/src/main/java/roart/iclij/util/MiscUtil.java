@@ -111,6 +111,34 @@ public class MiscUtil {
         return currentIncDecs;
     }
 
+    public List<MemoryItem> getCurrentMemories(LocalDate date, List<MemoryItem> listAll, Market market, int days, boolean inclusiveStart) {
+        System.out.println(market.getConfig().getMarket());
+        Map<String, Long> countMap;
+        if (date == null) {
+            date = LocalDate.now();
+        }
+        LocalDate newdate = date;
+        if (inclusiveStart) {
+            days++;
+        }
+        LocalDate olddate = date.minusDays(days);
+        List<MemoryItem> filterListAll = listAll;
+        if (market != null) {
+            filterListAll = filterListAll.stream().filter(m -> market.getConfig().getMarket().equals(m.getMarket())).collect(Collectors.toList());
+        }
+        List<MemoryItem> currentIncDecs = filterListAll;
+        currentIncDecs = currentIncDecs.stream().filter(m -> m.getDate() != null).collect(Collectors.toList());
+        countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
+        System.out.println(countMap);
+        currentIncDecs = currentIncDecs.stream().filter(m -> olddate.compareTo(m.getDate()) < 0).collect(Collectors.toList());
+        countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
+        System.out.println(countMap);
+        currentIncDecs = currentIncDecs.stream().filter(m -> newdate.compareTo(m.getDate()) >= 0).collect(Collectors.toList());
+        countMap = currentIncDecs.stream().collect(Collectors.groupingBy(e -> e.getMarket(), Collectors.counting()));
+        System.out.println(countMap);
+        return currentIncDecs;
+    }
+
     public List<MLMetricsItem> getCurrentMLMetrics(LocalDate date, List<MLMetricsItem> listAll, Market market, int days, boolean inclusiveStart) {
         if (date == null) {
             date = LocalDate.now();

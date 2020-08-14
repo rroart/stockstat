@@ -592,6 +592,18 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG);
     }
 
+    public boolean wantsSimulateInvestAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTAUTORUN);
+    }
+
+    public boolean wantsImproveSimulateInvestAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN);
+    }
+    
+    public String getImproveSimulateInvestEvolutionConfig() {
+        return (String)getValueOrDefault(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG);
+    }
+    
     public boolean singlemarketEvolveFirstOnly() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY);
     }

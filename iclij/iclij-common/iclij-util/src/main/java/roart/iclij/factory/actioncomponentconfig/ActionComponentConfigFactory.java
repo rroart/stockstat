@@ -24,6 +24,10 @@ public abstract class ActionComponentConfigFactory {
             return new ImproveAbovebelowActionComponentConfigFactory();
         case IclijConfigConstants.MACHINELEARNING:
             return new MachineLearningActionComponentConfigFactory();
+        case IclijConfigConstants.SIMULATEINVEST:
+            return new SimulateInvestActionComponentConfigFactory();
+        case IclijConfigConstants.IMPROVESIMULATEINVEST:
+            return new ImproveSimulateInvestActionComponentConfigFactory();
         default:
             return null;
         }                
