@@ -1,4 +1,4 @@
-package roart.component;
+package roart.iclij.evolution.fitness.impl;
 
 import java.text.ParseException;
 import java.util.ArrayList;

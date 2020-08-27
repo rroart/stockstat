@@ -1,4 +1,4 @@
-package roart.component;
+package roart.iclij.evolution.fitness.impl;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -19,12 +19,13 @@ import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
+import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.ConfigMapChromosome2;
-import roart.evolution.fitness.Fitness;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
+import roart.evolution.fitness.Fitness;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;

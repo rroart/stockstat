@@ -1,4 +1,4 @@
-package roart.component;
+package roart.iclij.evolution.fitness.impl;
 
 import io.jenetics.BitChromosome;
 import io.jenetics.BitGene;
