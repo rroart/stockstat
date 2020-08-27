@@ -695,7 +695,7 @@ public class ArraysUtil {
         if (nextlastoffset < 2) {
             int jj = 0;
         }
-        System.out.println("" + nextlastoffset);
+        //System.out.println("" + nextlastoffset);
         nextlastoffset = searchForwardNonNull(doubles, nextlastoffset, doubles.length);
         double[] retArray = new double[doubles.length - nextlastoffset];
         for (int i = nextlastoffset; i < doubles.length; i++) {
