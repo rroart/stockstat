@@ -20,6 +20,7 @@ public class IclijConfig {
         this.deflt = config.deflt;
         this.text = config.text;
         this.type = config.type;
+        this.range = config.range;
     }
 
     public IclijConfig() {        
@@ -33,6 +34,7 @@ public class IclijConfig {
     private Map<String, Object> deflt = new HashMap<>();
     private Map<String, Class> type = new HashMap<>();
     private Map<String, String> conv = new HashMap<>();
+    private Map<String, Double[]> range = new HashMap<>();
 
     private LocalDate date;
 
@@ -110,6 +112,14 @@ public class IclijConfig {
 
     public void setConv(Map<String, String> conv) {
         this.conv = conv;
+    }
+
+    public Map<String, Double[]> getRange() {
+        return range;
+    }
+
+    public void setRange(Map<String, Double[]> range) {
+        this.range = range;
     }
 
     public Integer serverShutdownHour() {
@@ -594,6 +604,62 @@ public class IclijConfig {
 
     public boolean wantsSimulateInvestAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTAUTORUN);
+    }
+
+    public boolean wantsSimulateInvestConfidence() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCE);
+    }
+
+    public double getSimulateInvestCondidenceValue() {
+        return (Double) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE);
+    }
+
+    public int getSimulateInvestConfidenceFindtimes() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
+    }
+
+    public boolean wantsSimulateInvestStoploss() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTOPLOSS);
+    }
+
+    public double getSimulateInvestStoplossValue() {
+        return (Double) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE);
+    }
+
+    public boolean wantsSimulateInvestIndicatorReverse() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+    }
+
+    public boolean wantsSimulateInvestIndicatorPure() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORPURE);
+    }
+
+    public boolean wantsSimulateInvestIndicatorRebase() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
+    }
+
+    public boolean wantsSimulateInvestMLDate() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTMLDATE);
+    }
+
+    public int getSimulateInvestStocks() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTOCKS);
+    }
+
+    public boolean wantsSimulateInvestBuyweight() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);
+    }
+
+    public int getSimulateInvestInterval() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+    }
+
+    public int getSimulateInvestAdviser() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTADVISER);
+    }
+
+    public int getSimulateInvestPeriod() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTPERIOD);
     }
 
     public boolean wantsImproveSimulateInvestAutorun() {
