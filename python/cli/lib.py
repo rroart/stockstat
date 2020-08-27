@@ -38,6 +38,8 @@ filterweekend = True
 VALUE = 1
 MACD = 2
 RSI = 3
+MACD2 = 4
+SIGN2 = 4
 
 def getmetas(conn):
     return pd.read_sql_query('select * from meta', con=conn)
@@ -312,7 +314,8 @@ def getperiodmap(list1, list2):
 
 
 def listperiod(list, period, index):
-    #print(type(list))
+    #print("ttt", type(list))
+    #print(list)
     #print(len(list))
     if period == 0:
         return list.period1.iloc[index]
@@ -336,6 +339,32 @@ def listperiod(list, period, index):
         return list.price.iloc[index]
     if period == 10:
         return list.indexvalue.iloc[index]
+    return None
+
+def listperiod2(list, period):
+    #print(len(list))
+    if period == 0:
+        return list.period1
+    if period == 1:
+        return list.period2
+    if period == 2:
+        return list.period3
+    if period == 3:
+        return list.period4
+    if period == 4:
+        return list.period5
+    if period == 5:
+        return list.period6
+    if period == 6:
+        return list.period7
+    if period == 7:
+        return list.period8
+    if period == 8:
+        return list.period9
+    if period == 9:
+        return list.price
+    if period == 10:
+        return list.indexvalue
     return None
                                         # out of use
 def myperiodtextslist(myperiodtexts, periodtexts):
@@ -402,11 +431,15 @@ def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, want
             hist = 0 #np.NaN
             macdd = 0 #np.NaN
             histd = 0 #np.NaN
+            macd2 = 0
+            sign2 = 0
             if wantmacd:
                 macd = df.momc.iloc[i]
                 hist = df.histc.iloc[i]
                 macdd = df.momdc.iloc[i]
                 histd = df.histdc.iloc[i]
+                macd2 = df.macd2.iloc[i]
+                sign2 = df.sign2.iloc[i]
             
             rise = 0 #np.NaN
             if wantrise:
@@ -423,7 +456,7 @@ def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, want
                 rise = 0
             #print(name[:33], df.date.iloc[i], l, rise, hist, histd, macd, macdd, rsi, df.id.iloc[i])
             #print("rsi " , rsi, type(rsi))
-            print("%3d %-35s %12s % 6.2f %3d % 3.2f % 3.2f % 3.2f % 3.2f %3.2f %s" %(i, name[:33], df.date.iloc[i], listperiod(df, period, i), rise, hist, histd, macd, macdd, rsi, df.id.iloc[i]))
+            print("%3d %-35s %12s % 6.2f %3d % 3.2f % 3.2f % 3.2f % 3.2f %3.3f %3.3f %3.2f %s" %(i, name[:33], df.date.iloc[i], listperiod(df, period, i), rise, hist, histd, macd, macdd, macd2, sign2, rsi, df.id.iloc[i]))
         
                                         #        print(df$id[[1]])
     
@@ -449,6 +482,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
     periodtexts = stockdata.periodtexts
     myperiodtexts = myperiodtextslist(myperiodtexts, periodtexts)
     print ("00 " , len(myperiodtexts))
+    dateset = set(stockdata.listdates)
     for i in range(len(myperiodtexts)):
         periodtext = myperiodtexts[i]
         print("1", myperiodtexts)
@@ -466,7 +500,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
             headskiprsi = end
         headskipmacd = 0
         if end is not None:
-            headskipmacd = end
+            headskipmacd = len(stockdata.listdates) - stockdata.dates.endindex
         #print(len(periodmaps))
         for j in range(stockdata.days):
             df = stockdata.stocklistperiod[period][j]
@@ -505,18 +539,43 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                 histlist = []
                 momdlist = []
                 histdlist = []
+                macd2list = []
+                sign2list = []
                 for mydf in df.itertuples():
                     #print(type(listid))
-                    el = next(x for x in listid if x.id.iloc[0] == mydf.id)
+                    el = next(x for x in stockdata.listid if x.id.iloc[0] == mydf.id)
                     #print(type(el))
-                    el = el.sort_values(by='date', ascending = 0)
+                    eldateset = set(el.date.values)
+                    aset = dateset - eldateset
+                    emptydf = pd.DataFrame(data = None, columns = el.columns)
+                    #print("l", len(emptydf))
+                    #print("aset", aset)
+                    for x in aset:
+                        emptydf = emptydf.append({ 'date' : x }, ignore_index=True)
+                    #print("empty0", len(el), len(emptydf), len(aset))
+                    el = el.append(emptydf)
+                    #print("empty", len(el), len(emptydf), len(aset))
+                    #print("eld", len(eld), eld.values)
+                    
+                    #for x in stockdata.listdates:
+                    #    #print("lll", len(el.date == x))
+                    #    if len(el.date == x) == 0:
+                    #        print("xxx", x)
+                    #el2 = stockdata.stocks[stockdata.stocks.id == mydf.id]
+                    #print("x", type(el), len(el))
+                    #print(type(el2), len(el2))
+                    el = el.sort_values(by='date', ascending = 1)
                     myc = pdu.getonedfvalue(el, period)
+                    mycorig = myc
                     myclen = len(myc)
                     #print(type(myc))
-                    myc = myc.head(n=(myclen-headskipmacd))
-                    myc = myc.tail(n=macddays)
-                                        #print(myc)
-                    if percentize:
+                    #print(myclen, headskipmacd)
+                    #print(type(headskipmacd))
+                    #myc = myc.head(n=(myclen-headskipmacd))
+                    #myc = myc.tail(n=macddays)
+                    myc = myc.iloc[0 : stockdata.dates.startindex + 1]
+                    #print(type(myc))
+                    if False and percentize:
                         if periodtext == "Price" or periodtext == "Index":
 
                             #print("myc")
@@ -532,23 +591,44 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                             #print("myc2")
                     #print(mydf.id)
                     global doprint
-                    doprint = mydf.id == 'VXAZN'
+                    doprint = mydf.id == '6006'
+                    macd.doprint = doprint
                     if doprint:
+                        print(type(myc))
                         print(myc.values)
-                    momhist = getmomhist(myc, deltadays)
+                        print(mycorig.values)
+                        print(len(myc.values))
+                        print(len(stockdata.listdates))
+                        print(myclen)
+                        print("iloc",stockdata.dates.startindex,stockdata.dates.endindex)
+                        print("iloc",stockdata.listdates[stockdata.dates.startindex],stockdata.listdates[stockdata.dates.endindex])
+                    #if myclen != len(stockdata.listdates):
+                    #    print("error", len(stockdata.listdates),myclen)
+                    #else:
+                    #    print("ok")
+                    if True:
+                        myc = myc.interpolate(method='linear')
+                    momhist = macd.MACD().getmomhist([myc, None, None], deltadays)
                     #print(type(momhist))
                     #print(len(momhist))
                                         #print(mom)
+                    if doprint:
+                        print("monh", momhist)
                     if not momhist is None:
+                        l = listperiod2(mydf, period)
                         momlist.append(momhist[0])
-                        histlist.append(momhist[1])
-                        momdlist.append(momhist[2])
-                        histdlist.append(momhist[3])
+                        histlist.append(momhist[2])
+                        momdlist.append(momhist[3])
+                        histdlist.append(momhist[5])
+                        macd2list.append(momhist[0]/l)
+                        sign2list.append(momhist[1]/l)
                     else:
                         momlist.append(None)
                         histlist.append(None)
                         momdlist.append(None)
                         histdlist.append(None)
+                        macd2list.append(None)
+                        sign2list.append(None)
                 headskipmacd = headskipmacd + tablemoveintervaldays
                 momc = momlist
                 histc = histlist
@@ -561,6 +641,8 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                 df['histc'] = pd.Series(data = histlist, name = 'histc', index = df.index)
                 df['momdc'] = pd.Series(data = momdlist, name = 'momdc', index = df.index)
                 df['histdc'] = pd.Series(data = histdlist, name = 'histdc', index = df.index)
+                df['macd2'] = pd.Series(data = macd2list, name = 'macd2', index = df.index)
+                df['sign2'] = pd.Series(data = sign2list, name = 'sign2', index = df.index)
                 #print(df.name)
                 #print(df.momc)
                 if sort == MACD:
@@ -568,11 +650,21 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                         df = df.sort_values(by='histc', ascending = 0)
                     else:
                         df = df.sort_values(by='histc', ascending = 1)
+                if sort == MACD2:
+                    if reverse:
+                        df = df.sort_values(by='macd2', ascending = 0)
+                    else:
+                        df = df.sort_values(by='macd2', ascending = 1)
+                if sort == SIGN2:
+                    if reverse:
+                        df = df.sort_values(by='sign2', ascending = 0)
+                    else:
+                        df = df.sort_values(by='sign2', ascending = 1)
             if wantrsi:
                 rsilist = []
                 headskip = 0
                 for mydf in df.itertuples():
-                    el = next(x for x in listid if x.id.iloc[0] == mydf.id)
+                    el = next(x for x in stockdata.listid if x.id.iloc[0] == mydf.id)
                     #print(type(el))
                     el = el.sort_values(by='date', ascending = 0)
                     #el = listid[mydf.id]
@@ -605,9 +697,9 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
         if not wantchart:
             return
         if reverse:
-            getbottomchart(market, days, topbottom, stocklistperiod, period)
+            getbottomchart(market, stockdata.days, topbottom, stocklistperiod, period)
         else:
-            gettopchart(market, days, topbottom, stocklistperiod, period)
+            gettopchart(market, stockdata.days, topbottom, stocklistperiod, period)
               
 def gettopchart(market, days, topbottom, stocklistperiod, period):
     mainlist = stocklistperiod[period][0]
@@ -697,7 +789,6 @@ def getelem(id, days, stocklistperiod, period, size):
 # ( [ ( "tradcomm", "XAUUSD:CUR" ), ( "tradcomm", "XAUUSD:CUR", "Price" ) ], "\1 / \2" )
 
 def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = []):
-#def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = []):
     periodtext = ids[0][2]
     scalebeginning100 = 0
     if len(ids) > 1:
@@ -879,12 +970,16 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
     print(myma)
     print("mym", type(myma), len(myma))
     myma = my.fixnaarr(myma)
-    myma = my.base100(myma, periodtext)
+    print(myma)
+    print("p",periodtext)
+    #myma = my.base100(myma, periodtext)
     #print(myma)
     for i in range(numindicators):
         indicator = indicators[i]
         lses = indicator.calculate(myma)
-        print("l0", type(lses), type(lses[0]))
+        print(type(indicator))
+        print("l0", type(lses), len(lses))
+        #type(lses[0]))
         lsesl = lses[0].tolist()
         lsesr = [ round(num, 1) for num in lsesl ]
         print(lsesr)
@@ -1290,7 +1385,7 @@ def getelem3tup(id, days, datedstocklist, period, size):
         if len(el) == 1:
             return(el)
         else:
-            print("err3")
+            print("err3",len(el),id)
         c = c + 1
     return(retl)
 

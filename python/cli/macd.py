@@ -2,6 +2,8 @@ import talib as ta
 
 #import myutils as my
 
+doprint = False
+
 class MACD:
 
   def title(self):
@@ -11,7 +13,7 @@ class MACD:
       return ["macd", "signal", "diff"]
   
   def getmacd(self, m):
-    print("mmm", type(m))
+    #print("mmm", type(m))
     #print(len(m))
     #print(type(m[0]))
     l = len(m) / 2
@@ -43,11 +45,13 @@ class MACD:
                                         #    print(myma)
                                         #    print("bla\n")
     #myma = my.fixna(myma)
+    #print("bbbb")
     #print(myma)
     #print(len(myma))
     l = myma[0]
-    llow = myma[1]
-    lhigh = myma[2]
+    #llow = myma[1]
+    #lhigh = myma[2]
+    #print("len",len(l))
     if len(l) < 40:
         return(None)
     
@@ -63,8 +67,12 @@ class MACD:
     sig = 9
     #m = ta.MACD(myma, nFast=fast, nSlow=slow, nSig=sig, maType = maType, percent = False )
     #print((myma)
+    if doprint:
+      print("l1",l.values)
     if not l.isnull().all():
         m = ta.MACD(l)
+        if doprint:
+          print("hh")
     else:
         return None
         #m = (pd.Series([np.NaN]), pd.Series([np.NaN]), pd.Series([np.NaN]))
@@ -91,16 +99,17 @@ class MACD:
   def getmomhist(self, myma, deltadays):
     #print(type(myma))
     #print(myma.values)
-    lses = calculate(myma)
+    lses = self.calculate(myma)
     if lses is None:
         print("null")
         return(None)
     
-    retl = [0, 0, 0, 0]
+    retl = [0, 0, 0, 0, 0, 0]
     ls1 = lses[0]
     ls2 = lses[1]
     ls3 = lses[2]
     #print(type(ls1))
+    doprint = None
     if doprint:
         print(ls1.values)
         print(ls2.values)
@@ -108,17 +117,22 @@ class MACD:
     #print(type(ls1))
     #rint(ls1.keys())
     keys1 = ls1.keys()
+    keys2 = ls2.keys()
     keys3 = ls3.keys()
     last1 = len(ls1) - 1
+    last2 = len(ls2) - 1
     last3 = len(ls3) - 1
     r = keys1[last1]
     retl[0] = ls1[keys1[last1]]
-    retl[1] = ls3[keys3[last3]]
+    retl[1] = ls2[keys2[last2]]
+    retl[2] = ls3[keys3[last3]]
     delta = deltadays - 1
     prevs1 = last1 - delta
+    prevs2 = last2 - delta
     prevs3 = last3 - delta
-    retl[2] = (ls1[keys1[last1]] - ls1[keys1[prevs1]])/delta
-    retl[3] = (ls3[keys3[last3]] - ls3[keys3[prevs3]])/delta
+    retl[3] = (ls1[keys1[last1]] - ls1[keys1[prevs1]])/delta
+    retl[4] = (ls2[keys2[last2]] - ls2[keys2[prevs2]])/delta
+    retl[5] = (ls3[keys3[last3]] - ls3[keys3[prevs3]])/delta
     #print(mydf.id)
      #           if mydf.id == 'VXAZN':
     #print('vxazn')
