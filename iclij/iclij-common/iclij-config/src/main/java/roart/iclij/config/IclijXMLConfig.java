@@ -99,11 +99,13 @@ public class IclijXMLConfig {
         IclijConfigConstantMaps.makeTextMap();
         IclijConfigConstantMaps.makeTypeMap();
         IclijConfigConstantMaps.makeConvertMap();
+        IclijConfigConstantMaps.makeRangeMap();
         configInstance.setDeflt(IclijConfigConstantMaps.deflt);
         configInstance.setType(IclijConfigConstantMaps.map);
         configInstance.setText(IclijConfigConstantMaps.text);
         configInstance.setConv(IclijConfigConstantMaps.conv);
-        if (configxml != null) {
+        configInstance.setRange(IclijConfigConstantMaps.range);
+       if (configxml != null) {
             printout();
             doc = configxml.getDocument();
             if (doc != null) {

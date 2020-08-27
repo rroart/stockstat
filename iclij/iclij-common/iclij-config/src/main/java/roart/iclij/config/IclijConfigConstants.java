@@ -235,6 +235,21 @@ public class IclijConfigConstants {
     public static final String MACHINELEARNINGTHRESHOLD = "machinelearning.threshold";
     public static final String SIMULATEINVEST = "simulateinvest";
     public static final String SIMULATEINVESTAUTORUN = "simulateinvest.autorun";
+    public static final String SIMULATEINVESTCONFIDENCE = "simulateinvest.confidence";
+    public static final String SIMULATEINVESTCONFIDENCEVALUE = "simulateinvest.confidence.value";
+    public static final String SIMULATEINVESTCONFIDENCEFINDTIMES = "simulateinvest.confidence.findtimes";
+    public static final String SIMULATEINVESTSTOPLOSS = "simulateinvest.stoploss";
+    public static final String SIMULATEINVESTSTOPLOSSVALUE = "simulateinvest.stoploss.value";
+    public static final String SIMULATEINVESTINDICATORPURE = "simulateinvest.indicator.pure";
+    public static final String SIMULATEINVESTINDICATORREBASE = "simulateinvest.indicator.rebase";
+    public static final String SIMULATEINVESTINDICATORREVERSE = "simulateinvest.indicator.reverse";
+    public static final String SIMULATEINVESTMLDATE = "simulateinvest.mldate";
+    public static final String SIMULATEINVESTSTOCKS = "simulateinvest.stocks";
+    public static final String SIMULATEINVESTBUYWEIGHT = "simulateinvest.buyweight";
+    public static final String SIMULATEINVESTINTERVAL = "simulateinvest.interval";
+    public static final String SIMULATEINVESTADVISER = "simulateinvest.adviser";
+    // special
+    public static final String SIMULATEINVESTPERIOD = "simulateinvest.period";
     public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
     public static final String IMPROVESIMULATEINVESTAUTORUN = "improvesimulateinvest.autorun";
     public static final String IMPROVESIMULATEINVESTEVOLUTIONCONFIG = "improvesimulateinvest.evolutionconfig";
