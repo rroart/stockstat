@@ -1,6 +1,5 @@
-package roart.evolution.marketfilter.chromosome.impl;
+package roart.iclij.evolution.fitness.impl;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,21 +12,17 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import roart.action.FindProfitAction;
 import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
-import roart.action.MarketAction.MarketComponentTime;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.component.Component;
 import roart.component.model.ComponentData;
-import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
-import roart.evolution.species.Individual;
+import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterChromosome;
 import roart.iclij.config.Market;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
@@ -42,182 +37,48 @@ import roart.iclij.util.MarketUtil;
 import roart.iclij.util.MiscUtil;
 import roart.iclij.verifyprofit.VerifyProfit;
 import roart.iclij.verifyprofit.VerifyProfitUtil;
-import roart.iclij.verifyprofit.TrendUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
 import roart.util.ServiceUtil;
 
-public class MarketFilterChromosome extends AbstractChromosome {
-    private MarketFilterGene gene;
+public class FitnessMarketFilter2 {
+
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     private Map<String, Object> map = new HashMap<>();
 
-    protected MarketAction action;
+    private MarketAction action;
     
-    protected List<String> confList;
-
-    protected ComponentData param;
-
-    protected ProfitData profitdata;
-
-    protected Market market;
-
-    protected Memories positions;
-
-    protected String componentName;
-
-    protected String subcomponent;
+    private Market market;
+    
+    private ComponentData param;
+    
+    private ProfitData profitdata;
 
     protected Boolean buy;
 
-    protected Parameters parameters;
+    protected String componentName;
+    
+    private String subcomponent;
+    
+    private Parameters parameters;
 
     private List<MLMetricsItem> mlTests;
-    
-    public MarketFilterChromosome(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, MarketFilterGene gene, List<MLMetricsItem> mlTests) {
+
+    public FitnessMarketFilter2(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
         this.action = action;
-        this.confList = confList;
         this.param = param;
         this.profitdata = profitdata;
         this.market = market;
-        this.positions = positions;
         this.componentName = componentName;
         this.subcomponent = subcomponent;
         this.buy = buy;
         this.parameters = parameters;
-        this.gene = gene;
         this.mlTests = mlTests;
     }
 
-    public MarketFilterChromosome(MarketFilterChromosome marketFilterChromosome) {
-        this(marketFilterChromosome.action, marketFilterChromosome.confList, marketFilterChromosome.param, marketFilterChromosome.profitdata, marketFilterChromosome.market, marketFilterChromosome.positions, marketFilterChromosome.componentName, marketFilterChromosome.buy, marketFilterChromosome.subcomponent, marketFilterChromosome.parameters, marketFilterChromosome.getGene().copy(), marketFilterChromosome.mlTests);
-    }
-
-    public MarketFilterGene getGene() {
-        return gene;
-    }
-
-    public void setGene(MarketFilterGene gene) {
-        this.gene = gene;
-    }
-
-    public Map<String, Object> getMap() {
-        return map;
-    }
-
-    public void setMap(Map<String, Object> map) {
-        this.map = map;
-    }
-
-    public MarketAction getAction() {
-        return action;
-    }
-
-    public void setAction(MarketAction action) {
-        this.action = action;
-    }
-
-    public List<String> getConfList() {
-        return confList;
-    }
-
-    public void setConfList(List<String> confList) {
-        this.confList = confList;
-    }
-
-    public ComponentData getParam() {
-        return param;
-    }
-
-    public void setParam(ComponentData param) {
-        this.param = param;
-    }
-
-    public ProfitData getProfitdata() {
-        return profitdata;
-    }
-
-    public void setProfitdata(ProfitData profitdata) {
-        this.profitdata = profitdata;
-    }
-
-    public Market getMarket() {
-        return market;
-    }
-
-    public void setMarket(Market market) {
-        this.market = market;
-    }
-
-    public Memories getPositions() {
-        return positions;
-    }
-
-    public void setPositions(Memories positions) {
-        this.positions = positions;
-    }
-
-    public String getComponentName() {
-        return componentName;
-    }
-
-    public void setComponentName(String componentName) {
-        this.componentName = componentName;
-    }
-
-    public String getSubcomponent() {
-        return subcomponent;
-    }
-
-    public void setSubcomponent(String subcomponent) {
-        this.subcomponent = subcomponent;
-    }
-
-    public Boolean getBuy() {
-        return buy;
-    }
-
-    public void setBuy(Boolean buy) {
-        this.buy = buy;
-    }
-
-    public Parameters getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Parameters parameters) {
-        this.parameters = parameters;
-    }
-
-    @Override
-    public double getEvaluations(int j) throws JsonParseException, JsonMappingException, IOException {
-        return 0;
-    }
-
-    @Override
-    public void mutate() {
-        gene.mutate();
-    }
-
-    @Override
-    public void getRandom() throws JsonParseException, JsonMappingException, IOException {
-        gene.randomize();
-    }
-
-    @Override
-    public void transformToNode() throws JsonParseException, JsonMappingException, IOException {
-    }
-
-    @Override
-    public void normalize() {
-    }
-
-    @Override
-    public void transformFromNode() throws JsonParseException, JsonMappingException, IOException {
-    }
-
-    @Override
-    public double getFitness() throws JsonParseException, JsonMappingException, IOException {
+    public synchronized double fitness(MarketFilterChromosome chromosome) {
+        log.info("Fitness");
         List<MemoryItem> memoryItems = null;
         WebData myData = new WebData();
         myData.setIncs(new ArrayList<>());
@@ -233,7 +94,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
         List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
         List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
-        incProp = extracted(myData, listInc, listDec, mlTests);
+        incProp = extracted(chromosome, myData, listInc, listDec, mlTests);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
         action.filterIncDecs(param, market, profitdata, maps, true, null);
         action.filterIncDecs(param, market, profitdata, maps, false, null);
@@ -284,7 +145,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
                     incdecFitness = 0;
                 }
                 log.info("Fit {} {} ( {} / {} ) {} ( {} / {} ) {} {} ( {} / {} )", incProp, fitness, countDec, sizeDec, fitness2, countInc, sizeInc, fitness3, fitness4, countDec + countInc, size);
-                log.info("Fit #{} {}", this.hashCode(), this.toString());
+                log.info("Fit #{} {}", this.hashCode(), chromosome.gene().allele().toString());
             }
             //memoryItems = new MyFactory().myfactory(getConf(), PipelineConstants.MLMACD);
         } catch (Exception e) {
@@ -309,11 +170,11 @@ public class MarketFilterChromosome extends AbstractChromosome {
         // or rather verified incdec
         log.info("Fit {} {} {}", this.componentName, incdecFitness, memoryFitness);
         //configSaves(param, getMap());
-        param.getUpdateMap().putAll(getMap());
+        param.getUpdateMap().putAll(map);
         return incdecFitness;
     }
 
-    public Trend extracted(WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec, List<MLMetricsItem> mlTests) {
+    public Trend extracted(MarketFilterChromosome chromosome, WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec, List<MLMetricsItem> mlTests) {
         Trend incProp = null;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
@@ -341,7 +202,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
 
             map.put(ConfigConstants.MISCTHRESHOLD, null);
 
-	    /*
+            /*
             FindProfitAction myaction = new FindProfitAction();
             //marketTime.;
             MarketComponentTime marketTime = myaction.getMCT(componentName, component, subcomponent, market, 0, false, buy, parameters);
@@ -351,8 +212,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
             // plus borrow from verifyprofit
             //myaction.filterIncDecs(param, market, profitdata, maps, true);
             */
-            market.setFilter(gene.getMarketfilter());
-            Memories listMap = new Memories(market);
+            market.setFilter(chromosome.getGene().getAllele());
             ComponentData componentData = component.handle(action, market, param, profitdata, new Memories(market), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
             //componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
@@ -367,15 +227,18 @@ public class MarketFilterChromosome extends AbstractChromosome {
                 log.error(Constants.EXCEPTION, e);
             }
 
+            Memories listMap =  new Memories(market);
             ProfitInputData inputdata = new ProfitInputData();
             listMap.method(myData.getMemoryItems(), param.getInput().getConfig());        
+            //ProfitData profitdata = new ProfitData();
             profitdata.setInputdata(inputdata);
             inputdata.setNameMap(new HashMap<>());
+            Memories positions = listMap;
 
             //component.enableDisable(componentData, positions, param.getConfigValueMap(), buy);
 
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, map, subcomponent, null, parameters);
-            component.calculateIncDec(componentData2, profitdata, listMap, buy, mlTests, parameters);
+            ComponentData componentData2 = component.handle(action, market, param, profitdata, positions, evolve, map, subcomponent, null, parameters);
+            component.calculateIncDec(componentData2, profitdata, positions, buy, mlTests, parameters);
 
             short startoffset = new MarketUtil().getStartoffset(market);
             action.setValMap(param);
@@ -398,29 +261,6 @@ public class MarketFilterChromosome extends AbstractChromosome {
             log.error(Constants.EXCEPTION, e);
         }
         return incProp;
-    }
-
-    @Override
-    public Individual crossover(AbstractChromosome chromosome) {
-        MarketFilterGene newNNConfig =  (MarketFilterGene) gene.crossover(((MarketFilterChromosome) chromosome).gene);
-        MarketFilterChromosome eval = new MarketFilterChromosome(action, confList, param, profitdata, market, positions, componentName, buy, subcomponent, parameters, gene, mlTests);
-        //MarketFilterChromosome eval = new MarketFilterChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
-        return new Individual(eval);
-    }
-
-    @Override
-    public AbstractChromosome copy() {
-        return new MarketFilterChromosome(this);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return gene == null;
-    }
-    
-    @Override
-    public String toString() {
-        return "" + gene;
     }
 
 }

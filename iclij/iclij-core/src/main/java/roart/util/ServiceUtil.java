@@ -11,6 +11,7 @@ import roart.action.ImproveAboveBelowAction;
 import roart.action.ImproveFilterAction;
 import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
+import roart.action.SimulateInvestAction;
 import roart.common.constants.Constants;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
@@ -120,6 +121,24 @@ public class ServiceUtil {
         MarketAction improveProfitAction = new ImproveProfitAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
         WebData webData = improveProfitAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebDataJson webDataJson = convert(webData);
+        result.setWebdatajson(webDataJson);
+        return result;
+    }
+
+    public static IclijServiceResult getSimulateInvest(ComponentInput componentInput) {
+        IclijServiceResult result = new IclijServiceResult();
+        ComponentData param = null;
+        try {
+            param = ComponentData.getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+
+        MarketAction simulateInvestAction = new SimulateInvestAction();
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
         return result;
