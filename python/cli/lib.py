@@ -23,6 +23,8 @@ import stochrsi
 import adl
 import etl
 
+import request
+
 #from sqlalchemy import create_engine
 
 doprint = False
@@ -1419,7 +1421,57 @@ def prevNonNan(alist, pos):
 
 def rangei(stop):
     return range(stop + 1)
+
+def simulateinvest(market, startdate, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0):
+    data = { 'startdate' : startdate, 'confidence' : confidence, 'confidencevalue' : confidencevalue, 'confidencefindtimes' : confidencefindtimes, 'stoploss' : stoploss, 'stoplossvalue' : stoplossvalue, 'indicatorpure' : indicatorpure, 'indicatorrebase' : indicatorrebase, 'indicatorreverse' : indicatorreverse, 'mldate' : mldate, 'stocks' : stocks, 'buyweight' : buyweight, 'interval' : interval, 'adviser' : adviser, 'period' : period }
+    response = request.request2(market, data)
+    print(type(response))
+    print(response)
+    print(response.text)
+    print(response.json())
+    resp = response.json()
+    print(resp)
+    webdata = resp['webdatajson']
+    print(webdata)
+    print(type(webdata))
+    print(webdata.keys())
+    updatemap = webdata['updateMap']
+    #print(updatemap)
+    print(updatemap.keys())
+    dates = updatemap['plotdates']
+    commondays = dates
+    print(type(dates))
+    default = updatemap['plotdefault']
+    capital = updatemap['plotcapital']
+    commonls = [ default, capital ]
+    mynames = [ "default", "capital" ]
+    plt.rc('axes', grid=True)
+    plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
+
+    mynames=["default","my"]
+    olddate = dates[0]
+    newdate = dates[len(dates) - 1]
     
+    textsize = 9
+    left, width = 0.1, 0.8
+    rect1 = [left, 0.5, width, 0.4]
+    #rect2 = [left, 0.3, width, 0.2]
+    #rect3 = [left, 0.1, width, 0.2]
+    plt.ion()
+    #print("TT" + str(type(mynames[0])))
+    title = str(mynames) + " " + str(olddate) + " - " + str(newdate)
+    fig = plt.figure(facecolor='white')
+    axescolor = '#f6f6f6'  # the axes background color
+
+    ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
+    displayax(ax1, commonls, commondays, mynames, None, None, newdate, olddate, None, title, "V")
+    plt.show()
+    print(updatemap['stockhistory'])
+    print(updatemap['sumhistory'])
+    print(webdata.keys())
+    print(webdata['timingMap'])
+    return
+
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 
