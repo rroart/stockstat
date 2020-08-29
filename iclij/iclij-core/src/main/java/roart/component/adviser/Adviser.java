@@ -10,21 +10,29 @@ import org.slf4j.LoggerFactory;
 
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
+import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 
 public abstract class Adviser {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
+    
     protected Market market;
+    
     protected LocalDate investStart;
+    
     protected LocalDate investEnd;
+    
     protected ComponentData param;
 
-    public Adviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param) {
+    protected SimulateInvestConfig simulateConfig;
+    
+    public Adviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
         this.market = market;
         this.investStart = investStart;
         this.investEnd = investEnd;
         this.param = param;
+        this.simulateConfig = simulateConfig;
     }
 
     public abstract List<IncDecItem> getIncs(String aParameter, int buytop,

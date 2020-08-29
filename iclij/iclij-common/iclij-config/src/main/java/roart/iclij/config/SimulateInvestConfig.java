@@ -1,6 +1,8 @@
 package roart.iclij.config;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SimulateInvestConfig {
     private Boolean confidence;
@@ -15,7 +17,7 @@ public class SimulateInvestConfig {
     
     private Boolean indicatorPure;
     
-    private Boolean indicatoreRebase;
+    private Boolean indicatorRebase;
     
     private Boolean indicatorReverse;
     
@@ -32,6 +34,8 @@ public class SimulateInvestConfig {
     private Integer period;
 
     private List<String> excludes;
+    
+    private String startdate;
     
     public SimulateInvestConfig() {
         super();
@@ -85,12 +89,12 @@ public class SimulateInvestConfig {
         this.indicatorPure = indicatorPure;
     }
 
-    public Boolean getIndicatoreRebase() {
-        return indicatoreRebase;
+    public Boolean getIndicatorRebase() {
+        return indicatorRebase;
     }
 
-    public void setIndicatoreRebase(Boolean indicatoreRebase) {
-        this.indicatoreRebase = indicatoreRebase;
+    public void setIndicatorRebase(Boolean indicatorRebase) {
+        this.indicatorRebase = indicatorRebase;
     }
 
     public Boolean getIndicatorReverse() {
@@ -156,5 +160,85 @@ public class SimulateInvestConfig {
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
     }
+
+    public String getStartdate() {
+        return startdate;
+    }
+
+    public void setStartdate(String startdate) {
+        this.startdate = startdate;
+    }
     
+    public void merge(SimulateInvestConfig other) {
+        if (other == null) {
+            return;
+        }
+        if (other.confidence != null) {
+            this.confidence = other.confidence;
+        }
+        if (other.confidenceFindTimes != null) {
+            this.confidenceFindTimes = other.confidenceFindTimes;
+        }
+        if (other.confidenceValue != null) {
+            this.confidenceValue = other.confidenceValue;
+        }
+        if (other.stoplossValue != null) {
+            this.stoplossValue = other.stoplossValue;
+        }
+        if (other.stoploss != null) {
+            this.stoploss = other.stoploss;
+        }
+        if (other.indicatorReverse != null) {
+            this.indicatorReverse = other.indicatorReverse;
+        }
+        if (other.indicatorRebase != null) {
+            this.indicatorRebase = other.indicatorRebase;
+        }
+        if (other.indicatorPure != null) {
+            this.indicatorPure = other.indicatorPure;
+        }
+        if (other.mldate != null) {
+            this.mldate = other.mldate;
+        }
+        if (other.stocks != null) {
+            this.stocks = other.stocks;
+        }
+        if (other.buyweight != null) {
+            this.buyweight = other.buyweight;
+        }
+        if (other.interval != null) {
+            this.interval = other.interval;
+        }
+        if (other.adviser != null) {
+            this.adviser = other.adviser;
+        }
+        if (other.period != null) {
+            this.period = other.period;
+        }
+        if (other.startdate != null) {
+            this.startdate = other.startdate;
+        }
+        if (other.excludes != null) {
+            this.excludes = other.excludes;
+        }
+    }
+    
+    public Map<String, Object> getMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, confidence);
+        map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, confidenceValue);
+        map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, confidenceFindTimes);
+        map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, stoploss);
+        map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, stoplossValue);
+        map.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, indicatorPure);
+        map.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, indicatorRebase);
+        map.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, indicatorReverse);
+        map.put(IclijConfigConstants.SIMULATEINVESTMLDATE, mldate);
+        map.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, stocks);
+        map.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, buyweight);
+        map.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, interval);
+        map.put(IclijConfigConstants.SIMULATEINVESTADVISER, adviser);
+        map.put(IclijConfigConstants.SIMULATEINVESTPERIOD, period);
+        return map;
+    }
 }

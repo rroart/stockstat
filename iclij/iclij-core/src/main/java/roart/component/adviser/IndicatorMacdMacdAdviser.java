@@ -5,11 +5,12 @@ import java.time.LocalDate;
 import roart.common.pipeline.PipelineConstants;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
+import roart.iclij.config.SimulateInvestConfig;
 
 public class IndicatorMacdMacdAdviser extends IndicatorAdviser {
 
-    public IndicatorMacdMacdAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param) {
-        super(market, investStart, investEnd, param);
+    public IndicatorMacdMacdAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
+        super(market, investStart, investEnd, param, simulateConfig);
     }
 
     @Override

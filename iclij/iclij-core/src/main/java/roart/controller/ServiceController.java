@@ -2,6 +2,7 @@ package roart.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +12,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import roart.common.constants.EurekaConstants;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijXMLConfig;
+import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.ControlService;
 import roart.iclij.service.IclijServiceParam;
@@ -98,6 +103,18 @@ public class ServiceController {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
         return ServiceUtil.getSimulateInvest(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
+    }
+
+    @RequestMapping(value = "action/simulateinvest/market/{market}",
+            method = RequestMethod.POST)
+    public IclijServiceResult getSimulateInvestMarket(@PathVariable("market") String market, @RequestBody SimulateInvestConfig simConfig)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        IclijConfig config = IclijXMLConfig.getConfigInstance();
+        Map<String, Object> map = simConfig.getMap();
+        config.getConfigValueMap().putAll(map);
+        return ServiceUtil.getSimulateInvest(new ComponentInput(config, null, market, null, null, true, false, new ArrayList<>(), new HashMap<>()));
     }
 
 }

@@ -11,8 +11,8 @@ import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
-import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
+import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.util.MiscUtil;
@@ -23,9 +23,14 @@ public class AboveBelowAdviser extends Adviser {
 
     private List<MemoryItem> allMemories = null;
 
-    public AboveBelowAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param) {
-        super(market, investStart, investEnd, param);
-        SimulateInvestData simulateParam = (SimulateInvestData) param;
+    public AboveBelowAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
+        super(market, investStart, investEnd, param, simulateConfig);
+        SimulateInvestData simulateParam;
+        if (param instanceof SimulateInvestData) {
+            simulateParam = (SimulateInvestData) param;
+        } else {
+            simulateParam = new SimulateInvestData(param);
+        }
         if (simulateParam.getAllIncDecs() != null) {
             allIncDecs = simulateParam.getAllIncDecs();
         } else {
@@ -88,8 +93,7 @@ public class AboveBelowAdviser extends Adviser {
 
     @Override
     public double getReliability(LocalDate date, Boolean above) {
-        IclijConfig config = param.getInput().getConfig();
-        int findTimes = config.getSimulateInvestConfidenceFindtimes();
+        int findTimes = simulateConfig.getConfidenceFindTimes();
         int verificationdays = param.getInput().getConfig().verificationDays();
         int findTime = market.getConfig().getFindtime();
         LocalDate oldDate = date.minusDays(verificationdays + findTime);

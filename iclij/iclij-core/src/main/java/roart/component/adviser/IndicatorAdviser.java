@@ -23,6 +23,7 @@ import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
+import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.IncDecItem;
 
 public abstract class IndicatorAdviser extends Adviser {
@@ -31,10 +32,9 @@ public abstract class IndicatorAdviser extends Adviser {
     
     protected boolean indicatorreverse;
     
-    public IndicatorAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param) {
-        super(market, investStart, investEnd, param);
-        IclijConfig config = param.getInput().getConfig();
-        indicatorreverse = config.wantsSimulateInvestIndicatorReverse();
+    public IndicatorAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
+        super(market, investStart, investEnd, param, simulateConfig);
+        indicatorreverse = simulateConfig.getIndicatorReverse();
         
         if (param.getResultMaps() != null) {
             List<MetaItem> metas = param.getService().getMetas();
@@ -66,7 +66,7 @@ public abstract class IndicatorAdviser extends Adviser {
         aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
         aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         aMap.put(ConfigConstants.MISCMYDAYS, 0);
-        aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, config.wantsSimulateInvestIndicatorRebase());
+        aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, simulateConfig.getIndicatorRebase());
         Map<String, Map<String, Object>> maps = param.getResultMaps();
         /*
         for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
@@ -137,7 +137,7 @@ public abstract class IndicatorAdviser extends Adviser {
             if (mainList != null) {
                 ValidateUtil.validateSizes(mainList, stockDates);
                 Double valNow;
-                if (config.wantsSimulateInvestIndicatorPure()) {
+                if (simulateConfig.getIndicatorPure()) {
                     valNow = 1.0;
                 } else {
                     valNow = mainList.get(mainList.size() - 1 - indexOffset);

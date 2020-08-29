@@ -20,6 +20,7 @@ import roart.common.util.MetaUtil;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
+import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.IncDecItem;
 
 public class PeriodAdviser extends Adviser {
@@ -28,12 +29,11 @@ public class PeriodAdviser extends Adviser {
     
     private Map<String, List<List<Double>>> categoryValueMap;
     
-    public PeriodAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param) {
-        super(market, investStart, investEnd, param);
-        IclijConfig config = param.getInput().getConfig();
-        indicatorreverse = config.wantsSimulateInvestIndicatorReverse();
+    public PeriodAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
+        super(market, investStart, investEnd, param, simulateConfig);
+        indicatorreverse = simulateConfig.getIndicatorReverse();
         if (true) {
-            int period = config.getSimulateInvestPeriod();
+            int period = simulateConfig.getPeriod();
             List<MetaItem> metas = param.getService().getMetas();
             MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
             List<String> categories = new MetaUtil().getCategories(meta);
