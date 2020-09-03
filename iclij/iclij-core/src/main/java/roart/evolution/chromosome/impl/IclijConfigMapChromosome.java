@@ -100,7 +100,7 @@ public class IclijConfigMapChromosome extends AbstractChromosome {
     @Override
     public Individual crossover(AbstractChromosome chromosome) {
         IclijConfigMapGene newNNConfig =  (IclijConfigMapGene) gene.crossover(((IclijConfigMapChromosome) chromosome).gene);
-        IclijConfigMapChromosome eval = new IclijConfigMapChromosome(gene);
+        IclijConfigMapChromosome eval = new IclijConfigMapChromosome(newNNConfig);
         //MarketFilterChromosome eval = new MarketFilterChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
         return new Individual(eval);
     }
