@@ -33,9 +33,15 @@ public class SimulateInvestConfig {
     
     private Integer period;
 
-    private List<String> excludes;
+    private String[] excludes;
     
     private String startdate;
+    
+    private Boolean intervalStoploss;
+    
+    private Double intervalStoplossValue;
+    
+    private Boolean interpolate;
     
     public SimulateInvestConfig() {
         super();
@@ -153,11 +159,11 @@ public class SimulateInvestConfig {
         this.period = period;
     }
 
-    public List<String> getExcludes() {
+    public String[] getExcludes() {
         return excludes;
     }
 
-    public void setExcludes(List<String> excludes) {
+    public void setExcludes(String[] excludes) {
         this.excludes = excludes;
     }
 
@@ -169,6 +175,30 @@ public class SimulateInvestConfig {
         this.startdate = startdate;
     }
     
+    public Boolean getIntervalStoploss() {
+        return intervalStoploss;
+    }
+
+    public void setIntervalStoploss(Boolean intervalStoploss) {
+        this.intervalStoploss = intervalStoploss;
+    }
+
+    public Double getIntervalStoplossValue() {
+        return intervalStoplossValue;
+    }
+
+    public void setIntervalStoplossValue(Double intervalStoplossValue) {
+        this.intervalStoplossValue = intervalStoplossValue;
+    }
+
+    public Boolean getInterpolate() {
+        return interpolate;
+    }
+
+    public void setInterpolate(Boolean interpolate) {
+        this.interpolate = interpolate;
+    }
+
     public void merge(SimulateInvestConfig other) {
         if (other == null) {
             return;
@@ -209,6 +239,15 @@ public class SimulateInvestConfig {
         if (other.interval != null) {
             this.interval = other.interval;
         }
+        if (other.intervalStoplossValue != null) {
+            this.intervalStoplossValue = other.intervalStoplossValue;
+        }
+        if (other.intervalStoploss != null) {
+            this.intervalStoploss = other.intervalStoploss;
+        }
+        if (other.interpolate != null) {
+            this.interpolate = other.interpolate;
+        }
         if (other.adviser != null) {
             this.adviser = other.adviser;
         }
@@ -223,7 +262,7 @@ public class SimulateInvestConfig {
         }
     }
     
-    public Map<String, Object> getMap() {
+    public Map<String, Object> asMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, confidence);
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, confidenceValue);
@@ -239,6 +278,10 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, interval);
         map.put(IclijConfigConstants.SIMULATEINVESTADVISER, adviser);
         map.put(IclijConfigConstants.SIMULATEINVESTPERIOD, period);
+        map.put(IclijConfigConstants.SIMULATEINVESTSTARTDATE, startdate);
+        map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, intervalStoploss);
+        map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE, intervalStoplossValue);
+        map.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, interpolate);
         return map;
     }
 }

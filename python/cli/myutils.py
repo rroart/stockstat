@@ -3,6 +3,13 @@ import numpy as np
 
 import myconfig as cf
 
+def fixzero(v):
+    print(type(v))
+    return [ None if x == 0 else x for x in v ]
+
+def fixzero2(v):
+    return v.replace(0, np.nan)
+
 def fixna(v):
     #print(type(v))
     if cf.nafix == 1:

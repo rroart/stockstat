@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.action.Action;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
@@ -102,7 +103,10 @@ public class FitnessIclijConfigMap extends Fitness {
 
             param.getInput().getConfig().getConfigValueMap().putAll(gene.getMap());
             
+            Action parent = action.getParent();
+            action.setParent(null);
             ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters);
+            action.setParent(parent);
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];
         } catch (Exception e) {

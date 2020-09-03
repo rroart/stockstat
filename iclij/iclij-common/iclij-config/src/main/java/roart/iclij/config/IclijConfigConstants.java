@@ -247,9 +247,14 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTSTOCKS = "simulateinvest.stocks";
     public static final String SIMULATEINVESTBUYWEIGHT = "simulateinvest.buyweight";
     public static final String SIMULATEINVESTINTERVAL = "simulateinvest.interval";
+    public static final String SIMULATEINVESTINTERVALSTOPLOSS = "simulateinvest.intervalstoploss";
+    public static final String SIMULATEINVESTINTERVALSTOPLOSSVALUE = "simulateinvest.intervalstoplossvalue";
     public static final String SIMULATEINVESTADVISER = "simulateinvest.adviser";
+    public static final String SIMULATEINVESTINTERPOLATE = "simulateinvest.interpolate";
     // special
     public static final String SIMULATEINVESTPERIOD = "simulateinvest.period";
+    // special
+    public static final String SIMULATEINVESTSTARTDATE = "simulateinvest.startdate";
     public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
     public static final String IMPROVESIMULATEINVESTAUTORUN = "improvesimulateinvest.autorun";
     public static final String IMPROVESIMULATEINVESTEVOLUTIONCONFIG = "improvesimulateinvest.evolutionconfig";
@@ -274,6 +279,7 @@ public class IclijConfigConstants {
     public static final String MARKETSMARKETLISTMARKET = "markets.marketlist.market[@id]";
     public static final String MARKETSMARKETLISTMARKETCONFIG = "markets.marketlist.market[@id].config";
     public static final String MARKETSMARKETLISTMARKETFILTER = "markets.marketlist.market[@id].filter";
+    public static final String MARKETSMARKETLISTMARKETSIMULATE = "markets.marketlist.market[@id].simulate";
     //public static final String MARKETSMARKETLISTMARKETEVOLUTIONCONFIG = "markets.marketlist.market[@id].evolutionconfig";
     public static final String MARKETSMARKETLISTMARKETMLCONFIG = "markets.marketlist.market[@id].mlconfig";
     @Deprecated

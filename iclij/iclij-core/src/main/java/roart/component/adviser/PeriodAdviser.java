@@ -34,9 +34,9 @@ public class PeriodAdviser extends Adviser {
         indicatorreverse = simulateConfig.getIndicatorReverse();
         if (true) {
             int period = simulateConfig.getPeriod();
-            List<MetaItem> metas = param.getService().getMetas();
-            MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
-            List<String> categories = new MetaUtil().getCategories(meta);
+            //List<MetaItem> metas = param.getService().getMetas();
+            //MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+            //List<String> categories = new MetaUtil().getCategories(meta);
             Map<String, Object> aMap = new HashMap<>();
             aMap.put(ConfigConstants.MACHINELEARNING, false);
             aMap.put(ConfigConstants.AGGREGATORS, false);
@@ -49,7 +49,12 @@ public class PeriodAdviser extends Adviser {
             //Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
             Map<String, Map<String, Object>> resultMaps = param.getResultMaps();
             Map<String, Object> objectMaps = resultMaps.get("" + cat);
-            Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.LIST);
+            Map<String, List<List<Double>>> aCategoryValueMap;
+            if (simulateConfig.getInterpolate()) {
+                aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.FILLLIST);
+            } else {
+                aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.LIST);
+            }
             categoryValueMap = aCategoryValueMap;
         } else {
             categoryValueMap = param.getCategoryValueMap();

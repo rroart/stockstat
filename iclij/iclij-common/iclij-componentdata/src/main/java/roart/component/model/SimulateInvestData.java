@@ -9,6 +9,8 @@ public class SimulateInvestData extends ComponentData {
     
     private List allMemories;
     
+    private List allMetas;
+    
     private Map<String, List<List<Double>>> aCategoryValueMap;
     
     private List<String> stockDates;
@@ -31,6 +33,14 @@ public class SimulateInvestData extends ComponentData {
 
     public void setAllMemories(List allMemories) {
         this.allMemories = allMemories;
+    }
+
+    public List getAllMetas() {
+        return allMetas;
+    }
+
+    public void setAllMetas(List allMetas) {
+        this.allMetas = allMetas;
     }
 
     public Map<String, List<List<Double>>> getaCategoryValueMap() {

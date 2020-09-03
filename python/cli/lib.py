@@ -38,11 +38,13 @@ topbottom = 15
 filterweekend = True
 
 VALUE = 1
-MACD = 2
-RSI = 3
-MACD2 = 4
-SIGN2 = 4
-
+RSI = 2
+MACD = 3
+SIGN = 4
+HIST = 5
+MACD2 = 6
+SIGN2 = 7
+HIST2 = 8
 def getmetas(conn):
     return pd.read_sql_query('select * from meta', con=conn)
 
@@ -435,14 +437,16 @@ def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, want
             histd = 0 #np.NaN
             macd2 = 0
             sign2 = 0
+            hist2 = 0
             if wantmacd:
                 macd = df.momc.iloc[i]
+                sign = df.signc.iloc[i]
                 hist = df.histc.iloc[i]
-                macdd = df.momdc.iloc[i]
-                histd = df.histdc.iloc[i]
+                #macdd = df.momdc.iloc[i]
+                #histd = df.histdc.iloc[i]
                 macd2 = df.macd2.iloc[i]
                 sign2 = df.sign2.iloc[i]
-            
+                hist2 = df.hist2.iloc[i]
             rise = 0 #np.NaN
             if wantrise:
                 #print(list(df.columns.values))
@@ -458,7 +462,7 @@ def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, want
                 rise = 0
             #print(name[:33], df.date.iloc[i], l, rise, hist, histd, macd, macdd, rsi, df.id.iloc[i])
             #print("rsi " , rsi, type(rsi))
-            print("%3d %-35s %12s % 6.2f %3d % 3.2f % 3.2f % 3.2f % 3.2f %3.3f %3.3f %3.2f %s" %(i, name[:33], df.date.iloc[i], listperiod(df, period, i), rise, hist, histd, macd, macdd, macd2, sign2, rsi, df.id.iloc[i]))
+            print("%3d %-35s %12s % 6.2f %3d % 3.2f % 3.2f % 3.2f % 3.4f %3.4f %3.4f %3.2f %s" %(i, name[:33], df.date.iloc[i], listperiod(df, period, i), rise, hist, macd, sign, hist2, macd2, sign2, rsi, df.id.iloc[i]))
         
                                         #        print(df$id[[1]])
     
@@ -478,7 +482,7 @@ def myperiodtextslist(myperiodtexts, periodtexts):
 def getbottomgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=VALUE, macddays=180, deltadays=3, percentize=True, wantchart=True):
     return(gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=True, deltadays=deltadays, percentize=percentize, wantchart=wantchart))
 
-def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, percentize=True, wantchart=True):
+def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, percentize=True, wantchart=True, interpolate=True):
     print("0", market)
     stockdata = StockData(market, allstocks, start, end, tableintervaldays = tablemoveintervaldays, tablemoveintervaldays = tablemoveintervaldays, reverse = reverse, numberdays = numberdays)
     periodtexts = stockdata.periodtexts
@@ -538,11 +542,13 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
             periodc = pdu.getonedfperiod(df, period)
             if wantmacd:
                 momlist = []
+                signlist = []
                 histlist = []
-                momdlist = []
-                histdlist = []
+                #momdlist = []
+                #histdlist = []
                 macd2list = []
                 sign2list = []
+                hist2list = []
                 for mydf in df.itertuples():
                     #print(type(listid))
                     el = next(x for x in stockdata.listid if x.id.iloc[0] == mydf.id)
@@ -593,7 +599,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                             #print("myc2")
                     #print(mydf.id)
                     global doprint
-                    doprint = mydf.id == '6006'
+                    doprint = mydf.id == 'SMI:IND'
                     macd.doprint = doprint
                     if doprint:
                         print(type(myc))
@@ -608,7 +614,9 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                     #    print("error", len(stockdata.listdates),myclen)
                     #else:
                     #    print("ok")
-                    if True:
+                    if periodtext == "Price" or periodtext == "Index":
+                        myc = my.fixzero2(myc)
+                    if interpolate:
                         myc = myc.interpolate(method='linear')
                     momhist = macd.MACD().getmomhist([myc, None, None], deltadays)
                     #print(type(momhist))
@@ -616,42 +624,61 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                                         #print(mom)
                     if doprint:
                         print("monh", momhist)
+                        l = listperiod2(mydf, period)
+                        print(l)
                     if not momhist is None:
                         l = listperiod2(mydf, period)
                         momlist.append(momhist[0])
+                        signlist.append(momhist[1])
                         histlist.append(momhist[2])
-                        momdlist.append(momhist[3])
-                        histdlist.append(momhist[5])
+                        #momdlist.append(momhist[3])
+                        #histdlist.append(momhist[5])
                         macd2list.append(momhist[0]/l)
                         sign2list.append(momhist[1]/l)
+                        hist2list.append(momhist[2]/l)
                     else:
                         momlist.append(None)
+                        signlist.append(None)
                         histlist.append(None)
-                        momdlist.append(None)
-                        histdlist.append(None)
+                        #momdlist.append(None)
+                        #histdlist.append(None)
                         macd2list.append(None)
                         sign2list.append(None)
+                        hist2list.append(None)
                 headskipmacd = headskipmacd + tablemoveintervaldays
                 momc = momlist
+                signc = signlist
                 histc = histlist
-                momdc = momdlist
-                histdc = histdlist
+                #momdc = momdlist
+                #histdc = histdlist
                 #print('momlist')
                 #print(momlist)
                 #print(type(momlist))
                 df['momc'] = pd.Series(data = momlist, name = 'momc', index = df.index)
                 df['histc'] = pd.Series(data = histlist, name = 'histc', index = df.index)
-                df['momdc'] = pd.Series(data = momdlist, name = 'momdc', index = df.index)
-                df['histdc'] = pd.Series(data = histdlist, name = 'histdc', index = df.index)
+                df['signc'] = pd.Series(data = signlist, name = 'signc', index = df.index)
+                #df['momdc'] = pd.Series(data = momdlist, name = 'momdc', index = df.index)
+                #df['histdc'] = pd.Series(data = histdlist, name = 'histdc', index = df.index)
                 df['macd2'] = pd.Series(data = macd2list, name = 'macd2', index = df.index)
                 df['sign2'] = pd.Series(data = sign2list, name = 'sign2', index = df.index)
+                df['hist2'] = pd.Series(data = hist2list, name = 'hist2', index = df.index)
                 #print(df.name)
                 #print(df.momc)
-                if sort == MACD:
+                if sort == HIST:
                     if reverse:
                         df = df.sort_values(by='histc', ascending = 0)
                     else:
                         df = df.sort_values(by='histc', ascending = 1)
+                if sort == MACD:
+                    if reverse:
+                        df = df.sort_values(by='momc', ascending = 0)
+                    else:
+                        df = df.sort_values(by='momc', ascending = 1)
+                if sort == SIGN:
+                    if reverse:
+                        df = df.sort_values(by='signc', ascending = 0)
+                    else:
+                        df = df.sort_values(by='signc', ascending = 1)
                 if sort == MACD2:
                     if reverse:
                         df = df.sort_values(by='macd2', ascending = 0)
@@ -662,6 +689,11 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
                         df = df.sort_values(by='sign2', ascending = 0)
                     else:
                         df = df.sort_values(by='sign2', ascending = 1)
+                if sort == HIST2:
+                    if reverse:
+                        df = df.sort_values(by='hist2', ascending = 0)
+                    else:
+                        df = df.sort_values(by='hist2', ascending = 1)
             if wantrsi:
                 rsilist = []
                 headskip = 0
@@ -965,14 +997,18 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
     print("ll ", len(ls), len(ls[0]))
     #print("mynames", type(mynames), len(mynames), mynames, " ", type(mynames[0]), len(mynames[0]))
     print("daes", olddate, newdate)
-    displayax(ax[0], ls[0], daynames2, mynames[0].values, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
+    myma0 = ls[0]
+    myma0 = [ my.fixzero2(myma0[0]), my.fixzero2(myma0[1]), my.fixzero2(myma0[2]) ]
+    myma0 = my.fixnaarr(myma0)
+    displayax(ax[0], myma0, daynames2, mynames[0].values, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
     myma = ls[0]
     #print("tmyma ", type(myma))
     #print(myma)
     print(myma)
     print("mym", type(myma), len(myma))
+    myma = [ my.fixzero2(myma[0]), my.fixzero2(myma[1]), my.fixzero2(myma[2]) ]
     myma = my.fixnaarr(myma)
-    print(myma)
+    print(myma[0].values)
     print("p",periodtext)
     #myma = my.base100(myma, periodtext)
     #print(myma)
@@ -1178,6 +1214,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
     print("ll ", mynames)
     #print("mynames", type(mynames), len(mynames), mynames, " ", type(mynames[0]), len(mynames[0]))
     print("daes", olddate, newdate)
+    print(type(commondays[0]))
     displayax(ax1, commonls, commondays, mynames, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
     percentize = True      
     if percentize:
@@ -1422,25 +1459,29 @@ def prevNonNan(alist, pos):
 def rangei(stop):
     return range(stop + 1)
 
-def simulateinvest(market, startdate, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0):
-    data = { 'startdate' : startdate, 'confidence' : confidence, 'confidencevalue' : confidencevalue, 'confidencefindtimes' : confidencefindtimes, 'stoploss' : stoploss, 'stoplossvalue' : stoplossvalue, 'indicatorpure' : indicatorpure, 'indicatorrebase' : indicatorrebase, 'indicatorreverse' : indicatorreverse, 'mldate' : mldate, 'stocks' : stocks, 'buyweight' : buyweight, 'interval' : interval, 'adviser' : adviser, 'period' : period }
+
+def simulateinvest2(market, startdate, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9):
+    simulateinvest(market, startdate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue)
+    
+def simulateinvest(market, startdate, confidence = False, confidenceValue = 0.7, confidenceFindTimes = 4, stoploss = True, stoplossValue = 0.9, indicatorPure = False, indicatorRebase = False, indicatorReverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalStoploss = True, intervalStoplossValue = 0.9):
+    data = { 'startdate' : startdate, 'confidence' : confidence, 'confidenceValue' : confidenceValue, 'confidenceFindTimes' : confidenceFindTimes, 'stoploss' : stoploss, 'stoplossValue' : stoplossValue, 'indicatorPure' : indicatorPure, 'indicatorRebase' : indicatorRebase, 'indicatorReverse' : indicatorReverse, 'mldate' : mldate, 'stocks' : stocks, 'buyweight' : buyweight, 'interval' : interval, 'adviser' : adviser, 'period' : period, 'interpolate' : interpolate, 'intervalStoploss' : intervalStoploss, 'intervalStoplossValue' : intervalStoplossValue }
     response = request.request2(market, data)
-    print(type(response))
-    print(response)
-    print(response.text)
-    print(response.json())
+    #print(type(response))
+    #print(response)
+    #print(response.text)
+    #print(response.json())
     resp = response.json()
-    print(resp)
+    #print(resp)
     webdata = resp['webdatajson']
-    print(webdata)
-    print(type(webdata))
-    print(webdata.keys())
+    #print(webdata)
+    #print(type(webdata))
+    #print(webdata.keys())
     updatemap = webdata['updateMap']
     #print(updatemap)
-    print(updatemap.keys())
+    #print(updatemap.keys())
     dates = updatemap['plotdates']
     commondays = dates
-    print(type(dates))
+    #print(type(dates))
     default = updatemap['plotdefault']
     capital = updatemap['plotcapital']
     commonls = [ default, capital ]
@@ -1464,12 +1505,20 @@ def simulateinvest(market, startdate, confidence = False, confidencevalue = 0.7,
     axescolor = '#f6f6f6'  # the axes background color
 
     ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
-    displayax(ax1, commonls, commondays, mynames, None, None, newdate, olddate, None, title, "V")
+    print(type(commondays[0]))
+    #print(commondays)
+    commondays = [ w.replace('.', '-') for w in commondays ]
+    commondays = [ np.datetime64(x) for x in commondays ]
+    #print(type(commondays[0]))
+    displayax(ax1, commonls, commondays, mynames, None, None, newdate, olddate, None, title, "Value")
     plt.show()
-    print(updatemap['stockhistory'])
-    print(updatemap['sumhistory'])
-    print(webdata.keys())
+    for x in updatemap['stockhistory']:
+        print(x)
+    for x in updatemap['sumhistory']:
+        print(x)
+    #print(webdata.keys())
     print(webdata['timingMap'])
+    print(updatemap['startdate'])
     return
 
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')

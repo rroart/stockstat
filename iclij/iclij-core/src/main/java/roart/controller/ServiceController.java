@@ -112,9 +112,9 @@ public class ServiceController {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
         IclijConfig config = IclijXMLConfig.getConfigInstance();
-        Map<String, Object> map = simConfig.getMap();
+        Map<String, Object> map = simConfig.asMap();
         config.getConfigValueMap().putAll(map);
-        return ServiceUtil.getSimulateInvest(new ComponentInput(config, null, market, null, null, true, false, new ArrayList<>(), new HashMap<>()));
+        return ServiceUtil.getSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
     }
 
 }

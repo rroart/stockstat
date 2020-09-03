@@ -32,13 +32,30 @@ public abstract class IndicatorAdviser extends Adviser {
     
     protected boolean indicatorreverse;
     
+    protected boolean interpolate;
+    
+    protected List<MetaItem> allMetas;
+    
     public IndicatorAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
         super(market, investStart, investEnd, param, simulateConfig);
+        SimulateInvestData simulateParam;
+        if (param instanceof SimulateInvestData) {
+            simulateParam = (SimulateInvestData) param;
+        } else {
+            simulateParam = new SimulateInvestData(param);
+        }
+        if (simulateParam.getAllMetas() != null) {
+            allMetas = simulateParam.getAllMetas();
+        } else {
+            allMetas = getAllMetas(param);
+        }
+
         indicatorreverse = simulateConfig.getIndicatorReverse();
         
+        interpolate = simulateConfig.getInterpolate();
+        
         if (param.getResultMaps() != null) {
-            List<MetaItem> metas = param.getService().getMetas();
-            MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+            MetaItem meta = new MetaUtil().findMeta(allMetas, market.getConfig().getMarket());
             Map<String, Map<String, Object>> resultMaps = param.getResultMaps();
             Integer cat = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             String catName = new MetaUtil().getCategory(meta, cat);
@@ -55,7 +72,7 @@ public abstract class IndicatorAdviser extends Adviser {
         // for improve evolver
         List<MetaItem> metas = param.getService().getMetas();
         MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
-        List<String> categories = new MetaUtil().getCategories(meta);
+        //List<String> categories = new MetaUtil().getCategories(meta);
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
         // don't need these both here and in getevolveml?
         aMap.put(ConfigConstants.MACHINELEARNING, false);
@@ -87,7 +104,12 @@ public abstract class IndicatorAdviser extends Adviser {
 
     @Override
     public List<IncDecItem> getIncs(String aParameter, int buytop, LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
-        Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
+        Map<String, List<List<Double>>> categoryValueMap;
+        if (interpolate) {
+            categoryValueMap = param.getFillCategoryValueMap();
+        } else {
+            categoryValueMap = param.getCategoryValueMap();
+        }
         List<Pair<String, Double>> valueList = getValuePairs(categoryValueMap, indexOffset, stockDates, excludes);
         List<IncDecItem> list = new ArrayList<>();
         for (Pair<String, Double> value : valueList) {
@@ -174,4 +196,9 @@ public abstract class IndicatorAdviser extends Adviser {
     
     protected abstract String getPipeline();
 
+    private List<MetaItem> getAllMetas(ComponentData param) {
+        return param.getService().getMetas();
+    }
+
 }
+

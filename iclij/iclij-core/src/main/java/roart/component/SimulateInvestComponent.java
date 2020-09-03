@@ -2,7 +2,10 @@ package roart.component;
 
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -46,9 +49,6 @@ import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
-import roart.iclij.model.action.ImproveSimulateInvestActionData;
-import roart.iclij.model.action.SimulateInvestActionData;
-import roart.iclij.util.MiscUtil;
 import roart.iclij.verifyprofit.TrendUtil;
 import roart.service.model.ProfitData;
 
@@ -95,7 +95,15 @@ public class SimulateInvestComponent extends ComponentML {
         }
         simConfig.setStoploss(config.wantsSimulateInvestStoploss());
         simConfig.setStoplossValue(config.getSimulateInvestStoplossValue());
+        simConfig.setIntervalStoploss(config.wantsSimulateInvestIntervalStoploss());
+        simConfig.setIntervalStoplossValue(config.getSimulateInvestIntervalStoplossValue());
         simConfig.setStocks(config.getSimulateInvestStocks());
+        simConfig.setInterpolate(config.wantsSimulateInvestInterpolate());
+        try {
+            simConfig.setStartdate(config.getSimulateInvestStartdate());
+        } catch (Exception e) {
+            
+        }
         SimulateInvestConfig localSimConfig = market.getSimulate();
         if (!(param instanceof SimulateInvestData)) {
             simConfig.merge(localSimConfig);
@@ -110,7 +118,12 @@ public class SimulateInvestComponent extends ComponentML {
         int interval = config.getSimulateInvestInterval();
         
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
-        Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
+        Map<String, List<List<Double>>> categoryValueMap;
+        if (simConfig.getInterpolate()) {
+            categoryValueMap = param.getFillCategoryValueMap();
+        } else {
+            categoryValueMap = param.getCategoryValueMap();
+        }
         LocalDate investStart = null;
         LocalDate investEnd = null;
         String mldate = null;
@@ -132,6 +145,10 @@ public class SimulateInvestComponent extends ComponentML {
         if (mldate == null) {
             mldate = stockDates.get(0);
         }
+        if (simConfig.getStartdate() != null) {
+            mldate = simConfig.getStartdate();
+            mldate = mldate.replace('-', '.');
+        }
         try {
             investStart = TimeUtil.convertDate(mldate);
         } catch (ParseException e1) {
@@ -140,7 +157,19 @@ public class SimulateInvestComponent extends ComponentML {
         
         int i = simConfig.getAdviser();
         Adviser adviser = new AdviserFactory().get(i, market, investStart, investEnd, param, simConfig);
-        
+
+        String[] excludes = null;
+        if (market.getSimulate() != null) {
+            excludes = market.getSimulate().getExcludes();
+        }
+        if (excludes == null) {
+            excludes = new String[0];
+        }
+        List<String> excludeList = Arrays.asList(excludes);
+
+        Map<String, List<List<Double>>> filteredCategoryValueMap = new HashMap<>(categoryValueMap);
+        filteredCategoryValueMap.keySet().removeAll(excludeList);
+
         List<String> plotDates = new ArrayList<>();
         List<Double> plotCapital = new ArrayList<>();
         List<Double> plotDefault = new ArrayList<>();
@@ -175,25 +204,12 @@ public class SimulateInvestComponent extends ComponentML {
                 List<Astock> sells = new ArrayList<>();
                 List<Astock> buys = new ArrayList<>();
                 
-                if (simConfig.getStoploss()) {
-                    stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset, sells, simConfig.getStoplossValue());                       
+                if (simConfig.getIntervalStoploss()) {
+                    stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset, sells, simConfig.getIntervalStoplossValue());                       
                 }
                 
                 if (!simConfig.getConfidence() || myreliability >= simConfig.getConfidenceValue()) {
-                    List<String> excludes = null;
-                    if (market.getSimulate() != null) {
-                        excludes = market.getSimulate().getExcludes();
-                    }
-                    if (excludes == null) {
-                        excludes = new ArrayList<>();
-                        /*
-                        excludes.add("VIX:IND");
-                        excludes.add("XU100:IND");
-                        excludes.add("NSEASI:IND");
-                        excludes.add("PSI20:IND");
-                        */
-                    }
-                    List<IncDecItem> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, excludes);
+                    List<IncDecItem> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, excludeList);
                     //List<IncDecItem> myincs = ds.getIncs(valueList);
                     //List<ValueList> valueList = ds.getValueList(categoryValueMap, indexOffset);
 
@@ -220,7 +236,7 @@ public class SimulateInvestComponent extends ComponentML {
                     log.error("Sizes");
                 }
                 
-                Trend trend = new TrendUtil().getTrend(findTime, null /*TimeUtil.convertDate2(olddate)*/, indexOffset, stockDates /*, findTime*/, param, market, categoryValueMap);
+                Trend trend = new TrendUtil().getTrend(findTime, null /*TimeUtil.convertDate2(olddate)*/, indexOffset, stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
                 if (trend.incAverage < 0) {
                     int jj = 0;
                 }
@@ -230,7 +246,9 @@ public class SimulateInvestComponent extends ComponentML {
                 Capital sum = getSum(mystocks);
                 sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + ids + " " + trend);
 
-                resultavg *= trend.incAverage;
+                if (trend.incAverage != 0) {
+                    resultavg *= trend.incAverage;
+                }
                 
                 plotDates.add(datestring);
                 plotDefault.add(resultavg);
@@ -245,26 +263,53 @@ public class SimulateInvestComponent extends ComponentML {
                     beatavg++;
                 }
                 
+                if (simConfig.getStoploss()) {
+                    for (int j = 0; j < interval; j++) {
+                        sells = new ArrayList<>();
+                        //System.out.println(interval + " " +  j);
+                        stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset + j, 1, categoryValueMap, indexOffset + j + 1, sells, simConfig.getStoplossValue());                       
+                        sell(stockDates, categoryValueMap, capital, sells, stockhistory, indexOffset + j, date, mystocks);
+                    }                    
+                }
                 date = date.plusDays(interval);
                 prevIndexOffset = indexOffset;
                 //memoryList.add(memory);
             }
             Capital sum = getSum(mystocks);
             sum.amount += capital.amount;
+            
+            Period period = Period.between(investStart, date);
+            long days = ChronoUnit.DAYS.between(investStart, date);
+            double years = (double) days / 365;
             Double score = sum.amount / resultavg;
-            if (score < 0 || score > 100) {
+            score = Math.pow(score, 1 / years);
+            if (score < -1) {
+                int jj = 0;
+            }
+            if (score > 10) {
+                int jj = 0;
+            }
+            if (score > 100) {
                 int jj = 0;
             }
             Map<String, Double> scoreMap = new HashMap<>();
             scoreMap.put("" + score, score);
             scoreMap.put("score", score);
             componentData.setScoreMap(scoreMap);
+            
+            {
+                int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, mldate);
+                Trend trend = new TrendUtil().getTrend(indexOffset - prevIndexOffset, null /*TimeUtil.convertDate2(olddate)*/, prevIndexOffset, stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
+                log.info(trend.toString());
+            }
+            
             Map<String, Object> map = new HashMap<>();
             map.put("sumhistory", sumHistory);
             map.put("stockhistory", stockhistory);
             map.put("plotdefault", plotDefault);
             map.put("plotdates", plotDates);
             map.put("plotcapital", plotCapital);
+            map.put("startdate", mldate);
             param.getUpdateMap().putAll(map);
             componentData.getUpdateMap().putAll(map);
         }
@@ -300,6 +345,7 @@ public class SimulateInvestComponent extends ComponentML {
         SimulateInvestData param = new SimulateInvestData(componentparam);
         param.setAllIncDecs(getAllIncDecs(market, null, null));
         param.setAllMemories(getAllMemories(market, null, null));
+        param.setAllMetas(getAllMetas(componentparam));
         getResultMaps(param, market);
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         param.setStockDates(stockDates);
@@ -339,6 +385,8 @@ public class SimulateInvestComponent extends ComponentML {
         confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
         confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSS);
         confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE);
         confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORPURE);
         confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
         confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
@@ -346,6 +394,7 @@ public class SimulateInvestComponent extends ComponentML {
         confList.add(IclijConfigConstants.SIMULATEINVESTSTOCKS);
         confList.add(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);
         confList.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERPOLATE);
         confList.add(IclijConfigConstants.SIMULATEINVESTADVISER);
         confList.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
         return confList;
@@ -405,7 +454,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private void stoploss(Capital capital, int buytop, List<Astock> mystocks, List<String> stockDates, int indexOffset,
-            int findTime, Map<String, List<List<Double>>> categoryValueMap, int prevIndexOffset,List<Astock> sells, double stoploss) {
+            int findTime, Map<String, List<List<Double>>> categoryValueMap, int prevIndexOffset, List<Astock> sells, double stoploss) {
         List<Astock> newSells = new ArrayList<>();
         for (Astock item : mystocks) {
             String id = item.id;
@@ -586,14 +635,18 @@ public class SimulateInvestComponent extends ComponentML {
         return new ArrayList<>();
     }
     
+    private List<MetaItem> getAllMetas(ComponentData param) {
+        return param.getService().getMetas();
+    }
+    
     private void getResultMaps(ComponentData param, Market market) {
         //Map<String, List<Object>> objectMap = new HashMap<>();
         IclijConfig config = param.getInput().getConfig();
        
         Map<String, Object> aMap = new HashMap<>();
         // for improve evolver
-        List<MetaItem> metas = param.getService().getMetas();
-        MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+        //List<MetaItem> metas = param.getService().getMetas();
+        //MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
         // don't need these both here and in getevolveml?
         aMap.put(ConfigConstants.MACHINELEARNING, false);

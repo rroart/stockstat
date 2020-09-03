@@ -626,6 +626,14 @@ public class IclijConfig {
         return (Double) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE);
     }
 
+    public boolean wantsSimulateInvestIntervalStoploss() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS);
+    }
+
+    public double getSimulateInvestIntervalStoplossValue() {
+        return (Double) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE);
+    }
+
     public boolean wantsSimulateInvestIndicatorReverse() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
     }
@@ -650,6 +658,10 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);
     }
 
+    public boolean wantsSimulateInvestInterpolate() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERPOLATE);
+    }
+
     public int getSimulateInvestInterval() {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVAL);
     }
@@ -660,6 +672,10 @@ public class IclijConfig {
 
     public int getSimulateInvestPeriod() {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTPERIOD);
+    }
+
+    public String getSimulateInvestStartdate() {
+        return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTARTDATE);
     }
 
     public boolean wantsImproveSimulateInvestAutorun() {
