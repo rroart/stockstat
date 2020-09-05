@@ -22,6 +22,8 @@ public class AdviserFactory {
             return new IndicatorMacdHistAdviser(market, investStart, investEnd, param, simulateConfig);
         case 5:
             return new IndicatorRsiAdviser(market, investStart, investEnd, param, simulateConfig);
+        case 6:
+            return new DayAdviser(market, investStart, investEnd, param, simulateConfig);
         default:
             return null;
         }

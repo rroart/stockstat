@@ -54,9 +54,14 @@ public abstract class IndicatorAdviser extends Adviser {
         
         interpolate = simulateConfig.getInterpolate();
         
-        if (param.getResultMaps() != null) {
+        if (param instanceof SimulateInvestData) {            
             MetaItem meta = new MetaUtil().findMeta(allMetas, market.getConfig().getMarket());
-            Map<String, Map<String, Object>> resultMaps = param.getResultMaps();
+            Map<String, Map<String, Object>> resultMaps;
+            if (simulateConfig.getIndicatorRebase()) {
+                resultMaps = simulateParam.getResultRebaseMaps();
+            } else {
+                resultMaps = simulateParam.getResultMaps();
+            }
             Integer cat = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             String catName = new MetaUtil().getCategory(meta, cat);
             Map<String, Object> objectMaps = resultMaps.get(catName);
@@ -70,7 +75,7 @@ public abstract class IndicatorAdviser extends Adviser {
         
         Map<String, Object> aMap = new HashMap<>();
         // for improve evolver
-        List<MetaItem> metas = param.getService().getMetas();
+        List<MetaItem> metas = allMetas; //param.getService().getMetas();
         MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
         //List<String> categories = new MetaUtil().getCategories(meta);
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
@@ -84,6 +89,7 @@ public abstract class IndicatorAdviser extends Adviser {
         aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         aMap.put(ConfigConstants.MISCMYDAYS, 0);
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, simulateConfig.getIndicatorRebase());
+        param.getResultMap(null, aMap);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
         /*
         for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {

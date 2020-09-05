@@ -678,6 +678,10 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTARTDATE);
     }
 
+    public int getSimulateInvestDay() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTDAY);
+    }
+
     public boolean wantsImproveSimulateInvestAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN);
     }

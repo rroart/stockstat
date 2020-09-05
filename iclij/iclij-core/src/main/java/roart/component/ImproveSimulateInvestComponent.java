@@ -97,6 +97,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         confList.add(IclijConfigConstants.SIMULATEINVESTINTERPOLATE);
         confList.add(IclijConfigConstants.SIMULATEINVESTADVISER);
         confList.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
+        confList.add(IclijConfigConstants.SIMULATEINVESTDAY);
         return confList;
     }
 

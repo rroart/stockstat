@@ -115,4 +115,8 @@ public class FitnessIclijConfigMap extends Fitness {
         return score;
     }
 
+    @Override
+    public String titleText() {
+        return componentName;
+    }
 }

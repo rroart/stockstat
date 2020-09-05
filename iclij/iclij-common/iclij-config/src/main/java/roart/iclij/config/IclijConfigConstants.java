@@ -251,6 +251,7 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTINTERVALSTOPLOSSVALUE = "simulateinvest.intervalstoplossvalue";
     public static final String SIMULATEINVESTADVISER = "simulateinvest.adviser";
     public static final String SIMULATEINVESTINTERPOLATE = "simulateinvest.interpolate";
+    public static final String SIMULATEINVESTDAY = "simulateinvest.day";
     // special
     public static final String SIMULATEINVESTPERIOD = "simulateinvest.period";
     // special

@@ -117,4 +117,13 @@ public class ServiceController {
         return ServiceUtil.getSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
     }
 
+    @RequestMapping(value = "action/improvesimulateinvest",
+            method = RequestMethod.POST)
+    public IclijServiceResult getImproveSimulateInvest(@RequestBody IclijServiceParam param)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
+    }
+
 }

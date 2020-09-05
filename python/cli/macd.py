@@ -72,7 +72,7 @@ class MACD:
     if not l.isnull().all():
         m = ta.MACD(l)
         if doprint:
-          print("hh")
+          print("hh", m[0].values)
     else:
         return None
         #m = (pd.Series([np.NaN]), pd.Series([np.NaN]), pd.Series([np.NaN]))
@@ -138,5 +138,6 @@ class MACD:
     #print('vxazn')
     #print(histc.values)
     #print(retl)
+    #print(retl[0])
     return(retl)
 

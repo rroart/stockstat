@@ -43,6 +43,8 @@ public class SimulateInvestConfig {
     
     private Boolean interpolate;
     
+    private Integer day;
+
     public SimulateInvestConfig() {
         super();
     }
@@ -199,6 +201,14 @@ public class SimulateInvestConfig {
         this.interpolate = interpolate;
     }
 
+    public Integer getDay() {
+        return day;
+    }
+
+    public void setDay(Integer day) {
+        this.day = day;
+    }
+
     public void merge(SimulateInvestConfig other) {
         if (other == null) {
             return;
@@ -282,6 +292,7 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, intervalStoploss);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE, intervalStoplossValue);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, interpolate);
+        map.put(IclijConfigConstants.SIMULATEINVESTDAY, day);
         return map;
     }
 }

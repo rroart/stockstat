@@ -11,7 +11,9 @@ public class SimulateInvestData extends ComponentData {
     
     private List allMetas;
     
-    private Map<String, List<List<Double>>> aCategoryValueMap;
+    private Map<String, List<List<Double>>> categoryValueRebaseMap;
+    
+    private Map<String, Map<String, Object>> resultRebaseMaps;
     
     private List<String> stockDates;
     
@@ -43,12 +45,20 @@ public class SimulateInvestData extends ComponentData {
         this.allMetas = allMetas;
     }
 
-    public Map<String, List<List<Double>>> getaCategoryValueMap() {
-        return aCategoryValueMap;
+    public Map<String, List<List<Double>>> getCategoryValueRebaseMap() {
+        return categoryValueRebaseMap;
     }
 
-    public void setaCategoryValueMap(Map<String, List<List<Double>>> aCategoryValueMap) {
-        this.aCategoryValueMap = aCategoryValueMap;
+    public void setCategoryValueRebaseMap(Map<String, List<List<Double>>> categoryValueRebaseMap) {
+        this.categoryValueRebaseMap = categoryValueRebaseMap;
+    }
+
+    public Map<String, Map<String, Object>> getResultRebaseMaps() {
+        return resultRebaseMaps;
+    }
+
+    public void setResultRebaseMaps(Map<String, Map<String, Object>> resultRebaseMaps) {
+        this.resultRebaseMaps = resultRebaseMaps;
     }
 
     public List<String> getStockDates() {

@@ -99,6 +99,7 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setIntervalStoplossValue(config.getSimulateInvestIntervalStoplossValue());
         simConfig.setStocks(config.getSimulateInvestStocks());
         simConfig.setInterpolate(config.wantsSimulateInvestInterpolate());
+        simConfig.setDay(config.getSimulateInvestDay());
         try {
             simConfig.setStartdate(config.getSimulateInvestStartdate());
         } catch (Exception e) {
@@ -175,6 +176,9 @@ public class SimulateInvestComponent extends ComponentML {
         List<Double> plotDefault = new ArrayList<>();
         
         List<String> parametersList = adviser.getParameters();
+        if (parametersList.isEmpty()) {
+            parametersList.add(null);
+        }
         for (String aParameter : parametersList) {
             Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
             if (realParameters != null && realParameters.getThreshold() != 1.0) {
@@ -397,6 +401,7 @@ public class SimulateInvestComponent extends ComponentML {
         confList.add(IclijConfigConstants.SIMULATEINVESTINTERPOLATE);
         confList.add(IclijConfigConstants.SIMULATEINVESTADVISER);
         confList.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
+        confList.add(IclijConfigConstants.SIMULATEINVESTDAY);
         return confList;
     }
 
@@ -639,7 +644,7 @@ public class SimulateInvestComponent extends ComponentML {
         return param.getService().getMetas();
     }
     
-    private void getResultMaps(ComponentData param, Market market) {
+    private void getResultMaps(SimulateInvestData param, Market market) {
         //Map<String, List<Object>> objectMap = new HashMap<>();
         IclijConfig config = param.getInput().getConfig();
        
@@ -656,11 +661,18 @@ public class SimulateInvestComponent extends ComponentML {
         aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
         aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         aMap.put(ConfigConstants.MISCMYDAYS, 0);
-        aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, config.wantsSimulateInvestIndicatorRebase());
+        aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, true);
         // different line
-        param.getAndSetWantedCategoryValueMap();
+        param.getResultMap(null, aMap);
+        Map<String, Map<String, Object>> mapsRebase = param.getResultMaps();
+        param.setResultRebaseMaps(mapsRebase);
+        
+        aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, false);
+        // different line
+        param.getResultMap(null, aMap);
         //Map<String, Map<String, Object>> maps = param.getResultMaps();
-        /*
+        //param.getAndSetWantedCategoryValueMap();
+       /*
         for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
             String key = entry.getKey();
             System.out.println("key " + key);
