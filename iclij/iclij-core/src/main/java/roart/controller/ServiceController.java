@@ -117,13 +117,19 @@ public class ServiceController {
         return ServiceUtil.getSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
     }
 
-    @RequestMapping(value = "action/improvesimulateinvest",
+    @RequestMapping(value = "action/improvesimulateinvest/market/{market}",
             method = RequestMethod.POST)
-    public IclijServiceResult getImproveSimulateInvest(@RequestBody IclijServiceParam param)
+    public IclijServiceResult getImproveSimulateInvest(@PathVariable("market") String market, @RequestBody SimulateInvestConfig simConfig)
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), true, false, new ArrayList<>(), new HashMap<>()));
+        if ("null".equals(market)) {
+            market = null;
+        }
+        IclijConfig config = new IclijConfig(IclijXMLConfig.getConfigInstance());
+        Map<String, Object> map = simConfig.asMap();
+        config.getConfigValueMap().putAll(map);
+        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
     }
 
 }

@@ -101,6 +101,11 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setInterpolate(config.wantsSimulateInvestInterpolate());
         simConfig.setDay(config.getSimulateInvestDay());
         try {
+            simConfig.setEnddate(config.getSimulateInvestEnddate());
+        } catch (Exception e) {
+            
+        }
+        try {
             simConfig.setStartdate(config.getSimulateInvestStartdate());
         } catch (Exception e) {
             
@@ -126,7 +131,7 @@ public class SimulateInvestComponent extends ComponentML {
             categoryValueMap = param.getCategoryValueMap();
         }
         LocalDate investStart = null;
-        LocalDate investEnd = null;
+        LocalDate investEnd = param.getFutureDate();
         String mldate = null;
         if (simConfig.getMldate()) {
             mldate = market.getConfig().getMldate();
@@ -152,6 +157,15 @@ public class SimulateInvestComponent extends ComponentML {
         }
         try {
             investStart = TimeUtil.convertDate(mldate);
+        } catch (ParseException e1) {
+            log.error(Constants.EXCEPTION, e1);
+        }
+        try {
+            String enddate = simConfig.getEnddate();
+            if (enddate != null) {
+                investEnd = TimeUtil.convertDate(enddate);
+            }
+            investEnd = TimeUtil.convertDate(mldate);
         } catch (ParseException e1) {
             log.error(Constants.EXCEPTION, e1);
         }
@@ -193,7 +207,7 @@ public class SimulateInvestComponent extends ComponentML {
             LocalDate date = investStart;
             int prevIndexOffset = 0;
             date = TimeUtil.getEqualBefore(stockDates, date);
-            while (date.isBefore(param.getFutureDate())) {
+            while (date.isBefore(investEnd)) {
                 date = TimeUtil.getForwardEqualAfter2(date, 0 /* findTime */, stockDates);
                 String datestring = TimeUtil.convertDate2(date);
                 int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);

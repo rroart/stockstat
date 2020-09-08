@@ -256,6 +256,7 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTPERIOD = "simulateinvest.period";
     // special
     public static final String SIMULATEINVESTSTARTDATE = "simulateinvest.startdate";
+    public static final String SIMULATEINVESTENDDATE = "simulateinvest.enddate";
     public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
     public static final String IMPROVESIMULATEINVESTAUTORUN = "improvesimulateinvest.autorun";
     public static final String IMPROVESIMULATEINVESTEVOLUTIONCONFIG = "improvesimulateinvest.evolutionconfig";

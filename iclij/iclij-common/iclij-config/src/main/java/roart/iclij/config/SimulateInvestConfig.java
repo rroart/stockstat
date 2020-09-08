@@ -37,6 +37,8 @@ public class SimulateInvestConfig {
     
     private String startdate;
     
+    private String enddate;
+    
     private Boolean intervalStoploss;
     
     private Double intervalStoplossValue;
@@ -177,6 +179,14 @@ public class SimulateInvestConfig {
         this.startdate = startdate;
     }
     
+    public String getEnddate() {
+        return enddate;
+    }
+
+    public void setEnddate(String enddate) {
+        this.enddate = enddate;
+    }
+
     public Boolean getIntervalStoploss() {
         return intervalStoploss;
     }
@@ -267,6 +277,9 @@ public class SimulateInvestConfig {
         if (other.startdate != null) {
             this.startdate = other.startdate;
         }
+        if (other.enddate != null) {
+            this.enddate = other.enddate;
+        }
         if (other.excludes != null) {
             this.excludes = other.excludes;
         }
@@ -289,6 +302,7 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTADVISER, adviser);
         map.put(IclijConfigConstants.SIMULATEINVESTPERIOD, period);
         map.put(IclijConfigConstants.SIMULATEINVESTSTARTDATE, startdate);
+        map.put(IclijConfigConstants.SIMULATEINVESTENDDATE, enddate);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, intervalStoploss);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE, intervalStoplossValue);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, interpolate);
