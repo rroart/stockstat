@@ -33,6 +33,9 @@ public class PeriodAdviser extends Adviser {
         super(market, investStart, investEnd, param, simulateConfig);
         indicatorreverse = simulateConfig.getIndicatorReverse();
         if (true) {
+            if (simulateConfig == null || simulateConfig.getPeriod() == null) {
+                int jj = 0;
+            }
             int period = simulateConfig.getPeriod();
             //List<MetaItem> metas = param.getService().getMetas();
             //MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
@@ -49,6 +52,10 @@ public class PeriodAdviser extends Adviser {
             //Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
             Map<String, Map<String, Object>> resultMaps = param.getResultMaps();
             Map<String, Object> objectMaps = resultMaps.get("" + cat);
+            if (objectMaps == null) {
+                categoryValueMap = new HashMap<>();
+                return;
+            }
             Map<String, List<List<Double>>> aCategoryValueMap;
             if (simulateConfig.getInterpolate()) {
                 aCategoryValueMap = (Map<String, List<List<Double>>>) objectMaps.get(PipelineConstants.FILLLIST);

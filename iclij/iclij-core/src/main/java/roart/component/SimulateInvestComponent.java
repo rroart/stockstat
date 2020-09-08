@@ -305,6 +305,7 @@ public class SimulateInvestComponent extends ComponentML {
                 int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, mldate);
                 Trend trend = new TrendUtil().getTrend(indexOffset - prevIndexOffset, null /*TimeUtil.convertDate2(olddate)*/, prevIndexOffset, stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
                 log.info(trend.toString());
+                log.info("" + simConfig.asMap());
             }
             
             Map<String, Object> map = new HashMap<>();

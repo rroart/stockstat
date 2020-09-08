@@ -32,7 +32,7 @@ public class DayAdviser extends Adviser {
         super(market, investStart, investEnd, param, simulateConfig);
         indicatorreverse = simulateConfig.getIndicatorReverse();
         day = simulateConfig.getDay();
-        if (true) {
+        if (false) {
             int period = simulateConfig.getPeriod();
             //List<MetaItem> metas = param.getService().getMetas();
             //MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
@@ -46,6 +46,7 @@ public class DayAdviser extends Adviser {
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
             Integer cat = period; //new MetaUtil().getCategory(meta, period);
+            //Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             //Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
             Map<String, Map<String, Object>> resultMaps = param.getResultMaps();
             Map<String, Object> objectMaps = resultMaps.get("" + cat);
@@ -57,7 +58,11 @@ public class DayAdviser extends Adviser {
             }
             categoryValueMap = aCategoryValueMap;
         } else {
-            categoryValueMap = param.getCategoryValueMap();
+            if (simulateConfig.getInterpolate()) {
+                categoryValueMap = param.getFillCategoryValueMap();
+            } else {
+                categoryValueMap = param.getCategoryValueMap();
+            }
         }
     }
 
