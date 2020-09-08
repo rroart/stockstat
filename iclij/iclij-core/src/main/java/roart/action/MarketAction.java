@@ -114,7 +114,7 @@ public abstract class MarketAction extends Action {
     
     @Override
     public void goal(Action parent, ComponentData param, Integer priority) {
-        getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
+        getMarkets(parent, new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
     }
 
     public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve, Integer priority, List<TimingItem> timingsdone) {
