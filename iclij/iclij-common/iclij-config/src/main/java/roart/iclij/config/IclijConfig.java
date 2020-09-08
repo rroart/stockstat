@@ -16,7 +16,7 @@ public class IclijConfig {
 
     public IclijConfig(IclijConfig config) {
         this.configTreeMap = config.configTreeMap;
-        this.configValueMap = config.configValueMap;
+        this.configValueMap = new HashMap<>(config.configValueMap);
         this.deflt = config.deflt;
         this.text = config.text;
         this.type = config.type;
