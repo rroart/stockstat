@@ -566,10 +566,14 @@ public abstract class MarketAction extends Action {
         timingMap.put(market.getConfig().getMarket(), param.getTimings());
         if (marketTime.buy == null || marketTime.buy) {
             myData.setTimingMap(timingMap);
-            myData.getUpdateMap().putAll(param.getUpdateMap());
+            if (param.getUpdateMap() != null) {
+                myData.getUpdateMap().putAll(param.getUpdateMap());
+            }
         } else {
             myData.setTimingMap2(timingMap);
-            myData.getUpdateMap2().putAll(param.getUpdateMap());
+            if (param.getUpdateMap() != null) {
+                myData.getUpdateMap2().putAll(param.getUpdateMap());
+            }
         }
     }
 
