@@ -126,7 +126,7 @@ public class IclijConfigMapGene extends AbstractGene {
     }
     
     public boolean isEmpty() {
-        return confList == null || confList.isEmpty();
+        return confList == null || confList.isEmpty() || map == null || map.isEmpty();
     }
     
     @Override
