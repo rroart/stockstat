@@ -99,11 +99,13 @@ public class IclijXMLConfig {
         IclijConfigConstantMaps.makeTextMap();
         IclijConfigConstantMaps.makeTypeMap();
         IclijConfigConstantMaps.makeConvertMap();
+        IclijConfigConstantMaps.makeRangeMap();
         configInstance.setDeflt(IclijConfigConstantMaps.deflt);
         configInstance.setType(IclijConfigConstantMaps.map);
         configInstance.setText(IclijConfigConstantMaps.text);
         configInstance.setConv(IclijConfigConstantMaps.conv);
-        if (configxml != null) {
+        configInstance.setRange(IclijConfigConstantMaps.range);
+       if (configxml != null) {
             printout();
             doc = configxml.getDocument();
             if (doc != null) {
@@ -663,11 +665,13 @@ public class IclijXMLConfig {
             }
             MarketFilter marketFilter = getConfig(configMap, "filter", MarketFilter.class, config);
             MLConfigs mlConfigs = getConfig(configMap, "mlconfig", MLConfigs.class, config);
+            SimulateInvestConfig simulate = getConfig(configMap, "simulate", SimulateInvestConfig.class, config);
             //MLConfigs defaultMlConfigs = getDefaultMlConfigs(config, mapper, text);
             //defaultMlConfigs.merge(mlConfigs);
             market.setConfig(marketConfig);
             market.setFilter(marketFilter);
             market.setMlconfig(mlConfigs);
+            market.setSimulate(simulate);
             //String text2 = (String) config.getConfigValueMap().get(text);
             //MarketConfig market = mapper.readValue(text2, new TypeReference<MarketConfig>(){});
             retList.add(market);

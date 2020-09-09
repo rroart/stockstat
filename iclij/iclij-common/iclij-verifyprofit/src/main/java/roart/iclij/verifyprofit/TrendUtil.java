@@ -21,10 +21,10 @@ public class TrendUtil {
 
     public Trend getTrend(int days, String date, int startoffset, List<String> stockDates, ComponentData componentData, Market market, Map<String, List<List<Double>>> categoryValueMap) {
         //log.info("Verify compare date {} with {}", oldDate, date);
-        log.info("Use date {} with {} days", date, days);
+        log.debug("Use date {} with {} days", date, days);
  
         VerifyProfit verify = new VerifyProfit();
-        return verify.getTrend(days, categoryValueMap, startoffset);
+        return verify.getTrend(days, categoryValueMap, startoffset, stockDates);
     }
 
     public Trend getTrend(int days, String date, int startoffset, List<String> stockDates, ComponentData componentData, Market market) {
@@ -41,7 +41,7 @@ public class TrendUtil {
         Map<String, List<List<Double>>> categoryValueMap = componentData.getCategoryValueMap();
  
         VerifyProfit verify = new VerifyProfit();
-        return verify.getTrend(days, categoryValueMap, startoffset);
+        return verify.getTrend(days, categoryValueMap, startoffset, stockDates);
     }
 
     public Trend getTrend(int days, String date, int startoffset, List<String> stockDates, int loopoffset, ComponentData componentData, Market market) {
@@ -66,7 +66,7 @@ public class TrendUtil {
         Map<String, List<List<Double>>> categoryValueMap = componentData.getCategoryValueMap();
   
         VerifyProfit verify = new VerifyProfit();
-        return verify.getTrend(days, categoryValueMap, startoffset, loopoffset);
+        return verify.getTrend(days, categoryValueMap, startoffset, loopoffset, stockDates);
     }
 
 }

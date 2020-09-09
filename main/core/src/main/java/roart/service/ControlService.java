@@ -39,6 +39,7 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
+import roart.common.util.ValidateUtil;
 import roart.db.dao.DbDao;
 import roart.db.dao.util.DbDaoUtil;
 import roart.etl.MarketDataETL;
@@ -269,6 +270,7 @@ public class ControlService {
         
         String catName = EvolutionService.getCatName(cat, periodText);
 
+        ValidateUtil.validateSizes(stocks, marketdatamap.get(market).stocks);
         if (stocks.size() != marketdatamap.get(market).stocks.size()) {
             log.error("Sizes {} {}", stocks.size(), marketdatamap.get(market).stocks.size());
         }

@@ -44,6 +44,8 @@ public class ComponentData {
 
     private Map<String, List<List<Double>>> categoryValueMap;
     
+    private Map<String, List<List<Double>>> fillCategoryValueMap;
+    
     private Integer usedsec;
 
     private Map<String, Object> updateMap;
@@ -73,6 +75,7 @@ public class ComponentData {
         this.setFuturedays(componentparam.getFuturedays());
         this.resultMap = componentparam.resultMap;
         this.categoryValueMap = componentparam.categoryValueMap;
+        this.fillCategoryValueMap = componentparam.fillCategoryValueMap;
         this.usedsec = componentparam.usedsec;
         this.updateMap = new HashMap<>(); //componentparam.updateMap;
         this.configValueMap = new HashMap<>(this.service.conf.getConfigValueMap());
@@ -221,6 +224,14 @@ public class ComponentData {
         this.categoryValueMap = categoryValueMap;
     }
 
+    public Map<String, List<List<Double>>> getFillCategoryValueMap() {
+        return fillCategoryValueMap;
+    }
+
+    public void setFillCategoryValueMap(Map<String, List<List<Double>>> fillCategoryValueMap) {
+        this.fillCategoryValueMap = fillCategoryValueMap;
+    }
+
     public Integer getUsedsec() {
         return usedsec;
     }
@@ -308,6 +319,8 @@ public class ComponentData {
         try {
             Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.LIST);
             this.setCategoryValueMap(aCategoryValueMap);
+            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.FILLLIST);
+            this.setFillCategoryValueMap(aFillCategoryValueMap);
         } catch (Exception e) {
             int jj = 0;
         }
@@ -333,7 +346,9 @@ public class ComponentData {
             log.info("" + result.get(PipelineConstants.META).keySet());
             Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
-        this.setCategoryValueMap(aCategoryValueMap);
+            this.setCategoryValueMap(aCategoryValueMap);
+            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.FILLLIST);
+            this.setFillCategoryValueMap(aFillCategoryValueMap);
         } catch (Exception e) {
             int jj = 0;
             log.error("Ex", e);

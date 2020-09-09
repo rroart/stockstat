@@ -1,4 +1,4 @@
-package roart.component;
+package roart.evolution.chromosome.winner;
 
 import java.util.List;
 import java.util.Map;

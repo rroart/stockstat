@@ -77,7 +77,7 @@ public class MarketFilterChromosome2 extends AbstractChromosome {
     @Override
     public Individual crossover(AbstractChromosome chromosome) {
         MarketFilterGene newNNConfig =  (MarketFilterGene) gene.crossover(((MarketFilterChromosome2) chromosome).gene);
-        MarketFilterChromosome2 eval = new MarketFilterChromosome2(confList, gene);
+        MarketFilterChromosome2 eval = new MarketFilterChromosome2(confList, newNNConfig);
         //MarketFilterChromosome eval = new MarketFilterChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
         return new Individual(eval);
     }

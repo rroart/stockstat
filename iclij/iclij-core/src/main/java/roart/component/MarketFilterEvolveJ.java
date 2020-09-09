@@ -24,6 +24,7 @@ import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene;
 import roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterMutate;
 import roart.iclij.config.Market;
 import roart.iclij.config.MarketFilter;
+import roart.iclij.evolution.fitness.impl.FitnessMarketFilter2;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;

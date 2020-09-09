@@ -124,7 +124,7 @@ public class ConfigMapChromosome2 extends AbstractChromosome {
     @Override
     public Individual crossover(AbstractChromosome chromosome) {
         ConfigMapGene newNNConfig =  (ConfigMapGene) gene.crossover(((ConfigMapChromosome) chromosome).gene);
-        ConfigMapChromosome2 eval = new ConfigMapChromosome2(gene);
+        ConfigMapChromosome2 eval = new ConfigMapChromosome2(newNNConfig);
         //MarketFilterChromosome eval = new MarketFilterChromosome(conf, ml, dataReaders, categories, key, newNNConfig, catName, cat, neuralnetcommand);
         return new Individual(eval);
     }

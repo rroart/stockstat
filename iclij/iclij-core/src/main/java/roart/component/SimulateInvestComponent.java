@@ -2,11 +2,15 @@ package roart.component;
 
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
@@ -21,21 +25,30 @@ import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
 import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
+import roart.common.util.ValidateUtil;
+import roart.component.adviser.Adviser;
+import roart.component.adviser.AdviserFactory;
 import roart.component.model.ComponentData;
+import roart.component.model.SimulateInvestData;
 import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
+import roart.evolution.chromosome.impl.ConfigMapChromosome2;
+import roart.evolution.chromosome.impl.IclijConfigMapChromosome;
+import roart.evolution.chromosome.impl.IclijConfigMapGene;
+import roart.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.config.SimulateInvestConfig;
+import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
-import roart.iclij.model.action.SimulateInvestActionData;
-import roart.iclij.util.MiscUtil;
 import roart.iclij.verifyprofit.TrendUtil;
 import roart.service.model.ProfitData;
 
@@ -54,64 +67,132 @@ public class SimulateInvestComponent extends ComponentML {
             Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
             Parameters parameters) {
         ComponentData componentData = new ComponentData(param);
-
+        SimulateInvestData simulateParam;
+        if (param instanceof SimulateInvestData) {
+            simulateParam = (SimulateInvestData) param;
+        } else {
+            simulateParam = new SimulateInvestData(param);
+        }
+        IclijConfig config = param.getInput().getConfig();
         double resultavg = 1;
         int beatavg = 0;
         int runs = 0;
-        int findTimes = 4;
-        boolean useReliability = false;
-        double reliability = 0.75;
-        boolean useMldate = true;
-        
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-        int verificationdays = param.getInput().getConfig().verificationDays();
+        SimulateInvestConfig simConfig = new SimulateInvestConfig();
+	simConfig.setAdviser(config.getSimulateInvestAdviser());
+	simConfig.setBuyweight(config.wantsSimulateInvestBuyweight());
+	simConfig.setConfidence(config.wantsSimulateInvestConfidence());
+	simConfig.setConfidenceValue(config.getSimulateInvestCondidenceValue());
+        simConfig.setConfidenceFindTimes(config.getSimulateInvestConfidenceFindtimes());
+        simConfig.setInterval(config.getSimulateInvestInterval());
+        simConfig.setIndicatorPure(config.wantsSimulateInvestIndicatorPure());
+        simConfig.setIndicatorRebase(config.wantsSimulateInvestIndicatorRebase());
+	simConfig.setIndicatorReverse(config.wantsSimulateInvestIndicatorReverse());
+	simConfig.setMldate(config.wantsSimulateInvestMLDate());
+        try {
+            simConfig.setPeriod(config.getSimulateInvestPeriod());
+        } catch (Exception e) {
+            
+        }
+        simConfig.setStoploss(config.wantsSimulateInvestStoploss());
+        simConfig.setStoplossValue(config.getSimulateInvestStoplossValue());
+        simConfig.setIntervalStoploss(config.wantsSimulateInvestIntervalStoploss());
+        simConfig.setIntervalStoplossValue(config.getSimulateInvestIntervalStoplossValue());
+        simConfig.setStocks(config.getSimulateInvestStocks());
+        simConfig.setInterpolate(config.wantsSimulateInvestInterpolate());
+        simConfig.setDay(config.getSimulateInvestDay());
+        try {
+            simConfig.setEnddate(config.getSimulateInvestEnddate());
+        } catch (Exception e) {
+            
+        }
+        try {
+            simConfig.setStartdate(config.getSimulateInvestStartdate());
+        } catch (Exception e) {
+            
+        }
+        SimulateInvestConfig localSimConfig = market.getSimulate();
+        if (!(param instanceof SimulateInvestData)) {
+            simConfig.merge(localSimConfig);
+        }
+        List<String> stockDates;
+        if (simulateParam.getStockDates() != null) {
+            stockDates = simulateParam.getStockDates();
+        } else {
+            stockDates = param.getService().getDates(market.getConfig().getMarket());           
+        }
         int findTime = market.getConfig().getFindtime();
-
+        int interval = config.getSimulateInvestInterval();
+        
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
-        Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
-        {
-            String period = "1w";
-            List<MetaItem> metas = param.getService().getMetas();
-            MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
-            List<String> categories = new MetaUtil().getCategories(meta);
-            aMap.put(ConfigConstants.MACHINELEARNING, false);
-            aMap.put(ConfigConstants.AGGREGATORS, false);
-            aMap.put(ConfigConstants.INDICATORS, true);
-            aMap.put(ConfigConstants.INDICATORSMACD, true);
-            aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
-            aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
-            aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            Integer cat = new MetaUtil().getCategory(meta, period);
-            Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
-            int jj = 0;
+        Map<String, List<List<Double>>> categoryValueMap;
+        if (simConfig.getInterpolate()) {
+            categoryValueMap = param.getFillCategoryValueMap();
+        } else {
+            categoryValueMap = param.getCategoryValueMap();
         }
         LocalDate investStart = null;
-        LocalDate investEnd = null;
+        LocalDate investEnd = param.getFutureDate();
         String mldate = null;
-        if (useMldate) {
-            mldate = ((SimulateInvestActionData) action.getActionData()).getMlDate(market, stockDates);
+        if (simConfig.getMldate()) {
+            mldate = market.getConfig().getMldate();
+            mldate = mldate.replace('-', '.');
+            //mldate = ((SimulateInvestActionData) action.getActionData()).getMlDate(market, stockDates);
+            //mldate = ((ImproveSimulateInvestActionData) action.getActionData()).getMlDate(market, stockDates);
         } else {
-            
+            Short populate = market.getConfig().getPopulate();
+            if (populate == null) {
+                //mldate = ((SimulateInvestActionData) action.getActionData()).getMlDate(market, stockDates);                
+                mldate = market.getConfig().getMldate();
+                mldate = mldate.replace('-', '.');
+            } else {
+                mldate = stockDates.get(populate);                
+            }
+        }
+        if (mldate == null) {
+            mldate = stockDates.get(0);
+        }
+        if (simConfig.getStartdate() != null) {
+            mldate = simConfig.getStartdate();
+            mldate = mldate.replace('-', '.');
         }
         try {
             investStart = TimeUtil.convertDate(mldate);
         } catch (ParseException e1) {
-            log.error(Constants.EXCEPTION);
+            log.error(Constants.EXCEPTION, e1);
         }
-        List<MemoryItem> allMemories = null;
         try {
-            allMemories = IclijDbDao.getAllMemories(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.ABOVEBELOW, null, null, investStart, investEnd);
-            // also filter on params
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
+            String enddate = simConfig.getEnddate();
+            if (enddate != null) {
+                enddate = enddate.replace('-', '.');
+                investEnd = TimeUtil.convertDate(enddate);
+            }
+        } catch (ParseException e1) {
+            log.error(Constants.EXCEPTION, e1);
         }
-        List<IncDecItem> allIncDecs = null;
-        try {
-            allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
+        
+        int i = simConfig.getAdviser();
+        Adviser adviser = new AdviserFactory().get(i, market, investStart, investEnd, param, simConfig);
+
+        String[] excludes = null;
+        if (market.getSimulate() != null) {
+            excludes = market.getSimulate().getExcludes();
         }
-        List<String> parametersList = new MiscUtil().getParameters(allIncDecs);
+        if (excludes == null) {
+            excludes = new String[0];
+        }
+        List<String> excludeList = Arrays.asList(excludes);
+
+        Map<String, List<List<Double>>> filteredCategoryValueMap = new HashMap<>(categoryValueMap);
+        filteredCategoryValueMap.keySet().removeAll(excludeList);
+
+        List<String> plotDates = new ArrayList<>();
+        List<Double> plotCapital = new ArrayList<>();
+        List<Double> plotDefault = new ArrayList<>();
+        
+        List<String> parametersList = adviser.getParameters();
+        if (parametersList.isEmpty()) {
+            parametersList.add(null);
+        }
         for (String aParameter : parametersList) {
             Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
             if (realParameters != null && realParameters.getThreshold() != 1.0) {
@@ -119,545 +200,182 @@ public class SimulateInvestComponent extends ComponentML {
             }
             Capital capital = new Capital();
             capital.amount = 1;
-            int buytop = 5;
-            boolean buyequal = true;
             List<Astock> mystocks = new ArrayList<>();
             List<Astock> stockhistory = new ArrayList<>();
+            List<String> sumHistory = new ArrayList<>();
             
             LocalDate date = investStart;
             int prevIndexOffset = 0;
             date = TimeUtil.getEqualBefore(stockDates, date);
-            while (date.isBefore(param.getFutureDate())) {
-                date = TimeUtil.getBackEqualBefore2(date, 0 /* findTime */, stockDates);
+            while (date.isBefore(investEnd)) {
+                date = TimeUtil.getForwardEqualAfter2(date, 0 /* findTime */, stockDates);
                 String datestring = TimeUtil.convertDate2(date);
                 int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
                 
-                LocalDate oldDate = date.minusDays(verificationdays + findTime);
-                List<MemoryItem> memories = new MiscUtil().getCurrentMemories(oldDate, allMemories, market, findTime * findTimes, false);
-                double myreliability = getReliability(memories, true);
-
-                //LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
-                List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
-                List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
-
-                double scoreFilter = 0;
-                double score = 0;
-                Pair<Long, Integer>[] scores = null;
-                long scoreSize = 0;
+                double myreliability = adviser.getReliability(date, true);
 
                 // get recommendations
 
-                double myavg = increase(capital, buytop, mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset);
+                double myavg = increase(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset);
                 update(stockDates, categoryValueMap, capital, mystocks, indexOffset);
 
-                if (!useReliability || myreliability < reliability) {
-                    List<IncDecItem> myincdecs = incdecsP;
-                    List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-                    List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
-                    List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
-
-                    myincs = new MiscUtil().mergeList(myincs, true);
-                    mydecs = new MiscUtil().mergeList(mydecs, true);
-                    List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
-
-                    Comparator<IncDecItem> incDecComparator = (IncDecItem comp1, IncDecItem comp2) -> comp2.getScore().compareTo(comp1.getScore());
-
-                    myincs.sort(incDecComparator);   
-                    mydecs.sort(incDecComparator);   
-
-                    int subListSize = Math.min(buytop, myincs.size());
-                    myincs = myincs.subList(0, subListSize);
-
-
-                    List<Astock> newbuys = getBuyList(stockDates, categoryValueMap, myincs, indexOffset);
-                    List<Astock> sells = getSellList(mystocks, newbuys);
-
-                    mystocks.removeAll(sells);
-
-                    sell(stockDates, categoryValueMap, capital, sells, stockhistory, indexOffset, date);
-
-                    buy(capital, buytop, mystocks, newbuys, buyequal, date);
-                }
-
-                Capital sum = new Capital();
-                for (Astock astock : mystocks) {
-                    sum.amount += astock.count * astock.price;
-                }
-
-                // remember reliability
-                // remember trend
-
-                Trend trend = new TrendUtil().getTrend(findTime, null /*TimeUtil.convertDate2(olddate)*/, indexOffset, stockDates /*, findTime*/, param, market, categoryValueMap);
-                log.info("Trend {}", trend);
+                List<Astock> sells = new ArrayList<>();
+                List<Astock> buys = new ArrayList<>();
                 
-                resultavg *= trend.incAverage;
+                if (simConfig.getIntervalStoploss()) {
+                    stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset, sells, simConfig.getIntervalStoplossValue());                       
+                }
+                
+                if (!simConfig.getConfidence() || myreliability >= simConfig.getConfidenceValue()) {
+                    List<IncDecItem> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, excludeList);
+                    //List<IncDecItem> myincs = ds.getIncs(valueList);
+                    //List<ValueList> valueList = ds.getValueList(categoryValueMap, indexOffset);
+
+                    buys = getBuyList(stockDates, categoryValueMap, myincs, indexOffset);
+                    buys = filter(buys, sells);
+                    List<Astock> keeps = keep(mystocks, buys);
+                    buys = filter(buys, mystocks);
+                    
+                    List<Astock> newsells = filter(mystocks, keeps);
+
+                    //mystocks.removeAll(newsells);
+                    
+                    sells.addAll(newsells);
+                    
+                    mystocks = keeps;
+                }
+
+                sell(stockDates, categoryValueMap, capital, sells, stockhistory, indexOffset, date, mystocks);
+
+                buy(capital, simConfig.getStocks(), mystocks, buys, simConfig.getBuyweight(), date);
+
+                List<String> myids = mystocks.stream().map(Astock::getId).collect(Collectors.toList());            
+                if (myids.size() != mystocks.size()) {
+                    log.error("Sizes");
+                }
+                
+                Trend trend = new TrendUtil().getTrend(findTime, null /*TimeUtil.convertDate2(olddate)*/, indexOffset, stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
+                if (trend.incAverage < 0) {
+                    int jj = 0;
+                }
+                log.debug("Trend {}", trend);
+                
+                List<String> ids = mystocks.stream().map(Astock::getId).collect(Collectors.toList());
+                Capital sum = getSum(mystocks);
+                sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + ids + " " + trend);
+
+                if (trend.incAverage != 0) {
+                    resultavg *= trend.incAverage;
+                }
+                
+                plotDates.add(datestring);
+                plotDefault.add(resultavg);
+                plotCapital.add(sum.amount + capital.amount);
+                
+                if (Double.isInfinite(resultavg)) {
+                    int jj = 0;
+                }
 
                 runs++;
                 if (myavg > trend.incAverage) {
                     beatavg++;
                 }
                 
-                //AboveBelowGene gene = new AboveBelowGene();
-                //AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
-                //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
-
-                MemoryItem memory = new MemoryItem();
-                if (true || score < market.getFilter().getConfidence()) {
-                    //ComponentData componentData = null; //component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
-                    Map<String, Object> updateMap = componentData.getUpdateMap();
-                    if (updateMap != null) {
-                        param.getUpdateMap().putAll(updateMap);
-                    }
-                    memory.setDescription((String) updateMap.get(aParameter));
-                    //List<Double> list = new ArrayList<>(param.getScoreMap().values());
-                    //memory.setLearnConfidence(list.get(0));
+                if (simConfig.getStoploss()) {
+                    for (int j = 0; j < interval; j++) {
+                        sells = new ArrayList<>();
+                        //System.out.println(interval + " " +  j);
+                        stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset + j, 1, categoryValueMap, indexOffset + j + 1, sells, simConfig.getStoplossValue());                       
+                        sell(stockDates, categoryValueMap, capital, sells, stockhistory, indexOffset + j, date, mystocks);
+                    }                    
                 }
-                memory.setAction(action.getName());
-                memory.setMarket(market.getConfig().getMarket());
-                memory.setDate(param.getBaseDate());
-                memory.setRecord(LocalDate.now());
-                memory.setUsedsec(param.getUsedsec());
-                memory.setFuturedays(param.getFuturedays());
-                memory.setFuturedate(param.getFutureDate());
-                memory.setComponent(getPipeline());
-                memory.setCategory(param.getCategoryTitle());
-                //memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
-                //memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
-                memory.setDescription("" + trend);
-                memory.setParameters(aParameter);
-                memory.setConfidence(score);
-                memory.setSize(scoreSize);
-                //memory.setAbovepositives((Long) scores[0].getLeft());
-                //memory.setAbovesize((long) scores[0].getRight()); 
-                //memory.setBelowpositives((Long) scores[1].getLeft());
-                //memory.setBelowsize((long) scores[1].getRight()); 
-                memory.setTestaccuracy(scoreFilter);
-                if (true || param.isDoSave()) {
-                    try {
-                        //memory.save();
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION);
-                    }
-                }
-                date = date.plusDays(findTime);
+                date = date.plusDays(interval);
                 prevIndexOffset = indexOffset;
                 //memoryList.add(memory);
             }
-            Capital sum = new Capital();
-            for (Astock astock : mystocks) {
-                sum.amount += astock.count * astock.price;
+            Capital sum = getSum(mystocks);
+            sum.amount += capital.amount;
+            
+            Period period = Period.between(investStart, date);
+            long days = ChronoUnit.DAYS.between(investStart, date);
+            double years = (double) days / 365;
+            Double score = sum.amount / resultavg;
+            score = Math.pow(score, 1 / years);
+            if (score < -1) {
+                int jj = 0;
             }
-            Double score = sum.amount;
+            if (score > 10) {
+                int jj = 0;
+            }
+            if (score > 100) {
+                int jj = 0;
+            }
             Map<String, Double> scoreMap = new HashMap<>();
             scoreMap.put("" + score, score);
-            param.setScoreMap(scoreMap);
+            scoreMap.put("score", score);
+            componentData.setScoreMap(scoreMap);
+            
+            {
+                int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, mldate);
+                Trend trend = new TrendUtil().getTrend(indexOffset - prevIndexOffset, null /*TimeUtil.convertDate2(olddate)*/, prevIndexOffset, stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
+                log.info(trend.toString());
+                log.info("" + simConfig.asMap());
+            }
+            
+            Map<String, Object> map = new HashMap<>();
+            map.put("sumhistory", sumHistory);
+            map.put("stockhistory", stockhistory);
+            map.put("plotdefault", plotDefault);
+            map.put("plotdates", plotDates);
+            map.put("plotcapital", plotCapital);
+            map.put("startdate", investStart);
+            map.put("enddate", investEnd);
+            map.put("titletext", getPipeline() + " " + investStart + " - " + investEnd);
+            param.getUpdateMap().putAll(map);
+            componentData.getUpdateMap().putAll(map);
         }
 
         //componentData.setFuturedays(0);
 
-        //handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
+        handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         return componentData;
     }
 
-    public ComponentData handle3(MarketAction action, Market market, ComponentData param, ProfitData profitdata,
-            Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
-            Parameters parameters) {
-        ComponentData componentData = new ComponentData(param);
-
-        double resultavg = 1;
-        int beatavg = 0;
-        int runs = 0;
-        int findTimes = 4;
-        boolean useReliability = false;
-        double reliability = 0.75;
-        boolean useMldate = true;
-        
-        String period = "1w";
-        // for improve evolver
-        List<MetaItem> metas = param.getService().getMetas();
-        MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
-        List<String> categories = new MetaUtil().getCategories(meta);
-       
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-        int verificationdays = param.getInput().getConfig().verificationDays();
-        int findTime = market.getConfig().getFindtime();
-
-        //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
-        Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
-        Map<String, Object> aMap2 = new HashMap<>();
-        // don't need these both here and in getevolveml?
-        /*
-        aMap.put(ConfigConstants.MACHINELEARNING, false);
-        aMap.put(ConfigConstants.AGGREGATORS, false);
-        aMap.put(ConfigConstants.INDICATORS, false);
-        aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
-        aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
-        aMap.put(ConfigConstants.MISCMYDAYS, 0);
-        Integer cat = new MetaUtil().getCategory(meta, period);
-        Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
-        */
-        //Map<String, List<Double>> categoryValueMap2 = (Map<String, List<Double>>) resultMaps;
-        LocalDate investStart = null;
-        LocalDate investEnd = null;
-        String mldate = null;
-        if (useMldate) {
-            mldate = ((SimulateInvestActionData) action.getActionData()).getMlDate(market, stockDates);
-        } else {
-            
-        }
-        try {
-            investStart = TimeUtil.convertDate(mldate);
-        } catch (ParseException e1) {
-            log.error(Constants.EXCEPTION);
-        }
-        List<MemoryItem> allMemories = null;
-        try {
-            allMemories = IclijDbDao.getAllMemories(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.ABOVEBELOW, null, null, investStart, investEnd);
-            // also filter on params
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        List<IncDecItem> allIncDecs = null;
-        try {
-            allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        List<String> parametersList = new MiscUtil().getParameters(allIncDecs);
-        for (String aParameter : parametersList) {
-            Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
-            if (realParameters != null && realParameters.getThreshold() != null) {
-                continue;
-            }
-            Capital capital = new Capital();
-            capital.amount = 1;
-            int buytop = 5;
-            boolean buyequal = true;
-            List<Astock> mystocks = new ArrayList<>();
-            List<Astock> stockhistory = new ArrayList<>();
-            
-            LocalDate date = investStart;
-            int prevIndexOffset = 0;
-            date = TimeUtil.getEqualBefore(stockDates, date);
-            while (date.isBefore(param.getFutureDate())) {
-                date = TimeUtil.getBackEqualBefore2(date, findTime, stockDates);
-                String datestring = TimeUtil.convertDate2(date);
-                int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
-                
-                LocalDate oldDate = date.minusDays(verificationdays + findTime);
-                List<MemoryItem> memories = new MiscUtil().getCurrentMemories(oldDate, allMemories, market, findTime * findTimes, false);
-                double myreliability = getReliability(memories, true);
-
-
-                double scoreFilter = 0;
-                double score = 0;
-                Pair<Long, Integer>[] scores = null;
-                long scoreSize = 0;
-
-                // get recommendations
-
-                double myavg = increase(capital, buytop, mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset);
-                update(stockDates, categoryValueMap, capital, mystocks, indexOffset);
-
-                if (!useReliability || myreliability < reliability) {
-
-                    List myincs = null;
-                    
-                    int subListSize = Math.min(buytop, myincs.size());
-
-                    List<Astock> newbuys = getBuyList2(stockDates, categoryValueMap, myincs, indexOffset);
-                    List<Astock> sells = getSellList(mystocks, newbuys);
-
-                    mystocks.removeAll(sells);
-
-                    sell(stockDates, categoryValueMap, capital, sells, stockhistory, indexOffset, date);
-
-                    buy(capital, buytop, mystocks, newbuys, buyequal, date);
-                }
-
-                Capital sum = new Capital();
-                for (Astock astock : mystocks) {
-                    sum.amount += astock.count * astock.price;
-                }
-
-                // remember reliability
-                // remember trend
-
-                Trend trend = new TrendUtil().getTrend(findTime, null /*TimeUtil.convertDate2(olddate)*/, indexOffset, stockDates /*, findTime*/, param, market, categoryValueMap);
-                log.info("Trend {}", trend);
-                
-                resultavg *= trend.incAverage;
-
-                runs++;
-                if (myavg > trend.incAverage) {
-                    beatavg++;
-                }
-                
-                //AboveBelowGene gene = new AboveBelowGene();
-                //AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
-                //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
-
-                MemoryItem memory = new MemoryItem();
-                if (true || score < market.getFilter().getConfidence()) {
-                    //ComponentData componentData = null; //component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
-                    Map<String, Object> updateMap = componentData.getUpdateMap();
-                    if (updateMap != null) {
-                        param.getUpdateMap().putAll(updateMap);
-                    }
-                    memory.setDescription((String) updateMap.get(aParameter));
-                    //List<Double> list = new ArrayList<>(param.getScoreMap().values());
-                    //memory.setLearnConfidence(list.get(0));
-                }
-                memory.setAction(action.getName());
-                memory.setMarket(market.getConfig().getMarket());
-                memory.setDate(param.getBaseDate());
-                memory.setRecord(LocalDate.now());
-                memory.setUsedsec(param.getUsedsec());
-                memory.setFuturedays(param.getFuturedays());
-                memory.setFuturedate(param.getFutureDate());
-                memory.setComponent(getPipeline());
-                memory.setCategory(param.getCategoryTitle());
-                //memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
-                //memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
-                memory.setDescription("" + trend);
-                memory.setParameters(aParameter);
-                memory.setConfidence(score);
-                memory.setSize(scoreSize);
-                //memory.setAbovepositives((Long) scores[0].getLeft());
-                //memory.setAbovesize((long) scores[0].getRight()); 
-                //memory.setBelowpositives((Long) scores[1].getLeft());
-                //memory.setBelowsize((long) scores[1].getRight()); 
-                memory.setTestaccuracy(scoreFilter);
-                if (true || param.isDoSave()) {
-                    try {
-                        memory.save();
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION);
-                    }
-                }
-                date = date.plusDays(findTime);
-                prevIndexOffset = indexOffset;
-                //memoryList.add(memory);
-            }
-            Capital sum = new Capital();
-            for (Astock astock : mystocks) {
-                sum.amount += astock.count * astock.price;
-            }
-       }
-
-        //componentData.setFuturedays(0);
-
-        //handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
-        return componentData;
+    private List<Astock> filter(List<Astock> stocks, List<Astock> others) {
+        List<String> ids = others.stream().map(Astock::getId).collect(Collectors.toList());        
+        return stocks.stream().filter(e -> !ids.contains(e.id)).collect(Collectors.toList());
     }
 
-    private List<Astock> getBuyList2(List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap, List myincs,
-            int indexOffset) {
-        // TODO Auto-generated method stub
-        return null;
+    private List<Astock> keep(List<Astock> stocks, List<Astock> others) {
+        List<String> ids = others.stream().map(Astock::getId).collect(Collectors.toList());        
+        return stocks.stream().filter(e -> ids.contains(e.id)).collect(Collectors.toList());
     }
 
-    public ComponentData handle4(MarketAction action, Market market, ComponentData param, ProfitData profitdata,
-            Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket,
-            Parameters parameters) {
-        ComponentData componentData = new ComponentData(param);
-
-        double resultavg = 1;
-        int beatavg = 0;
-        int runs = 0;
-        int findTimes = 4;
-        boolean useReliability = false;
-        double reliability = 0.75;
-        boolean useMldate = true;
-        
-        String period = "1w";
-        // for improve evolver
-        List<MetaItem> metas = param.getService().getMetas();
-        MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
-        List<String> categories = new MetaUtil().getCategories(meta);
-       
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-        int verificationdays = param.getInput().getConfig().verificationDays();
-        int findTime = market.getConfig().getFindtime();
-
-        //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
-        Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
-        // don't need these both here and in getevolveml?
-        aMap.put(ConfigConstants.MACHINELEARNING, false);
-        aMap.put(ConfigConstants.AGGREGATORS, false);
-        aMap.put(ConfigConstants.INDICATORS, true);
-        aMap.put(ConfigConstants.INDICATORSMACD, true);
-        aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
-        aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
-        aMap.put(ConfigConstants.MISCMYDAYS, 0);
-        Integer cat = new MetaUtil().getCategory(meta, period);
-        Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
-        LocalDate investStart = null;
-        LocalDate investEnd = null;
-        String mldate = null;
-        if (useMldate) {
-            mldate = ((SimulateInvestActionData) action.getActionData()).getMlDate(market, stockDates);
-        } else {
-            
+    private Capital getSum(List<Astock> mystocks) {
+        Capital sum = new Capital();
+        for (Astock astock : mystocks) {
+            sum.amount += astock.count * astock.price;
         }
-        try {
-            investStart = TimeUtil.convertDate(mldate);
-        } catch (ParseException e1) {
-            log.error(Constants.EXCEPTION);
-        }
-        List<MemoryItem> allMemories = null;
-        try {
-            allMemories = IclijDbDao.getAllMemories(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.ABOVEBELOW, null, null, investStart, investEnd);
-            // also filter on params
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        List<IncDecItem> allIncDecs = null;
-        try {
-            allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        List<String> parametersList = new MiscUtil().getParameters(allIncDecs);
-        for (String aParameter : parametersList) {
-            Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
-            if (realParameters != null && realParameters.getThreshold() != null) {
-                continue;
-            }
-            Capital capital = new Capital();
-            capital.amount = 1;
-            int buytop = 5;
-            boolean buyequal = true;
-            List<Astock> mystocks = new ArrayList<>();
-            List<Astock> stockhistory = new ArrayList<>();
-            
-            LocalDate date = investStart;
-            int prevIndexOffset = 0;
-            date = TimeUtil.getEqualBefore(stockDates, date);
-            while (date.isBefore(param.getFutureDate())) {
-                date = TimeUtil.getBackEqualBefore2(date, findTime, stockDates);
-                String datestring = TimeUtil.convertDate2(date);
-                int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
-                
-                LocalDate oldDate = date.minusDays(verificationdays + findTime);
-                List<MemoryItem> memories = new MiscUtil().getCurrentMemories(oldDate, allMemories, market, findTime * findTimes, false);
-                double myreliability = getReliability(memories, true);
-
-                //LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
-
-                double scoreFilter = 0;
-                double score = 0;
-                Pair<Long, Integer>[] scores = null;
-                long scoreSize = 0;
-
-                // get recommendations
-
-                double myavg = increase(capital, buytop, mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset);
-                update(stockDates, categoryValueMap, capital, mystocks, indexOffset);
-
-                if (!useReliability || myreliability < reliability) {
-
-                    List myincs = null;
-
-                    int subListSize = Math.min(buytop, myincs.size());
-
-                    List<Astock> newbuys = getBuyList3(stockDates, resultMaps, myincs, indexOffset);
-                    List<Astock> sells = getSellList(mystocks, newbuys);
-
-                    mystocks.removeAll(sells);
-
-                    sell(stockDates, categoryValueMap, capital, sells, stockhistory, indexOffset, date);
-
-                    buy(capital, buytop, mystocks, newbuys, buyequal, date);
-                }
-
-                Capital sum = new Capital();
-                for (Astock astock : mystocks) {
-                    sum.amount += astock.count * astock.price;
-                }
-
-                // remember reliability
-                // remember trend
-
-                Trend trend = new TrendUtil().getTrend(findTime, null /*TimeUtil.convertDate2(olddate)*/, indexOffset, stockDates /*, findTime*/, param, market, categoryValueMap);
-                log.info("Trend {}", trend);
-                
-                resultavg *= trend.incAverage;
-
-                runs++;
-                if (myavg > trend.incAverage) {
-                    beatavg++;
-                }
-                
-                //AboveBelowGene gene = new AboveBelowGene();
-                //AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
-                //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
-
-                MemoryItem memory = new MemoryItem();
-                if (true || score < market.getFilter().getConfidence()) {
-                    //ComponentData componentData = null; //component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
-                    Map<String, Object> updateMap = componentData.getUpdateMap();
-                    if (updateMap != null) {
-                        param.getUpdateMap().putAll(updateMap);
-                    }
-                    memory.setDescription((String) updateMap.get(aParameter));
-                    //List<Double> list = new ArrayList<>(param.getScoreMap().values());
-                    //memory.setLearnConfidence(list.get(0));
-                }
-                memory.setAction(action.getName());
-                memory.setMarket(market.getConfig().getMarket());
-                memory.setDate(param.getBaseDate());
-                memory.setRecord(LocalDate.now());
-                memory.setUsedsec(param.getUsedsec());
-                memory.setFuturedays(param.getFuturedays());
-                memory.setFuturedate(param.getFutureDate());
-                memory.setComponent(getPipeline());
-                memory.setCategory(param.getCategoryTitle());
-                //memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
-                //memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
-                memory.setDescription("" + trend);
-                memory.setParameters(aParameter);
-                memory.setConfidence(score);
-                memory.setSize(scoreSize);
-                //memory.setAbovepositives((Long) scores[0].getLeft());
-                //memory.setAbovesize((long) scores[0].getRight()); 
-                //memory.setBelowpositives((Long) scores[1].getLeft());
-                //memory.setBelowsize((long) scores[1].getRight()); 
-                memory.setTestaccuracy(scoreFilter);
-                if (true || param.isDoSave()) {
-                    try {
-                        //memory.save();
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION);
-                    }
-                }
-                date = date.plusDays(findTime);
-                prevIndexOffset = indexOffset;
-                //memoryList.add(memory);
-            }
-            Capital sum = new Capital();
-            for (Astock astock : mystocks) {
-                sum.amount += astock.count * astock.price;
-            }
-       }
-
-        //componentData.setFuturedays(0);
-
-        //handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
-        return componentData;
-    }
-
-    private List<Astock> getBuyList3(List<String> stockDates, Map<String, Object> resultMaps, List myincs,
-            int indexOffset) {
-        // TODO Auto-generated method stub
-        return null;
+        return sum;
     }
 
     @Override
-    public ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata,
+    public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
             List<MLMetricsItem> mlTests) {
-        return null;
+        SimulateInvestData param = new SimulateInvestData(componentparam);
+        param.setAllIncDecs(getAllIncDecs(market, null, null));
+        param.setAllMemories(getAllMemories(market, null, null));
+        param.setAllMetas(getAllMetas(componentparam));
+        getResultMaps(param, market);
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        param.setStockDates(stockDates);
+        List<String> confList = getConfList();
+        IclijConfigMapGene gene = new IclijConfigMapGene(confList, param.getInput().getConfig());
+        IclijConfigMapChromosome chromosome = new IclijConfigMapChromosome(gene);
+        //loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
+        FitnessIclijConfigMap fit = new FitnessIclijConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+        return improve(action, param, chromosome, subcomponent, new IclijConfigMapChromosomeWinner(), buy, fit);
     }
 
     @Override
@@ -682,7 +400,26 @@ public class SimulateInvestComponent extends ComponentML {
 
     @Override
     protected List<String> getConfList() {
-        return null;
+        List<String> confList = new ArrayList<>();
+        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
+        confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSS);
+        confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORPURE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTMLDATE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTSTOCKS);
+        confList.add(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERPOLATE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTADVISER);
+        confList.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
+        confList.add(IclijConfigConstants.SIMULATEINVESTDAY);
+        return confList;
     }
 
     @Override
@@ -705,36 +442,6 @@ public class SimulateInvestComponent extends ComponentML {
         return new Object[] { componentparam.getScoreMap().get("score") };
     }
     
-    private double getReliability(List<MemoryItem> memories, Boolean above) {
-        int abovepositives = 0;
-        int abovesize = 0;
-        int belowpositives = 0;
-        int belowsize = 0;
-        for (MemoryItem memory : memories) {
-            if (memory.getAbovepositives() == null) {
-                int jj = 0;
-            }
-            abovepositives += memory.getAbovepositives();
-            abovesize += memory.getAbovesize();
-            belowpositives += memory.getBelowpositives();
-            belowsize += memory.getBelowsize();
-        }
-        double positives = 0;
-        int size = 0;
-        if (above == null || above == true) {
-            positives += abovepositives;
-            size += abovesize;
-        }
-        if (above == null || above == false) {
-            positives += belowpositives;
-            size += belowsize;
-        }
-        if (size > 0) {
-            return positives / size;
-        }
-        return 0;
-    }
-
     private double increase(Capital capital, int buytop, List<Astock> mystocks, List<String> stockDates, int indexOffset,
             int findTime, Map<String, List<List<Double>>> categoryValueMap, int prevIndexOffset) {
         List<Double> incs = new ArrayList<>();
@@ -745,7 +452,7 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            log.debug("Sizes {} {}", stockDates.size(), mainList.size());
+            ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 Double valWas = mainList.get(mainList.size() - 1 - prevIndexOffset);
@@ -768,12 +475,35 @@ public class SimulateInvestComponent extends ComponentML {
         return average.getAsDouble();
     }
 
-    private void buy(Capital capital, int buytop, List<Astock> mystocks, List<Astock> newbuys, boolean buyequal, LocalDate date) {
+    private void stoploss(Capital capital, int buytop, List<Astock> mystocks, List<String> stockDates, int indexOffset,
+            int findTime, Map<String, List<List<Double>>> categoryValueMap, int prevIndexOffset, List<Astock> sells, double stoploss) {
+        List<Astock> newSells = new ArrayList<>();
+        for (Astock item : mystocks) {
+            String id = item.id;
+            List<List<Double>> resultList = categoryValueMap.get(id);
+            if (resultList == null || resultList.isEmpty()) {
+                continue;
+            }
+            List<Double> mainList = resultList.get(0);
+            ValidateUtil.validateSizes(mainList, stockDates);
+            if (mainList != null) {
+                Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
+                Double valWas = mainList.get(mainList.size() - 1 - prevIndexOffset);
+                if (valWas != null && valNow != null && valNow != 0 && valNow / valWas < stoploss) {
+                    newSells.add(item);
+                }
+            }
+        }
+        mystocks.removeAll(newSells);
+        sells.addAll(newSells);
+    }
+
+    private void buy(Capital capital, int buytop, List<Astock> mystocks, List<Astock> newbuys, boolean buyweight, LocalDate date) {
         int buys = buytop - mystocks.size();
         buys = Math.min(buys, newbuys.size());
         
         double totalweight = 0;
-        if (!buyequal) {
+        if (buyweight) {
             for (int i = 0; i < buys; i++) {
                 totalweight += newbuys.get(i).weight;
             }
@@ -782,7 +512,7 @@ public class SimulateInvestComponent extends ComponentML {
         for (int i = 0; i < buys; i++) {
             Astock astock = newbuys.get(i);
             double amount = 0;
-            if (buyequal) {
+            if (!buyweight) {
                 amount = capital.amount / buys;
             } else {
                 amount = capital.amount * astock.weight / totalweight;
@@ -805,7 +535,7 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            log.debug("Sizes {} {}", stockDates.size(), mainList.size());
+            ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (valNow != null) {
@@ -816,7 +546,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private void sell(List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap, Capital capital,
-            List<Astock> sells, List<Astock> stockhistory, int indexOffset, LocalDate date) {
+            List<Astock> sells, List<Astock> stockhistory, int indexOffset, LocalDate date, List<Astock> mystocks) {
         for (Astock item : sells) {
             String id = item.id;
             List<List<Double>> resultList = categoryValueMap.get(id);
@@ -824,7 +554,7 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            log.debug("Sizes {} {}", stockDates.size(), mainList.size());
+            ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (valNow != null) {
@@ -832,19 +562,20 @@ public class SimulateInvestComponent extends ComponentML {
                     item.selldate = date;
                     stockhistory.add(item);
                     capital.amount += item.count * item.sellprice;
+                } else {
+                    // put back if unknown
+                    mystocks.add(item);
                 }
             } else {
                 // put back if unknown
-                //mystocks.add(item);
+                mystocks.add(item);
             }
         }
     }
 
     private List<Astock> getSellList(List<Astock> mystocks, List<Astock> newbuys) {
-        List<String> myincids = newbuys.stream().map(Astock::getId).collect(Collectors.toList());
-            
-             List<Astock> sells = mystocks.stream().filter(e -> myincids.contains(e.id)).collect(Collectors.toList());
-        return sells;
+        List<String> myincids = newbuys.stream().map(Astock::getId).collect(Collectors.toList());            
+        return mystocks.stream().filter(e -> !myincids.contains(e.id)).collect(Collectors.toList());
     }
 
     private List<Astock> getBuyList(List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap,
@@ -857,7 +588,7 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            log.debug("Sizes {} {}", stockDates.size(), mainList.size());
+            ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (valNow != null) {
@@ -907,6 +638,77 @@ public class SimulateInvestComponent extends ComponentML {
         }
     }
 
+    private List<IncDecItem> getAllIncDecs(Market market, LocalDate investStart, LocalDate investEnd) {
+        try {
+            return IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new ArrayList<>();
+    }
+    
+    private List<MemoryItem> getAllMemories(Market market, LocalDate investStart, LocalDate investEnd) {
+        try {
+            return IclijDbDao.getAllMemories(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.ABOVEBELOW, null, null, investStart, investEnd);
+            // also filter on params
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }        
+        return new ArrayList<>();
+    }
+    
+    private List<MetaItem> getAllMetas(ComponentData param) {
+        return param.getService().getMetas();
+    }
+    
+    private void getResultMaps(SimulateInvestData param, Market market) {
+        //Map<String, List<Object>> objectMap = new HashMap<>();
+        IclijConfig config = param.getInput().getConfig();
+       
+        Map<String, Object> aMap = new HashMap<>();
+        // for improve evolver
+        //List<MetaItem> metas = param.getService().getMetas();
+        //MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
+        //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
+        // don't need these both here and in getevolveml?
+        aMap.put(ConfigConstants.MACHINELEARNING, false);
+        aMap.put(ConfigConstants.AGGREGATORS, false);
+        aMap.put(ConfigConstants.INDICATORS, true);
+        aMap.put(ConfigConstants.INDICATORSMACD, true);
+        aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
+        aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+        aMap.put(ConfigConstants.MISCMYDAYS, 0);
+        aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, true);
+        // different line
+        param.getResultMap(null, aMap);
+        Map<String, Map<String, Object>> mapsRebase = param.getResultMaps();
+        param.setResultRebaseMaps(mapsRebase);
+        
+        aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, false);
+        // different line
+        param.getResultMap(null, aMap);
+        //Map<String, Map<String, Object>> maps = param.getResultMaps();
+        //param.getAndSetWantedCategoryValueMap();
+       /*
+        for (Entry<String, Map<String, Object>> entry : maps.entrySet()) {
+            String key = entry.getKey();
+            System.out.println("key " + key);
+            System.out.println("keys " + entry.getValue().keySet());
+        }
+        */
+        //Integer cat = (Integer) maps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
+        //String catName = new MetaUtil().getCategory(meta, cat);
+        //Map<String, Object> resultMaps = maps.get(catName);
+        /*
+        if (resultMaps != null) {
+            Map<String, Object> macdMaps = (Map<String, Object>) resultMaps.get(PipelineConstants.INDICATORMACD);
+            //System.out.println("macd"+ macdMaps.keySet());
+            objectMap = (Map<String, List<Object>>) macdMaps.get(PipelineConstants.OBJECT);
+        }
+        */
+        //return resultMaps;
+    }
+    
     // algo 0
     // loop
     // get recommend for buy sell on date1
@@ -941,4 +743,6 @@ public class SimulateInvestComponent extends ComponentML {
     // #get stocklist value
     
     // use mach highest mom
+    
+    // improve with ds
 }

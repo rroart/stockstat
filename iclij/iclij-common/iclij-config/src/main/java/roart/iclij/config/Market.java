@@ -7,6 +7,8 @@ public class Market {
     
     private MLConfigs mlconfig;
 
+    private SimulateInvestConfig simulate;
+    
     public MarketConfig getConfig() {
         return config;
     }
@@ -29,6 +31,14 @@ public class Market {
 
     public void setMlconfig(MLConfigs mlConfigs) {
         this.mlconfig = mlConfigs;
+    }
+
+    public SimulateInvestConfig getSimulate() {
+        return simulate;
+    }
+
+    public void setSimulate(SimulateInvestConfig simulate) {
+        this.simulate = simulate;
     }
 
 }

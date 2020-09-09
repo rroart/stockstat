@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.util.TimeUtil;
+import roart.common.util.ValidateUtil;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.Trend;
 
@@ -64,6 +65,7 @@ public class VerifyProfit {
             List<Double> mainList = resultList.get(0);
             log.debug("Sizes {} {}", stockDates.size(), mainList.size());
             if (mainList != null) {
+                ValidateUtil.validateSizes(mainList, stockDates);
                 if (indexoffset + startoffset < days) {
                     log.error("Recent date {}", aDate);
                     continue;
@@ -81,7 +83,7 @@ public class VerifyProfit {
         }
     }
 
-    public Trend getTrend(int days, Map<String, List<List<Double>>> categoryValueMap, int startoffset) {
+    public Trend getTrend(int days, Map<String, List<List<Double>>> categoryValueMap, int startoffset, List<String> stockDates) {
         Trend trend = new Trend();
         if (days <= 0) {
             return trend;
@@ -97,6 +99,10 @@ public class VerifyProfit {
             }
             List<Double> mainList = resultList.get(0);
             if (mainList != null) {
+                ValidateUtil.validateSizes(mainList, stockDates);
+                if (mainList.size() - 1 - startoffset - days < 0) {
+                    int jj = 0;
+                }
                 Double valFuture = mainList.get(mainList.size() - 1 - startoffset);
                 Double valNow = mainList.get(mainList.size() - 1 - startoffset - days);
                 if (valFuture != null && valNow != null) {
@@ -133,7 +139,7 @@ public class VerifyProfit {
         return trend;
     }
     
-    public Trend getTrend(int days, Map<String, List<List<Double>>> categoryValueMap, int startoffset, int loopoffset) {
+    public Trend getTrend(int days, Map<String, List<List<Double>>> categoryValueMap, int startoffset, int loopoffset, List<String> stockDates) {
         Trend trend = new Trend();
         if (days <= 0) {
             return trend;
@@ -149,6 +155,9 @@ public class VerifyProfit {
             }
             List<Double> mainList = resultList.get(0);
             if (mainList != null) {
+                if (stockDates != null &&mainList.size() != stockDates.size()) {
+                    log.error("Size mismatch {} vs {}", mainList.size(), stockDates.size());
+                }
                 Double valFuture = mainList.get(mainList.size() - 1 - startoffset);
                 Double valNow = mainList.get(mainList.size() - 1 - startoffset - days);
                 if (valFuture != null && valNow != null) {

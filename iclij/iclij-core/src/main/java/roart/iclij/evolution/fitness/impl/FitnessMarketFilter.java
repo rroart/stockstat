@@ -1,4 +1,4 @@
-package roart.component;
+package roart.iclij.evolution.fitness.impl;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -23,6 +23,7 @@ import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
@@ -152,7 +153,7 @@ public class FitnessMarketFilter extends Fitness {
             short startoffset = new MarketUtil().getStartoffset(market);
             action.setValMap(param);
             VerifyProfit verify = new VerifyProfit();
-            incProp1 = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
+            incProp1 = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset, null);
             //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
             //log.info("trendcomp {} {}", trend, incProp);
             if (verificationdays > 0) {

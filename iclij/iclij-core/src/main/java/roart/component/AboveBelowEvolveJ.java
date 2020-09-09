@@ -22,6 +22,7 @@ import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.fitness.impl.FitnessAboveBelow2;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;

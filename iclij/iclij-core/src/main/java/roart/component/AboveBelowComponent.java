@@ -24,11 +24,13 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.DatasetData;
 import roart.db.IclijDbDao;
+import roart.evolution.chromosome.winner.AboveBelowChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.fitness.impl.FitnessAboveBelow;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -208,7 +210,7 @@ public class AboveBelowComponent extends ComponentML {
                 try {
                     memory.save();
                 } catch (Exception e) {
-                    log.error(Constants.EXCEPTION);
+                    log.error(Constants.EXCEPTION, e);
                 }
             }
             //memoryList.add(memory);

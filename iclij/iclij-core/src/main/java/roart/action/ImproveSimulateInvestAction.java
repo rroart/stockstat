@@ -18,8 +18,11 @@ import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.db.IclijDbDao;
+import roart.evolution.chromosome.impl.IclijConfigMapChromosome;
+import roart.evolution.chromosome.impl.IclijConfigMapGene;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -86,9 +89,7 @@ public class ImproveSimulateInvestAction extends MarketAction {
         if (param.getUpdateMap() == null) {
             param.setUpdateMap(new HashMap<>());
         }
-        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
-        int verificationdays = param.getInput().getConfig().verificationDays();
-        //param.getInput().setDoSave(false);
+        param.getInput().setDoSave(false);
 
         try {
             param.setFuturedays(0);
@@ -109,95 +110,13 @@ public class ImproveSimulateInvestAction extends MarketAction {
             //component.set(market, param, profitdata, positions, evolve);
             //ComponentData componentData = component.handle(market, param, profitdata, positions, evolve, new HashMap<>());
             // 0 ok?
-            Map<String, Object> aMap = new HashMap<>();
-            //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
-            List<IncDecItem> allIncDecs = null;
-            LocalDate date = param.getFutureDate();
-            date = TimeUtil.getBackEqualBefore2(date, verificationdays, stockDates);
-            LocalDate prevDate = date.minusDays(market.getConfig().getFindtime());
-            try {
-                allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), prevDate, date, null);
-            } catch (Exception e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-            List<IncDecItem> incdecs = allIncDecs; // new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
-            List<String> parametersList = new MiscUtil().getParameters(incdecs);
-            for (String aParameter : parametersList) {
-                List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
-                List<String> components = new ArrayList<>();
-                List<String> subcomponents = new ArrayList<>();
-                Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
-                
-                param.getAndSetCategoryValueMap();
-                Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
-                
-                //FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, realParameters, mlTests, incdecsP, components, subcomponents, stockDates);
 
-                double scoreFilter = 0;
-                double score = 0;
-                Pair[] scores = null;;
-                long scoreSize = 0;
-                int size = components.size() + subcomponents.size();
-                List<String> compsub = new ArrayList<>();
-                compsub.addAll(components);
-                compsub.addAll(subcomponents);
-                
-                
-                short startoffset = new MarketUtil().getStartoffset(market);
-                int findTime = market.getConfig().getFindtime();
-                Trend trend = new TrendUtil().getTrend(verificationdays, null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates /*, findTime*/, param, market, categoryValueMap);
-                log.info("Trend {}", trend);                
-                
-                //AboveBelowGene gene = new AboveBelowGene();
-                //AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
-                //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
-
-                MemoryItem memory = new MemoryItem();
-                if (true || score < market.getFilter().getConfidence()) {
-                    ComponentData componentData = null; //component.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
-                    Map<String, Object> updateMap = componentData.getUpdateMap();
-                    if (updateMap != null) {
-                        param.getUpdateMap().putAll(updateMap);
-                    }
-                    memory.setDescription((String) updateMap.get(aParameter));
-                    List<Double> list = new ArrayList<>(param.getScoreMap().values());
-                    memory.setLearnConfidence(list.get(0));
-                }
-                memory.setAction(action.getName());
-                memory.setMarket(market.getConfig().getMarket());
-                memory.setDate(param.getBaseDate());
-                memory.setRecord(LocalDate.now());
-                memory.setUsedsec(param.getUsedsec());
-                memory.setFuturedays(param.getFuturedays());
-                memory.setFuturedate(param.getFutureDate());
-                memory.setComponent(component.getPipeline());
-                memory.setCategory(param.getCategoryTitle());
-                //memory.setSubcomponent(meta.get(ResultMetaConstants.MLNAME) + " " + meta.get(ResultMetaConstants.MODELNAME));
-                //memory.setDescription(getShort((String) meta.get(ResultMetaConstants.MLNAME)) + withComma(getShort((String) meta.get(ResultMetaConstants.MODELNAME))) + withComma(meta.get(ResultMetaConstants.SUBTYPE)) + withComma(meta.get(ResultMetaConstants.SUBSUBTYPE)));
-                memory.setDescription("" + trend);
-                memory.setParameters(aParameter);
-                memory.setConfidence(score);
-                memory.setSize(scoreSize);
-                memory.setAbovepositives((Long) scores[0].getLeft());
-                memory.setAbovesize((long) scores[0].getRight()); 
-                memory.setBelowpositives((Long) scores[1].getLeft());
-                memory.setBelowsize((long) scores[1].getRight()); 
-                if (score < 0.9) {
-                }
-                memory.setTestaccuracy(scoreFilter);
-                if (true || param.isDoSave()) {
-                    try {
-                        memory.save();
-                    } catch (Exception e) {
-                        log.error(Constants.EXCEPTION);
-                    }
-                }
-                //memoryList.add(memory);
+            ComponentData componentData = component.improve(action, param, market, profitdata, listComponent, evolve, subcomponent, parameters, false, mlTests);
+            Map<String, Object> updateMap = componentData.getUpdateMap();
+            if (updateMap != null) {
+                param.getUpdateMap().putAll(updateMap);
             }
-            //component.handle(this, market, param, profitdata, listComponent, evolve, aMap, subcomponent, null, null);
-            //component.calculateIncDec(componentData, profitdata, positions);
-            //System.out.println("Buys: " + market.getMarket() + buys);
-            //System.out.println("Sells: " + market.getMarket() + sells);           
+
         }
 
     }

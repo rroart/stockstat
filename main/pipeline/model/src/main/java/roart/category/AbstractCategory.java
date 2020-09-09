@@ -101,8 +101,8 @@ public abstract class AbstractCategory {
             if (indicator.isEnabled()) {
                 Map<String, Object> tmpMap = indicator.getLocalResultMap();
                 if (tmpMap != null) {
-                    System.out.println("Adding indicator " + indicator.indicatorName());
-                    System.out.println("exist " + map.containsKey(indicator.indicatorName()));
+                    log.debug("Adding indicator {}", indicator.indicatorName());
+                    log.debug("exist {}", map.containsKey(indicator.indicatorName()));
                     map.put(indicator.indicatorName(), tmpMap);
                 }
            }

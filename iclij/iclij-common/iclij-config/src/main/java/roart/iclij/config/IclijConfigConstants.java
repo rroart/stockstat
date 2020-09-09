@@ -235,6 +235,28 @@ public class IclijConfigConstants {
     public static final String MACHINELEARNINGTHRESHOLD = "machinelearning.threshold";
     public static final String SIMULATEINVEST = "simulateinvest";
     public static final String SIMULATEINVESTAUTORUN = "simulateinvest.autorun";
+    public static final String SIMULATEINVESTCONFIDENCE = "simulateinvest.confidence";
+    public static final String SIMULATEINVESTCONFIDENCEVALUE = "simulateinvest.confidence.value";
+    public static final String SIMULATEINVESTCONFIDENCEFINDTIMES = "simulateinvest.confidence.findtimes";
+    public static final String SIMULATEINVESTSTOPLOSS = "simulateinvest.stoploss";
+    public static final String SIMULATEINVESTSTOPLOSSVALUE = "simulateinvest.stoploss.value";
+    public static final String SIMULATEINVESTINDICATORPURE = "simulateinvest.indicator.pure";
+    public static final String SIMULATEINVESTINDICATORREBASE = "simulateinvest.indicator.rebase";
+    public static final String SIMULATEINVESTINDICATORREVERSE = "simulateinvest.indicator.reverse";
+    public static final String SIMULATEINVESTMLDATE = "simulateinvest.mldate";
+    public static final String SIMULATEINVESTSTOCKS = "simulateinvest.stocks";
+    public static final String SIMULATEINVESTBUYWEIGHT = "simulateinvest.buyweight";
+    public static final String SIMULATEINVESTINTERVAL = "simulateinvest.interval";
+    public static final String SIMULATEINVESTINTERVALSTOPLOSS = "simulateinvest.intervalstoploss";
+    public static final String SIMULATEINVESTINTERVALSTOPLOSSVALUE = "simulateinvest.intervalstoplossvalue";
+    public static final String SIMULATEINVESTADVISER = "simulateinvest.adviser";
+    public static final String SIMULATEINVESTINTERPOLATE = "simulateinvest.interpolate";
+    public static final String SIMULATEINVESTDAY = "simulateinvest.day";
+    // special
+    public static final String SIMULATEINVESTPERIOD = "simulateinvest.period";
+    // special
+    public static final String SIMULATEINVESTSTARTDATE = "simulateinvest.startdate";
+    public static final String SIMULATEINVESTENDDATE = "simulateinvest.enddate";
     public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
     public static final String IMPROVESIMULATEINVESTAUTORUN = "improvesimulateinvest.autorun";
     public static final String IMPROVESIMULATEINVESTEVOLUTIONCONFIG = "improvesimulateinvest.evolutionconfig";
@@ -259,6 +281,7 @@ public class IclijConfigConstants {
     public static final String MARKETSMARKETLISTMARKET = "markets.marketlist.market[@id]";
     public static final String MARKETSMARKETLISTMARKETCONFIG = "markets.marketlist.market[@id].config";
     public static final String MARKETSMARKETLISTMARKETFILTER = "markets.marketlist.market[@id].filter";
+    public static final String MARKETSMARKETLISTMARKETSIMULATE = "markets.marketlist.market[@id].simulate";
     //public static final String MARKETSMARKETLISTMARKETEVOLUTIONCONFIG = "markets.marketlist.market[@id].evolutionconfig";
     public static final String MARKETSMARKETLISTMARKETMLCONFIG = "markets.marketlist.market[@id].mlconfig";
     @Deprecated

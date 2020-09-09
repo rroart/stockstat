@@ -18,7 +18,7 @@ public class MyMyConfig extends MyConfig {
 
     public MyMyConfig(MyConfig config) {
         setConfigTreeMap(config.getConfigTreeMap());
-        setConfigValueMap(config.getConfigValueMap());
+        setConfigValueMap(new HashMap<>(config.getConfigValueMap()));
         setDeflt(config.getDeflt());
         setText(config.getText());
         setRange(config.getRange());

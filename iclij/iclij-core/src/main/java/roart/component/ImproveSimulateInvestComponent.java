@@ -1,5 +1,6 @@
 package roart.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,16 +8,22 @@ import roart.action.MarketAction;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
+import roart.evolution.chromosome.impl.IclijConfigMapChromosome;
+import roart.evolution.chromosome.impl.IclijConfigMapGene;
+import roart.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
+@Deprecated
 public class ImproveSimulateInvestComponent extends ComponentML {
 
     @Override
@@ -43,7 +50,11 @@ public class ImproveSimulateInvestComponent extends ComponentML {
     public ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata,
             Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree,
             List<MLMetricsItem> mlTests) {
-        return null;
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        IclijConfigMapGene gene = new IclijConfigMapGene(getConfList(), param.getInput().getConfig());
+        IclijConfigMapChromosome chromosome = new IclijConfigMapChromosome(gene);
+        FitnessIclijConfigMap fit = new FitnessIclijConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+        return improve(action, param, chromosome, subcomponent, new IclijConfigMapChromosomeWinner(), buy, fit);
     }
 
     @Override
@@ -68,7 +79,26 @@ public class ImproveSimulateInvestComponent extends ComponentML {
 
     @Override
     protected List<String> getConfList() {
-        return null;
+        List<String> confList = new ArrayList<>();
+        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
+        confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSS);
+        confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORPURE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTMLDATE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTSTOCKS);
+        confList.add(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINTERPOLATE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTADVISER);
+        confList.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
+        confList.add(IclijConfigConstants.SIMULATEINVESTDAY);
+        return confList;
     }
 
     @Override
