@@ -157,7 +157,10 @@ public class ServiceUtil {
         }
 
         MarketAction simulateInvestAction = new ImproveSimulateInvestAction();
-        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        Market market = null;
+        if (param.getInput().getMarket() != null) {
+            market = new MarketUtil().findMarket(param.getInput().getMarket());
+        }
         WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);

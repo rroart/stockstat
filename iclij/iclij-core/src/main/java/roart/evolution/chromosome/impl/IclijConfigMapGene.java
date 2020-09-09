@@ -3,6 +3,7 @@ package roart.evolution.chromosome.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import roart.common.util.MathUtil;
@@ -132,6 +133,13 @@ public class IclijConfigMapGene extends AbstractGene {
     @Override
     public String toString() {
         return map.toString();
+        /*
+        String str = "";
+        for (Entry<String, Object> entry : map.entrySet()) {
+            str = str + "       " + entry.getKey() + " " + entry.getValue() + "\n";
+        }
+        return str;
+        */
     }
 
 }

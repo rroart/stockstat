@@ -123,7 +123,7 @@ public class ServiceController {
             throws Exception {
         //MainAction.goals.add(new ImproveProfitAction());
         //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
-        if ("null".equals(market)) {
+        if ("null".equals(market) || "None".equals(market)) {
             market = null;
         }
         IclijConfig config = new IclijConfig(IclijXMLConfig.getConfigInstance());

@@ -163,9 +163,9 @@ public class SimulateInvestComponent extends ComponentML {
         try {
             String enddate = simConfig.getEnddate();
             if (enddate != null) {
+                enddate = enddate.replace('-', '.');
                 investEnd = TimeUtil.convertDate(enddate);
             }
-            investEnd = TimeUtil.convertDate(mldate);
         } catch (ParseException e1) {
             log.error(Constants.EXCEPTION, e1);
         }
@@ -328,7 +328,9 @@ public class SimulateInvestComponent extends ComponentML {
             map.put("plotdefault", plotDefault);
             map.put("plotdates", plotDates);
             map.put("plotcapital", plotCapital);
-            map.put("startdate", mldate);
+            map.put("startdate", investStart);
+            map.put("enddate", investEnd);
+            map.put("titletext", getPipeline() + " " + investStart + " - " + investEnd);
             param.getUpdateMap().putAll(map);
             componentData.getUpdateMap().putAll(map);
         }
