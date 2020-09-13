@@ -71,6 +71,7 @@ public class PipelineConstants {
     public static final String MLSTOCH = "mlstoch";
     public static final String RECOMMENDERRSI = "recommenderrsi";
     public static final String AGGREGATORRECOMMENDERINDICATOR = "aggregatorrecommenderindicator";
+    public static final String MACDBASE = "macdbase";
     public static final String PREDICTOR = "predictor";
     public static final String LIR = "lir";
     public static final String MLP = "mlp";

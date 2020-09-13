@@ -118,3 +118,29 @@ def getonedfperiodarr(df, period):
     #print("should not be here")
     return None
 
+def listperiod2(list, period):
+    #print(len(list))
+    if period == 0:
+        return list.period1
+    if period == 1:
+        return list.period2
+    if period == 2:
+        return list.period3
+    if period == 3:
+        return list.period4
+    if period == 4:
+        return list.period5
+    if period == 5:
+        return list.period6
+    if period == 6:
+        return list.period7
+    if period == 7:
+        return list.period8
+    if period == 8:
+        return list.period9
+    if period == 9:
+        return list.price
+    if period == 10:
+        return list.indexvalue
+    return None
+                                        # out of use

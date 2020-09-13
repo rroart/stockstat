@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.aggregator.impl.AggregatorRecommenderIndicator;
+import roart.aggregator.impl.MACDBase;
 import roart.aggregator.impl.MLATR;
 import roart.aggregator.impl.MLCCI;
 import roart.aggregator.impl.MLIndicator;
@@ -496,7 +497,7 @@ public class ControlService {
             Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories,
             Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
-        Aggregator[] aggregates = new Aggregator[9];
+        Aggregator[] aggregates = new Aggregator[10];
         aggregates[0] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList);
         aggregates[1] = new RecommenderRSI(conf, catName, marketdatamap, categories);
         aggregates[2] = new MLMACD(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
@@ -506,6 +507,7 @@ public class ControlService {
         aggregates[6] = new MLSTOCH(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
         aggregates[7] = new MLMulti(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
         aggregates[8] = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, datareaders, neuralnetcommand);
+        aggregates[9] = new MACDBase(conf, catName, catName, cat, categories, idNameMap, datareaders);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSMACD));

@@ -1,4 +1,8 @@
 import talib as ta
+import pandas as pd
+import pdutils as pdu
+import myutils as my
+import const
 
 #import myutils as my
 
@@ -6,6 +10,10 @@ doprint = False
 
 class MACD:
 
+  def __init__(self, stockdata):
+    self.count = 0;
+    self.stockdata = stockdata
+        
   def title(self):
       return "MACD"
 
@@ -141,3 +149,186 @@ class MACD:
     #print(retl[0])
     return(retl)
 
+  def dfextend(self, df, period, periodtext, sort, interpolate = True, rebase = False, deltadays = 3, reverse = False):
+    dateset = set(self.stockdata.listdates)
+    momlist = []
+    signlist = []
+    histlist = []
+    momdlist = []
+    histdlist = []
+    sigdlist = []
+    macd2list = []
+    sign2list = []
+    hist2list = []
+    for mydf in df.itertuples():
+        #print(type(listid))
+        el = next(x for x in self.stockdata.listid if x.id.iloc[0] == mydf.id)
+        #print(type(el))
+        eldateset = set(el.date.values)
+        aset = dateset - eldateset
+        emptydf = pd.DataFrame(data = None, columns = el.columns)
+        #print("l", len(emptydf))
+        #print("aset", aset)
+        for x in aset:
+            emptydf = emptydf.append({ 'date' : x }, ignore_index=True)
+        #print("empty0", len(el), len(emptydf), len(aset))
+        el = el.append(emptydf)
+        #print("empty", len(el), len(emptydf), len(aset))
+        #print("eld", len(eld), eld.values)
+        
+        #for x in stockdata.listdates:
+        #    #print("lll", len(el.date == x))
+        #    if len(el.date == x) == 0:
+        #        print("xxx", x)
+        #el2 = stockdata.stocks[stockdata.stocks.id == mydf.id]
+        #print("x", type(el), len(el))
+        #print(type(el2), len(el2))
+        el = el.sort_values(by='date', ascending = 1)
+        myc = pdu.getonedfvalue(el, period)
+        dateslen = len(self.stockdata.listdates)
+        myclen = len(myc)
+        mycoffset = dateslen - myclen
+        mycorig = myc
+        #print(type(myc))
+        #print(myclen, headskipmacd)
+        #print(type(headskipmacd))
+        #myc = myc.head(n=(myclen-headskipmacd))
+        #myc = myc.tail(n=macddays)
+        myc = myc.iloc[0 : self.stockdata.dates.startindex + 1 - mycoffset]
+        #print(type(myc))
+        if rebase:
+            if periodtext == "Price" or periodtext == "Index":
+
+                #print("myc")
+                #print(type(myc))
+                #print(myc.values[0])
+                first = myc.values[0]
+                #print(first)
+                #print(100/first)
+                #print(myc.values)
+                myc = myc * (100 / first)
+                #print(myc.values)
+
+                #print("myc2")
+        #print(mydf.id)
+        global doprint
+        doprint = mydf.id == '1301162' or mydf.id == '3SUR'
+        #doprint = doprint
+        #rsi.doprint = doprint
+        if doprint:
+            print(type(myc))
+            print(myc.values)
+            print(mycorig.values)
+            print(len(myc.values))
+            print(len(self.stockdata.listdates))
+            print(myclen)
+            print("iloc",self.stockdata.dates.startindex,self.stockdata.dates.endindex)
+            print("iloc",self.stockdata.listdates[self.stockdata.dates.startindex],self.stockdata.listdates[self.stockdata.dates.endindex])
+        #if myclen != len(stockdata.listdates):
+        #    print("error", len(stockdata.listdates),myclen)
+        #else:
+        #    print("ok")
+        if periodtext == "Price" or periodtext == "Index":
+            myc = my.fixzero2(myc)
+        if interpolate:
+            myc = myc.interpolate(method='linear')
+        momhist = self.getmomhist([myc, None, None], deltadays)
+        #print(type(momhist))
+        #print(len(momhist))
+        #print(momhist.keys())
+
+        #print(type(momhist))
+        #print(len(momhist))
+                            #print(mom)
+        if doprint:
+            print("monh", momhist)
+            l = pdu.listperiod2(mydf, period)
+            print(l)
+        if not momhist is None:
+            l = pdu.listperiod2(mydf, period)
+            momlist.append(momhist[0])
+            signlist.append(momhist[1])
+            histlist.append(momhist[2])
+            momdlist.append(momhist[3])
+            sigdlist.append(momhist[4])
+            histdlist.append(momhist[5])
+            macd2list.append(momhist[0]/l)
+            sign2list.append(momhist[1]/l)
+            hist2list.append(momhist[2]/l)
+        else:
+            momlist.append(None)
+            signlist.append(None)
+            histlist.append(None)
+            momdlist.append(None)
+            sigdlist.append(None)
+            histdlist.append(None)
+            macd2list.append(None)
+            sign2list.append(None)
+            hist2list.append(None)
+    #headskipmacd = headskipmacd + tablemoveintervaldays
+    momc = momlist
+    signc = signlist
+    histc = histlist
+    #momdc = momdlist
+    #histdc = histdlist
+    #print('momlist')
+    #print(momlist)
+    #print(type(momlist))
+    df['momc'] = pd.Series(data = momlist, name = 'momc', index = df.index)
+    df['histc'] = pd.Series(data = histlist, name = 'histc', index = df.index)
+    df['signc'] = pd.Series(data = signlist, name = 'signc', index = df.index)
+    df['momdc'] = pd.Series(data = momdlist, name = 'momdc', index = df.index)
+    df['sigdc'] = pd.Series(data = sigdlist, name = 'sigdc', index = df.index)
+    df['histdc'] = pd.Series(data = histdlist, name = 'histdc', index = df.index)
+    df['macd2'] = pd.Series(data = macd2list, name = 'macd2', index = df.index)
+    df['sign2'] = pd.Series(data = sign2list, name = 'sign2', index = df.index)
+    df['hist2'] = pd.Series(data = hist2list, name = 'hist2', index = df.index)
+    #print(df.name)
+    #print(df.momc)
+    if sort == const.HIST:
+        if reverse:
+            df = df.sort_values(by='histc', ascending = 0)
+        else:
+            df = df.sort_values(by='histc', ascending = 1)
+    if sort == const.MACD:
+        if reverse:
+            df = df.sort_values(by='momc', ascending = 0)
+        else:
+            df = df.sort_values(by='momc', ascending = 1)
+    if sort == const.SIGN:
+        if reverse:
+            df = df.sort_values(by='signc', ascending = 0)
+        else:
+            df = df.sort_values(by='signc', ascending = 1)
+    if sort == const.MACD2:
+        if reverse:
+            df = df.sort_values(by='macd2', ascending = 0)
+        else:
+            df = df.sort_values(by='macd2', ascending = 1)
+    if sort == const.SIGN2:
+        if reverse:
+            df = df.sort_values(by='sign2', ascending = 0)
+        else:
+            df = df.sort_values(by='sign2', ascending = 1)
+    if sort == const.HIST2:
+        if reverse:
+            df = df.sort_values(by='hist2', ascending = 0)
+        else:
+            df = df.sort_values(by='hist2', ascending = 1)
+
+  def titles(self):
+    return [ "macd", "sign", "hist", "macdd", "signd", "histd", "macdb", "signb", "histb" ]
+
+  def values(self, df, i):
+    return [ df.momc.iloc[i],
+             df.signc.iloc[i],
+             df.histc.iloc[i],
+             df.momdc.iloc[i],
+             df.sigdc.iloc[i],
+             df.histdc.iloc[i],
+             df.macd2.iloc[i],
+             df.sign2.iloc[i],
+             df.hist2.iloc[i] ]
+
+  def formats(self):
+    return [ "{:.2f}", "{:.2f}", "{:.2f}", "{:.4f}", "{:.4f}", "{:.4f}", "{:.4f}", "{:.4f}", "{:.4f}" ]
