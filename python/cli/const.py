@@ -1,0 +1,9 @@
+VALUE = 1
+RSI = 2
+MACD = 3
+SIGN = 4
+HIST = 5
+MACD2 = 6
+SIGN2 = 7
+HIST2 = 8
+NAME = 9
