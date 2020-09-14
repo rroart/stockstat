@@ -498,16 +498,16 @@ public class ControlService {
             AbstractCategory[] categories,
             Pipeline[] datareaders, List<String> disableList, Map<String, String> idNameMap, String catName, Integer cat, NeuralNetCommand neuralnetcommand) throws Exception {
         Aggregator[] aggregates = new Aggregator[10];
-        aggregates[0] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList);
-        aggregates[1] = new RecommenderRSI(conf, catName, marketdatamap, categories);
-        aggregates[2] = new MLMACD(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[3] = new MLRSI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[4] = new MLATR(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[5] = new MLCCI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[6] = new MLSTOCH(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[7] = new MLMulti(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
-        aggregates[8] = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, datareaders, neuralnetcommand);
-        aggregates[9] = new MACDBase(conf, catName, catName, cat, categories, idNameMap, datareaders);
+        aggregates[0] = new MACDBase(conf, catName, catName, cat, categories, idNameMap, datareaders);
+        aggregates[1] = new AggregatorRecommenderIndicator(conf, catName, marketdatamap, categories, datareaders, disableList);
+        aggregates[2] = new RecommenderRSI(conf, catName, marketdatamap, categories);
+        aggregates[3] = new MLMACD(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[4] = new MLRSI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[5] = new MLATR(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[6] = new MLCCI(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[7] = new MLSTOCH(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[8] = new MLMulti(conf, catName, catName, cat, categories, idNameMap, datareaders, neuralnetcommand);
+        aggregates[9] = new MLIndicator(conf, catName, marketdatamap, catName, cat, categories, datareaders, neuralnetcommand);
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.MACHINELEARNING));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.AGGREGATORSMLMACD));
         log.info("Aggregate {}", conf.getConfigValueMap().get(ConfigConstants.INDICATORSMACD));

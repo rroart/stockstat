@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import time
 import request
+import multiprocessing as mp
 
 import rise
 import day
@@ -1294,6 +1295,7 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
 def improvesimulateinvest(market = None, startdate = None, enddate = None):
     data = { 'startdate' : startdate, 'enddate' : enddate }
     response = request.request2(market, data)
+    print("improve complete")
     #print(response.text)
 
 def myprint4(arg):
@@ -1376,6 +1378,30 @@ def gettopgraphG(market, start, end, numberdays, tablemoveintervaldays, topbotto
     print(wantmacd, wantrsi, wantdays)
     import multiprocessing as mp
     mp.Process(target = gettopgraphGwrap, args = (market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise, wantmacd, wantrsi, sort, macddays, reverse, deltadays, percentize, wantchart, interpolate, wantdays, days, wantgrid)).start()
+
+def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):                                                
+        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day).start()
+    output = file.getvalue()
+    gui.view(output)
+
+def simulateinvest2G(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1):
+    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day)).start()
+
+def improvesimulateinvestGwrap(market, startdate, enddate):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):                                                
+        improvesimulateinvest(market, startdate, enddate)
+    output = file.getvalue()
+    gui.view(output)
+
+def improvesimulateinvestG(market, startdate = None, enddate = None):
+    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate)).start()
 
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
