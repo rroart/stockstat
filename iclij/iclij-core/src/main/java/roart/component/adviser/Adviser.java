@@ -40,5 +40,6 @@ public abstract class Adviser {
 
     public abstract List<String> getParameters();
 
+    @Deprecated
     public abstract double getReliability(LocalDate date, Boolean above);
 }

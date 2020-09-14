@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.OptionalDouble;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.action.MarketAction;
@@ -204,6 +207,9 @@ public class SimulateInvestComponent extends ComponentML {
             List<Astock> stockhistory = new ArrayList<>();
             List<String> sumHistory = new ArrayList<>();
             
+            int findTimes = simConfig.getConfidenceFindTimes();
+            Pair<Integer, Integer>[] hits = new ImmutablePair[findTimes];
+           
             LocalDate date = investStart;
             int prevIndexOffset = 0;
             date = TimeUtil.getEqualBefore(stockDates, date);
@@ -217,7 +223,7 @@ public class SimulateInvestComponent extends ComponentML {
                 // get recommendations
 
                 double myavg = increase(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset);
-                update(stockDates, categoryValueMap, capital, mystocks, indexOffset);
+                int up = update(stockDates, categoryValueMap, capital, mystocks, indexOffset);
 
                 List<Astock> sells = new ArrayList<>();
                 List<Astock> buys = new ArrayList<>();
@@ -225,6 +231,27 @@ public class SimulateInvestComponent extends ComponentML {
                 if (simConfig.getIntervalStoploss()) {
                     stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset, sells, simConfig.getIntervalStoplossValue());                       
                 }
+                
+                Pair<Integer, Integer> pair = new ImmutablePair(up, mystocks.size());
+                for (int j = findTimes - 1; j > 0; j--) {
+                    hits[j] = hits[j - 1];
+                }
+                hits[0] = pair;
+                double count = 0;
+                int total = 0;
+                for (Pair<Integer, Integer> aPair : hits) {
+                    if (aPair == null) {
+                        continue;
+                    }
+                    count += aPair.getLeft();
+                    total += aPair.getRight();
+                }
+                double reliabilty = 1;
+                if (total > 0) {
+                    reliabilty = count / total;
+                }
+
+                myreliability = reliabilty;
                 
                 if (!simConfig.getConfidence() || myreliability >= simConfig.getConfidenceValue()) {
                     List<IncDecItem> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, excludeList);
@@ -526,8 +553,9 @@ public class SimulateInvestComponent extends ComponentML {
         capital.amount -= totalamount;
     }
 
-    private void update(List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap, Capital capital,
+    private int update(List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap, Capital capital,
             List<Astock> mystocks, int indexOffset) {
+        int up = 0;
         for (Astock item : mystocks) {
             String id = item.id;
             List<List<Double>> resultList = categoryValueMap.get(id);
@@ -539,10 +567,14 @@ public class SimulateInvestComponent extends ComponentML {
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (valNow != null) {
+                    if (valNow > item.price) {
+                        up++;
+                    }
                     item.price = valNow;
                 }
             }
         }
+        return up;
     }
 
     private void sell(List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap, Capital capital,
