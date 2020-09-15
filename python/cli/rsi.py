@@ -124,7 +124,8 @@ class RSI:
             df = df.sort_values(by='rsic', ascending = 0)
         else:
             df = df.sort_values(by='rsic', ascending = 1)
-
+    return df
+        
   def titles(self):
     return [ "rsi" ]
 

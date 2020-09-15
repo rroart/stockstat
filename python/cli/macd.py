@@ -315,6 +315,7 @@ class MACD:
             df = df.sort_values(by='hist2', ascending = 0)
         else:
             df = df.sort_values(by='hist2', ascending = 1)
+    return df
 
   def titles(self):
     return [ "macd", "sign", "hist", "macdd", "signd", "histd", "macdb", "signb", "histb" ]
