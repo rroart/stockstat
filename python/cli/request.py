@@ -3,7 +3,7 @@ import os
 
 aport = os.environ.get('MYAPORT')
 if aport is None:
-    aport = 80
+    aport = "80"
 
 url1 = 'http://localhost:' + aport + '/action/simulateinvest'
 url2 = 'http://localhost:' + aport + '/action/improvesimulateinvest'
