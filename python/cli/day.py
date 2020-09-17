@@ -61,7 +61,7 @@ class DAY:
         df = df.sort_values(by='days', ascending = 0)
     else:
         df = df.sort_values(by='days', ascending = 1)
-    
+    return df
 
   def titles(self):
     return [ "day" ]

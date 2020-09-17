@@ -205,11 +205,11 @@ public class IclijXMLConfig {
                 myclass = IclijConfigConstantMaps.map.get(node);
             }
             if (myclass == null) {
-                String node1 = node0.replaceFirst("\\[@id=[a-z]*\\]", "[@id]");
+                String node1 = node0.replaceFirst("\\[@id=[a-z0-9]*\\]", "[@id]");
                 myclass = (Class) IclijConfigConstantMaps.map.get(node1);
             }
             if (myclass == null) {
-                String node1 = node.replaceFirst("\\[@id=[a-z]*\\]", "[@id]");
+                String node1 = node.replaceFirst("\\[@id=[a-z0-9]*\\]", "[@id]");
                 myclass = (Class) IclijConfigConstantMaps.map.get(node1);
             }
             String s = "";
@@ -680,7 +680,7 @@ public class IclijXMLConfig {
     }
 
     private static MLConfigs getDefaultMlConfigs(IclijConfig config, ObjectMapper mapper, String text) {
-        text = text.replaceFirst("\\[@id=[a-z]*\\]", "[@id]");
+        text = text.replaceFirst("\\[@id=[a-z0-9]*\\]", "[@id]");
         String mlConfigsString = (String) config.getDeflt().get(text + ".mlconfig");
         try {
             return mapper.readValue(mlConfigsString, MLConfigs.class);

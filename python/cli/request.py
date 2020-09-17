@@ -1,7 +1,12 @@
 import requests
+import os
 
-url1 = 'http://localhost:22347/action/simulateinvest'
-url2 = 'http://localhost:22347/action/improvesimulateinvest'
+aport = os.environ.get('MYAPORT')
+if aport is None:
+    aport = "80"
+
+url1 = 'http://localhost:' + aport + '/action/simulateinvest'
+url2 = 'http://localhost:' + aport + '/action/improvesimulateinvest'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}

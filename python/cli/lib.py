@@ -370,7 +370,7 @@ def mytopperiod2(indicators, dflist, period, max, days, reverse=False, wantgrid 
         lists = []
         
         titles = [ "num", "name", "date", "value"]
-        formats = [ "{:3d}", "{:35.35}", "{:.12}", "{:.2f}" ];
+        formats = [ "{:3d}", "{:35.35}", "{:.10}", "{:.2f}" ];
         numindicators = len(indicators)
         for k in range(numindicators):
             indicator = indicators[k]
@@ -386,7 +386,7 @@ def mytopperiod2(indicators, dflist, period, max, days, reverse=False, wantgrid 
         for i in range(max):
             l = listperiod(df, period, i)
             name = df.name.iloc[i]
-            values = [ i, name[:33], df.date.iloc[i], l ]
+            values = [ i, name[:33], df.date.iloc[i].to_datetime64(), l ]
             for k in range(numindicators):
                 indicator = indicators[k]
                 values = values + indicator.values(df, i)
@@ -474,7 +474,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
             numindicators = len(indicators)
             for k in range(numindicators):
                 indicator = indicators[k]
-                indicator.dfextend(df, period, periodtext, sort, interpolate = interpolate, rebase = rebase, deltadays = deltadays, reverse = reverse)
+                df = indicator.dfextend(df, period, periodtext, sort, interpolate = interpolate, rebase = rebase, deltadays = deltadays, reverse = reverse)
             #idc = df.id
             #namec = df.name
             #datec = df.date
@@ -726,9 +726,9 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
     if wantcci:
         indicators.append(cci.CCI())
     if wantmacd:
-        indicators.append(macd.MACD())
+        indicators.append(macd.MACD(stockdata))
     if wantrsi:
-        indicators.append(rsi.RSI())
+        indicators.append(rsi.RSI(stockdata))
     if wantstoch:
         indicators.append(stoch.STOCH())
     if wantstochrsi:
@@ -1384,7 +1384,7 @@ def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):                                                
-        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day).start()
+        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day)
     output = file.getvalue()
     gui.view(output)
 

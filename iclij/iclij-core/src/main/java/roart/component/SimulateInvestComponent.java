@@ -138,7 +138,9 @@ public class SimulateInvestComponent extends ComponentML {
         String mldate = null;
         if (simConfig.getMldate()) {
             mldate = market.getConfig().getMldate();
-            mldate = mldate.replace('-', '.');
+            if (mldate != null) {
+                mldate = mldate.replace('-', '.');
+            }
             //mldate = ((SimulateInvestActionData) action.getActionData()).getMlDate(market, stockDates);
             //mldate = ((ImproveSimulateInvestActionData) action.getActionData()).getMlDate(market, stockDates);
         } else {
@@ -146,7 +148,9 @@ public class SimulateInvestComponent extends ComponentML {
             if (populate == null) {
                 //mldate = ((SimulateInvestActionData) action.getActionData()).getMlDate(market, stockDates);                
                 mldate = market.getConfig().getMldate();
-                mldate = mldate.replace('-', '.');
+                if (mldate != null) {
+                    mldate = mldate.replace('-', '.');
+                }
             } else {
                 mldate = stockDates.get(populate);                
             }
@@ -229,7 +233,7 @@ public class SimulateInvestComponent extends ComponentML {
                 List<Astock> buys = new ArrayList<>();
                 
                 if (simConfig.getIntervalStoploss()) {
-                    stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset, sells, simConfig.getIntervalStoplossValue());                       
+                    stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset, findTime, categoryValueMap, prevIndexOffset, sells, simConfig.getIntervalStoplossValue(), "ISTOP");                       
                 }
                 
                 Pair<Integer, Integer> pair = new ImmutablePair(up, mystocks.size());
@@ -252,6 +256,8 @@ public class SimulateInvestComponent extends ComponentML {
                 }
 
                 myreliability = reliabilty;
+                
+                boolean noconf = simConfig.getConfidence() && myreliability < simConfig.getConfidenceValue();
                 
                 if (!simConfig.getConfidence() || myreliability >= simConfig.getConfidenceValue()) {
                     List<IncDecItem> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, excludeList);
@@ -289,7 +295,8 @@ public class SimulateInvestComponent extends ComponentML {
                 
                 List<String> ids = mystocks.stream().map(Astock::getId).collect(Collectors.toList());
                 Capital sum = getSum(mystocks);
-                sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + ids + " " + trend);
+                String hasNoConf = noconf ? "NOCONF" : "";
+                sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend);
 
                 if (trend.incAverage != 0) {
                     resultavg *= trend.incAverage;
@@ -312,8 +319,11 @@ public class SimulateInvestComponent extends ComponentML {
                     for (int j = 0; j < interval; j++) {
                         sells = new ArrayList<>();
                         //System.out.println(interval + " " +  j);
-                        stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset + j, 1, categoryValueMap, indexOffset + j + 1, sells, simConfig.getStoplossValue());                       
-                        sell(stockDates, categoryValueMap, capital, sells, stockhistory, indexOffset + j, date, mystocks);
+                        if (indexOffset - j - 1 < 0) {
+                            break;
+                        }
+                        stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - j, 1, categoryValueMap, indexOffset - j - 1, sells, simConfig.getStoplossValue(), "STOP");                       
+                        sell(stockDates, categoryValueMap, capital, sells, stockhistory, indexOffset - j, date, mystocks);
                     }                    
                 }
                 date = date.plusDays(interval);
@@ -503,7 +513,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private void stoploss(Capital capital, int buytop, List<Astock> mystocks, List<String> stockDates, int indexOffset,
-            int findTime, Map<String, List<List<Double>>> categoryValueMap, int prevIndexOffset, List<Astock> sells, double stoploss) {
+            int findTime, Map<String, List<List<Double>>> categoryValueMap, int prevIndexOffset, List<Astock> sells, double stoploss, String stop) {
         List<Astock> newSells = new ArrayList<>();
         for (Astock item : mystocks) {
             String id = item.id;
@@ -515,8 +525,12 @@ public class SimulateInvestComponent extends ComponentML {
             ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
+                if (prevIndexOffset <= -1) {
+                    int jj = 0;
+                }
                 Double valWas = mainList.get(mainList.size() - 1 - prevIndexOffset);
                 if (valWas != null && valNow != null && valNow != 0 && valNow / valWas < stoploss) {
+                    item.status = stop;
                     newSells.add(item);
                 }
             }
@@ -651,6 +665,8 @@ public class SimulateInvestComponent extends ComponentML {
         public LocalDate selldate;
         
         public double weight;
+        
+        public String status;
         
         public String getId() {
             return id;
