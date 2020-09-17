@@ -103,6 +103,9 @@ public class DayAdviser extends Adviser {
             }
             List<Double> mainList = resultList.get(0);
             if (mainList != null) {
+                if (mainList.size() - 1 - indexOffset - day < 0) {
+                    continue;
+                }
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 Double valWas = mainList.get(mainList.size() - 1 - indexOffset - day);
                 if (valNow != null && valWas != null && valWas != 0) {
