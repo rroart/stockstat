@@ -56,6 +56,9 @@ public class CrossTestAction extends MarketAction {
             if (component == null) {
                 continue;
             }
+            if (market.getConfig().getMlmarkets() == null) {
+                continue;
+            }
             for (String mlmarket : market.getConfig().getMlmarkets()) {
                 param.getService().conf.setMLmarket(mlmarket);
                 boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
