@@ -1229,11 +1229,11 @@ def rangei(stop):
     return range(stop + 1)
 
 
-def simulateinvest2(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1):
-    simulateinvest(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day)
+def simulateinvest2(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = None):
+    simulateinvest(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay)
     
-def simulateinvest(market, startdate = None, enddate = None, confidence = False, confidenceValue = 0.7, confidenceFindTimes = 4, stoploss = True, stoplossValue = 0.9, indicatorPure = False, indicatorRebase = False, indicatorReverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalStoploss = True, intervalStoplossValue = 0.9, day = 1):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'confidence' : confidence, 'confidenceValue' : confidenceValue, 'confidenceFindTimes' : confidenceFindTimes, 'stoploss' : stoploss, 'stoplossValue' : stoplossValue, 'indicatorPure' : indicatorPure, 'indicatorRebase' : indicatorRebase, 'indicatorReverse' : indicatorReverse, 'mldate' : mldate, 'stocks' : stocks, 'buyweight' : buyweight, 'interval' : interval, 'adviser' : adviser, 'period' : period, 'interpolate' : interpolate, 'intervalStoploss' : intervalStoploss, 'intervalStoplossValue' : intervalStoplossValue, 'day' : day }
+def simulateinvest(market, startdate = None, enddate = None, confidence = False, confidenceValue = 0.7, confidenceFindTimes = 4, stoploss = True, stoplossValue = 0.9, indicatorPure = False, indicatorRebase = False, indicatorReverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalStoploss = True, intervalStoplossValue = 0.9, day = 1, delay = None):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'confidence' : confidence, 'confidenceValue' : confidenceValue, 'confidenceFindTimes' : confidenceFindTimes, 'stoploss' : stoploss, 'stoplossValue' : stoplossValue, 'indicatorPure' : indicatorPure, 'indicatorRebase' : indicatorRebase, 'indicatorReverse' : indicatorReverse, 'mldate' : mldate, 'stocks' : stocks, 'buyweight' : buyweight, 'interval' : interval, 'adviser' : adviser, 'period' : period, 'interpolate' : interpolate, 'intervalStoploss' : intervalStoploss, 'intervalStoplossValue' : intervalStoplossValue, 'day' : day, 'delay' : delay }
     print(market, data)
     response = request.request1(market, data)
     #print(type(response))
@@ -1292,8 +1292,8 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
     print(updatemap['enddate'])
     return
 
-def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga }
+def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay }
     response = request.request2(market, data)
     print("improve complete")
     #print(response.text)
@@ -1379,29 +1379,35 @@ def gettopgraphG(market, start, end, numberdays, tablemoveintervaldays, topbotto
     import multiprocessing as mp
     mp.Process(target = gettopgraphGwrap, args = (market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise, wantmacd, wantrsi, sort, macddays, reverse, deltadays, percentize, wantchart, interpolate, wantdays, days, wantgrid)).start()
 
-def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day):
+def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):                                                
-        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day)
+        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay)
     output = file.getvalue()
     gui.view(output)
 
-def simulateinvest2G(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1):
-    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day)).start()
+def simulateinvest2G(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = 1):
+    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay)).start()
 
-def improvesimulateinvestGwrap(market, startdate, enddate, ga):
+f = False
+t = True
+    
+def simulateinvestsG(market, startdate = None, enddate = None, c = f, cv = 0.7, ct = 4, st = t, stv = 0.9, ip = t, ib = f, ir = f, m = f, s = 3, b = t, i = 7, a = 0, p = 0, f = t, ist = t, istv = 0.9, d = 1, w = 1):
+    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w)).start()
+
+def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicatorpure, delay):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):                                                
-        improvesimulateinvest(market, startdate, enddate, ga)
+        improvesimulateinvest(market, startdate, enddate, ga, adviser, indicatorpure, delay)
     output = file.getvalue()
     gui.view(output)
 
-def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0):
-    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga)).start()
+def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1):
+    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay)).start()
 
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
