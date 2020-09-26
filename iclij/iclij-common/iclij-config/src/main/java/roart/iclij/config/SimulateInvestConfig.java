@@ -3,6 +3,7 @@ package roart.iclij.config;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class SimulateInvestConfig {
     private Boolean confidence;
@@ -47,6 +48,12 @@ public class SimulateInvestConfig {
     
     private Integer day;
 
+    private Integer ga;
+    
+    private Integer delay;
+    
+    private Integer extradelay;
+    
     public SimulateInvestConfig() {
         super();
     }
@@ -219,6 +226,30 @@ public class SimulateInvestConfig {
         this.day = day;
     }
 
+    public Integer getGa() {
+        return ga;
+    }
+
+    public void setGa(Integer ga) {
+        this.ga = ga;
+    }
+
+    public Integer getDelay() {
+        return delay;
+    }
+
+    public void setDelay(Integer delay) {
+        this.delay = delay;
+    }
+
+    public Integer getExtradelay() {
+        return extradelay;
+    }
+
+    public void setExtradelay(Integer extradelay) {
+        this.extradelay = extradelay;
+    }
+
     public void merge(SimulateInvestConfig other) {
         if (other == null) {
             return;
@@ -283,6 +314,15 @@ public class SimulateInvestConfig {
         if (other.excludes != null) {
             this.excludes = other.excludes;
         }
+        if (other.ga != null) {
+            this.ga = other.ga;
+        }
+        if (other.delay != null) {
+            this.delay = other.delay;
+        }
+        if (other.extradelay != null) {
+            this.extradelay = other.extradelay;
+        }
     }
     
     public Map<String, Object> asMap() {
@@ -307,6 +347,17 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE, intervalStoplossValue);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, interpolate);
         map.put(IclijConfigConstants.SIMULATEINVESTDAY, day);
+        map.put(IclijConfigConstants.SIMULATEINVESTDELAY, delay);
+        return map;
+    }
+    
+    public Map<String, Object> asValuedMap() {
+        Map<String, Object> map = new HashMap<>();
+        for (Entry<String, Object> entry : asMap().entrySet()) {
+            if (entry.getValue() != null) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+        }
         return map;
     }
 }

@@ -100,6 +100,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.DATASETPREDICTORMLCONFIG, String.class);
         map.put(IclijConfigConstants.DATASETINDICATORRECOMMENDER, Boolean.class);
+        map.put(IclijConfigConstants.EVOLVEGA, Integer.class);
         map.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEML, Boolean.class);
         map.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, String.class);
@@ -273,6 +274,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTADVISER, Integer.class);
         map.put(IclijConfigConstants.SIMULATEINVESTPERIOD, Integer.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTDELAY, Integer.class);
         map.put(IclijConfigConstants.SIMULATEINVESTDAY, Integer.class);
         map.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, Boolean.class);
         map.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, Boolean.class);
@@ -356,6 +358,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.DATASETRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.DATASETPREDICTOR, Boolean.TRUE);
         deflt.put(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG, null);
+        deflt.put(IclijConfigConstants.EVOLVEGA, 0);
         deflt.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, Boolean.TRUE);
         deflt.put(IclijConfigConstants.EVOLVEML, Boolean.FALSE);
         deflt.put(IclijConfigConstants.EVOLVEMLMLCONFIG, MLCONFIG);
@@ -488,6 +491,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.SIMULATEINVESTADVISER, 0);
         deflt.put(IclijConfigConstants.SIMULATEINVESTDAY, 1);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTDELAY, 1);
         deflt.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, Boolean.TRUE);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPS, 5);
@@ -579,6 +583,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.DATASETPREDICTOR, "Enable dataset predictor");
         text.put(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG, "dataset predictor evolution config");
         text.put(IclijConfigConstants.DATASETPREDICTORMLCONFIG, "dataset predictor ml enable");
+        text.put(IclijConfigConstants.EVOLVEGA, "Evolve GA");
         text.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, "Enable evolution generated recommender settings");
         text.put(IclijConfigConstants.EVOLVEML, "Enable evolution generated ml configs");
         text.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, "ML GP config");
@@ -752,6 +757,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, "Simulate invest interpolate");
 	text.put(IclijConfigConstants.SIMULATEINVESTADVISER, "Simulate invest adviser");
         text.put(IclijConfigConstants.SIMULATEINVESTDAY, "Simulate invest day adviser");
+        text.put(IclijConfigConstants.SIMULATEINVESTDELAY, "Simulate invest delay");
         text.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, "Enable improve simulate invest autorun");
         text.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, "Single market loops with evolve first only");
         text.put(IclijConfigConstants.SINGLEMARKETLOOPS, "Single market loops");
@@ -870,6 +876,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.DATASETPREDICTOREVOLUTIONCONFIG, new IclijXMLType(String.class, null, "dataset predictor evolution config"));
         mymap.put(IclijConfigConstants.DATASETPREDICTORMLCONFIG, new IclijXMLType(String.class, MLCONFIG, "dataset predictor ml enable"));
         mymap.put(IclijConfigConstants.EVOLVE, new IclijXMLType(null, null, null));
+        mymap.put(IclijConfigConstants.EVOLVEGA, new IclijXMLType(Integer.class, 0, "Evolve GA"));
         mymap.put(IclijConfigConstants.EVOLVEINDICATORRECOMMENDER, new IclijXMLType(Boolean.class, Boolean.TRUE, "Enable evolution generated recommender settings"));
         mymap.put(IclijConfigConstants.EVOLVEML, new IclijXMLType(Boolean.class, Boolean.FALSE, "Evolve ML enable"));
         mymap.put(IclijConfigConstants.EVOLVEMLEVOLUTIONCONFIG, new IclijXMLType( String.class, "{ \"generations\" : 10, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 4, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config", ConfigConstants.EVOLVEMLEVOLUTIONCONFIG));
@@ -1043,6 +1050,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest interpolate"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTADVISER, new IclijXMLType(Integer.class, 0, "Simulate invest adviser"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTDAY, new IclijXMLType(Integer.class, 1, "Simulate invest day adviser"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTDELAY, new IclijXMLType(Integer.class, 1, "Simulate invest delay"));
         mymap.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve simulate invest autorun"));
         mymap.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, new IclijXMLType(Boolean.class, Boolean.TRUE, "Single market loops with evolve first only"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPS, new IclijXMLType(Integer.class, 5, "Single market loops"));

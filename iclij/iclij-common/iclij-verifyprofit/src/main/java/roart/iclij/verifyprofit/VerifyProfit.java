@@ -101,7 +101,7 @@ public class VerifyProfit {
             if (mainList != null) {
                 ValidateUtil.validateSizes(mainList, stockDates);
                 if (mainList.size() - 1 - startoffset - days < 0) {
-                    int jj = 0;
+                    continue;
                 }
                 Double valFuture = mainList.get(mainList.size() - 1 - startoffset);
                 Double valNow = mainList.get(mainList.size() - 1 - startoffset - days);

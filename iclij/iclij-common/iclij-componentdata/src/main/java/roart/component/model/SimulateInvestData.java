@@ -3,6 +3,8 @@ package roart.component.model;
 import java.util.List;
 import java.util.Map;
 
+import roart.iclij.config.SimulateInvestConfig;
+
 public class SimulateInvestData extends ComponentData {
 
     private List allIncDecs;
@@ -16,6 +18,8 @@ public class SimulateInvestData extends ComponentData {
     private Map<String, Map<String, Object>> resultRebaseMaps;
     
     private List<String> stockDates;
+    
+    private SimulateInvestConfig config;
     
     public SimulateInvestData(ComponentData componentparam) {
         super(componentparam);
@@ -67,6 +71,14 @@ public class SimulateInvestData extends ComponentData {
 
     public void setStockDates(List<String> stockDates) {
         this.stockDates = stockDates;
+    }
+
+    public SimulateInvestConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(SimulateInvestConfig config) {
+        this.config = config;
     }
 
 }
