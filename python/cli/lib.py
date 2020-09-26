@@ -1292,8 +1292,8 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
     print(updatemap['enddate'])
     return
 
-def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay }
+def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay, 'intervalwhole' : intervalwhole }
     response = request.request2(market, data)
     print("improve complete")
     #print(response.text)
@@ -1397,17 +1397,17 @@ t = True
 def simulateinvestsG(market, startdate = None, enddate = None, c = f, cv = 0.7, ct = 4, st = t, stv = 0.9, ip = t, ib = f, ir = f, m = f, s = 3, b = t, i = 7, a = 0, p = 0, f = t, ist = t, istv = 0.9, d = 1, w = 1):
     mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w)).start()
 
-def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicatorpure, delay):
+def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):                                                
-        improvesimulateinvest(market, startdate, enddate, ga, adviser, indicatorpure, delay)
+        improvesimulateinvest(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole)
     output = file.getvalue()
     gui.view(output)
 
-def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1):
-    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay)).start()
+def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1, intervalwhole = True):
+    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole)).start()
 
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
