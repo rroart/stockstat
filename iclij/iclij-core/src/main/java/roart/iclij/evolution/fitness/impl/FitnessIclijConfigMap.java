@@ -3,6 +3,7 @@ package roart.iclij.evolution.fitness.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +16,9 @@ import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.ConfigMapChromosome2;
-import roart.evolution.chromosome.impl.IclijConfigMapChromosome;
-import roart.evolution.chromosome.impl.IclijConfigMapGene;
 import roart.evolution.fitness.Fitness;
+import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
+import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
@@ -70,16 +71,7 @@ public class FitnessIclijConfigMap extends Fitness {
 
     @Override
     public double fitness(AbstractChromosome chromosome) {
-        List<MemoryItem> memoryItems = null;
-        WebData myData = new WebData();
-        myData.setUpdateMap(new HashMap<>());
-        myData.setMemoryItems(new ArrayList<>());
-        //myData.profitData = new ProfitData();
-        myData.setTimingMap(new HashMap<>());
-
-        profitdata.setBuys(new HashMap<>());
-        profitdata.setSells(new HashMap<>());
-        Double score = fitness(myData, profitdata, chromosome);
+        Double score = fitness(profitdata, chromosome);
         IclijConfigMapGene gene = ((IclijConfigMapChromosome) chromosome).getGene();
         param.getUpdateMap().putAll(gene.getMap());
         log.info("Fit {}", score);
@@ -87,35 +79,16 @@ public class FitnessIclijConfigMap extends Fitness {
         return score != null ? score : 0.0;
     }
 
-    public Double fitness(WebData myData, ProfitData profitdata, AbstractChromosome chromosome) {
+    public Double fitness(ProfitData profitdata, AbstractChromosome chromosome) {
         IclijConfigMapGene gene = ((IclijConfigMapChromosome) chromosome).getGene();
-        Double score = null;
-        try {
-            Component component =  action.getComponentFactory().factory(componentName);
-            ActionComponentConfig config = ActionComponentConfigFactory.factoryfactory(action.getName()).factory(component.getPipeline());
-            component.setConfig(config);
-            boolean evolve = false; // component.wantEvolve(param.getInput().getConfig());
-            myData.setProfitData(profitdata);
+        Map<String, Object> map = gene.getMap();
 
-            Memories listMap = new Memories(market);
-
-            ProfitInputData inputdata = new ProfitInputData();
-            profitdata.setInputdata(inputdata);
-            inputdata.setNameMap(new HashMap<>());
-
-            param.getInput().getConfig().getConfigValueMap().putAll(gene.getMap());
-            
-            Action parent = action.getParent();
-            action.setParent(null);
-            ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters);
-            action.setParent(parent);
-            titletext = (String) componentData2.getUpdateMap().get("titletext");
-            Object[] result = component.calculateAccuracy(componentData2);
-            score = (Double) result[0];
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
+        List<String> titletexts = new ArrayList<>();
+        Double fitness = new FitnessIclijConfigMapCommon().fitnessCommon(profitdata, map, action, market, param, componentName, subcomponent, parameters, titletexts);
+        if (!titletexts.isEmpty()) {
+            titletext = titletexts.get(0);
         }
-        return score;
+        return fitness;
     }
 
     @Override

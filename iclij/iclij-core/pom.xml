@@ -179,6 +179,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-iclij-evolution-iclijconfigmap</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-common-service</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
@@ -277,6 +282,11 @@
       <groupId>io.jenetics</groupId>
       <artifactId>jenetics</artifactId>
       <version>${jenetics.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math3</artifactId>
+      <version>${commons.math3.version}</version>
     </dependency>
   </dependencies>
 </project>

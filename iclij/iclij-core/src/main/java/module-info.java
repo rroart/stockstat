@@ -49,6 +49,7 @@ module iclij.core {
     requires org.apache.commons.lang3;
     requires io.jenetics.base;
     requires iclij.evolutionmarketfilter;
+    requires iclij.evolutioniclijconfigmap;
     requires db;
     //requires springfox.core;
     //requires springfox.spi;
