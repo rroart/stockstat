@@ -271,6 +271,7 @@ public class IclijConfigConstantMaps {
 	map.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, Integer.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, Integer.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTINTERVALWHOLE, Boolean.class);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTADVISER, Integer.class);
         map.put(IclijConfigConstants.SIMULATEINVESTPERIOD, Integer.class);
@@ -488,6 +489,7 @@ public class IclijConfigConstantMaps {
 	deflt.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, 5);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, Boolean.FALSE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, 7);
+	deflt.put(IclijConfigConstants.SIMULATEINVESTINTERVALWHOLE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.SIMULATEINVESTADVISER, 0);
         deflt.put(IclijConfigConstants.SIMULATEINVESTDAY, 1);
@@ -754,6 +756,7 @@ public class IclijConfigConstantMaps {
 	text.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, "Simulate invest stocks");
 	text.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, "Simulate invest buy weight");
 	text.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, "Simulate invest interval");
+        text.put(IclijConfigConstants.SIMULATEINVESTINTERVALWHOLE, "Simulate invest interval whole");
         text.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, "Simulate invest interpolate");
 	text.put(IclijConfigConstants.SIMULATEINVESTADVISER, "Simulate invest adviser");
         text.put(IclijConfigConstants.SIMULATEINVESTDAY, "Simulate invest day adviser");
@@ -788,7 +791,7 @@ public class IclijConfigConstantMaps {
         range.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE, new Double[] { 0.5, 1.0, 2.0 } );
         range.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, new Double[] { 1.0, 10.0 } );
         range.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, new Double[] { 1.0, 21.0 } );
-        range.put(IclijConfigConstants.SIMULATEINVESTADVISER, new Double[] { 0.0, 7.0 } );
+        range.put(IclijConfigConstants.SIMULATEINVESTADVISER, new Double[] { 0.0, 8.0 } );
         range.put(IclijConfigConstants.SIMULATEINVESTPERIOD, new Double[] { 0.0, 10.0 } );
         range.put(IclijConfigConstants.SIMULATEINVESTDAY, new Double[] { 1.0, 20.0, 1.0 } );
     }
@@ -1047,6 +1050,7 @@ public class IclijConfigConstantMaps {
 	mymap.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, new IclijXMLType(Integer.class, 5, "Simulate invest stocks"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest buy weight"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, new IclijXMLType(Integer.class, 7, "Simulate invest interval"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest interval whole"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest interpolate"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTADVISER, new IclijXMLType(Integer.class, 0, "Simulate invest adviser"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTDAY, new IclijXMLType(Integer.class, 1, "Simulate invest day adviser"));

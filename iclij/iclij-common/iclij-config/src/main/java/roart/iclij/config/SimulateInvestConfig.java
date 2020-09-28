@@ -54,6 +54,8 @@ public class SimulateInvestConfig {
     
     private Integer extradelay;
     
+    private Boolean intervalwhole;
+    
     public SimulateInvestConfig() {
         super();
     }
@@ -250,6 +252,14 @@ public class SimulateInvestConfig {
         this.extradelay = extradelay;
     }
 
+    public Boolean getIntervalwhole() {
+        return intervalwhole;
+    }
+
+    public void setIntervalwhole(Boolean intervalwhole) {
+        this.intervalwhole = intervalwhole;
+    }
+
     public void merge(SimulateInvestConfig other) {
         if (other == null) {
             return;
@@ -323,6 +333,9 @@ public class SimulateInvestConfig {
         if (other.extradelay != null) {
             this.extradelay = other.extradelay;
         }
+        if (other.intervalwhole != null) {
+            this.intervalwhole = other.intervalwhole;
+        }
     }
     
     public Map<String, Object> asMap() {
@@ -348,6 +361,7 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTINTERPOLATE, interpolate);
         map.put(IclijConfigConstants.SIMULATEINVESTDAY, day);
         map.put(IclijConfigConstants.SIMULATEINVESTDELAY, delay);
+        map.put(IclijConfigConstants.SIMULATEINVESTINTERVALWHOLE, intervalwhole);
         return map;
     }
     

@@ -666,6 +666,10 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVAL);
     }
 
+    public boolean wantsSimulateInvestIntervalWhole() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVALWHOLE);
+    }
+
     public int getSimulateInvestAdviser() {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTADVISER);
     }

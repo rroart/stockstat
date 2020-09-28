@@ -6,11 +6,13 @@ import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.OptionalDouble;
 import java.util.Set;
@@ -86,6 +88,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (!(param instanceof SimulateInvestData)) {
             SimulateInvestConfig localSimConfig = market.getSimulate();
             simConfig.merge(localSimConfig);
+            extradelay = simConfig.getExtradelay();
         } else {
             /*
             if (simulateParam.getConfig() != null) {
@@ -180,30 +183,25 @@ public class SimulateInvestComponent extends ComponentML {
         Map<String, List<List<Double>>> filteredCategoryValueMap = new HashMap<>(categoryValueMap);
         filteredCategoryValueMap.keySet().removeAll(excludeList);
 
-        List<String> plotDates = new ArrayList<>();
-        List<Double> plotCapital = new ArrayList<>();
-        List<Double> plotDefault = new ArrayList<>();
-        
+        boolean intervalwhole = config.wantsSimulateInvestIntervalWhole();
+        int end = 1;
+        if (intervalwhole) {
+            end = simConfig.getInterval();
+        }
+
         List<String> parametersList = adviser.getParameters();
         if (parametersList.isEmpty()) {
             parametersList.add(null);
         }
+        
+        List<Double> scores = new ArrayList<>();
+        
         for (String aParameter : parametersList) {
             Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
             if (realParameters != null && realParameters.getThreshold() != 1.0) {
                 continue;
             }
-            Capital capital = new Capital();
-            capital.amount = 1;
-            List<Astock> mystocks = new ArrayList<>();
-            List<Astock> stockhistory = new ArrayList<>();
-            List<String> sumHistory = new ArrayList<>();
-            
-            int findTimes = simConfig.getConfidenceFindTimes();
-            Pair<Integer, Integer>[] hits = new ImmutablePair[findTimes];
-           
-            LocalDate date = investStart;
-            
+
             int delay = simConfig.getDelay();
             int totalDelays = extradelay + delay;
             investEnd = TimeUtil.getBackEqualBefore2(investEnd, 0 /* findTime */, stockDates);
@@ -221,9 +219,27 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                 }
             }
+            
+            for (int offset = 0; offset < end; offset++) {
+                
+            Capital capital = new Capital();
+            capital.amount = 1;
+            List<Astock> mystocks = new ArrayList<>();
+            List<Astock> stockhistory = new ArrayList<>();
+            List<String> sumHistory = new ArrayList<>();
+            List<String> plotDates = new ArrayList<>();
+            List<Double> plotCapital = new ArrayList<>();
+            List<Double> plotDefault = new ArrayList<>();
+                        
+            int findTimes = simConfig.getConfidenceFindTimes();
+            Pair<Integer, Integer>[] hits = new ImmutablePair[findTimes];
+           
             int prevIndexOffset = 0;
             //try {
-                date = TimeUtil.getEqualBefore(stockDates, date);
+            LocalDate date = investStart;
+            
+            date = TimeUtil.getEqualBefore(stockDates, date);
+            date = TimeUtil.getForwardEqualAfter2(date, offset, stockDates);
         /*    
         } catch (Exception e) {
                 log.error(Constants.ERROR, e);
@@ -390,10 +406,7 @@ public class SimulateInvestComponent extends ComponentML {
             if (score > 100) {
                 int jj = 0;
             }
-            Map<String, Double> scoreMap = new HashMap<>();
-            scoreMap.put("" + score, score);
-            scoreMap.put("score", score);
-            componentData.setScoreMap(scoreMap);
+            scores.add(score);
             
             {
                 int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, mldate);
@@ -402,6 +415,7 @@ public class SimulateInvestComponent extends ComponentML {
                 log.info("" + simConfig.asMap());
             }
             
+            if (offset == 0) {
             Map<String, Object> map = new HashMap<>();
             map.put("sumhistory", sumHistory);
             map.put("stockhistory", stockhistory);
@@ -413,7 +427,35 @@ public class SimulateInvestComponent extends ComponentML {
             map.put("titletext", getPipeline() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
             param.getUpdateMap().putAll(map);
             componentData.getUpdateMap().putAll(map);
+            }
         }
+        }
+
+        Double score = 0.0;
+        if (!scores.isEmpty()) {
+            OptionalDouble average = scores
+                    .stream()
+                    .mapToDouble(a -> a)
+                    .average();
+            score = average.getAsDouble();            
+        }
+        if (intervalwhole) {
+            String stats = scores.stream().filter(Objects::nonNull).mapToDouble(e -> (Double) e).summaryStatistics().toString();
+            Map<String, Object> map = new HashMap<>();
+            map.put("scores", scores);
+            map.put("stats", stats);
+            double min = Collections.min(scores);
+            double max = Collections.max(scores);
+            int minDay = scores.indexOf(min);
+            int maxDay = scores.indexOf(max);
+            map.put("minmax", "min " + min + " at " + minDay + " and max " + max + " at " + maxDay);
+            param.getUpdateMap().putAll(map);
+            componentData.getUpdateMap().putAll(map);
+        }    
+        Map<String, Double> scoreMap = new HashMap<>();
+        scoreMap.put("" + score, score);
+        scoreMap.put("score", score);
+        componentData.setScoreMap(scoreMap);
 
         //componentData.setFuturedays(0);
 
@@ -878,6 +920,7 @@ public class SimulateInvestComponent extends ComponentML {
         aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         aMap.put(ConfigConstants.MISCMYDAYS, 0);
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, true);
+        aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         // different line
         param.getResultMap(null, aMap);
         Map<String, Map<String, Object>> mapsRebase = param.getResultMaps();
