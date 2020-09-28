@@ -269,7 +269,8 @@ public class ExtraReader extends Pipeline {
         for (Entry<Pair<String, String>, Double[]> entry : listMap.entrySet()) {
             Double[] array = entry.getValue();
             Double[] newArray = new Double[array.length];
-            retMap.put(entry.getKey(), ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf)));
+            String interpolationmethod = conf.getInterpolationmethod();
+            retMap.put(entry.getKey(), ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf), interpolationmethod));
         }      
         return retMap;
     }
@@ -287,7 +288,8 @@ public class ExtraReader extends Pipeline {
             Double[][] newArray = new Double[array.length][];
             for (int i = 0; i < array.length; i ++) {
                 newArray[i] = new Double[array[i].length];
-                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf));
+                String interpolationmethod = conf.getInterpolationmethod();
+                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf), interpolationmethod);
             }
             retMap.put(id, newArray);
         }      
