@@ -70,7 +70,7 @@ class RSI:
     
     return [m]
 
-  def dfextend(self, df, period, periodtext, sort, interpolate = True, rebase = False, deltadays = 3, reverse = False):
+  def dfextend(self, df, period, periodtext, sort, interpolate = True, rebase = False, deltadays = 3, reverse = False, interpolation = 'linear'):
     dateset = set(self.stockdata.listdates)
     rsilist = []
     headskip = 0
@@ -101,7 +101,8 @@ class RSI:
         if periodtext == "Price" or periodtext == "Index":
             myc = my.fixzero2(myc)
         if interpolate:
-            myc = myc.interpolate(method='linear')
+            myc = my.fixna(myc, interpolation)
+            #myc = myc.interpolate(method='linear')
         doprint = mydf.id == '1301162'
         #macd.doprint = doprint
         #rsi.doprint = doprint

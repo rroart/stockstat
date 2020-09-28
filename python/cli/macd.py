@@ -149,7 +149,7 @@ class MACD:
     #print(retl[0])
     return(retl)
 
-  def dfextend(self, df, period, periodtext, sort, interpolate = True, rebase = False, deltadays = 3, reverse = False):
+  def dfextend(self, df, period, periodtext, sort, interpolate = True, rebase = False, deltadays = 3, reverse = False, interpolation = 'linear'):
     dateset = set(self.stockdata.listdates)
     momlist = []
     signlist = []
@@ -231,7 +231,8 @@ class MACD:
         if periodtext == "Price" or periodtext == "Index":
             myc = my.fixzero2(myc)
         if interpolate:
-            myc = myc.interpolate(method='linear')
+            myc = my.fixna(myc, interpolation)
+            #myc = myc.interpolate(method='linear')
         momhist = self.getmomhist([myc, None, None], deltadays)
         #print(type(momhist))
         #print(len(momhist))

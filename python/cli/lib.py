@@ -436,7 +436,7 @@ def myperiodtextslist(myperiodtexts, periodtexts):
 def getbottomgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=const.VALUE, macddays=180, deltadays=3, percentize=True, wantchart=True):
     return(gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=True, deltadays=deltadays, percentize=percentize, wantchart=wantchart))
 
-def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=const.VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, rebase=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False):
+def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=const.VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, rebase=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False, interpolation = 'linear'):
     print("0", market)
     print(wantmacd, wantrsi, wantdays, rebase, interpolate)
     stockdata = StockData(market, allstocks, start, end, tableintervaldays = tablemoveintervaldays, tablemoveintervaldays = tablemoveintervaldays, reverse = reverse, numberdays = numberdays)
@@ -474,7 +474,7 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
             numindicators = len(indicators)
             for k in range(numindicators):
                 indicator = indicators[k]
-                df = indicator.dfextend(df, period, periodtext, sort, interpolate = interpolate, rebase = rebase, deltadays = deltadays, reverse = reverse)
+                df = indicator.dfextend(df, period, periodtext, sort, interpolate = interpolate, rebase = rebase, deltadays = deltadays, reverse = reverse, interpolation = interpolation)
             #idc = df.id
             #namec = df.name
             #datec = df.date
@@ -582,7 +582,7 @@ def getelem(id, days, stocklistperiod, period, size):
 
 # ( [ ( "tradcomm", "XAUUSD:CUR" ), ( "tradcomm", "XAUUSD:CUR", "Price" ) ], "\1 / \2" )
 
-def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = []):
+def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = [], interpolation = 'linear'):
     periodtext = ids[0][2]
     scalebeginning100 = 0
     if len(ids) > 1:
@@ -683,13 +683,16 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
                         if interpolate:
                             print(type(l))
                             l = my.fixzero2(l)
-                            l = l.interpolate(method='linear')
+                            #l = l.interpolate(method='linear')
+                            l = my.fixna(l, interpolation)
                             if not llow is None:
                                 llow = my.fixzero2(llow)
-                                llow = llow.interpolate(method='linear')
+                                #llow = llow.interpolate(method='linear')
+                                llow = my.fixna(llow, interpolation)
                             if not lhigh is None:
                                 lhigh = my.fixzero2(lhigh)
-                                lhigh = lhigh.interpolate(method='linear')
+                                #lhigh = lhigh.interpolate(method='linear')
+                                lhigh = my.fixna(lhigh, interpolation)
                             
                         ls.append([l, llow, lhigh])
                         listdf = getelem3tup(id, stockdata.days, datedstocklists, period, topbottom)
@@ -763,7 +766,7 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
     print("daes", olddate, newdate)
     myma0 = ls[0]
     myma0 = [ my.fixzero2(myma0[0]), my.fixzero2(myma0[1]), my.fixzero2(myma0[2]) ]
-    myma0 = my.fixnaarr(myma0)
+    myma0 = my.fixnaarr(myma0, interpolation)
     displayax(ax[0], myma0, daynames2, mynames[0].values, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
     myma = ls[0]
     #print("tmyma ", type(myma))
@@ -772,7 +775,7 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
     print("mym", type(myma), len(myma))
     myma = [ my.fixzero2(myma[0]), my.fixzero2(myma[1]), my.fixzero2(myma[2]) ]
     print("mem0", myma[0].values)
-    myma = my.fixnaarr(myma)
+    myma = my.fixnaarr(myma, interpolation)
     print(myma[0].values)
     print("p",periodtext)
     #myma = my.base100(myma, periodtext)
@@ -806,7 +809,7 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
     plt.show()
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
 
-def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
+def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, interpolation = 'linear'):
     scalebeginning100 = 1
     
     markets = set()
@@ -905,7 +908,8 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
                         dayls.append(bigretl[2])
                         if interpolate:
                             print(type(l))
-                            l = l.interpolate(method='linear')
+                            #l = l.interpolate(method='linear')
+                            l = my.fixna(l, interpolation)
                         ls.append(l)
                         listdf = getelem3tup(id, stockdata.days, datedstocklists, indexid, topbottom)
                         df = listdf
@@ -1229,11 +1233,11 @@ def rangei(stop):
     return range(stop + 1)
 
 
-def simulateinvest2(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = None):
-    simulateinvest(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay)
+def simulateinvest2(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = None, intervalwhole = False):
+    simulateinvest(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole)
     
-def simulateinvest(market, startdate = None, enddate = None, confidence = False, confidenceValue = 0.7, confidenceFindTimes = 4, stoploss = True, stoplossValue = 0.9, indicatorPure = False, indicatorRebase = False, indicatorReverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalStoploss = True, intervalStoplossValue = 0.9, day = 1, delay = None):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'confidence' : confidence, 'confidenceValue' : confidenceValue, 'confidenceFindTimes' : confidenceFindTimes, 'stoploss' : stoploss, 'stoplossValue' : stoplossValue, 'indicatorPure' : indicatorPure, 'indicatorRebase' : indicatorRebase, 'indicatorReverse' : indicatorReverse, 'mldate' : mldate, 'stocks' : stocks, 'buyweight' : buyweight, 'interval' : interval, 'adviser' : adviser, 'period' : period, 'interpolate' : interpolate, 'intervalStoploss' : intervalStoploss, 'intervalStoplossValue' : intervalStoplossValue, 'day' : day, 'delay' : delay }
+def simulateinvest(market, startdate = None, enddate = None, confidence = False, confidenceValue = 0.7, confidenceFindTimes = 4, stoploss = True, stoplossValue = 0.9, indicatorPure = False, indicatorRebase = False, indicatorReverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalStoploss = True, intervalStoplossValue = 0.9, day = 1, delay = None, intervalwhole = False):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'confidence' : confidence, 'confidenceValue' : confidenceValue, 'confidenceFindTimes' : confidenceFindTimes, 'stoploss' : stoploss, 'stoplossValue' : stoplossValue, 'indicatorPure' : indicatorPure, 'indicatorRebase' : indicatorRebase, 'indicatorReverse' : indicatorReverse, 'mldate' : mldate, 'stocks' : stocks, 'buyweight' : buyweight, 'interval' : interval, 'adviser' : adviser, 'period' : period, 'interpolate' : interpolate, 'intervalStoploss' : intervalStoploss, 'intervalStoplossValue' : intervalStoplossValue, 'day' : day, 'delay' : delay, 'intervalwhole' : intervalwhole }
     print(market, data)
     response = request.request1(market, data)
     #print(type(response))
@@ -1290,11 +1294,23 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
     print(webdata['timingMap'])
     print(updatemap['startdate'])
     print(updatemap['enddate'])
+    if intervalwhole:
+      print(updatemap['scores'])
+      print(updatemap['stats'])
+      print(updatemap['minmax'])
     return
 
 def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True):
     data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay, 'intervalwhole' : intervalwhole }
     response = request.request2(market, data)
+    resp = response.json()
+    webdata = resp['webdatajson']
+    updatemap = webdata['updateMap']
+
+    #print(updatemap.keys())
+    #print(updatemap['scores'])
+    #print(updatemap['stats'])
+    #print(updatemap['minmax'])
     print("improve complete")
     #print(response.text)
 
@@ -1362,40 +1378,40 @@ def getvaluesG(myid, start, end):
     import multiprocessing as mp
     mp.Process(target=getvaluesGwrap, args=(myid, start, end)).start()
 
-def gettopgraphGwrap(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=const.VALUE, macddays=180, reverse=False, deltadays=3, rebase=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False):
+def gettopgraphGwrap(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=const.VALUE, macddays=180, reverse=False, deltadays=3, rebase=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False, interpolation = 'linear'):
     print("0", market)
     print(wantmacd, wantrsi, wantdays)
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):
-        gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=reverse, deltadays=deltadays, rebase=rebase, wantchart=wantchart, interpolate=interpolate, wantdays=wantdays, days=days, wantgrid=wantgrid)
+        gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=reverse, deltadays=deltadays, rebase=rebase, wantchart=wantchart, interpolate=interpolate, wantdays=wantdays, days=days, wantgrid=wantgrid, interpolation=interpolation)
     output = file.getvalue()
     gui.view(output)
 
-def gettopgraphG(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=const.VALUE, macddays=180, reverse=False, deltadays=3, percentize=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False):
+def gettopgraphG(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=const.VALUE, macddays=180, reverse=False, deltadays=3, percentize=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False, interpolation = 'linear'):
     print("0", market)
     print(wantmacd, wantrsi, wantdays)
     import multiprocessing as mp
-    mp.Process(target = gettopgraphGwrap, args = (market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise, wantmacd, wantrsi, sort, macddays, reverse, deltadays, percentize, wantchart, interpolate, wantdays, days, wantgrid)).start()
+    mp.Process(target = gettopgraphGwrap, args = (market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise, wantmacd, wantrsi, sort, macddays, reverse, deltadays, percentize, wantchart, interpolate, wantdays, days, wantgrid, interpolation)).start()
 
-def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay):
+def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):                                                
-        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay)
+        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole)
     output = file.getvalue()
     gui.view(output)
 
-def simulateinvest2G(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = 1):
-    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay)).start()
+def simulateinvest2G(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = 1, intervalwhole = False):
+    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole)).start()
 
 f = False
 t = True
     
-def simulateinvestsG(market, startdate = None, enddate = None, c = f, cv = 0.7, ct = 4, st = t, stv = 0.9, ip = t, ib = f, ir = f, m = f, s = 3, b = t, i = 7, a = 0, p = 0, f = t, ist = t, istv = 0.9, d = 1, w = 1):
-    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w)).start()
+def simulateinvestsG(market, startdate = None, enddate = None, c = f, cv = 0.7, ct = 4, st = t, stv = 0.9, ip = t, ib = f, ir = f, m = f, s = 3, b = t, i = 7, a = 0, p = 0, f = t, ist = t, istv = 0.9, d = 1, w = 1, iw = f):
+    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw)).start()
 
 def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole):
     import io
