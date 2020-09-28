@@ -37,6 +37,8 @@ public class MarketConfig {
     
     private Short populate;
     
+    private String interpolate;
+    
     public MarketConfig() {
         super();
     }
@@ -183,6 +185,14 @@ public class MarketConfig {
 
     public void setPopulate(Short populate) {
         this.populate = populate;
+    }
+
+    public String getInterpolate() {
+        return interpolate;
+    }
+
+    public void setInterpolate(String interpolate) {
+        this.interpolate = interpolate;
     }
 
 }

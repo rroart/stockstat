@@ -72,7 +72,8 @@ public class ValueETL {
             }
             for (int i = 0; i < array.length; i ++) {
                 newArray[i] = new Double[array[i].length];
-                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf));
+                String interpolationmethod = conf.getInterpolationmethod();
+                newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf), interpolationmethod);
             }
             retMap.put(entry.getKey(), newArray);
         }      
@@ -84,7 +85,8 @@ public class ValueETL {
         for (Entry<String, Double[]> entry : listMap.entrySet()) {
             Double[] array = entry.getValue();
             Double[] newArray = new Double[array.length];
-            newArray = ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf));
+            String interpolationmethod = conf.getInterpolationmethod();
+            newArray = ArraysUtil.fixMapHoles(array, newArray, maxHoleNumber(conf), interpolationmethod);
             retMap.put(entry.getKey(), newArray);
         }      
         return retMap;

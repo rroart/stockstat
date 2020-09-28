@@ -172,7 +172,7 @@ public abstract class MarketAction extends Action {
             ComponentInput input = new ComponentInput(config, null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(input, 0);
+                param = ComponentData.getParam(input, 0, market);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }

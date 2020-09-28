@@ -821,6 +821,14 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MISCFILTERWEEKEND);
     }
 
+    public boolean wantInterpolate() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MISCINTERPOLATE);
+    }
+
+    public String getInterpolationmethod() {
+        return (String) getValueOrDefault(ConfigConstants.MISCINTERPOLATIONMETHOD);
+    }
+
     public String getThreshold() {
         return (String) getValueOrDefault(ConfigConstants.MISCTHRESHOLD);
     }

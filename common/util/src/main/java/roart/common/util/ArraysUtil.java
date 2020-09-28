@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.CategoryConstants;
+import roart.common.constants.Constants;
+
 import com.google.common.collect.Range;
 
 public class ArraysUtil {
@@ -573,13 +575,14 @@ public class ArraysUtil {
     /**
      * Goes through the array, smoothes out missing values (by using the previous),
      * or nulls out, depending or whether a max number was passed
-     * 
-     * @param doubles
      * @param maxHoleNumber
+     * @param interpolationmethod TODO
+     * @param doubles
+     * 
      * @return Fixed array
      */
 
-    public static Double[] fixMapHoles(Double[] srcArray, Double[] dstArray, int maxHoleNumber) {
+    public static Double[] fixMapHoles(Double[] srcArray, Double[] dstArray, int maxHoleNumber, String interpolationmethod) {
         int length = srcArray.length;
         if (dstArray == null) {
             dstArray = srcArray;
@@ -615,6 +618,9 @@ public class ArraysUtil {
                     return dstArray;
                 }
                 double diff = (dstArray[i + 1] - dstArray[j]) / 3;
+                if (Constants.FFILL.equals(interpolationmethod)) {
+                    diff = 0;
+                }
                 for (int k = j + 1; k <= i; k++) {
                     dstArray[k] = dstArray[j] + diff * (k - j);
                 }

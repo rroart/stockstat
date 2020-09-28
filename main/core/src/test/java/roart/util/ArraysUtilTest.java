@@ -116,20 +116,20 @@ public class ArraysUtilTest {
     @Test
     public void arrayUtilTest() {
         Double[] array = { 1.0, 2.0, 3.0, null, null, null, 4.0, 5.0, null, null, 10.0, 11.0 };
-        ArraysUtil.fixMapHoles(array, null, 2);
+        ArraysUtil.fixMapHoles(array, null, 2, interpolationmethod);
         System.out.println(Arrays.asList(array));
         Double[] array2 = { null, 1.0, 2.0, 3.0 };
-        ArraysUtil.fixMapHoles(array2, null, 2);
+        ArraysUtil.fixMapHoles(array2, null, 2, interpolationmethod);
         System.out.println(Arrays.asList(array2));
         Double[] array3 = { 1.0, 2.0, 3.0, null };
-        ArraysUtil.fixMapHoles(array3, null, 2);
+        ArraysUtil.fixMapHoles(array3, null, 2, interpolationmethod);
         System.out.println(Arrays.asList(array3));
         Double[] array4 = { null, null, null, 1.0, 2.0, 3.0, null };
         System.out.println("n4");
-        ArraysUtil.fixMapHoles(array4, null, 2);
+        ArraysUtil.fixMapHoles(array4, null, 2, interpolationmethod);
         System.out.println("nr4 " + Arrays.asList(array4));
         Double[] array5 = { 1.0, 2.0, 3.0, null, null, null, 4.0, 5.0, null, null, 10.0, 11.0 };
-        ArraysUtil.fixMapHoles(array5, null, 5);
+        ArraysUtil.fixMapHoles(array5, null, 5, interpolationmethod);
         System.out.println(Arrays.asList(array5));
     }
     
