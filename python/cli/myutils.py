@@ -10,20 +10,22 @@ def fixzero(v):
 def fixzero2(v):
     return v.replace(0, np.nan)
 
-def fixna(v):
+def fixna(v, interpolation):
     #print(type(v))
     if cf.nafix == 1:
         return(v.dropna())
-    else:
+    if interpolation == 'linear':
         return (v.interpolate(method='linear'))
+    else:
+        return v.ffill()
 
-def fixnaarr(myma):
+def fixnaarr(myma, interpolation):
     l = myma[0]
     llow = myma[1]
     lhigh = myma[2]
-    l = fixna(l)
-    llow = fixna(llow)
-    lhigh = fixna(lhigh)
+    l = fixna(l, interpolation)
+    llow = fixna(llow, interpolation)
+    lhigh = fixna(lhigh, interpolation)
     return [ l, llow, lhigh ]
 
 def base100(myma, periodtext):

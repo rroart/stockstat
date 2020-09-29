@@ -1,5 +1,7 @@
 package roart.iclij.config;
 
+import roart.common.config.Extra;
+
 public class Market {
     private MarketConfig config;
     
@@ -8,6 +10,8 @@ public class Market {
     private MLConfigs mlconfig;
 
     private SimulateInvestConfig simulate;
+    
+    private Extra extra;
     
     public MarketConfig getConfig() {
         return config;

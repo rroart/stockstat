@@ -469,10 +469,11 @@ public abstract class Component {
         long time0 = System.currentTimeMillis();
         Map<String, Object> confMap = new HashMap<>();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
-        double score = evolveJ.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap,
-                evolutionConfig, getPipeline());
+        param = evolveJ.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap,
+                evolutionConfig, getPipeline(), null, null);
         try {
             // fix mlmarket;
+            double score = 0;
             TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);

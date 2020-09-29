@@ -65,4 +65,7 @@ public class Constants {
     public static final String STOCH = "stoch";
     public static final String STOCHRSI = "stochrsi";
     public static final String MOVE = "move";
+    
+    public static final String LINEAR = "linear";
+    public static final String FFILL = "ffill";
 }

@@ -89,6 +89,7 @@ public abstract class IndicatorAdviser extends Adviser {
         aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         aMap.put(ConfigConstants.MISCMYDAYS, 0);
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, simulateConfig.getIndicatorRebase());
+        aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         param.getResultMap(null, aMap);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
         /*
@@ -177,11 +178,15 @@ public abstract class IndicatorAdviser extends Adviser {
                 }
             }
         }
+        sort(valueList);
+        return valueList;
+    }
+
+    protected void sort(List<Pair<String, Double>> valueList) {
         valueList.sort(Comparator.comparing(Pair::getValue));
         if (indicatorreverse) {
             Collections.reverse(valueList);
         }
-        return valueList;
     }
 
     @Override

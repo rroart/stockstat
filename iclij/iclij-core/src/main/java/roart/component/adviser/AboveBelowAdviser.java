@@ -45,7 +45,8 @@ public class AboveBelowAdviser extends Adviser {
     
     private void getAllIncDecs() {
         try {
-            allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
+            //allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), investStart, investEnd, null);
+            allIncDecs = IclijDbDao.getAllIncDecs(market.getConfig().getMarket(), null, null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

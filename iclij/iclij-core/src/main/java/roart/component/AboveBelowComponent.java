@@ -31,6 +31,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessAboveBelow;
+import roart.iclij.evolution.fitness.impl.FitnessAboveBelowCommon;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -89,6 +90,7 @@ public class AboveBelowComponent extends ComponentML {
             Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
             
             FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, this.getPipeline(), null, subcomponent, realParameters, null, incdecsP, components, subcomponents, stockDates);
+            FitnessAboveBelowCommon fitCommon = new FitnessAboveBelowCommon();
 
             double scoreFilter = 0;
             {
@@ -113,7 +115,7 @@ public class AboveBelowComponent extends ComponentML {
 
                 new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, categoryValueMap);
                 
-                scoreFilter = fit.fitness(myincs, mydecs, myincdec, 0);
+                scoreFilter = fitCommon.fitness(myincs, mydecs, myincdec, 0, null);
 
 
             }
@@ -132,9 +134,9 @@ public class AboveBelowComponent extends ComponentML {
                 List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                 short startoffset = new MarketUtil().getStartoffset(market);
                 new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, param.getCategoryValueMap());
-                score = fit.fitness(myincs, mydecs, myincdec, 0);
+                score = fitCommon.fitness(myincs, mydecs, myincdec, 0, null);
                 scoreSize = myincs.size() + mydecs.size() + myincdec.size();
-                scores = fit.fitness2(myincs, mydecs, myincdec, 0);
+                scores = fitCommon.fitness2(myincs, mydecs, myincdec, 0, null);
                 scoreSize = (long) scores[0].getRight() + scores[1].getRight();
                 {
                     Memories listComponentMap = new Memories(market);
@@ -365,9 +367,9 @@ public class AboveBelowComponent extends ComponentML {
             //confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
             //List<Double> aboveConfidenceList = new ArrayList<>();
             //List<Double> belowConfidenceList = new ArrayList<>();
-            Pair<Long, Integer> abovecnt = FitnessAboveBelow.countsize(incdecList.stream().filter(e -> e.isIncrease()).collect(Collectors.toList()));
-            Pair<Long, Integer> belowcnt = FitnessAboveBelow.countsize(incdecList.stream().filter(e -> !e.isIncrease()).collect(Collectors.toList()));
-            Pair<Long, Integer> cnt = FitnessAboveBelow.countsize(incdecList);
+            Pair<Long, Integer> abovecnt = FitnessAboveBelowCommon.countsize(incdecList.stream().filter(e -> e.isIncrease()).collect(Collectors.toList()));
+            Pair<Long, Integer> belowcnt = FitnessAboveBelowCommon.countsize(incdecList.stream().filter(e -> !e.isIncrease()).collect(Collectors.toList()));
+            Pair<Long, Integer> cnt = FitnessAboveBelowCommon.countsize(incdecList);
             {
                 MemoryItem memory = new MemoryItem();
                 memory.setAction(action.getName());

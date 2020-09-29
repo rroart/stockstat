@@ -58,6 +58,8 @@ public class ComponentData {
     
     private List<TimingItem> timings = new ArrayList<>();
     
+    private Market market;
+    
     public ComponentData() {
         
     }
@@ -82,6 +84,7 @@ public class ComponentData {
         this.action = componentparam.action;
         this.disableList = componentparam.disableList;
         this.timings = componentparam.timings;
+        this.market = componentparam.market;
     }
 
     public ComponentData(ComponentInput input) {
@@ -89,6 +92,10 @@ public class ComponentData {
     }
 
     public static ComponentData getParam(ComponentInput input, int days) throws Exception {
+        return getParam(input, days, null);
+    }
+
+    public static ComponentData getParam(ComponentInput input, int days, Market aMarket) throws Exception {
         ComponentData param = new ComponentData(input);
         //param.setAction(IclijConstants.FINDPROFIT);
         String market = input.getConfig().getMarket();
@@ -103,6 +110,7 @@ public class ComponentData {
         }
         // verification days, 0 or something
         param.setOffset(days);
+        param.setMarket(aMarket);
         return param;
     }
 
@@ -280,6 +288,10 @@ public class ComponentData {
         this.timings = timings;
     }
 
+    public void setMarket(Market market) {
+        this.market = market;
+    }
+
     public int setDatesNot() throws ParseException {
         List<String> stockdates = service.getDates(getMarket());
         String date = TimeUtil.convertDate2(this.getInput().getEnddate());
@@ -312,6 +324,7 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
+        setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
@@ -337,6 +350,7 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
         setValueMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
         setValueMap.put(ConfigConstants.MISCMYDAYS, 0);
+        setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();

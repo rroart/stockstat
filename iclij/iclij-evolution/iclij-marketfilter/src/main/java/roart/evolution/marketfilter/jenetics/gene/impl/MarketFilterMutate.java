@@ -5,6 +5,7 @@ import java.util.Random;
 import io.jenetics.Chromosome;
 import io.jenetics.Mutator;
 import io.jenetics.MutatorResult;
+import roart.evolution.marketfilter.common.gene.impl.MarketFilterMutateCommon;
 import roart.iclij.config.MarketFilter;
 
 public class MarketFilterMutate <C extends Comparable<? super C>>
@@ -25,9 +26,7 @@ extends Mutator<MarketFilterGene, C> {
         //new MarketFilterMutate().mutate(gene);
         roart.evolution.marketfilter.genetics.gene.impl.MarketFilterMutate mutate = new roart.evolution.marketfilter.genetics.gene.impl.MarketFilterMutate(); 
         MarketFilter filter = gene.getAllele();
-        MarketFilter newFilter = new MarketFilter(filter.getInccategory(), filter.getIncdays(), filter.getIncthreshold(), filter.getDeccategory(), filter.getDecdays(), filter.getDecthreshold(), filter.getConfidence(), filter.getRecordage());
-        roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene other = new roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene(newFilter, filter.categories);
-        mutate.mutate(other);
-        return gene.newInstance(other.getMarketfilter());
-}
+        new MarketFilterMutateCommon().mutateCommon(filter);
+        return gene.newInstance(filter);
+    }
 }

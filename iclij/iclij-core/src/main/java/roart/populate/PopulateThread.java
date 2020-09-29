@@ -46,7 +46,7 @@ public class PopulateThread extends Thread {
                 }
                 ComponentData param = null;
                 try {
-                    param = ComponentData.getParam(new ComponentInput(config, null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0);
+                    param = ComponentData.getParam(new ComponentInput(config, null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), 0, market);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }

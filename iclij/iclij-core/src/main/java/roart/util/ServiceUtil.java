@@ -40,6 +40,7 @@ public class ServiceUtil {
 
         FindProfitAction findProfitAction = new FindProfitAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        param.setMarket(market);
         WebData webData = findProfitAction.getVerifyMarket(componentInput, param, market, false, componentInput.getConfig().verificationDays());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
@@ -68,6 +69,7 @@ public class ServiceUtil {
 
         MarketAction findProfitAction = new FindProfitAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        param.setMarket(market);
         WebData webData = findProfitAction.getMarket(null, param, market, null, null, timingList);        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
@@ -86,6 +88,7 @@ public class ServiceUtil {
 
         MarketAction improveAboveBelowAction = new ImproveAboveBelowAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        param.setMarket(market);
         WebData webData = improveAboveBelowAction.getMarket(null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
@@ -104,6 +107,7 @@ public class ServiceUtil {
 
         MarketAction improveFilterAction = new ImproveFilterAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        param.setMarket(market);
         WebData webData = improveFilterAction.getMarket(null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
@@ -122,6 +126,7 @@ public class ServiceUtil {
 
         MarketAction improveProfitAction = new ImproveProfitAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        param.setMarket(market);
         WebData webData = improveProfitAction.getMarket(null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
@@ -140,6 +145,7 @@ public class ServiceUtil {
 
         MarketAction simulateInvestAction = new SimulateInvestAction();
         Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        param.setMarket(market);
         WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);
@@ -161,6 +167,7 @@ public class ServiceUtil {
         if (param.getInput().getMarket() != null) {
             market = new MarketUtil().findMarket(param.getInput().getMarket());
         }
+        param.setMarket(market);
         WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
         WebDataJson webDataJson = convert(webData);
         result.setWebdatajson(webDataJson);

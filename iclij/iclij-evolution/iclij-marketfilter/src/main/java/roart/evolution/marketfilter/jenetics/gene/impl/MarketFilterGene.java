@@ -41,6 +41,7 @@ Mean<MarketFilterGene>*/ {
         MarketFilter filter = getAllele();
         roart.evolution.marketfilter.genetics.gene.impl.MarketFilterMutate mutate = new roart.evolution.marketfilter.genetics.gene.impl.MarketFilterMutate(); 
         MarketFilter newFilter = new MarketFilter(filter.getInccategory(), filter.getIncdays(), filter.getIncthreshold(), filter.getDeccategory(), filter.getDecdays(), filter.getDecthreshold(), filter.getConfidence(), filter.getRecordage());
+        newFilter.categories = filter.categories;
         roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene other = new roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene(newFilter, filter.categories);
         other.randomize();
         return new MarketFilterGene(other.getMarketfilter());
@@ -54,6 +55,7 @@ Mean<MarketFilterGene>*/ {
     static ISeq<MarketFilterGene> seq(final int count, MarketFilter filter) {
         roart.evolution.marketfilter.genetics.gene.impl.MarketFilterMutate mutate = new roart.evolution.marketfilter.genetics.gene.impl.MarketFilterMutate(); 
         MarketFilter newFilter = new MarketFilter(filter.getInccategory(), filter.getIncdays(), filter.getIncthreshold(), filter.getDeccategory(), filter.getDecdays(), filter.getDecthreshold(), filter.getConfidence(), filter.getRecordage());
+        newFilter.categories = filter.categories;
         roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene other = new roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene(newFilter, filter.categories);
         other.randomize();
         return MSeq.<MarketFilterGene>ofLength(count)

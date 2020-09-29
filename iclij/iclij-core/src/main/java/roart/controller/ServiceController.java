@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import roart.common.constants.EurekaConstants;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.model.component.ComponentInput;
@@ -127,9 +128,62 @@ public class ServiceController {
             market = null;
         }
         IclijConfig config = new IclijConfig(IclijXMLConfig.getConfigInstance());
-        Map<String, Object> map = simConfig.asMap();
+        Map<String, Object> map = simConfig.asValuedMap();
+        config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTSTARTDATE, simConfig.getStartdate());
+        config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTENDDATE, simConfig.getEnddate());
+        map.remove(IclijConfigConstants.SIMULATEINVESTSTARTDATE);
+        map.remove(IclijConfigConstants.SIMULATEINVESTENDDATE);
+        if (simConfig.getGa() != null) {
+            int ga = simConfig.getGa();
+            simConfig.setGa(null);
+            config.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
+        }
+        /*
         config.getConfigValueMap().putAll(map);
-        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
+        if (simConfig.getAdviser() != null) {
+            int adviser = simConfig.getAdviser();
+            simConfig.setAdviser(null);
+            config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTADVISER, adviser);
+        }
+        if (simConfig.getIndicatorPure() != null) {
+            boolean adviser = simConfig.getIndicatorPure();
+            simConfig.setIndicatorPure(null);
+            config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, adviser);
+        }
+        */
+        return ServiceUtil.getImproveSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), map));
+    }
+
+    @RequestMapping(value = "action/improvefilter/market/{market}/ga/{ga}",
+            method = RequestMethod.POST)
+    public IclijServiceResult getImproveFilter(@PathVariable("market") String market, @PathVariable Integer ga)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        if ("null".equals(market) || "None".equals(market)) {
+            market = null;
+        }
+        IclijConfig config = new IclijConfig(IclijXMLConfig.getConfigInstance());
+        if (ga != null) {
+            config.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
+        }
+        return ServiceUtil.getImproveFilter(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
+    @RequestMapping(value = "action/improveabovebelow/market/{market}/ga/{ga}",
+            method = RequestMethod.POST)
+    public IclijServiceResult getImproveAboveBelow(@PathVariable("market") String market, @PathVariable Integer ga)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        if ("null".equals(market) || "None".equals(market)) {
+            market = null;
+        }
+        IclijConfig config = new IclijConfig(IclijXMLConfig.getConfigInstance());
+        if (ga != null) {
+            config.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
+        }
+        return ServiceUtil.getImproveAboveBelow(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
     }
 
 }

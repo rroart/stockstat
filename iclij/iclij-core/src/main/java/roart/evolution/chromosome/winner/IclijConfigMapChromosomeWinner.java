@@ -3,7 +3,7 @@ package roart.evolution.chromosome.winner;
 import java.util.Map;
 
 import roart.component.model.ComponentData;
-import roart.evolution.chromosome.impl.IclijConfigMapChromosome;
+import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.evolution.species.Individual;
 
 public class IclijConfigMapChromosomeWinner extends ChromosomeWinner {

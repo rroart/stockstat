@@ -666,12 +666,20 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVAL);
     }
 
+    public boolean wantsSimulateInvestIntervalWhole() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVALWHOLE);
+    }
+
     public int getSimulateInvestAdviser() {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTADVISER);
     }
 
     public int getSimulateInvestPeriod() {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTPERIOD);
+    }
+
+    public int getSimulateInvestDelay() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTDELAY);
     }
 
     public String getSimulateInvestStartdate() {
@@ -742,6 +750,10 @@ public class IclijConfig {
 
     public boolean verificationRerun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONRERUN);
+    }
+
+    public int getEvolveGA() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.EVOLVEGA);
     }
 
     public boolean wantEvolveRecommender() {

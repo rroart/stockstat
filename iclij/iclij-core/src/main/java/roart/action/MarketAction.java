@@ -169,10 +169,10 @@ public abstract class MarketAction extends Action {
             String marketName = market.getConfig().getMarket();
             MetaItem meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-            ComponentInput input = new ComponentInput(config, null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), new HashMap<>());
+            ComponentInput input = new ComponentInput(config, null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(input, 0);
+                param = ComponentData.getParam(input, 0, market);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }

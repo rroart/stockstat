@@ -72,6 +72,7 @@ public class IclijConfigConstants {
     public static final String DATASETPREDICTOREVOLUTIONCONFIG = "dataset.predictor.evolutionconfig";
     public static final String DATASETPREDICTORMLCONFIG = "dataset.predictor.mlconfig";
     public static final String EVOLVE = "evolve";
+    public static final String EVOLVEGA = "evolve.ga";
     public static final String EVOLVEINDICATORRECOMMENDER = "evolve.indicatorrecommender";
     public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
     public static final String EVOLVEML = "evolve.ml";
@@ -247,6 +248,7 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTSTOCKS = "simulateinvest.stocks";
     public static final String SIMULATEINVESTBUYWEIGHT = "simulateinvest.buyweight";
     public static final String SIMULATEINVESTINTERVAL = "simulateinvest.interval";
+    public static final String SIMULATEINVESTINTERVALWHOLE = "simulateinvest.intervalwhole";
     public static final String SIMULATEINVESTINTERVALSTOPLOSS = "simulateinvest.intervalstoploss";
     public static final String SIMULATEINVESTINTERVALSTOPLOSSVALUE = "simulateinvest.intervalstoplossvalue";
     public static final String SIMULATEINVESTADVISER = "simulateinvest.adviser";
@@ -254,6 +256,8 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTDAY = "simulateinvest.day";
     // special
     public static final String SIMULATEINVESTPERIOD = "simulateinvest.period";
+    // special
+    public static final String SIMULATEINVESTDELAY = "simulateinvest.delay";
     // special
     public static final String SIMULATEINVESTSTARTDATE = "simulateinvest.startdate";
     public static final String SIMULATEINVESTENDDATE = "simulateinvest.enddate";

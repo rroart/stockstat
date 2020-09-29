@@ -65,7 +65,11 @@ public class FitnessMarketFilter2 {
 
     private List<MLMetricsItem> mlTests;
 
-    public FitnessMarketFilter2(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests) {
+    private List<String> stockDates;
+
+    private List<IncDecItem> incdecs;
+    
+    public FitnessMarketFilter2(MarketAction action, List<String> confList, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, List<String> stockDates, List<IncDecItem> incdecs) {
         this.action = action;
         this.param = param;
         this.profitdata = profitdata;
@@ -75,9 +79,16 @@ public class FitnessMarketFilter2 {
         this.buy = buy;
         this.parameters = parameters;
         this.mlTests = mlTests;
+        this.stockDates = stockDates;
+        this.incdecs = incdecs;
     }
 
     public synchronized double fitness(MarketFilterChromosome chromosome) {
+        market.setFilter(chromosome.getGene().getAllele());
+        return new FitnessMarketFilterCommon().fitnessCommon(action, param, market, profitdata, buy, stockDates, incdecs, parameters, componentName, map);
+    }
+
+    public synchronized double fitness1(MarketFilterChromosome chromosome) {
         log.info("Fitness");
         List<MemoryItem> memoryItems = null;
         WebData myData = new WebData();
@@ -212,7 +223,6 @@ public class FitnessMarketFilter2 {
             // plus borrow from verifyprofit
             //myaction.filterIncDecs(param, market, profitdata, maps, true);
             */
-            market.setFilter(chromosome.getGene().getAllele());
             ComponentData componentData = component.handle(action, market, param, profitdata, new Memories(market), myevolve /*evolve && evolvefirst*/, map, subcomponent, null, parameters);
             //componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());

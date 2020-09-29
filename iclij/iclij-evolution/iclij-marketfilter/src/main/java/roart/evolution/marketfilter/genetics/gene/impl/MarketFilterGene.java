@@ -4,11 +4,10 @@ import roart.iclij.config.MarketFilter;
 
 import java.util.List;
 
-import roart.common.util.RandomUtil;
+import roart.evolution.marketfilter.common.gene.impl.MarketFilterMutateCommon;
 import roart.gene.AbstractGene;
 
 public class MarketFilterGene extends AbstractGene {
-    protected static final int RANDOMS = 7;
     
     private MarketFilter marketfilter;
 
@@ -30,13 +29,13 @@ public class MarketFilterGene extends AbstractGene {
     @Override
     public void randomize() {
         MarketFilter myconfig = marketfilter;
-        MarketFilterGene gene = this;
-        myconfig.setDeccategory(gene.generateCategory());
+        MarketFilterMutateCommon gene =  new MarketFilterMutateCommon();
+        myconfig.setDeccategory(gene.generateCategory(myconfig));
         if (random.nextBoolean()) {
             myconfig.setDecdays(gene.generateDays());
         }
         myconfig.setDecthreshold(gene.generateThreshold());
-        myconfig.setInccategory(gene.generateCategory());
+        myconfig.setInccategory(gene.generateCategory(myconfig));
         if (random.nextBoolean()) {
             myconfig.setIncdays(gene.generateDays());
         }
@@ -71,45 +70,8 @@ public class MarketFilterGene extends AbstractGene {
         newFilter.setIncdays(marketfilter.getIncdays());
         newFilter.setIncthreshold(marketfilter.getIncthreshold());
         newFilter.setRecordage(marketfilter.getRecordage());
+        newFilter.categories = marketfilter.categories;
         return new MarketFilterGene(newFilter, categories);
-    }
-    
-    /*
-     * private String inccategory;
-    
-    private Integer incdays;
-    
-    private Double incthreshold;
-
-    private String deccategory;
-    
-    private Integer decdays;
-
-    private Double decthreshold;
-
-    private Double confidence;
-
-  
-     */
-    protected int generateDays() {
-        return RandomUtil.random(random, 5, 50);
-    }
-
-    protected double generateConfidence() {
-        return RandomUtil.random(random, 0.01, 0.01, 100);
-    }
-
-    protected double generateThreshold() {
-        return RandomUtil.random(random, 0.9, 0.01, 20);
-    }
-
-    protected String generateCategory() {
-        //String[] categories = { "1w", "1m", "3m", "1y", "3y", "5y", "10y", "cy" };
-        if (categories.isEmpty()) {
-            return null;
-        }
-        int index = random.nextInt(categories.size());
-        return categories.get(index);
     }
     
     @Override 
