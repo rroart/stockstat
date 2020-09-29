@@ -42,12 +42,9 @@ public class IndicatorMacdHistZeroAdviser extends IndicatorAdviser {
             return;
         }
         List<Double> values = valueList.stream().map(Pair::getValue).collect(Collectors.toList());
-        Double min = Collections.min(values);
-        Double max = Collections.max(values);
-        Double absmax = Math.max(Math.abs(min), Math.abs(max));
         int i = 0;
         for (Pair<String, Double> pair : new ArrayList<>(valueList)) {
-            Pair aPair = new ImmutablePair(pair.getKey(), absmax - Math.abs(pair.getValue()));
+            Pair aPair = new ImmutablePair(pair.getKey(), Math.abs(pair.getValue()));
             valueList.set(i, aPair);
             i++;
         }
