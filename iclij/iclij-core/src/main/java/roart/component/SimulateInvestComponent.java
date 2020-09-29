@@ -88,7 +88,9 @@ public class SimulateInvestComponent extends ComponentML {
         if (!(param instanceof SimulateInvestData)) {
             SimulateInvestConfig localSimConfig = market.getSimulate();
             simConfig.merge(localSimConfig);
-            extradelay = simConfig.getExtradelay();
+            if (simConfig.getExtradelay() != null) {
+                extradelay = simConfig.getExtradelay();
+            }
         } else {
             /*
             if (simulateParam.getConfig() != null) {
