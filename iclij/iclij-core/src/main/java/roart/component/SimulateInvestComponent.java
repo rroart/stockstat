@@ -241,6 +241,13 @@ public class SimulateInvestComponent extends ComponentML {
             LocalDate date = investStart;
             
             date = TimeUtil.getEqualBefore(stockDates, date);
+            if (date == null) {
+                try {
+                    date = TimeUtil.convertDate(stockDates.get(0));
+                } catch (ParseException e) {
+                    log.error(Constants.ERROR, e);
+                }
+            }
             date = TimeUtil.getForwardEqualAfter2(date, offset, stockDates);
         /*    
         } catch (Exception e) {
