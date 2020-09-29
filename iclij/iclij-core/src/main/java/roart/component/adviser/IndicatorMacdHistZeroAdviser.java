@@ -41,10 +41,9 @@ public class IndicatorMacdHistZeroAdviser extends IndicatorAdviser {
         if (valueList.isEmpty()) {
             return;
         }
-        List<Double> values = valueList.stream().map(Pair::getValue).collect(Collectors.toList());
         int i = 0;
         for (Pair<String, Double> pair : new ArrayList<>(valueList)) {
-            Pair aPair = new ImmutablePair(pair.getKey(), Math.abs(pair.getValue()));
+            Pair<String, Double> aPair = new ImmutablePair(pair.getKey(), Math.abs(pair.getValue()));
             valueList.set(i, aPair);
             i++;
         }
