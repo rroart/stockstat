@@ -1,5 +1,10 @@
 package roart.component;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +84,8 @@ public class MarketFilterEvolveJ extends EvolveJ {
                     .limit(evolutionConfig.getGenerations())
                     .collect(EvolutionResult.toBestEvolutionResult());
             List<Phenotype<MarketFilterGene, Double>> population = result.population().asList();
-            print(market.getConfig().getMarket() + " " + pipeline + " " + subcomponent, population);
+            //print(market.getConfig().getMarket() + " " + pipeline + " " + subcomponent, population);
+            print2(market.getConfig().getMarket() + " " + subcomponent, pipeline, population);
             List<Genotype<MarketFilterGene>> list2 = result.genotypes().asList();
             final Phenotype<MarketFilterGene, Double> pt = result.bestPhenotype();
 
@@ -100,4 +106,23 @@ public class MarketFilterEvolveJ extends EvolveJ {
         return param;
     }
     
+    protected void print2(String title, String subtitle, List<Phenotype<MarketFilterGene, Double>> population) {
+        Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+            writer.write(title + "\n\n");
+            if (subtitle != null) {
+                writer.write(subtitle + "\n\n");
+            }
+            for (Phenotype<MarketFilterGene, Double> pt : population) {
+                MarketFilter filter = pt.genotype().chromosome().gene().allele();
+                String individual = pt.fitness() + " #" + pt.hashCode() + " #" + pt.genotype().chromosome().hashCode() + " #" + pt.genotype().chromosome().gene().hashCode() + " #" + filter.hashCode() + " " + filter.toString();
+                writer.write(individual + "\n");            
+                log.info("Individual {}", individual);
+            }
+            writer.write("\n");
+        } catch (IOException e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+    }
+
 }

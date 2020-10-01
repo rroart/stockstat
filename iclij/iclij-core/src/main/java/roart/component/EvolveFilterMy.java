@@ -51,6 +51,7 @@ public class EvolveFilterMy extends EvolveMy {
         MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
         List<String> categories = new MetaUtil().getCategories(meta);
         MarketFilterGene gene = new MarketFilterGene(market.getFilter(), categories);
+        gene.getMarketfilter().categories = categories;
         //MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);
         MarketFilterChromosome2 chromosome2 = new MarketFilterChromosome2(new ArrayList<>(), gene);
         FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, mlTests, stockDates, incdecsP);

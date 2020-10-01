@@ -158,26 +158,24 @@ public class AboveBelowComponent extends ComponentML {
                 }
             }
             
-            int size = components.size() + subcomponents.size();
-            List<String> compsub = new ArrayList<>();
-            compsub.addAll(components);
-            compsub.addAll(subcomponents);
-            
             
             short startoffset = new MarketUtil().getStartoffset(market);
             int findTime = market.getConfig().getFindtime();
             Trend trend = new TrendUtil().getTrend(verificationdays, null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates /*, findTime*/, param, market, categoryValueMap);
             log.info("Trend {}", trend);                
             
-            //AboveBelowGene gene = new AboveBelowGene();
-            AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
-            //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
-
-            // Making a memory for the last findtime period
-            
             MemoryItem memory = new MemoryItem();
             if (true || score < market.getFilter().getConfidence()) {
-                componentData = this.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
+                int ga = param.getInput().getConfig().getEvolveGA();
+                Evolve evolve2 = AboveBelowEvolveFactory.factory(ga);
+                String evolutionConfigString = param.getInput().getConfig().getImproveAbovebelowEvolutionConfig();
+                EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
+
+                Map<String, Object> confMap = new HashMap<>();
+                List<String> confList = new ArrayList<>();
+                Boolean buy = null;
+                List<MLMetricsItem> mlTests = null;
+                componentData = evolve2.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests , confMap , evolutionConfig, this.getPipeline(), this, confList );
                 Map<String, Object> updateMap = componentData.getUpdateMap();
                 if (updateMap != null) {
                     param.getUpdateMap().putAll(updateMap);
