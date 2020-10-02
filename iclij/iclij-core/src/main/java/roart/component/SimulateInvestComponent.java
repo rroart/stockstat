@@ -79,7 +79,6 @@ public class SimulateInvestComponent extends ComponentML {
             simulateParam = new SimulateInvestData(param);
         }
         IclijConfig config = param.getInput().getConfig();
-        double resultavg = 1;
         int beatavg = 0;
         int runs = 0;
         SimulateInvestConfig simConfig = getSimConfig(config);
@@ -232,6 +231,7 @@ public class SimulateInvestComponent extends ComponentML {
             List<String> plotDates = new ArrayList<>();
             List<Double> plotCapital = new ArrayList<>();
             List<Double> plotDefault = new ArrayList<>();
+            double resultavg = 1;
                         
             int findTimes = simConfig.getConfidenceFindTimes();
             Pair<Integer, Integer>[] hits = new ImmutablePair[findTimes];
@@ -569,8 +569,8 @@ public class SimulateInvestComponent extends ComponentML {
         Evolve evolve = SimulateInvestEvolveFactory.factory(ga);
         String evolutionConfigString = param.getInput().getConfig().getImproveAbovebelowEvolutionConfig();
         EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
-        evolutionConfig.setGenerations(3);
-        evolutionConfig.setSelect(6);
+        //evolutionConfig.setGenerations(3);
+        //evolutionConfig.setSelect(6);
         
         Map<String, Object> confMap = new HashMap<>();
         // confmap
@@ -930,6 +930,7 @@ public class SimulateInvestComponent extends ComponentML {
         aMap.put(ConfigConstants.MISCMYDAYS, 0);
         aMap.put(ConfigConstants.MISCPERCENTIZEPRICEINDEX, true);
         aMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
+        aMap.put(ConfigConstants.MISCMERGECY, false);
         // different line
         param.getResultMap(null, aMap);
         Map<String, Map<String, Object>> mapsRebase = param.getResultMaps();

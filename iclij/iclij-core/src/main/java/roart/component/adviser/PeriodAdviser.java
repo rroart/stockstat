@@ -48,6 +48,7 @@ public class PeriodAdviser extends Adviser {
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);        
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
+            aMap.put(ConfigConstants.MISCMERGECY, false);
             Integer cat = period; //new MetaUtil().getCategory(meta, period);
             //Map<String, Object> resultMaps = param.getResultMap(""+ cat, aMap);
             Map<String, Map<String, Object>> resultMaps = param.getResultMaps();
