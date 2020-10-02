@@ -833,6 +833,10 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MISCTHRESHOLD);
     }
 
+    public boolean wantMergecy() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MISCMERGECY);
+    }
+
     public String getDbSparkMaster() {
         return (String) getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER);
     }

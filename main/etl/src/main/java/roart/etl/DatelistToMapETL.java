@@ -17,7 +17,7 @@ public class DatelistToMapETL {
         Map<String, Double[][]> retMap = new HashMap<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         int index = 0;
-        if (!currentyear) {
+        if (!currentyear || !conf.wantMergecy()) {
             if (index >= 0) {
                 for (int i = datedstocklists.length - 1; i >= 0; i--) {
                     List<StockItem> stocklist = datedstocklists[i];
