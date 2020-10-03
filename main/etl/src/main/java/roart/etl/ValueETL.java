@@ -53,6 +53,9 @@ public class ValueETL {
             if (value != null) {
                 double[][] newValue = new double[value.length][];
                 double first = value.length > 0 && value[0].length > 0 ? value[0][0] : 0;
+                if (first == 0) {
+                    continue;
+                }
                 for (int i = 0; i < value.length; i++) {
                     newValue[i] = ArraysUtil.getPercentizedPriceIndex(value[i], first);
                 }
