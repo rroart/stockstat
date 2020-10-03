@@ -62,6 +62,9 @@ public abstract class IndicatorAdviser extends Adviser {
             } else {
                 resultMaps = simulateParam.getResultMaps();
             }
+            if (resultMaps == null || resultMaps.isEmpty()) {
+                int jj = 0;
+            }
             Integer cat = (Integer) resultMaps.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             String catName = new MetaUtil().getCategory(meta, cat);
             Map<String, Object> objectMaps = resultMaps.get(catName);
@@ -156,6 +159,9 @@ public abstract class IndicatorAdviser extends Adviser {
             List<Double> mainList = resultList.get(0);
             //Double[] macdList = calculatedMap.get(entry.getKey());
             List<Object> macdList2 = objectMap.get(entry.getKey());
+            if (macdList2 == null) {
+                continue;
+            }
             List<Double> macdList = (List<Double>) macdList2.get(getOffset());
             int end = (Integer) macdList2.get(getOffset2());
             int macdIndex = macdList.size() - 1 - indexOffset - end;
