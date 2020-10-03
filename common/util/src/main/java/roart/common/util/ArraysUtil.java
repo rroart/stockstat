@@ -301,7 +301,7 @@ public class ArraysUtil {
     }
 
     public static double[] getPercentizedPriceIndex(double[] list, double first) {
-        if (list == null || list.length == 0) {
+        if (list == null || list.length == 0 || first == 0) {
             return list;
         }
         double[] retlist = new double[list.length];
