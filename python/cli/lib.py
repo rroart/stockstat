@@ -1300,8 +1300,8 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
       print(updatemap['minmax'])
     return
 
-def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True, stocks = None):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay, 'intervalwhole' : intervalwhole, 'stocks' : stocks }
+def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True, stocks = None, indicatorreverse = None, interval = None):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay, 'intervalwhole' : intervalwhole, 'stocks' : stocks, 'indicatorreverse' : indicatorreverse, 'interval' : interval }
     from datetime import datetime
     tsstart = datetime.now().timestamp()
     response = request.request2(market, data)
