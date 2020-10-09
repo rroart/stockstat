@@ -16,7 +16,7 @@ class DAY:
   def names(self):
       return "day";
 
-  def dfextend(self, df, period, periodtext, sort, interpolate = True, rebase = False, deltadays = 3, reverse = False):
+  def dfextend(self, df, period, periodtext, sort, interpolate = True, rebase = False, deltadays = 3, reverse = False, interpolation = 'linear'):
     #df2 = stockdata.stocklistperiod[period][j + days]
     daylist = []
     for mydf in df.itertuples():
@@ -39,7 +39,7 @@ class DAY:
         if periodtext == "Price" or periodtext == "Index":
             myc = my.fixzero2(myc)
         if interpolate:
-            myc = myc.interpolate(method='linear')
+            myc = my.fixna(myc, interpolation)
         #print("myc", myc.values)
         alen = len(myc)
         #print("alen",alen)
