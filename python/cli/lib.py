@@ -1197,6 +1197,14 @@ def getelem3tup(id, days, datedstocklist, period, size):
         c = c + 1
     return(retl)
 
+def gettopyear(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1y", wantchart=False)
+
+def gettop3m(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "3m", wantchart=False)
+
 def gettopmonth(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
     gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
@@ -1411,6 +1419,9 @@ def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue
     with redirect_stdout(file):                                                
         simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole)
     output = file.getvalue()
+    myfile = open("/tmp/" + str(time.time()) + ".txt", "w")
+    myfile.write(output)
+    myfile.close()
     gui.view(output)
 
 def simulateinvest2G(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = 1, intervalwhole = False):
