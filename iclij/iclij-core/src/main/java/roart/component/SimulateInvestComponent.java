@@ -716,7 +716,12 @@ public class SimulateInvestComponent extends ComponentML {
             mystocks = noConfidenceHoldSell(mystocks, noConfKeep, sells);
         }
 
-        map.put("lastbuysell", "Buy: " + buys + " Sell: " + sells);
+        List<String> ids = mystocks.stream().map(Astock::getId).collect(Collectors.toList());
+        List<String> buyids = buys.stream().map(Astock::getId).collect(Collectors.toList());
+        List<String> sellids = sells.stream().map(Astock::getId).collect(Collectors.toList());
+        ids.addAll(buyids);
+        ids.removeAll(sellids);
+        map.put("lastbuysell", "Buy: " + buyids + " Sell: " + sellids + " Stocks: " +ids);
     }
 
     private double getReliability(List<Astock> mystocks, Pair<Integer, Integer>[] hits, int findTimes, int up) {
