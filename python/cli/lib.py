@@ -1306,6 +1306,7 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
       print(updatemap['scores'])
       print(updatemap['stats'])
       print(updatemap['minmax'])
+    print(updatemap['lastbuysell'])
     return
 
 def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True, stocks = None, indicatorreverse = None, interval = None):

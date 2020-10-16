@@ -260,8 +260,6 @@ public class SimulateInvestComponent extends ComponentML {
                 String datestring = TimeUtil.convertDate2(date);
                 indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
                 
-                double myreliability = adviser.getReliability(date, true);
-
                 // get recommendations
 
                 double myavg = increase(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset);
@@ -276,56 +274,13 @@ public class SimulateInvestComponent extends ComponentML {
                     stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset - extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP");                       
                 }
                 
-                Pair<Integer, Integer> pair = new ImmutablePair(up, mystocks.size());
-                for (int j = findTimes - 1; j > 0; j--) {
-                    hits[j] = hits[j - 1];
-                }
-                hits[0] = pair;
-                double count = 0;
-                int total = 0;
-                for (Pair<Integer, Integer> aPair : hits) {
-                    if (aPair == null) {
-                        continue;
-                    }
-                    count += aPair.getLeft();
-                    total += aPair.getRight();
-                }
-                double reliabilty = 1;
-                if (total > 0) {
-                    reliabilty = count / total;
-                }
-
-                myreliability = reliabilty;
-                
-                boolean noconf = simConfig.getConfidence() && myreliability < simConfig.getConfidenceValue();
+                double myreliability = getReliability(mystocks, hits, findTimes, up);
                 
                 if (!simConfig.getConfidence() || myreliability >= simConfig.getConfidenceValue()) {
-                    List<IncDecItem> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, excludeList);
-                    //List<IncDecItem> myincs = ds.getIncs(valueList);
-                    //List<ValueList> valueList = ds.getValueList(categoryValueMap, indexOffset);
-
-                    buys = getBuyList(stockDates, categoryValueMap, myincs, indexOffset);
-                    buys = filter(buys, sells);
-                    List<Astock> keeps = keep(mystocks, buys);
-                    buys = filter(buys, mystocks);
-                    
-                    List<Astock> newsells = filter(mystocks, keeps);
-
-                    //mystocks.removeAll(newsells);
-                    
-                    sells.addAll(newsells);
-                    
-                    mystocks = keeps;
+                    mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, excludeList,
+                            aParameter, mystocks, date, indexOffset, sells, buys);
                 } else {
-                    List<Astock> keeps = noConfKeep;
-                    
-                    List<Astock> newsells = filter(mystocks, keeps);
-
-                    //mystocks.removeAll(newsells);
-                    
-                    sells.addAll(newsells);
-                    
-                    mystocks = keeps;
+                    mystocks = noConfidenceHoldSell(mystocks, noConfKeep, sells);
                 }
 
                 // TODO delay DELAY
@@ -351,9 +306,12 @@ public class SimulateInvestComponent extends ComponentML {
                 log.debug("Trend {}", trend);
                 
                 List<String> ids = mystocks.stream().map(Astock::getId).collect(Collectors.toList());
-                update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay /*- delay */, new ArrayList<>());
+                // to delay?
+                update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay - delay, new ArrayList<>());
                 // depends on delay DELAY
                 Capital sum = getSum(mystocks);
+
+                boolean noconf = simConfig.getConfidence() && myreliability < simConfig.getConfidenceValue();                
                 String hasNoConf = noconf ? "NOCONF" : "";
                 datestring = stockDates.get(stockDates.size() - 1 - (indexOffset - extradelay - delay));
                 sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend);
@@ -398,7 +356,14 @@ public class SimulateInvestComponent extends ComponentML {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
-            update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay /* - delay */, new ArrayList<>());
+            if (offset == 0) {
+                try {
+                    lastbuysell(stockDates, date, adviser, capital, simConfig, categoryValueMap, mystocks, extradelay, prevIndexOffset, hits, findTimes, aParameter, excludeList, param.getUpdateMap());
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+            update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay - delay, new ArrayList<>());
             Capital sum = getSum(mystocks);
             sum.amount += capital.amount;
             
@@ -477,6 +442,44 @@ public class SimulateInvestComponent extends ComponentML {
 
         handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         return componentData;
+    }
+
+    private List<Astock> confidenceBuyHoldSell(SimulateInvestConfig simConfig, List<String> stockDates,
+            Map<String, List<List<Double>>> categoryValueMap, Adviser adviser, List<String> excludeList,
+            String aParameter, List<Astock> mystocks, LocalDate date, int indexOffset, List<Astock> sells,
+            List<Astock> buys) {
+        List<IncDecItem> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, excludeList);
+        //List<IncDecItem> myincs = ds.getIncs(valueList);
+        //List<ValueList> valueList = ds.getValueList(categoryValueMap, indexOffset);
+
+        List<Astock> buysTmp = getBuyList(stockDates, categoryValueMap, myincs, indexOffset);
+        buysTmp = filter(buysTmp, sells);
+        List<Astock> keeps = keep(mystocks, buysTmp);
+        buysTmp = filter(buysTmp, mystocks);
+        buys.clear();
+        buys.addAll(buysTmp);
+        
+        List<Astock> newsells = filter(mystocks, keeps);
+
+        //mystocks.removeAll(newsells);
+        
+        sells.addAll(newsells);
+        
+        mystocks = keeps;
+        return mystocks;
+    }
+
+    private List<Astock> noConfidenceHoldSell(List<Astock> mystocks, List<Astock> noConfKeep, List<Astock> sells) {
+        List<Astock> keeps = noConfKeep;
+        
+        List<Astock> newsells = filter(mystocks, keeps);
+
+        //mystocks.removeAll(newsells);
+        
+        sells.addAll(newsells);
+        
+        mystocks = keeps;
+        return mystocks;
     }
 
     private SimulateInvestConfig getSimConfig(IclijConfig config) {
@@ -681,6 +684,64 @@ public class SimulateInvestComponent extends ComponentML {
         return average.getAsDouble();
     }
 
+    private void lastbuysell(List<String> stockDates, LocalDate date, Adviser adviser, Capital capital, SimulateInvestConfig simConfig, Map<String, List<List<Double>>> categoryValueMap, List<Astock> mystocks, int extradelay, int prevIndexOffset, Pair<Integer, Integer>[] hits, int findTimes, String aParameter, List<String> excludeList, Map<String, Object> map) {
+        mystocks = new ArrayList<>(mystocks);
+        date = TimeUtil.getForwardEqualAfter2(date, 0 /* findTime */, stockDates);
+        String datestring = TimeUtil.convertDate2(date);
+        int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
+        
+        // get recommendations
+
+        List<Astock> noConfKeep = new ArrayList<>();
+        int up = update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay, noConfKeep);
+
+        List<Astock> sells = new ArrayList<>();
+        List<Astock> buys = new ArrayList<>();
+        
+        if (simConfig.getIntervalStoploss()) {
+            // TODO delay
+            stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset - extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP");                       
+        }
+        
+        double myreliability = getReliability(mystocks, hits, findTimes, up);
+        
+        if (!simConfig.getConfidence() || myreliability >= simConfig.getConfidenceValue()) {
+            
+
+            //mystocks.removeAll(newsells);
+            
+            mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, excludeList, aParameter,
+                    mystocks, date, indexOffset, sells, buys);
+        } else {
+            mystocks = noConfidenceHoldSell(mystocks, noConfKeep, sells);
+        }
+
+        map.put("lastbuysell", "Buy: " + buys + " Sell: " + sells);
+    }
+
+    private double getReliability(List<Astock> mystocks, Pair<Integer, Integer>[] hits, int findTimes, int up) {
+        Pair<Integer, Integer> pair = new ImmutablePair(up, mystocks.size());
+        for (int j = findTimes - 1; j > 0; j--) {
+            hits[j] = hits[j - 1];
+        }
+        hits[0] = pair;
+        double count = 0;
+        int total = 0;
+        for (Pair<Integer, Integer> aPair : hits) {
+            if (aPair == null) {
+                continue;
+            }
+            count += aPair.getLeft();
+            total += aPair.getRight();
+        }
+        double reliability = 1;
+        if (total > 0) {
+            reliability = count / total;
+        }
+
+        return reliability;
+    }
+    
     private void stoploss(Capital capital, int buytop, List<Astock> mystocks, List<String> stockDates, int indexOffset,
             Map<String, List<List<Double>>> categoryValueMap, int prevIndexOffset, List<Astock> sells, double stoploss, String stop) {
         List<Astock> newSells = new ArrayList<>();
