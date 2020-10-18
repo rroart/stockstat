@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,8 @@ public class ComponentData {
     
     private Map<String, List<List<Double>>> fillCategoryValueMap;
     
+    private Map<String, List<List<Object>>> volumeMap;
+    
     private Integer usedsec;
 
     private Map<String, Object> updateMap;
@@ -78,6 +81,7 @@ public class ComponentData {
         this.resultMap = componentparam.resultMap;
         this.categoryValueMap = componentparam.categoryValueMap;
         this.fillCategoryValueMap = componentparam.fillCategoryValueMap;
+        this.volumeMap = componentparam.volumeMap;
         this.usedsec = componentparam.usedsec;
         this.updateMap = new HashMap<>(); //componentparam.updateMap;
         this.configValueMap = new HashMap<>(this.service.conf.getConfigValueMap());
@@ -240,6 +244,14 @@ public class ComponentData {
         this.fillCategoryValueMap = fillCategoryValueMap;
     }
 
+    public Map<String, List<List<Object>>> getVolumeMap() {
+        return volumeMap;
+    }
+
+    public void setVolumeMap(Map<String, List<List<Object>>> volumeMap) {
+        this.volumeMap = volumeMap;
+    }
+
     public Integer getUsedsec() {
         return usedsec;
     }
@@ -334,6 +346,8 @@ public class ComponentData {
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.FILLLIST);
             this.setFillCategoryValueMap(aFillCategoryValueMap);
+            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) result.get("" + this.getCategory()).get(PipelineConstants.VOLUME);
+            this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
         }
@@ -363,6 +377,8 @@ public class ComponentData {
             this.setCategoryValueMap(aCategoryValueMap);
             Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.FILLLIST);
             this.setFillCategoryValueMap(aFillCategoryValueMap);
+            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) result.get("" + cat).get(PipelineConstants.VOLUME);
+            this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
             log.error("Ex", e);
