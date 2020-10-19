@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import roart.common.config.MyMyConfig;
 import roart.common.util.MapUtil;
 import roart.model.StockItem;
@@ -23,9 +25,6 @@ public class DatelistToMapETL {
                     List<StockItem> stocklist = datedstocklists[i];
                     for (StockItem stock : stocklist) {
                         String stockid = stock.getId();
-                        if ("F00000ZHEV".equals(stockid)) {
-                            int jj = 0;
-                        }
                         Double[] value = StockDao.getValue(stock, periodInt);
                         MapUtil.mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
                     }
@@ -76,9 +75,21 @@ public class DatelistToMapETL {
                 }
             }
         }
-        Double[][] i = retMap.get("16545");
-        if (i != null) {
-            Double[][] j = i;
+        return retMap;
+    }
+
+    public static Map<String, Object[][]> getVolumes(MyMyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+            Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
+        Map<String, Object[][]> retMap = new HashMap<>();
+        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        for (int i = datedstocklists.length - 1; i >= 0; i--) {
+            List<StockItem> stocklist = datedstocklists[i];
+            for (StockItem stock : stocklist) {
+                String stockid = stock.getId();
+                Pair<Long, String> value = StockDao.getVolume(stock);
+                Object[] value2 = new Object[] { value.getLeft(), value.getRight() };
+                MapUtil.mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value2, datedstocklists.length);
+            }
         }
         return retMap;
     }

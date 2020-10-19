@@ -11,6 +11,7 @@ public class PipelineConstants {
     public static final String BASE100FILLLIST = "base100filllist";
     public static final String TRUNCBASE100LIST = "truncbase100list";
     public static final String TRUNCBASE100FILLLIST = "truncbase100filllist";
+    public static final String VOLUME = "volume";
     public static final String NAME = "name";
     public static final String RETLIST = "retlist";
     public static final String DATELIST = "datelist";

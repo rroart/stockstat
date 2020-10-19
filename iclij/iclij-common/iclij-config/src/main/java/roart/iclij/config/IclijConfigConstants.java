@@ -239,6 +239,8 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTCONFIDENCE = "simulateinvest.confidence";
     public static final String SIMULATEINVESTCONFIDENCEVALUE = "simulateinvest.confidence.value";
     public static final String SIMULATEINVESTCONFIDENCEFINDTIMES = "simulateinvest.confidence.findtimes";
+    public static final String SIMULATEINVESTCONFIDENCEHOLDINCREASE = "simulateinvest.confidence.hold.increase";
+    public static final String SIMULATEINVESTNOCONFIDENCEHOLDINCREASE = "simulateinvest.noconfidence.hold.increase";
     public static final String SIMULATEINVESTSTOPLOSS = "simulateinvest.stoploss";
     public static final String SIMULATEINVESTSTOPLOSSVALUE = "simulateinvest.stoploss.value";
     public static final String SIMULATEINVESTINDICATORPURE = "simulateinvest.indicator.pure";

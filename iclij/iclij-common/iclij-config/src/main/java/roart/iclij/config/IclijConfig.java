@@ -610,12 +610,20 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCE);
     }
 
-    public double getSimulateInvestCondidenceValue() {
+    public double getSimulateInvestConfidenceValue() {
         return (Double) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE);
     }
 
     public int getSimulateInvestConfidenceFindtimes() {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
+    }
+
+    public boolean wantsSimulateInvestConfidenceHoldIncrease() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE);
+    }
+
+    public boolean wantsSimulateInvestNoConfidenceHoldIncrease() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE);
     }
 
     public boolean wantsSimulateInvestStoploss() {

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.config.MyConfig;
 import roart.common.config.MyMyConfig;
@@ -142,4 +144,10 @@ public class StockDao {
         }
         return retMap;
     }
+    
+    public static Pair<Long, String> getVolume(StockItem stock) throws Exception {
+        return new ImmutablePair<Long, String>(stock.getVolume(), stock.getCurrency());   
+    }
+
+    
 }

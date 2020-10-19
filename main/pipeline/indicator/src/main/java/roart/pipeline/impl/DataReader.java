@@ -43,12 +43,15 @@ public class DataReader extends Pipeline {
     Map<String, String> nameMap;
     List<Date> dateList;
     String categoryTitle;
+
+    private Map<String, Object[][]> volumeMap;
     
     @Override
     public Map<Integer, Map<String, Object>> getResultMap() {
         Map<Integer, Map<String, Object>> resultMap = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.LIST, listMap);
+        map.put(PipelineConstants.VOLUME, volumeMap);
         resultMap.put(category, map);
         return resultMap;
     }
@@ -57,6 +60,7 @@ public class DataReader extends Pipeline {
     public Map<String, Object> getLocalResultMap() {
         Map<String, Object> map = new HashMap<>();
         map.put(PipelineConstants.LIST, listMap);
+        map.put(PipelineConstants.VOLUME, volumeMap);
         map.put(PipelineConstants.FILLLIST, fillListMap);
         map.put(PipelineConstants.BASE100LIST, base100ListMap);
         map.put(PipelineConstants.BASE100FILLLIST, base100FillListMap);
@@ -103,6 +107,7 @@ public class DataReader extends Pipeline {
         this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.nameMap = StockDao.getNameMap(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.listMap = DatelistToMapETL.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+        this.volumeMap = DatelistToMapETL.getVolumes(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         Double[][] e = listMap.get("F00000ZHEV");
         if (e != null) {
             int jj = 0;

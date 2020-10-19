@@ -56,6 +56,12 @@ public class SimulateInvestConfig {
     
     private Boolean intervalwhole;
     
+    private Boolean confidenceholdincrease;
+    
+    private Boolean noconfidenceholdincrease;
+    
+    private Map<String, Double> volumelimits;
+    
     public SimulateInvestConfig() {
         super();
     }
@@ -260,6 +266,30 @@ public class SimulateInvestConfig {
         this.intervalwhole = intervalwhole;
     }
 
+    public Boolean getConfidenceholdincrease() {
+        return confidenceholdincrease;
+    }
+
+    public void setConfidenceholdincrease(Boolean confidenceholdincrease) {
+        this.confidenceholdincrease = confidenceholdincrease;
+    }
+
+    public Boolean getNoconfidenceholdincrease() {
+        return noconfidenceholdincrease;
+    }
+
+    public void setNoconfidenceholdincrease(Boolean noconfidenceholdincrease) {
+        this.noconfidenceholdincrease = noconfidenceholdincrease;
+    }
+
+    public Map<String, Double> getVolumelimits() {
+        return volumelimits;
+    }
+
+    public void setVolumelimits(Map<String, Double> volumelimits) {
+        this.volumelimits = volumelimits;
+    }
+
     public void merge(SimulateInvestConfig other) {
         if (other == null) {
             return;
@@ -336,6 +366,15 @@ public class SimulateInvestConfig {
         if (other.intervalwhole != null) {
             this.intervalwhole = other.intervalwhole;
         }
+        if (other.confidenceholdincrease != null) {
+            this.confidenceholdincrease = other.confidenceholdincrease;
+        }
+        if (other.noconfidenceholdincrease != null) {
+            this.noconfidenceholdincrease = other.noconfidenceholdincrease;
+        }
+        if (other.volumelimits != null) {
+            this.volumelimits = other.volumelimits;
+        }
     }
     
     public Map<String, Object> asMap() {
@@ -343,6 +382,8 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, confidence);
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, confidenceValue);
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, confidenceFindTimes);
+        map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, confidenceholdincrease);
+        map.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE, noconfidenceholdincrease);
         map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, stoploss);
         map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, stoplossValue);
         map.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, indicatorPure);
