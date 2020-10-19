@@ -260,6 +260,8 @@ public class IclijConfigConstantMaps {
 	map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, Double.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, Integer.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, Boolean.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, Double.class);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, Boolean.class);
@@ -478,6 +480,8 @@ public class IclijConfigConstantMaps {
 	deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, Boolean.FALSE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, 0.75);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, 4);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE, Boolean.TRUE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, Boolean.FALSE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, 0.95);
         deflt.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, Boolean.FALSE);
@@ -745,6 +749,8 @@ public class IclijConfigConstantMaps {
 	text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, "Simulate invest confidence enable");
 	text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, "Simulate invest confidence value");
 	text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, "Simulate invest find times");
+        text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, "Simulate invest confidence hold increase");
+        text.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE, "Simulate invest no confidence hold increase");
 	text.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, "Simulate invest stop loss enable");
 	text.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, "Simulate invest stop loss value");
         text.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, "Simulate invest interval stop loss enable");
@@ -1039,6 +1045,8 @@ public class IclijConfigConstantMaps {
 	mymap.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest confidence enable"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE, new IclijXMLType(Integer.class, 0.75, "Simulate invest confidence value"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, new IclijXMLType(Integer.class, 4, "Simulate invest find times"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest confidence hold increase"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, new IclijXMLType(Boolean.class, Boolean.TRUE, "Simulate invest no confidence hold increase"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest stop loss enable"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, new IclijXMLType(Double.class, 0.95, "Simulate invest stop loss value"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest interval stop loss enable"));
