@@ -86,8 +86,8 @@ public class DayAdviser extends Adviser {
             list.add(item);
         }
         list = list.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-        int subListSize = Math.min(buytop, list.size());
-        list = list.subList(0, subListSize);
+        //int subListSize = Math.min(buytop, list.size());
+        //list = list.subList(0, subListSize);
         return list;
     }
 

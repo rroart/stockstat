@@ -82,8 +82,8 @@ public class AboveBelowAdviser extends Adviser {
         myincs.sort(incDecComparator);   
         mydecs.sort(incDecComparator);   
 
-        int subListSize = Math.min(buytop, myincs.size());
-        myincs = myincs.subList(0, subListSize);
+        //int subListSize = Math.min(buytop, myincs.size());
+        //myincs = myincs.subList(0, subListSize);
         return myincs;
     }
     
