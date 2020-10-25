@@ -406,7 +406,7 @@ public class SimulateInvestComponent extends ComponentML {
             }
             scores.add(score);
             
-            {
+            if (offset == 0) {
                 int myIndexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, mldate);
                 Trend trend = new TrendUtil().getTrend(myIndexOffset - prevIndexOffset, null /*TimeUtil.convertDate2(olddate)*/, prevIndexOffset, stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
                 log.info(trend.toString());
@@ -468,7 +468,7 @@ public class SimulateInvestComponent extends ComponentML {
             Map<String, Double> volumeLimits = simConfig.getVolumelimits();
             for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
                 String id = entry.getKey();
-                int anOffset = indexOffset - extradelay - delay;
+                int anOffset = indexOffset /* - extradelay - delay */;
                 int len = interval * 2;
                 List<List<Double>> resultList = categoryValueMap.get(id);
                 if (resultList == null || resultList.isEmpty()) {
@@ -496,13 +496,13 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                     Double sum = 0.0;
                     int count = 0;
-                    for (int i = first; i < size - 1 - anOffset; i++) {
+                    for (int i = first; i <= size - 1 - anOffset; i++) {
                         Integer volume = (Integer) list.get(i).get(0);
                         if (volume != null) {
-                            Double price = mainList.get(mainList.size() - 1 - indexOffset);
+                            Double price = mainList.get(i /* mainList.size() - 1 - indexOffset */);
                             if (price == null) {
                                 if (volume > 0) {
-                                    log.error("Price null with volume > 0");
+                                    log.debug("Price null with volume > 0");
                                 }
                                 continue;
                             }
