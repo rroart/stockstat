@@ -602,7 +602,7 @@ public class ArraysUtil {
         for (int i = start; i >= 0; i--) {
             i = searchBackwardNull(dstArray, i);
             int j = searchBackwardNonNull(dstArray, i);
-            if (i - j > maxHoleNumber) {
+            if (maxHoleNumber > 0 && i - j > maxHoleNumber) {
                 for (int k = 0; k <= i; k++) {
                     dstArray[k] = null;
                 }
