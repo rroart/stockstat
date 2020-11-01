@@ -36,6 +36,10 @@ public abstract class IndicatorAdviser extends Adviser {
     
     protected List<MetaItem> allMetas;
     
+    private boolean indicatordirection;
+    
+    private boolean indicatordirectionup;
+    
     public IndicatorAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
         super(market, investStart, investEnd, param, simulateConfig);
         SimulateInvestData simulateParam;
@@ -54,6 +58,10 @@ public abstract class IndicatorAdviser extends Adviser {
         
         interpolate = simulateConfig.getInterpolate();
         
+        indicatordirection = simulateConfig.getIndicatorDirection();
+        
+        indicatordirectionup = simulateConfig.getIndicatorDirectionUp();
+        
         if (param instanceof SimulateInvestData) {            
             MetaItem meta = new MetaUtil().findMeta(allMetas, market.getConfig().getMarket());
             Map<String, Map<String, Object>> resultMaps;
@@ -69,9 +77,9 @@ public abstract class IndicatorAdviser extends Adviser {
             String catName = new MetaUtil().getCategory(meta, cat);
             Map<String, Object> objectMaps = resultMaps.get(catName);
             if (objectMaps != null) {
-                Map<String, Object> macdMaps = (Map<String, Object>) objectMaps.get(getPipeline());
+                Map<String, Object> indicatorMaps = (Map<String, Object>) objectMaps.get(getPipeline());
                 //System.out.println("macd"+ macdMaps.keySet());
-                objectMap = (Map<String, List<Object>>) macdMaps.get(PipelineConstants.OBJECT);
+                objectMap = (Map<String, List<Object>>) indicatorMaps.get(PipelineConstants.OBJECT);
             }
             return;
         }
@@ -106,9 +114,9 @@ public abstract class IndicatorAdviser extends Adviser {
         String catName = new MetaUtil().getCategory(meta, cat);
         Map<String, Object> resultMaps = maps.get(catName);
         if (resultMaps != null) {
-            Map<String, Object> macdMaps = (Map<String, Object>) resultMaps.get(getPipeline());
+            Map<String, Object> indicatorMaps = (Map<String, Object>) resultMaps.get(getPipeline());
             //System.out.println("macd"+ macdMaps.keySet());
-            objectMap = (Map<String, List<Object>>) macdMaps.get(PipelineConstants.OBJECT);
+            objectMap = (Map<String, List<Object>>) indicatorMaps.get(PipelineConstants.OBJECT);
         }
     }
 
@@ -158,17 +166,29 @@ public abstract class IndicatorAdviser extends Adviser {
             }
             List<Double> mainList = resultList.get(0);
             //Double[] macdList = calculatedMap.get(entry.getKey());
-            List<Object> macdList2 = objectMap.get(entry.getKey());
-            if (macdList2 == null) {
+            List<Object> indicatorList2 = objectMap.get(entry.getKey());
+            if (indicatorList2 == null) {
                 continue;
             }
-            List<Double> macdList = (List<Double>) macdList2.get(getOffset());
-            int end = (Integer) macdList2.get(getOffset2());
-            int macdIndex = macdList.size() - 1 - indexOffset - end;
-            if (macdIndex < 0) {
+            List<Double> indicatorList = (List<Double>) indicatorList2.get(getOffset());
+            int end = (Integer) indicatorList2.get(getOffset2());
+            int indicatorIndex = indicatorList.size() - 1 - indexOffset - end;
+            if (indicatorIndex < 0) {
                 continue;
             }
-            Double macd = macdList.get(macdIndex);
+            Double indicatorValue = indicatorList.get(indicatorIndex);
+            if (indicatordirection) {
+                if (indicatorIndex < 1) {
+                    continue;
+                }
+                Double indicatorPrevValue = indicatorList.get(indicatorIndex - 1);
+                if (indicatorValue == null || indicatorPrevValue == null) {
+                    continue;
+                }
+                if (!indicatordirectionup == indicatorValue > indicatorPrevValue) {
+                    continue;
+                }
+            }
             if (mainList != null) {
                 ValidateUtil.validateSizes(mainList, stockDates);
                 Double valNow;
@@ -178,8 +198,8 @@ public abstract class IndicatorAdviser extends Adviser {
                     valNow = mainList.get(mainList.size() - 1 - indexOffset);
                     // mainList.size() - 1 - (stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring))
                 }
-                if (valNow != null && valNow != 0 && macd != null) {
-                    Pair<String, Double> value = new ImmutablePair<String, Double>(entry.getKey(), macd / valNow);
+                if (valNow != null && valNow != 0 && indicatorValue != null) {
+                    Pair<String, Double> value = new ImmutablePair<String, Double>(entry.getKey(), indicatorValue / valNow);
                     valueList.add(value);
                 }
             }
