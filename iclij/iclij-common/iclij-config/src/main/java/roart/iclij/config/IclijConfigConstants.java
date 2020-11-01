@@ -250,6 +250,8 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTINDICATORPURE = "simulateinvest.indicator.pure";
     public static final String SIMULATEINVESTINDICATORREBASE = "simulateinvest.indicator.rebase";
     public static final String SIMULATEINVESTINDICATORREVERSE = "simulateinvest.indicator.reverse";
+    public static final String SIMULATEINVESTINDICATORDIRECTION = "simulateinvest.indicator.direction";
+    public static final String SIMULATEINVESTINDICATORDIRECTIONUP = "simulateinvest.indicator.direction.up";
     public static final String SIMULATEINVESTMLDATE = "simulateinvest.mldate";
     public static final String SIMULATEINVESTSTOCKS = "simulateinvest.stocks";
     public static final String SIMULATEINVESTBUYWEIGHT = "simulateinvest.buyweight";

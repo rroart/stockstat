@@ -70,6 +70,10 @@ public class SimulateInvestConfig {
     
     private Integer noconfidencetrenddecreaseTimes;
     
+    public Boolean indicatorDirection;
+    
+    public Boolean indicatorDirectionUp;
+    
     public SimulateInvestConfig() {
         super();
     }
@@ -330,6 +334,22 @@ public class SimulateInvestConfig {
         this.noconfidencetrenddecreaseTimes = noconfidencetrenddecreaseTimes;
     }
 
+    public Boolean getIndicatorDirection() {
+        return indicatorDirection;
+    }
+
+    public void setIndicatorDirection(Boolean indicatorDirection) {
+        this.indicatorDirection = indicatorDirection;
+    }
+
+    public Boolean getIndicatorDirectionUp() {
+        return indicatorDirectionUp;
+    }
+
+    public void setIndicatorDirectionUp(Boolean indicatorDirectionUp) {
+        this.indicatorDirectionUp = indicatorDirectionUp;
+    }
+
     public void merge(SimulateInvestConfig other) {
         if (other == null) {
             return;
@@ -427,6 +447,12 @@ public class SimulateInvestConfig {
         if (other.noconfidencetrenddecreaseTimes != null) {
             this.noconfidencetrenddecreaseTimes = other.noconfidencetrenddecreaseTimes;
         }
+        if (other.indicatorDirection != null) {
+            this.indicatorDirection = other.indicatorDirection;
+        }
+        if (other.indicatorDirectionUp != null) {
+            this.indicatorDirectionUp = other.indicatorDirectionUp;
+        }
     }
     
     public Map<String, Object> asMap() {
@@ -445,6 +471,8 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, indicatorPure);
         map.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, indicatorRebase);
         map.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, indicatorReverse);
+        map.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION, indicatorDirection);
+        map.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP, indicatorDirectionUp);
         map.put(IclijConfigConstants.SIMULATEINVESTMLDATE, mldate);
         map.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, stocks);
         map.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, buyweight);

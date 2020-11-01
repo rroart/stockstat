@@ -96,6 +96,8 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORPURE);
         confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
         confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP);
         confList.add(IclijConfigConstants.SIMULATEINVESTMLDATE);
         confList.add(IclijConfigConstants.SIMULATEINVESTSTOCKS);
         confList.add(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);

@@ -670,6 +670,14 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
     }
 
+    public boolean wantsSimulateInvestIndicatorDirection() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION);
+    }
+
+    public boolean wantsSimulateInvestIndicatorDirectionUp() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP);
+    }
+
     public boolean wantsSimulateInvestMLDate() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTMLDATE);
     }

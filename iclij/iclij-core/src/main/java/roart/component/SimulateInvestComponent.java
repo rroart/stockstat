@@ -617,6 +617,8 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setIndicatorPure(config.wantsSimulateInvestIndicatorPure());
         simConfig.setIndicatorRebase(config.wantsSimulateInvestIndicatorRebase());
 	simConfig.setIndicatorReverse(config.wantsSimulateInvestIndicatorReverse());
+        simConfig.setIndicatorDirection(config.wantsSimulateInvestIndicatorDirection());
+        simConfig.setIndicatorDirectionUp(config.wantsSimulateInvestIndicatorDirectionUp());
 	simConfig.setMldate(config.wantsSimulateInvestMLDate());
         try {
             simConfig.setPeriod(config.getSimulateInvestPeriod());
@@ -750,6 +752,8 @@ public class SimulateInvestComponent extends ComponentML {
         confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORPURE);
         confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
         confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION);
+        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP);
         confList.add(IclijConfigConstants.SIMULATEINVESTMLDATE);
         confList.add(IclijConfigConstants.SIMULATEINVESTSTOCKS);
         confList.add(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);

@@ -273,6 +273,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, Boolean.class);
         map.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, Boolean.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION, Boolean.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTMLDATE, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, Integer.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, Boolean.class);
@@ -497,6 +499,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, Boolean.TRUE);
         deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, Boolean.FALSE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP, Boolean.TRUE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTMLDATE, Boolean.TRUE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, 5);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, Boolean.FALSE);
@@ -770,6 +774,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, "Simulate invest indicator rebase 100");
         text.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, "Simulate invest indicator pure");
 	text.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, "Simulate invest indicator reverse");
+        text.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION, "Simulate invest indicator direction");
+        text.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP, "Simulate invest indicator direction up");
 	text.put(IclijConfigConstants.SIMULATEINVESTMLDATE, "Simulate invest ML date");
 	text.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, "Simulate invest stocks");
 	text.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, "Simulate invest buy weight");
@@ -1068,6 +1074,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, new IclijXMLType(Boolean.class, Boolean.TRUE, "Simulate invest indicator rebase 100"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest indicator pure"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest indicator reverse"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest indicator direction"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP, new IclijXMLType(Boolean.class, Boolean.TRUE, "Simulate invest indicator direction up"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTMLDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest ML date"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, new IclijXMLType(Integer.class, 5, "Simulate invest stocks"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest buy weight"));
