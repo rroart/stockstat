@@ -85,6 +85,10 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
         confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE);
         confList.add(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES);
+        confList.add(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE);
+        confList.add(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES);
         confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSS);
         confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE);
         confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS);

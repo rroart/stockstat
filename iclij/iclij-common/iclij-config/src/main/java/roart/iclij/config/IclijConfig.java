@@ -626,6 +626,22 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE);
     }
 
+    public boolean wantsSimulateInvestConfidenceTrendIncrease() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE);
+    }
+
+    public int wantsSimulateInvestConfidenceTrendIncreaseTimes() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES);
+    }
+
+    public boolean wantsSimulateInvestNoConfidenceTrendDecrease() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE);
+    }
+
+    public int wantsSimulateInvestNoConfidenceTrendDecreaseTimes() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES);
+    }
+
     public boolean wantsSimulateInvestStoploss() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTOPLOSS);
     }

@@ -62,6 +62,14 @@ public class SimulateInvestConfig {
     
     private Map<String, Double> volumelimits;
     
+    private Boolean confidencetrendincrease;
+    
+    private Integer confidencetrendincreaseTimes;
+    
+    private Boolean noconfidencetrenddecrease;
+    
+    private Integer noconfidencetrenddecreaseTimes;
+    
     public SimulateInvestConfig() {
         super();
     }
@@ -290,6 +298,38 @@ public class SimulateInvestConfig {
         this.volumelimits = volumelimits;
     }
 
+    public Boolean getConfidencetrendincrease() {
+        return confidencetrendincrease;
+    }
+
+    public void setConfidencetrendincrease(Boolean confidencetrendincrease) {
+        this.confidencetrendincrease = confidencetrendincrease;
+    }
+
+    public Integer getConfidencetrendincreaseTimes() {
+        return confidencetrendincreaseTimes;
+    }
+
+    public void setConfidencetrendincreaseTimes(Integer confidencetrendincreaseTimes) {
+        this.confidencetrendincreaseTimes = confidencetrendincreaseTimes;
+    }
+
+    public Boolean getNoconfidencetrenddecrease() {
+        return noconfidencetrenddecrease;
+    }
+
+    public void setNoconfidencetrenddecrease(Boolean noconfidencetrenddecrease) {
+        this.noconfidencetrenddecrease = noconfidencetrenddecrease;
+    }
+
+    public Integer getNoconfidencetrenddecreaseTimes() {
+        return noconfidencetrenddecreaseTimes;
+    }
+
+    public void setNoconfidencetrenddecreaseTimes(Integer noconfidencetrenddecreaseTimes) {
+        this.noconfidencetrenddecreaseTimes = noconfidencetrenddecreaseTimes;
+    }
+
     public void merge(SimulateInvestConfig other) {
         if (other == null) {
             return;
@@ -375,6 +415,18 @@ public class SimulateInvestConfig {
         if (other.volumelimits != null) {
             this.volumelimits = other.volumelimits;
         }
+        if (other.confidencetrendincrease != null) {
+            this.confidencetrendincrease = other.confidencetrendincrease;
+        }
+        if (other.confidencetrendincreaseTimes != null) {
+            this.confidencetrendincreaseTimes = other.confidencetrendincreaseTimes;
+        }
+        if (other.noconfidencetrenddecrease != null) {
+            this.noconfidencetrenddecrease = other.noconfidencetrenddecrease;
+        }
+        if (other.noconfidencetrenddecreaseTimes != null) {
+            this.noconfidencetrenddecreaseTimes = other.noconfidencetrenddecreaseTimes;
+        }
     }
     
     public Map<String, Object> asMap() {
@@ -384,6 +436,10 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, confidenceFindTimes);
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, confidenceholdincrease);
         map.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE, noconfidenceholdincrease);
+        map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE, confidencetrendincrease);
+        map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES, confidencetrendincreaseTimes);
+        map.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE, noconfidencetrenddecrease);
+        map.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES, noconfidencetrenddecreaseTimes);
         map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, stoploss);
         map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, stoplossValue);
         map.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, indicatorPure);
