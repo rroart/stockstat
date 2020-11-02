@@ -70,9 +70,9 @@ public class SimulateInvestConfig {
     
     private Integer noconfidencetrenddecreaseTimes;
     
-    public Boolean indicatorDirection;
+    private Boolean indicatorDirection;
     
-    public Boolean indicatorDirectionUp;
+    private Boolean indicatorDirectionUp;
     
     public SimulateInvestConfig() {
         super();
