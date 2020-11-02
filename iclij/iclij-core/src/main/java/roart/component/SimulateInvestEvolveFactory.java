@@ -9,6 +9,8 @@ public class SimulateInvestEvolveFactory {
             return new EvolveIclijConfigMapMy();
         case 1:
             return new IclijConfigMapEvolveJ();
+        case 2:
+            return new IclijConfigMapEvolveA();
         }
         return evolve;
     }

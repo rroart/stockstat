@@ -262,6 +262,10 @@ public class IclijConfigConstantMaps {
 	map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, Integer.class);
         map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, Boolean.class);
         map.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE, Boolean.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE, Boolean.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES, Integer.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE, Boolean.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES, Integer.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, Double.class);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, Boolean.class);
@@ -269,6 +273,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, Boolean.class);
         map.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, Boolean.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION, Boolean.class);
+        map.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTMLDATE, Boolean.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, Integer.class);
 	map.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, Boolean.class);
@@ -482,6 +488,10 @@ public class IclijConfigConstantMaps {
 	deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, 4);
         deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, Boolean.FALSE);
         deflt.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES, 1);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES, 1);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, Boolean.FALSE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, 0.95);
         deflt.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, Boolean.FALSE);
@@ -489,6 +499,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, Boolean.TRUE);
         deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, Boolean.FALSE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP, Boolean.TRUE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTMLDATE, Boolean.TRUE);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, 5);
 	deflt.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, Boolean.FALSE);
@@ -751,6 +763,10 @@ public class IclijConfigConstantMaps {
 	text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES, "Simulate invest find times");
         text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE, "Simulate invest confidence hold increase");
         text.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE, "Simulate invest no confidence hold increase");
+        text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE, "Simulate invest confidence trend increase");
+        text.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES, "Simulate invest confidence trend increase times");
+        text.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE, "Simulate invest no confidence trend increase");
+        text.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES, "Simulate invest no confidence trend increase times");
 	text.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSS, "Simulate invest stop loss enable");
 	text.put(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE, "Simulate invest stop loss value");
         text.put(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS, "Simulate invest interval stop loss enable");
@@ -758,6 +774,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, "Simulate invest indicator rebase 100");
         text.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, "Simulate invest indicator pure");
 	text.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, "Simulate invest indicator reverse");
+        text.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION, "Simulate invest indicator direction");
+        text.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP, "Simulate invest indicator direction up");
 	text.put(IclijConfigConstants.SIMULATEINVESTMLDATE, "Simulate invest ML date");
 	text.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, "Simulate invest stocks");
 	text.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, "Simulate invest buy weight");
@@ -800,6 +818,8 @@ public class IclijConfigConstantMaps {
         range.put(IclijConfigConstants.SIMULATEINVESTADVISER, new Double[] { 0.0, 8.0 } );
         range.put(IclijConfigConstants.SIMULATEINVESTPERIOD, new Double[] { 0.0, 10.0 } );
         range.put(IclijConfigConstants.SIMULATEINVESTDAY, new Double[] { 1.0, 20.0, 1.0 } );
+        range.put(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES, new Double[] { 1.0, 10.0 } );
+        range.put(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES, new Double[] { 1.0, 10.0 } );
     }
     
     public static Map<String, String> conv = new HashMap<>();
@@ -1054,6 +1074,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE, new IclijXMLType(Boolean.class, Boolean.TRUE, "Simulate invest indicator rebase 100"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest indicator pure"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest indicator reverse"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest indicator direction"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP, new IclijXMLType(Boolean.class, Boolean.TRUE, "Simulate invest indicator direction up"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTMLDATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest ML date"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTSTOCKS, new IclijXMLType(Integer.class, 5, "Simulate invest stocks"));
 	mymap.put(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT, new IclijXMLType(Boolean.class, Boolean.FALSE, "Simulate invest buy weight"));
