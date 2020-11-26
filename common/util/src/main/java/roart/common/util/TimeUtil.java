@@ -188,6 +188,9 @@ public class TimeUtil {
     public static String getForwardEqualAfter(LocalDate date, int back, List<String> stockDates) {
         int index = getIndexEqualAfter(stockDates, TimeUtil.convertDate2(date));
         index = index + back;
+        if (index > stockDates.size() - 1) {
+            return null;
+        }
         return stockDates.get(index);
     }
 

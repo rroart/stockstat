@@ -262,7 +262,7 @@ public class SimulateInvestComponent extends ComponentML {
             }
             */
             int indexOffset = totalDelays;
-            while (date != null && investEnd != null && date.isBefore(investEnd)) {
+            while (date != null && investEnd != null && !date.isAfter(investEnd)) {
                 date = TimeUtil.getForwardEqualAfter2(date, 0 /* findTime */, stockDates);
                 String datestring = TimeUtil.convertDate2(date);
                 indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
