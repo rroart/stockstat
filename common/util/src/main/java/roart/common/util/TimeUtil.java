@@ -196,6 +196,9 @@ public class TimeUtil {
 
     public static LocalDate getForwardEqualAfter2(LocalDate date, int back, List<String> stockDates) {
         String str = getForwardEqualAfter(date, back, stockDates);
+        if (str == null) {
+            return null;
+        }
         try {
             return convertDate(str);
         } catch (ParseException e) {
