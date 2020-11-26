@@ -862,6 +862,9 @@ public class SimulateInvestComponent extends ComponentML {
             int buyCnt = simConfig.getStocks() - mystocks.size();
             buyCnt = Math.min(buyCnt, buys.size());
             ids.addAll(buyids.subList(0, buyCnt));
+            buyids = buyids.subList(0, buyCnt);
+        } else {
+            buyids.clear();
         }
         ids.removeAll(sellids);
         map.put("lastbuysell", "Buy: " + buyids + " Sell: " + sellids + " Stocks: " +ids);
