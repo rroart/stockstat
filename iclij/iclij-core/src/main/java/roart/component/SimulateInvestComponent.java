@@ -226,8 +226,6 @@ public class SimulateInvestComponent extends ComponentML {
             }
             
             long time0 = System.currentTimeMillis();
-            AboveBelowAdviser.time1 = 0;
-            AboveBelowAdviser.time2 = 0;
             long time3 = 0;
             long time4 = 0;
             for (int offset = 0; offset < end; offset++) {
@@ -423,8 +421,6 @@ public class SimulateInvestComponent extends ComponentML {
             }
         }
             log.info("time0 {}", System.currentTimeMillis() - time0);
-            log.info("time1 {}", AboveBelowAdviser.time1);
-            log.info("time2 {}", AboveBelowAdviser.time2);
             log.info("time2 {}", time3);
             log.info("time2 {}", time4);
         }
