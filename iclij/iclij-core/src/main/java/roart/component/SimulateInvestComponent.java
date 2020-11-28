@@ -31,6 +31,7 @@ import roart.common.util.MathUtil;
 import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.common.util.ValidateUtil;
+import roart.component.adviser.AboveBelowAdviser;
 import roart.component.adviser.Adviser;
 import roart.component.adviser.AdviserFactory;
 import roart.component.model.ComponentData;
@@ -224,6 +225,11 @@ public class SimulateInvestComponent extends ComponentML {
                 }
             }
             
+            long time0 = System.currentTimeMillis();
+            AboveBelowAdviser.time1 = 0;
+            AboveBelowAdviser.time2 = 0;
+            long time3 = 0;
+            long time4 = 0;
             for (int offset = 0; offset < end; offset++) {
                 
             Capital capital = new Capital();
@@ -239,8 +245,9 @@ public class SimulateInvestComponent extends ComponentML {
             int findTimes = simConfig.getConfidenceFindTimes();
             Pair<Integer, Integer>[] hits = new ImmutablePair[findTimes];
 
-            int trendInc = 0;
-            int trendDec = 0;
+            Integer[] trendInc = new Integer[] { 0 };
+            Integer[] trendDec = new Integer[] { 0 };
+            Pair<Integer, Integer> trendIncDec = new ImmutablePair<>(0, 0);
             
             int prevIndexOffset = 0;
             //try {
@@ -267,37 +274,15 @@ public class SimulateInvestComponent extends ComponentML {
                 String datestring = TimeUtil.convertDate2(date);
                 indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
                 
-                Trend trend = null;
-                try {
-                    trend = new TrendUtil().getTrend(interval, null /*TimeUtil.convertDate2(olddate)*/, indexOffset, stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
-                } catch (Exception e) {
-                    log.error(Constants.ERROR, e);
-                }
-                if (trend != null && trend.incAverage < 0) {
-                    int jj = 0;
-                }
-                log.debug("Trend {}", trend);
-                
-                if (trend != null) {
-                    if (trend.incAverage > 1) {
-                        trendInc++;
-                        trendDec = 0;
-                    } else {
-                        trendInc = 0;
-                        trendDec++;
-                    }
-                }
+                Trend trend = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, trendInc, trendDec, indexOffset);
                 // get recommendations
 
-                List<String> volumeExcludes = new ArrayList<>();
-                getVolumeExcludes(simConfig, extradelay, stockDates, interval, categoryValueMap, volumeMap, delay,
-                        indexOffset, volumeExcludes);
-                
-                List<String> myExcludes = new ArrayList<>();
-                myExcludes.addAll(configExcludeList);
-                myExcludes.addAll(volumeExcludes);
+                List<String> myExcludes = getExclusions(simConfig, extradelay, stockDates, interval, categoryValueMap,
+                        volumeMap, configExcludeList, delay, indexOffset);
+
                 double myavg = increase(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset);
-                List<Astock> holdIncrease = new ArrayList<>();
+
+		List<Astock> holdIncrease = new ArrayList<>();
                 int up = update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay, holdIncrease, prevIndexOffset - extradelay);
 
                 List<Astock> sells = new ArrayList<>();
@@ -311,8 +296,8 @@ public class SimulateInvestComponent extends ComponentML {
                 double myreliability = getReliability(mystocks, hits, findTimes, up);
                 
                 boolean confidence = !simConfig.getConfidence() || myreliability >= simConfig.getConfidenceValue();
-                boolean confidence1 = !simConfig.getConfidencetrendincrease() || trendInc >= simConfig.getConfidencetrendincreaseTimes();
-                boolean noconfidence2 = simConfig.getNoconfidencetrenddecrease() && trendDec >= simConfig.getNoconfidencetrenddecreaseTimes();
+                boolean confidence1 = !simConfig.getConfidencetrendincrease() || trendInc[0] >= simConfig.getConfidencetrendincreaseTimes();
+                boolean noconfidence2 = simConfig.getNoconfidencetrenddecrease() && trendDec[0] >= simConfig.getNoconfidencetrenddecreaseTimes();
                 boolean noconfidence = !confidence || !confidence1 || noconfidence2;
                 if (!noconfidence) {
                     mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, myExcludes,
@@ -385,13 +370,7 @@ public class SimulateInvestComponent extends ComponentML {
             }
             if (offset == 0) {
                 try {
-                    List<String> myExcludes = new ArrayList<>();
-                    myExcludes.addAll(configExcludeList);
-                    List<String> volumeExcludes = new ArrayList<>();
-                    getVolumeExcludes(simConfig, extradelay, stockDates, interval, categoryValueMap, volumeMap, delay,
-                            indexOffset, volumeExcludes);
-                    myExcludes.addAll(volumeExcludes);
-                    lastbuysell(stockDates, date, adviser, capital, simConfig, categoryValueMap, mystocks, extradelay, prevIndexOffset, hits, findTimes, aParameter, myExcludes, param.getUpdateMap(), trendInc, trendDec);
+                    lastbuysell(stockDates, date, adviser, capital, simConfig, categoryValueMap, mystocks, extradelay, prevIndexOffset, hits, findTimes, aParameter, param.getUpdateMap(), trendInc, trendDec, configExcludeList, param, market, interval, filteredCategoryValueMap, volumeMap, delay);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -443,6 +422,11 @@ public class SimulateInvestComponent extends ComponentML {
             componentData.getUpdateMap().putAll(map);
             }
         }
+            log.info("time0 {}", System.currentTimeMillis() - time0);
+            log.info("time1 {}", AboveBelowAdviser.time1);
+            log.info("time2 {}", AboveBelowAdviser.time2);
+            log.info("time2 {}", time3);
+            log.info("time2 {}", time4);
         }
 
         Double score = 0.0;
@@ -475,6 +459,45 @@ public class SimulateInvestComponent extends ComponentML {
 
         handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         return componentData;
+    }
+
+    private List<String> getExclusions(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
+            int interval, Map<String, List<List<Double>>> categoryValueMap, Map<String, List<List<Object>>> volumeMap,
+            List<String> configExcludeList, int delay, int indexOffset) {
+        List<String> myExcludes = new ArrayList<>();
+        List<String> volumeExcludes = new ArrayList<>();
+        getVolumeExcludes(simConfig, extradelay, stockDates, interval, categoryValueMap, volumeMap, delay,
+                indexOffset, volumeExcludes);
+        
+        myExcludes.addAll(configExcludeList);
+        myExcludes.addAll(volumeExcludes);
+        return myExcludes;
+    }
+
+   private Trend getTrendIncDec(Market market, ComponentData param, List<String> stockDates, int interval,
+            Map<String, List<List<Double>>> filteredCategoryValueMap, Integer[] trendInc, Integer[] trendDec,
+            int indexOffset) {
+        Trend trend = null;
+        try {
+            trend = new TrendUtil().getTrend(interval, null /*TimeUtil.convertDate2(olddate)*/, indexOffset, stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
+        } catch (Exception e) {
+            log.error(Constants.ERROR, e);
+        }
+        if (trend != null && trend.incAverage < 0) {
+            int jj = 0;
+        }
+        log.debug("Trend {}", trend);
+        
+        if (trend != null) {
+            if (trend.incAverage > 1) {
+                trendInc[0]++;
+                trendDec[0] = 0;
+            } else {
+                trendInc[0] = 0;
+                trendDec[0]++;
+            }
+        }
+        return trend;
     }
 
     private void getVolumeExcludes(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
@@ -564,6 +587,7 @@ public class SimulateInvestComponent extends ComponentML {
         } else {
             buysTmp = getBuyList(stockDates, categoryValueMap, myincs, indexOffset - delay - extradelay, simConfig.getStocks());
         }
+        myincs = null;
         //buysTmp = filter(buysTmp, sells);
         List<Astock> keeps = keep(mystocks, buysTmp);
         keeps.addAll(hold);
@@ -821,15 +845,21 @@ public class SimulateInvestComponent extends ComponentML {
         return average.getAsDouble();
     }
 
-    private void lastbuysell(List<String> stockDates, LocalDate date, Adviser adviser, Capital capital, SimulateInvestConfig simConfig, Map<String, List<List<Double>>> categoryValueMap, List<Astock> mystocks, int extradelay, int prevIndexOffset, Pair<Integer, Integer>[] hits, int findTimes, String aParameter, List<String> excludeList, Map<String, Object> map, int trendInc, int trendDec) {
+    private void lastbuysell(List<String> stockDates, LocalDate date, Adviser adviser, Capital capital, SimulateInvestConfig simConfig, Map<String, List<List<Double>>> categoryValueMap, List<Astock> mystocks, int extradelay, int prevIndexOffset, Pair<Integer, Integer>[] hits, int findTimes, String aParameter, Map<String, Object> map, Integer[] trendInc, Integer[] trendDec, List<String> configExcludeList, ComponentData param, Market market, int interval, Map<String, List<List<Double>>> filteredCategoryValueMap, Map<String, List<List<Object>>> volumeMap, int delay) {
         mystocks = new ArrayList<>(mystocks);
         date = TimeUtil.getForwardEqualAfter2(date, 0 /* findTime */, stockDates);
         String datestring = TimeUtil.convertDate2(date);
         int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
         
+	Trend trend = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, trendInc, trendDec, indexOffset);
         // get recommendations
 
-        List<Astock> holdIncrease = new ArrayList<>();
+        List<String> myExcludes = getExclusions(simConfig, extradelay, stockDates, interval, categoryValueMap,
+                volumeMap, configExcludeList, delay, indexOffset);
+
+	double myavg = increase(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset);
+
+	List<Astock> holdIncrease = new ArrayList<>();
         int up = update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay, holdIncrease, prevIndexOffset - extradelay);
 
         List<Astock> sells = new ArrayList<>();
@@ -843,13 +873,13 @@ public class SimulateInvestComponent extends ComponentML {
         double myreliability = getReliability(mystocks, hits, findTimes, up);
         
         boolean confidence = !simConfig.getConfidence() || myreliability >= simConfig.getConfidenceValue();
-        boolean confidence1 = !simConfig.getConfidencetrendincrease() || trendInc >= simConfig.getConfidencetrendincreaseTimes();
-        boolean noconfidence2 = simConfig.getNoconfidencetrenddecrease() && trendDec >= simConfig.getNoconfidencetrenddecreaseTimes();
+        boolean confidence1 = !simConfig.getConfidencetrendincrease() || trendInc[0] >= simConfig.getConfidencetrendincreaseTimes();
+        boolean noconfidence2 = simConfig.getNoconfidencetrenddecrease() && trendDec[0] >= simConfig.getNoconfidencetrenddecreaseTimes();
         boolean noconfidence = !confidence || !confidence1 || noconfidence2;
         if (!noconfidence) {
-            int delay = 0;
-            mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, excludeList, aParameter,
-                    mystocks, date, indexOffset, sells, buys, holdIncrease, extradelay, delay);
+            int delay0 = 0;
+            mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, myExcludes, aParameter,
+                    mystocks, date, indexOffset, sells, buys, holdIncrease, extradelay, delay0);
         } else {
             mystocks = noConfidenceHoldSell(mystocks, holdIncrease, sells, simConfig);
         }
@@ -1064,7 +1094,7 @@ public class SimulateInvestComponent extends ComponentML {
             List<Double> mainList = resultList.get(0);
             ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
-                Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
+                Double valNow = mainList.get(mainList.size() - 1 - indexOffset);                    
                 if (valNow != null) {
                     Astock astock = new Astock();
                     astock.id = id;
