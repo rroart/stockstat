@@ -837,6 +837,14 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MISCMERGECY);
     }
 
+    public String getServices() {
+        return (String) getValueOrDefault(ConfigConstants.MISCSERVICES);
+    }
+
+    public String getCommunications() {
+        return (String) getValueOrDefault(ConfigConstants.MISCCOMMUNICATIONS);
+    }
+
     public String getDbSparkMaster() {
         return (String) getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER);
     }

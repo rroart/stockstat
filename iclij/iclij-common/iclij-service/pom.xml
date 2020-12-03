@@ -60,6 +60,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-common-util</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-model</artifactId>
       <version>0.5-SNAPSHOT</version>
     </dependency>
@@ -67,6 +72,12 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-config</artifactId>
       <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

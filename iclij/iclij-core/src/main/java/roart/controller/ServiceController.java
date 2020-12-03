@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
@@ -51,6 +52,21 @@ public class ServiceController {
         return new ResponseEntity(HttpStatus.OK);
     }
     
+    @RequestMapping(value = "/" + EurekaConstants.GETCONFIG,
+            method = RequestMethod.POST)
+    public IclijServiceResult getConfig(@RequestBody IclijServiceParam param)
+            throws Exception {
+        IclijServiceResult result = new IclijServiceResult();
+        try {
+            result.setIclijConfig(IclijXMLConfig.getConfigInstance());
+            System.out.println("configs " + result.getIclijConfig());
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            result.setError(e.getMessage());
+        }
+        return result;
+    }
+
     @RequestMapping(value = "/" + EurekaConstants.GETVERIFY,
             method = RequestMethod.POST)
     public IclijServiceResult getVerify(@RequestBody IclijServiceParam param)

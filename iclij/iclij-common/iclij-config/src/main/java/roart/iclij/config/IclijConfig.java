@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Map.Entry;
 
+import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigTreeMap;
 
 public class IclijConfig {
@@ -128,6 +129,14 @@ public class IclijConfig {
 
     public boolean populate() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MISCPOPULATE);
+    }
+
+    public String getServices() {
+        return (String) getValueOrDefault(IclijConfigConstants.MISCSERVICES);
+    }
+
+    public String getCommunications() {
+        return (String) getValueOrDefault(IclijConfigConstants.MISCCOMMUNICATIONS);
     }
 
     public double mpServerCpu() {

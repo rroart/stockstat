@@ -138,6 +138,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.EVOLVETHRESHOLD, String.class);
         map.put(IclijConfigConstants.MISCSHUTDOWNHOUR, Integer.class);
         map.put(IclijConfigConstants.MISCPOPULATE, Boolean.class);
+        map.put(IclijConfigConstants.MISCSERVICES, String.class);
+        map.put(IclijConfigConstants.MISCCOMMUNICATIONS, String.class);
         map.put(IclijConfigConstants.MPSERVERCPU, Double.class);
         map.put(IclijConfigConstants.MPCLIENTCPU, Double.class);
         map.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.class);
@@ -396,6 +398,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.EVOLVEFUTUREDAYS, " [ 10 ]");
         deflt.put(IclijConfigConstants.EVOLVETHRESHOLD, "[ 1.0 ]");
         deflt.put(IclijConfigConstants.MISCPOPULATE, Boolean.FALSE);
+        deflt.put(IclijConfigConstants.MISCSERVICES, "{}");
+        deflt.put(IclijConfigConstants.MISCCOMMUNICATIONS, "{}");
         deflt.put(IclijConfigConstants.MPSERVERCPU, 0.5);
         deflt.put(IclijConfigConstants.MPCLIENTCPU, 0.5);
         deflt.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.FALSE);
@@ -640,6 +644,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MISCSHUTDOWNHOUR, "Server shutdown hour");
         text.put(IclijConfigConstants.MISCPOPULATE, "Populate history");
         text.put(IclijConfigConstants.MPSERVERCPU, "Server cpu usage");
+        text.put(IclijConfigConstants.MISCSERVICES, "Services and communications");
+        text.put(IclijConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
         text.put(IclijConfigConstants.MPCLIENTCPU, "Client cpu usage");
         text.put(IclijConfigConstants.FINDPROFITAUTORUN, "Enable find profit autorun");
         text.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, "Do machine learning dynamically if no persistent present");
@@ -943,6 +949,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.EVOLVETHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ]", "Evolve threshold"));
         mymap.put(IclijConfigConstants.MISCSHUTDOWNHOUR, new IclijXMLType(Integer.class, null, "Server shutdown hour"));
         mymap.put(IclijConfigConstants.MISCPOPULATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Populate history"));
+        mymap.put(IclijConfigConstants.MISCSERVICES, new IclijXMLType( String.class, "{}", "Services and communications"));
+        mymap.put(IclijConfigConstants.MISCCOMMUNICATIONS, new IclijXMLType( String.class, "{}", "Communications and connections"));
         mymap.put(IclijConfigConstants.MPSERVERCPU, new IclijXMLType(Double.class, 0.5, "Server cpu usage"));
         mymap.put(IclijConfigConstants.MPCLIENTCPU, new IclijXMLType(Double.class, 0.5, "Client cpu usage"));
         mymap.put(IclijConfigConstants.FINDPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit autorun"));

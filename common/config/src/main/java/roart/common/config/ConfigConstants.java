@@ -206,6 +206,8 @@ public class ConfigConstants {
     public static final String MISCINTERPOLATE = "misc.interpolate";
     public static final String MISCINTERPOLATIONMETHOD = "misc.interpolatationmethod";
     public static final String MISCMERGECY = "misc.mergecy";
+    public static final String MISCSERVICES = "misc.services";
+    public static final String MISCCOMMUNICATIONS = "misc.communications";
     public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS = "evolve.indicatorrecommender.complex.futuredays";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD = "evolve.indicatorrecommender.complex.threshold";

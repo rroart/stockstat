@@ -45,6 +45,7 @@ public class IclijController implements CommandLineRunner {
 	    try {
 	        MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { IclijXMLConfig.getConfigInstance().mpServerCpu() } );
+            new ServiceControllerOther().start();
             new PopulateThread().start();
             new DatabaseThread().start();
             if (MainAction.wantsGoals()) {        

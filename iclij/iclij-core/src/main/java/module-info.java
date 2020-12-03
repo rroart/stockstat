@@ -51,6 +51,8 @@ module iclij.core {
     requires iclij.evolutionmarketfilter;
     requires iclij.evolutioniclijconfigmap;
     requires db;
+    requires common.communication.model;
+    requires common.communication.factory;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;
