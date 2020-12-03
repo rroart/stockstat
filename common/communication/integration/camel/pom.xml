@@ -1,0 +1,134 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>roart</groupId>
+    <artifactId>stockstat-common-communication-integration</artifactId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.5-SNAPSHOT</version>
+  </parent>
+  <groupId>roart</groupId>
+  <artifactId>stockstat-common-communication-integration-camel</artifactId>
+  <packaging>jar</packaging>
+  <version>0.5-SNAPSHOT</version>
+  <name>Stock Statistics Common Communication Integration Camel</name>
+  <dependencies>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-constants</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-model</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-util</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-communication-integration-model</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>3.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-stream</artifactId>
+      <version>3.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jms</artifactId>
+      <version>3.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-activemq</artifactId>
+      <version>3.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-rabbitmq</artifactId>
+      <version>3.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-amqp</artifactId>
+      <version>3.6.0</version>
+    </dependency>
+    <!-->dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-rabbitmq</artifactId>
+      <version>3.6.0</version>
+    </dependency-->
+	<!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-camel -->
+	<dependency>
+    	<groupId>org.apache.activemq</groupId>
+    	<artifactId>activemq-camel</artifactId>
+    	<version>5.16.0</version>
+	</dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math3</artifactId>
+      <version>${commons.math3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
+
+
+<!--dependency>
+    <groupId>javax.xml.bind</groupId>
+    <artifactId>jaxb-api</artifactId>
+    <version>2.3.1</version>
+</dependency>
+
+<dependency>
+    <groupId>com.sun.xml.bind</groupId>
+    <artifactId>jaxb-core</artifactId>
+    <version>2.3.0.1</version>
+</dependency>
+
+<dependency>
+    <groupId>com.sun.xml.bind</groupId>
+    <artifactId>jaxb-impl</artifactId>
+    <version>2.3.2</version>
+</dependency-->
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>          
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+  </dependencies>
+</project>
