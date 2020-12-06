@@ -7,12 +7,18 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.eureka.util.EurekaUtil;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
 import roart.result.model.ResultItem;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
+import roart.common.util.JsonUtil;
+import roart.common.util.ServiceConnectionUtil;
+import roart.common.communication.factory.CommunicationFactory;
+import roart.common.communication.model.Communication;
 
 import java.util.List;
 import java.util.Set;
@@ -20,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +52,15 @@ public class ControlService {
     public void getConfig() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
+        ServiceResult result = sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
+        /*
+        IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(EurekaConstants.GETCONFIG, iclijConfig.getServices(), iclijConfig.getCommunications());
+        ServiceResult result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
+        Communication c = CommunicationFactory.get(sc.getLeft(), ServiceResult.class, EurekaConstants.GETCONFIG, objectMapper, true, true, true, sc.getRight());
+        param.setWebpath(c.getReturnService());
+        result = (ServiceResult) c.sendReceive(param);
+        */
         //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
         conf = new MyMyConfig(result.getConfig());
         Map<String, Object> map = conf.getConfigValueMap();
@@ -62,6 +77,16 @@ public class ControlService {
        
     }
     
+    private <T> T sendCMe(Class<T> myclass, ServiceParam param, String service) {
+        IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
+        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight());
+        param.setWebpath(c.getReturnService());
+        result = c.sendReceive(param);
+        return result[0];
+    }
+
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
         //System.out.print(space.substring(0, indent));
@@ -265,14 +290,24 @@ public class ControlService {
         return data;
     }
 
+    public <T> T sendReceive(Communication c, IclijServiceParam param) {
+        param.setWebpath(c.getReturnService());
+        T r = (T) c.sendReceive(param);
+        return r;
+    }
+
     public WebData getVerify(String findprofit, ComponentInput componentInput) {
         // TODO Auto-generated method stub
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(componentInput.getConfig());
         param.setWebpath(EurekaConstants.GETVERIFY);
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(EurekaConstants.GETVERIFY, componentInput.getConfig().getServices(), componentInput.getConfig().getCommunications());
         param.setOffset(componentInput.getLoopoffset());
-        IclijServiceResult result = EurekaUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
-
+        IclijServiceResult result = null; // EurekaUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+        Communication c = CommunicationFactory.get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, true, sc.getRight());
+        param.setWebpath(c.getReturnService());
+        //result = (IclijServiceResult[]) c.sendReceive(param);
+        
         WebDataJson dataJson = result.getWebdatajson();
         WebData data = convert(dataJson);
         return data;
