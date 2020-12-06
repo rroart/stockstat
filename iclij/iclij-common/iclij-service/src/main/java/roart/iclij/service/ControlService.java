@@ -87,6 +87,16 @@ public class ControlService {
         return result[0];
     }
 
+    private <T> T sendAMe(Class<T> myclass, IclijServiceParam param, String service, ObjectMapper objectMapper) {
+        IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
+        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight());
+        param.setWebpath(c.getReturnService());
+        result = c.sendReceive(param);
+        return result[0];
+    }
+
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
         //System.out.print(space.substring(0, indent));
@@ -303,9 +313,11 @@ public class ControlService {
         param.setWebpath(EurekaConstants.GETVERIFY);
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(EurekaConstants.GETVERIFY, componentInput.getConfig().getServices(), componentInput.getConfig().getCommunications());
         param.setOffset(componentInput.getLoopoffset());
-        IclijServiceResult result = null; // EurekaUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+        IclijServiceResult result = sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+        /*
         Communication c = CommunicationFactory.get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, true, sc.getRight());
         param.setWebpath(c.getReturnService());
+        */
         //result = (IclijServiceResult[]) c.sendReceive(param);
         
         WebDataJson dataJson = result.getWebdatajson();
