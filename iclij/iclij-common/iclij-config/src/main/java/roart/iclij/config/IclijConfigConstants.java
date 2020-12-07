@@ -112,6 +112,8 @@ public class IclijConfigConstants {
     public static final String MISCPOPULATE = "misc.populate";
     public static final String MISCSERVICES = "misc.services";
     public static final String MISCCOMMUNICATIONS = "misc.communications";
+    public static final String MISCCACHE = "misc.cache";
+    public static final String MISCCACHETTL = "misc.cache.ttl";
     public static final String MPSERVERCPU = "mp.server.cpu";
     public static final String MPCLIENTCPU = "mp.client.cpu";
     public static final String FINDPROFIT = "findprofit";

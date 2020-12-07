@@ -139,6 +139,14 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.MISCCOMMUNICATIONS);
     }
 
+    public boolean wantCache() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.MISCCACHE);
+    }
+
+    public int getCacheTTL() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.MISCCACHETTL);
+    }
+
     public double mpServerCpu() {
         return (Double) getValueOrDefault(IclijConfigConstants.MPSERVERCPU);
     }

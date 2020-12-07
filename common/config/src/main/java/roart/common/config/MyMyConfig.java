@@ -845,6 +845,14 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.MISCCOMMUNICATIONS);
     }
 
+    public boolean wantCache() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MISCCACHE);
+    }
+
+    public int getCacheTTL() {
+        return (Integer) getValueOrDefault(ConfigConstants.MISCCACHETTL);
+    }
+
     public String getDbSparkMaster() {
         return (String) getConfigValueMap().get(ConfigConstants.DATABASESPARKSPARKMASTER);
     }

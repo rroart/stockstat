@@ -14,6 +14,7 @@
   <packaging>pom</packaging>
   <name>Stock Statistics Common</name>
   <modules>
+    <module>cache</module>
     <module>communication</module>
     <module>constants</module>
     <module>config</module>

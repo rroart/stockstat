@@ -140,6 +140,8 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.MISCPOPULATE, Boolean.class);
         map.put(IclijConfigConstants.MISCSERVICES, String.class);
         map.put(IclijConfigConstants.MISCCOMMUNICATIONS, String.class);
+        map.put(IclijConfigConstants.MISCCACHE, Boolean.class);
+        map.put(IclijConfigConstants.MISCCACHETTL, Integer.class);
         map.put(IclijConfigConstants.MPSERVERCPU, Double.class);
         map.put(IclijConfigConstants.MPCLIENTCPU, Double.class);
         map.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.class);
@@ -402,6 +404,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.MISCCOMMUNICATIONS, "{}");
         deflt.put(IclijConfigConstants.MPSERVERCPU, 0.5);
         deflt.put(IclijConfigConstants.MPCLIENTCPU, 0.5);
+        deflt.put(IclijConfigConstants.MISCCACHE, Boolean.TRUE);
+        deflt.put(IclijConfigConstants.MISCCACHETTL, 3600);
         deflt.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITMLINDICATOR, Boolean.TRUE);
@@ -646,6 +650,8 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MPSERVERCPU, "Server cpu usage");
         text.put(IclijConfigConstants.MISCSERVICES, "Services and communications");
         text.put(IclijConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
+        text.put(IclijConfigConstants.MISCCACHE, "Cache enable");
+        text.put(IclijConfigConstants.MISCCACHETTL, "Cache TTL");
         text.put(IclijConfigConstants.MPCLIENTCPU, "Client cpu usage");
         text.put(IclijConfigConstants.FINDPROFITAUTORUN, "Enable find profit autorun");
         text.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, "Do machine learning dynamically if no persistent present");
@@ -951,6 +957,8 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.MISCPOPULATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Populate history"));
         mymap.put(IclijConfigConstants.MISCSERVICES, new IclijXMLType( String.class, "{}", "Services and communications"));
         mymap.put(IclijConfigConstants.MISCCOMMUNICATIONS, new IclijXMLType( String.class, "{}", "Communications and connections"));
+        mymap.put(IclijConfigConstants.MISCCACHE, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache enable"));
+        mymap.put(IclijConfigConstants.MISCCACHETTL, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
         mymap.put(IclijConfigConstants.MPSERVERCPU, new IclijXMLType(Double.class, 0.5, "Server cpu usage"));
         mymap.put(IclijConfigConstants.MPCLIENTCPU, new IclijXMLType(Double.class, 0.5, "Client cpu usage"));
         mymap.put(IclijConfigConstants.FINDPROFITAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable find profit autorun"));

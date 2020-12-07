@@ -25,4 +25,5 @@ module iclij.common.service {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires common.communication.model;
+    requires common.cache;
 }

@@ -43,6 +43,7 @@ import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.service.ControlService;
 import roart.service.evolution.EvolutionService;
+import roart.common.cache.MyCache;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -311,6 +312,9 @@ public class ServiceController implements CommandLineRunner {
         MyExecutors.initThreads("dev".equals(activeProfile));
         MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
         new DatabaseThread().start();
+        MyMyConfig instance = new MyMyConfig(MyXMLConfig.getConfigInstance());
+        MyCache.setCache(instance.wantCache());
+        MyCache.setCacheTTL(instance.getCacheTTL());
     }
     
 }

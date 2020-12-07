@@ -16,6 +16,7 @@ module iclij.core {
     requires common.model;
     requires common.service;
     requires common.util;
+    requires common.cache;
     requires commons;
     requires commons.math3;
     requires deductive;

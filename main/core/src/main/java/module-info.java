@@ -18,6 +18,7 @@ module core {
     requires common.eureka;
     requires common.model;
     requires common.service;
+    requires common.cache;
     //requires common.util;
     requires commons.configuration2;
     requires commons.lang;
