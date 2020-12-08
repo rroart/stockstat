@@ -21,4 +21,5 @@ module dbdao {
     requires stockutil;
     requires common.constants;
     requires common.model;
+    requires common.cache;
 }

@@ -107,7 +107,8 @@ public class MyCache {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        log.info("Cache key {} {}", key, object != null);
+        String keyHead = key.substring(0, Math.min(80, key.length()));
+        log.info("Cache key {} {}", keyHead, object != null);
         return object;
     }
     

@@ -13,6 +13,8 @@ import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.RelationItem;
 import roart.iclij.model.TimingItem;
+import roart.common.cache.MyCache;
+import roart.common.config.CacheConstants;
 
 public class IclijDbDao {
     private static Logger log = LoggerFactory.getLogger(IclijDbDao.class);
@@ -67,9 +69,14 @@ public class IclijDbDao {
     }
 
     public static List<IncDecItem> getAllIncDecs(String market, LocalDate startDate, LocalDate endDate, String parameters) throws Exception {
-        long time0 = System.currentTimeMillis();
-        List<IncDecItem> list =  IncDecItem.getAll(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate), parameters);
-        log.info("IncDecItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        String key = CacheConstants.INCDEC + market + startDate + endDate + parameters;
+        List<IncDecItem> list = (List<IncDecItem>) MyCache.getInstance().get(key);
+        if (list == null) {
+            long time0 = System.currentTimeMillis();
+            list =  IncDecItem.getAll(market, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate), parameters);
+            MyCache.getInstance().put(key, list);
+            log.info("IncDecItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        }
         return list;
     }
 

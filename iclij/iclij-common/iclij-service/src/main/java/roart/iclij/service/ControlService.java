@@ -1,5 +1,6 @@
 package roart.iclij.service;
 
+import roart.common.config.CacheConstants;
 import roart.common.config.ConfigTreeMap;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.EurekaConstants;
@@ -19,6 +20,7 @@ import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
+import roart.common.cache.MyCache;
 
 import java.util.List;
 import java.util.Set;
@@ -118,10 +120,17 @@ public class ControlService {
     }
     
     public List<MetaItem> getMetas() {
+        String key = CacheConstants.METAS;
+        List<MetaItem> list = (List<MetaItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMETAS);
-        return result.getMetas();     
+        list = result.getMetas();
+        MyCache.getInstance().put(key, list);
+        return list;
     }
     
     public Map<String, String> getStocks(String market) {
@@ -133,12 +142,19 @@ public class ControlService {
     }
     
     public List<String> getDates(String market) {
+        String key = CacheConstants.DATES + conf.getMarket() + conf.getdate();
+        List<String> list =  (List<String>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setWantMaps(true);
         param.setMarket(market);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETDATES);
-        return (List<String>) result.getMaps().get(PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
+        list = (List<String>) result.getMaps().get(PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
+        MyCache.getInstance().put(key, list);
+        return list;
     }
    /**
      * Create result lists
@@ -151,6 +167,11 @@ public class ControlService {
     }
     
     public Map<String, Map<String, Object>> getContent(List<String> disableList) {
+        String key = CacheConstants.CONTENT + conf.getMarket() + conf.getMLmarket() + conf.getdate() + conf.getConfigValueMap();
+        Map<String, Map<String, Object>> list = (Map<String, Map<String, Object>>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setWantMaps(true);
@@ -162,7 +183,10 @@ public class ControlService {
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENT);
-        return result.getMaps();
+        list = result.getMaps();
+        MyCache.getInstance().put(key, list);
+        return list;
+        //return result.getMaps();
         //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
 	/*
         for (Object o : (List)((List)result.list2)) {
