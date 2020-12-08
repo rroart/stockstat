@@ -15,5 +15,6 @@ module common.communication.factory {
     requires common.communication.integration.spring;
     requires common.communication.message.pulsar;
     requires common.communications.message.kafka;
+    requires common.constants;
     //requires com.fasterxml.jackson.datatype.jsr310;
 }

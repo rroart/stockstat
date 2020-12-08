@@ -8,20 +8,21 @@ import roart.common.communication.message.kafka.KafkaNot;
 import roart.common.communication.message.kafka.Kafka;
 import roart.common.communication.message.pulsar.Pulsar;
 import roart.common.communication.rest.REST;
+import roart.common.constants.CommunicationConstants;
 
 public class CommunicationFactory {
     public static Communication get(String name, Class myclass, String service, ObjectMapper mapper, boolean send, boolean receive, boolean sendreceive, String connection) {
         switch (name) {
-        case "REST":
-            return new REST("REST", myclass, service, mapper, send, receive, sendreceive, connection);
-        case "CAMEL":
-            return new Camel("CAMEL", myclass, service, mapper, send, receive, sendreceive, connection);
-        case "SPRING":
-            return new Spring("SPRING", myclass, service, mapper, send, receive, sendreceive, connection);
-        case "PULSAR":
-            return new Pulsar("PULSAR", myclass, service, mapper, send, receive, sendreceive, connection);
-        case "KAFKA":
-            return new Kafka("KAFKA", myclass, service, mapper, send, receive, sendreceive, connection);
+        case CommunicationConstants.REST:
+            return new REST(name, myclass, service, mapper, send, receive, sendreceive, connection);
+        case CommunicationConstants.CAMEL:
+            return new Camel(name, myclass, service, mapper, send, receive, sendreceive, connection);
+        case CommunicationConstants.SPRING:
+            return new Spring(name, myclass, service, mapper, send, receive, sendreceive, connection);
+        case CommunicationConstants.PULSAR:
+            return new Pulsar(name, myclass, service, mapper, send, receive, sendreceive, connection);
+        case CommunicationConstants.KAFKA:
+            return new Kafka(name, myclass, service, mapper, send, receive, sendreceive, connection);
         }
         return null;
     }
