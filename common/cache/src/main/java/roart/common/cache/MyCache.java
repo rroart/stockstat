@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -17,14 +18,6 @@ public class MyCache {
     private static boolean cacheme;
     private static int ttl;
     
-    public Logger getLog() {
-        return log;
-    }
-
-    public void setLog(Logger log) {
-        this.log = log;
-    }
-
     public boolean isCacheme() {
         return cacheme;
     }
@@ -41,28 +34,12 @@ public class MyCache {
         ttl = attl;
     }
 
-    public CacheLoader<String, Object> getLoader() {
-        return loader;
-    }
-
-    public void setLoader(CacheLoader<String, Object> loader) {
-        this.loader = loader;
-    }
-
-    public LoadingCache<String, Object> getCache() {
-        return cache;
-    }
-
-    public void setCache(LoadingCache<String, Object> cache) {
-        this.cache = cache;
-    }
-
     public static void setInstance(MyCache instance) {
         MyCache.instance = instance;
     }
 
     private CacheLoader<String, Object> loader;
-    private LoadingCache<String, Object> cache;
+    private Cache<Object, Object> cache;
     
     private static MyCache instance = null;
     
@@ -73,12 +50,12 @@ public class MyCache {
         loader = new CacheLoader<String, Object>() {
             @Override
             public String load(String key) {
-                return key.toUpperCase();
+                return key;
             }
         };
         cache = CacheBuilder.newBuilder()
                 .expireAfterAccess(ttl, TimeUnit.SECONDS)
-                .build(loader);
+                .build();
     }
     
     public static MyCache getInstance() {
@@ -103,7 +80,7 @@ public class MyCache {
         }
         Object object = null;
         try {
-            object = cache.get(key);
+            object = cache.getIfPresent(key);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
