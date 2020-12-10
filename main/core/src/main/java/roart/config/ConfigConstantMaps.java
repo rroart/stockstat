@@ -227,6 +227,7 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCFILTERHOLIDAY, Boolean.class);
         map.put(ConfigConstants.MISCTHRESHOLD, String.class);
         map.put(ConfigConstants.MISCMERGECY, Boolean.class);
+        map.put(ConfigConstants.MISCMYSERVICES, String.class);
         map.put(ConfigConstants.MISCSERVICES, String.class);
         map.put(ConfigConstants.MISCCOMMUNICATIONS, String.class);
         map.put(ConfigConstants.MISCCACHE, Boolean.class);
@@ -608,6 +609,7 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCINTERPOLATIONMETHOD, Constants.LINEAR);
         deflt.put(ConfigConstants.MISCTHRESHOLD, "[ 1.0 ]");
         deflt.put(ConfigConstants.MISCMERGECY, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCMYSERVICES, "[]");
         deflt.put(ConfigConstants.MISCSERVICES, "{}");
         deflt.put(ConfigConstants.MISCCOMMUNICATIONS, "{}");
         deflt.put(ConfigConstants.MISCCACHE, Boolean.TRUE);
@@ -985,6 +987,7 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCFILTERHOLIDAY, "Filter out holiday data");
         text.put(ConfigConstants.MISCTHRESHOLD, "Display thresholds");
         text.put(ConfigConstants.MISCMERGECY, "Merge current years");
+        text.put(ConfigConstants.MISCMYSERVICES, "Services starting");
         text.put(ConfigConstants.MISCSERVICES, "Services and communications");
         text.put(ConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
         text.put(ConfigConstants.MISCCACHE, "Cache enable");
@@ -1415,6 +1418,7 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCFILTERHOLIDAY, new XMLType( Boolean.class, Boolean.TRUE, "Filter out holiday data"));
         mymap.put(ConfigConstants.MISCTHRESHOLD, new XMLType( String.class, "[ 1.0 ]", "Display thresholds"));
         mymap.put(ConfigConstants.MISCMERGECY, new XMLType( Boolean.class, Boolean.TRUE, "Merge current years"));
+        mymap.put(ConfigConstants.MISCMYSERVICES, new XMLType( String.class, "[]", "Services starting"));
         mymap.put(ConfigConstants.MISCSERVICES, new XMLType( String.class, "{}", "Services and communications"));
         mymap.put(ConfigConstants.MISCCOMMUNICATIONS, new XMLType( String.class, "{}", "Communications and connections"));
         mymap.put(ConfigConstants.MISCCACHE, new XMLType( Boolean.class, Boolean.TRUE, "Cache enable"));

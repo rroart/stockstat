@@ -13,28 +13,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
+import roart.common.config.MyMyConfig;
 import roart.common.constants.CommunicationConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.common.service.ServiceParam;
+import roart.common.service.ServiceResult;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
-import roart.iclij.config.IclijConfig;
-import roart.iclij.config.IclijXMLConfig;
-import roart.iclij.model.component.ComponentInput;
-import roart.iclij.service.IclijServiceParam;
-import roart.iclij.service.IclijServiceResult;
-import roart.util.ServiceUtil;
+import roart.config.MyXMLConfig;
 
 public class ServiceControllerOther {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public IclijServiceResult get(final Communication c, IclijConfig config) { 
+    public ServiceResult get(final Communication c, MyMyConfig config) { 
         Thread t = new Thread(new Runnable() {
             public void run() {
                 for (;;) {
-                IclijServiceParam[] params = c.receive();
-                for (IclijServiceParam param : params) {
+                ServiceParam[] params = c.receive();
+                for (ServiceParam param : params) {
                     Thread t2 = new Thread(new Runnable() {
                         public void run() { 
                             get(param, c, config);
@@ -53,24 +51,15 @@ public class ServiceControllerOther {
         return null;
     }
 
-    public IclijServiceResult get(IclijServiceParam param, Communication c, IclijConfig config) { 
-        IclijServiceResult r = null;
+    public ServiceResult get(ServiceParam param, Communication c, MyMyConfig config) { 
+        ServiceResult r = null;
         System.out.println("Cserv"+c.getService());
         switch (c.getService()) {
-        case "TSTSR":
-        case "TSTSR2":
-        case "TSTSR3":
-        case "TSTSR4":
-            r = new IclijServiceResult();
-            break;
-        case EurekaConstants.GETVERIFY:
-            r = ServiceUtil.getVerify(new ComponentInput(param.getIclijConfig(), null, null, null, param.getOffset(), false, false, new ArrayList<>(), new HashMap<>()));
-            break;
         case EurekaConstants.GETCONFIG:
-            r = new IclijServiceResult();
+            r = new ServiceResult();
             try {
-                r.setIclijConfig(IclijXMLConfig.getConfigInstance());
-                System.out.println("configs " + r.getIclijConfig());
+                r.setConfig(MyXMLConfig.getConfigInstance());
+                System.out.println("configs " + r.getConfig());
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
                 r.setError(e.getMessage());
@@ -82,7 +71,7 @@ public class ServiceControllerOther {
         if (param.getWebpath() != null) {
             Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(c.getService(), config.getServices(), config.getCommunications());
             System.out.println("scsc" + sc.getLeft() + " " + sc.getRight());
-            Communication c2 = CommunicationFactory.get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, false, false, sc.getRight());
+            Communication c2 = CommunicationFactory.get(sc.getLeft(), ServiceResult.class, param.getWebpath(), objectMapper, true, false, false, sc.getRight());
             c2.send(r);
             c2.destroy();
         }
@@ -90,7 +79,7 @@ public class ServiceControllerOther {
     }
 
     public void start() {
-        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        MyMyConfig instance = new MyMyConfig(MyXMLConfig.getConfigInstance());
         String myservices = instance.getMyservices();
         String services = instance.getServices();
         String communications = instance.getCommunications();
@@ -110,9 +99,8 @@ public class ServiceControllerOther {
                 connection = "localhost";
             }
             ObjectMapper objectMapper = new ObjectMapper();
-            Communication comm = CommunicationFactory.get(communication, IclijServiceParam.class, myservice, objectMapper, false, true, false, connection);
+            Communication comm = CommunicationFactory.get(communication, ServiceParam.class, myservice, objectMapper, false, true, false, connection);
             get(comm, instance);
         }        
     }
-
 }

@@ -131,6 +131,10 @@ public class IclijConfig {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MISCPOPULATE);
     }
 
+    public String getMyservices() {
+        return (String) getValueOrDefault(IclijConfigConstants.MISCMYSERVICES);
+    }
+
     public String getServices() {
         return (String) getValueOrDefault(IclijConfigConstants.MISCSERVICES);
     }

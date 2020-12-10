@@ -837,6 +837,10 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MISCMERGECY);
     }
 
+    public String getMyservices() {
+        return (String) getValueOrDefault(ConfigConstants.MISCMYSERVICES);
+    }
+
     public String getServices() {
         return (String) getValueOrDefault(ConfigConstants.MISCSERVICES);
     }

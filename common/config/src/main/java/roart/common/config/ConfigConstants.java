@@ -206,6 +206,7 @@ public class ConfigConstants {
     public static final String MISCINTERPOLATE = "misc.interpolate";
     public static final String MISCINTERPOLATIONMETHOD = "misc.interpolatationmethod";
     public static final String MISCMERGECY = "misc.mergecy";
+    public static final String MISCMYSERVICES = "misc.myservices";
     public static final String MISCSERVICES = "misc.services";
     public static final String MISCCOMMUNICATIONS = "misc.communications";
     public static final String MISCCACHE = "misc.cache[@enable]";

@@ -25,6 +25,18 @@ public class JsonUtil {
         return null;
     }
 
+    public static <T> T convertnostrip(String text, Class<T> myclass) {
+        ObjectMapper mapper = new ObjectMapper();
+        if (text != null) {
+            try {
+                return mapper.readValue(text, myclass);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
+
     public static <T> T convert(String text, Class<T> myclass) {
         ObjectMapper mapper = new ObjectMapper();
         if (text != null) {
