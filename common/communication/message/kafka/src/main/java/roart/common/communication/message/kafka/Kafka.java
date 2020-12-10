@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.DeleteTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -112,14 +113,18 @@ public class Kafka extends MessageCommunication {
 
         //print the topic name
         System.out.println("Subscribed to topic " + getReceiveService());
-
-        ConsumerRecords<String, String> records = consumer.poll(duration);
-        String[] retRecord = new String[records.count()];
-        int count = 0;
-        for (ConsumerRecord<String, String> record : records) {
-            retRecord[count++] = record.value();
-            System.out.printf("offset = %d, key = %s, value = %s\n", 
-                    record.offset(), record.key(), record.value());
+        String[] retRecord = null;
+        int returned = 0;
+        while (returned == 0) {
+            ConsumerRecords<String, String> records = consumer.poll(duration);
+            returned = records.count();
+            retRecord = new String[returned];
+            int count = 0;
+            for (ConsumerRecord<String, String> record : records) {
+                retRecord[count++] = record.value();
+                System.out.printf("offset = %d, key = %s, value = %s\n", 
+                        record.offset(), record.key(), record.value());
+            }
         }
         // print the offset,key and value for the consumer records.     
         //consumer.close();
@@ -130,5 +135,17 @@ public class Kafka extends MessageCommunication {
     public void destroy() {
         // TODO Auto-generated method stub
         
+    }
+    
+    @Override
+    public void destroyTmp() {
+        // TODO Auto-generated method stub
+        Properties config = new Properties();
+        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.122.219:9092");
+        AdminClient admin = AdminClient.create(config);
+        List<String> list = new ArrayList<>();
+        list.add(getReceiveService());
+        DeleteTopicsResult deleteTopicsResult = admin.deleteTopics(list);
+
     }
 }

@@ -157,4 +157,9 @@ public class Pulsar extends MessageCommunication {
         }
 
     }
+    
+    @Override
+    public void destroyTmp() {
+        // TODO Auto-generated method stub
+    }
 }
