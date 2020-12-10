@@ -311,6 +311,7 @@ public class ServiceController implements CommandLineRunner {
         System.out.println("Using profile " + activeProfile);
         MyExecutors.initThreads("dev".equals(activeProfile));
         MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
+        new ServiceControllerOther().start();
         new DatabaseThread().start();
         MyMyConfig instance = new MyMyConfig(MyXMLConfig.getConfigInstance());
         MyCache.setCache(instance.wantCache());

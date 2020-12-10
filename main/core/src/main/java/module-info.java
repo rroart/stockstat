@@ -69,4 +69,6 @@ module core {
     requires pipeline.indicator;
     requires pipeline.predictor;
     requires stocketl;
+    requires common.communication.model;
+    requires common.communication.factory;
 }

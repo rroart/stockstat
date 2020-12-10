@@ -124,10 +124,13 @@ public abstract class Communication {
         send(param);
         T[] r = receive();
         log.info("Rq time {}s for {} ", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), service);
-        //destroy();
+        destroyTmp();
         System.out.println("xxyy"+r);
         System.out.println("xxyy"+r.getClass().getName());
         return r;
+    }
+
+    protected void destroyTmp() {
     }
 
     public <T> T[] receive() {
@@ -139,7 +142,7 @@ public abstract class Communication {
         int count = 0;
         for (String aReceive : receives) {
             System.out.println("t0"+aReceive);
-            T t = JsonUtil.convert(aReceive, aclass);
+            T t = JsonUtil.convertnostrip(aReceive, aclass);
             System.out.println("t"+t);
             ts[count++] = t;
         }
