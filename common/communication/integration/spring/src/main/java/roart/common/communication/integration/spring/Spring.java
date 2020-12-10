@@ -42,8 +42,18 @@ public class Spring extends IntegrationCommunication {
         CachingConnectionFactory connectionFactory =
             new CachingConnectionFactory(connection);
         if (sendreceive) {
-        AmqpAdmin admin = new RabbitAdmin(connectionFactory);
-        admin.declareQueue(new Queue(getReceiveService()));
+            AmqpAdmin admin = new RabbitAdmin(connectionFactory);
+            admin.declareQueue(new Queue(getSendService()));
+            admin.declareQueue(new Queue(getReceiveService()));
+        } else {
+            if (send) {
+                AmqpAdmin admin = new RabbitAdmin(connectionFactory);
+                admin.declareQueue(new Queue(getSendService()));
+            }
+            if (receive) {
+                AmqpAdmin admin = new RabbitAdmin(connectionFactory);
+                admin.declareQueue(new Queue(getReceiveService()));
+            }
         }
         //connectionFactory.setUsername("guest");
         //connectionFactory.setPassword("guest");
@@ -119,6 +129,15 @@ public class Spring extends IntegrationCommunication {
     public void destroy() {
         // TODO Auto-generated method stub
         
+    }
+
+    protected void destroyTmp() {
+        if (sendreceive) {
+            CachingConnectionFactory connectionFactory =
+                    new CachingConnectionFactory(connection);
+            AmqpAdmin admin = new RabbitAdmin(connectionFactory);
+            admin.deleteQueue(getReceiveService());
+        }
     }
 
 }
