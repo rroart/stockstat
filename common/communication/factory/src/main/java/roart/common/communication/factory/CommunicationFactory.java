@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.common.communication.model.Communication;
 import roart.common.communication.integration.camel.Camel;
 import roart.common.communication.integration.spring.Spring;
-import roart.common.communication.message.kafka.KafkaNot;
 import roart.common.communication.message.kafka.Kafka;
 import roart.common.communication.message.pulsar.Pulsar;
 import roart.common.communication.rest.REST;
