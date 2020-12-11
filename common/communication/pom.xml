@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
   <name>Stock Statistics Common Communication</name>
   <modules>
-    <module>stream</module>
+    <!--module>stream</module-->
     <module>integration</module>
     <module>message</module>
     <module>rest</module>
