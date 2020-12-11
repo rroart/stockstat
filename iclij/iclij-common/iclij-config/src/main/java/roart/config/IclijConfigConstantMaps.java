@@ -401,8 +401,8 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.EVOLVEFUTUREDAYS, " [ 10 ]");
         deflt.put(IclijConfigConstants.EVOLVETHRESHOLD, "[ 1.0 ]");
         deflt.put(IclijConfigConstants.MISCPOPULATE, Boolean.FALSE);
-        deflt.put(IclijConfigConstants.MISCMYSERVICES, "{}");
-        deflt.put(IclijConfigConstants.MISCSERVICES, "[]");
+        deflt.put(IclijConfigConstants.MISCMYSERVICES, "[]");
+        deflt.put(IclijConfigConstants.MISCSERVICES, "{}");
         deflt.put(IclijConfigConstants.MISCCOMMUNICATIONS, "{}");
         deflt.put(IclijConfigConstants.MPSERVERCPU, 0.5);
         deflt.put(IclijConfigConstants.MPCLIENTCPU, 0.5);
