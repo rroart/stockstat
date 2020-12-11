@@ -84,6 +84,11 @@ public class AboveBelowAdviser extends Adviser {
 
         //int subListSize = Math.min(buytop, myincs.size());
         //myincs = myincs.subList(0, subListSize);
+        incdecs = null;
+        incdecsP = null;
+        myincdecs = null;
+        mydecs = null;
+        myincdec = null;
         return myincs;
     }
     

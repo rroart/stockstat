@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,9 +14,9 @@ import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
 
-public class IndicatorMacdHistZeroAdviser extends IndicatorMacdHistAdviser {
+public class IndicatorMacdSignalZeroAdviser extends IndicatorMacdSignalAdviser {
 
-    public IndicatorMacdHistZeroAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
+    public IndicatorMacdSignalZeroAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
         super(market, investStart, investEnd, param, simulateConfig);
     }
 
@@ -37,5 +36,4 @@ public class IndicatorMacdHistZeroAdviser extends IndicatorMacdHistAdviser {
             Collections.reverse(valueList);
         }
     }
-
 }
