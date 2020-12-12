@@ -589,7 +589,7 @@ public class SimulateInvestComponent extends ComponentML {
                     if (limit == null) {
                         continue;
                     }
-                    Double sum = 0.0;
+                    double sum = 0.0;
                     int count = 0;
                     for (int i = first; i <= size - 1 - anOffset; i++) {
                         Integer volume = (Integer) list.get(i).get(0);
