@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
 
 import roart.common.constants.Constants;
@@ -84,6 +85,10 @@ public class MyCache {
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
+        if (object == null) {
+            cache.invalidate(key);
+        }
+        log.debug("CacheStats {}", cache.stats());
         String keyHead = key.substring(0, Math.min(80, key.length()));
         log.info("Cache key {} {}", keyHead, object != null);
         return object;
