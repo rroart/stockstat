@@ -411,7 +411,9 @@ public class SimulateInvestComponent extends ComponentML {
                 if (lastInvest) {
                     mystocks = savedStocks;
                 }
-                update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay - delay, new ArrayList<>(), prevIndexOffset - extradelay - delay);
+                if (prevIndexOffset - extradelay - delay >= 0) {
+                    update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay - delay, new ArrayList<>(), prevIndexOffset - extradelay - delay);
+                }
                 Capital sum = getSum(mystocks);
                 sum.amount += capital.amount;
 
