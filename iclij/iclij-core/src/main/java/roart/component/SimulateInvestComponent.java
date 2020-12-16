@@ -299,7 +299,9 @@ public class SimulateInvestComponent extends ComponentML {
 
                     if (simConfig.getIntervalStoploss()) {
                         // TODO delay
-                        stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset - extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP");
+                        if (indexOffset - extradelay - delay >= 0) {
+                            stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset - extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP");
+                        }
                     }
 
                     double myreliability = getReliability(mystocks, hits, findTimes, up);
@@ -312,10 +314,14 @@ public class SimulateInvestComponent extends ComponentML {
                         if (lastInvest) {
                             delay = 0;
                         }
-                        mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, myExcludes,
-                                realParameters, mystocks, date, indexOffset, sells, buys, holdIncrease, extradelay, delay);
+                        if (indexOffset - extradelay - delay >= 0) {
+                            mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, myExcludes,
+                                    realParameters, mystocks, date, indexOffset, sells, buys, holdIncrease, extradelay, delay);
+                        }
                     } else {
-                        mystocks = noConfidenceHoldSell(mystocks, holdIncrease, sells, simConfig);
+                        if (indexOffset - extradelay - delay >= 0) {
+                            mystocks = noConfidenceHoldSell(mystocks, holdIncrease, sells, simConfig);
+                        }
                     }
 
                     if (!lastInvest) {
