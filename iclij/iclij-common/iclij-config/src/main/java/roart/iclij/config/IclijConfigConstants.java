@@ -272,6 +272,8 @@ public class IclijConfigConstants {
     // special
     public static final String SIMULATEINVESTDELAY = "simulateinvest.delay";
     // special
+    public static final String SIMULATEINVESTVOLUMELIMITS = "simulateinvest.volumelimits";
+    // special
     public static final String SIMULATEINVESTSTARTDATE = "simulateinvest.startdate";
     public static final String SIMULATEINVESTENDDATE = "simulateinvest.enddate";
     public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";

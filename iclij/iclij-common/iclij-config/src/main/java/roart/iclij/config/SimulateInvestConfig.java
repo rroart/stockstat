@@ -5,7 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import roart.common.constants.Constants;
+
 public class SimulateInvestConfig {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     private Boolean confidence;
     
     private Double confidenceValue;
@@ -487,6 +496,11 @@ public class SimulateInvestConfig {
         map.put(IclijConfigConstants.SIMULATEINVESTDAY, day);
         map.put(IclijConfigConstants.SIMULATEINVESTDELAY, delay);
         map.put(IclijConfigConstants.SIMULATEINVESTINTERVALWHOLE, intervalwhole);
+        String volumelimitString = null;
+        if (volumelimits != null) {
+            volumelimitString = convert(volumelimits);
+        }
+        map.put(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS, volumelimitString);
         return map;
     }
     
@@ -498,5 +512,17 @@ public class SimulateInvestConfig {
             }
         }
         return map;
+    }
+    
+    private String convert(Object object) {
+        ObjectMapper mapper = new ObjectMapper();
+        if (object != null) {
+            try {
+                return mapper.writeValueAsString(object);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
     }
 }

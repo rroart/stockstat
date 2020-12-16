@@ -105,7 +105,7 @@ public class SimulateInvestComponent extends ComponentML {
             }
              */
             SimulateInvestConfig localSimConfig = market.getSimulate();
-            if (localSimConfig != null && localSimConfig.getVolumelimits() != null) {
+            if (localSimConfig != null && localSimConfig.getVolumelimits() != null && simConfig.getVolumelimits() == null) {
                 simConfig.setVolumelimits(localSimConfig.getVolumelimits());
             }
             if (localSimConfig != null && localSimConfig.getExtradelay() != null) {
@@ -223,6 +223,10 @@ public class SimulateInvestComponent extends ComponentML {
                 }
             }
 
+            long time00 = System.currentTimeMillis();
+            Map<String, double[]> newVolumeMap = getVolumeExcludesFull(simConfig, stockDates, interval, categoryValueMap, volumeMap);
+            log.info("timee0 {}", System.currentTimeMillis() - time00);        
+
             long time0 = System.currentTimeMillis();
             long time3 = 0;
             long time4 = 0;
@@ -283,7 +287,7 @@ public class SimulateInvestComponent extends ComponentML {
                     // get recommendations
 
                     List<String> myExcludes = getExclusions(simConfig, extradelay, stockDates, interval, categoryValueMap,
-                            volumeMap, configExcludeList, delay, indexOffset);
+                            volumeMap, configExcludeList, delay, indexOffset, newVolumeMap);
 
                     double myavg = increase(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset);
 
@@ -295,7 +299,7 @@ public class SimulateInvestComponent extends ComponentML {
 
                     if (simConfig.getIntervalStoploss()) {
                         // TODO delay
-                        stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset - extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP");                       
+                        stoploss(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset - extradelay, sells, simConfig.getIntervalStoplossValue(), "ISTOP");
                     }
 
                     double myreliability = getReliability(mystocks, hits, findTimes, up);
@@ -521,12 +525,18 @@ public class SimulateInvestComponent extends ComponentML {
 
     private List<String> getExclusions(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
             int interval, Map<String, List<List<Double>>> categoryValueMap, Map<String, List<List<Object>>> volumeMap,
-            List<String> configExcludeList, int delay, int indexOffset) {
+            List<String> configExcludeList, int delay, int indexOffset, Map<String, double[]> newVolumeMap) {
         List<String> myExcludes = new ArrayList<>();
         List<String> volumeExcludes = new ArrayList<>();
+        /*
         getVolumeExcludes(simConfig, extradelay, stockDates, interval, categoryValueMap, volumeMap, delay,
                 indexOffset, volumeExcludes);
-
+                */
+        long time0 = System.currentTimeMillis();
+        getVolumeExcludes(simConfig, extradelay, stockDates, interval, categoryValueMap, volumeMap, delay,
+                indexOffset, volumeExcludes, newVolumeMap);
+        log.info("timed0 {}", System.currentTimeMillis() - time0);        
+        
         myExcludes.addAll(configExcludeList);
         myExcludes.addAll(volumeExcludes);
         return myExcludes;
@@ -610,6 +620,85 @@ public class SimulateInvestComponent extends ComponentML {
                     if (count > 0 && sum / count < limit) {
                         volumeExcludes.add(id);
                     }
+                }
+            }
+        }
+    }
+
+    private Map<String, double[]> getVolumeExcludesFull(SimulateInvestConfig simConfig, List<String> stockDates, int interval,
+            Map<String, List<List<Double>>> categoryValueMap, Map<String, List<List<Object>>> volumeMap) {
+        Map<String, double[]> newVolumeMap = new HashMap<>(); 
+        if (simConfig.getVolumelimits() != null) {
+            for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+                String id = entry.getKey();
+                int len = interval * 2;
+                List<List<Double>> resultList = categoryValueMap.get(id);
+                if (resultList == null || resultList.isEmpty()) {
+                    continue;
+                }
+                List<Double> mainList = resultList.get(0);
+                ValidateUtil.validateSizes(mainList, stockDates);
+                List<List<Object>> list = volumeMap.get(id);
+                if (mainList != null) {
+                    int size = mainList.size();
+                    double[] newList = new double[size];
+                    for (int i = 0; i < size; i++) {
+                        Integer volume = (Integer) list.get(i).get(0);
+                        Double price = mainList.get(i /* mainList.size() - 1 - indexOffset */);
+                        if (volume != null) {
+                            if (price == null) {
+                                if (volume > 0) {
+                                    log.debug("Price null with volume > 0");
+                                }
+                                continue;
+                            }
+                        } else {
+                            continue; 
+                        }
+                        for (int j = 0; j < len; j++) {
+                            int idx = i + j;
+                            if (idx > size - 1) {
+                                break;
+                            }
+                            newList[idx] += price * volume;
+                        }
+                    }
+                    newVolumeMap.put(id, newList);
+                }
+            }
+        }
+        return newVolumeMap;
+    }
+
+    private void getVolumeExcludes(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
+            int interval, Map<String, List<List<Double>>> categoryValueMap,
+            Map<String, List<List<Object>>> volumeMap, int delay, int indexOffset, List<String> volumeExcludes, Map<String, double[]> newVolumeMap) {
+        if (simConfig.getVolumelimits() != null) {
+            Map<String, Double> volumeLimits = simConfig.getVolumelimits();
+            for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+                String id = entry.getKey();
+                int len = interval * 2;
+                List<List<Object>> list = volumeMap.get(id);
+                String currency = null;
+                for (int i = 0; i < list.size(); i++) {
+                    currency = (String) list.get(i).get(1);
+                    if (currency != null) {
+                        break;
+                    }
+                }
+                Double limit = volumeLimits.get(currency);
+                if (limit == null) {
+                    continue;
+                }
+                int count = len;
+                double[] sums = newVolumeMap.get(id);
+                int idx = sums.length - 1 - indexOffset;
+                if (idx < count) {
+                    count = idx;
+                }
+                double sum = sums[idx];
+                if (count > 0 && sum / count < limit) {
+                    volumeExcludes.add(id);
                 }
             }
         }
@@ -716,6 +805,8 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setInterpolate(config.wantsSimulateInvestInterpolate());
         simConfig.setDay(config.getSimulateInvestDay());
         simConfig.setDelay(config.getSimulateInvestDelay());
+        Map<String, Double> map = JsonUtil.convert(config.getSimulateInvestVolumelimits(), Map.class);
+        simConfig.setVolumelimits(map);
 
         try {
             simConfig.setEnddate(config.getSimulateInvestEnddate());
@@ -914,7 +1005,7 @@ public class SimulateInvestComponent extends ComponentML {
         // get recommendations
 
         List<String> myExcludes = getExclusions(simConfig, extradelay, stockDates, interval, categoryValueMap,
-                volumeMap, configExcludeList, delay, indexOffset);
+                volumeMap, configExcludeList, delay, indexOffset, null);
 
         double myavg = increase(capital, simConfig.getStocks(), mystocks, stockDates, indexOffset - extradelay, categoryValueMap, prevIndexOffset);
 

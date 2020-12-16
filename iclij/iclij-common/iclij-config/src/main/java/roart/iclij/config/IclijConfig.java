@@ -735,6 +735,10 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTDELAY);
     }
 
+    public String getSimulateInvestVolumelimits() {
+        return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS);
+    }
+
     public String getSimulateInvestStartdate() {
         return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTARTDATE);
     }
