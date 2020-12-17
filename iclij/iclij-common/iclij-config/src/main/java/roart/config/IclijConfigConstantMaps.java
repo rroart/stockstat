@@ -521,7 +521,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.SIMULATEINVESTADVISER, 0);
         deflt.put(IclijConfigConstants.SIMULATEINVESTDAY, 1);
         deflt.put(IclijConfigConstants.SIMULATEINVESTDELAY, 1);
-        deflt.put(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS, "{}");
+        deflt.put(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS, null);
         deflt.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, Boolean.TRUE);
         deflt.put(IclijConfigConstants.SINGLEMARKETLOOPS, 5);
@@ -1108,7 +1108,7 @@ public class IclijConfigConstantMaps {
 	mymap.put(IclijConfigConstants.SIMULATEINVESTADVISER, new IclijXMLType(Integer.class, 0, "Simulate invest adviser"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTDAY, new IclijXMLType(Integer.class, 1, "Simulate invest day adviser"));
         mymap.put(IclijConfigConstants.SIMULATEINVESTDELAY, new IclijXMLType(Integer.class, 1, "Simulate invest delay"));
-        mymap.put(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS, new IclijXMLType(String.class, "{}", "Simulate invest volume limits"));
+        mymap.put(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS, new IclijXMLType(String.class, null, "Simulate invest volume limits"));
         mymap.put(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN, new IclijXMLType(Boolean.class, Boolean.FALSE, "Enable improve simulate invest autorun"));
         mymap.put(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY, new IclijXMLType(Boolean.class, Boolean.TRUE, "Single market loops with evolve first only"));
         mymap.put(IclijConfigConstants.SINGLEMARKETLOOPS, new IclijXMLType(Integer.class, 5, "Single market loops"));
