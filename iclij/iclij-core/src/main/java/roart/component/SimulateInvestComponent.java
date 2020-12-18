@@ -50,8 +50,8 @@ import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
+import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.Trend;
@@ -918,7 +918,7 @@ public class SimulateInvestComponent extends ComponentML {
 
         // full list
         String aParameter = JsonUtil.convert(realParameters);
-        List<IncDecItem> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, anExcludeList);
+        List<String> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, anExcludeList);
         //List<IncDecItem> myincs = ds.getIncs(valueList);
         //List<ValueList> valueList = ds.getValueList(categoryValueMap, indexOffset);
 
@@ -1313,12 +1313,6 @@ public class SimulateInvestComponent extends ComponentML {
         int buys = buytop - mystocks.size();
         buys = Math.min(buys, newbuys.size());
 
-        double totalweight = 0;
-        if (buyweight) {
-            for (int i = 0; i < buys; i++) {
-                totalweight += Math.abs(newbuys.get(i).weight);
-            }
-        }
         double totalamount = 0;
         for (int i = 0; i < buys; i++) {
             Astock astock = newbuys.get(i);
@@ -1336,11 +1330,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (valNow != null) {
 
                     double amount = 0;
-                    if (!buyweight) {
-                        amount = capital.amount / buys;
-                    } else {
-                        amount = capital.amount * astock.weight / totalweight;
-                    }
+                    amount = capital.amount / buys;
                     astock.buyprice = valNow;
                     astock.count = amount / astock.buyprice;
                     String dateNow = stockDates.get(stockDates.size() - 1 - indexOffset);
@@ -1434,10 +1424,9 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private List<Astock> getBuyList(List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap,
-            List<IncDecItem> myincs, int indexOffset, Integer count) {
+            List<String> myincs, int indexOffset, Integer count) {
         List<Astock> newbuys = new ArrayList<>();
-        for (IncDecItem item : myincs) {
-            String id = item.getId();
+        for (String id : myincs) {
             List<List<Double>> resultList = categoryValueMap.get(id);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
@@ -1450,7 +1439,6 @@ public class SimulateInvestComponent extends ComponentML {
                     Astock astock = new Astock();
                     astock.id = id;
                     //astock.price = -1;
-                    astock.weight = Math.abs(item.getScore());
                     newbuys.add(astock);
                     count--;
                     if (count == 0) {

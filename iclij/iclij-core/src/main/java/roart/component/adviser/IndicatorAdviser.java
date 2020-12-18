@@ -152,7 +152,7 @@ public abstract class IndicatorAdviser extends Adviser {
     }
 
     //@Override
-    public List<IncDecItem> getIncs(String aParameter, int buytop, LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
+    public List<String> getIncs(String aParameter, int buytop, LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
         int idx = stockDates.size() - 1 - indexOffset;
         if (idx < 0) {
             return new ArrayList<>();
@@ -161,28 +161,7 @@ public abstract class IndicatorAdviser extends Adviser {
         if (valueList == null) {
             return new ArrayList<>();
         }
-        List<IncDecItem> list = new ArrayList<>();
-        for (Pair<String, Double> value : valueList) {
-            if (excludes.contains(value.getKey())) {
-                continue;
-            }
-            Double myvalue = value.getValue();
-            if (myvalue == null) {
-                continue;
-            }
-            IncDecItem item = new IncDecItem();
-            item.setId(value.getKey());
-            if (myvalue <= 0) {
-                myvalue = -myvalue;
-            }
-            item.setScore(myvalue);
-            item.setIncrease(myvalue > 0);
-            list.add(item);
-        }
-        list = list.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-        //int subListSize = Math.min(buytop, list.size());
-        //list = list.subList(0, subListSize);
-        return list;
+        return valueList.stream().map(Pair::getKey).collect(Collectors.toList());
     }
 
     private List<Pair<String, Double>> getValuePairs(Map<String, List<List<Double>>> categoryValueMap, int indexOffset, List<String> stockDates, List<String> excludes) {

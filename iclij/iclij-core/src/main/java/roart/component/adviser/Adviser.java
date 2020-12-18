@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateInvestConfig;
-import roart.iclij.model.IncDecItem;
-import roart.iclij.model.MemoryItem;
 
 public abstract class Adviser {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -37,7 +35,7 @@ public abstract class Adviser {
         this.simulateConfig = simulateConfig;
     }
 
-    public abstract List<IncDecItem> getIncs(String aParameter, int buytop,
+    public abstract List<String> getIncs(String aParameter, int buytop,
             LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes);
 
     public abstract List<String> getParameters();

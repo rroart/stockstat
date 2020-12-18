@@ -103,13 +103,14 @@ public class AboveBelowAdviser extends Adviser {
     }
     
     @Override
-    public List<IncDecItem> getIncs(String aParameter, int buytop,
+    public List<String> getIncs(String aParameter, int buytop,
             LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
         this.aParameter = aParameter;
         int idx = stockDates.size() - 1 - indexOffset;
         List<IncDecItem> incdecs = valueMap.get(idx);
         List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
-        return incdecsP;
+        List<String> list = incdecsP.stream().map(IncDecItem::getId).collect(Collectors.toList());
+        return list;
     }
     
     @Override
