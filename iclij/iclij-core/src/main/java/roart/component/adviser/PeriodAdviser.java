@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.cache.MyCache;
+import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
@@ -191,7 +192,11 @@ public class PeriodAdviser extends Adviser {
     @Override
     public void getValueMap(List<String> stockDates, int firstidx, int lastidx,
             Map<String, List<List<Double>>> categoryValueMap2) {
-        String key = "ADVISERVALUEMAP" + market.getConfig().getMarket() + this.getClass().getName() + firstidx + "_" + lastidx;
+        int start = stockDates.size() - 1 - firstidx;
+        int end = stockDates.size() - 1 - lastidx;
+        String investStart = stockDates.get(start);
+        String investEnd = stockDates.get(end);
+        String key = CacheConstants.SIMULATEINVESTADVISER + market.getConfig().getMarket() + this.getClass().getName() + investStart + investEnd;
         valueMap = (Map<Integer, List<Pair<String, Double>>>) MyCache.getInstance().get(key);
         if (valueMap != null) {
             return;

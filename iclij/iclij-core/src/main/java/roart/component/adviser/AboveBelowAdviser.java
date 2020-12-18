@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import roart.common.cache.MyCache;
+import roart.common.config.CacheConstants;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
@@ -204,7 +205,11 @@ public class AboveBelowAdviser extends Adviser {
     @Override
     public void getValueMap(List<String> stockDates, int firstidx, int lastidx,
             Map<String, List<List<Double>>> categoryValueMap) {
-        String key = "ADVISERVALUEMAP" + market.getConfig().getMarket() + this.getClass().getName() + firstidx + "_" + lastidx;
+        int start = stockDates.size() - 1 - firstidx;
+        int end = stockDates.size() - 1 - lastidx;
+        String investStart = stockDates.get(start);
+        String investEnd = stockDates.get(end);
+        String key = CacheConstants.SIMULATEINVESTADVISER + market.getConfig().getMarket() + this.getClass().getName() + investStart + investEnd;
         valueMap = (Map<Integer, List<IncDecItem>>) MyCache.getInstance().get(key);
         if (valueMap != null) {
             return;

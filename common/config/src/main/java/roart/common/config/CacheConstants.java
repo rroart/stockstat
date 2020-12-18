@@ -13,4 +13,10 @@ public class CacheConstants {
 
     public static final String INCDEC = "incdec";
     
+    public static final String SIMULATEINVESTVOLUMELIMITS = "simulateinvestvolumelimits";
+    
+    public static final String SIMULATEINVESTTREND = "simulateinvesttrend";
+    
+    public static final String SIMULATEINVESTADVISER = "simulateinvestadviser";
+    
 }

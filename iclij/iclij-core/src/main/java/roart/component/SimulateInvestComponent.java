@@ -23,6 +23,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import roart.action.MarketAction;
 import roart.common.cache.MyCache;
+import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
@@ -254,7 +255,7 @@ public class SimulateInvestComponent extends ComponentML {
                 firstidx = stockDates.size() - 1 - firstidx;
                 lastidx = stockDates.size() - 1 - lastidx;
 
-                String key = "VOLUMELIMIT" + market.getConfig().getMarket() + simConfig.getInterval() + investStart + lastInvestEnd;
+                String key = CacheConstants.SIMULATEINVESTVOLUMELIMITS + market.getConfig().getMarket() + adviser.getClass().getName() + simConfig.getInterval() + investStart + investEnd;
                 newVolumeMap = (Map<Integer, List<String>>) MyCache.getInstance().get(key);
                 if (newVolumeMap == null) {
                     long time00 = System.currentTimeMillis();
@@ -267,7 +268,7 @@ public class SimulateInvestComponent extends ComponentML {
                 adviser.getValueMap(stockDates, firstidx, lastidx, categoryValueMap);
                 log.info("timeee0 {}", System.currentTimeMillis() - time00);
 
-                trendMap = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, firstidx, lastidx);
+                trendMap = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, firstidx, lastidx, simConfig);
                 Set<Integer> keys = trendMap.keySet();
                 List<Integer> keyl = new ArrayList<>(keys);
                 Collections.sort(keyl);
@@ -652,9 +653,9 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private Map<Integer, Trend> getTrendIncDec(Market market, ComponentData param, List<String> stockDates, int interval,
-            Map<String, List<List<Double>>> filteredCategoryValueMap, int firstidx, int lastidx) {
+            Map<String, List<List<Double>>> filteredCategoryValueMap, int firstidx, int lastidx, SimulateInvestConfig simConfig) {
         Map<Integer, Trend> trendMap = null;
-        String key = "ADVISERTREND" + market.getConfig().getMarket() + this.getClass().getName() + interval + "_" + firstidx + "_" + lastidx;
+        String key = CacheConstants.SIMULATEINVESTTREND + market.getConfig().getMarket() + "_" + simConfig.getAdviser() + "_" + interval + "_" + simConfig.getStartdate() + simConfig.getEnddate();
         trendMap = (Map<Integer, Trend>) MyCache.getInstance().get(key);
         if (trendMap != null) {
             return trendMap;
