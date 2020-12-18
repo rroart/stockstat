@@ -26,6 +26,8 @@ public abstract class Adviser {
     protected ComponentData param;
 
     protected SimulateInvestConfig simulateConfig;
+
+    protected Map<Integer, List<Pair<String, Double>>> valueMap;
     
     public Adviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
         this.market = market;
@@ -42,4 +44,7 @@ public abstract class Adviser {
 
     @Deprecated
     public abstract double getReliability(LocalDate date, Boolean above);
+
+    public abstract void getValueMap(List<String> stockDates, int firstidx2, int lastidx2,
+            Map<String, List<List<Double>>> categoryValueMap);
 }

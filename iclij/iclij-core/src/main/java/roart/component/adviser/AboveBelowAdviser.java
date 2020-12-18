@@ -1,12 +1,18 @@
 package roart.component.adviser;
 
+import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import roart.common.cache.MyCache;
 import roart.common.constants.Constants;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.IclijConstants;
@@ -23,6 +29,10 @@ public class AboveBelowAdviser extends Adviser {
 
     private List<MemoryItem> allMemories = null;
 
+    private Map<Integer, List<IncDecItem>> valueMap;
+
+    private String aParameter;
+    
     public AboveBelowAdviser(Market market, LocalDate investStart, LocalDate investEnd, ComponentData param, SimulateInvestConfig simulateConfig) {
         super(market, investStart, investEnd, param, simulateConfig);
         SimulateInvestData simulateParam;
@@ -61,8 +71,8 @@ public class AboveBelowAdviser extends Adviser {
         }        
     }
     
-    @Override
-    public List<IncDecItem> getIncs(String aParameter, int buytop,
+    //@Override
+    public List<IncDecItem> getIncs2(String aParameter, int buytop,
             LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
         List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
         incdecs = incdecs.stream().filter(e -> !excludes.contains(e.getId())).collect(Collectors.toList());
@@ -90,6 +100,16 @@ public class AboveBelowAdviser extends Adviser {
         mydecs = null;
         myincdec = null;
         return myincs;
+    }
+    
+    @Override
+    public List<IncDecItem> getIncs(String aParameter, int buytop,
+            LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
+        this.aParameter = aParameter;
+        int idx = stockDates.size() - 1 - indexOffset;
+        List<IncDecItem> incdecs = valueMap.get(idx);
+        List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
+        return incdecsP;
     }
     
     @Override
@@ -133,4 +153,62 @@ public class AboveBelowAdviser extends Adviser {
         return 0;
     }
 
+    public Map<Integer, List<IncDecItem>> getValues(String aParameter,
+            List<String> stockDates, List<String> excludes, int firstidx, int lastidx) {
+        Map<Integer, List<IncDecItem>> valueMap = new HashMap<>();
+        int size = stockDates.size();
+        int start = size - 1 - firstidx;
+        int end = size - 1 - lastidx;
+        //List<Pair<String, Double>> valueList = new ArrayList<>();
+        for (int i = start; i <= end; i++) {
+            List<IncDecItem> valueList = new ArrayList<>();
+            valueMap.put(i, valueList);
+            int indexOffset = size - 1 - i;
+            String dateString = stockDates.get(i);
+            LocalDate date = null;
+            try {
+                date = new TimeUtil().convertDate(dateString);
+            } catch (ParseException e) {
+                log.info(Constants.EXCEPTION, e);
+            }
+            List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
+            incdecs = incdecs.stream().filter(e -> !excludes.contains(e.getId())).collect(Collectors.toList());
+            List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
+
+            List<IncDecItem> myincdecs = incdecsP;
+            List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
+            List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
+            List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
+
+            myincs = new MiscUtil().mergeList(myincs, true);
+            mydecs = new MiscUtil().mergeList(mydecs, true);
+            List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+
+            Comparator<IncDecItem> incDecComparator = (IncDecItem comp1, IncDecItem comp2) -> comp2.getScore().compareTo(comp1.getScore());
+
+            myincs.sort(incDecComparator);   
+            mydecs.sort(incDecComparator);   
+
+            //int subListSize = Math.min(buytop, myincs.size());
+            //myincs = myincs.subList(0, subListSize);
+            incdecs = null;
+            incdecsP = null;
+            myincdecs = null;
+            mydecs = null;
+            myincdec = null;
+        }
+        return valueMap;
+    }
+    
+    @Override
+    public void getValueMap(List<String> stockDates, int firstidx, int lastidx,
+            Map<String, List<List<Double>>> categoryValueMap) {
+        String key = "ADVISERVALUEMAP" + market.getConfig().getMarket() + this.getClass().getName() + firstidx + "_" + lastidx;
+        valueMap = (Map<Integer, List<IncDecItem>>) MyCache.getInstance().get(key);
+        if (valueMap != null) {
+            return;
+        }
+        valueMap = getValues(aParameter, stockDates, new ArrayList<>(), firstidx, lastidx);                
+        MyCache.getInstance().put(key, valueMap);
+    }
 }

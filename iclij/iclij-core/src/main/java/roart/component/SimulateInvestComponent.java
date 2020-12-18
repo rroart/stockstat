@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import roart.action.MarketAction;
+import roart.common.cache.MyCache;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
@@ -174,7 +175,7 @@ public class SimulateInvestComponent extends ComponentML {
 
         Integer origAdviserId = (Integer) param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTADVISER);
         int adviserId = simConfig.getAdviser();
-        Adviser adviser = new AdviserFactory().get(adviserId, market, investStart, investEnd, param, simConfig);
+        Adviser adviser = new AdviserFactory().get(adviserId, market, investStart, investEnd, param, simConfig);;
 
         String[] excludes = null;
         if (market.getSimulate() != null) {
@@ -223,10 +224,56 @@ public class SimulateInvestComponent extends ComponentML {
                 }
             }
 
-            long time00 = System.currentTimeMillis();
-            Map<String, double[]> newVolumeMap = getVolumeExcludesFull(simConfig, stockDates, interval, categoryValueMap, volumeMap);
-            log.info("timee0 {}", System.currentTimeMillis() - time00);        
+            Map<Integer, List<String>> newVolumeMap = null;
+            Map<Integer, Trend> trendMap = null;
+            {
+                LocalDate date = investStart;
 
+                date = TimeUtil.getEqualBefore(stockDates, date);
+                if (date == null) {
+                    try {
+                        date = TimeUtil.convertDate(stockDates.get(0));
+                    } catch (ParseException e) {
+                        log.error(Constants.ERROR, e);
+                    }
+                }
+                date = TimeUtil.getForwardEqualAfter2(date, 0 /* findTime */, stockDates);
+                String datestring = TimeUtil.convertDate2(date);
+                int firstidx = TimeUtil.getIndexEqualAfter(stockDates, datestring);
+                firstidx -= interval * 2;
+                if (firstidx < 0) {
+                    firstidx = 0;
+                }
+                
+                String lastInvestEndS = TimeUtil.convertDate2(lastInvestEnd);
+                int lastidx = stockDates.indexOf(lastInvestEndS);
+                lastidx += interval;
+                if (lastidx >= stockDates.size()) {
+                    lastidx = stockDates.size() - 1;
+                }
+                firstidx = stockDates.size() - 1 - firstidx;
+                lastidx = stockDates.size() - 1 - lastidx;
+
+                String key = "VOLUMELIMIT" + market.getConfig().getMarket() + simConfig.getInterval() + investStart + lastInvestEnd;
+                newVolumeMap = (Map<Integer, List<String>>) MyCache.getInstance().get(key);
+                if (newVolumeMap == null) {
+                    long time00 = System.currentTimeMillis();
+                    newVolumeMap = getVolumeExcludesFull(simConfig, stockDates, interval, categoryValueMap, volumeMap, firstidx, lastidx);
+                    MyCache.getInstance().put(key, newVolumeMap);
+                    log.info("timee0 {}", System.currentTimeMillis() - time00);
+                }
+
+                long time00 = System.currentTimeMillis();
+                adviser.getValueMap(stockDates, firstidx, lastidx, categoryValueMap);
+                log.info("timeee0 {}", System.currentTimeMillis() - time00);
+
+                trendMap = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, firstidx, lastidx);
+                Set<Integer> keys = trendMap.keySet();
+                List<Integer> keyl = new ArrayList<>(keys);
+                Collections.sort(keyl);
+                log.info("keyl {}", keyl);
+            }
+            
             long time0 = System.currentTimeMillis();
             long time3 = 0;
             long time4 = 0;
@@ -270,7 +317,7 @@ public class SimulateInvestComponent extends ComponentML {
                  */
                 int indexOffset = totalDelays;
                 List<Astock> savedStocks = new ArrayList<>();
-                if (evolving) {
+                if (evolving || offset > 0) {
                     investEnd = lastInvestEnd;
                 }
                 while (date != null && investEnd != null && !date.isAfter(investEnd)) {
@@ -283,7 +330,8 @@ public class SimulateInvestComponent extends ComponentML {
                     String datestring = TimeUtil.convertDate2(date);
                     indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
 
-                    Trend trend = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, trendInc, trendDec, indexOffset);
+                    //Trend trend = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, trendInc, trendDec, indexOffset);
+                    Trend trend = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, trendInc, trendDec, indexOffset, trendMap);
                     // get recommendations
 
                     List<String> myExcludes = getExclusions(simConfig, extradelay, stockDates, interval, categoryValueMap,
@@ -311,12 +359,13 @@ public class SimulateInvestComponent extends ComponentML {
                     boolean noconfidence2 = simConfig.getNoconfidencetrenddecrease() && trendDec[0] >= simConfig.getNoconfidencetrenddecreaseTimes();
                     boolean noconfidence = !confidence || !confidence1 || noconfidence2;
                     if (!noconfidence) {
+                        int adelay = delay;
                         if (lastInvest) {
-                            delay = 0;
+                            adelay = 0;
                         }
-                        if (indexOffset - extradelay - delay >= 0) {
+                        if (indexOffset - extradelay - adelay >= 0) {
                             mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, myExcludes,
-                                    realParameters, mystocks, date, indexOffset, sells, buys, holdIncrease, extradelay, delay);
+                                    realParameters, mystocks, date, indexOffset, sells, buys, holdIncrease, extradelay, adelay);
                         }
                     } else {
                         if (indexOffset - extradelay - delay >= 0) {
@@ -531,7 +580,7 @@ public class SimulateInvestComponent extends ComponentML {
 
     private List<String> getExclusions(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
             int interval, Map<String, List<List<Double>>> categoryValueMap, Map<String, List<List<Object>>> volumeMap,
-            List<String> configExcludeList, int delay, int indexOffset, Map<String, double[]> newVolumeMap) {
+            List<String> configExcludeList, int delay, int indexOffset, Map<Integer, List<String>> newVolumeMap) {
         List<String> myExcludes = new ArrayList<>();
         List<String> volumeExcludes = new ArrayList<>();
         /*
@@ -540,8 +589,8 @@ public class SimulateInvestComponent extends ComponentML {
                 */
         long time0 = System.currentTimeMillis();
         getVolumeExcludes(simConfig, extradelay, stockDates, interval, categoryValueMap, volumeMap, delay,
-                indexOffset, volumeExcludes, newVolumeMap);
-        log.info("timed0 {}", System.currentTimeMillis() - time0);        
+                indexOffset, volumeExcludes, null, newVolumeMap);
+        //log.info("timed0 {}", System.currentTimeMillis() - time0);        
         
         myExcludes.addAll(configExcludeList);
         myExcludes.addAll(volumeExcludes);
@@ -556,6 +605,9 @@ public class SimulateInvestComponent extends ComponentML {
             trend = new TrendUtil().getTrend(interval, null /*TimeUtil.convertDate2(olddate)*/, indexOffset, stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
         } catch (Exception e) {
             log.error(Constants.ERROR, e);
+        }
+        if (trend == null) {
+            int jj = 0;
         }
         if (trend != null && trend.incAverage < 0) {
             int jj = 0;
@@ -574,6 +626,48 @@ public class SimulateInvestComponent extends ComponentML {
         return trend;
     }
 
+    private Trend getTrendIncDec(Market market, ComponentData param, List<String> stockDates, int interval,
+            Map<String, List<List<Double>>> filteredCategoryValueMap, Integer[] trendInc, Integer[] trendDec,
+            int indexOffset, Map<Integer, Trend> trendMap) {
+        int idx = stockDates.size() - 1 - indexOffset;
+        Trend trend = trendMap.get(idx);
+        if (trend == null) {
+            int jj = 0;
+        }
+        if (trend != null && trend.incAverage < 0) {
+            int jj = 0;
+        }
+        log.debug("Trend {}", trend);
+
+        if (trend != null) {
+            if (trend.incAverage > 1) {
+                trendInc[0]++;
+                trendDec[0] = 0;
+            } else {
+                trendInc[0] = 0;
+                trendDec[0]++;
+            }
+        }
+        return trend;
+    }
+
+    private Map<Integer, Trend> getTrendIncDec(Market market, ComponentData param, List<String> stockDates, int interval,
+            Map<String, List<List<Double>>> filteredCategoryValueMap, int firstidx, int lastidx) {
+        Map<Integer, Trend> trendMap = null;
+        String key = "ADVISERTREND" + market.getConfig().getMarket() + this.getClass().getName() + interval + "_" + firstidx + "_" + lastidx;
+        trendMap = (Map<Integer, Trend>) MyCache.getInstance().get(key);
+        if (trendMap != null) {
+            return trendMap;
+        }
+        try {
+            trendMap = new TrendUtil().getTrend(interval, null, stockDates, param, market, filteredCategoryValueMap, firstidx, lastidx);
+        } catch (Exception e) {
+            log.error(Constants.ERROR, e);
+        }
+        MyCache.getInstance().put(key, trendMap);
+        return trendMap;
+    }
+
     private void getVolumeExcludes(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
             int interval, Map<String, List<List<Double>>> categoryValueMap,
             Map<String, List<List<Object>>> volumeMap, int delay, int indexOffset, List<String> volumeExcludes) {
@@ -588,7 +682,7 @@ public class SimulateInvestComponent extends ComponentML {
                     continue;
                 }
                 List<Double> mainList = resultList.get(0);
-                ValidateUtil.validateSizes(mainList, stockDates);
+                //ValidateUtil.validateSizes(mainList, stockDates);
                 if (mainList != null) {
                     int size = mainList.size();
                     int first = size - anOffset - len;
@@ -643,7 +737,7 @@ public class SimulateInvestComponent extends ComponentML {
                     continue;
                 }
                 List<Double> mainList = resultList.get(0);
-                ValidateUtil.validateSizes(mainList, stockDates);
+                //ValidateUtil.validateSizes(mainList, stockDates);
                 List<List<Object>> list = volumeMap.get(id);
                 if (mainList != null) {
                     int size = mainList.size();
@@ -681,17 +775,10 @@ public class SimulateInvestComponent extends ComponentML {
             Map<String, List<List<Object>>> volumeMap, int delay, int indexOffset, List<String> volumeExcludes, Map<String, double[]> newVolumeMap) {
         if (simConfig.getVolumelimits() != null) {
             Map<String, Double> volumeLimits = simConfig.getVolumelimits();
+            int len = interval * 2;
             for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
                 String id = entry.getKey();
-                int len = interval * 2;
-                List<List<Object>> list = volumeMap.get(id);
-                String currency = null;
-                for (int i = 0; i < list.size(); i++) {
-                    currency = (String) list.get(i).get(1);
-                    if (currency != null) {
-                        break;
-                    }
-                }
+                String currency = getCurrency(volumeMap, id);
                 Double limit = volumeLimits.get(currency);
                 if (limit == null) {
                     continue;
@@ -707,6 +794,108 @@ public class SimulateInvestComponent extends ComponentML {
                     volumeExcludes.add(id);
                 }
             }
+        }
+    }
+
+    private String getCurrency(Map<String, List<List<Object>>> volumeMap, String id) {
+        String currency = null;
+        List<List<Object>> list = volumeMap.get(id);
+        for (int i = list.size() - 1; i >= 0; i--) {
+            currency = (String) list.get(i).get(1);
+            if (currency != null) {
+                break;
+            }
+        }
+        return currency;
+    }
+
+    private Map<Integer, List<String>> getVolumeExcludesFull(SimulateInvestConfig simConfig, List<String> stockDates, int interval,
+            Map<String, List<List<Double>>> categoryValueMap, Map<String, List<List<Object>>> volumeMap, int firstidx, int lastidx) {
+        Map<Integer, List<String>> listlist = new HashMap<>(); 
+        if (simConfig.getVolumelimits() != null) {
+            Map<String, Double> volumeLimits = simConfig.getVolumelimits();
+            for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+                String id = entry.getKey();
+                String currency = getCurrency(volumeMap, id);
+                Double limit = volumeLimits.get(currency);
+                if (limit == null) {
+                    continue;
+                }
+                int len = interval * 2;
+                List<List<Double>> resultList = categoryValueMap.get(id);
+                if (resultList == null || resultList.isEmpty()) {
+                    continue;
+                }
+                List<Double> mainList = resultList.get(0);
+                //ValidateUtil.validateSizes(mainList, stockDates);
+                List<List<Object>> list = volumeMap.get(id);
+                if (mainList != null) {
+                    int size = mainList.size();
+                    double[] newList = new double[size];
+                    int start = size - 1 - firstidx;
+                    int end = size - 1 - lastidx;
+                    for (int i = start; i <= end; i++) {
+                        Integer volume = (Integer) list.get(i).get(0);
+                        Double price = mainList.get(i /* mainList.size() - 1 - indexOffset */);
+                        if (volume != null) {
+                            if (price == null) {
+                                if (volume > 0) {
+                                    log.debug("Price null with volume > 0");
+                                }
+                                continue;
+                            }
+                        } else {
+                            continue; 
+                        }
+                        for (int j = 0; j < len; j++) {
+                            int idx = i + j;
+                            if (idx > size - 1) {
+                                break;
+                            }
+                            newList[idx] += price * volume;
+                        }
+                    }
+                    // now make the skip lists
+                    int count = len;
+                    double[] sums = newList; 
+                    for (int i = start; i <= end; i++) {
+                        List<String> datedlist = listlist.get(i);
+                        if (datedlist == null) {
+                            datedlist = new ArrayList<>();
+                            listlist.put(i, datedlist);
+                        }
+                        int idx = i;
+                        if (idx < count) {
+                            count = idx;
+                        }
+                        double sum = sums[idx];
+                        if (count > 0 && sum / count < limit) {
+                            datedlist.add(id);
+                        }
+                    }
+                }
+            }
+        }
+        Set<Integer> keys = listlist.keySet();
+        List<Integer> keyl = new ArrayList<>(keys);
+        Collections.sort(keyl);
+        log.info("kkkk {}", keyl);
+        return listlist;
+    }
+
+    private void getVolumeExcludes(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
+            int interval, Map<String, List<List<Double>>> categoryValueMap,
+            Map<String, List<List<Object>>> volumeMap, int delay, int indexOffset, List<String> volumeExcludes, Map<String, double[]> newVolumeMap, Map<Integer, List<String>> listlist) {
+        if (simConfig.getVolumelimits() != null) {
+            int idx = stockDates.size() - 1 - indexOffset;
+            if (idx < 0) {
+                return;
+            }
+            List<String> list = listlist.get(idx);
+            if (list == null) {
+                return;
+            }
+            volumeExcludes.addAll(list);
         }
     }
 
@@ -975,8 +1164,11 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            ValidateUtil.validateSizes(mainList, stockDates);
+            //ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
+                if (indexOffset <= -1) {
+                    continue;
+                }
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (prevIndexOffset <= -1) {
                     continue;
@@ -1089,7 +1281,7 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            ValidateUtil.validateSizes(mainList, stockDates);
+            //ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 String dateNowStr = stockDates.get(stockDates.size() - 1 - indexOffset);
                 LocalDate dateNow = null;
@@ -1138,7 +1330,7 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            ValidateUtil.validateSizes(mainList, stockDates);
+            //ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (valNow != null) {
@@ -1178,7 +1370,7 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            ValidateUtil.validateSizes(mainList, stockDates);
+            //ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 if (indexOffset < 0) {
                     int jj = 0;
@@ -1211,7 +1403,7 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            ValidateUtil.validateSizes(mainList, stockDates);
+            //ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (valNow != null) {
@@ -1251,7 +1443,7 @@ public class SimulateInvestComponent extends ComponentML {
                 continue;
             }
             List<Double> mainList = resultList.get(0);
-            ValidateUtil.validateSizes(mainList, stockDates);
+            //ValidateUtil.validateSizes(mainList, stockDates);
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);                    
                 if (valNow != null) {
