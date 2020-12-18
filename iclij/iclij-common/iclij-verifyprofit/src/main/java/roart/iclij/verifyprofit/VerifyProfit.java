@@ -3,17 +3,20 @@ package roart.iclij.verifyprofit;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.OptionalDouble;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.util.TimeUtil;
 import roart.common.util.ValidateUtil;
+import roart.iclij.config.IclijConfig;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.Trend;
 
@@ -192,5 +195,70 @@ public class VerifyProfit {
         trend.max = Collections.max(incs);
         trend.stats = incs.stream().filter(Objects::nonNull).mapToDouble(e -> (Double) e).summaryStatistics().toString();
         return trend;
+    }
+
+    public Map<Integer, Trend> getTrend(int days, Map<String, List<List<Double>>> categoryValueMap, List<String> stockDates, int firstidx, int lastidx) {
+        Map<Integer, Trend> trendMap = new HashMap<>();
+        int size = stockDates.size();
+        int start = size - 1 - firstidx;
+        int end = size - 1 - lastidx;
+        //List<Pair<String, Double>> valueList = new ArrayList<>();
+        for (int i = start; i <= end; i++) {
+            int indexOffset = size - 1 - i;
+            Trend trend = new Trend();
+            trendMap.put(i, trend);
+            if (days <= 0) {
+                continue;
+            }
+            int nocount2 = 0;
+            int nocount = 0;
+            int count = 0;
+            List<Double> incs = new ArrayList<>();
+            for (Entry<String, List<List<Double>>> entry : categoryValueMap.entrySet()) {
+                List<List<Double>> resultList = entry.getValue();
+                if (resultList == null || resultList.isEmpty()) {
+                    continue;
+                }
+                List<Double> mainList = resultList.get(0);
+                if (mainList != null) {
+                    ValidateUtil.validateSizes(mainList, stockDates);
+                    if (mainList.size() - 1 - indexOffset - days < 0) {
+                        continue;
+                    }
+                    Double valFuture = mainList.get(mainList.size() - 1 - indexOffset);
+                    Double valNow = mainList.get(mainList.size() - 1 - indexOffset - days);
+                    if (valFuture != null && valNow != null) {
+                        if (valFuture > valNow) {
+                            trend.up++;
+                        }
+                        if (valFuture.equals(valNow)) {
+                            trend.neutral++;
+                        }
+                        if (valFuture < valNow) {
+                            trend.down++;
+                        }
+                        incs.add(valFuture / valNow);
+                        count++;
+                    } else {
+                        nocount++;
+                    }
+                } else {
+                    nocount2++;
+                }
+            }
+            if (count == 0) {
+                continue;
+            }
+            trend.incProp = ((double) trend.up) / count;
+            OptionalDouble average = incs
+                    .stream()
+                    .mapToDouble(a -> a)
+                    .average();
+            trend.incAverage = average.getAsDouble();
+            trend.min = Collections.min(incs);
+            trend.max = Collections.max(incs);
+            trend.stats = incs.stream().filter(Objects::nonNull).mapToDouble(e -> (Double) e).summaryStatistics().toString();
+        }
+        return trendMap;
     }
 }

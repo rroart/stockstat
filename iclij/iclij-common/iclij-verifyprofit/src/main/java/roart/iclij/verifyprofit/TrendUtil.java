@@ -69,4 +69,12 @@ public class TrendUtil {
         return verify.getTrend(days, categoryValueMap, startoffset, loopoffset, stockDates);
     }
 
+    public Map<Integer, Trend> getTrend(int days, String date, List<String> stockDates, ComponentData componentData, Market market, Map<String, List<List<Double>>> categoryValueMap, int firstidx, int lastidx) {
+        //log.info("Verify compare date {} with {}", oldDate, date);
+        log.debug("Use date {} with {} days", date, days);
+ 
+        VerifyProfit verify = new VerifyProfit();
+        return verify.getTrend(days, categoryValueMap, stockDates, firstidx, lastidx);
+    }
+
 }
