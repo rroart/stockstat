@@ -617,7 +617,7 @@ public class ArraysUtil {
                 if (j < 0) {
                     return dstArray;
                 }
-                double diff = (dstArray[i + 1] - dstArray[j]) / 3;
+                double diff = (dstArray[i + 1] - dstArray[j]) / (i + 1 - j);
                 if (Constants.FFILL.equals(interpolationmethod)) {
                     diff = 0;
                 }
