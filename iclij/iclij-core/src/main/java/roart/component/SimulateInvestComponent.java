@@ -283,7 +283,10 @@ public class SimulateInvestComponent extends ComponentML {
                 Capital capital = new Capital();
                 capital.amount = 1;
                 List<Astock> mystocks = new ArrayList<>();
-                List<Astock> stockhistory = new ArrayList<>();
+                List<Astock> stockhistory = null;
+                if (!evolving) {
+                    stockhistory = new ArrayList<>();
+                }
                 List<String> sumHistory = new ArrayList<>();
                 List<String> plotDates = new ArrayList<>();
                 List<Double> plotCapital = new ArrayList<>();
@@ -389,22 +392,26 @@ public class SimulateInvestComponent extends ComponentML {
 
                             // to delay?
                             update(stockDates, categoryValueMap, capital, mystocks, indexOffset - extradelay - delay, new ArrayList<>(), prevIndexOffset - extradelay - delay);
-                            // depends on delay DELAY
-                            Capital sum = getSum(mystocks);
-
-                            //boolean noconf = simConfig.getConfidence() && myreliability < simConfig.getConfidenceValue();                
-                            String hasNoConf = noconfidence ? "NOCONF" : "";
-                            datestring = stockDates.get(stockDates.size() - 1 - (indexOffset - extradelay - delay));
-                            List<String> ids = mystocks.stream().map(Astock::getId).collect(Collectors.toList());
-                            sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend);
 
                             if (trend != null && trend.incAverage != 0) {
                                 resultavg *= trend.incAverage;
                             }
 
-                            plotDates.add(datestring);
-                            plotDefault.add(resultavg);
-                            plotCapital.add(sum.amount + capital.amount);
+                            if (!evolving) {
+                                // depends on delay DELAY
+                                Capital sum = getSum(mystocks);
+
+                                //boolean noconf = simConfig.getConfidence() && myreliability < simConfig.getConfidenceValue();                
+                                String hasNoConf = noconfidence ? "NOCONF" : "";
+                                datestring = stockDates.get(stockDates.size() - 1 - (indexOffset - extradelay - delay));
+
+                                List<String> ids = mystocks.stream().map(Astock::getId).collect(Collectors.toList());
+                                sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend);
+
+                                plotDates.add(datestring);
+                                plotDefault.add(resultavg);
+                                plotCapital.add(sum.amount + capital.amount);
+                            }
 
                             if (Double.isInfinite(resultavg)) {
                                 int jj = 0;
@@ -515,7 +522,7 @@ public class SimulateInvestComponent extends ComponentML {
                     log.info("" + simConfig.asMap());
                 }
 
-                if (offset == 0) {
+                if (!evolving && offset == 0) {
                     Map<String, Object> map = new HashMap<>();
                     map.put("sumhistory", sumHistory);
                     map.put("stockhistory", stockhistory);
@@ -920,6 +927,8 @@ public class SimulateInvestComponent extends ComponentML {
         // full list
         String aParameter = JsonUtil.convert(realParameters);
         List<String> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, anExcludeList);
+        myincs = new ArrayList<>(myincs);
+        myincs.removeAll(anExcludeList);
         //List<IncDecItem> myincs = ds.getIncs(valueList);
         //List<ValueList> valueList = ds.getValueList(categoryValueMap, indexOffset);
 
@@ -1406,7 +1415,9 @@ public class SimulateInvestComponent extends ComponentML {
                         log.error(Constants.EXCEPTION, e);
                     }
                     item.selldate = date;
-                    stockhistory.add(item);
+                    if (stockhistory != null) {
+                        stockhistory.add(item);
+                    }
                     capital.amount += item.count * item.sellprice;
                 } else {
                     // put back if unknown
@@ -1592,7 +1603,7 @@ public class SimulateInvestComponent extends ComponentML {
          */
         //return resultMaps;
     }
-
+    
     // loop
     // update values with indexoffset - extra
     // get advise based on indexoffset info (TODO extra)
