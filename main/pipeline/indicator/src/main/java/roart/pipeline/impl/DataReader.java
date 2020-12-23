@@ -107,7 +107,9 @@ public class DataReader extends Pipeline {
         this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.nameMap = StockDao.getNameMap(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         this.listMap = DatelistToMapETL.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
-        this.volumeMap = DatelistToMapETL.getVolumes(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+        if (category == Constants.PRICECOLUMN) {
+            this.volumeMap = DatelistToMapETL.getVolumes(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+        }
         Double[][] e = listMap.get("F00000ZHEV");
         if (e != null) {
             int jj = 0;

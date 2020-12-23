@@ -193,6 +193,9 @@ public class ControlService {
                     log.debug("ca {}", predictors[i].getName());
                 }
                 for (int i = 0; i < aggregates.length; i++) {
+                    if (!aggregates[i].isEnabled()) {
+                        continue;
+                    }
                     log.debug("ag {}", aggregates[i].getName());
                     Map map = aggregates[i].getLocalResultMap();
                     maps.put(aggregates[i].getName(), map);
@@ -206,7 +209,25 @@ public class ControlService {
         for (ResultItemTable list : otherTables) {
             retlist.add(list);
         }
+        printmap(maps, 0);
         return retlist;
+    }
+    
+    public void printmap(Object o, int i) {
+        //System.out.println("" + i + " " + o.hashCode());
+        Map<String, Object> m = (Map<String, Object>) o;
+        for (Entry<String, Object> e : m.entrySet()) {
+            Object value = e.getValue();
+            if (value instanceof Map) {
+                System.out.println("" + i + " " + e.getKey() + " " + value.hashCode());
+                printmap((Map<String, Object>) value, i + 1);
+            } else {
+                if (value == null) {
+                    System.out.println("" + i + " " + e.getKey() + " " + null);
+                    //System.out.println(" v " + null);
+                }
+            }
+        }
     }
 
     public StockData getStockData(MyMyConfig conf) {

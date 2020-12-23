@@ -115,7 +115,7 @@ public class EvolutionService {
                     newIndicatorMap);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
     
-            findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days);
+            findRecommendSettings(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, stockData.days, datareaders);
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
             return retlist;
@@ -138,7 +138,7 @@ public class EvolutionService {
 
     private void findRecommendSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, int days, Pipeline[] datareaders) throws Exception {
         TaUtil tu = new TaUtil();
         String thresholdString = conf.getTestIndicatorRecommenderComplexThreshold();
         Double[] thresholds = getThresholds(conf, thresholdString);
@@ -147,7 +147,7 @@ public class EvolutionService {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
             if (macdrsiMinMax == null || macdrsiMinMax.length == 1) {
                 int jj = 0;
@@ -297,7 +297,7 @@ public class EvolutionService {
                     newIndicatorMap);
             Map<String, List<String>[]> recommendKeyMap = Recommend.getRecommenderKeyMap(usedRecommenders, indicatorMap, conf);
     
-            findRecommendSettingsNew(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap);
+            findRecommendSettingsNew(conf, evolutionConfig, disableList, table, usedRecommenders, recommendKeyMap, indicatorMap, updateMap, datareaders);
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
             return retlist;
@@ -309,13 +309,13 @@ public class EvolutionService {
 
     private void findRecommendSettingsNew(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
             Map<String, List<Recommend>> usedRecommenders, Map<String, List<String>[]> recommendKeyMap,
-            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap) throws Exception {
+            Map<String, AbstractIndicator> indicatorMap, Map<String, Object> updateMap, Pipeline[] datareaders) throws Exception {
         TaUtil tu = new TaUtil();
         for (Entry<String, List<Recommend>> entry : usedRecommenders.entrySet()) {
             List<AbstractIndicator> indicators = Recommend.getIndicators(entry.getKey(), usedRecommenders, indicatorMap);
             List<String>[] recommendList = recommendKeyMap.get(entry.getKey());
             Recommend recommend = entry.getValue().get(0);
-            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null);
+            Object[] retObj = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, recommend.getFutureDays(), conf.getTableDays(), recommend.getIntervalDays(), null, datareaders);
             List<Double>[] macdrsiMinMax = (List<Double>[]) retObj[1];
             if (macdrsiMinMax.length == 1) {
                 int jj = 0;
