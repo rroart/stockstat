@@ -164,7 +164,7 @@ public class AboveBelowAdviser extends Adviser {
         //List<Pair<String, Double>> valueList = new ArrayList<>();
         for (int i = start; i <= end; i++) {
             List<IncDecItem> valueList = new ArrayList<>();
-            valueMap.put(i, valueList);
+            //valueMap.put(i, valueList);
             int indexOffset = size - 1 - i;
             String dateString = stockDates.get(i);
             LocalDate date = null;
@@ -190,6 +190,7 @@ public class AboveBelowAdviser extends Adviser {
 
             myincs.sort(incDecComparator);   
             mydecs.sort(incDecComparator);   
+            valueMap.put(i, myincs);
 
             //int subListSize = Math.min(buytop, myincs.size());
             //myincs = myincs.subList(0, subListSize);
