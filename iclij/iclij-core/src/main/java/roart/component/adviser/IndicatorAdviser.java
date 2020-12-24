@@ -282,6 +282,7 @@ public abstract class IndicatorAdviser extends Adviser {
                     }
                 }
             }
+            sort(valueList);
             valueMap.put(i, valueList);
         }
         for (Entry<Integer, List<Pair<String, Double>>> entry : valueMap.entrySet()) {
