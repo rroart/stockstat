@@ -105,7 +105,7 @@ public class AboveBelowAdviser extends Adviser {
     
     @Override
     public List<String> getIncs(String aParameter, int buytop,
-            LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
+            int indexOffset, List<String> stockDates, List<String> excludes) {
         this.aParameter = aParameter;
         int idx = stockDates.size() - 1 - indexOffset;
         List<IncDecItem> incdecs = valueMap.get(idx);

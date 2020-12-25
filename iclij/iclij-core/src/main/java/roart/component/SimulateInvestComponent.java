@@ -373,7 +373,7 @@ public class SimulateInvestComponent extends ComponentML {
                         }
                         if (indexOffset - extradelay - adelay >= 0) {
                             mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, myExcludes,
-                                    realParameters, mystocks, date, indexOffset, sells, buys, holdIncrease, extradelay, adelay);
+                                    realParameters, mystocks, indexOffset, sells, buys, holdIncrease, extradelay, adelay);
                         }
                     } else {
                         if (indexOffset - extradelay - delay >= 0) {
@@ -526,19 +526,23 @@ public class SimulateInvestComponent extends ComponentML {
                     log.info("" + simConfig.asMap());
                 }
 
-                if (!evolving && offset == 0) {
+                if (offset == 0) {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("sumhistory", sumHistory);
-                    map.put("stockhistory", stockhistory);
-                    map.put("plotdefault", plotDefault);
-                    map.put("plotdates", plotDates);
-                    map.put("plotcapital", plotCapital);
-                    map.put("startdate", investStart);
-                    map.put("enddate", investEnd);
-                    map.put("titletext", getPipeline() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
-                    param.getUpdateMap().putAll(map);
-                    param.getUpdateMap().putIfAbsent("lastbuysell", "Not buying or selling today");
-                    componentData.getUpdateMap().putAll(map);
+                    if (!evolving) {
+                        map.put("sumhistory", sumHistory);
+                        map.put("stockhistory", stockhistory);
+                        map.put("plotdefault", plotDefault);
+                        map.put("plotdates", plotDates);
+                        map.put("plotcapital", plotCapital);
+                        map.put("startdate", investStart);
+                        map.put("enddate", investEnd);
+                        param.getUpdateMap().putAll(map);
+                        param.getUpdateMap().putIfAbsent("lastbuysell", "Not buying or selling today");
+                        componentData.getUpdateMap().putAll(map);
+                    } else {
+                        map.put("titletext", getPipeline() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                        param.getUpdateMap().putAll(map);
+                    }
                 }
             }
             log.info("time0 {}", System.currentTimeMillis() - time0);
@@ -936,8 +940,8 @@ public class SimulateInvestComponent extends ComponentML {
 
     private List<Astock> confidenceBuyHoldSell(SimulateInvestConfig simConfig, List<String> stockDates,
             Map<String, List<List<Double>>> categoryValueMap, Adviser adviser, List<String> excludeList,
-            Parameters realParameters, List<Astock> mystocks, LocalDate date, int indexOffset, List<Astock> sells,
-            List<Astock> buys, List<Astock> holdIncrease, int extradelay, int delay) {
+            Parameters realParameters, List<Astock> mystocks, int indexOffset, List<Astock> sells, List<Astock> buys,
+            List<Astock> holdIncrease, int extradelay, int delay) {
         List<Astock> hold;
         if (simConfig.getConfidenceholdincrease() == null || simConfig.getConfidenceholdincrease()) {
             hold = holdIncrease;
@@ -953,7 +957,7 @@ public class SimulateInvestComponent extends ComponentML {
 
         // full list
         String aParameter = JsonUtil.convert(realParameters);
-        List<String> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), date, indexOffset, stockDates, anExcludeList);
+        List<String> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), indexOffset, stockDates, anExcludeList);
         myincs = new ArrayList<>(myincs);
         myincs.removeAll(anExcludeList);
         //List<IncDecItem> myincs = ds.getIncs(valueList);
@@ -1263,7 +1267,7 @@ public class SimulateInvestComponent extends ComponentML {
         if (!noconfidence) {
             int delay0 = 0;
             mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, myExcludes, aParameter,
-                    mystocks, date, indexOffset, sells, buys, holdIncrease, extradelay, delay0);
+                    mystocks, indexOffset, sells, buys, holdIncrease, extradelay, delay0);
         } else {
             mystocks = noConfidenceHoldSell(mystocks, holdIncrease, sells, simConfig);
         }

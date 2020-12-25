@@ -36,7 +36,7 @@ public abstract class Adviser {
     }
 
     public abstract List<String> getIncs(String aParameter, int buytop,
-            LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes);
+            int indexOffset, List<String> stockDates, List<String> excludes);
 
     public abstract List<String> getParameters();
 
