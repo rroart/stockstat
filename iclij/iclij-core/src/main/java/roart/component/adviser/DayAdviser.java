@@ -190,11 +190,6 @@ public class DayAdviser extends Adviser {
     }
 
     @Override
-    public double getReliability(LocalDate date, Boolean above) {
-        return 1;
-    }
-
-    @Override
     public void getValueMap(List<String> stockDates, int firstidx, int lastidx,
             Map<String, List<List<Double>>> categoryValueMap2) {
         int start = stockDates.size() - 1 - firstidx;

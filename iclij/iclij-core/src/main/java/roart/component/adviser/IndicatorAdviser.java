@@ -305,11 +305,6 @@ public abstract class IndicatorAdviser extends Adviser {
         return list;
     }
 
-    @Override
-    public double getReliability(LocalDate date, Boolean above) {
-        return 1;
-    }
-    
     protected abstract int getOffset();
 
     protected abstract int getOffset2();

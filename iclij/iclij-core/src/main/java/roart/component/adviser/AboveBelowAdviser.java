@@ -119,42 +119,6 @@ public class AboveBelowAdviser extends Adviser {
         return new MiscUtil().getParameters(allIncDecs);
     }
 
-    @Override
-    public double getReliability(LocalDate date, Boolean above) {
-        int findTimes = simulateConfig.getConfidenceFindTimes();
-        int verificationdays = param.getInput().getConfig().verificationDays();
-        int findTime = market.getConfig().getFindtime();
-        LocalDate oldDate = date.minusDays(verificationdays + findTime);
-        List<MemoryItem> memories = new MiscUtil().getCurrentMemories(oldDate, allMemories, market, findTime * findTimes, false);
-        int abovepositives = 0;
-        int abovesize = 0;
-        int belowpositives = 0;
-        int belowsize = 0;
-        for (MemoryItem memory : memories) {
-            if (memory.getAbovepositives() == null) {
-                int jj = 0;
-            }
-            abovepositives += memory.getAbovepositives();
-            abovesize += memory.getAbovesize();
-            belowpositives += memory.getBelowpositives();
-            belowsize += memory.getBelowsize();
-        }
-        double positives = 0;
-        int size = 0;
-        if (above == null || above == true) {
-            positives += abovepositives;
-            size += abovesize;
-        }
-        if (above == null || above == false) {
-            positives += belowpositives;
-            size += belowsize;
-        }
-        if (size > 0) {
-            return positives / size;
-        }
-        return 0;
-    }
-
     public Map<Integer, List<IncDecItem>> getValues(String aParameter,
             List<String> stockDates, List<String> excludes, int firstidx, int lastidx) {
         Map<Integer, List<IncDecItem>> valueMap = new HashMap<>();

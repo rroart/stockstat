@@ -40,9 +40,6 @@ public abstract class Adviser {
 
     public abstract List<String> getParameters();
 
-    @Deprecated
-    public abstract double getReliability(LocalDate date, Boolean above);
-
     public abstract void getValueMap(List<String> stockDates, int firstidx2, int lastidx2,
             Map<String, List<List<Double>>> categoryValueMap);
 }
