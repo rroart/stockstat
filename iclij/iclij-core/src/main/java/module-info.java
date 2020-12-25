@@ -54,6 +54,7 @@ module iclij.core {
     requires db;
     requires common.communication.model;
     requires common.communication.factory;
+    requires guava;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import roart.action.MarketAction;
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
@@ -120,6 +123,7 @@ public class SimulateInvestComponent extends ComponentML {
         } else {
             stockDates = param.getService().getDates(market.getConfig().getMarket());           
         }
+        BiMap<String, LocalDate> stockDatesBiMap = getStockDatesBiMap(config, stockDates);
         int interval = simConfig.getInterval();
 
         //ComponentData componentData = component.improve2(action, param, market, profitdata, null, buy, subcomponent, parameters, mlTests);
@@ -575,6 +579,30 @@ public class SimulateInvestComponent extends ComponentML {
 
         handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
         return componentData;
+    }
+
+    private BiMap<String, LocalDate> getStockDatesBiMap(IclijConfig config, List<String> stockDates) {
+        String key = CacheConstants.DATESMAP + config.getMarket() + config.getDate();
+        BiMap<String, LocalDate> list =  (BiMap<String, LocalDate>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
+        list = createStockDatesBiMap(stockDates);
+        MyCache.getInstance().put(key, list);
+        return list;
+    }
+
+    private BiMap<String, LocalDate> createStockDatesBiMap(List<String> stockDates) {
+        BiMap<String, LocalDate> biMap = HashBiMap.create();
+        for (String aDate : stockDates) {
+            try {
+                LocalDate date = TimeUtil.convertDate(aDate);
+                biMap.put(aDate, date);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }            
+        }
+        return biMap;
     }
 
     private List<Astock> copy(List<Astock> mystocks) {
