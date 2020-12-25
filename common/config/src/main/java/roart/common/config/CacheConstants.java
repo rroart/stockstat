@@ -7,6 +7,8 @@ public class CacheConstants {
     
     public static final String DATES = "dates";
     
+    public static final String DATESMAP = "datesmap";
+    
     public static final String MARKETS = "markets";
 
     public static final String CONTENT = "content";
