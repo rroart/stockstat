@@ -20,5 +20,7 @@ public class CacheConstants {
     public static final String SIMULATEINVESTTREND = "simulateinvesttrend";
     
     public static final String SIMULATEINVESTADVISER = "simulateinvestadviser";
+
+    public static final String MEMORIES = "memories";
     
 }

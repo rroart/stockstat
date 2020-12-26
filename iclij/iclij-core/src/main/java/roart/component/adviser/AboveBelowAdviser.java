@@ -28,7 +28,7 @@ public class AboveBelowAdviser extends Adviser {
 
     private List<IncDecItem> allIncDecs = null;
 
-    private List<MemoryItem> allMemories = null;
+    //private List<MemoryItem> allMemories = null;
 
     private Map<Integer, List<IncDecItem>> valueMap;
 
@@ -47,11 +47,13 @@ public class AboveBelowAdviser extends Adviser {
         } else {
             getAllIncDecs();
         }
+        /*
         if (simulateParam.getAllMemories() != null) {
             allMemories = simulateParam.getAllMemories();
         } else {
             getAllMemories();
         }
+        */
     }
     
     private void getAllIncDecs() {
@@ -63,6 +65,7 @@ public class AboveBelowAdviser extends Adviser {
         }
     }
     
+    /*
     private void getAllMemories() {
         try {
             allMemories = IclijDbDao.getAllMemories(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.ABOVEBELOW, null, null, investStart, investEnd);
@@ -71,6 +74,7 @@ public class AboveBelowAdviser extends Adviser {
             log.error(Constants.EXCEPTION, e);
         }        
     }
+    */
     
     //@Override
     public List<IncDecItem> getIncs2(String aParameter, int buytop,

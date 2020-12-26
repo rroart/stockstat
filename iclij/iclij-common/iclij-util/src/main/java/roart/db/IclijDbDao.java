@@ -34,9 +34,15 @@ public class IclijDbDao {
     }
 
     public static List<MemoryItem> getAllMemories(String market, String action, String component, String subcomponent, String parameters, LocalDate startDate, LocalDate endDate) throws Exception {
+        String key = CacheConstants.MEMORIES + market + action + component + subcomponent + parameters + startDate + endDate;
+        List<MemoryItem> list =  (List<MemoryItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         long time0 = System.currentTimeMillis();
-        List<MemoryItem> list =  MemoryItem.getAll(market, action, component, subcomponent, parameters, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));
+        list =  MemoryItem.getAll(market, action, component, subcomponent, parameters, TimeUtil.convertDate(startDate), TimeUtil.convertDate(endDate));
         log.info("MemoryItem getall {}", (System.currentTimeMillis() - time0) / 1000);
+        MyCache.getInstance().put(key, list);
         return list;
     }
 
