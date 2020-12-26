@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -190,9 +191,10 @@ public class SimulateInvestComponent extends ComponentML {
             excludes = new String[0];
         }
         List<String> configExcludeList = Arrays.asList(excludes);
+        Set<String> configExcludeSet = new HashSet<>(configExcludeList);
 
         Map<String, List<List<Double>>> filteredCategoryValueMap = new HashMap<>(categoryValueMap);
-        filteredCategoryValueMap.keySet().removeAll(configExcludeList);
+        filteredCategoryValueMap.keySet().removeAll(configExcludeSet);
 
         boolean intervalwhole = config.wantsSimulateInvestIntervalWhole();
         int end = 1;
@@ -259,6 +261,7 @@ public class SimulateInvestComponent extends ComponentML {
                 firstidx = stockDates.size() - 1 - firstidx;
                 lastidx = stockDates.size() - 1 - lastidx;
 
+                // vol lim w/ adviser?
                 String key = CacheConstants.SIMULATEINVESTVOLUMELIMITS + market.getConfig().getMarket() + adviser.getClass().getName() + simConfig.getInterval() + investStart + investEnd;
                 newVolumeMap = (Map<Integer, List<String>>) MyCache.getInstance().get(key);
                 if (newVolumeMap == null) {
@@ -954,12 +957,13 @@ public class SimulateInvestComponent extends ComponentML {
         List<String> ids2 = hold.stream().map(Astock::getId).collect(Collectors.toList());
         anExcludeList.addAll(ids1);
         anExcludeList.addAll(ids2);
-
+        Set<String> anExcludeSet = new LinkedHashSet<>(anExcludeList);
         // full list
         String aParameter = JsonUtil.convert(realParameters);
-        List<String> myincs = adviser.getIncs(aParameter, simConfig.getStocks(), indexOffset, stockDates, anExcludeList);
-        myincs = new ArrayList<>(myincs);
-        myincs.removeAll(anExcludeList);
+        List<String> myincl = adviser.getIncs(aParameter, simConfig.getStocks(), indexOffset, stockDates, anExcludeList);
+        Set<String> myincs = new LinkedHashSet<>(myincl);
+        //myincs = new ArrayList<>(myincs);
+        myincs.removeAll(anExcludeSet);
         //List<IncDecItem> myincs = ds.getIncs(valueList);
         //List<ValueList> valueList = ds.getValueList(categoryValueMap, indexOffset);
 
@@ -1465,7 +1469,7 @@ public class SimulateInvestComponent extends ComponentML {
         return mystocks.stream().filter(e -> !myincids.contains(e.id)).collect(Collectors.toList());
     }
 
-    private List<Astock> getBuyList(Map<String, List<List<Double>>> categoryValueMap, List<String> myincs,
+    private List<Astock> getBuyList(Map<String, List<List<Double>>> categoryValueMap, Set<String> myincs,
             int indexOffset, Integer count) {
         List<Astock> newbuys = new ArrayList<>();
         for (String id : myincs) {
