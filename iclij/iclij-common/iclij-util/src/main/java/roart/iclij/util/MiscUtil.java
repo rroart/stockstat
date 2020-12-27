@@ -453,8 +453,6 @@ public class MiscUtil {
         return incdecs
                 .stream()
                 .map(IncDecItem::getParameters)
-                .collect(Collectors.toList())
-                .stream()
                 .distinct()
                 .collect(Collectors.toList());
      }
