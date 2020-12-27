@@ -247,14 +247,15 @@ public class SimulateInvestComponent extends ComponentML {
                 date = TimeUtil.getForwardEqualAfter2(date, 0 /* findTime */, stockDates);
                 String datestring = TimeUtil.convertDate2(date);
                 int firstidx = TimeUtil.getIndexEqualAfter(stockDates, datestring);
-                firstidx -= interval * 2;
+                int maxinterval = 20;
+                firstidx -= maxinterval * 2;
                 if (firstidx < 0) {
                     firstidx = 0;
                 }
                 
                 String lastInvestEndS = TimeUtil.convertDate2(lastInvestEnd);
                 int lastidx = stockDates.indexOf(lastInvestEndS);
-                lastidx += interval;
+                lastidx += maxinterval;
                 if (lastidx >= stockDates.size()) {
                     lastidx = stockDates.size() - 1;
                 }
