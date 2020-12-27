@@ -546,7 +546,7 @@ public class SimulateInvestComponent extends ComponentML {
                         componentData.getUpdateMap().putAll(map);
                     } else {
                         map.put("titletext", getPipeline() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
-                        param.getUpdateMap().putAll(map);
+                        componentData.getUpdateMap().putAll(map);
                     }
                 }
             }
