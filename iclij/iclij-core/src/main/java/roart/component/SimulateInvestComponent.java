@@ -212,6 +212,7 @@ public class SimulateInvestComponent extends ComponentML {
         // TODO investend and other reset of more params
         Parameters realParameters = parameters;
         if (realParameters == null || realParameters.getThreshold() == 1.0) {
+            String aParameter = JsonUtil.convert(realParameters);
 
             int delay = simConfig.getDelay();
             int totalDelays = extradelay + delay;
@@ -377,7 +378,7 @@ public class SimulateInvestComponent extends ComponentML {
                         }
                         if (indexOffset - extradelay - adelay >= 0) {
                             mystocks = confidenceBuyHoldSell(simConfig, stockDates, categoryValueMap, adviser, myExcludes,
-                                    realParameters, mystocks, indexOffset, sells, buys, holdIncrease, extradelay, adelay);
+                                    aParameter, mystocks, indexOffset, sells, buys, holdIncrease, extradelay, adelay);
                         }
                     } else {
                         if (indexOffset - extradelay - delay >= 0) {
@@ -944,7 +945,7 @@ public class SimulateInvestComponent extends ComponentML {
 
     private List<Astock> confidenceBuyHoldSell(SimulateInvestConfig simConfig, List<String> stockDates,
             Map<String, List<List<Double>>> categoryValueMap, Adviser adviser, List<String> excludeList,
-            Parameters realParameters, List<Astock> mystocks, int indexOffset, List<Astock> sells, List<Astock> buys,
+            String aParameter, List<Astock> mystocks, int indexOffset, List<Astock> sells, List<Astock> buys,
             List<Astock> holdIncrease, int extradelay, int delay) {
         List<Astock> hold;
         if (simConfig.getConfidenceholdincrease() == null || simConfig.getConfidenceholdincrease()) {
@@ -960,7 +961,6 @@ public class SimulateInvestComponent extends ComponentML {
         anExcludeList.addAll(ids2);
         Set<String> anExcludeSet = new LinkedHashSet<>(anExcludeList);
         // full list
-        String aParameter = JsonUtil.convert(realParameters);
         List<String> myincl = adviser.getIncs(aParameter, simConfig.getStocks(), indexOffset, stockDates, anExcludeList);
         Set<String> myincs = new LinkedHashSet<>(myincl);
         //myincs = new ArrayList<>(myincs);
@@ -1238,8 +1238,9 @@ public class SimulateInvestComponent extends ComponentML {
         return average.getAsDouble();
     }
 
-    private void lastbuysell(List<String> stockDates, LocalDate date, Adviser adviser, Capital capital, SimulateInvestConfig simConfig, Map<String, List<List<Double>>> categoryValueMap, List<Astock> mystocks, int extradelay, int prevIndexOffset, Pair<Integer, Integer>[] hits, int findTimes, Parameters aParameter, Map<String, Object> map, Integer[] trendInc, Integer[] trendDec, List<String> configExcludeList, ComponentData param, Market market, int interval, Map<String, List<List<Double>>> filteredCategoryValueMap, Map<String, List<List<Object>>> volumeMap, int delay) {
+    private void lastbuysell(List<String> stockDates, LocalDate date, Adviser adviser, Capital capital, SimulateInvestConfig simConfig, Map<String, List<List<Double>>> categoryValueMap, List<Astock> mystocks, int extradelay, int prevIndexOffset, Pair<Integer, Integer>[] hits, int findTimes, Parameters realParameters, Map<String, Object> map, Integer[] trendInc, Integer[] trendDec, List<String> configExcludeList, ComponentData param, Market market, int interval, Map<String, List<List<Double>>> filteredCategoryValueMap, Map<String, List<List<Object>>> volumeMap, int delay) {
         mystocks = new ArrayList<>(mystocks);
+        String aParameter = JsonUtil.convert(realParameters);
         date = TimeUtil.getForwardEqualAfter2(date, 0 /* findTime */, stockDates);
         String datestring = TimeUtil.convertDate2(date);
         int indexOffset = stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(stockDates, datestring);
