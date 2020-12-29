@@ -85,6 +85,7 @@ public class AboveBelowComponent extends ComponentML {
             List<String> subcomponents = new ArrayList<>();
             getComponentLists(incdecsP, components, subcomponents);
             Parameters realParameters = JsonUtil.convert(aParameter, Parameters.class);
+	    Double threshold = realParameters.getThreshold();
             
             param.getAndSetCategoryValueMap();
             Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
@@ -105,6 +106,12 @@ public class AboveBelowComponent extends ComponentML {
                         .filter(e -> !listComponent2.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
                         .collect(Collectors.toList());
                 List<IncDecItem> myincdecs = allCurrentIncDecs;
+		if (threshold != 1.0) {
+		    myincdecs = myincdecs
+			.stream()
+			.filter(e -> e.isIncrease() == threshold > 1.0)
+			.collect(Collectors.toList());
+		}
                 Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
                 Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
 
@@ -125,6 +132,12 @@ public class AboveBelowComponent extends ComponentML {
             Pair<Long, Integer>[] scores = null;
             {
                 List<IncDecItem> myincdecs = incdecsP;
+		if (threshold != 1.0) {
+		    myincdecs = myincdecs
+			.stream()
+			.filter(e -> e.isIncrease() == threshold > 1.0)
+			.collect(Collectors.toList());
+		}
                 Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
                 Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
                 List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
