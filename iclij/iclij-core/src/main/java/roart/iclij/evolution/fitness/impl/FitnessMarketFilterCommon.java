@@ -1,10 +1,13 @@
 package roart.iclij.evolution.fitness.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -44,11 +47,11 @@ public class FitnessMarketFilterCommon {
         action.fillProfitdata(profitdata, myincdecs);
         action.filterIncDecs(param, market, profitdata, maps, true, stockDates);
         action.filterIncDecs(param, market, profitdata, maps, false, stockDates);
-        List<IncDecItem> myincs = new ArrayList<>(profitdata.getBuys().values());
-        List<IncDecItem> mydecs = new ArrayList<>(profitdata.getSells().values());
+        Set<IncDecItem> myincs = new HashSet<>(profitdata.getBuys().values());
+        Set<IncDecItem> mydecs = new HashSet<>(profitdata.getSells().values());
         myincs = new MiscUtil().mergeList(myincs, true);
         mydecs = new MiscUtil().mergeList(mydecs, true);
-        List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+        Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
             myData.setProfitData(profitdata);
@@ -83,7 +86,7 @@ public class FitnessMarketFilterCommon {
         return incdecFitness;
     }
     
-    public double fitness(List<IncDecItem> myincs, List<IncDecItem> mydecs, List<IncDecItem> myincdec, int minimum, Boolean buy) {
+    public double fitness(Collection<IncDecItem> myincs, Collection<IncDecItem> mydecs, Collection<IncDecItem> myincdec, int minimum, Boolean buy) {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
@@ -135,7 +138,7 @@ public class FitnessMarketFilterCommon {
         return incdecFitness;
     }
     
-    public static Pair<Long, Integer> countsize(List<IncDecItem> list) {
+    public static Pair<Long, Integer> countsize(Collection<IncDecItem> list) {
         List<Boolean> listBoolean = list.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
         long count = listBoolean.stream().filter(i -> i).count();                            
         int size = listBoolean.size();

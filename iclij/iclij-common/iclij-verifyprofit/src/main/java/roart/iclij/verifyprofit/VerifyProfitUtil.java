@@ -2,6 +2,7 @@ package roart.iclij.verifyprofit;
 
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class VerifyProfitUtil {
     }
 
     public void getVerifyProfit(int days, LocalDate date, LocalDate oldDate,
-            List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold, ComponentData componentData, List<String> stockDates, Market market) {
+            Collection<IncDecItem> listInc, Collection<IncDecItem> listDec, Collection<IncDecItem> listIncDec, int startoffset, Double threshold, ComponentData componentData, List<String> stockDates, Market market) {
         componentData = new ComponentData(componentData);
         try {
             componentData.setFuturedays(0);
@@ -60,7 +61,7 @@ public class VerifyProfitUtil {
     }
 
     public void getVerifyProfit(int days, LocalDate date,
-            List<IncDecItem> listInc, List<IncDecItem> listDec, List<IncDecItem> listIncDec, int startoffset, Double threshold, List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap) {
+            Collection<IncDecItem> listInc, Collection<IncDecItem> listDec, Collection<IncDecItem> listIncDec, int startoffset, Double threshold, List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap) {
         log.info("Verify compare date {} with {} threshold {}", date, days, threshold);
     
         VerifyProfit verify = new VerifyProfit();

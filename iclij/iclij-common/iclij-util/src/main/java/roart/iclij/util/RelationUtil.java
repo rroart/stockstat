@@ -24,7 +24,7 @@ import roart.iclij.model.component.ComponentInput;
 import roart.iclij.service.IclijServiceList;
 
 public class RelationUtil {
-    public List[] method(ComponentInput componentInput, List<IncDecItem> listIncDecs) throws Exception {
+    public Set[] method(ComponentInput componentInput, Set<IncDecItem> listIncDecs) throws Exception {
         IclijXMLConfig conf = IclijXMLConfig.instance();
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         /*
@@ -40,20 +40,20 @@ public class RelationUtil {
 
          */
 
-        List<RelationItem> relations = IclijDbDao.getAllRelations();
+        Set<RelationItem> relations = new HashSet<>(IclijDbDao.getAllRelations());
         
         //List<RelationItem> foundRelations = search(listAll, relations);
         
         //List<TimingItem> listAllTimings = TimingItem.getAll();
         //List<TimingItem> currentTimings = getCurrentTimings(date, listAllTimings, IclijConstants.IMPROVEPROFIT);
         //List<IncDecItem> listAll = IncDecItem.getAll();
-        List<IncDecItem> currentIncDecs = listIncDecs;
+        Set<IncDecItem> currentIncDecs = new HashSet<>(listIncDecs);
         //currentIncDecs.addAll(listIncDecs);
         List<Market> markets = conf.getMarkets(instance);
         markets = new MarketUtil().filterMarkets(markets, false);
         
         Set<Pair<String, String>> alreadyDone = new HashSet<>();
-        List<RelationItem> alreadyFound = new ArrayList<>();
+        Set<RelationItem> alreadyFound = new HashSet<>();
         
         for (IncDecItem incdec : currentIncDecs) {
             Pair<String, String> pair = new ImmutablePair(incdec.getMarket(), incdec.getId());
@@ -68,15 +68,15 @@ public class RelationUtil {
             //relation.setOtherId(incdec.getId());
             boolean done = false;
             while (!done) {
-                List<RelationItem> foundRelations2 = searchPartof(relation, relations);
+                Set<RelationItem> foundRelations2 = searchPartof(relation, relations);
                 foundRelations2.removeAll(alreadyFound);
                 if (!foundRelations2.isEmpty()) {
                     int jj = 0;
                 }
                 alreadyFound.addAll(foundRelations2);
-                List<RelationItem> foundRelations4 = new ArrayList<>();
+                Set<RelationItem> foundRelations4 = new HashSet<>();
                 for (RelationItem aRelation : foundRelations2) {
-                    List<RelationItem> foundRelations3 = searchEquivalent(aRelation, relations);
+                    Set<RelationItem> foundRelations3 = searchEquivalent(aRelation, relations);
                     foundRelations3.removeAll(alreadyFound);
                     if (!foundRelations3.isEmpty()) {
                         int jj = 0;
@@ -92,7 +92,7 @@ public class RelationUtil {
         alreadyFound = filter5(alreadyDone, alreadyFound);
         currentIncDecs = filter4(alreadyFound, currentIncDecs);
         
-        List[] retObjects = new ArrayList[2];
+        Set[] retObjects = new HashSet[2];
         retObjects[0] = currentIncDecs;
         retObjects[1] = alreadyFound;
         return retObjects;
@@ -123,8 +123,8 @@ public class RelationUtil {
         return retain;
     }
 
-    private List<IncDecItem> filter4(List<RelationItem> relations, List<IncDecItem> currentIncDecs) {
-        List<IncDecItem> retain = new ArrayList<>();
+    private Set<IncDecItem> filter4(Set<RelationItem> relations, Set<IncDecItem> currentIncDecs) {
+        Set<IncDecItem> retain = new HashSet<>();
         for (IncDecItem item : currentIncDecs) {
             // partof
             // and
@@ -212,8 +212,8 @@ public class RelationUtil {
         return false;
     }
     
-    private List<RelationItem> filter5(Set<Pair<String, String>> done, List<RelationItem> found) {
-        List<RelationItem> retain = new ArrayList<>();
+    private Set<RelationItem> filter5(Set<Pair<String, String>> done, Set<RelationItem> found) {
+        Set<RelationItem> retain = new HashSet<>();
         for (RelationItem aRelation : found) {
             boolean foundLeft = false;
             boolean foundRight = false;
@@ -266,8 +266,8 @@ public class RelationUtil {
      * @return
      */
     
-    private List<RelationItem> searchEquivalent(RelationItem relation, List<RelationItem> relations) {
-        List<RelationItem> retList = new ArrayList<>();
+    private Set<RelationItem> searchEquivalent(RelationItem relation, Set<RelationItem> relations) {
+        Set<RelationItem> retList = new HashSet<>();
 
         String market = relation.getMarket();
         String id = relation.getId();
@@ -280,7 +280,7 @@ public class RelationUtil {
         return retList;
     }
 
-    private void searchEquivalentInner(List<RelationItem> relations, List<RelationItem> retList, String market,
+    private void searchEquivalentInner(Set<RelationItem> relations, Set<RelationItem> retList, String market,
             String id) {
         for (RelationItem aRelation : relations) {
             if (aRelation.getType().equals(RelationConstants.EQUIVALENT)) {
@@ -324,8 +324,8 @@ public class RelationUtil {
      * @return found relations
      */
     
-    private List<RelationItem> searchPartof(RelationItem relation, List<RelationItem> relations) {
-        List<RelationItem> retList = new ArrayList<>();
+    private Set<RelationItem> searchPartof(RelationItem relation, Set<RelationItem> relations) {
+        Set<RelationItem> retList = new HashSet<>();
         String market = relation.getMarket();
         String id = relation.getId();
         

@@ -108,13 +108,13 @@ public class AboveBelowAdviser extends Adviser {
             List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
 
             List<IncDecItem> myincdecs = incdecsP;
-            List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-            List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
+            Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
+            Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
             List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
 
             myincs = new MiscUtil().mergeList(myincs, true);
             mydecs = new MiscUtil().mergeList(mydecs, true);
-            List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+            Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
 
             Comparator<IncDecItem> incDecComparator = (IncDecItem comp1, IncDecItem comp2) -> comp2.getScore().compareTo(comp1.getScore());
 

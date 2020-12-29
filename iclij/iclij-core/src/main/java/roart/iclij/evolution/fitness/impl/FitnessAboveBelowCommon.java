@@ -1,6 +1,7 @@
 package roart.iclij.evolution.fitness.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +33,7 @@ public class FitnessAboveBelowCommon {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public double fitness(List<IncDecItem> myincs, List<IncDecItem> mydecs, List<IncDecItem> myincdec, int minimum, Boolean buy) {
+    public double fitness(Collection<IncDecItem> myincs, Collection<IncDecItem> mydecs, Collection<IncDecItem> myincdec, int minimum, Boolean buy) {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
@@ -84,7 +85,7 @@ public class FitnessAboveBelowCommon {
         return incdecFitness;
     }
     
-    public Pair<Long, Integer>[] fitness2(List<IncDecItem> myincs, List<IncDecItem> mydecs, List<IncDecItem> myincdec, int minimum, Boolean buy) {
+    public Pair<Long, Integer>[] fitness2(Collection<IncDecItem> myincs, Collection<IncDecItem> mydecs, Collection<IncDecItem> myincdec, int minimum, Boolean buy) {
         double incdecFitness;
         int fitnesses = 0;
         double decfitness = 0;
@@ -178,11 +179,11 @@ public class FitnessAboveBelowCommon {
         
         Set<IncDecItem> myincdecs = new HashSet<>(new MiscUtil().getIncDecsWithComponent(incdecs, mycomponents));
         myincdecs.addAll(new MiscUtil().getIncDecsWithSubcomponent(incdecs, mysubcomponents));
-        List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-        List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
+        Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
+        Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
         myincs = new MiscUtil().mergeList(myincs, true);
         mydecs = new MiscUtil().mergeList(mydecs, true);
-        List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+        Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();
             myData.setProfitData(profitdata);
@@ -216,7 +217,7 @@ public class FitnessAboveBelowCommon {
         return incdecFitness;
     }
 
-    public static Pair<Long, Integer> countsize(List<IncDecItem> list) {
+    public static Pair<Long, Integer> countsize(Collection<IncDecItem> list) {
         List<Boolean> listBoolean = list.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
         long count = listBoolean.stream().filter(i -> i).count();                            
         int size = listBoolean.size();
@@ -224,7 +225,7 @@ public class FitnessAboveBelowCommon {
 
     }
     
-    public static Pair<Long, Integer> countsize(List<IncDecItem> list, boolean above) {
+    public static Pair<Long, Integer> countsize(Collection<IncDecItem> list, boolean above) {
         list = list.stream().filter(e -> e.isIncrease() == above).collect(Collectors.toList());
         List<Boolean> listBoolean = list.stream().map(IncDecItem::getVerified).filter(Objects::nonNull).collect(Collectors.toList());
         long count = listBoolean.stream().filter(i -> i).count();                            

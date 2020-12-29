@@ -105,12 +105,12 @@ public class AboveBelowComponent extends ComponentML {
                         .filter(e -> !listComponent2.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
                         .collect(Collectors.toList());
                 List<IncDecItem> myincdecs = allCurrentIncDecs;
-                List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-                List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
+                Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
+                Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
 
                 myincs = new MiscUtil().mergeList(myincs, true);
                 mydecs = new MiscUtil().mergeList(mydecs, true);
-                List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+                Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                 short startoffset = new MarketUtil().getStartoffset(market);
 
                 new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, categoryValueMap);
@@ -125,13 +125,13 @@ public class AboveBelowComponent extends ComponentML {
             Pair<Long, Integer>[] scores = null;
             {
                 List<IncDecItem> myincdecs = incdecsP;
-                List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-                List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
+                Set<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toSet());
+                Set<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toSet());
                 List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
 
                 myincs = new MiscUtil().mergeList(myincs, true);
                 mydecs = new MiscUtil().mergeList(mydecs, true);
-                List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
+                Set<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                 short startoffset = new MarketUtil().getStartoffset(market);
                 new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, param.getCategoryValueMap());
                 score = fitCommon.fitness(myincs, mydecs, myincdec, 0, null);
@@ -414,8 +414,8 @@ public class AboveBelowComponent extends ComponentML {
                 }
 
             }
-            List<String> incIds = incdecList.stream().filter(e -> e.isIncrease()).map(IncDecItem::getId).collect(Collectors.toList());
-            List<String> decIds = incdecList.stream().filter(e -> !e.isIncrease()).map(IncDecItem::getId).collect(Collectors.toList());
+            Set<String> incIds = incdecList.stream().filter(e -> e.isIncrease()).map(IncDecItem::getId).collect(Collectors.toSet());
+            Set<String> decIds = incdecList.stream().filter(e -> !e.isIncrease()).map(IncDecItem::getId).collect(Collectors.toSet());
             incIds.retainAll(decIds);
             //long listBoolean = memoryList.stream().filter(e -> e.isIncrease()).count();
             //long listBoolean2 = memoryList.stream().filter(e -> !e.isIncrease()).count();

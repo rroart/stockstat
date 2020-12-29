@@ -7,11 +7,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -198,31 +201,31 @@ public class MiscUtil {
         return listAll.stream().filter(m -> subcomponents.contains(m.getSubcomponent())).collect(Collectors.toList());
     }
 
-    public List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec) {
+    public Set<IncDecItem> moveAndGetCommon(Set<IncDecItem> listInc, Set<IncDecItem> listDec) {
         // and a new list for common items
-        List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
-        List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
-        List<String> commonIds = new ArrayList<>(incIds);
+        Set<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toSet());
+        Set<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toSet());
+        Set<String> commonIds = new HashSet<>(incIds);
         commonIds.retainAll(decIds);
-        List<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toList());
-        common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toList()));
+        Set<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet());
+        common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet()));
         listInc.removeAll(common);
         listDec.removeAll(common);
         return common;
     }
 
-    public List<IncDecItem> moveAndGetCommon(List<IncDecItem> listInc, List<IncDecItem> listDec, boolean verify) {
+    public Set<IncDecItem> moveAndGetCommon(Set<IncDecItem> listInc, Set<IncDecItem> listDec, boolean verify) {
         // and a new list for common items
-        List<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toList());
-        List<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toList());
-        List<String> commonIds = new ArrayList<>(incIds);
+        Set<String> incIds = listInc.stream().map(IncDecItem::getId).collect(Collectors.toSet());
+        Set<String> decIds = listDec.stream().map(IncDecItem::getId).collect(Collectors.toSet());
+        Set<String> commonIds = new HashSet<>(incIds);
         commonIds.retainAll(decIds);
-        List<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toList());
-        common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toList()));
+        Set<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet());
+        common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId())).collect(Collectors.toSet()));
         listInc.removeAll(common);
         listDec.removeAll(common);
         if (true) {
-            List<IncDecItem> mergecommon = new ArrayList<>();
+            Set<IncDecItem> mergecommon = new HashSet<>();
             for (String id : commonIds) {
                 IncDecItem inc = common.stream().filter(item -> id.equals(item.getId()) && item.isIncrease()).findAny().orElse(null);
                 IncDecItem dec = common.stream().filter(item -> id.equals(item.getId()) && !item.isIncrease()).findAny().orElse(null);
@@ -245,26 +248,26 @@ public class MiscUtil {
         return common;
     }
 
-    public List<IncDecItem> moveAndGetCommon2(List<IncDecItem> listInc, List<IncDecItem> listDec, boolean verify) {
+    public Set<IncDecItem> moveAndGetCommon2(Set<IncDecItem> listInc, Set<IncDecItem> listDec, boolean verify) {
         // and a new list for common items
-        List<String> incIds = new ArrayList<>();
+        Set<String> incIds = new HashSet<>();
         for (IncDecItem item : listInc) {
             String id = item.getId() + item.getDate().toString();
             incIds.add(id);
         }
-        List<String> decIds = new ArrayList<>();
+        Set<String> decIds = new HashSet<>();
         for (IncDecItem item : listDec) {
             String id = item.getId() + item.getDate().toString();
             decIds.add(id);
         }
-        List<String> commonIds = new ArrayList<>(incIds);
+        Set<String> commonIds = new HashSet<>(incIds);
         commonIds.retainAll(decIds);
-        List<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId() + m.getDate().toString())).collect(Collectors.toList());
-        common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId() + m.getDate().toString())).collect(Collectors.toList()));
+        Set<IncDecItem> common = listInc.stream().filter(m -> commonIds.contains(m.getId() + m.getDate().toString())).collect(Collectors.toSet());
+        common.addAll(listDec.stream().filter(m -> commonIds.contains(m.getId() + m.getDate().toString())).collect(Collectors.toSet()));
         listInc.removeAll(common);
         listDec.removeAll(common);
         if (true) {
-            List<IncDecItem> mergecommon = new ArrayList<>();
+            Set<IncDecItem> mergecommon = new HashSet<>();
             for (String id : commonIds) {
                 IncDecItem inc = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && item.isIncrease()).findAny().orElse(null);
                 IncDecItem dec = common.stream().filter(item -> id.equals(item.getId() + item.getDate().toString()) && !item.isIncrease()).findAny().orElse(null);
@@ -417,7 +420,7 @@ public class MiscUtil {
         return retList;
     }
 
-    public List<IncDecItem> mergeList(List<IncDecItem> itemList, boolean splitid) {
+    public Set<IncDecItem> mergeList(Collection<IncDecItem> itemList, boolean splitid) {
         Map<String, IncDecItem> map = new HashMap<>();
         for (IncDecItem item : itemList) {
             String id;
@@ -446,7 +449,7 @@ public class MiscUtil {
                 getItem.setDescription(getItem.getDescription() + ", " + item.getDescription());
             }
         }
-        return new ArrayList<>(map.values());
+        return new HashSet<>(map.values());
     }
 
     public List<String> getParameters(List<IncDecItem> incdecs) {

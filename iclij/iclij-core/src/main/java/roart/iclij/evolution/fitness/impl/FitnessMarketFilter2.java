@@ -2,10 +2,13 @@ package roart.iclij.evolution.fitness.impl;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -101,9 +104,9 @@ public class FitnessMarketFilter2 {
         myData.setTimingMap(new HashMap<>());
         int b = param.getService().conf.hashCode();
         boolean c = param.getService().conf.wantIndicatorRecommender();
-        List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
-        List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
-        List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
+        Set<IncDecItem> listInc = new HashSet<>(profitdata.getBuys().values());
+        Set<IncDecItem> listDec = new HashSet<>(profitdata.getSells().values());
+        Set<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
         incProp = extracted(chromosome, myData, listInc, listDec, mlTests);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
@@ -185,7 +188,7 @@ public class FitnessMarketFilter2 {
         return incdecFitness;
     }
 
-    public Trend extracted(MarketFilterChromosome chromosome, WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec, List<MLMetricsItem> mlTests) {
+    public Trend extracted(MarketFilterChromosome chromosome, WebData myData, Collection<IncDecItem> listInc, Collection<IncDecItem> listDec, List<MLMetricsItem> mlTests) {
         Trend incProp = null;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();

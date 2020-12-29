@@ -101,9 +101,9 @@ public class FitnessMarketFilter extends Fitness {
         myData.setTimingMap(new HashMap<>());
         int b = param.getService().conf.hashCode();
         boolean c = param.getService().conf.wantIndicatorRecommender();
-        List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
-        List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
-        List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
+        Set<IncDecItem> listInc = new HashSet<>(profitdata.getBuys().values());
+        Set<IncDecItem> listDec = new HashSet<>(profitdata.getSells().values());
+        Set<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
         Trend incProp1 = null;
         try {

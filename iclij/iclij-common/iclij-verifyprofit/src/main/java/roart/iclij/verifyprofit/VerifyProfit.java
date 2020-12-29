@@ -2,6 +2,7 @@ package roart.iclij.verifyprofit;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +51,7 @@ public class VerifyProfit {
         }
     }
 
-    public void doVerify(List<IncDecItem> list, int days, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold, List<String> stockDates) {
+    public void doVerify(Collection<IncDecItem> list, int days, Map<String, List<List<Double>>> categoryValueMap, LocalDate date, int startoffset, Double threshold, List<String> stockDates) {
         if (days <= 0) {
             return;
         }
@@ -237,6 +238,10 @@ public class VerifyProfit {
                         if (valFuture < valNow) {
                             trend.down++;
                         }
+                        double v = valFuture / valNow;
+                        if (v < 0) {
+                            int jj = 0;
+                        }
                         incs.add(valFuture / valNow);
                         count++;
                     } else {
@@ -258,6 +263,9 @@ public class VerifyProfit {
             trend.min = Collections.min(incs);
             trend.max = Collections.max(incs);
             trend.stats = incs.stream().filter(Objects::nonNull).mapToDouble(e -> (Double) e).summaryStatistics().toString();
+            if (trend != null && trend.incAverage < 0) {
+                int jj = 0;
+            }
         }
         return trendMap;
     }

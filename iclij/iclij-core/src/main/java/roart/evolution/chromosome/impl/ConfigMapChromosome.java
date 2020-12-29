@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -179,9 +182,9 @@ public class ConfigMapChromosome extends AbstractChromosome {
         myData.setTimingMap(new HashMap<>());
         int b = param.getService().conf.hashCode();
         boolean c = param.getService().conf.wantIndicatorRecommender();
-        List<IncDecItem> listInc = new ArrayList<>(profitdata.getBuys().values());
-        List<IncDecItem> listDec = new ArrayList<>(profitdata.getSells().values());
-        List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
+        Set<IncDecItem> listInc = new HashSet<>(profitdata.getBuys().values());
+        Set<IncDecItem> listDec = new HashSet<>(profitdata.getSells().values());
+        Set<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec);
         Trend incProp = null;
         incProp = extracted(myData, listInc, listDec);
 
@@ -260,7 +263,7 @@ public class ConfigMapChromosome extends AbstractChromosome {
         return incdecFitness;
     }
 
-    public Trend extracted(WebData myData, List<IncDecItem> listInc, List<IncDecItem> listDec) {
+    public Trend extracted(WebData myData, Collection<IncDecItem> listInc, Collection<IncDecItem> listDec) {
         Trend incProp = null;
         try {
             int verificationdays = param.getInput().getConfig().verificationDays();

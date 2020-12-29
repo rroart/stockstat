@@ -178,7 +178,7 @@ public class ServiceUtil {
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
 
         List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
-        List<IncDecItem> listRel = new ArrayList<>();
+        Set<IncDecItem> listRel = new HashSet<>();
         List<IclijServiceList> lists = new ArrayList<>();
         lists.add(getHeader("Content"));
         Map<String, Object> trendMap = new HashMap<>();
@@ -223,15 +223,15 @@ public class ServiceUtil {
                     .filter(e -> !memories.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
                     .collect(Collectors.toList());
             
-            Map<String, List<IncDecItem>> currentIncDecMap = splitParam(allCurrentIncDecs);
-            for (Entry<String, List<IncDecItem>> entry : currentIncDecMap.entrySet()) {
+            Map<String, Set<IncDecItem>> currentIncDecMap = splitParam(allCurrentIncDecs);
+            for (Entry<String, Set<IncDecItem>> entry : currentIncDecMap.entrySet()) {
                 String key = entry.getKey();
-                List<IncDecItem> currentIncDecs = entry.getValue();
-                List<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toList());
-                List<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toList());
+                Set<IncDecItem> currentIncDecs = entry.getValue();
+                Set<IncDecItem> listInc = currentIncDecs.stream().filter(m -> m.isIncrease()).collect(Collectors.toSet());
+                Set<IncDecItem> listDec = currentIncDecs.stream().filter(m -> !m.isIncrease()).collect(Collectors.toSet());
                 listInc = new MiscUtil().mergeList(listInc, false);
                 listDec = new MiscUtil().mergeList(listDec, false);
-                List<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
+                Set<IncDecItem> listIncDec = new MiscUtil().moveAndGetCommon(listInc, listDec, true);
                 List<IclijServiceList> subLists = getServiceList(market.getConfig().getMarket(), key, listInc, listDec, listIncDec);
                 lists.addAll(subLists);
                 listRel.addAll(listInc);
@@ -279,8 +279,8 @@ public class ServiceUtil {
         memories.method(currentList, config);
      }
 
-    private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, List<IncDecItem> listIncDecs) throws Exception {
-        List[] objects = new RelationUtil().method(componentInput, listIncDecs);
+    private static void addRelations(ComponentInput componentInput, List<IclijServiceList> lists, Set<IncDecItem> listIncDecs) throws Exception {
+        Set[] objects = new RelationUtil().method(componentInput, listIncDecs);
 
         IclijServiceList incdecs = new IclijServiceList();
         incdecs.setTitle("Incdecs with relations");
@@ -630,8 +630,8 @@ public class ServiceUtil {
         }
         return subLists;
     }
-    static List<IclijServiceList> getServiceList(String market, String text, List<IncDecItem> listInc, List<IncDecItem> listDec,
-            List<IncDecItem> listIncDec) {
+    static List<IclijServiceList> getServiceList(String market, String text, Set<IncDecItem> listInc, Set<IncDecItem> listDec,
+            Set<IncDecItem> listIncDec) {
         List<IclijServiceList> subLists = new ArrayList<>();
         roundList(listInc);
         roundList(listDec);
@@ -750,8 +750,8 @@ public class ServiceUtil {
         String baseDateStr = TimeUtil.convertDate2(param.getBaseDate());
         String futureDateStr = TimeUtil.convertDate2(param.getFutureDate());
         log.info("Base future date {} {}", baseDateStr, futureDateStr);
-        List<IncDecItem> allListInc = new ArrayList<>(myData.getIncs());
-        List<IncDecItem> allListDec = new ArrayList<>(myData.getDecs());
+        Set<IncDecItem> allListInc = new HashSet<>(myData.getIncs());
+        Set<IncDecItem> allListDec = new HashSet<>(myData.getDecs());
         allListInc = new MiscUtil().mergeList(allListInc, !rerun);
         allListDec = new MiscUtil().mergeList(allListDec, !rerun);
 
@@ -766,38 +766,38 @@ public class ServiceUtil {
         allListInc = allListInc
                 .stream()
                 .filter(e -> !memoryFilter.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         allListDec = allListDec
                 .stream()
                 .filter(e -> !memoryFilter.containsBelow(e.getComponent(), new ImmutablePair(e.getSubcomponent(), e.getLocalcomponent()), null, null, true))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         
-        List<IncDecItem> allListIncDec;
+        Set<IncDecItem> allListIncDec;
         if (rerun) {
             allListIncDec = new MiscUtil().moveAndGetCommon(allListInc, allListDec, verificationdays > 0);
         } else {
             allListIncDec = new MiscUtil().moveAndGetCommon2(allListInc, allListDec, verificationdays > 0);
         }
-        Map<String, List<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
-        Map<String, List<IncDecItem>> allListIncMap = splitParam(allListInc);
-        Map<String, List<IncDecItem>> allListDecMap = splitParam(allListDec);
+        Map<String, Set<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
+        Map<String, Set<IncDecItem>> allListIncMap = splitParam(allListInc);
+        Map<String, Set<IncDecItem>> allListDecMap = splitParam(allListDec);
         Set<String> allKeys = new HashSet<>();
         allKeys.addAll(allListIncDecMap.keySet());
         allKeys.addAll(allListDecMap.keySet());
         allKeys.addAll(allListIncMap.keySet());
         for (String key : allKeys) {
-            List<IncDecItem> listIncDec = allListIncDecMap.get(key);
-            List<IncDecItem> listInc = allListIncMap.get(key);
-            List<IncDecItem> listDec = allListDecMap.get(key);
+            Set<IncDecItem> listIncDec = allListIncDecMap.get(key);
+            Set<IncDecItem> listInc = allListIncMap.get(key);
+            Set<IncDecItem> listDec = allListDecMap.get(key);
             if (listIncDec == null) {
-                listIncDec = new ArrayList<>();
+                listIncDec = new HashSet<>();
             }
             if (listDec == null) {
-                listDec = new ArrayList<>();
+                listDec = new HashSet<>();
             }
             if (listInc == null) {
-                listInc = new ArrayList<>();
+                listInc = new HashSet<>();
             }
             if (verificationdays > 0) {
                 if (rerun) {
@@ -830,7 +830,7 @@ public class ServiceUtil {
         IclijServiceList trends = convert(trendMap);
         retLists.add(trends);
 
-        List<IncDecItem> currentIncDecs = new ArrayList<>();
+        Set<IncDecItem> currentIncDecs = new HashSet<>();
         List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
         List<Market> markets = conf.getMarkets(instance);
         markets = new MarketUtil().filterMarkets(markets, false);
@@ -901,35 +901,35 @@ public class ServiceUtil {
         String baseDateStr = TimeUtil.convertDate2(param.getBaseDate());
         String futureDateStr = TimeUtil.convertDate2(param.getFutureDate());
         log.info("Base future date {} {}", baseDateStr, futureDateStr);
-        List<IncDecItem> allListInc = new ArrayList<>(myData.getIncs());
-        List<IncDecItem> allListDec = new ArrayList<>(myData.getDecs());
+        Set<IncDecItem> allListInc = new HashSet<>(myData.getIncs());
+        Set<IncDecItem> allListDec = new HashSet<>(myData.getDecs());
         allListInc = new MiscUtil().mergeList(allListInc, !rerun);
         allListDec = new MiscUtil().mergeList(allListDec, !rerun);
-        List<IncDecItem> allListIncDec;
+        Set<IncDecItem> allListIncDec;
         if (rerun) {
             allListIncDec = new MiscUtil().moveAndGetCommon(allListInc, allListDec, verificationdays > 0);
         } else {
             allListIncDec = new MiscUtil().moveAndGetCommon2(allListInc, allListDec, verificationdays > 0);
         }
-        Map<String, List<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
-        Map<String, List<IncDecItem>> allListIncMap = splitParam(allListInc);
-        Map<String, List<IncDecItem>> allListDecMap = splitParam(allListDec);
+        Map<String, Set<IncDecItem>> allListIncDecMap = splitParam(allListIncDec);
+        Map<String, Set<IncDecItem>> allListIncMap = splitParam(allListInc);
+        Map<String, Set<IncDecItem>> allListDecMap = splitParam(allListDec);
         Set<String> allKeys = new HashSet<>();
         allKeys.addAll(allListIncDecMap.keySet());
         allKeys.addAll(allListDecMap.keySet());
         allKeys.addAll(allListIncMap.keySet());
         for (String key : allKeys) {
-            List<IncDecItem> listIncDec = allListIncDecMap.get(key);
-            List<IncDecItem> listInc = allListIncMap.get(key);
-            List<IncDecItem> listDec = allListDecMap.get(key);
+            Set<IncDecItem> listIncDec = allListIncDecMap.get(key);
+            Set<IncDecItem> listInc = allListIncMap.get(key);
+            Set<IncDecItem> listDec = allListDecMap.get(key);
             if (listIncDec == null) {
-                listIncDec = new ArrayList<>();
+                listIncDec = new HashSet<>();
             }
             if (listDec == null) {
-                listDec = new ArrayList<>();
+                listDec = new HashSet<>();
             }
             if (listInc == null) {
-                listInc = new ArrayList<>();
+                listInc = new HashSet<>();
             }
             if (verificationdays > 0) {
                 if (rerun) {
@@ -959,7 +959,7 @@ public class ServiceUtil {
         IclijServiceList updates = convert(market.getConfig().getMarket(), updateMap);
         retLists.add(updates);
 
-        List<IncDecItem> currentIncDecs = new ArrayList<>();
+        Set<IncDecItem> currentIncDecs = new HashSet<>();
         List<IncDecItem> listAll = IclijDbDao.getAllIncDecs();
         List<Market> markets = conf.getMarkets(instance);
         markets = new MarketUtil().filterMarkets(markets, false);
@@ -1245,7 +1245,7 @@ public class ServiceUtil {
     }
      */
 
-    private static void wipeFields(List<IncDecItem> list) {
+    private static void wipeFields(Collection<IncDecItem> list) {
         for (IncDecItem item : list) {
             item.setComponent(null);
             item.setLocalcomponent(null);
@@ -1253,7 +1253,7 @@ public class ServiceUtil {
         }
     }
     
-    private static void roundList(List<IncDecItem> list) {
+    private static void roundList(Collection<IncDecItem> list) {
         for (IncDecItem item : list) {
             Double score = item.getScore();
             if (score != null) {
@@ -1357,13 +1357,13 @@ public class ServiceUtil {
         }        
     }
 
-    public static Map<String, List<IncDecItem>> splitParam(List<IncDecItem> items) {
-        Map<String, List<IncDecItem>> mymap = new HashMap<String, List<IncDecItem>>();
+    public static Map<String, Set<IncDecItem>> splitParam(Collection<IncDecItem> items) {
+        Map<String, Set<IncDecItem>> mymap = new HashMap<String, Set<IncDecItem>>();
         for (IncDecItem item : items) {
             String key = item.getParameters();
-            List<IncDecItem> itemlist = mymap.get(key);
+            Set<IncDecItem> itemlist = mymap.get(key);
             if (itemlist == null) {
-                itemlist = new ArrayList<IncDecItem>();
+                itemlist = new HashSet<>();
                 mymap.put(key, itemlist);
             }
             itemlist.add(item);
