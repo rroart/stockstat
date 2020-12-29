@@ -284,11 +284,11 @@ public class ServiceUtil {
 
         IclijServiceList incdecs = new IclijServiceList();
         incdecs.setTitle("Incdecs with relations");
-        incdecs.setList(objects[0]);
+        incdecs.setList(new ArrayList<>((objects[0])));
 
         IclijServiceList relations = new IclijServiceList();
         relations.setTitle("Relations");
-        relations.setList(objects[1]);
+        relations.setList(new ArrayList<>(objects[1]));
 
         lists.add(incdecs);
         lists.add(relations);
@@ -642,7 +642,7 @@ public class ServiceUtil {
             IclijServiceList inc = new IclijServiceList();
             String trendStr = "";
             inc.setTitle(market + " " + "Increase " + text + " ( verified " + count + " / " + listIncBoolean.size() + " )" + trendStr);
-            inc.setList(listInc);
+            inc.setList(new ArrayList<>(listInc));
             subLists.add(inc);
         }
         if (!listDec.isEmpty()) {
@@ -650,7 +650,7 @@ public class ServiceUtil {
             long count = listDecBoolean.stream().filter(i -> i).count();                            
             IclijServiceList dec = new IclijServiceList();
             dec.setTitle(market + " " + "Decrease " + text + " ( verified " + count + " / " + listDecBoolean.size() + " )");
-            dec.setList(listDec);
+            dec.setList(new ArrayList<>(listDec));
             subLists.add(dec);
         }
         if (!listIncDec.isEmpty()) {
@@ -658,7 +658,7 @@ public class ServiceUtil {
             long count = listIncDecBoolean.stream().filter(i -> i).count();                            
             IclijServiceList incDec = new IclijServiceList();
             incDec.setTitle(market + " " + "Increase and decrease " + text + "( verified " + count + " / " + listIncDecBoolean.size() + " )" );
-            incDec.setList(listIncDec);
+            incDec.setList(new ArrayList<>(listIncDec));
             subLists.add(incDec);
         }
         wipeFields(listInc);
