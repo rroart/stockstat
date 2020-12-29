@@ -4,6 +4,7 @@
       <sparkmaster>$SPARKMASTER</sparkmaster>
     </spark>
     <hibernate enable='false'/>
+    <maxholes>0</maxholes>
   </database>
   <machinelearning enable='$MACHINELEARNING'>
     <mp enable='true'>
@@ -137,6 +138,9 @@
     <mygraphequalizeunify enable='true'/>
     <threshold>[ 1.0 ]</threshold>
     <!--threshold>[ 0.90, 0.95, 1.0, 1.05, 1.10 ]</threshold-->
+    <cache enable='$CACHE'>
+      <ttl>$CACHETTL</ttl>
+    </cache>
   </misc>
   <evolve>
     <indicatorrecommender>

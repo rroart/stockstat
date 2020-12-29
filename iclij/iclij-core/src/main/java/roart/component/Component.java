@@ -44,6 +44,7 @@ import roart.constants.IclijConstants;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.ConfigMapChromosome2;
+import roart.evolution.chromosome.winner.ChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.fitness.Fitness;
 import roart.evolution.species.Individual;
@@ -170,7 +171,7 @@ public abstract class Component {
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
         long time0 = System.currentTimeMillis();
-        if (!IclijConstants.EVOLVE.equals(param.getAction()) && !IclijConstants.DATASET.equals(param.getAction()) && !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction())) {
+        if (!IclijConstants.EVOLVE.equals(param.getAction()) && !IclijConstants.DATASET.equals(param.getAction()) && !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction()) && !IclijConstants.SIMULATEINVEST.equals(param.getAction()) && !IclijConstants.IMPROVESIMULATEINVEST.equals(param.getAction())) {
             Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
             param.setCategory(resultMaps);
             param.getAndSetCategoryValueMap();
@@ -201,6 +202,19 @@ public abstract class Component {
                     if (result[2] != null) {
                         description =  (String) result[2] + " " + description;
                     }
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+            if (IclijConstants.SIMULATEINVEST.equals(param.getAction()) ) {
+                Map<String, Double> scoreMap2 = param.getScoreMap();
+                try {
+                    score = scoreMap2
+                            .values()
+                            .stream()
+                            .mapToDouble(e -> (Double) e)
+                            .max()
+                            .orElse(-1);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -455,10 +469,11 @@ public abstract class Component {
         long time0 = System.currentTimeMillis();
         Map<String, Object> confMap = new HashMap<>();
         EvolutionConfig evolutionConfig = getImproveEvolutionConfig(param.getInput().getConfig());
-        double score = evolveJ.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap,
-                evolutionConfig, getPipeline());
+        param = evolveJ.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap,
+                evolutionConfig, getPipeline(), null, null);
         try {
             // fix mlmarket;
+            double score = 0;
             TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);
             configSaves(param, confMap, subcomponent);

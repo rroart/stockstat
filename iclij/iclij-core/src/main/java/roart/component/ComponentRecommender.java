@@ -28,6 +28,7 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.RecommenderData;
 import roart.evolution.chromosome.impl.RecommenderChromosome;
+import roart.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.evolution.fitness.AbstractScore;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.gene.impl.ConfigMapGene;

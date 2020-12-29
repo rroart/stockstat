@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.constants.CategoryConstants;
+import roart.common.constants.Constants;
+
 import com.google.common.collect.Range;
 
 public class ArraysUtil {
@@ -299,7 +301,7 @@ public class ArraysUtil {
     }
 
     public static double[] getPercentizedPriceIndex(double[] list, double first) {
-        if (list == null || list.length == 0) {
+        if (list == null || list.length == 0 || first == 0) {
             return list;
         }
         double[] retlist = new double[list.length];
@@ -573,13 +575,14 @@ public class ArraysUtil {
     /**
      * Goes through the array, smoothes out missing values (by using the previous),
      * or nulls out, depending or whether a max number was passed
-     * 
-     * @param doubles
      * @param maxHoleNumber
+     * @param interpolationmethod TODO
+     * @param doubles
+     * 
      * @return Fixed array
      */
 
-    public static Double[] fixMapHoles(Double[] srcArray, Double[] dstArray, int maxHoleNumber) {
+    public static Double[] fixMapHoles(Double[] srcArray, Double[] dstArray, int maxHoleNumber, String interpolationmethod) {
         int length = srcArray.length;
         if (dstArray == null) {
             dstArray = srcArray;
@@ -599,7 +602,7 @@ public class ArraysUtil {
         for (int i = start; i >= 0; i--) {
             i = searchBackwardNull(dstArray, i);
             int j = searchBackwardNonNull(dstArray, i);
-            if (i - j > maxHoleNumber) {
+            if (maxHoleNumber > 0 && i - j > maxHoleNumber) {
                 for (int k = 0; k <= i; k++) {
                     dstArray[k] = null;
                 }
@@ -614,7 +617,10 @@ public class ArraysUtil {
                 if (j < 0) {
                     return dstArray;
                 }
-                double diff = (dstArray[i + 1] - dstArray[j]) / 3;
+                double diff = (dstArray[i + 1] - dstArray[j]) / (i + 1 - j);
+                if (Constants.FFILL.equals(interpolationmethod)) {
+                    diff = 0;
+                }
                 for (int k = j + 1; k <= i; k++) {
                     dstArray[k] = dstArray[j] + diff * (k - j);
                 }
@@ -695,7 +701,7 @@ public class ArraysUtil {
         if (nextlastoffset < 2) {
             int jj = 0;
         }
-        System.out.println("" + nextlastoffset);
+        //System.out.println("" + nextlastoffset);
         nextlastoffset = searchForwardNonNull(doubles, nextlastoffset, doubles.length);
         double[] retArray = new double[doubles.length - nextlastoffset];
         for (int i = nextlastoffset; i < doubles.length; i++) {

@@ -380,7 +380,7 @@ public class MarketFilterChromosome extends AbstractChromosome {
             short startoffset = new MarketUtil().getStartoffset(market);
             action.setValMap(param);
             VerifyProfit verify = new VerifyProfit();
-            incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset);
+            incProp = verify.getTrend(verificationdays, param.getCategoryValueMap(), startoffset, null);
             //Trend incProp = new FindProfitAction().getTrend(verificationdays, param.getFutureDate(), param.getService());
             //log.info("trendcomp {} {}", trend, incProp);
             if (verificationdays > 0) {

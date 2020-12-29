@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
 
 public class MetaUtil {
@@ -26,4 +27,27 @@ public class MetaUtil {
         return Arrays.asList(meta.getPeriod()).stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
     
+    public Integer getCategory(MetaItem meta, String name) {
+        for (int i = 0; i < meta.getPeriod().length; i++) {
+            if (name.equals(meta.getPeriod()[i])) {
+                return i;
+            }
+        }
+        return null;
+    }
+    
+    public String getCategory(MetaItem meta, Integer category) {
+        String categoryName;
+        switch (category) {
+        case Constants.PRICECOLUMN:
+            categoryName = Constants.PRICE;
+            break;
+        case Constants.INDEXVALUECOLUMN:
+            categoryName = Constants.INDEX;
+            break;
+        default:
+            return meta.getperiod(category);
+        }
+        return categoryName;
+    }
 }

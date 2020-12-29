@@ -15,6 +15,8 @@
   <name>Stock Statistics Iclij Evolution</name>
 <modules>
   <!--module>iclij-evolution-configmap</module-->
+  <!--module>iclij-evolvecommon</module-->
+  <module>iclij-iclijconfigmap</module>
   <module>iclij-marketfilter</module>
 </modules>
   <build>

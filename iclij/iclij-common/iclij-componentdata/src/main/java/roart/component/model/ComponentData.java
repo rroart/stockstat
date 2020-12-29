@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,10 @@ public class ComponentData {
 
     private Map<String, List<List<Double>>> categoryValueMap;
     
+    private Map<String, List<List<Double>>> fillCategoryValueMap;
+    
+    private Map<String, List<List<Object>>> volumeMap;
+    
     private Integer usedsec;
 
     private Map<String, Object> updateMap;
@@ -55,6 +60,8 @@ public class ComponentData {
     private List<String> disableList = new ArrayList<>();
     
     private List<TimingItem> timings = new ArrayList<>();
+    
+    private Market market;
     
     public ComponentData() {
         
@@ -73,12 +80,15 @@ public class ComponentData {
         this.setFuturedays(componentparam.getFuturedays());
         this.resultMap = componentparam.resultMap;
         this.categoryValueMap = componentparam.categoryValueMap;
+        this.fillCategoryValueMap = componentparam.fillCategoryValueMap;
+        this.volumeMap = componentparam.volumeMap;
         this.usedsec = componentparam.usedsec;
         this.updateMap = new HashMap<>(); //componentparam.updateMap;
         this.configValueMap = new HashMap<>(this.service.conf.getConfigValueMap());
         this.action = componentparam.action;
         this.disableList = componentparam.disableList;
         this.timings = componentparam.timings;
+        this.market = componentparam.market;
     }
 
     public ComponentData(ComponentInput input) {
@@ -86,6 +96,10 @@ public class ComponentData {
     }
 
     public static ComponentData getParam(ComponentInput input, int days) throws Exception {
+        return getParam(input, days, null);
+    }
+
+    public static ComponentData getParam(ComponentInput input, int days, Market aMarket) throws Exception {
         ComponentData param = new ComponentData(input);
         //param.setAction(IclijConstants.FINDPROFIT);
         String market = input.getConfig().getMarket();
@@ -100,6 +114,7 @@ public class ComponentData {
         }
         // verification days, 0 or something
         param.setOffset(days);
+        param.setMarket(aMarket);
         return param;
     }
 
@@ -221,6 +236,22 @@ public class ComponentData {
         this.categoryValueMap = categoryValueMap;
     }
 
+    public Map<String, List<List<Double>>> getFillCategoryValueMap() {
+        return fillCategoryValueMap;
+    }
+
+    public void setFillCategoryValueMap(Map<String, List<List<Double>>> fillCategoryValueMap) {
+        this.fillCategoryValueMap = fillCategoryValueMap;
+    }
+
+    public Map<String, List<List<Object>>> getVolumeMap() {
+        return volumeMap;
+    }
+
+    public void setVolumeMap(Map<String, List<List<Object>>> volumeMap) {
+        this.volumeMap = volumeMap;
+    }
+
     public Integer getUsedsec() {
         return usedsec;
     }
@@ -269,6 +300,10 @@ public class ComponentData {
         this.timings = timings;
     }
 
+    public void setMarket(Market market) {
+        this.market = market;
+    }
+
     public int setDatesNot() throws ParseException {
         List<String> stockdates = service.getDates(getMarket());
         String date = TimeUtil.convertDate2(this.getInput().getEnddate());
@@ -301,6 +336,7 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
+        setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
@@ -308,6 +344,10 @@ public class ComponentData {
         try {
             Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.LIST);
             this.setCategoryValueMap(aCategoryValueMap);
+            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + this.getCategory()).get(PipelineConstants.FILLLIST);
+            this.setFillCategoryValueMap(aFillCategoryValueMap);
+            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) result.get("" + this.getCategory()).get(PipelineConstants.VOLUME);
+            this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
         }
@@ -322,6 +362,9 @@ public class ComponentData {
         setValueMap.put(ConfigConstants.MACHINELEARNING, Boolean.FALSE);
         setValueMap.put(ConfigConstants.INDICATORSRSIRECOMMEND, Boolean.FALSE);
         setValueMap.put(ConfigConstants.MISCTHRESHOLD, null);
+        setValueMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
+        setValueMap.put(ConfigConstants.MISCMYDAYS, 0);
+        setValueMap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, market.getConfig().getInterpolate());
         service.conf.setConfigValueMap(new HashMap<>(configValueMap));
         service.conf.getConfigValueMap().putAll(setValueMap);
         Map<String, Map<String, Object>> result = getService().getContent();
@@ -331,7 +374,11 @@ public class ComponentData {
             log.info("" + result.get(PipelineConstants.META).keySet());
             Integer cat = (Integer) result.get(PipelineConstants.META).get(PipelineConstants.WANTEDCAT);
             Map<String, List<List<Double>>> aCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.LIST);
-        this.setCategoryValueMap(aCategoryValueMap);
+            this.setCategoryValueMap(aCategoryValueMap);
+            Map<String, List<List<Double>>> aFillCategoryValueMap = (Map<String, List<List<Double>>>) result.get("" + cat).get(PipelineConstants.FILLLIST);
+            this.setFillCategoryValueMap(aFillCategoryValueMap);
+            Map<String, List<List<Object>>> aVolumeMap = (Map<String, List<List<Object>>>) result.get("" + cat).get(PipelineConstants.VOLUME);
+            this.setVolumeMap(aVolumeMap);
         } catch (Exception e) {
             int jj = 0;
             log.error("Ex", e);

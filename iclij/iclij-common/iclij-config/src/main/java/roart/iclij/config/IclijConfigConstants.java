@@ -72,6 +72,7 @@ public class IclijConfigConstants {
     public static final String DATASETPREDICTOREVOLUTIONCONFIG = "dataset.predictor.evolutionconfig";
     public static final String DATASETPREDICTORMLCONFIG = "dataset.predictor.mlconfig";
     public static final String EVOLVE = "evolve";
+    public static final String EVOLVEGA = "evolve.ga";
     public static final String EVOLVEINDICATORRECOMMENDER = "evolve.indicatorrecommender";
     public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
     public static final String EVOLVEML = "evolve.ml";
@@ -109,6 +110,11 @@ public class IclijConfigConstants {
     public static final String EVOLVETHRESHOLD = "evolve.threshold";
     public static final String MISCSHUTDOWNHOUR = "misc.shutdownhour";
     public static final String MISCPOPULATE = "misc.populate";
+    public static final String MISCMYSERVICES = "misc.myservices";
+    public static final String MISCSERVICES = "misc.services";
+    public static final String MISCCOMMUNICATIONS = "misc.communications";
+    public static final String MISCCACHE = "misc.cache";
+    public static final String MISCCACHETTL = "misc.cache.ttl";
     public static final String MPSERVERCPU = "mp.server.cpu";
     public static final String MPCLIENTCPU = "mp.client.cpu";
     public static final String FINDPROFIT = "findprofit";
@@ -169,6 +175,7 @@ public class IclijConfigConstants {
     public static final String IMPROVEPROFITMLINDICATOR = "improveprofit.mlindicator";
     public static final String IMPROVEPROFITMLINDICATOREVOLUTIONCONFIG = "improveprofit.mlindicator.evolutionconfig";
     public static final String IMPROVEPROFITMLINDICATORMLCONFIG = "improveprofit.mlindicator.mlconfig";
+    public static final String IMPROVEPROFITMLINDICATOREXTRA = "improveprofit.mlindicator.extra";
     public static final String IMPROVEPROFITPREDICTOR = "improveprofit.predictor";
     public static final String IMPROVEPROFITPREDICTOREVOLUTIONCONFIG = "improveprofit.predictor.evolutionconfig";
     public static final String IMPROVEPROFITPREDICTORMLCONFIG = "improveprofit.predictor.mlconfig";
@@ -232,6 +239,46 @@ public class IclijConfigConstants {
     public static final String MACHINELEARNINGPREDICTORMLCONFIG = "machinelearning.predictor.mlconfig";
     public static final String MACHINELEARNINGFUTUREDAYS = "machinelearning.futuredays";
     public static final String MACHINELEARNINGTHRESHOLD = "machinelearning.threshold";
+    public static final String SIMULATEINVEST = "simulateinvest";
+    public static final String SIMULATEINVESTAUTORUN = "simulateinvest.autorun";
+    public static final String SIMULATEINVESTCONFIDENCE = "simulateinvest.confidence";
+    public static final String SIMULATEINVESTCONFIDENCEVALUE = "simulateinvest.confidence.value";
+    public static final String SIMULATEINVESTCONFIDENCETRENDINCREASE = "simulateinvest.confidence.trend.increase";
+    public static final String SIMULATEINVESTCONFIDENCETRENDINCREASETIMES = "simulateinvest.confidence.trend.increase.times";
+    public static final String SIMULATEINVESTCONFIDENCEFINDTIMES = "simulateinvest.confidence.findtimes";
+    public static final String SIMULATEINVESTCONFIDENCEHOLDINCREASE = "simulateinvest.confidence.hold.increase";
+    public static final String SIMULATEINVESTNOCONFIDENCEHOLDINCREASE = "simulateinvest.noconfidence.hold.increase";
+    public static final String SIMULATEINVESTNOCONFIDENCETRENDDECREASE = "simulateinvest.noconfidence.trend.decrease";
+    public static final String SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES = "simulateinvest.noconfidence.trend.decrease.times";
+    public static final String SIMULATEINVESTSTOPLOSS = "simulateinvest.stoploss";
+    public static final String SIMULATEINVESTSTOPLOSSVALUE = "simulateinvest.stoploss.value";
+    public static final String SIMULATEINVESTINDICATORPURE = "simulateinvest.indicator.pure";
+    public static final String SIMULATEINVESTINDICATORREBASE = "simulateinvest.indicator.rebase";
+    public static final String SIMULATEINVESTINDICATORREVERSE = "simulateinvest.indicator.reverse";
+    public static final String SIMULATEINVESTINDICATORDIRECTION = "simulateinvest.indicator.direction";
+    public static final String SIMULATEINVESTINDICATORDIRECTIONUP = "simulateinvest.indicator.direction.up";
+    public static final String SIMULATEINVESTMLDATE = "simulateinvest.mldate";
+    public static final String SIMULATEINVESTSTOCKS = "simulateinvest.stocks";
+    public static final String SIMULATEINVESTBUYWEIGHT = "simulateinvest.buyweight";
+    public static final String SIMULATEINVESTINTERVAL = "simulateinvest.interval";
+    public static final String SIMULATEINVESTINTERVALWHOLE = "simulateinvest.intervalwhole";
+    public static final String SIMULATEINVESTINTERVALSTOPLOSS = "simulateinvest.intervalstoploss";
+    public static final String SIMULATEINVESTINTERVALSTOPLOSSVALUE = "simulateinvest.intervalstoplossvalue";
+    public static final String SIMULATEINVESTADVISER = "simulateinvest.adviser";
+    public static final String SIMULATEINVESTINTERPOLATE = "simulateinvest.interpolate";
+    public static final String SIMULATEINVESTDAY = "simulateinvest.day";
+    // special
+    public static final String SIMULATEINVESTPERIOD = "simulateinvest.period";
+    // special
+    public static final String SIMULATEINVESTDELAY = "simulateinvest.delay";
+    // special
+    public static final String SIMULATEINVESTVOLUMELIMITS = "simulateinvest.volumelimits";
+    // special
+    public static final String SIMULATEINVESTSTARTDATE = "simulateinvest.startdate";
+    public static final String SIMULATEINVESTENDDATE = "simulateinvest.enddate";
+    public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
+    public static final String IMPROVESIMULATEINVESTAUTORUN = "improvesimulateinvest.autorun";
+    public static final String IMPROVESIMULATEINVESTEVOLUTIONCONFIG = "improvesimulateinvest.evolutionconfig";
     public static final String SINGLEMARKETEVOLVEFIRSTONLY = "singlemarket.evolvefirstonly";
     public static final String SINGLEMARKETLOOPS = "singlemarket.loops";
     public static final String SINGLEMARKETLOOPINTERVAL = "singlemarket.loopinterval";
@@ -253,6 +300,7 @@ public class IclijConfigConstants {
     public static final String MARKETSMARKETLISTMARKET = "markets.marketlist.market[@id]";
     public static final String MARKETSMARKETLISTMARKETCONFIG = "markets.marketlist.market[@id].config";
     public static final String MARKETSMARKETLISTMARKETFILTER = "markets.marketlist.market[@id].filter";
+    public static final String MARKETSMARKETLISTMARKETSIMULATE = "markets.marketlist.market[@id].simulate";
     //public static final String MARKETSMARKETLISTMARKETEVOLUTIONCONFIG = "markets.marketlist.market[@id].evolutionconfig";
     public static final String MARKETSMARKETLISTMARKETMLCONFIG = "markets.marketlist.market[@id].mlconfig";
     @Deprecated

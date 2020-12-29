@@ -218,6 +218,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-common-cache</artifactId>
+      <version>0.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-db</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
@@ -355,6 +360,11 @@
       <groupId>roart</groupId>
       <artifactId>stockstat-aggregate</artifactId>
       <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-clients</artifactId>
+      <version>2.6.0</version>
     </dependency>
   </dependencies>
   <properties>

@@ -11,9 +11,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import roart.action.Action;
 import roart.action.MainAction;
+import roart.common.cache.MyCache;
 import roart.db.thread.DatabaseThread;
 import roart.eureka.util.EurekaUtil;
 import roart.executor.MyExecutors;
+import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
 import roart.populate.PopulateThread;
@@ -45,8 +47,12 @@ public class IclijController implements CommandLineRunner {
 	    try {
 	        MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { IclijXMLConfig.getConfigInstance().mpServerCpu() } );
+            new ServiceControllerOther().start();
             new PopulateThread().start();
             new DatabaseThread().start();
+            IclijConfig instance = IclijXMLConfig.getConfigInstance();
+            MyCache.setCache(instance.wantCache());
+            MyCache.setCacheTTL(instance.getCacheTTL());
             if (MainAction.wantsGoals()) {        
                 Action action = new MainAction();
                 action.goal(null, null, null);

@@ -24,11 +24,14 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.DatasetData;
 import roart.db.IclijDbDao;
+import roart.evolution.chromosome.winner.AboveBelowChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.fitness.impl.FitnessAboveBelow;
+import roart.iclij.evolution.fitness.impl.FitnessAboveBelowCommon;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -88,6 +91,7 @@ public class AboveBelowComponent extends ComponentML {
             Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
             
             FitnessAboveBelow fit = new FitnessAboveBelow(action, new ArrayList<>(), param, profitdata, market, null, this.getPipeline(), null, subcomponent, realParameters, null, incdecsP, components, subcomponents, stockDates);
+            FitnessAboveBelowCommon fitCommon = new FitnessAboveBelowCommon();
 
             double scoreFilter = 0;
             {
@@ -118,7 +122,7 @@ public class AboveBelowComponent extends ComponentML {
 
                 new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, categoryValueMap);
                 
-                scoreFilter = fit.fitness(myincs, mydecs, myincdec, 0);
+                scoreFilter = fitCommon.fitness(myincs, mydecs, myincdec, 0, null);
 
 
             }
@@ -143,9 +147,9 @@ public class AboveBelowComponent extends ComponentML {
                 List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
                 short startoffset = new MarketUtil().getStartoffset(market);
                 new VerifyProfitUtil().getVerifyProfit(verificationdays, param.getFutureDate(), myincs, mydecs, myincdec, startoffset, realParameters.getThreshold(), stockDates, param.getCategoryValueMap());
-                score = fit.fitness(myincs, mydecs, myincdec, 0);
+                score = fitCommon.fitness(myincs, mydecs, myincdec, 0, null);
                 scoreSize = myincs.size() + mydecs.size() + myincdec.size();
-                scores = fit.fitness2(myincs, mydecs, myincdec, 0);
+                scores = fitCommon.fitness2(myincs, mydecs, myincdec, 0, null);
                 scoreSize = (long) scores[0].getRight() + scores[1].getRight();
                 {
                     Memories listComponentMap = new Memories(market);
@@ -153,6 +157,8 @@ public class AboveBelowComponent extends ComponentML {
                     LocalDate prevdate = param.getInput().getEnddate();
                     prevdate = prevdate.minusDays(action.getActionData().getTime(market));
                     LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * action.getActionData().getTime(market));
+                    
+                    // making separate memories the components and subcomponents
                     
                     getListComponentsNew(myData, param, realParameters, evolve, market, listComponentMap, prevdate, olddate, mylocals, action);
                     /*
@@ -165,24 +171,24 @@ public class AboveBelowComponent extends ComponentML {
                 }
             }
             
-            int size = components.size() + subcomponents.size();
-            List<String> compsub = new ArrayList<>();
-            compsub.addAll(components);
-            compsub.addAll(subcomponents);
-            
             
             short startoffset = new MarketUtil().getStartoffset(market);
             int findTime = market.getConfig().getFindtime();
             Trend trend = new TrendUtil().getTrend(verificationdays, null /*TimeUtil.convertDate2(olddate)*/, startoffset, stockDates /*, findTime*/, param, market, categoryValueMap);
             log.info("Trend {}", trend);                
             
-            //AboveBelowGene gene = new AboveBelowGene();
-            AboveBelowChromosome chromosome = new AboveBelowChromosome(size);
-            //action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);            
-
             MemoryItem memory = new MemoryItem();
             if (true || score < market.getFilter().getConfidence()) {
-                componentData = this.improve(action, param, chromosome, subcomponent, new AboveBelowChromosomeWinner(aParameter, compsub), null, fit);
+                int ga = param.getInput().getConfig().getEvolveGA();
+                Evolve evolve2 = AboveBelowEvolveFactory.factory(ga);
+                String evolutionConfigString = param.getInput().getConfig().getImproveAbovebelowEvolutionConfig();
+                EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
+
+                Map<String, Object> confMap = new HashMap<>();
+                List<String> confList = new ArrayList<>();
+                Boolean buy = null;
+                List<MLMetricsItem> mlTests = null;
+                componentData = evolve2.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests , confMap , evolutionConfig, this.getPipeline(), this, confList );
                 Map<String, Object> updateMap = componentData.getUpdateMap();
                 if (updateMap != null) {
                     param.getUpdateMap().putAll(updateMap);
@@ -217,7 +223,7 @@ public class AboveBelowComponent extends ComponentML {
                 try {
                     memory.save();
                 } catch (Exception e) {
-                    log.error(Constants.EXCEPTION);
+                    log.error(Constants.EXCEPTION, e);
                 }
             }
             //memoryList.add(memory);
@@ -372,9 +378,9 @@ public class AboveBelowComponent extends ComponentML {
             //confidences = confidences.stream().filter(m -> m != null && !m.isNaN()).collect(Collectors.toList());
             //List<Double> aboveConfidenceList = new ArrayList<>();
             //List<Double> belowConfidenceList = new ArrayList<>();
-            Pair<Long, Integer> abovecnt = FitnessAboveBelow.countsize(incdecList.stream().filter(e -> e.isIncrease()).collect(Collectors.toList()));
-            Pair<Long, Integer> belowcnt = FitnessAboveBelow.countsize(incdecList.stream().filter(e -> !e.isIncrease()).collect(Collectors.toList()));
-            Pair<Long, Integer> cnt = FitnessAboveBelow.countsize(incdecList);
+            Pair<Long, Integer> abovecnt = FitnessAboveBelowCommon.countsize(incdecList.stream().filter(e -> e.isIncrease()).collect(Collectors.toList()));
+            Pair<Long, Integer> belowcnt = FitnessAboveBelowCommon.countsize(incdecList.stream().filter(e -> !e.isIncrease()).collect(Collectors.toList()));
+            Pair<Long, Integer> cnt = FitnessAboveBelowCommon.countsize(incdecList);
             {
                 MemoryItem memory = new MemoryItem();
                 memory.setAction(action.getName());

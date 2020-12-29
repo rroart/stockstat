@@ -7,6 +7,7 @@ import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.config.XMLType;
 import roart.common.constants.CategoryConstants;
+import roart.common.constants.Constants;
 
 public class ConfigConstantMaps {
 
@@ -221,8 +222,16 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZE, Boolean.class);
         map.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, Boolean.class);
         map.put(ConfigConstants.MISCFILTERWEEKEND, Boolean.class);
+        map.put(ConfigConstants.MISCINTERPOLATE, Boolean.class);
+        map.put(ConfigConstants.MISCINTERPOLATIONMETHOD, Integer.class);
         map.put(ConfigConstants.MISCFILTERHOLIDAY, Boolean.class);
         map.put(ConfigConstants.MISCTHRESHOLD, String.class);
+        map.put(ConfigConstants.MISCMERGECY, Boolean.class);
+        map.put(ConfigConstants.MISCMYSERVICES, String.class);
+        map.put(ConfigConstants.MISCSERVICES, String.class);
+        map.put(ConfigConstants.MISCCOMMUNICATIONS, String.class);
+        map.put(ConfigConstants.MISCCACHE, Boolean.class);
+        map.put(ConfigConstants.MISCCACHETTL, Integer.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, Integer.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, Integer.class);
         map.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, Integer.class);
@@ -596,7 +605,15 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCFILTERWEEKEND, Boolean.TRUE);
         deflt.put(ConfigConstants.MISCFILTERHOLIDAY, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCINTERPOLATE, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCINTERPOLATIONMETHOD, Constants.LINEAR);
         deflt.put(ConfigConstants.MISCTHRESHOLD, "[ 1.0 ]");
+        deflt.put(ConfigConstants.MISCMERGECY, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCMYSERVICES, "[]");
+        deflt.put(ConfigConstants.MISCSERVICES, "{}");
+        deflt.put(ConfigConstants.MISCCOMMUNICATIONS, "{}");
+        deflt.put(ConfigConstants.MISCCACHE, Boolean.TRUE);
+        deflt.put(ConfigConstants.MISCCACHETTL, 3600);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, 10);
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD, " [ 1.0 ] ");
         deflt.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXINTERVALDAYS, 5);
@@ -965,8 +982,16 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZE, "Enable graph equalizing");
         text.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, "Enable unified graph equalizing");
         text.put(ConfigConstants.MISCFILTERWEEKEND, "Filter out weekend data");
+        text.put(ConfigConstants.MISCINTERPOLATE, "Interpolate");
+        text.put(ConfigConstants.MISCINTERPOLATIONMETHOD, "Interpolation method");
         text.put(ConfigConstants.MISCFILTERHOLIDAY, "Filter out holiday data");
         text.put(ConfigConstants.MISCTHRESHOLD, "Display thresholds");
+        text.put(ConfigConstants.MISCMERGECY, "Merge current years");
+        text.put(ConfigConstants.MISCMYSERVICES, "Services starting");
+        text.put(ConfigConstants.MISCSERVICES, "Services and communications");
+        text.put(ConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
+        text.put(ConfigConstants.MISCCACHE, "Cache enable");
+        text.put(ConfigConstants.MISCCACHETTL, "Cache TTL");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEFUTUREDAYS, "Test simple recommender future days");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERSIMPLEINTERVALDAYS, "Test simple recommender interval days");
         text.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, "Test complex recommender future days");
@@ -1388,8 +1413,16 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.MISCMYGRAPHEQUALIZE, new XMLType( Boolean.class, Boolean.TRUE, "Enable graph equalizing"));
         mymap.put(ConfigConstants.MISCMYGRAPHEQUALIZEUNIFY, new XMLType( Boolean.class, Boolean.TRUE, "Enable unified graph equalizing"));
         mymap.put(ConfigConstants.MISCFILTERWEEKEND, new XMLType( Boolean.class, Boolean.TRUE, "Filter out weekend data"));
+        mymap.put(ConfigConstants.MISCINTERPOLATE, new XMLType( Boolean.class, Boolean.TRUE, "Interpolate"));
+        mymap.put(ConfigConstants.MISCINTERPOLATIONMETHOD, new XMLType( Integer.class, Constants.LINEAR, "Interpolation method"));        
         mymap.put(ConfigConstants.MISCFILTERHOLIDAY, new XMLType( Boolean.class, Boolean.TRUE, "Filter out holiday data"));
         mymap.put(ConfigConstants.MISCTHRESHOLD, new XMLType( String.class, "[ 1.0 ]", "Display thresholds"));
+        mymap.put(ConfigConstants.MISCMERGECY, new XMLType( Boolean.class, Boolean.TRUE, "Merge current years"));
+        mymap.put(ConfigConstants.MISCMYSERVICES, new XMLType( String.class, "[]", "Services starting"));
+        mymap.put(ConfigConstants.MISCSERVICES, new XMLType( String.class, "{}", "Services and communications"));
+        mymap.put(ConfigConstants.MISCCOMMUNICATIONS, new XMLType( String.class, "{}", "Communications and connections"));
+        mymap.put(ConfigConstants.MISCCACHE, new XMLType( Boolean.class, Boolean.TRUE, "Cache enable"));
+        mymap.put(ConfigConstants.MISCCACHETTL, new XMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG, new XMLType( String.class, "{ \"generations\" : 100, \"children\" : 4, \"crossover\" : 2, \"elite\" : 1, \"elitecloneandmutate\" : 1, \"select\" : 16, \"mutate\" : 2, \"generationcreate\" : 1 }", "ML GP config"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS, new XMLType( Integer.class, 10, "Test complex recommender future days"));
         mymap.put(ConfigConstants.EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD, new XMLType( String.class, " [ 1.0 ] ", "Test complex recommender threshold"));

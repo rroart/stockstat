@@ -203,6 +203,14 @@ public class ConfigConstants {
     public static final String MISCFILTERWEEKEND = "misc.weekend";
     public static final String MISCFILTERHOLIDAY = "misc.holiday";
     public static final String MISCTHRESHOLD = "misc.threshold";
+    public static final String MISCINTERPOLATE = "misc.interpolate";
+    public static final String MISCINTERPOLATIONMETHOD = "misc.interpolatationmethod";
+    public static final String MISCMERGECY = "misc.mergecy";
+    public static final String MISCMYSERVICES = "misc.myservices";
+    public static final String MISCSERVICES = "misc.services";
+    public static final String MISCCOMMUNICATIONS = "misc.communications";
+    public static final String MISCCACHE = "misc.cache[@enable]";
+    public static final String MISCCACHETTL = "misc.cache.ttl";
     public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS = "evolve.indicatorrecommender.complex.futuredays";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD = "evolve.indicatorrecommender.complex.threshold";

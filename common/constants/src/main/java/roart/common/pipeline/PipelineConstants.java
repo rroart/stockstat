@@ -11,6 +11,7 @@ public class PipelineConstants {
     public static final String BASE100FILLLIST = "base100filllist";
     public static final String TRUNCBASE100LIST = "truncbase100list";
     public static final String TRUNCBASE100FILLLIST = "truncbase100filllist";
+    public static final String VOLUME = "volume";
     public static final String NAME = "name";
     public static final String RETLIST = "retlist";
     public static final String DATELIST = "datelist";
@@ -71,6 +72,7 @@ public class PipelineConstants {
     public static final String MLSTOCH = "mlstoch";
     public static final String RECOMMENDERRSI = "recommenderrsi";
     public static final String AGGREGATORRECOMMENDERINDICATOR = "aggregatorrecommenderindicator";
+    public static final String MACDBASE = "macdbase";
     public static final String PREDICTOR = "predictor";
     public static final String LIR = "lir";
     public static final String MLP = "mlp";
@@ -80,6 +82,8 @@ public class PipelineConstants {
     public static final String DATASET = "dataset";
     public static final String ABOVEBELOW = "abovebelow";
     public static final String FILTER = "filter";
+    public static final String SIMULATEINVEST = "simulateinvest";
+    public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
     
     public static final String CATEGORY = "category"; 
     public static final String CATEGORYTITLE = "categorytitle";

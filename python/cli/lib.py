@@ -8,12 +8,13 @@ import numpy as np
 import psycopg2
 import matplotlib.pyplot as plt
 
-import myutils as my
-import pdutils as pdu
-
 from datetime import datetime, timedelta
 import time
+import request
+import multiprocessing as mp
 
+import rise
+import day
 import atr
 import cci
 import macd
@@ -22,6 +23,11 @@ import stoch
 import stochrsi
 import adl
 import etl
+
+import guiutils as gui
+import myutils as my
+import pdutils as pdu
+import const
 
 #from sqlalchemy import create_engine
 
@@ -34,10 +40,6 @@ periods = 11
 topbottom = 15
 
 filterweekend = True
-
-VALUE = 1
-MACD = 2
-RSI = 3
 
 def getmetas(conn):
     return pd.read_sql_query('select * from meta', con=conn)
@@ -174,6 +176,7 @@ class StockData:
         self.stocklistperiod = getlistsorted(self.datedstocklists, self.listid, self.listdate, self.days, tablemoveintervaldays, reverse = reverse)
         self.marketdatamap = {}
         self.marketdatamap[market] = [ self.stocks, self.periodtexts, self.datedstocklists, self.listdates ]
+        self.tablemoveintervaldays = tablemoveintervaldays
     
 def adls(market, period, days = 180):
     stockdata = StockData(market, allstocks, days, None)
@@ -204,37 +207,6 @@ def getdatedstocklists(listdate, listdates, dates, numberdays, tableintervaldays
             index = index + tableintervaldays
     print(len(datedstocklists))
     return datedstocklists
-
-def getlistmove(datedstocklists, listid, listdate, count, tableintervaldays, stocklistperiod):
-    #periodmaps = [] #matrix([], nrow = periods, ncol = (count - 1))
-    periodmaps = [[None for x in range(count)] for y in range(periods)]
-    print("ddd")
-    print(count)
-    print(periods)
-    for j in range(count):
-        for i in range(periods):
-            hasperiod = stocklistperiod[i][j] is not None
-            #print("hasperiod")
-            #print(type(hasperiod))
-            #print(hasperiod)
-            if hasperiod:
-                print("j")
-                print(j)
-                if j > 0:
-                    df1 = stocklistperiod[i][j - 1]
-                    df2 = stocklistperiod[i][j]
-                    tmplist = getperiodmap(df1, df2)
-                    periodmaps[i][j - 1] = tmplist
-                
-             #else:
-                                        #print("no period day ", j, " period ", i)
-            
-        
-
-    print("periodmaps")
-    print(periodmaps)
-    return(periodmaps)
-
 
 def getlistsorted(datedstocklists, listid, listdate, count, tableintervaldays, wantrise = True, reverse = False):
     stocklistperiod = [[0 for x in range(count)] for y in range(periods)]
@@ -312,7 +284,8 @@ def getperiodmap(list1, list2):
 
 
 def listperiod(list, period, index):
-    #print(type(list))
+    #print("ttt", type(list))
+    #print(list)
     #print(len(list))
     if period == 0:
         return list.period1.iloc[index]
@@ -337,7 +310,7 @@ def listperiod(list, period, index):
     if period == 10:
         return list.indexvalue.iloc[index]
     return None
-                                        # out of use
+
 def myperiodtextslist(myperiodtexts, periodtexts):
     retlist = myperiodtexts
     if myperiodtexts is None:
@@ -378,7 +351,8 @@ def getvalues(myid, start, end):
             else:
                 print("err" ,len(df))
                 
-def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, wantrsi=False, reverse=False):
+def mytopperiod2(indicators, dflist, period, max, days, reverse=False, wantgrid = False):
+    #print(wantmacd, wantrsi, wantdays)
     #print(type(dflist))
     print("days ", days, " ", len(dflist))
     for j in range(days):
@@ -392,38 +366,57 @@ def mytopperiod2(dflist, period, max, days, wantrise=False, wantmacd=False, want
         print(type(df))
         if max > len(df):
             max = len(df)
+
+        lists = []
         
+        titles = [ "num", "name", "date", "value"]
+        formats = [ "{:3d}", "{:35.35}", "{:.10}", "{:.2f}" ];
+        numindicators = len(indicators)
+        for k in range(numindicators):
+            indicator = indicators[k]
+            titles = titles + indicator.titles()
+            formats = formats + indicator.formats()
+        titles = titles + [ "id" ]
+        formats = formats + [ "{}" ]
+        for j in range(len(titles)):
+            title = titles[j]
+            print(title, end=" ")
+        print();
+        lists.append(titles)
         for i in range(max):
-            rsi = 0 #np.NaN
-            if wantrsi:
-                rsi = df.rsic.iloc[i]
-            
-            macd = 0 #np.NaN
-            hist = 0 #np.NaN
-            macdd = 0 #np.NaN
-            histd = 0 #np.NaN
-            if wantmacd:
-                macd = df.momc.iloc[i]
-                hist = df.histc.iloc[i]
-                macdd = df.momdc.iloc[i]
-                histd = df.histdc.iloc[i]
-            
-            rise = 0 #np.NaN
-            if wantrise:
-                #print(list(df.columns.values))
-                rise = df.risec.iloc[i]
-                #print(df.risec)
-            
-            name = df.name.iloc[i]
-	    #Encoding(name) = "UTF-8"
             l = listperiod(df, period, i)
+            name = df.name.iloc[i]
+            values = [ i, name[:33], df.date.iloc[i].to_datetime64(), l ]
+            for k in range(numindicators):
+                indicator = indicators[k]
+                values = values + indicator.values(df, i)
+                #formats = formats + indicator.formats()
+            #formats = formats + [ "{}" ]
+            values = values + [ df.id.iloc[i] ]
+            for j in range(len(titles)):
+                value = values[j]
+                aformat = formats[j]
+                try: 
+                    value = aformat.format(value)
+                except:
+                    import sys
+                    print("err", value, aformat, file=sys.stderr)
+                if wantgrid:
+                    values[j] = value
+                print(value, end=" ")
+            print();
+            lists.append(values)
+        if wantgrid:
+            import multiprocessing as mp
+            mp.Process(target=gui.grid, args=( [ lists ] )).start()
+
+	    #Encoding(name) = "UTF-8"
             #print(l, period, i)
             #print(rise)
-            if np.isnan(rise):
-                rise = 0
             #print(name[:33], df.date.iloc[i], l, rise, hist, histd, macd, macdd, rsi, df.id.iloc[i])
             #print("rsi " , rsi, type(rsi))
-            print("%3d %-35s %12s % 6.2f %3d % 3.2f % 3.2f % 3.2f % 3.2f %3.2f %s" %(i, name[:33], df.date.iloc[i], listperiod(df, period, i), rise, hist, histd, macd, macdd, rsi, df.id.iloc[i]))
+            #print(i, name[:33], df.date.iloc[i], listperiod(df, period, i), rise, hist, macd, sign, histd, macdd, sigdd, hist2, macd2, sign2, rsi, dayvalue, df.id.iloc[i])
+            #print(" %s" %(i, name[:33], df.date.iloc[i], listperiod(df, period, i), rise, hist, macd, sign, histd, macdd, sigdd, hist2, macd2, sign2, rsi, dayvalue, df.id.iloc[i]))
         
                                         #        print(df$id[[1]])
     
@@ -440,15 +433,26 @@ def myperiodtextslist(myperiodtexts, periodtexts):
     return(retlist)
 
 
-def getbottomgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=VALUE, macddays=180, deltadays=3, percentize=True, wantchart=True):
+def getbottomgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=const.VALUE, macddays=180, deltadays=3, percentize=True, wantchart=True):
     return(gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=True, deltadays=deltadays, percentize=percentize, wantchart=wantchart))
 
-def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, percentize=True, wantchart=True):
+def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=const.VALUE, macddays=180, reverse=False, wantrise=False, wantmacd=False, wantrsi=False, deltadays=3, rebase=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False, interpolation = 'linear'):
     print("0", market)
+    print(wantmacd, wantrsi, wantdays, rebase, interpolate)
     stockdata = StockData(market, allstocks, start, end, tableintervaldays = tablemoveintervaldays, tablemoveintervaldays = tablemoveintervaldays, reverse = reverse, numberdays = numberdays)
     periodtexts = stockdata.periodtexts
     myperiodtexts = myperiodtextslist(myperiodtexts, periodtexts)
     print ("00 " , len(myperiodtexts))
+    indicators = []
+    if wantrise:
+        indicators.append(rise.RISE(stockdata))
+    if wantmacd:
+        indicators.append(macd.MACD(stockdata))
+    if wantrsi:
+        indicators.append(rsi.RSI(stockdata))
+    if wantdays:
+        indicators.append(day.DAY(stockdata, days))
+    dateset = set(stockdata.listdates)
     for i in range(len(myperiodtexts)):
         periodtext = myperiodtexts[i]
         print("1", myperiodtexts)
@@ -456,9 +460,6 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
         print("3" , periodtext)
         period = stockdata.periodtexts.index(periodtext)
         stocklistperiod = stockdata.stocklistperiod
-        periodmaps = None
-        if wantrise:
-            periodmaps = getlistmove(stockdata.datedstocklists, stockdata.listid, stockdata.listdate, stockdata.days, tablemoveintervaldays, stocklistperiod)
         
         dflist = []
         headskiprsi = 0
@@ -466,148 +467,33 @@ def gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom
             headskiprsi = end
         headskipmacd = 0
         if end is not None:
-            headskipmacd = end
+            headskipmacd = len(stockdata.listdates) - stockdata.dates.endindex
         #print(len(periodmaps))
         for j in range(stockdata.days):
             df = stockdata.stocklistperiod[period][j]
-            if wantrise:
-                list2 = []
-                if j < stockdata.days:
-                    list2 = periodmaps[period][j]
-                riselist = [ None for x in range(len(df)) ]
-                for i in range(len(df)):
-                    id = df.id.iloc[i]
-                    rise = 0
-                    if j < stockdata.days:
-                        #print(type(list2))
-                        #print(type(id))
-                        #print(id)
-                        if True:
-                            import time
-                            #time.sleep(15)
-                        if not list2 is None:
-                            rise = list2.get(id)
-                            #print(list2.keys())
-                            #print(rise)
-                            if rise is None:
-                                rise = 0 #None
-                    riselist[i] = rise
-                risec = pd.Series(data = riselist, name = 'risec')
-                df['risec'] = risec
-                print('riselist')
-                print(riselist)
-            idc = df.id
-            namec = df.name
-            datec = df.date
-            periodc = pdu.getonedfperiod(df, period)
-            if wantmacd:
-                momlist = []
-                histlist = []
-                momdlist = []
-                histdlist = []
-                for mydf in df.itertuples():
-                    #print(type(listid))
-                    el = next(x for x in listid if x.id.iloc[0] == mydf.id)
-                    #print(type(el))
-                    el = el.sort_values(by='date', ascending = 0)
-                    myc = pdu.getonedfvalue(el, period)
-                    myclen = len(myc)
-                    #print(type(myc))
-                    myc = myc.head(n=(myclen-headskipmacd))
-                    myc = myc.tail(n=macddays)
-                                        #print(myc)
-                    if percentize:
-                        if periodtext == "Price" or periodtext == "Index":
-
-                            #print("myc")
-                            #print(type(myc))
-                            #print(myc.values[0])
-                            first = myc.values[0]
-                            #print(first)
-                            #print(100/first)
-                            #print(myc.values)
-                            myc = myc * (100 / first)
-                            #print(myc.values)
-
-                            #print("myc2")
-                    #print(mydf.id)
-                    global doprint
-                    doprint = mydf.id == 'VXAZN'
-                    if doprint:
-                        print(myc.values)
-                    momhist = getmomhist(myc, deltadays)
-                    #print(type(momhist))
-                    #print(len(momhist))
-                                        #print(mom)
-                    if not momhist is None:
-                        momlist.append(momhist[0])
-                        histlist.append(momhist[1])
-                        momdlist.append(momhist[2])
-                        histdlist.append(momhist[3])
-                    else:
-                        momlist.append(None)
-                        histlist.append(None)
-                        momdlist.append(None)
-                        histdlist.append(None)
-                headskipmacd = headskipmacd + tablemoveintervaldays
-                momc = momlist
-                histc = histlist
-                momdc = momdlist
-                histdc = histdlist
-                #print('momlist')
-                #print(momlist)
-                #print(type(momlist))
-                df['momc'] = pd.Series(data = momlist, name = 'momc', index = df.index)
-                df['histc'] = pd.Series(data = histlist, name = 'histc', index = df.index)
-                df['momdc'] = pd.Series(data = momdlist, name = 'momdc', index = df.index)
-                df['histdc'] = pd.Series(data = histdlist, name = 'histdc', index = df.index)
-                #print(df.name)
-                #print(df.momc)
-                if sort == MACD:
-                    if reverse:
-                        df = df.sort_values(by='histc', ascending = 0)
-                    else:
-                        df = df.sort_values(by='histc', ascending = 1)
-            if wantrsi:
-                rsilist = []
-                headskip = 0
-                for mydf in df.itertuples():
-                    el = next(x for x in listid if x.id.iloc[0] == mydf.id)
-                    #print(type(el))
-                    el = el.sort_values(by='date', ascending = 0)
-                    #el = listid[mydf.id]
-                    #el = el[order(el.date),]
-                    myc = pdu.getonedfvalue(el, period)
-                    myclen = len(myc)
-                    myc = myc.head(n=(myclen-headskiprsi))
-                    myc = myc.tail(n=macddays)
-                    if percentize:
-                        if periodtext == "Price" or periodtext == "Index":
-                            first = myc.values[0]
-                            myc = myc * (100 / first)
-                    rsi = rsi.getrsi(myc)
-                    rsilist.append(rsi)
-                    #if rsi is None:
-                    #    print("App rsi none")
-                        
-                headskiprsi = headskiprsi + tablemoveintervaldays
-                rsic = rsilist
-                df['rsic'] = pd.Series(data = rsic, name = 'rsic', index = df.index)
-                if sort == RSI:
-                    if reverse:
-                        df = df.sort_values(by='rsic', ascending = 0)
-                    else:
-                        df = df.sort_values(by='rsic', ascending = 1)
+            numindicators = len(indicators)
+            for k in range(numindicators):
+                indicator = indicators[k]
+                df = indicator.dfextend(df, period, periodtext, sort, interpolate = interpolate, rebase = rebase, deltadays = deltadays, reverse = reverse, interpolation = interpolation)
+            #idc = df.id
+            #namec = df.name
+            #datec = df.date
+            #periodc = pdu.getonedfperiod(df, period)
+            if sort == const.NAME:
+                if reverse:
+                    df = df.sort_values(by='name', ascending = 0)
+                else:
+                    df = df.sort_values(by='name', ascending = 1)
             print("typedf ", type(df))
             dflist.append(df)
         #print("dflist",dflist)
-        mytopperiod2(dflist, period, topbottom, stockdata.days, wantrise=wantrise, wantmacd=wantmacd, wantrsi=wantrsi, reverse=reverse)
+        mytopperiod2(indicators, dflist, period, topbottom, stockdata.days, reverse=reverse, wantgrid = wantgrid)
         if not wantchart:
             return
         if reverse:
-            getbottomchart(market, days, topbottom, stocklistperiod, period)
+            getbottomchart(market, stockdata.days, topbottom, stocklistperiod, period)
         else:
-            gettopchart(market, days, topbottom, stocklistperiod, period)
+            gettopchart(market, stockdata.days, topbottom, stocklistperiod, period)
               
 def gettopchart(market, days, topbottom, stocklistperiod, period):
     mainlist = stocklistperiod[period][0]
@@ -696,8 +582,7 @@ def getelem(id, days, stocklistperiod, period, size):
 
 # ( [ ( "tradcomm", "XAUUSD:CUR" ), ( "tradcomm", "XAUUSD:CUR", "Price" ) ], "\1 / \2" )
 
-def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = []):
-#def getcontentgraph(start, end, tableintervaldays, ids, periodtext, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = []):
+def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = [], interpolation = 'linear'):
     periodtext = ids[0][2]
     scalebeginning100 = 0
     if len(ids) > 1:
@@ -797,11 +682,17 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
                         dayset2.extend(bigretl[2])
                         if interpolate:
                             print(type(l))
-                            l = l.interpolate(method='linear')
+                            l = my.fixzero2(l)
+                            #l = l.interpolate(method='linear')
+                            l = my.fixna(l, interpolation)
                             if not llow is None:
-                                llow = llow.interpolate(method='linear')
+                                llow = my.fixzero2(llow)
+                                #llow = llow.interpolate(method='linear')
+                                llow = my.fixna(llow, interpolation)
                             if not lhigh is None:
-                                lhigh = lhigh.interpolate(method='linear')
+                                lhigh = my.fixzero2(lhigh)
+                                #lhigh = lhigh.interpolate(method='linear')
+                                lhigh = my.fixna(lhigh, interpolation)
                             
                         ls.append([l, llow, lhigh])
                         listdf = getelem3tup(id, stockdata.days, datedstocklists, period, topbottom)
@@ -838,14 +729,15 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
     if wantcci:
         indicators.append(cci.CCI())
     if wantmacd:
-        indicators.append(macd.MACD())
+        indicators.append(macd.MACD(stockdata))
     if wantrsi:
-        indicators.append(rsi.RSI())
+        indicators.append(rsi.RSI(stockdata))
     if wantstoch:
         indicators.append(stoch.STOCH())
     if wantstochrsi:
         indicators.append(stochrsi.STOCHRSI())
-    
+
+    rsi.doprint=True
     textsize = 9
     left, width = 0.1, 0.8
     numindicators = len(indicators)
@@ -872,19 +764,28 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
     print("ll ", len(ls), len(ls[0]))
     #print("mynames", type(mynames), len(mynames), mynames, " ", type(mynames[0]), len(mynames[0]))
     print("daes", olddate, newdate)
-    displayax(ax[0], ls[0], daynames2, mynames[0].values, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
+    myma0 = ls[0]
+    myma0 = [ my.fixzero2(myma0[0]), my.fixzero2(myma0[1]), my.fixzero2(myma0[2]) ]
+    myma0 = my.fixnaarr(myma0, interpolation)
+    displayax(ax[0], myma0, daynames2, mynames[0].values, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
     myma = ls[0]
     #print("tmyma ", type(myma))
     #print(myma)
     print(myma)
     print("mym", type(myma), len(myma))
-    myma = my.fixnaarr(myma)
-    myma = my.base100(myma, periodtext)
+    myma = [ my.fixzero2(myma[0]), my.fixzero2(myma[1]), my.fixzero2(myma[2]) ]
+    print("mem0", myma[0].values)
+    myma = my.fixnaarr(myma, interpolation)
+    print(myma[0].values)
+    print("p",periodtext)
+    #myma = my.base100(myma, periodtext)
     #print(myma)
     for i in range(numindicators):
         indicator = indicators[i]
         lses = indicator.calculate(myma)
-        print("l0", type(lses), type(lses[0]))
+        print(type(indicator))
+        print("l0", type(lses), len(lses))
+        #type(lses[0]))
         lsesl = lses[0].tolist()
         lsesr = [ round(num, 1) for num in lsesl ]
         print(lsesr)
@@ -908,7 +809,7 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
     plt.show()
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
 
-def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
+def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, interpolation = 'linear'):
     scalebeginning100 = 1
     
     markets = set()
@@ -1007,7 +908,8 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
                         dayls.append(bigretl[2])
                         if interpolate:
                             print(type(l))
-                            l = l.interpolate(method='linear')
+                            #l = l.interpolate(method='linear')
+                            l = my.fixna(l, interpolation)
                         ls.append(l)
                         listdf = getelem3tup(id, stockdata.days, datedstocklists, indexid, topbottom)
                         df = listdf
@@ -1081,6 +983,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True):
     print("ll ", mynames)
     #print("mynames", type(mynames), len(mynames), mynames, " ", type(mynames[0]), len(mynames[0]))
     print("daes", olddate, newdate)
+    print(type(commondays[0]))
     displayax(ax1, commonls, commondays, mynames, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
     percentize = True      
     if percentize:
@@ -1290,9 +1193,17 @@ def getelem3tup(id, days, datedstocklist, period, size):
         if len(el) == 1:
             return(el)
         else:
-            print("err3")
+            print("err3",len(el),id)
         c = c + 1
     return(retl)
+
+def gettopyear(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1y", wantchart=False)
+
+def gettop3m(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "3m", wantchart=False)
 
 def gettopmonth(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
@@ -1305,6 +1216,10 @@ def getbottommonth(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 1
 def gettopweek(id, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
     gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
+
+def gettopday(id, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
+    start = (numberdays - 1) * tablemoveintervaldays
+    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1d", wantchart=False)
 
 def getbottomweek(id, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
@@ -1324,7 +1239,213 @@ def prevNonNan(alist, pos):
 
 def rangei(stop):
     return range(stop + 1)
+
+
+def simulateinvest2(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = None, intervalwhole = False, confidenceholdincrease = False, noconfidenceholdincrease = True, noconfidencetrenddecrease = False, noconfidencetrenddecreasetimes = 1, confidencetrendincrease = False, confidencetrendincreasetimes = 1, indicatordirection = False, indicatordirectionup = True, volumelimits = None):
+    simulateinvest(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits)
     
+def simulateinvest(market, startdate = None, enddate = None, confidence = False, confidenceValue = 0.7, confidenceFindTimes = 4, stoploss = True, stoplossValue = 0.9, indicatorPure = False, indicatorRebase = False, indicatorReverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalStoploss = True, intervalStoplossValue = 0.9, day = 1, delay = None, intervalwhole = False, confidenceholdincrease = False, noconfidenceholdincrease = True, noconfidencetrenddecrease = False, noconfidencetrenddecreasetimes = 1, confidencetrendincrease = False, confidencetrendincreasetimes = 1, indicatordirection = False, indicatordirectionup = True, volumelimits = None):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'confidence' : confidence, 'confidenceValue' : confidenceValue, 'confidenceFindTimes' : confidenceFindTimes, 'stoploss' : stoploss, 'stoplossValue' : stoplossValue, 'indicatorPure' : indicatorPure, 'indicatorRebase' : indicatorRebase, 'indicatorReverse' : indicatorReverse, 'mldate' : mldate, 'stocks' : stocks, 'buyweight' : buyweight, 'interval' : interval, 'adviser' : adviser, 'period' : period, 'interpolate' : interpolate, 'intervalStoploss' : intervalStoploss, 'intervalStoplossValue' : intervalStoplossValue, 'day' : day, 'delay' : delay, 'intervalwhole' : intervalwhole, 'confidenceholdincrease' : confidenceholdincrease, 'noconfidenceholdincrease': noconfidenceholdincrease, 'noconfidencetrenddecrease' : noconfidencetrenddecrease, 'noconfidencetrenddecreaseTimes' : noconfidencetrenddecreasetimes, 'confidencetrendincrease' : confidencetrendincrease, 'confidencetrendincreaseTimes' : confidencetrendincreasetimes, 'indicatorDirection' : indicatordirection, 'indicatorDirectionUp' : indicatordirectionup, 'volumelimits' : volumelimits }
+    print(market, data)
+    response = request.request1(market, data)
+    #print(type(response))
+    #print(response)
+    #print(response.text)
+    #print(response.json())
+    resp = response.json()
+    #print(resp)
+    webdata = resp['webdatajson']
+    #print(webdata)
+    #print(type(webdata))
+    #print(webdata.keys())
+    updatemap = webdata['updateMap']
+    #print(updatemap)
+    #print(updatemap.keys())
+    dates = updatemap['plotdates']
+    commondays = dates
+    #print(type(dates))
+    default = updatemap['plotdefault']
+    capital = updatemap['plotcapital']
+    commonls = [ default, capital ]
+    mynames = [ "default", "capital" ]
+    plt.rc('axes', grid=True)
+    plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
+
+    mynames=["default","my"]
+    olddate = dates[0]
+    newdate = dates[len(dates) - 1]
+    
+    textsize = 9
+    left, width = 0.1, 0.8
+    rect1 = [left, 0.5, width, 0.4]
+    #rect2 = [left, 0.3, width, 0.2]
+    #rect3 = [left, 0.1, width, 0.2]
+    plt.ion()
+    #print("TT" + str(type(mynames[0])))
+    title = market + " " + str(mynames) + " " + str(olddate) + " - " + str(newdate)
+    fig = plt.figure(facecolor='white')
+    axescolor = '#f6f6f6'  # the axes background color
+
+    ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
+    print(type(commondays[0]))
+    #print(commondays)
+    commondays = [ w.replace('.', '-') for w in commondays ]
+    commondays = [ np.datetime64(x) for x in commondays ]
+    #print(type(commondays[0]))
+    displayax(ax1, commonls, commondays, mynames, None, None, newdate, olddate, None, title, "Value")
+    plt.show()
+    for x in updatemap['stockhistory']:
+        print(x)
+    for x in updatemap['sumhistory']:
+        print(x)
+    #print(webdata.keys())
+    print(webdata['timingMap'])
+    print(updatemap['startdate'])
+    print(updatemap['enddate'])
+    if intervalwhole:
+      print(updatemap['scores'])
+      print(updatemap['stats'])
+      print(updatemap['minmax'])
+    print(updatemap['lastbuysell'])
+    return
+
+def improvesimulateinvest(market = None, startdate = None, enddate = None, ga = 0, adviser = None, indicatorpure = None, delay = 1, intervalwhole = True, stocks = None, indicatorreverse = None, interval = None, buyweight = None, volumelimits = None):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'adviser' : adviser, 'indicatorPure' : indicatorpure, 'delay' : delay, 'intervalwhole' : intervalwhole, 'stocks' : stocks, 'indicatorReverse' : indicatorreverse, 'interval' : interval, 'buyweight' : buyweight, 'volumelimits' : volumelimits }
+    from datetime import datetime
+    tsstart = datetime.now().timestamp()
+    response = request.request2(market, data)
+    tsend = datetime.now().timestamp()
+    time = tsend - tsstart
+    resp = response.json()
+    webdata = resp['webdatajson']
+    updatemap = webdata['updateMap']
+    #timingmap = webdata['timingMap']
+    #key = list(timingmap.keys())[0]
+    #timing = timingmap[key]
+    #print(timing)
+    #print(type(timing))
+    #print(timing.keys)
+    #print(updatemap.keys())
+    #print(updatemap['scores'])
+    #print(updatemap['stats'])
+    #print(updatemap['minmax'])
+    print("improve complete", market, startdate, enddate, time)
+    #print(response.text)
+
+def myprint4(arg):
+    print("aa", arg)
+    
+def myprint3(queue, arg):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):                                                
+        myprint4(arg)
+        print("more")
+    output = file.getvalue()
+    #print("after",output)
+    queue.put(output)
+    import tkinter as tk
+    root = tk.Tk()
+    txt = tk.Text(master = root, fg='green', bg='black')
+    txt.pack(side=tk.RIGHT)
+    txt.insert(tk.END, output)
+    tk.mainloop()
+    #bop = tk.Frame()
+    #bop.pack(side=tk.LEFT)
+    
+    
+def myprint2(arg):
+    import multiprocessing as mp
+    import io
+    from contextlib import redirect_stdout
+    import time
+    p = mp.Pool(5)
+    file = io.StringIO()
+    #if True: 
+    with redirect_stdout(file):
+        p.map(myprint3, [ "aaa" ])
+    output = file.getvalue()
+    #print("after",output)
+    
+def myprint(arg):
+    import multiprocessing as mp
+    import io
+    from contextlib import redirect_stdout
+    import time
+    queue = mp.Queue()
+    if True: 
+    #with redirect_stdout(file):
+        print(type(arg), arg)
+        p = mp.Process(target=myprint3, args=(queue, "z"))
+        p.start()
+    output = queue.get()
+    print("after2",output)
+    # output is a `str` whose 
+
+def getvaluesGwrap(myid, start, end):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):                                                
+        getvalues(myid, start, end)
+    output = file.getvalue()
+    gui.view(output)
+
+def getvaluesG(myid, start, end):
+    import multiprocessing as mp
+    mp.Process(target=getvaluesGwrap, args=(myid, start, end)).start()
+
+def gettopgraphGwrap(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=const.VALUE, macddays=180, reverse=False, deltadays=3, rebase=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False, interpolation = 'linear'):
+    print("0", market)
+    print(wantmacd, wantrsi, wantdays)
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):
+        gettopgraph(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, sort=sort, wantmacd=wantmacd, wantrise=wantrise, wantrsi=wantrsi, macddays=macddays, reverse=reverse, deltadays=deltadays, rebase=rebase, wantchart=wantchart, interpolate=interpolate, wantdays=wantdays, days=days, wantgrid=wantgrid, interpolation=interpolation)
+    output = file.getvalue()
+    gui.view(output)
+
+def gettopgraphG(market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise=False, wantmacd=False, wantrsi=False, sort=const.VALUE, macddays=180, reverse=False, deltadays=3, percentize=False, wantchart=True, interpolate=True, wantdays=False, days=1, wantgrid=False, interpolation = 'linear'):
+    print("0", market)
+    print(wantmacd, wantrsi, wantdays)
+    import multiprocessing as mp
+    mp.Process(target = gettopgraphGwrap, args = (market, start, end, numberdays, tablemoveintervaldays, topbottom, myperiodtexts, wantrise, wantmacd, wantrsi, sort, macddays, reverse, deltadays, percentize, wantchart, interpolate, wantdays, days, wantgrid, interpolation)).start()
+
+def simulateinvest2Gwrap(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):
+        simulateinvest2(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits)
+    output = file.getvalue()
+    myfile = open("/tmp/" + str(time.time()) + ".txt", "w")
+    myfile.write(output)
+    myfile.close()
+    gui.view(output)
+
+def simulateinvest2G(market, startdate = None, enddate = None, confidence = False, confidencevalue = 0.7, confidencefindtimes = 4, stoploss = True, stoplossvalue = 0.9, indicatorpure = False, indicatorrebase = False, indicatorreverse = False, mldate = False, stocks = 3, buyweight = False, interval = 7, adviser = 0, period = 0, interpolate = False, intervalstoploss = True, intervalstoplossvalue = 0.9, day = 1, delay = 1, intervalwhole = False, confidenceholdincrease = False, noconfidenceholdincrease = True, noconfidencetrenddecrease = False, noconfidencetrenddecreasetimes = 1, confidencetrendincrease = False, confidencetrendincreasetimes = 1, indicatordirection = False, indicatordirectionup = True, volumelimits = None):
+    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, confidence, confidencevalue, confidencefindtimes, stoploss, stoplossvalue, indicatorpure, indicatorrebase, indicatorreverse, mldate, stocks, buyweight, interval, adviser, period, interpolate, intervalstoploss, intervalstoplossvalue, day, delay, intervalwhole, confidenceholdincrease, noconfidenceholdincrease, noconfidencetrenddecrease, noconfidencetrenddecreasetimes, confidencetrendincrease, confidencetrendincreasetimes, indicatordirection, indicatordirectionup, volumelimits)).start()
+
+f = False
+t = True
+    
+def simulateinvestsG(market, startdate = None, enddate = None, c = f, cv = 0.7, ct = 4, st = t, stv = 0.9, ip = t, ib = f, ir = f, m = f, s = 3, b = t, i = 7, a = 0, p = 0, f = t, ist = t, istv = 0.9, d = 1, w = 1, iw = f, ch = f, nch = t, nctd = f, nctdt = 1, cti = f, ctit = 1, id = f, idu = t, vl = None):
+    mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw, ch, nch, nctd, nctdt, cti, ctit, id, idu, vl)).start()
+
+def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):                                                
+        improvesimulateinvest(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks)
+    output = file.getvalue()
+    gui.view(output)
+
+def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1, intervalwhole = True, stocks = None):
+    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks)).start()
+
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 

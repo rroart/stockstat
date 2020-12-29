@@ -83,7 +83,7 @@ public abstract class EvolutionAlgorithm {
         List<Individual> populationCopies = new ArrayList<>(population);
         int populationSize = Math.min(size, population.size());
         int randMax = populationSize;
-        for (int i = 0; i < testRecommendMutate && randMax > 1 ; i--, randMax--) {
+        for (int i = 0; i < testRecommendMutate && randMax > 1 ; i++, randMax--) {
             int idx = start + rand.nextInt(randMax - start);
             Individual pop = populationCopies.get(idx);
             populationCopies.remove(idx);

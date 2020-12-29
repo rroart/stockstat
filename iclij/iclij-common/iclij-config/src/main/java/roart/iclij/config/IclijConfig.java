@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Map.Entry;
 
+import roart.common.config.ConfigConstants;
 import roart.common.config.ConfigTreeMap;
 
 public class IclijConfig {
@@ -16,10 +17,11 @@ public class IclijConfig {
 
     public IclijConfig(IclijConfig config) {
         this.configTreeMap = config.configTreeMap;
-        this.configValueMap = config.configValueMap;
+        this.configValueMap = new HashMap<>(config.configValueMap);
         this.deflt = config.deflt;
         this.text = config.text;
         this.type = config.type;
+        this.range = config.range;
     }
 
     public IclijConfig() {        
@@ -33,6 +35,7 @@ public class IclijConfig {
     private Map<String, Object> deflt = new HashMap<>();
     private Map<String, Class> type = new HashMap<>();
     private Map<String, String> conv = new HashMap<>();
+    private Map<String, Double[]> range = new HashMap<>();
 
     private LocalDate date;
 
@@ -112,12 +115,40 @@ public class IclijConfig {
         this.conv = conv;
     }
 
+    public Map<String, Double[]> getRange() {
+        return range;
+    }
+
+    public void setRange(Map<String, Double[]> range) {
+        this.range = range;
+    }
+
     public Integer serverShutdownHour() {
         return (Integer) getValueOrDefault(IclijConfigConstants.MISCSHUTDOWNHOUR);
     }
 
     public boolean populate() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.MISCPOPULATE);
+    }
+
+    public String getMyservices() {
+        return (String) getValueOrDefault(IclijConfigConstants.MISCMYSERVICES);
+    }
+
+    public String getServices() {
+        return (String) getValueOrDefault(IclijConfigConstants.MISCSERVICES);
+    }
+
+    public String getCommunications() {
+        return (String) getValueOrDefault(IclijConfigConstants.MISCCOMMUNICATIONS);
+    }
+
+    public boolean wantCache() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.MISCCACHE);
+    }
+
+    public int getCacheTTL() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.MISCCACHETTL);
     }
 
     public double mpServerCpu() {
@@ -592,6 +623,142 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.MACHINELEARNINGPREDICTOREVOLUTIONCONFIG);
     }
 
+    public boolean wantsSimulateInvestAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTAUTORUN);
+    }
+
+    public boolean wantsSimulateInvestConfidence() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCE);
+    }
+
+    public double getSimulateInvestConfidenceValue() {
+        return (Double) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE);
+    }
+
+    public int getSimulateInvestConfidenceFindtimes() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
+    }
+
+    public boolean wantsSimulateInvestConfidenceHoldIncrease() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE);
+    }
+
+    public boolean wantsSimulateInvestNoConfidenceHoldIncrease() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE);
+    }
+
+    public boolean wantsSimulateInvestConfidenceTrendIncrease() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE);
+    }
+
+    public int wantsSimulateInvestConfidenceTrendIncreaseTimes() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES);
+    }
+
+    public boolean wantsSimulateInvestNoConfidenceTrendDecrease() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE);
+    }
+
+    public int wantsSimulateInvestNoConfidenceTrendDecreaseTimes() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES);
+    }
+
+    public boolean wantsSimulateInvestStoploss() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTOPLOSS);
+    }
+
+    public double getSimulateInvestStoplossValue() {
+        return (Double) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE);
+    }
+
+    public boolean wantsSimulateInvestIntervalStoploss() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS);
+    }
+
+    public double getSimulateInvestIntervalStoplossValue() {
+        return (Double) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE);
+    }
+
+    public boolean wantsSimulateInvestIndicatorReverse() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+    }
+
+    public boolean wantsSimulateInvestIndicatorPure() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORPURE);
+    }
+
+    public boolean wantsSimulateInvestIndicatorRebase() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
+    }
+
+    public boolean wantsSimulateInvestIndicatorDirection() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION);
+    }
+
+    public boolean wantsSimulateInvestIndicatorDirectionUp() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP);
+    }
+
+    public boolean wantsSimulateInvestMLDate() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTMLDATE);
+    }
+
+    public int getSimulateInvestStocks() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTOCKS);
+    }
+
+    public boolean wantsSimulateInvestBuyweight() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);
+    }
+
+    public boolean wantsSimulateInvestInterpolate() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERPOLATE);
+    }
+
+    public int getSimulateInvestInterval() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+    }
+
+    public boolean wantsSimulateInvestIntervalWhole() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTINTERVALWHOLE);
+    }
+
+    public int getSimulateInvestAdviser() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTADVISER);
+    }
+
+    public int getSimulateInvestPeriod() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTPERIOD);
+    }
+
+    public int getSimulateInvestDelay() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTDELAY);
+    }
+
+    public String getSimulateInvestVolumelimits() {
+        return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS);
+    }
+
+    public String getSimulateInvestStartdate() {
+        return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTARTDATE);
+    }
+
+    public String getSimulateInvestEnddate() {
+        return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTENDDATE);
+    }
+
+    public int getSimulateInvestDay() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTDAY);
+    }
+
+    public boolean wantsImproveSimulateInvestAutorun() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN);
+    }
+    
+    public String getImproveSimulateInvestEvolutionConfig() {
+        return (String)getValueOrDefault(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG);
+    }
+    
     public boolean singlemarketEvolveFirstOnly() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.SINGLEMARKETEVOLVEFIRSTONLY);
     }
@@ -640,6 +807,10 @@ public class IclijConfig {
 
     public boolean verificationRerun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.VERIFICATIONRERUN);
+    }
+
+    public int getEvolveGA() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.EVOLVEGA);
     }
 
     public boolean wantEvolveRecommender() {

@@ -22,12 +22,7 @@ import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
-public abstract class EvolveJ {
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
-
-    public abstract double evolve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, Boolean buy,
-            String subcomponent, Parameters parameters, List<MLMetricsItem> mlTests, Map<String, Object> confMap,
-            EvolutionConfig evolutionConfig, String pipeline);
+public abstract class EvolveJ extends Evolve {
 
     protected void print(String title, List<Phenotype<roart.evolution.marketfilter.jenetics.gene.impl.MarketFilterGene, Double>> population) {
         Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
@@ -43,5 +38,4 @@ public abstract class EvolveJ {
             log.error(Constants.EXCEPTION, e);
         }
     }
-
 }

@@ -126,8 +126,8 @@ public abstract class AbstractIndicator extends Calculatable {
         map.put(PipelineConstants.RESULT, calculatedMap);
         map.put(PipelineConstants.OBJECT, objectMap);
         map.put(PipelineConstants.OBJECTFIXED, objectFixedMap);
-        map.put(PipelineConstants.LIST, listMap);
-        map.put(PipelineConstants.TRUNCLIST, truncListMap);
+        //map.put(PipelineConstants.LIST, listMap);
+        //map.put(PipelineConstants.TRUNCLIST, truncListMap);
         map.put(PipelineConstants.RESULT, calculatedMap);
         map.put(PipelineConstants.MARKETOBJECT, marketObjectMap);
         map.put(PipelineConstants.MARKETCALCULATED, marketCalculatedMap);

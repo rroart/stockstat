@@ -17,13 +17,17 @@ import org.slf4j.LoggerFactory;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.model.MetaItem;
+import roart.common.util.JsonUtil;
 import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
-import roart.component.FitnessMarketFilter;
-import roart.component.MarketFilterChromosomeWinner;
+import roart.component.Evolve;
+import roart.component.FilterEvolveFactory;
+import roart.component.SimulateInvestEvolveFactory;
 import roart.component.model.ComponentData;
 import roart.db.IclijDbDao;
+import roart.evolution.chromosome.winner.MarketFilterChromosomeWinner;
+import roart.evolution.config.EvolutionConfig;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
@@ -31,6 +35,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.fitness.impl.FitnessMarketFilter;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -82,7 +87,6 @@ public class ImproveFilterAction extends MarketAction {
             if (component == null) {
                 continue;
             }
-            boolean evolve = false; // param.getInput().getConfig().wantEvolveML();
 
             List<IncDecItem> allIncDecs = null;
             LocalDate date = param.getFutureDate();
@@ -112,14 +116,16 @@ public class ImproveFilterAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
             aMap.put(ConfigConstants.MISCMYTABLEDAYS, 0);
             aMap.put(ConfigConstants.MISCMYDAYS, 0);
-            List<MetaItem> metas = param.getService().getMetas();
-            MetaItem meta = new MetaUtil().findMeta(metas, market.getConfig().getMarket());
-            List<String> categories = new MetaUtil().getCategories(meta);
-            MarketFilterGene gene = new MarketFilterGene(market.getFilter(), categories);
-            //MarketFilterChromosome chromosome = new MarketFilterChromosome(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, gene, mlTests);
-            MarketFilterChromosome2 chromosome2 = new MarketFilterChromosome2(new ArrayList<>(), gene);
-            FitnessMarketFilter fit = new FitnessMarketFilter(action, new ArrayList<>(), param, profitdata, market, null, component.getPipeline(), buy, subcomponent, parameters, mlTests, stockDates, incdecsP);
-            ComponentData componentData = component.improve(action, param, chromosome2, subcomponent, new MarketFilterChromosomeWinner(), buy, fit);
+
+            int ga = param.getInput().getConfig().getEvolveGA();
+            Evolve evolve = FilterEvolveFactory.factory(ga);
+            String evolutionConfigString = param.getInput().getConfig().getImproveAbovebelowEvolutionConfig();
+            EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
+
+            Map<String, Object> confMap = new HashMap<>();
+            List<String> confList = new ArrayList<>();
+            ComponentData componentData = evolve.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, component.getPipeline(), component, confList );
+       
             Map<String, Object> updateMap = componentData.getUpdateMap();
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);

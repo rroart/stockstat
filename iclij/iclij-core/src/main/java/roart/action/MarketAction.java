@@ -34,7 +34,6 @@ import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.ComponentFactory;
-import roart.component.FitnessAboveBelow;
 import roart.component.model.ComponentData;
 import roart.constants.IclijConstants;
 import roart.db.IclijDbDao;
@@ -44,6 +43,7 @@ import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.MLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.evolution.fitness.impl.FitnessAboveBelow;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
@@ -114,7 +114,7 @@ public abstract class MarketAction extends Action {
     
     @Override
     public void goal(Action parent, ComponentData param, Integer priority) {
-        getMarkets(parent, new ComponentInput(IclijXMLConfig.getConfigInstance(), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
+        getMarkets(parent, new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>()), null, priority);
     }
 
     public WebData getMarket(Action parent, ComponentData param, Market market, Boolean evolve, Integer priority, List<TimingItem> timingsdone) {
@@ -169,10 +169,10 @@ public abstract class MarketAction extends Action {
             String marketName = market.getConfig().getMarket();
             MetaItem meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-            ComponentInput input = new ComponentInput(config, null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), new HashMap<>());
+            ComponentInput input = new ComponentInput(config, null, marketName, null, 0, paramTemplate.getInput().isDoSave(), false, new ArrayList<>(), paramTemplate.getInput().getValuemap());
             ComponentData param = null;
             try {
-                param = ComponentData.getParam(input, 0);
+                param = ComponentData.getParam(input, 0, market);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
@@ -566,12 +566,14 @@ public abstract class MarketAction extends Action {
         timingMap.put(market.getConfig().getMarket(), param.getTimings());
         if (marketTime.buy == null || marketTime.buy) {
             myData.setTimingMap(timingMap);
-            if (marketTime.buy != null) {
+            if (param.getUpdateMap() != null) {
                 myData.getUpdateMap().putAll(param.getUpdateMap());
             }
         } else {
             myData.setTimingMap2(timingMap);
-            myData.getUpdateMap2().putAll(param.getUpdateMap());
+            if (param.getUpdateMap() != null) {
+                myData.getUpdateMap2().putAll(param.getUpdateMap());
+            }
         }
     }
 

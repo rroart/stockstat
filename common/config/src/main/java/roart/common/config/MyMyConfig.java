@@ -18,7 +18,7 @@ public class MyMyConfig extends MyConfig {
 
     public MyMyConfig(MyConfig config) {
         setConfigTreeMap(config.getConfigTreeMap());
-        setConfigValueMap(config.getConfigValueMap());
+        setConfigValueMap(new HashMap<>(config.getConfigValueMap()));
         setDeflt(config.getDeflt());
         setText(config.getText());
         setRange(config.getRange());
@@ -821,8 +821,40 @@ public class MyMyConfig extends MyConfig {
         return (Boolean) getValueOrDefault(ConfigConstants.MISCFILTERWEEKEND);
     }
 
+    public boolean wantInterpolate() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MISCINTERPOLATE);
+    }
+
+    public String getInterpolationmethod() {
+        return (String) getValueOrDefault(ConfigConstants.MISCINTERPOLATIONMETHOD);
+    }
+
     public String getThreshold() {
         return (String) getValueOrDefault(ConfigConstants.MISCTHRESHOLD);
+    }
+
+    public boolean wantMergecy() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MISCMERGECY);
+    }
+
+    public String getMyservices() {
+        return (String) getValueOrDefault(ConfigConstants.MISCMYSERVICES);
+    }
+
+    public String getServices() {
+        return (String) getValueOrDefault(ConfigConstants.MISCSERVICES);
+    }
+
+    public String getCommunications() {
+        return (String) getValueOrDefault(ConfigConstants.MISCCOMMUNICATIONS);
+    }
+
+    public boolean wantCache() {
+        return (Boolean) getValueOrDefault(ConfigConstants.MISCCACHE);
+    }
+
+    public int getCacheTTL() {
+        return (Integer) getValueOrDefault(ConfigConstants.MISCCACHETTL);
     }
 
     public String getDbSparkMaster() {

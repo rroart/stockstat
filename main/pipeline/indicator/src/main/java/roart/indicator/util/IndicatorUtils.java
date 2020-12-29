@@ -34,6 +34,7 @@ import roart.common.model.MetaItem;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.data.ExtraData;
+import roart.pipeline.impl.DataReader;
 import roart.pipeline.impl.ExtraReader;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -249,10 +250,10 @@ public class IndicatorUtils {
         return retobj;
     }
 
-    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData) throws Exception {
+    public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, Pipeline[] datareaders) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
-        int arraySize = getCommonArraySizeAndObjectMap(indicators, objectMapsList, listList);
+        int arraySize = getCommonArraySizeAndObjectMap(indicators, objectMapsList, listList, datareaders);
         Object[] retobj = new Object[3];
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = new HashMap<>();
         if (listList.isEmpty()) {
@@ -304,8 +305,8 @@ public class IndicatorUtils {
                     int jj = 0;
                     continue;
                 }
-                dayIndicatorMap.put(j, indicatorMap);
             }
+            dayIndicatorMap.put(j, indicatorMap);
         }
         findMinMax(arraySize, dayIndicatorMap, indicatorLists, indicatorMinMax);
         retobj[0] = dayIndicatorMap;
@@ -346,14 +347,17 @@ public class IndicatorUtils {
     }
 
     private static int getCommonArraySizeAndObjectMap(List<AbstractIndicator> indicators, List<Map<String, Object[]>> objectMapsList,
-            List<Map<String, Double[][]>> listList) {
+            List<Map<String, Double[][]>> listList, Pipeline[] datareaders) {
         int arraySize = 0;
+        Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
         for (AbstractIndicator indicator : indicators) {
+            DataReader datareader = (DataReader) pipelineMap.get("" + indicator.getCategory());
             Map<String, Object> resultMap = indicator.getLocalResultMap();
             Map<String, Object[]> objMap = (Map<String, Object[]>) resultMap.get(PipelineConstants.OBJECT);
             if (objMap != null) { 
                 objectMapsList.add(objMap);
-                listList.add((Map<String, Double[][]>) resultMap.get(PipelineConstants.LIST));
+                Map<String, Double[][]> list0 = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.LIST);
+                listList.add(list0);
                 arraySize += indicator.getResultSize();
                 log.info("sizes {}", listList.get(listList.size() - 1).size());
             }

@@ -99,11 +99,13 @@ public class IclijXMLConfig {
         IclijConfigConstantMaps.makeTextMap();
         IclijConfigConstantMaps.makeTypeMap();
         IclijConfigConstantMaps.makeConvertMap();
+        IclijConfigConstantMaps.makeRangeMap();
         configInstance.setDeflt(IclijConfigConstantMaps.deflt);
         configInstance.setType(IclijConfigConstantMaps.map);
         configInstance.setText(IclijConfigConstantMaps.text);
         configInstance.setConv(IclijConfigConstantMaps.conv);
-        if (configxml != null) {
+        configInstance.setRange(IclijConfigConstantMaps.range);
+       if (configxml != null) {
             printout();
             doc = configxml.getDocument();
             if (doc != null) {
@@ -203,11 +205,11 @@ public class IclijXMLConfig {
                 myclass = IclijConfigConstantMaps.map.get(node);
             }
             if (myclass == null) {
-                String node1 = node0.replaceFirst("\\[@id=[a-z]*\\]", "[@id]");
+                String node1 = node0.replaceFirst("\\[@id=[a-z0-9]*\\]", "[@id]");
                 myclass = (Class) IclijConfigConstantMaps.map.get(node1);
             }
             if (myclass == null) {
-                String node1 = node.replaceFirst("\\[@id=[a-z]*\\]", "[@id]");
+                String node1 = node.replaceFirst("\\[@id=[a-z0-9]*\\]", "[@id]");
                 myclass = (Class) IclijConfigConstantMaps.map.get(node1);
             }
             String s = "";
@@ -663,11 +665,13 @@ public class IclijXMLConfig {
             }
             MarketFilter marketFilter = getConfig(configMap, "filter", MarketFilter.class, config);
             MLConfigs mlConfigs = getConfig(configMap, "mlconfig", MLConfigs.class, config);
+            SimulateInvestConfig simulate = getConfig(configMap, "simulate", SimulateInvestConfig.class, config);
             //MLConfigs defaultMlConfigs = getDefaultMlConfigs(config, mapper, text);
             //defaultMlConfigs.merge(mlConfigs);
             market.setConfig(marketConfig);
             market.setFilter(marketFilter);
             market.setMlconfig(mlConfigs);
+            market.setSimulate(simulate);
             //String text2 = (String) config.getConfigValueMap().get(text);
             //MarketConfig market = mapper.readValue(text2, new TypeReference<MarketConfig>(){});
             retList.add(market);
@@ -676,7 +680,7 @@ public class IclijXMLConfig {
     }
 
     private static MLConfigs getDefaultMlConfigs(IclijConfig config, ObjectMapper mapper, String text) {
-        text = text.replaceFirst("\\[@id=[a-z]*\\]", "[@id]");
+        text = text.replaceFirst("\\[@id=[a-z0-9]*\\]", "[@id]");
         String mlConfigsString = (String) config.getDeflt().get(text + ".mlconfig");
         try {
             return mapper.readValue(mlConfigsString, MLConfigs.class);

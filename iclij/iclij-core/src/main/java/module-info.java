@@ -16,6 +16,7 @@ module iclij.core {
     requires common.model;
     requires common.service;
     requires common.util;
+    requires common.cache;
     requires commons;
     requires commons.math3;
     requires deductive;
@@ -49,7 +50,11 @@ module iclij.core {
     requires org.apache.commons.lang3;
     requires io.jenetics.base;
     requires iclij.evolutionmarketfilter;
+    requires iclij.evolutioniclijconfigmap;
     requires db;
+    requires common.communication.model;
+    requires common.communication.factory;
+    requires guava;
     //requires springfox.core;
     //requires springfox.spi;
     //requires springfox.spring.web;

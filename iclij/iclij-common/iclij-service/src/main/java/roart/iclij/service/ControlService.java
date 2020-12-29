@@ -1,5 +1,6 @@
 package roart.iclij.service;
 
+import roart.common.config.CacheConstants;
 import roart.common.config.ConfigTreeMap;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.EurekaConstants;
@@ -7,12 +8,19 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.eureka.util.EurekaUtil;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.model.WebData;
 import roart.iclij.model.WebDataJson;
 import roart.iclij.model.component.ComponentInput;
 import roart.result.model.ResultItem;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
+import roart.common.util.JsonUtil;
+import roart.common.util.ServiceConnectionUtil;
+import roart.common.communication.factory.CommunicationFactory;
+import roart.common.communication.model.Communication;
+import roart.common.cache.MyCache;
 
 import java.util.List;
 import java.util.Set;
@@ -20,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +54,15 @@ public class ControlService {
     public void getConfig() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
+        ServiceResult result = sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
+        /*
+        IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(EurekaConstants.GETCONFIG, iclijConfig.getServices(), iclijConfig.getCommunications());
+        ServiceResult result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
+        Communication c = CommunicationFactory.get(sc.getLeft(), ServiceResult.class, EurekaConstants.GETCONFIG, objectMapper, true, true, true, sc.getRight());
+        param.setWebpath(c.getReturnService());
+        result = (ServiceResult) c.sendReceive(param);
+        */
         //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
         conf = new MyMyConfig(result.getConfig());
         Map<String, Object> map = conf.getConfigValueMap();
@@ -62,6 +79,26 @@ public class ControlService {
        
     }
     
+    private <T> T sendCMe(Class<T> myclass, ServiceParam param, String service) {
+        IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
+        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight());
+        param.setWebpath(c.getReturnService());
+        result = c.sendReceive(param);
+        return result[0];
+    }
+
+    private <T> T sendAMe(Class<T> myclass, IclijServiceParam param, String service, ObjectMapper objectMapper) {
+        IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
+        Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight());
+        param.setWebpath(c.getReturnService());
+        result = c.sendReceive(param);
+        return result[0];
+    }
+
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
         //System.out.print(space.substring(0, indent));
@@ -83,10 +120,17 @@ public class ControlService {
     }
     
     public List<MetaItem> getMetas() {
+        String key = CacheConstants.METAS;
+        List<MetaItem> list = (List<MetaItem>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMETAS);
-        return result.getMetas();     
+        list = result.getMetas();
+        MyCache.getInstance().put(key, list);
+        return list;
     }
     
     public Map<String, String> getStocks(String market) {
@@ -98,12 +142,19 @@ public class ControlService {
     }
     
     public List<String> getDates(String market) {
+        String key = CacheConstants.DATES + conf.getMarket() + conf.getdate();
+        List<String> list =  (List<String>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setWantMaps(true);
         param.setMarket(market);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETDATES);
-        return (List<String>) result.getMaps().get(PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
+        list = (List<String>) result.getMaps().get(PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
+        MyCache.getInstance().put(key, list);
+        return list;
     }
    /**
      * Create result lists
@@ -116,6 +167,11 @@ public class ControlService {
     }
     
     public Map<String, Map<String, Object>> getContent(List<String> disableList) {
+        String key = CacheConstants.CONTENT + conf.getMarket() + conf.getMLmarket() + conf.getdate() + conf.getConfigValueMap();
+        Map<String, Map<String, Object>> list = (Map<String, Map<String, Object>>) MyCache.getInstance().get(key);
+        if (list != null) {
+            return list;
+        }
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setWantMaps(true);
@@ -127,7 +183,10 @@ public class ControlService {
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENT);
-        return result.getMaps();
+        list = result.getMaps();
+        MyCache.getInstance().put(key, list);
+        return list;
+        //return result.getMaps();
         //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
 	/*
         for (Object o : (List)((List)result.list2)) {
@@ -265,14 +324,26 @@ public class ControlService {
         return data;
     }
 
+    public <T> T sendReceive(Communication c, IclijServiceParam param) {
+        param.setWebpath(c.getReturnService());
+        T r = (T) c.sendReceive(param);
+        return r;
+    }
+
     public WebData getVerify(String findprofit, ComponentInput componentInput) {
         // TODO Auto-generated method stub
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(componentInput.getConfig());
         param.setWebpath(EurekaConstants.GETVERIFY);
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(EurekaConstants.GETVERIFY, componentInput.getConfig().getServices(), componentInput.getConfig().getCommunications());
         param.setOffset(componentInput.getLoopoffset());
-        IclijServiceResult result = EurekaUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
-
+        IclijServiceResult result = sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+        /*
+        Communication c = CommunicationFactory.get(sc.getLeft(), IclijServiceResult.class, param.getWebpath(), objectMapper, true, true, true, sc.getRight());
+        param.setWebpath(c.getReturnService());
+        */
+        //result = (IclijServiceResult[]) c.sendReceive(param);
+        
         WebDataJson dataJson = result.getWebdatajson();
         WebData data = convert(dataJson);
         return data;

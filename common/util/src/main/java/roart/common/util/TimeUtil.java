@@ -97,6 +97,9 @@ public class TimeUtil {
     
     public static LocalDate getEqualBefore(List<String> stockDates, String date) {
         int index = getIndexEqualBefore(stockDates, date);
+        if (index < 0) {
+            return null;
+        }
         try {
             return convertDate(stockDates.get(index));
         } catch (ParseException e) {
@@ -163,11 +166,17 @@ public class TimeUtil {
     public static String getBackEqualBefore(LocalDate date, int back, List<String> stockDates) {
         int index = getIndexEqualBefore(stockDates, TimeUtil.convertDate2(date));
         index = index - back;
+        if (index < 0) {
+            return null;
+        }
         return stockDates.get(index);
     }
 
     public static LocalDate getBackEqualBefore2(LocalDate date, int back, List<String> stockDates) {
         String str = getBackEqualBefore(date, back, stockDates);
+        if (str == null) { 
+            return null;
+        }
         try {
             return convertDate(str);
         } catch (ParseException e) {
@@ -179,11 +188,17 @@ public class TimeUtil {
     public static String getForwardEqualAfter(LocalDate date, int back, List<String> stockDates) {
         int index = getIndexEqualAfter(stockDates, TimeUtil.convertDate2(date));
         index = index + back;
+        if (index > stockDates.size() - 1) {
+            return null;
+        }
         return stockDates.get(index);
     }
 
     public static LocalDate getForwardEqualAfter2(LocalDate date, int back, List<String> stockDates) {
         String str = getForwardEqualAfter(date, back, stockDates);
+        if (str == null) {
+            return null;
+        }
         try {
             return convertDate(str);
         } catch (ParseException e) {

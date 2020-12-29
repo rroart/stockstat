@@ -12,6 +12,7 @@ module iclij.common.util {
     
     requires common.model;
     requires common.util;
+    requires common.cache;
     requires iclij.common.config;
     requires iclij.common.model;
     requires iclij.common.service;

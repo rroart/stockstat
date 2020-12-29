@@ -18,6 +18,7 @@ module core {
     requires common.eureka;
     requires common.model;
     requires common.service;
+    requires common.cache;
     //requires common.util;
     requires commons.configuration2;
     requires commons.lang;
@@ -68,4 +69,6 @@ module core {
     requires pipeline.indicator;
     requires pipeline.predictor;
     requires stocketl;
+    requires common.communication.model;
+    requires common.communication.factory;
 }
