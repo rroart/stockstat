@@ -65,6 +65,8 @@ import roart.service.model.ProfitData;
 
 public class SimulateInvestComponent extends ComponentML {
 
+    private static final boolean VERIFYCACHE = false;
+    
     @Override
     public void enable(Map<String, Object> valueMap) {
     }
@@ -232,7 +234,7 @@ public class SimulateInvestComponent extends ComponentML {
                 }
             }
 
-            Map<Integer, List<String>> newVolumeMap = null;
+            Map<Integer, List<String>> volumeExcludeMap = null;
             Map<Integer, Trend> trendMap = null;
             {
                 LocalDate date = investStart;
@@ -264,13 +266,27 @@ public class SimulateInvestComponent extends ComponentML {
                 lastidx = stockDates.size() - 1 - lastidx;
 
                 // vol lim w/ adviser?
-                String key = CacheConstants.SIMULATEINVESTVOLUMELIMITS + market.getConfig().getMarket() + adviser.getClass().getName() + simConfig.getInterval() + investStart + investEnd;
-                newVolumeMap = (Map<Integer, List<String>>) MyCache.getInstance().get(key);
-                if (newVolumeMap == null) {
+                String key = CacheConstants.SIMULATEINVESTVOLUMELIMITS + market.getConfig().getMarket() + adviser.getClass().getName() + simConfig.getInterval() + investStart + investEnd + simConfig.getInterpolate();
+                volumeExcludeMap = (Map<Integer, List<String>>) MyCache.getInstance().get(key);
+                Map<Integer, List<String>> newVolumeExcludeMap = null;
+                if (volumeExcludeMap == null || VERIFYCACHE) {
                     long time00 = System.currentTimeMillis();
-                    newVolumeMap = getVolumeExcludesFull(simConfig, interval, categoryValueMap, volumeMap, firstidx, lastidx);
-                    MyCache.getInstance().put(key, newVolumeMap);
+                    newVolumeExcludeMap = getVolumeExcludesFull(simConfig, interval, categoryValueMap, volumeMap, firstidx, lastidx);
                     log.info("timee0 {}", System.currentTimeMillis() - time00);
+                }
+                if (VERIFYCACHE && volumeExcludeMap != null) {
+                    for (Entry<Integer, List<String>> entry : newVolumeExcludeMap.entrySet()) {
+                        int key2 = entry.getKey();
+                        List<String> v2 = entry.getValue();
+                        List<String> v = volumeExcludeMap.get(key2);
+                        if (v2 != null && !v2.equals(v)) {
+                            log.error("Difference with cache");
+                        }
+                    }
+                }
+              if (volumeExcludeMap == null) {
+                    volumeExcludeMap = newVolumeExcludeMap;
+                    MyCache.getInstance().put(key, volumeExcludeMap);
                 }
 
                 long time00 = System.currentTimeMillis();
@@ -348,7 +364,7 @@ public class SimulateInvestComponent extends ComponentML {
                     // get recommendations
 
                     List<String> myExcludes = getExclusions(simConfig, extradelay, stockDates, interval, categoryValueMap,
-                            volumeMap, configExcludeList, delay, indexOffset, newVolumeMap);
+                            volumeMap, configExcludeList, delay, indexOffset, volumeExcludeMap);
 
                     double myavg = increase(mystocks, indexOffset - extradelay, categoryValueMap, prevIndexOffset);
 
@@ -698,16 +714,32 @@ public class SimulateInvestComponent extends ComponentML {
     private Map<Integer, Trend> getTrendIncDec(Market market, ComponentData param, List<String> stockDates, int interval,
             Map<String, List<List<Double>>> filteredCategoryValueMap, int firstidx, int lastidx, SimulateInvestConfig simConfig) {
         Map<Integer, Trend> trendMap = null;
-        String key = CacheConstants.SIMULATEINVESTTREND + market.getConfig().getMarket() + "_" + simConfig.getAdviser() + "_" + interval + "_" + simConfig.getStartdate() + simConfig.getEnddate();
+        String key = CacheConstants.SIMULATEINVESTTREND + market.getConfig().getMarket() + "_" + simConfig.getAdviser() + "_" + interval + "_" + simConfig.getStartdate() + simConfig.getEnddate() + simConfig.getInterpolate();
         trendMap = (Map<Integer, Trend>) MyCache.getInstance().get(key);
+        Map<Integer, Trend> newTrendMap = null;
+        if (trendMap == null || VERIFYCACHE) {
+            long time0 = System.currentTimeMillis();
+            try {
+                newTrendMap = new TrendUtil().getTrend(interval, null, stockDates, param, market, filteredCategoryValueMap, firstidx, lastidx);
+            } catch (Exception e) {
+                log.error(Constants.ERROR, e);
+            }
+            log.info("time millis {}", System.currentTimeMillis() - time0);
+        }
+        if (VERIFYCACHE && trendMap != null) {
+            for (Entry<Integer, Trend> entry : newTrendMap.entrySet()) {
+                int key2 = entry.getKey();
+                Trend v2 = entry.getValue();
+                Trend v = trendMap.get(key2);
+                if (v2 != null && !v2.toString().equals(v.toString())) {
+                    log.error("Difference with cache");
+                }
+            }
+        }
         if (trendMap != null) {
             return trendMap;
         }
-        try {
-            trendMap = new TrendUtil().getTrend(interval, null, stockDates, param, market, filteredCategoryValueMap, firstidx, lastidx);
-        } catch (Exception e) {
-            log.error(Constants.ERROR, e);
-        }
+        trendMap = newTrendMap;
         MyCache.getInstance().put(key, trendMap);
         return trendMap;
     }

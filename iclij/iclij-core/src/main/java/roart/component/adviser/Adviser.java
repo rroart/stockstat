@@ -15,6 +15,8 @@ import roart.iclij.config.SimulateInvestConfig;
 public abstract class Adviser {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     
+    protected static final boolean VERIFYCACHE = false;
+    
     protected Market market;
     
     protected LocalDate investStart;

@@ -322,12 +322,28 @@ public abstract class IndicatorAdviser extends Adviser {
         int end = stockDates.size() - 1 - lastidx;
         String investStart = stockDates.get(start);
         String investEnd = stockDates.get(end);
-        String key = CacheConstants.SIMULATEINVESTADVISER + market.getConfig().getMarket() + this.getClass().getName() + investStart + investEnd;
+        String key = CacheConstants.SIMULATEINVESTADVISER + market.getConfig().getMarket() + this.getClass().getName() + investStart + investEnd + simulateConfig.getIndicatorPure() + indicatordirection + indicatordirectionup + indicatorreverse + interpolate + " " + simulateConfig.getIndicatorRebase();
         valueMap = (Map<Integer, List<Pair<String, Double>>>) MyCache.getInstance().get(key);
+        Map<Integer, List<Pair<String, Double>>> newValueMap = null;
+        if (valueMap == null || VERIFYCACHE) {
+            long time0 = System.currentTimeMillis();
+            newValueMap = getValuePairs(categoryValueMap, stockDates, new ArrayList<>(), firstidx, lastidx);
+            log.info("time millis {}", System.currentTimeMillis() - time0);
+        }
+        if (VERIFYCACHE && valueMap != null) {
+            for (Entry<Integer, List<Pair<String, Double>>> entry : newValueMap.entrySet()) {
+                int key2 = entry.getKey();
+                List<Pair<String, Double>> v2 = entry.getValue();
+                List<Pair<String, Double>> v = valueMap.get(key2);
+                if (v2 != null && !v2.equals(v)) {
+                    log.error("Difference with cache");
+                }
+            }
+        }
         if (valueMap != null) {
             return;
         }
-        valueMap = getValuePairs(categoryValueMap, stockDates, new ArrayList<>(), firstidx, lastidx);                
+        valueMap = newValueMap;
         MyCache.getInstance().put(key, valueMap);
     }
 }

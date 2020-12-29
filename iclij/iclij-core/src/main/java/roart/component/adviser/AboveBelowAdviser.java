@@ -7,7 +7,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
@@ -65,48 +69,6 @@ public class AboveBelowAdviser extends Adviser {
         }
     }
     
-    /*
-    private void getAllMemories() {
-        try {
-            allMemories = IclijDbDao.getAllMemories(market.getConfig().getMarket(), IclijConstants.IMPROVEABOVEBELOW, PipelineConstants.ABOVEBELOW, null, null, investStart, investEnd);
-            // also filter on params
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }        
-    }
-    */
-    
-    //@Override
-    public List<IncDecItem> getIncs2(String aParameter, int buytop,
-            LocalDate date, int indexOffset, List<String> stockDates, List<String> excludes) {
-        List<IncDecItem> incdecs = new MiscUtil().getCurrentIncDecs(date, allIncDecs, market, market.getConfig().getFindtime(), false);
-        incdecs = incdecs.stream().filter(e -> !excludes.contains(e.getId())).collect(Collectors.toList());
-        List<IncDecItem> incdecsP = new MiscUtil().getCurrentIncDecs(incdecs, aParameter);              
-
-        List<IncDecItem> myincdecs = incdecsP;
-        List<IncDecItem> myincs = myincdecs.stream().filter(m1 -> m1.isIncrease()).collect(Collectors.toList());
-        List<IncDecItem> mydecs = myincdecs.stream().filter(m2 -> !m2.isIncrease()).collect(Collectors.toList());
-        List<IncDecItem> mylocals = new MiscUtil().getIncDecLocals(myincdecs);
-
-        myincs = new MiscUtil().mergeList(myincs, true);
-        mydecs = new MiscUtil().mergeList(mydecs, true);
-        List<IncDecItem> myincdec = new MiscUtil().moveAndGetCommon(myincs, mydecs, true);
-
-        Comparator<IncDecItem> incDecComparator = (IncDecItem comp1, IncDecItem comp2) -> comp2.getScore().compareTo(comp1.getScore());
-
-        myincs.sort(incDecComparator);   
-        mydecs.sort(incDecComparator);   
-
-        //int subListSize = Math.min(buytop, myincs.size());
-        //myincs = myincs.subList(0, subListSize);
-        incdecs = null;
-        incdecsP = null;
-        myincdecs = null;
-        mydecs = null;
-        myincdec = null;
-        return myincs;
-    }
-    
     @Override
     public List<String> getIncs(String aParameter, int buytop,
             int indexOffset, List<String> stockDates, List<String> excludes) {
@@ -156,17 +118,10 @@ public class AboveBelowAdviser extends Adviser {
 
             Comparator<IncDecItem> incDecComparator = (IncDecItem comp1, IncDecItem comp2) -> comp2.getScore().compareTo(comp1.getScore());
 
-            myincs.sort(incDecComparator);   
-            mydecs.sort(incDecComparator);   
-            valueMap.put(i, myincs);
+            List<IncDecItem> myincl = new ArrayList<>(myincs);
+            myincl.sort(incDecComparator);   
+            valueMap.put(i, myincl);
 
-            //int subListSize = Math.min(buytop, myincs.size());
-            //myincs = myincs.subList(0, subListSize);
-            incdecs = null;
-            incdecsP = null;
-            myincdecs = null;
-            mydecs = null;
-            myincdec = null;
         }
         return valueMap;
     }
@@ -180,10 +135,26 @@ public class AboveBelowAdviser extends Adviser {
         String investEnd = stockDates.get(end);
         String key = CacheConstants.SIMULATEINVESTADVISER + market.getConfig().getMarket() + this.getClass().getName() + investStart + investEnd;
         valueMap = (Map<Integer, List<IncDecItem>>) MyCache.getInstance().get(key);
+        Map<Integer, List<IncDecItem>> newValueMap = null;
+        if (valueMap == null || VERIFYCACHE) {
+            long time0 = System.currentTimeMillis();
+            newValueMap = getValues(aParameter, stockDates, new ArrayList<>(), firstidx, lastidx);                
+            log.info("time millis {}", System.currentTimeMillis() - time0);
+        }
+        if (VERIFYCACHE && valueMap != null) {
+            for (Entry<Integer, List<IncDecItem>> entry : newValueMap.entrySet()) {
+                int key2 = entry.getKey();
+                List<IncDecItem> v2 = entry.getValue();
+                List<IncDecItem> v = valueMap.get(key2);
+                if (v2 != null && !v2.equals(v)) {
+                    log.error("Difference with cache");
+                }
+            }
+        }
         if (valueMap != null) {
             return;
         }
-        valueMap = getValues(aParameter, stockDates, new ArrayList<>(), firstidx, lastidx);                
+        valueMap = newValueMap;
         MyCache.getInstance().put(key, valueMap);
     }
 }
