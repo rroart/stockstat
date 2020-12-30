@@ -6,11 +6,11 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-main</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-pipeline</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Stock Statistics Main Pipeline</name>
   <modules>

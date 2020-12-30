@@ -4,12 +4,12 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-ml</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-ml-spark</artifactId>
   <packaging>jar</packaging>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <name>Stock Statistics ML Spark</name>
   <!--build>
     <plugins>

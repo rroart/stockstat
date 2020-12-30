@@ -4,12 +4,12 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-iclij-evolution</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-iclij-evolution-iclijconfigmap</artifactId>
   <packaging>jar</packaging>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <name>Stock Statistics Iclij Evolution Iclij Config Map</name>
   <dependencies>
     <dependency>
@@ -36,32 +36,32 @@
 	    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-constants</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
 	    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-model</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
 	    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-config</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
 	    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-evolution-model</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
 	    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-evolution-gene</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
 	    <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-util</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
 <!-- https://mvnrepository.com/artifact/io.jenetics/jenetics -->
 <dependency>

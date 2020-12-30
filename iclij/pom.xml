@@ -6,11 +6,11 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-parent</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-iclij</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Stock Statistics Iclij</name>
 <modules>
@@ -18,7 +18,7 @@
   <module>iclij-common</module>
   <module>iclij-core</module>
   <module>iclij-evolution</module>
-  <module>iclij-web</module>
+  <!--module>iclij-web</module-->
   <module>iclij-webcore</module>
   <module>iclij-webr</module>
 </modules>

@@ -4,12 +4,12 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-common</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-common-config</artifactId>
   <packaging>jar</packaging>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <name>Stock Statistics Common Config</name>
   <build>
     <plugins>
@@ -90,12 +90,12 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-constants</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-util</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

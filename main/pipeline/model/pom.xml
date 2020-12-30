@@ -4,12 +4,12 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-pipeline</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-pipeline-model</artifactId>
   <packaging>jar</packaging>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <name>Stock Statistics Pipeline Model</name>
   <dependencies>
     <dependency>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-util</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>

@@ -6,11 +6,11 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-main</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-core</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Stock Statistics Main Core</name>
   <build>
@@ -219,7 +219,7 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-cache</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>

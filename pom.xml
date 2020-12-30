@@ -3,7 +3,7 @@
   <groupId>roart</groupId>
   <artifactId>stockstat-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <name>Stock Statistics Parent</name>
   <modules>
     <module>common</module>
@@ -75,9 +75,9 @@
     </dependency>
   </dependencies>
   <properties>
-    <stockstat.version>0.5-SNAPSHOT</stockstat.version>
+    <stockstat.version>0.6-SNAPSHOT</stockstat.version>
     <jdk.version>11</jdk.version>
-    <mavencompiler.version>3.8.0</mavencompiler.version>
+    <mavencompiler.version>3.8.1</mavencompiler.version>
     <maveninstall.version>2.5.2</maveninstall.version>
     <mavenshade.version>3.2.1</mavenshade.version>
     <jetty.version>9.4.12.v20180830</jetty.version>

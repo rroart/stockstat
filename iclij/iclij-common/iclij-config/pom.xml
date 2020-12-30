@@ -4,12 +4,12 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-iclij-common</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-iclij-common-config</artifactId>
   <packaging>jar</packaging>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <name>Stock Statistics Iclij Common Config</name>
   <dependencies>
     <dependency>
@@ -36,7 +36,7 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-config</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>

@@ -4,7 +4,7 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-iclij</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-iclij-webcore</artifactId>

@@ -4,12 +4,12 @@
     <groupId>roart</groupId>
     <artifactId>stockstat-iclij-common</artifactId>
     <relativePath>../pom.xml</relativePath>
-    <version>0.5-SNAPSHOT</version>
+    <version>0.6-SNAPSHOT</version>
   </parent>
   <groupId>roart</groupId>
   <artifactId>stockstat-iclij-common-service</artifactId>
   <packaging>jar</packaging>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <name>Stock Statistics Iclij Common Service</name>
   <dependencies>
     <dependency>
@@ -51,32 +51,32 @@
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-service</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-eureka</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-util</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-common-cache</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-model</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-common-config</artifactId>
-      <version>0.5-SNAPSHOT</version>
+      <version>${stockstat.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>roart</groupId>
   <artifactId>stockstat-eureka</artifactId>
-  <version>0.5-SNAPSHOT</version>
+  <version>0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Stock Statistics Eureka</name>
   <parent>
