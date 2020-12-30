@@ -14,7 +14,7 @@ NAMESPACE=`kubectl get namespace $1 | grep not.found`
 
 kubectl config set-context minikube --namespace=$1
 
-cd distribution/target/stockstat-distribution-0.5-SNAPSHOT-bin/stockstat-distribution-0.5-SNAPSHOT/docker
+cd distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.5-SNAPSHOT/docker
 
 make
 

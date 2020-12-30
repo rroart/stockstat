@@ -21,7 +21,7 @@ COPY webr/pom.xml webr
 COPY distribution/pom.xml distribution
 COPY pom.xml pom.xml
 RUN mvn -pl iclij/iclij-webcore -am install -Dmaven.test.skip=true
-RUN cp -p iclij/iclij-webcore/target/stockstat-iclij-webcore-0.5-SNAPSHOT.jar /usr/local/bin
+RUN cp -p iclij/iclij-webcore/target/stockstat-iclij-webcore-0.6-SNAPSHOT.jar /usr/local/bin
 
 FROM supinf/envsubst
 ARG myconfig
@@ -53,8 +53,8 @@ ENV MYDBSERVERPORT ${mydbserverport}
 ENV MYDBSERVERDB ${mydbserverdb}
 RUN mkdir /usr/local/conf
 WORKDIR /usr/local/bin
-COPY --from=0 /usr/local/bin/stockstat-iclij-webcore-0.5-SNAPSHOT.jar .
+COPY --from=0 /usr/local/bin/stockstat-iclij-webcore-0.6-SNAPSHOT.jar .
 COPY --from=1 /tmp/iclij.xml /usr/local/conf/
 RUN ln -s /tmp /usr/local/logs
-CMD java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-iclij-webcore-0.5-SNAPSHOT.jar --spring.profiles.active=docker
+CMD java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-iclij-webcore-0.6-SNAPSHOT.jar --spring.profiles.active=docker
 

@@ -20,7 +20,7 @@ COPY webr/pom.xml webr
 COPY distribution/pom.xml distribution
 COPY pom.xml pom.xml
 RUN mvn -pl main/core -am install -Dmaven.test.skip=true
-RUN cp -p main/core/target/stockstat-core-0.5-SNAPSHOT.jar /usr/local/bin
+RUN cp -p main/core/target/stockstat-core-0.6-SNAPSHOT.jar /usr/local/bin
 
 FROM supinf/envsubst
 ARG myconfig
@@ -50,9 +50,9 @@ RUN mkdir /usr/local/conf
 ADD ${myconfig} /usr/local/conf
 ADD ${myenv} /usr/local/conf
 WORKDIR /usr/local/bin
-COPY --from=0 /usr/local/bin/stockstat-core-0.5-SNAPSHOT.jar .
+COPY --from=0 /usr/local/bin/stockstat-core-0.6-SNAPSHOT.jar .
 COPY --from=1 /tmp/stockstat.xml /usr/local/conf/
 RUN ln -s /tmp /usr/local/logs
 USER root
-CMD SPARK_DRIVER_HOST=`hostname -i` java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-core-0.5-SNAPSHOT.jar --spring.profiles.active=docker
+CMD SPARK_DRIVER_HOST=`hostname -i` java -Dserver.port=${MYWEBPORT} -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-core-0.6-SNAPSHOT.jar --spring.profiles.active=docker
 

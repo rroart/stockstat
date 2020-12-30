@@ -1,4 +1,4 @@
-VERSION = 0.5-SNAPSHOT
+VERSION = 0.6-SNAPSHOT
 SUBDIRS = tensorflow spark pd eureka web iclij-web core iclij-core
 
 all: $(SUBDIRS)

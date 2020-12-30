@@ -1,4 +1,4 @@
-VERSION = 0.5-SNAPSHOT
+VERSION = 0.6-SNAPSHOT
 SUBDIRS = tensorflow spark pdfred eureka web iclij-web iclij-webcore core iclij-core
 SUBDIRS = dbclone pytorchdata tensorflowdata
 SUBDIRS2 = core iclij-core

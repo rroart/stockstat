@@ -1,4 +1,4 @@
-VERSION = 0.5-SNAPSHOT
+VERSION = 0.6-SNAPSHOT
 SUBDIRS = tensorflowdata pytorchdata tensorflow pytorch pdfred postgresql webr iwebr core icore iwebcore dbclone
 
 all: $(SUBDIRS)

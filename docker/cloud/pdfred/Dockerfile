@@ -20,7 +20,7 @@ COPY webr/pom.xml webr
 COPY distribution distribution
 COPY pom.xml pom.xml
 RUN mvn -pl input -am install -Dmaven.test.skip=true
-RUN cp -p input/target/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar /usr/local/bin
+RUN cp -p input/target/stockstat-input-0.6-SNAPSHOT-jar-with-dependencies.jar /usr/local/bin
 
 #FROM debian:stretch
 FROM openjdk:11-jdk
@@ -39,13 +39,13 @@ RUN apt-get install -y python3 python3-pip
 RUN pip3 install pandas_datareader
 RUN mkdir /usr/local/pdfred
 ADD python/pdfred/*.py /usr/local/pdfred/
-COPY --from=0 /usr/local/bin/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar /usr/local/bin/
+COPY --from=0 /usr/local/bin/stockstat-input-0.6-SNAPSHOT-jar-with-dependencies.jar /usr/local/bin/
 
 WORKDIR /usr/local/pdfred
 
 #ENV SPARK_MASTER_HOST 127.0.0.1
 
 CMD /usr/bin/python3 /usr/local/pdfred/generatexml.py; \
-    java -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar /tmp/fred.xml; \
+    java -Dconnection.url=jdbc:postgresql://${MYDBSERVER}:${MYDBSERVERPORT}/${MYDBSERVERDB} -jar /usr/local/bin/stockstat-input-0.6-SNAPSHOT-jar-with-dependencies.jar /tmp/fred.xml; \
     echo finished; \
     while true; do sleep 3600; done 

@@ -15,6 +15,6 @@ WORKDIR /usr/local/pd
 #ENV SPARK_MASTER_HOST 127.0.0.1
 
 CMD /usr/bin/python3 /usr/local/pd/generatexml.py; \
-    /usr/bin/java -Dconnection.url=jdbc:postgresql://postgresql-10-centos7:5432/stockstat -jar /usr/local/pd/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar /tmp/nasdaq.xml; \
+    /usr/bin/java -Dconnection.url=jdbc:postgresql://postgresql-10-centos7:5432/stockstat -jar /usr/local/pd/stockstat-input-0.6-SNAPSHOT-jar-with-dependencies.jar /tmp/nasdaq.xml; \
     echo finished; \
     while true; do sleep 3600; done 

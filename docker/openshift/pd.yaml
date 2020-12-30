@@ -21,7 +21,7 @@ spec:
       WORKDIR /usr/local/pd
       #ENV SPARK_MASTER_HOST 127.0.0.1
       CMD /usr/bin/python3 /usr/local/pd/generatexml.py; \
-      	  /usr/bin/java -Dconnection.url=jdbc:postgresql://postgresql-10-centos7:5432/stockstat -jar /usr/local/pd/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar /tmp/nasdaq.xml; \
+      	  /usr/bin/java -Dconnection.url=jdbc:postgresql://postgresql-10-centos7:5432/stockstat -jar /usr/local/pd/stockstat-input-0.6-SNAPSHOT-jar-with-dependencies.jar /tmp/nasdaq.xml; \
       	  echo finished; \
       	  while true; do sleep 3600; done
     images:
@@ -29,7 +29,7 @@ spec:
         kind: ImageStreamTag
         name: stockstat-build:latest
       paths: 
-      - sourcePath: /opt/app-root/src/distribution/target/stockstat-distribution-0.5-SNAPSHOT-bin/stockstat-distribution-0.5-SNAPSHOT/lib/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar
+      - sourcePath: /opt/app-root/src/distribution/target/stockstat-distribution-0.6-SNAPSHOT-bin/stockstat-distribution-0.5-SNAPSHOT/lib/stockstat-input-0.5-SNAPSHOT-jar-with-dependencies.jar
         destinationDir: "files"
     - from: 
         kind: ImageStreamTag
