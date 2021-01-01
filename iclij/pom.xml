@@ -21,6 +21,7 @@
   <!--module>iclij-web</module-->
   <module>iclij-webcore</module>
   <module>iclij-webr</module>
+  <module>iclij-sim</module>
 </modules>
   <build>
     <plugins>
