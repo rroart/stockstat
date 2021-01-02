@@ -14,6 +14,7 @@ module core {
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires common.config;
+    requires common.controller;
     //requires common.constants;
     requires common.eureka;
     requires common.model;
@@ -71,4 +72,5 @@ module core {
     requires stocketl;
     requires common.communication.model;
     requires common.communication.factory;
+    requires javax.servlet.api;
 }

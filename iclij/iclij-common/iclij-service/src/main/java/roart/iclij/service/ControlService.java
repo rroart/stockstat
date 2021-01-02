@@ -99,6 +99,17 @@ public class ControlService {
         return result[0];
     }
 
+    public void send(String service, Object object, ObjectMapper objectMapper) {
+        IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
+        Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
+        Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight());
+        c.send(object);
+    }
+
+    public void send(String service, Object object) {
+        send(service, object, new ObjectMapper());
+    }
+
     private void print(ConfigTreeMap map2, int indent) {
         String space = "      ";
         //System.out.print(space.substring(0, indent));

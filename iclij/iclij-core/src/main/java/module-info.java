@@ -12,6 +12,7 @@ module iclij.core {
     requires com.fasterxml.jackson.datatype.jsr310;
     requires common.config;
     requires common.constants;
+    requires common.controller;
     requires common.eureka;
     requires common.model;
     requires common.service;

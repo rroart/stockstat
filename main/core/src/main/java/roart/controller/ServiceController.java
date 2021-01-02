@@ -34,6 +34,7 @@ import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
+import roart.common.util.JsonUtil;
 import roart.config.MyXMLConfig;
 import roart.db.dao.DbDao;
 import roart.db.thread.DatabaseThread;
@@ -192,6 +193,7 @@ public class ServiceController implements CommandLineRunner {
             NeuralNetCommand neuralnetcommand = param.getNeuralnetcommand();
             result.setList(getInstance().getContent( new MyMyConfig(param.getConfig()), maps, disableList, neuralnetcommand));
             result.setMaps(maps);
+            log.info("blblbl" + JsonUtil.convert(maps).length());
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             result.setError(e.getMessage());
@@ -311,9 +313,12 @@ public class ServiceController implements CommandLineRunner {
         System.out.println("Using profile " + activeProfile);
         MyExecutors.initThreads("dev".equals(activeProfile));
         MyExecutors.init(new double[] { 0, new MyMyConfig(MyXMLConfig.getConfigInstance()).getMLMPCpu() } );
-        new ServiceControllerOther().start();
-        new DatabaseThread().start();
         MyMyConfig instance = new MyMyConfig(MyXMLConfig.getConfigInstance());
+        String myservices = instance.getMyservices();
+        String services = instance.getServices();
+        String communications = instance.getCommunications();
+        new ServiceControllerOther(myservices, services, communications, ServiceParam.class).start();
+        new DatabaseThread().start();
         MyCache.setCache(instance.wantCache());
         MyCache.setCacheTTL(instance.getCacheTTL());
     }

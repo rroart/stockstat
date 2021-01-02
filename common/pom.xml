@@ -16,8 +16,9 @@
   <modules>
     <module>cache</module>
     <module>communication</module>
-    <module>constants</module>
     <module>config</module>
+    <module>constants</module>
+    <module>controller</module>
     <module>db</module>
     <module>eureka</module>
     <module>myexecutor</module>

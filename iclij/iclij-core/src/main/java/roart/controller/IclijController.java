@@ -18,6 +18,7 @@ import roart.executor.MyExecutors;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.service.ControlService;
+import roart.iclij.service.IclijServiceParam;
 import roart.populate.PopulateThread;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -47,10 +48,13 @@ public class IclijController implements CommandLineRunner {
 	    try {
 	        MyExecutors.initThreads("dev".equals(activeProfile));
             MyExecutors.init(new double[] { IclijXMLConfig.getConfigInstance().mpServerCpu() } );
-            new ServiceControllerOther().start();
+            IclijConfig instance = IclijXMLConfig.getConfigInstance();
+            String myservices = instance.getMyservices();
+            String services = instance.getServices();
+            String communications = instance.getCommunications();
+            new ServiceControllerOther(myservices, services, communications, IclijServiceParam.class).start();
             new PopulateThread().start();
             new DatabaseThread().start();
-            IclijConfig instance = IclijXMLConfig.getConfigInstance();
             MyCache.setCache(instance.wantCache());
             MyCache.setCacheTTL(instance.getCacheTTL());
             if (MainAction.wantsGoals()) {        

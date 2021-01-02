@@ -402,7 +402,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.EVOLVEFUTUREDAYS, " [ 10 ]");
         deflt.put(IclijConfigConstants.EVOLVETHRESHOLD, "[ 1.0 ]");
         deflt.put(IclijConfigConstants.MISCPOPULATE, Boolean.FALSE);
-        deflt.put(IclijConfigConstants.MISCMYSERVICES, "[]");
+        deflt.put(IclijConfigConstants.MISCMYSERVICES, "{}");
         deflt.put(IclijConfigConstants.MISCSERVICES, "{}");
         deflt.put(IclijConfigConstants.MISCCOMMUNICATIONS, "{}");
         deflt.put(IclijConfigConstants.MPSERVERCPU, 0.5);
@@ -961,7 +961,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.EVOLVETHRESHOLD, new IclijXMLType(String.class, " [ 1.0 ]", "Evolve threshold"));
         mymap.put(IclijConfigConstants.MISCSHUTDOWNHOUR, new IclijXMLType(Integer.class, null, "Server shutdown hour"));
         mymap.put(IclijConfigConstants.MISCPOPULATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Populate history"));
-        mymap.put(IclijConfigConstants.MISCMYSERVICES, new IclijXMLType( String.class, "[]", "Services starting"));
+        mymap.put(IclijConfigConstants.MISCMYSERVICES, new IclijXMLType( String.class, "{}", "Services starting"));
         mymap.put(IclijConfigConstants.MISCSERVICES, new IclijXMLType( String.class, "{}", "Services and communications"));
         mymap.put(IclijConfigConstants.MISCCOMMUNICATIONS, new IclijXMLType( String.class, "{}", "Communications and connections"));
         mymap.put(IclijConfigConstants.MISCCACHE, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache enable"));

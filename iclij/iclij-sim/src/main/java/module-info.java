@@ -22,6 +22,7 @@ module iclij.sim {
     requires spring.beans;
     requires myexecutor;
     requires common.cache;
+    requires common.controller;
     requires spring.context;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
