@@ -27,6 +27,13 @@ ifneq ($(ICLIJTMPL),)
 endif
 	$(MAKE) -C conf -f ../Makefile iclij.xml
 
+iclij-sim:
+	mkdir -p conf
+ifneq ($(ISIMTMPL),)
+	rsync -a $$ISIMTMPL conf/isim.xml.tmpl
+endif
+	$(MAKE) -C conf -f ../Makefile isim.xml
+
 weba:
 	weba/scripts/genenv.sh
 
