@@ -70,8 +70,8 @@ Need to provide postgres with a database stockstat, and username/password stocks
   su - root
   su - postgres
   psql
-  create database stockstat;
   create user stockstat with password 'password';
+  create database stockstat owner stockstat;
   #grant all privileges on database stockstat to stockstat;
   psql stockstat
   grant all privileges on all tables in schema public to stockstat;
