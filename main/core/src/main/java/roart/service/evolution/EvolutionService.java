@@ -162,7 +162,7 @@ public class EvolutionService {
                 OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
     
                 List<String> individuals = new ArrayList<>();
-                Individual fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals);
+                Individual fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null);
                 evolution.print(conf.getMarket() + " " + "recommend" + " " + i, null, individuals);
     
                 for (String id : scoreList) {
@@ -338,7 +338,7 @@ public class EvolutionService {
     
             OrdinaryEvolution evolution = new OrdinaryEvolution(evolutionConfig);
     
-            Individual buysell = evolution.getFittest(evolutionConfig, recommend, null);
+            Individual buysell = evolution.getFittest(evolutionConfig, recommend, null, null);
     
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(id);
@@ -556,7 +556,7 @@ public class EvolutionService {
             evolution.fittest = fitness::fitness;
             
             List<String> individuals = new ArrayList<>();
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals);
+            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, null);
             evolution.print(conf.getMarket() + " " + ml, null, individuals);
             
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
@@ -629,7 +629,7 @@ public class EvolutionService {
             evolution.fittest = fitness::fitness;
             
             List<String> individuals = new ArrayList<>();
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals);
+            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, null);
             evolution.print(conf.getMarket() + " " + ml, null, individuals);
     
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();

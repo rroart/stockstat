@@ -63,7 +63,7 @@ public class FitnessIclijConfigMap2 {
         Map<String, Object> map = gene.getMap();
 
         List<String> titletexts = new ArrayList<>();
-        Double fitness = new FitnessIclijConfigMapCommon().fitnessCommon(profitdata, map, action, market, param, componentName, subcomponent, parameters, titletexts);
+        Double fitness = new FitnessIclijConfigMapCommon().fitnessCommon(profitdata, map, action, market, param, componentName, subcomponent, parameters, titletexts, null);
         if (!titletexts.isEmpty()) {
             titletext = titletexts.get(0);
         }

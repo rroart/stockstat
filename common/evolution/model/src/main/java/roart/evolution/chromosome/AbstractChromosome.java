@@ -1,6 +1,7 @@
 package roart.evolution.chromosome;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -15,6 +16,16 @@ public abstract class AbstractChromosome {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     
     protected Random random = new Random();
+
+    protected Map<String, Object> resultMap;
+    
+    public Map<String, Object> getResultMap() {
+        return resultMap;
+    }
+
+    public void setResultMap(Map<String, Object> resultMap) {
+        this.resultMap = resultMap;
+    }
 
     private boolean ascending = true;
     

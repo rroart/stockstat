@@ -28,6 +28,7 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
 import roart.evolution.species.Population;
+import org.apache.commons.lang3.tuple.Pair;
 
 public abstract class EvolutionAlgorithm {
     protected static Logger log = LoggerFactory.getLogger(EvolutionAlgorithm.class);
@@ -61,7 +62,7 @@ public abstract class EvolutionAlgorithm {
         this.doParallel = doParallel;
     }
 
-    public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender, List<String> individuals) throws Exception;
+    public abstract Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommender, List<String> individuals, List<Pair<Double, AbstractChromosome>> results) throws Exception;
 
     protected void printmap(Map<String, Object> map) throws JsonProcessingException {
         for (String key : new ArrayList<String>()) {

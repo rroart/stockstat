@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -313,7 +314,8 @@ public abstract class Component {
         Map<String, String> retMap = new HashMap<>();
         try {
             List<String> individuals = new ArrayList<>();
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals);
+            List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
+            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
             evolution.print(param.getMarket() + " " + subcomponent, fitness.titleText(), individuals);
             Map<String, Object> confMap = new HashMap<>();
             double score = winner.handleWinner(param, best, confMap);
@@ -321,6 +323,9 @@ public abstract class Component {
             Map<String, Double> scoreMap = new HashMap<>();
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("e", results);
+            param.setResultMap(resultMap);
             //param.setFutureDate(LocalDate.now());
             // fix mlmarket;
             TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);

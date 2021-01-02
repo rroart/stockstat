@@ -14,6 +14,8 @@ import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 public class OneFourEvolution extends EvolutionAlgorithm {
 
     public OneFourEvolution(EvolutionConfig evolutionConfig) {
@@ -21,7 +23,7 @@ public class OneFourEvolution extends EvolutionAlgorithm {
     }
     
     @Override
-    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommend, List<String> individuals) throws Exception {
+    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome recommend, List<String> individuals, List<Pair<Double, AbstractChromosome>> results) throws Exception {
         int selectionSize = evolutionConfig.getSelect();
         int four = 4;
         int five = 5;

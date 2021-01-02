@@ -84,7 +84,8 @@ public class FitnessIclijConfigMap extends Fitness {
         Map<String, Object> map = gene.getMap();
 
         List<String> titletexts = new ArrayList<>();
-        Double fitness = new FitnessIclijConfigMapCommon().fitnessCommon(profitdata, map, action, market, param, componentName, subcomponent, parameters, titletexts);
+        chromosome.setResultMap(new HashMap());
+        Double fitness = new FitnessIclijConfigMapCommon().fitnessCommon(profitdata, map, action, market, param, componentName, subcomponent, parameters, titletexts, chromosome.getResultMap());
         if (!titletexts.isEmpty()) {
             titletext = titletexts.get(0);
         }

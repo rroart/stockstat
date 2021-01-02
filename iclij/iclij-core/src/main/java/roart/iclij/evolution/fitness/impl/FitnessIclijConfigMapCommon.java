@@ -27,7 +27,7 @@ public class FitnessIclijConfigMapCommon {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public Double fitnessCommon(ProfitData profitdata, Map<String, Object> map, MarketAction action, Market market, ComponentData param, String componentName, String subcomponent, Parameters parameters, List<String> titletexts) {
+    public Double fitnessCommon(ProfitData profitdata, Map<String, Object> map, MarketAction action, Market market, ComponentData param, String componentName, String subcomponent, Parameters parameters, List<String> titletexts, Map<String, Object> resultMap) {
         List<MemoryItem> memoryItems = null;
         WebData myData = new WebData();
         myData.setUpdateMap(new HashMap<>());
@@ -67,6 +67,9 @@ public class FitnessIclijConfigMapCommon {
             titletexts.add(titletext);
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];
+            if (resultMap != null) {
+                resultMap.putAll(componentData2.getResultMap());
+            }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

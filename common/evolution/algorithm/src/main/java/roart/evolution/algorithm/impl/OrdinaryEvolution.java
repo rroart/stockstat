@@ -15,6 +15,9 @@ import roart.evolution.config.EvolutionConfig;
 import roart.evolution.species.Individual;
 import roart.evolution.species.Population;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 public class OrdinaryEvolution extends EvolutionAlgorithm {
 
     public OrdinaryEvolution(EvolutionConfig evolutionConfig) {
@@ -22,7 +25,7 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
     }
     
     @Override
-    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals) throws Exception {
+    public Individual getFittest(EvolutionConfig evolutionConfig, AbstractChromosome chromosome, List<String> individuals, List<Pair<Double, AbstractChromosome>> results) throws Exception {
         int selectionSize = getEvolutionConfig().getSelect();
         Population population = new Population(selectionSize, evolutionConfig, chromosome, false);
         if (getEvolutionConfig().getUseoldelite() && !chromosome.isEmpty()) {
@@ -35,6 +38,12 @@ public class OrdinaryEvolution extends EvolutionAlgorithm {
         }
         Individual parent = getBest(selectionSize, population, true, chromosome, individuals);
         parent.getEvaluation().transformFromNode();
+        if (results != null) {
+            for (Individual individual : population.getIndividuals()) {
+                Pair<Double, AbstractChromosome> pair = new ImmutablePair<>(individual.getFitness(), individual.getEvaluation());
+                results.add(pair);
+            }
+        }
         return parent;
     }
 
