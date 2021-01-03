@@ -49,7 +49,11 @@ public class ConfigTreeMap {
         }
         String first = name.substring(0, index);
         String rest = name.substring(index + 1);
-        return search(map.get(first).getConfigTreeMap(), rest);
+        ConfigTreeMap firstMap = map.get(first);
+        if (firstMap == null) {
+            return null;
+        }
+        return search(firstMap.getConfigTreeMap(), rest);
     }
 
     public static void insert(Map<String, ConfigTreeMap> map, String name, String fullName, String path, Map<String, Object> deflt) {
