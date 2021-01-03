@@ -20,6 +20,7 @@
   <module>iclij-filter</module>
   <module>iclij-model</module>
   <module>iclij-service</module>
+  <module>iclij-simulate</module>
   <module>iclij-util</module>
   <module>iclij-verifyprofit</module>
 </modules>
