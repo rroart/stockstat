@@ -80,7 +80,6 @@ public class Spring extends IntegrationCommunication {
             } else {
                 string = new String((byte[]) object);
             }
-            System.out.println("str" + string + " " + getReceiveService());
         }
         return new String[] { string };
     }
