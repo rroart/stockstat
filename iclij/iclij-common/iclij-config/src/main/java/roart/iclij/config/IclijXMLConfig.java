@@ -652,6 +652,9 @@ public class IclijXMLConfig {
         List<Market> retList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         ConfigTreeMap map = config.getConfigTreeMap().search("markets.marketlist");
+        if (map == null) {
+            return retList;
+        }
         for (Entry<String, ConfigTreeMap> entry : map.getConfigTreeMap().entrySet()) {
             String text = entry.getValue().getName();
             ConfigTreeMap configMap = entry.getValue();
