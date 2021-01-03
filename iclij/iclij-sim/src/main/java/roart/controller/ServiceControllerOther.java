@@ -37,6 +37,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         switch (c.getService()) {
         case "filterinvest":
             r = new IclijServiceResult();
+            new Sim();
             break;
         }
         if (param instanceof IclijServiceParam) {

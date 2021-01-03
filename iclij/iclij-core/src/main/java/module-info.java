@@ -30,6 +30,7 @@ module iclij.core {
     requires iclij.common.service;
     requires iclij.common.util;
     requires iclij.common.verifyprofit;
+    requires iclij.common.simulate;
     requires java.xml;
     requires javax.servlet.api;
     requires math;

@@ -10,6 +10,7 @@ module iclij.sim {
     requires iclij.common.service;
     requires common.communication.model;
     requires iclij.common.config;
+    requires iclij.common.simulate;
     requires common.constants;
     requires com.fasterxml.jackson.databind;
     requires common.communication.factory;
