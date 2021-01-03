@@ -44,6 +44,13 @@
       <outputDirectory>lib</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>${project.basedir}/../iclij/iclij-sim/target</directory>
+      <includes>
+	<include>*.jar</include>
+      </includes>
+      <outputDirectory>lib</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/../iclij/iclij-webcore/target</directory>
       <includes>
 	<include>*.jar</include>

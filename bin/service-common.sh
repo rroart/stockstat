@@ -31,21 +31,21 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ../lib
 
 #java -jar stockstat-eureka-0.6-SNAPSHOT.jar 2>&1 | tee /tmp/eureka.out > /dev/null 2>&1 &
-if [ $core eq 1 ]; then
+if [ $core -eq 1 ]; then
     $COMMAND "$JAVA10 $DB $COREDEBUG -jar stockstat-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/core$OUTNAME.out $REDIRECT" &
 fi
-if [ $icore eq 1 ]; then
+if [ $icore -eq 1 ]; then
     $COMMAND "java $DB $ICOREDEBUG -jar stockstat-iclij-core-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclij$OUTNAME.out $REDIRECT" &
 fi
-if [ $web eq 1 ]; then
+if [ $web -eq 1 ]; then
     $COMMAND "java $DB $IWEBCOREDEBUG -jar stockstat-iclij-webcore-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijwebcore$OUTNAME.out $REDIRECT" &
     $COMMAND "java -jar $IWEBDEBUG stockstat-iclij-web-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclijweb$OUTNAME.out $REDIRECT" &
     $COMMAND "java -jar $WEBDEBUG stockstat-web-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/web$OUTNAME.out $REDIRECT" &
 fi
-if [ $isim eq 1 ]; then
-    $COMMAND "java $DB -Dconfig=isim.xml $ISIMDEBUG -jar stockstat-iclij-sim-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/iclij$OUTNAME.out $REDIRECT" &
+if [ $isim -eq 1 ]; then
+    $COMMAND "java $DB -Dconfig=isim.xml $ISIMDEBUG -jar stockstat-iclij-sim-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/isim$OUTNAME.out $REDIRECT" &
 fi
-if [ $ml eq 1 ]; then
+if [ $ml -eq 1 ]; then
     cd ../tensorflow
     $COMMAND "./flasktf.sh $TENSORFLOWSERVERPORT 2>&1 | tee /tmp/flasktf$OUTNAME.out" &
 
@@ -55,7 +55,7 @@ if [ $ml eq 1 ]; then
     cd ../gem
     $COMMAND "./flaskgem.sh $GEMSERVERPORT 2>&1 | tee /tmp/flaskgem$OUTNAME.out" &
 fi
-if [ $web eq 1 ]; then
+if [ $web -eq 1 ]; then
     cd ../webr/docroot
     $COMMAND "http-server -p $WEBR" &
 
