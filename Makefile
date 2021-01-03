@@ -34,6 +34,13 @@ ifneq ($(ISIMTMPL),)
 endif
 	$(MAKE) -C conf -f ../Makefile isim.xml
 
+iclij-evolve:
+	mkdir -p conf
+ifneq ($(IEVOLVETMPL),)
+	rsync -a $$IEVOLVETMPL conf/ievolve.xml.tmpl
+endif
+	$(MAKE) -C conf -f ../Makefile ievolve.xml
+
 weba:
 	weba/scripts/genenv.sh
 

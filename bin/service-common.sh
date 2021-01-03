@@ -5,6 +5,7 @@ ml=0
 core=0
 icore=0
 isim=0
+ievolve=0
 
 if [ "$1" == "" ]; then
     web=1
@@ -12,6 +13,7 @@ if [ "$1" == "" ]; then
     core=1
     icore=1
     isim=1
+    ievolve=1
 else
     while [ "$1" != "" ]; do
 	[ "$1" == "w" ] &&  web=1
@@ -19,6 +21,7 @@ else
 	[ "$1" == "c" ] &&  core=1
 	[ "$1" == "i" ] &&  icore=1
 	[ "$1" == "s" ] &&  isim=1
+	[ "$1" == "e" ] &&  ievolve=1
 	shift 1
     done
 fi
@@ -44,6 +47,9 @@ if [ $web -eq 1 ]; then
 fi
 if [ $isim -eq 1 ]; then
     $COMMAND "java $DB -Dconfig=isim.xml $ISIMDEBUG -jar stockstat-iclij-sim-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/isim$OUTNAME.out $REDIRECT" &
+fi
+if [ $ievolve -eq 1 ]; then
+    $COMMAND "java $DB -Dconfig=ievolve.xml $IEVOLVEDEBUG -jar stockstat-iclij-evolve-0.6-SNAPSHOT.jar $DEV 2>&1 | tee /tmp/ievolve$OUTNAME.out $REDIRECT" &
 fi
 if [ $ml -eq 1 ]; then
     cd ../tensorflow
