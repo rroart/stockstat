@@ -32,12 +32,12 @@ public abstract class ServiceControllerOtherAbstract {
         this.replyclass = replyclass;
     }
 
-    public <T> void get(final Communication c, Class<T> myclass) { 
+    public void get(final Communication c) { 
         Thread t = new Thread(new Runnable() {
             public void run() {
                 for (;;) {
-                    T[] params = c.receive();
-                    for (T param : params) {
+                    Object[] params = c.receive();
+                    for (Object param : params) {
                         Thread t2 = new Thread(new Runnable() {
                             public void run() { 
                                 get(param, c);
@@ -57,6 +57,9 @@ public abstract class ServiceControllerOtherAbstract {
     public abstract void get(Object param, Communication c);
 
     public void start() {
+        if (myservices == null || myservices.isEmpty()) {
+            myservices = "{}";
+        }
         Map<String, String> myservicelist = JsonUtil.convert(myservices, Map.class);
         Map<String, String> serviceMap = JsonUtil.convert(services, Map.class);
         Map<String, String> communicationsMap = JsonUtil.convert(communications, Map.class);
@@ -76,12 +79,12 @@ public abstract class ServiceControllerOtherAbstract {
                 connection = "localhost";
             }
             ObjectMapper objectMapper = new ObjectMapper();
-            Communication comm = CommunicationFactory.get(communication, replyclass, myservice, objectMapper, false, true, false, connection);
+            Class myclass = String.class;
             if (reply) {
-                get(comm, replyclass);
-            } else {
-                get(comm, String.class);
+                myclass = replyclass;
             }
+            Communication comm = CommunicationFactory.get(communication, myclass, myservice, objectMapper, false, true, false, connection);
+            get(comm);
         }        
     }
     
