@@ -142,7 +142,12 @@ public abstract class Communication {
         int count = 0;
         for (String aReceive : receives) {
             System.out.println("t0"+aReceive);
-            T t = JsonUtil.convertnostrip(aReceive, aclass);
+            T t;
+            if (aclass == String.class) {
+                t = (T) aReceive;
+            } else {
+                t = JsonUtil.convertnostrip(aReceive, aclass);
+            }
             System.out.println("t"+t);
             ts[count++] = t;
         }
