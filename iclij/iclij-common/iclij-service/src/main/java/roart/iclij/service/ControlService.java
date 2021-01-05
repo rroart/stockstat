@@ -107,7 +107,9 @@ public class ControlService {
     }
 
     public void send(String service, Object object) {
-        send(service, object, new ObjectMapper());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        send(service, object, mapper);
     }
 
     private void print(ConfigTreeMap map2, int indent) {

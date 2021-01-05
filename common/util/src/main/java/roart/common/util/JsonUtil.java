@@ -77,4 +77,18 @@ public class JsonUtil {
         return null;
     }
 
+    public static String convert(Object object, ObjectMapper mapper) {
+        if (mapper == null) {
+            mapper = new ObjectMapper();
+        }
+        if (object != null) {
+            try {
+                return mapper.writeValueAsString(object);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
+
 }

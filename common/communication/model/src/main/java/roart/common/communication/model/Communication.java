@@ -101,7 +101,7 @@ public abstract class Communication {
     public void send(Object o) {
         System.out.println("sendchn " + getSendService());
         System.out.println("sendchn " + JsonUtil.convert(o));
-        send(JsonUtil.convert(o));
+        send(JsonUtil.convert(o, mapper));
     }
 
     public abstract String[] receiveString();
