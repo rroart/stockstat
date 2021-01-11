@@ -5,23 +5,23 @@ import java.time.LocalDate;
 import roart.common.util.MathUtil;
 
 public class SimulateStock {
-    public String id;
+    private String id;
 
-    public double price;
+    private double price;
 
-    public double count;
+    private double count;
 
-    public double buyprice;
+    private double buyprice;
 
-    public double sellprice;
+    private double sellprice;
 
-    public LocalDate buydate;
+    private LocalDate buydate;
 
-    public LocalDate selldate;
+    private LocalDate selldate;
 
-    public double weight;
+    private double weight;
 
-    public String status;
+    private String status;
 
     public SimulateStock(String id, double price, double count, double buyprice, double sellprice, LocalDate buydate,
             LocalDate selldate, double weight, String status) {
@@ -52,11 +52,78 @@ public class SimulateStock {
     }
 
     public SimulateStock() {
-        // TODO Auto-generated constructor stub
     }
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getCount() {
+        return count;
+    }
+
+    public void setCount(double count) {
+        this.count = count;
+    }
+
+    public double getBuyprice() {
+        return buyprice;
+    }
+
+    public void setBuyprice(double buyprice) {
+        this.buyprice = buyprice;
+    }
+
+    public double getSellprice() {
+        return sellprice;
+    }
+
+    public void setSellprice(double sellprice) {
+        this.sellprice = sellprice;
+    }
+
+    public LocalDate getBuydate() {
+        return buydate;
+    }
+
+    public void setBuydate(LocalDate buydate) {
+        this.buydate = buydate;
+    }
+
+    public LocalDate getSelldate() {
+        return selldate;
+    }
+
+    public void setSelldate(LocalDate selldate) {
+        this.selldate = selldate;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String toString() {
