@@ -28,4 +28,9 @@ module iclij.sim {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.core;
+    requires scala.library;
+    requires evolution.model;
+    requires iclij.evolutioniclijconfigmap;
+    requires iclij.common.util;
+    requires guava;
 }
