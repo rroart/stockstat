@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Random;
 
 import roart.common.util.MathUtil;
@@ -100,6 +103,7 @@ public class IclijConfigMapGene extends AbstractGene {
         return gene;
     }
     
+    @JsonIgnore
     public boolean isEmpty() {
         return confList == null || confList.isEmpty() || map == null || map.isEmpty();
     }

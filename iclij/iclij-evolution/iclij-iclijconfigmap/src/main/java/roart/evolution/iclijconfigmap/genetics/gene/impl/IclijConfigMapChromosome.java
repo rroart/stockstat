@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -13,6 +14,9 @@ import roart.evolution.species.Individual;
 public class IclijConfigMapChromosome extends AbstractChromosome {
     protected IclijConfigMapGene gene;
     
+    public IclijConfigMapChromosome() {
+    }
+
     public IclijConfigMapChromosome(IclijConfigMapGene gene) {
         this.gene = gene;
     }
@@ -112,6 +116,7 @@ public class IclijConfigMapChromosome extends AbstractChromosome {
         return chromosome;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEmpty() {
         return gene.isEmpty();
@@ -122,6 +127,7 @@ public class IclijConfigMapChromosome extends AbstractChromosome {
         return gene.toString();
     }
 
+    @JsonIgnore
     @Override
     public double getFitness() throws JsonParseException, JsonMappingException, IOException {
         // TODO Auto-generated method stub
