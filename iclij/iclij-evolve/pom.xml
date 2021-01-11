@@ -169,6 +169,11 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
+      <artifactId>stockstat-evolution-chromosome</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>roart</groupId>
       <artifactId>stockstat-common-util</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
@@ -307,6 +312,12 @@
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-clients</artifactId>
       <version>2.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

@@ -27,4 +27,8 @@ module iclij.evolve {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.core;
+    requires java.base;
+    requires evolution.model;
+    requires evolution.chromosome;
+    requires common.config;
 }

@@ -35,7 +35,19 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         IclijServiceResult r = null;
         System.out.println("Cserv"+c.getService());
         switch (c.getService()) {
-        case "filterinvest":
+        case "filterevolve":
+            r = new IclijServiceResult();
+            new Evolve().method((String) param);
+            break;
+        case "filterprofit":
+            r = new IclijServiceResult();
+            new Evolve().method((String) param);
+            break;
+        case "filterfilter":
+            r = new IclijServiceResult();
+            new Evolve().method((String) param);
+            break;
+        case "filterabovebelow":
             r = new IclijServiceResult();
             new Evolve().method((String) param);
             break;
