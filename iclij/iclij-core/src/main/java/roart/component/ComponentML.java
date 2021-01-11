@@ -63,8 +63,9 @@ public abstract class ComponentML extends Component {
             //param.getService().conf.getConfigValueMap().putAll(evolveMap);
             Map<String, Object> anUpdateMap = new HashMap<>();
             Map<String, Object> aScoreMap = new HashMap<>();
+            Map<String, Object> resultMap = new HashMap<>();
             param.getService().conf.setdate(TimeUtil.convertDate(param.getFutureDate()));
-            List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap, aScoreMap);
+            List<ResultItem> retlist = param.getService().getEvolveML(true, param.getDisableList(), pipeline, param.getService().conf, anUpdateMap, aScoreMap, resultMap);
             mlSaves(mlConfigMap, param, anUpdateMap, subcomponent, parameters);
             if (param.getUpdateMap() != null) {
                 param.getUpdateMap().putAll(anUpdateMap); 
@@ -72,6 +73,7 @@ public abstract class ComponentML extends Component {
             if (scoreMap != null) {
                 scoreMap.putAll(aScoreMap);
             }
+            param.setResultMap(resultMap);
             return new HashMap<>(); //evolveMap;
         }
         return new HashMap<>();

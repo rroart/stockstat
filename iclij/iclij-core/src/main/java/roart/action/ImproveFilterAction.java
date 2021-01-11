@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import roart.component.FilterEvolveFactory;
 import roart.component.SimulateInvestEvolveFactory;
 import roart.component.model.ComponentData;
 import roart.db.IclijDbDao;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.winner.MarketFilterChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
@@ -130,6 +132,8 @@ public class ImproveFilterAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
+            List<Pair<Double, AbstractChromosome>> results = (List<Pair<Double, AbstractChromosome>>) componentData.getResultMap().get("e");
+            componentData.getService().send("filterfilter", results);
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           

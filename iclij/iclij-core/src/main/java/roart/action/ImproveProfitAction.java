@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -84,6 +86,8 @@ public class ImproveProfitAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
+            List<Pair<Double, AbstractChromosome>> results = (List<Pair<Double, AbstractChromosome>>) componentData.getResultMap().get("e");
+            componentData.getService().send("filterprofit", results);
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           

@@ -20,6 +20,7 @@ import roart.common.constants.Constants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
@@ -85,7 +86,9 @@ public class EvolveAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
-            //component.calculateIncDec(componentData, profitdata, positions);
+            List<Pair<Double, AbstractChromosome>> results = (List<Pair<Double, AbstractChromosome>>) componentData.getResultMap().get("e");
+            componentData.getService().send("filterevolve", results);
+           //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           
         }

@@ -27,6 +27,7 @@ import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.db.IclijDbDao;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.winner.AboveBelowChromosomeWinner;
 import roart.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.config.IclijConfig;
@@ -128,6 +129,8 @@ public class ImproveAboveBelowAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
+            List<Pair<Double, AbstractChromosome>> results = (List<Pair<Double, AbstractChromosome>>) componentData.getResultMap().get("e");
+            componentData.getService().send("filterabovebelow", results);
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           

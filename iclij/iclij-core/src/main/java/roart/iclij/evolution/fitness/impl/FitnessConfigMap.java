@@ -65,6 +65,8 @@ public class FitnessConfigMap extends Fitness {
     
     protected List<String> stockDates;
     
+    protected String titletext;
+    
     public FitnessConfigMap(MarketAction action, ComponentData param, ProfitData profitdata, Market market, Memories positions, String componentName, Boolean buy, String subcomponent, Parameters parameters, ConfigMapGene gene, List<String> stockDates) {
         this.action = action;
         this.param = param;
@@ -128,10 +130,18 @@ public class FitnessConfigMap extends Fitness {
             ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters);
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];
+            titletext = (String) componentData2.getUpdateMap().get("titletext");
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
         return score;
     }
 
+    @Override
+    public String titleText() {
+        if (titletext != null) {
+            return titletext;
+        }
+        return null;
+    }
 }

@@ -257,5 +257,9 @@ public class FitnessMarketFilter extends Fitness {
         return new FitnessMarketFilterCommon().fitnessCommon(action, param, market, profitdata, buy, stockDates, incdecs, parameters, componentName, map);
     }
 
+    @Override
+    public String titleText() {
+        return "marketfilter";
+    }
 
 }
