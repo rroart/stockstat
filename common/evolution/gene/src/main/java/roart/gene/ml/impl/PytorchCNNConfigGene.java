@@ -13,6 +13,10 @@ public class PytorchCNNConfigGene extends PytorchPreFeedConfigGene {
         super(config);
     }
     
+    public PytorchCNNConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new PytorchCNNConfigGene(new PytorchCNNConfig((PytorchCNNConfig) getConfig()));

@@ -13,6 +13,10 @@ public class TensorflowDNNConfigGene extends TensorflowEstimatorConfigGene {
         super(config);
     }
    
+    public TensorflowDNNConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new TensorflowDNNConfigGene(new TensorflowDNNConfig((TensorflowDNNConfig) getConfig()));

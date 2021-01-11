@@ -5,12 +5,30 @@ import roart.common.ml.SparkConfig;
 import roart.gene.NeuralNetConfigGene;
 import roart.common.constants.Constants;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = SparkLORConfigGene.class, name = "SparkLORConfigGene"),
+    @Type(value = SparkLSVCConfigGene.class, name = "SparkLSVCConfigGene"),
+    @Type(value = SparkMLPCConfigGene.class, name = "SparkMLPCConfigGene"),
+    @Type(value = SparkOVRConfigGene.class, name = "SparkOVRConfigGene") })  
 public abstract class SparkConfigGene extends NeuralNetConfigGene {
 
     protected static final int RANDOMS = 2;
     
     public SparkConfigGene(NeuralNetConfig config) {
         super(config);
+    }
+
+    public SparkConfigGene() {
+        // JSON
     }
 
     @Override

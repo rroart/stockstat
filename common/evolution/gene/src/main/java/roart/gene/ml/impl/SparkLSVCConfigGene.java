@@ -13,6 +13,10 @@ public class SparkLSVCConfigGene extends SparkConfigGene {
         super(config);
     }
 
+    public SparkLSVCConfigGene() {
+        // JSON
+    }
+
     @Override
     public NeuralNetConfigGene copy() {
         return new SparkLSVCConfigGene(new SparkLSVCConfig((SparkLSVCConfig) getConfig()));

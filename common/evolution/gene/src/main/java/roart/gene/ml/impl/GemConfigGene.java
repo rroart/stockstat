@@ -6,6 +6,22 @@ import roart.common.util.RandomUtil;
 import roart.gene.NeuralNetConfigGene;
 import roart.common.constants.Constants;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = GemEWCConfigGene.class, name = "GemEWCConfigGene"),
+    @Type(value = GemGEMConfigGene.class, name = "GemGEMConfigGene"),
+    @Type(value = GemIcarlConfigGene.class, name = "GemICarlConfigGene"),
+    @Type(value = GemIConfigGene.class, name = "GemIConfigGene"),
+    @Type(value = GemMMConfigGene.class, name = "GemMMConfigGene"),
+    @Type(value = GemSConfigGene.class, name = "GemSConfigGene") })  
 public abstract class GemConfigGene extends NeuralNetConfigGene {
     
     protected static final int RANDOMS = 4;
@@ -14,6 +30,10 @@ public abstract class GemConfigGene extends NeuralNetConfigGene {
         super(config);
     }
 
+    public GemConfigGene() {
+        // JSON
+    }
+    
     @Override
     public void randomize() {
         GemConfig myconfig = (GemConfig) getConfig();

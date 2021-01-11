@@ -13,4 +13,5 @@ module common.config {
     requires org.apache.commons.lang3;
     requires slf4j.api;
     requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.databind;
 }

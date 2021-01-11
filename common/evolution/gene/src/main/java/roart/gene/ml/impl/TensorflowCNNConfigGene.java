@@ -12,6 +12,10 @@ public class TensorflowCNNConfigGene extends TensorflowPreFeedConfigGene {
         super(config);
      }
     
+    public TensorflowCNNConfigGene() {
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new TensorflowCNNConfigGene(new TensorflowCNNConfig((TensorflowCNNConfig) getConfig()));

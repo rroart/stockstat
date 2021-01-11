@@ -9,7 +9,11 @@ import roart.gene.NeuralNetConfigGene;
 public class TensorflowCNN2ConfigGene extends TensorflowPreFeedConfigGene {
     public TensorflowCNN2ConfigGene(TensorflowConfig config) {
         super(config);
-     }
+    }
+    
+    public TensorflowCNN2ConfigGene() {        
+        // JSON
+    }
     
     @Override
     public NeuralNetConfigGene copy() {

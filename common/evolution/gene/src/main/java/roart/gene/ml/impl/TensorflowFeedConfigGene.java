@@ -4,12 +4,28 @@ import roart.common.ml.TensorflowConfig;
 import roart.common.ml.TensorflowFeedConfig;
 import roart.common.constants.Constants;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = TensorflowMLPConfigGene.class, name = "TensorflowMLPConfigGene"),
+    @Type(value = TensorflowRecurrentConfigGene.class, name = "TensorflowRecurrentConfigGene") })  
 public abstract class TensorflowFeedConfigGene extends TensorflowConfigGene {
 
     public TensorflowFeedConfigGene(TensorflowConfig config) {
         super(config);
     }
 
+    public TensorflowFeedConfigGene() {
+        // JSON
+    }
+    
     @Override
     public void randomize() {
         super.randomize();

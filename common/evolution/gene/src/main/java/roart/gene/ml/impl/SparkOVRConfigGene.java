@@ -12,6 +12,10 @@ public class SparkOVRConfigGene extends SparkConfigGene {
         super(config);
     }
 
+    public SparkOVRConfigGene() {
+        // JSON
+    }
+
     @Override
     public NeuralNetConfigGene copy() {
         return new SparkOVRConfigGene(new SparkOVRConfig((SparkOVRConfig) getConfig()));

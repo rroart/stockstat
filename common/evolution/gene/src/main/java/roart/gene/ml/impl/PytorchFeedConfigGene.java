@@ -4,11 +4,27 @@ import roart.common.ml.PytorchConfig;
 import roart.common.ml.PytorchFeedConfig;
 import roart.common.constants.Constants;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = PytorchMLPConfigGene.class, name = "PytorchMLPConfigGene"),
+    @Type(value = PytorchRecurrentConfigGene.class, name = "PytorchRecurrentConfigGene") })  
 public abstract class PytorchFeedConfigGene extends PytorchConfigGene {
     public PytorchFeedConfigGene(PytorchConfig config) {
         super(config);
     }
 
+    public PytorchFeedConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public void randomize() {
         super.randomize();

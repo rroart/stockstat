@@ -11,6 +11,10 @@ public class TensorflowLICConfigGene extends TensorflowEstimatorConfigGene {
         super(config);
     }
     
+    public TensorflowLICConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new TensorflowLICConfigGene(new TensorflowLICConfig((TensorflowLICConfig) getConfig()));

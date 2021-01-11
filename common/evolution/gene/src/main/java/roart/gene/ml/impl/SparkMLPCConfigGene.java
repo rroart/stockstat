@@ -12,6 +12,10 @@ public class SparkMLPCConfigGene extends SparkConfigGene {
         super(config);
     }
     
+    public SparkMLPCConfigGene() {
+        // JSON
+    }
+
     @Override
     public NeuralNetConfigGene copy() {
         return new SparkMLPCConfigGene(new SparkMLPCConfig((SparkMLPCConfig) getConfig()));

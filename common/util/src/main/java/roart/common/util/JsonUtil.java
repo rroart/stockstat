@@ -50,6 +50,18 @@ public class JsonUtil {
         return null;
     }
 
+    public static <T> T convert(String text, Class<T> myclass, ObjectMapper mapper) {
+        if (text != null) {
+            try {
+                String strippedtext = strip(text);
+                return mapper.readValue(strippedtext, myclass);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+        }
+        return null;
+    }
+
     public static String strip(String text) {
         if (text == null || text.isEmpty()) {
             return text;

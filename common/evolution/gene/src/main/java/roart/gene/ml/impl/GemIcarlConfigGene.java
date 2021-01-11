@@ -13,6 +13,10 @@ public class GemIcarlConfigGene extends GemConfigGene {
         super(config);
     }
 
+    public GemIcarlConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new GemIcarlConfigGene(new GemIcarlConfig((GemIcarlConfig) getConfig()));

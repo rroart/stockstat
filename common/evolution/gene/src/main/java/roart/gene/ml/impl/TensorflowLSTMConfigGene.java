@@ -10,6 +10,10 @@ public class TensorflowLSTMConfigGene extends TensorflowRecurrentConfigGene {
         super(config);
     }
     
+    public TensorflowLSTMConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new TensorflowLSTMConfigGene(new TensorflowLSTMConfig((TensorflowLSTMConfig) getConfig()));

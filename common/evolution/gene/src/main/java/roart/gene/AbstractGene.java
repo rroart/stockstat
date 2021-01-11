@@ -12,7 +12,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         include = JsonTypeInfo.As.PROPERTY,  
         property = "_class")  
 @JsonSubTypes({  
-    @Type(value = CalcGene.class, name = "CalcGene") })  
+    @Type(value = CalcGene.class, name = "CalcGene"),
+    @Type(value = NeuralNetConfigGene.class, name = "NeuralNetConfigGene") })  
 public abstract class AbstractGene {
     protected Random random = new Random();
 

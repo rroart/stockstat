@@ -11,6 +11,10 @@ public class PytorchGRUConfigGene extends PytorchRecurrentConfigGene {
         super(config);
     }
     
+    public PytorchGRUConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new PytorchGRUConfigGene(new PytorchGRUConfig((PytorchGRUConfig) getConfig()));

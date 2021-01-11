@@ -11,6 +11,10 @@ public class SparkLORConfigGene extends SparkConfigGene {
         super(config);
     }
 
+    public SparkLORConfigGene() {
+        // JSON
+    }
+
     @Override
     public NeuralNetConfigGene copy() {
         return new SparkLORConfigGene(new SparkLORConfig((SparkLORConfig) getConfig()));

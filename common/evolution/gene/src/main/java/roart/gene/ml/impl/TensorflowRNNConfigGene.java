@@ -10,6 +10,10 @@ public class TensorflowRNNConfigGene extends TensorflowRecurrentConfigGene {
         super(config);
     }
     
+    public TensorflowRNNConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new TensorflowRNNConfigGene(new TensorflowRNNConfig((TensorflowRNNConfig) getConfig()));

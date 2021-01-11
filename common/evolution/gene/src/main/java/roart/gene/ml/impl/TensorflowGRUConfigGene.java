@@ -10,6 +10,10 @@ public class TensorflowGRUConfigGene extends TensorflowRecurrentConfigGene {
         super(config);
     }
     
+    public TensorflowGRUConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new TensorflowGRUConfigGene(new TensorflowGRUConfig((TensorflowGRUConfig) getConfig()));

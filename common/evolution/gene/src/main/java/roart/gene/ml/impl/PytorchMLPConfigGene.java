@@ -10,6 +10,10 @@ public class PytorchMLPConfigGene extends PytorchFeedConfigGene {
         super(config);
     }
     
+    public PytorchMLPConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new PytorchMLPConfigGene(new PytorchMLPConfig((PytorchMLPConfig) getConfig()));

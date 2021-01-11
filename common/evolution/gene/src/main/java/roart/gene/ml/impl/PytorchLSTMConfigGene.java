@@ -11,6 +11,10 @@ public class PytorchLSTMConfigGene extends PytorchRecurrentConfigGene {
         super(config);
     }
     
+    public PytorchLSTMConfigGene() {
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new PytorchLSTMConfigGene(new PytorchLSTMConfig((PytorchLSTMConfig) getConfig()));

@@ -11,6 +11,10 @@ public class PytorchRNNConfigGene extends PytorchRecurrentConfigGene {
         super(config);
     }
     
+    public PytorchRNNConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new PytorchRNNConfigGene(new PytorchRNNConfig((PytorchRNNConfig) getConfig()));

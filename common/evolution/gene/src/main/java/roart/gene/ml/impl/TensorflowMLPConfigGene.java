@@ -10,6 +10,10 @@ public class TensorflowMLPConfigGene extends TensorflowFeedConfigGene {
         super(config);
     }
     
+    public TensorflowMLPConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new TensorflowMLPConfigGene(new TensorflowMLPConfig((TensorflowMLPConfig) getConfig()));

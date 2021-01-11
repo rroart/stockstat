@@ -11,6 +11,10 @@ public class GemIConfigGene extends GemConfigGene {
         super(config);
     }
 
+    public GemIConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public NeuralNetConfigGene copy() {
         return new GemIConfigGene(new GemIConfig((GemIConfig) getConfig()));

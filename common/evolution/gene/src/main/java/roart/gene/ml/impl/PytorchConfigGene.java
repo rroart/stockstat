@@ -6,6 +6,18 @@ import roart.common.util.RandomUtil;
 import roart.gene.NeuralNetConfigGene;
 import roart.common.constants.Constants;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = PytorchFeedConfigGene.class, name = "PytorchFeedConfigGene"),
+    @Type(value = PytorchPreFeedConfigGene.class, name = "PytorchPreFeedConfigGene") })  
 public abstract class PytorchConfigGene extends NeuralNetConfigGene {
     
     protected static final int RANDOMS = 1;
@@ -14,6 +26,10 @@ public abstract class PytorchConfigGene extends NeuralNetConfigGene {
         super(config);
     }
 
+    public PytorchConfigGene() {        
+        // JSON
+    }
+    
     @Override
     public void randomize() {
         PytorchConfig myconfig = (PytorchConfig) getConfig();

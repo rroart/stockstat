@@ -2,10 +2,29 @@ package roart.gene;
 
 import roart.common.ml.NeuralNetConfig;
 import roart.common.util.RandomUtil;
+import roart.gene.ml.impl.GemConfigGene;
+import roart.gene.ml.impl.PytorchConfigGene;
+import roart.gene.ml.impl.PytorchLSTMConfigGene;
+import roart.gene.ml.impl.SparkConfigGene;
+import roart.gene.ml.impl.TensorflowConfigGene;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = GemConfigGene.class, name = "GemConfigGene"),
+    @Type(value = PytorchConfigGene.class, name = "PytorchConfigGene"),
+    @Type(value = SparkConfigGene.class, name = "SparkConfigGene"),
+    @Type(value = TensorflowConfigGene.class, name = "TensorflowConfigGene") })  
 public abstract class NeuralNetConfigGene extends AbstractGene {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
@@ -25,6 +44,10 @@ public abstract class NeuralNetConfigGene extends AbstractGene {
         this.config = config;
     }
 
+    public NeuralNetConfigGene() {        
+        // JSON
+    }
+    
     public abstract NeuralNetConfigGene copy();
 
     protected int generateSteps() {
