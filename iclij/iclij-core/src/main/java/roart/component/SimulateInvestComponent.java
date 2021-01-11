@@ -67,6 +67,7 @@ import roart.iclij.verifyprofit.TrendUtil;
 import roart.service.model.ProfitData;
 import roart.simulate.SimulateStock;
 import roart.simulate.Capital;
+import roart.simulate.StockHistory;
 
 public class SimulateInvestComponent extends ComponentML {
 
@@ -223,11 +224,26 @@ public class SimulateInvestComponent extends ComponentML {
 
             int delay = simConfig.getDelay();
             int totalDelays = extradelay + delay;
+            investEnd = TimeUtil.getBackEqualBefore2(investEnd, 0 /* findTime */, stockDates);
+            if (investEnd != null) {
+                String aDate = TimeUtil.convertDate2(investEnd);
+                if (aDate != null) {
+                    int idx = stockDates.indexOf(aDate) - extradelay;
+                    if (idx >=0 ) {
+                        aDate = stockDates.get(idx);
+                        try {
+                            investEnd = TimeUtil.convertDate(aDate);
+                        } catch (ParseException e) {
+                            log.error(Constants.EXCEPTION, e);
+                        }
+                    }
+                }
+            }
             LocalDate lastInvestEnd = TimeUtil.getBackEqualBefore2(investEnd, 0 /* findTime */, stockDates);
             if (lastInvestEnd != null) {
                 String aDate = TimeUtil.convertDate2(lastInvestEnd);
                 if (aDate != null) {
-                    int idx = stockDates.indexOf(aDate) - totalDelays;
+                    int idx = stockDates.indexOf(aDate) - delay;
                     if (idx >=0 ) {
                         aDate = stockDates.get(idx);
                         try {
@@ -306,17 +322,14 @@ public class SimulateInvestComponent extends ComponentML {
             }
             
             long time0 = System.currentTimeMillis();
-            long time3 = 0;
-            long time4 = 0;
+            Map<String, Object> resultMap = new HashMap<>();
             for (int offset = 0; offset < end; offset++) {
 
                 Capital capital = new Capital();
                 capital.amount = 1;
                 List<SimulateStock> mystocks = new ArrayList<>();
-                List<SimulateStock> stockhistory = null;
-                if (!evolving) {
-                    stockhistory = new ArrayList<>();
-                }
+                List<SimulateStock> stockhistory = new ArrayList<>();
+                List<StockHistory> history = new ArrayList<>();
                 List<String> sumHistory = new ArrayList<>();
                 List<String> plotDates = new ArrayList<>();
                 List<Double> plotCapital = new ArrayList<>();
@@ -374,8 +387,13 @@ public class SimulateInvestComponent extends ComponentML {
                     double myavg = increase(mystocks, indexOffset - extradelay, categoryValueMap, prevIndexOffset);
 
                     List<SimulateStock> holdIncrease = new ArrayList<>();
-                    int up = update(categoryValueMap, mystocks, indexOffset - extradelay, holdIncrease, prevIndexOffset - extradelay);
-
+                    int up;
+                    if (indexOffset - extradelay >= 0) {
+                        up = update(categoryValueMap, mystocks, indexOffset - extradelay, holdIncrease, prevIndexOffset - extradelay);
+                    } else {
+                        up = mystocks.size();
+                    }
+                    
                     List<SimulateStock> sells = new ArrayList<>();
                     List<SimulateStock> buys = new ArrayList<>();
 
@@ -427,20 +445,24 @@ public class SimulateInvestComponent extends ComponentML {
                                 resultavg *= trend.incAverage;
                             }
 
+                            // depends on delay DELAY
+                            Capital sum = getSum(mystocks);
+
+                            //boolean noconf = simConfig.getConfidence() && myreliability < simConfig.getConfidenceValue();                
+                            String hasNoConf = noconfidence ? "NOCONF" : "";
+                            String historydatestring = stockDates.get(stockDates.size() - 1 - (indexOffset - extradelay - delay));
+
+                            List<String> ids = mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                             if (!evolving) {
-                                // depends on delay DELAY
-                                Capital sum = getSum(mystocks);
-
-                                //boolean noconf = simConfig.getConfidence() && myreliability < simConfig.getConfidenceValue();                
-                                String hasNoConf = noconfidence ? "NOCONF" : "";
-                                datestring = stockDates.get(stockDates.size() - 1 - (indexOffset - extradelay - delay));
-
-                                List<String> ids = mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
-                                sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend);
-
-                                plotDates.add(datestring);
-                                plotDefault.add(resultavg);
-                                plotCapital.add(sum.amount + capital.amount);
+                                if (offset == 0) {
+                                    sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend);
+                                    plotDates.add(historydatestring);
+                                    plotDefault.add(resultavg);
+                                    plotCapital.add(sum.amount + capital.amount);
+                                }
+                            } else {
+                                StockHistory aHistory = new StockHistory(historydatestring, capital, sum, resultavg, hasNoConf, ids, trend.toString());
+                                history.add(aHistory);
                             }
 
                             if (Double.isInfinite(resultavg)) {
@@ -570,10 +592,27 @@ public class SimulateInvestComponent extends ComponentML {
                         componentData.getUpdateMap().putAll(map);
                     }
                 }
+                if (evolving) {
+                    for (SimulateStock stock : mystocks) {
+                        stock.setSellprice(stock.getPrice());
+                        stock.setStatus("END");
+                    }
+                    stockhistory.addAll(mystocks);
+                    
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("history", history);
+                    map.put("stockhistory", stockhistory);
+                    map.put("score", score);
+                    map.put("startdate", TimeUtil.convertDate2(investStart));
+                    map.put("enddate", TimeUtil.convertDate2(investEnd));
+                    //map.put("market", market.getConfig().getMarket());
+                    resultMap.put("" + offset, map);
+                }
+            }
+            if (evolving) {
+                componentData.setResultMap(resultMap);
             }
             log.info("time0 {}", System.currentTimeMillis() - time0);
-            log.info("time2 {}", time3);
-            log.info("time2 {}", time4);
         }
 
         Double score = 0.0;
@@ -604,7 +643,6 @@ public class SimulateInvestComponent extends ComponentML {
         scoreMap.put("" + score, score);
         scoreMap.put("score", score);
         componentData.setScoreMap(scoreMap);
-
         //componentData.setFuturedays(0);
 
         handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
@@ -1116,18 +1154,18 @@ public class SimulateInvestComponent extends ComponentML {
     }
     private List<SimulateStock> filter(List<SimulateStock> stocks, List<SimulateStock> others) {
         List<String> ids = others.stream().map(SimulateStock::getId).collect(Collectors.toList());        
-        return stocks.stream().filter(e -> !ids.contains(e.id)).collect(Collectors.toList());
+        return stocks.stream().filter(e -> !ids.contains(e.getId())).collect(Collectors.toList());
     }
 
     private List<SimulateStock> keep(List<SimulateStock> stocks, List<SimulateStock> others) {
         List<String> ids = others.stream().map(SimulateStock::getId).collect(Collectors.toList());        
-        return stocks.stream().filter(e -> ids.contains(e.id)).collect(Collectors.toList());
+        return stocks.stream().filter(e -> ids.contains(e.getId())).collect(Collectors.toList());
     }
 
     private Capital getSum(List<SimulateStock> mystocks) {
         Capital sum = new Capital();
         for (SimulateStock astock : mystocks) {
-            sum.amount += astock.count * astock.price;
+            sum.amount += astock.getCount() * astock.getPrice();
         }
         return sum;
     }
@@ -1243,7 +1281,7 @@ public class SimulateInvestComponent extends ComponentML {
     private double increase(List<SimulateStock> mystocks, int indexOffset, Map<String, List<List<Double>>> categoryValueMap, int prevIndexOffset) {
         List<Double> incs = new ArrayList<>();
         for (SimulateStock item : mystocks) {
-            String id = item.id;
+            String id = item.getId();
             List<List<Double>> resultList = categoryValueMap.get(id);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
@@ -1361,7 +1399,7 @@ public class SimulateInvestComponent extends ComponentML {
             List<SimulateStock> sells, double stoploss, String stop) {
         List<SimulateStock> newSells = new ArrayList<>();
         for (SimulateStock item : mystocks) {
-            String id = item.id;
+            String id = item.getId();
             List<List<Double>> resultList = categoryValueMap.get(id);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
@@ -1376,7 +1414,7 @@ public class SimulateInvestComponent extends ComponentML {
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }
-                if (!dateNow.isAfter(item.buydate)) {
+                if (!dateNow.isAfter(item.getBuydate())) {
                     continue;
                 }
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
@@ -1386,7 +1424,7 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 Double valWas = mainList.get(mainList.size() - 1 - prevIndexOffset);
                 if (valWas != null && valNow != null && valNow != 0 && valWas != 0 && valNow / valWas < stoploss) {
-                    item.status = stop;
+                    item.setStatus(stop);
                     newSells.add(item);
                 }
             }
@@ -1403,7 +1441,7 @@ public class SimulateInvestComponent extends ComponentML {
         for (int i = 0; i < buys; i++) {
             SimulateStock astock = newbuys.get(i);
 
-            String id = astock.id;
+            String id = astock.getId();
 
             List<List<Double>> resultList = categoryValueMap.get(id);
             if (resultList == null || resultList.isEmpty()) {
@@ -1417,15 +1455,15 @@ public class SimulateInvestComponent extends ComponentML {
 
                     double amount = 0;
                     amount = capital.amount / buys;
-                    astock.buyprice = valNow;
-                    astock.count = amount / astock.buyprice;
+                    astock.setBuyprice(valNow);
+                    astock.setCount(amount / astock.getBuyprice());
                     String dateNow = stockDates.get(stockDates.size() - 1 - indexOffset);
                     try {
                         date = TimeUtil.convertDate(dateNow);
                     } catch (ParseException e) {
                         log.error(Constants.EXCEPTION, e);
                     }
-                    astock.buydate = date;
+                    astock.setBuydate(date);
                     mystocks.add(astock);
                     totalamount += amount;
                 } else {
@@ -1440,7 +1478,7 @@ public class SimulateInvestComponent extends ComponentML {
             List<SimulateStock> noConfKeep, int prevIndexOffset) {
         int up = 0;
         for (SimulateStock item : mystocks) {
-            String id = item.id;
+            String id = item.getId();
             List<List<Double>> resultList = categoryValueMap.get(id);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
@@ -1453,7 +1491,7 @@ public class SimulateInvestComponent extends ComponentML {
                 }
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (valNow != null) {
-                    item.price = valNow;
+                    item.setPrice(valNow);
                 }
                 if (prevIndexOffset <= -1) {
                     continue;
@@ -1473,7 +1511,7 @@ public class SimulateInvestComponent extends ComponentML {
     private void sell(List<String> stockDates, Map<String, List<List<Double>>> categoryValueMap, Capital capital,
             List<SimulateStock> sells, List<SimulateStock> stockhistory, int indexOffset, LocalDate date, List<SimulateStock> mystocks) {
         for (SimulateStock item : sells) {
-            String id = item.id;
+            String id = item.getId();
             List<List<Double>> resultList = categoryValueMap.get(id);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
@@ -1483,18 +1521,16 @@ public class SimulateInvestComponent extends ComponentML {
             if (mainList != null) {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);
                 if (valNow != null) {
-                    item.sellprice = valNow;
+                    item.setSellprice(valNow);
                     String dateNow = stockDates.get(stockDates.size() - 1 - indexOffset);
                     try {
                         date = TimeUtil.convertDate(dateNow);
                     } catch (ParseException e) {
                         log.error(Constants.EXCEPTION, e);
                     }
-                    item.selldate = date;
-                    if (stockhistory != null) {
-                        stockhistory.add(item);
-                    }
-                    capital.amount += item.count * item.sellprice;
+                    item.setSelldate(date);
+                    stockhistory.add(item);
+                    capital.amount += item.getCount() * item.getSellprice();
                 } else {
                     // put back if unknown
                     mystocks.add(item);
@@ -1508,7 +1544,7 @@ public class SimulateInvestComponent extends ComponentML {
 
     private List<SimulateStock> getSellList(List<SimulateStock> mystocks, List<SimulateStock> newbuys) {
         List<String> myincids = newbuys.stream().map(SimulateStock::getId).collect(Collectors.toList());            
-        return mystocks.stream().filter(e -> !myincids.contains(e.id)).collect(Collectors.toList());
+        return mystocks.stream().filter(e -> !myincids.contains(e.getId())).collect(Collectors.toList());
     }
 
     private List<SimulateStock> getBuyList(Map<String, List<List<Double>>> categoryValueMap, Set<String> myincs,
@@ -1525,7 +1561,7 @@ public class SimulateInvestComponent extends ComponentML {
                 Double valNow = mainList.get(mainList.size() - 1 - indexOffset);                    
                 if (valNow != null) {
                     SimulateStock astock = new SimulateStock();
-                    astock.id = id;
+                    astock.setId(id);
                     //astock.price = -1;
                     newbuys.add(astock);
                     count--;
@@ -1643,7 +1679,8 @@ public class SimulateInvestComponent extends ComponentML {
     // lucky shots / short runs
     // config commons / invariants
     // one company lucky percentage value / rerun without
-    
+    // some lucky few days
+    // too few good results
     /*
      */
     
