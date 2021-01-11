@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ import roart.db.dao.util.DbDaoUtil;
 import roart.etl.MarketDataETL;
 import roart.etl.PeriodDataETL;
 import roart.evolution.algorithm.impl.OrdinaryEvolution;
+import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.IndicatorChromosome;
 import roart.evolution.chromosome.impl.IndicatorEvaluationNew;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
@@ -353,7 +355,7 @@ public class EvolutionService {
         }
     }
 
-    public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap) throws JsonParseException, JsonMappingException, IOException {
+    public List<ResultItem> getEvolveML(MyMyConfig conf, List<String> disableList, Map<String, Object> updateMap, String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws JsonParseException, JsonMappingException, IOException {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         String market = conf.getMarket();
@@ -423,7 +425,7 @@ public class EvolutionService {
             //new ServiceUtil().createPredictors(categories);
             new ServiceUtil().calculatePredictors(predictors);
 
-            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, stockData.catName, stockData.cat, neuralnetcommand, scoreMap);
+            findMLSettings(conf, evolutionConfig, disableList, table, updateMap, ml, datareaders, categories, stockData.catName, stockData.cat, neuralnetcommand, scoreMap, resultMap);
     
             List<ResultItem> retlist = new ArrayList<>();
             retlist.add(table);
@@ -449,7 +451,7 @@ public class EvolutionService {
     }
 
     private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, List<String> disableList, ResultItemTable table,
-            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap) throws Exception {
+            Map<String, Object> updateMap, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String catName, Integer cat, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
         TaUtil tu = new TaUtil();
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
@@ -556,7 +558,8 @@ public class EvolutionService {
             evolution.fittest = fitness::fitness;
             
             List<String> individuals = new ArrayList<>();
-            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, null);
+            List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
+            Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
             evolution.print(conf.getMarket() + " " + ml, null, individuals);
             
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
@@ -594,6 +597,7 @@ public class EvolutionService {
             }
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
+            resultMap.put("e", results);
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
             row.add(nnconfigString);

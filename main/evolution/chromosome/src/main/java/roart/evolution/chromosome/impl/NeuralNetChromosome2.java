@@ -13,6 +13,7 @@ import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +59,9 @@ public class NeuralNetChromosome2 extends AbstractChromosome {
 
     public NeuralNetChromosome2(NeuralNetChromosome2 chromosome) {
         this(chromosome.nnConfigGene.copy());
+    }
+
+    public NeuralNetChromosome2() {
     }
 
     public NeuralNetConfigGene getNnConfig() {
@@ -110,6 +114,7 @@ public class NeuralNetChromosome2 extends AbstractChromosome {
         return new NeuralNetChromosome2(this);
     }
     
+    @JsonIgnore
     @Override
     public boolean isEmpty() {
         return nnConfigGene == null || nnConfigGene.getConfig() == null || nnConfigGene.getConfig().empty();
@@ -120,6 +125,7 @@ public class NeuralNetChromosome2 extends AbstractChromosome {
         return "" + nnConfigGene;
     }
 
+    @JsonIgnore
     @Override
     public double getFitness() throws JsonParseException, JsonMappingException, IOException {
         // TODO Auto-generated method stub

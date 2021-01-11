@@ -69,6 +69,8 @@ public class FitnessNeuralNet extends Fitness {
 
     private NeuralNetCommand neuralnetcommand;
     
+    protected String titletext;
+    
     public FitnessNeuralNet(MyMyConfig conf, String ml, Pipeline[] dataReaders, AbstractCategory[] categories, String key, String catName, Integer cat, NeuralNetCommand neuralnetcommand) {
         this.conf = conf.copy();
         this.ml = ml;
@@ -142,4 +144,12 @@ public class FitnessNeuralNet extends Fitness {
         }
     }
 
+    @Override
+    public String titleText() {
+        titletext = ml;
+        if (titletext != null) {
+            return titletext;
+        }
+        return null;
+    }
 }

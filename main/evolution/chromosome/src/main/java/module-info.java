@@ -20,4 +20,5 @@ module evolution.chromosome {
     requires pipeline.model;
     requires common.model;
     requires pipeline.predictor;
+    requires com.fasterxml.jackson.annotation;
 }
