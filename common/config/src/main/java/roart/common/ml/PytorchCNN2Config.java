@@ -44,6 +44,11 @@ public class PytorchCNN2Config extends PytorchPreFeedConfig {
         super(name);
     }
 
+    public PytorchCNN2Config() {
+        super();
+        // JSON
+    }
+
     public int getKernelsize() {
         return kernelsize;
     }

@@ -1,5 +1,19 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = GemConfig.class, name = "GemConfig"),
+    @Type(value = PytorchConfig.class, name = "PytorchConfig"),
+    @Type(value = SparkConfig.class, name = "SparkConfig"),
+    @Type(value = TensorflowConfig.class, name = "TensorflowConfig") })  
 public abstract class NeuralNetConfig {
     private String name;
 
@@ -8,6 +22,9 @@ public abstract class NeuralNetConfig {
         this.name = name;
     }
 
+    public NeuralNetConfig() {
+    }
+    
     public String getName() {
         return name;
     }

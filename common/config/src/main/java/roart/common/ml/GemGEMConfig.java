@@ -37,6 +37,11 @@ public class GemGEMConfig extends GemConfig {
         super(name);
     }
 
+    public GemGEMConfig() {
+        super();
+        // JSON
+    }
+
     public int getN_memories() {
         return n_memories;
     }

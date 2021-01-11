@@ -35,6 +35,11 @@ public class SparkMLPCConfig extends SparkConfig {
         super(name);
     }
 
+    public SparkMLPCConfig() {
+        super();
+        // JSON
+    }
+
     public Integer getLayers() {
         return layers;
     }

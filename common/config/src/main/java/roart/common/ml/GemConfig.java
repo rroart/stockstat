@@ -1,5 +1,21 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = GemEWCConfig.class, name = "GemEWCConfig"),
+    @Type(value = GemGEMConfig.class, name = "GemGEMConfig"),
+    @Type(value = GemIcarlConfig.class, name = "GemICarlConfig"),
+    @Type(value = GemIConfig.class, name = "GemIConfig"),
+    @Type(value = GemMMConfig.class, name = "GemMMConfig"),
+    @Type(value = GemSConfig.class, name = "GemSConfig") })  
 @SuppressWarnings("squid:S00116")
 public abstract class GemConfig extends NeuralNetConfig {
 
@@ -23,6 +39,11 @@ public abstract class GemConfig extends NeuralNetConfig {
 
     public GemConfig(String name) {
         super(name);
+    }
+
+    public GemConfig() {
+        super();
+        // JSON
     }
 
     public int getSteps() {

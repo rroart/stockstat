@@ -23,4 +23,9 @@ public class PytorchMLPConfig extends PytorchFeedConfig {
         super(name);
     }
 
+    public PytorchMLPConfig() {
+        super();
+        // JSON
+    }
+
 }

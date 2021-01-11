@@ -1,5 +1,19 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = SparkLORConfig.class, name = "SparkLORConfig"),
+    @Type(value = SparkLSVCConfig.class, name = "SparkLSVCConfig"),
+    @Type(value = SparkMLPCConfig.class, name = "SparkMLPCConfig"),
+    @Type(value = SparkOVRConfig.class, name = "SparkOVRConfig") })  
 public abstract class SparkConfig extends NeuralNetConfig {
 
     private int maxiter;
@@ -30,6 +44,11 @@ public abstract class SparkConfig extends NeuralNetConfig {
 
     public SparkConfig(String name) {
         super(name);
+    }
+
+    public SparkConfig() {
+        super();
+        // JSON
     }
 
     @Override

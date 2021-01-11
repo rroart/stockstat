@@ -69,6 +69,11 @@ public class PytorchCNNConfig extends PytorchPreFeedConfig {
         super(name);
     }
 
+    public PytorchCNNConfig() {
+        super();
+        // JSON
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + kernelsize + " " + stride;

@@ -26,6 +26,11 @@ public class SparkLSVCConfig extends SparkConfig {
         super(name);
     }
 
+    public SparkLSVCConfig() {
+        super();
+        // JSON
+    }
+
     public Boolean getFitintercept() {
         return fitintercept;
     }

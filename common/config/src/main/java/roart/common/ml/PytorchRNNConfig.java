@@ -25,4 +25,9 @@ public class PytorchRNNConfig extends PytorchRecurrentConfig {
         super(name);
     }
 
+    public PytorchRNNConfig() {
+        super();
+        // JSON
+    }
+
 }

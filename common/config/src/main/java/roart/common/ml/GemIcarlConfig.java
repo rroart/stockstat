@@ -41,6 +41,11 @@ public class GemIcarlConfig extends GemConfig {
         super(name);
     }
 
+    public TensorflowFeedConfig() {
+        super();
+        // JSON
+    }
+
     public int getN_memories() {
         return n_memories;
     }

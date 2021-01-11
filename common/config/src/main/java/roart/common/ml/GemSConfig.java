@@ -25,6 +25,11 @@ public class GemSConfig extends GemConfig {
         super(name);
     }
 
+    public GemSConfig() {
+        super();
+        // JSON
+    }
+
     @Override
     public boolean empty() {
         // TODO Auto-generated method stub

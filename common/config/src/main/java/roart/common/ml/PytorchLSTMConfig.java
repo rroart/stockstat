@@ -25,4 +25,9 @@ public class PytorchLSTMConfig extends PytorchRecurrentConfig {
         super(name);
     }
 
+    public PytorchLSTMConfig() {
+        super();
+        // JSON
+    }
+
 }

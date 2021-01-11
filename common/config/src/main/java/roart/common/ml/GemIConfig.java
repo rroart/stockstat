@@ -33,6 +33,11 @@ public class GemIConfig extends GemConfig {
         super(name);
     }
 
+    public GemIConfig() {
+        super();
+        // JSON
+    }
+
     public boolean isFinetune() {
         return finetune;
     }

@@ -53,6 +53,11 @@ public class TensorflowCNNConfig extends TensorflowPreFeedConfig {
         super(name);
     }
 
+    public TensorflowCNNConfig() {
+        super();
+        // JSON
+    }
+
     public TensorflowCNNConfig(TensorflowCNNConfig config) {
         this(config.steps, config.kernelsize, config.stride, config.dropout);
     }

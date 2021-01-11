@@ -43,6 +43,11 @@ public abstract class TensorflowRecurrentConfig extends TensorflowFeedConfig {
         super(name);
     }
 
+    public TensorflowRecurrentConfig() {
+        super();
+        // JSON
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + slide + " " + dropout + " " + dropoutin;

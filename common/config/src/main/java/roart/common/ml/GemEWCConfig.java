@@ -33,6 +33,11 @@ public class GemEWCConfig extends GemConfig {
         super(name);
     }
 
+    public GemEWCConfig() {
+        super();
+        // JSON
+    }
+
     public int getN_memories() {
         return n_memories;
     }

@@ -27,4 +27,9 @@ public class TensorflowLSTMConfig extends TensorflowRecurrentConfig {
         this(config.steps, config.layers, config.hidden, config.lr, config.slide, config.dropout, config.dropoutin);
     }
 
+    public TensorflowLSTMConfig() {
+        super();
+        // JSON
+    }
+
 }

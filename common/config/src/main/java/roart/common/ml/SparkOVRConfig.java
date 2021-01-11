@@ -34,6 +34,11 @@ public class SparkOVRConfig extends SparkConfig {
         super(name);
     }
 
+    public SparkOVRConfig() {
+        super();
+        // JSON
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + fitintercept;

@@ -24,4 +24,9 @@ public class TensorflowMLPConfig extends TensorflowFeedConfig {
         this(config.steps, config.layers, config.hidden, config.lr);
     }
 
+    public TensorflowMLPConfig() {
+        super();
+        // JSON
+    }
+
 }

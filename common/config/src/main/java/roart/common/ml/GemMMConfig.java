@@ -25,6 +25,11 @@ public class GemMMConfig extends GemConfig {
         super(name);
     }
 
+    public GemMMConfig() {
+        super();
+        // JSON
+    }
+
     @Override
     public boolean empty() {
         // TODO Auto-generated method stub

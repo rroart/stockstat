@@ -40,6 +40,11 @@ public class TensorflowCNN2Config extends TensorflowPreFeedConfig {
         this(config.steps, config.kernelsize, config.maxpool, config.stride, config.dropout1, config.dropout2);
     }
 
+    public TensorflowCNN2Config() {
+        super();
+        // JSON
+    }
+
     public int getKernelsize() {
         return kernelsize;
     }

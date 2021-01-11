@@ -1,5 +1,17 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = TensorflowMLPConfig.class, name = "TensorflowMLPConfig"),
+    @Type(value = TensorflowRecurrentConfig.class, name = "TensorflowRecurrentConfig") })  
 public abstract class TensorflowFeedConfig extends TensorflowConfig {
 
     protected int layers;
@@ -41,6 +53,11 @@ public abstract class TensorflowFeedConfig extends TensorflowConfig {
 
     public TensorflowFeedConfig(String name) {
         super(name);
+    }
+
+    public TensorflowFeedConfig() {
+        super();
+        // JSON
     }
 
     @Override

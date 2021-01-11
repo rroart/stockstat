@@ -7,6 +7,9 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import roart.common.config.ConfigConstants;
 import roart.common.config.MLConstants;
 import roart.common.util.JsonUtil;
@@ -568,7 +571,9 @@ public class NeuralNetConfigs {
         NeuralNetConfig nnconfig = null;
         Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
         Pair<Class<NeuralNetConfig>, String> nnstring = map.get(key);
-        nnconfig = JsonUtil.convert(config, nnstring.getLeft());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
+        nnconfig = JsonUtil.convert(config, nnstring.getLeft(), mapper);
         return nnconfig;
     }
 

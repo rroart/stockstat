@@ -25,4 +25,9 @@ public class PytorchGRUConfig extends PytorchRecurrentConfig {
         super(name);
     }
 
+    public PytorchGRUConfig() {
+        super();
+        // JSON
+    }
+
 }
