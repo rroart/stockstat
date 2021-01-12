@@ -33,7 +33,9 @@ import roart.simulate.StockHistory;
 public class Sim {
 
     public void method(String param) {
-        List<Pair<Double, AbstractChromosome>> myList = convert(param);
+        Map<String, List<Pair<Double, AbstractChromosome>>> myMap = convert(param);
+        String id = myMap.keySet().iterator().next();
+        List<Pair<Double, AbstractChromosome>> myList = myMap.get(id);
         if (myList.size() > 0) {
             //for ()
             Pair<Double, AbstractChromosome> winnerPair = myList.get(0);
@@ -167,13 +169,13 @@ public class Sim {
         }
     }
 
-    private List<Pair<Double, AbstractChromosome>> convert(String param) {
+    private Map<String, List<Pair<Double, AbstractChromosome>>> convert(String param) {
         List<Pair<Double, AbstractChromosome>> myList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        List<Map<Double, AbstractChromosome>> res = null;
+        Map<String, List<Map<Double, AbstractChromosome>>> res0 = null;
         try {
-            res = mapper.readValue(param, new TypeReference<List<LinkedHashMap<Double, IclijConfigMapChromosome>>>(){});
+            res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, IclijConfigMapChromosome>>>>(){});
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -184,7 +186,9 @@ public class Sim {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        List<Map> list = JsonUtil.convert(param, List.class);
+        String id = res0.keySet().iterator().next();
+        List<Map<Double, AbstractChromosome>> res = res0.get(id);
+        //List<Map> list = JsonUtil.convert(param, List.class);
         SimulateStock s;
         for (Map<Double, AbstractChromosome> map : res) {
             for (Entry<Double, AbstractChromosome> entry : map.entrySet()) {
@@ -221,7 +225,9 @@ public class Sim {
                 chromosome.setResultMap(resultMap);
             }
         }
-        list.size();
-        return myList;
+        //list.size();
+        Map<String, List<Pair<Double, AbstractChromosome>>> map = new HashMap<>();
+        map.put(id, myList);
+        return map;
     }
 }

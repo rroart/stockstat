@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -24,21 +25,23 @@ import roart.evolution.chromosome.impl.NeuralNetChromosome2;
 public class Evolve {
 
     public void method(String param) {
-        List<Pair<Double, AbstractChromosome>> myList = convert(param);
+        Map<String, List<Pair<Double, AbstractChromosome>>> myMap = convert(param);
+        String id = myMap.keySet().iterator().next();
+        List<Pair<Double, AbstractChromosome>> myList = myMap.get(id);
         myList.size();
     }
 
-    private List<Pair<Double, AbstractChromosome>> convert(String param) {
+    private Map<String, List<Pair<Double, AbstractChromosome>>> convert(String param) {
         //Map<String, Object> map = JsonUtil.convert(param, Map.class);
         //map.keySet();
         List<Pair<Double, AbstractChromosome>> myList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         //List<Map<Double, AbstractChromosome>> res = null;
-        List<LinkedHashMap<Double, NeuralNetChromosome2>> res = null;
+        Map<String, List<LinkedHashMap<Double, NeuralNetChromosome2>>> res0 = null;
         try {
-            //res = mapper.readValue(param, new TypeReference<List<LinkedHashMap<Double, NeuralNetChromosome2>>>(){});
-            res = mapper.readValue(param, new TypeReference<List<LinkedHashMap<Double, NeuralNetChromosome2>>>(){});
+            //res = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, NeuralNetChromosome2>>>>(){});
+            res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, NeuralNetChromosome2>>>>(){});
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -49,6 +52,8 @@ public class Evolve {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        String id = res0.keySet().iterator().next();
+        List<LinkedHashMap<Double, NeuralNetChromosome2>> res = res0.get(id);
         //for (Map<Double, AbstractChromosome> map : res) {
         for (LinkedHashMap<Double, NeuralNetChromosome2> map : res) {
             //for (Entry<Double, AbstractChromosome> entry : map.entrySet()) {
@@ -76,6 +81,8 @@ public class Evolve {
             }
         }
         */
-        return myList;
+        Map<String, List<Pair<Double, AbstractChromosome>>> map = new HashMap<>();
+        map.put(id, myList);
+        return map;
     }
 }

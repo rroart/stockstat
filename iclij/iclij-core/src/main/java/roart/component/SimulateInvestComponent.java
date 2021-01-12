@@ -1201,7 +1201,7 @@ public class SimulateInvestComponent extends ComponentML {
         Map<String, Object> confMap = new HashMap<>();
         // confmap
         ComponentData e = evolve.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, getPipeline(), this, confList);
-        List<Pair<Double, AbstractChromosome>> results = (List<Pair<Double, AbstractChromosome>>) e.getResultMap().get("e");
+        Map<String, Object> results = (Map<String, Object>) e.getResultMap();
         e.getService().send("filterinvest", results);
         return e;
     }

@@ -165,7 +165,7 @@ public class EvolutionService {
     
                 List<String> individuals = new ArrayList<>();
                 Individual fittestIndividual = evolution.getFittest(evolutionConfig, indicatorEval0, individuals, null);
-                evolution.print(conf.getMarket() + " " + "recommend" + " " + i, null, individuals);
+                String filename = evolution.print(conf.getMarket() + " " + "recommend" + " " + i, "recommend", individuals);
     
                 for (String id : scoreList) {
                     ResultItemTableRow row = new ResultItemTableRow();
@@ -377,7 +377,7 @@ public class EvolutionService {
             table.add(headrow);
         
             try {
-                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap);
+                findMLSettings(conf, evolutionConfig, table, updateMap, ml, neuralnetcommand, scoreMap, resultMap);
         
                 List<ResultItem> retlist = new ArrayList<>();
                 retlist.add(table);
@@ -560,7 +560,7 @@ public class EvolutionService {
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
-            evolution.print(conf.getMarket() + " " + ml, null, individuals);
+            String filename = evolution.print(conf.getMarket() + " " + ml, "evolve" + " " + ml + " " + nnconfig.getClass().getSimpleName(), individuals);
             
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
@@ -597,7 +597,8 @@ public class EvolutionService {
             }
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
-            resultMap.put("e", results);
+            resultMap.put(filename, results);
+            //resultMap.put("id", filename);
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
             row.add(nnconfigString);
@@ -607,7 +608,7 @@ public class EvolutionService {
     }
 
     private void findMLSettings(MyMyConfig conf, EvolutionConfig evolutionConfig, ResultItemTable table, Map<String, Object> updateMap,
-            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap) throws Exception {
+            String ml, NeuralNetCommand neuralnetcommand, Map<String, Object> scoreMap, Map<String, Object> resultMap) throws Exception {
         log.info("Evolution config {} {} {} {}", evolutionConfig.getGenerations(), evolutionConfig.getSelect(), evolutionConfig.getElite(), evolutionConfig.getMutate());
         NeuralNetConfigs nnConfigs = null;
         String nnconfigString = null;
@@ -633,8 +634,9 @@ public class EvolutionService {
             evolution.fittest = fitness::fitness;
             
             List<String> individuals = new ArrayList<>();
+            List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, null);
-            evolution.print(conf.getMarket() + " " + ml, null, individuals);
+            String filename = evolution.print(conf.getMarket() + " " + ml, "evolve" + " " + ml + " " + nnconfig.getClass().getSimpleName(), individuals);
     
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
@@ -647,6 +649,8 @@ public class EvolutionService {
             }
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
+            resultMap.put(filename, results);
+            //resultMap.put("id", filename);
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
             row.add(nnconfigString);

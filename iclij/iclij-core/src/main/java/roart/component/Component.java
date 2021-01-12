@@ -316,7 +316,7 @@ public abstract class Component {
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
-            evolution.print(param.getMarket() + " " + subcomponent, fitness.titleText(), individuals);
+            String filename = evolution.print(param.getMarket() + " " + subcomponent, fitness.titleText(), individuals);
             Map<String, Object> confMap = new HashMap<>();
             double score = winner.handleWinner(param, best, confMap);
             //confMap.put("score", "" + score);
@@ -324,7 +324,8 @@ public abstract class Component {
             scoreMap.put("" + score, score);
             param.setScoreMap(scoreMap);
             Map<String, Object> resultMap = new HashMap<>();
-            resultMap.put("e", results);
+            resultMap.put(filename, results);
+            //resultMap.put("id", filename);
             param.setResultMap(resultMap);
             //param.setFutureDate(LocalDate.now());
             // fix mlmarket;

@@ -86,7 +86,7 @@ public class EvolveAction extends MarketAction {
             if (updateMap != null) {
                 param.getUpdateMap().putAll(updateMap);
             }
-            List<Pair<Double, AbstractChromosome>> results = (List<Pair<Double, AbstractChromosome>>) componentData.getResultMap().get("e");
+            Map<String, Object> results = componentData.getResultMap();
             componentData.getService().send("filterevolve", results);
            //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);

@@ -202,7 +202,7 @@ public abstract class EvolutionAlgorithm {
         }
     }
 
-    public void print(String title, String subtitle, List<String> individuals) {
+    public String print(String title, String subtitle, List<String> individuals) {
         Path path = Paths.get("" + System.currentTimeMillis() + ".txt");
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             writer.write(title + "\n\n");
@@ -216,6 +216,7 @@ public abstract class EvolutionAlgorithm {
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
         }
+        return path.getFileName().toString();
     }
 
 }
