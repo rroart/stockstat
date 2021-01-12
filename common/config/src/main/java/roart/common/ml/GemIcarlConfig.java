@@ -41,7 +41,7 @@ public class GemIcarlConfig extends GemConfig {
         super(name);
     }
 
-    public TensorflowFeedConfig() {
+    public GemIcarlConfig() {
         super();
         // JSON
     }
