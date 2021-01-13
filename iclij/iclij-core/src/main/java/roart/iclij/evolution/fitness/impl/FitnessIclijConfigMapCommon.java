@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import roart.action.Action;
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
+import roart.common.constants.EvolveConstants;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.Market;
@@ -63,7 +64,7 @@ public class FitnessIclijConfigMapCommon {
             action.setParent(null);
             ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, map, subcomponent, null, parameters);
             action.setParent(parent);
-            String titletext = (String) componentData2.getUpdateMap().get("titletext");
+            String titletext = (String) componentData2.getUpdateMap().get(EvolveConstants.TITLETEXT);
             titletexts.add(titletext);
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];

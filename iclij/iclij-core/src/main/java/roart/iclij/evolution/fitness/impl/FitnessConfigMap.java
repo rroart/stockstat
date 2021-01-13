@@ -18,6 +18,7 @@ import roart.action.ImproveProfitAction;
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.constants.EvolveConstants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
@@ -130,7 +131,7 @@ public class FitnessConfigMap extends Fitness {
             ComponentData componentData2 = component.handle(action, market, param, profitdata, listMap, evolve, gene.getMap(), subcomponent, null, parameters);
             Object[] result = component.calculateAccuracy(componentData2);
             score = (Double) result[0];
-            titletext = (String) componentData2.getUpdateMap().get("titletext");
+            titletext = (String) componentData2.getUpdateMap().get(EvolveConstants.TITLETEXT);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
