@@ -29,6 +29,7 @@ import roart.iclij.config.SimulateFilter;
 import roart.iclij.util.MiscUtil;
 import roart.simulate.SimulateStock;
 import roart.simulate.StockHistory;
+import roart.constants.SimConstants;
 
 public class Sim {
 
@@ -57,6 +58,8 @@ public class Sim {
             filters[8] = new SimulateFilter(5, 0.2, true, true, 16);
             filters[9] = new SimulateFilter(5, 0.2, true, true, 16);
             filter = filters[adviser];
+            List<String> output = new ArrayList<>();
+            output.add("Sim");
             // config compare always true
             if (true/*filter.*/) {
                 Map<Double, List<AbstractChromosome>> chromosomeMap = new HashMap<>();
@@ -94,7 +97,7 @@ public class Sim {
                 boolean above = true;
                 for (Entry<String, Object> entry : winnerResultMap.entrySet()) {
                     Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
-                    double score = (double) aMap.get("score");
+                    double score = (double) aMap.get(SimConstants.SCORE);
                     if (score < 1) {
                         above = false;
                         break;
@@ -105,7 +108,7 @@ public class Sim {
                 boolean stable = true;
                 for (Entry<String, Object> entry : winnerResultMap.entrySet()) {
                     Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
-                    List<StockHistory> history = (List<StockHistory>) aMap.get("history");
+                    List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
                     StockHistory last = history.get(history.size() - 1);
                     double lasttotal = last.getCapital().amount + last.getSum().amount;
                     List<Double> values = new ArrayList<>();
@@ -133,20 +136,20 @@ public class Sim {
                 boolean lucky = false;
                 for (Entry<String, Object> entry : winnerResultMap.entrySet()) {
                     Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
-                    List<StockHistory> history = (List<StockHistory>) aMap.get("history");
+                    List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
                     StockHistory last = history.get(history.size() - 1);
                     double total = last.getCapital().amount + last.getSum().amount;
-                    List<SimulateStock> stockhistory = (List<SimulateStock>) aMap.get("stockhistory");
+                    List<SimulateStock> stockhistory = (List<SimulateStock>) aMap.get(SimConstants.STOCKHISTORY);
                     Map<String, List<SimulateStock>> stockMap = new HashMap<>();
                     for (SimulateStock aStock : stockhistory) {
                         new MiscUtil().listGetterAdder(stockMap, aStock.getId(), aStock);
                     }
                     Map<String, Double> priceMap = new HashMap<>();
                     for (Entry<String, List<SimulateStock>> entry2 : stockMap.entrySet()) {
-                        String id = entry2.getKey();
+                        String id2 = entry2.getKey();
                         List<SimulateStock> list = entry2.getValue();
                         double sum = list.stream().map(e -> e.getCount()*(e.getSellprice() - e.getBuyprice())).reduce(0.0, Double::sum);
-                        priceMap.put(id, sum);
+                        priceMap.put(id2, sum);
                     }
                     OptionalDouble max = priceMap.values().stream().mapToDouble(e -> e).max();
                     if (max.getAsDouble() > filter.getLucky()) {
@@ -158,7 +161,7 @@ public class Sim {
             }
             if (filter.getShortrun() > 0) {
                 Map<String, Object> aMap = (Map<String, Object>) winnerResultMap.get("0");
-                List<StockHistory> history = (List<StockHistory>) aMap.get("history");
+                List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
                 if (history.size() < filter.getShortrun()) {
                     
                 }
@@ -205,21 +208,21 @@ public class Sim {
                     for (Entry<String, Object> entry4 : map4.entrySet()) {
                         System.out.println(entry4);
                     }
-                    List alist = (List) map4.get("history");
+                    List alist = (List) map4.get(SimConstants.HISTORY);
                     List<StockHistory> history = mapper.convertValue(alist, new TypeReference<List<StockHistory>>(){});
-                    List alist2 = (List) map4.get("stockhistory");
+                    List alist2 = (List) map4.get(SimConstants.STOCKHISTORY);
 
                     List<SimulateStock> stockhistory = mapper.convertValue(alist2, new TypeReference<List<SimulateStock>>(){});
                     int jj = 0;
-                    Double ascore = (Double) map4.get("score");
-                    String startdate = (String) map4.get("startdate");
-                    String enddate = (String) map4.get("enddate");
+                    Double ascore = (Double) map4.get(SimConstants.SCORE);
+                    String startdate = (String) map4.get(SimConstants.STARTDATE);
+                    String enddate = (String) map4.get(SimConstants.ENDDATE);
                     Map<String, Object> newMap = new HashMap<>();
-                    newMap.put("history", history);
-                    newMap.put("stockhistory", stockhistory);
-                    newMap.put("score", ascore);
-                    newMap.put("startdate", startdate);
-                    newMap.put("enddate", enddate);
+                    newMap.put(SimConstants.HISTORY, history);
+                    newMap.put(SimConstants.STOCKHISTORY, stockhistory);
+                    newMap.put(SimConstants.SCORE, ascore);
+                    newMap.put(SimConstants.STARTDATE, startdate);
+                    newMap.put(SimConstants.ENDDATE, enddate);
                     resultMap.put(entry3.getKey(), newMap);
                 }
                 chromosome.setResultMap(resultMap);

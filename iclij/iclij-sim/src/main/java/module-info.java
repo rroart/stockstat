@@ -33,4 +33,5 @@ module iclij.sim {
     requires iclij.evolutioniclijconfigmap;
     requires iclij.common.util;
     requires guava;
+    requires iclij.common.constants;
 }

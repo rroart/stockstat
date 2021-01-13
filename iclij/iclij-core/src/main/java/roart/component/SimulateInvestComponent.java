@@ -31,6 +31,8 @@ import roart.common.cache.MyCache;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.constants.EvolveConstants;
+import roart.common.constants.ServiceConstants;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
@@ -43,6 +45,7 @@ import roart.component.adviser.AdviserFactory;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
 import roart.constants.IclijConstants;
+import roart.constants.SimConstants;
 import roart.db.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.ConfigMapChromosome2;
@@ -502,7 +505,7 @@ public class SimulateInvestComponent extends ComponentML {
                                 buyids.clear();
                             }
                             ids.removeAll(sellids);
-                            param.getUpdateMap().put("lastbuysell", "Buy: " + buyids + " Sell: " + sellids + " Stocks: " +ids);
+                            param.getUpdateMap().put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " +ids);
 
                         }
                     }
@@ -577,18 +580,18 @@ public class SimulateInvestComponent extends ComponentML {
                 if (offset == 0) {
                     Map<String, Object> map = new HashMap<>();
                     if (!evolving) {
-                        map.put("sumhistory", sumHistory);
-                        map.put("stockhistory", stockhistory);
-                        map.put("plotdefault", plotDefault);
-                        map.put("plotdates", plotDates);
-                        map.put("plotcapital", plotCapital);
-                        map.put("startdate", investStart);
-                        map.put("enddate", investEnd);
+                        map.put(SimConstants.SUMHISTORY, sumHistory);
+                        map.put(SimConstants.STOCKHISTORY, stockhistory);
+                        map.put(SimConstants.PLOTDEFAULT, plotDefault);
+                        map.put(SimConstants.PLOTDATES, plotDates);
+                        map.put(SimConstants.PLOTCAPITAL, plotCapital);
+                        map.put(SimConstants.STARTDATE, investStart);
+                        map.put(SimConstants.ENDDATE, investEnd);
                         param.getUpdateMap().putAll(map);
                         param.getUpdateMap().putIfAbsent("lastbuysell", "Not buying or selling today");
                         componentData.getUpdateMap().putAll(map);
                     } else {
-                        map.put("titletext", getPipeline() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                        map.put(EvolveConstants.TITLETEXT, getPipeline() + " " + market.getConfig().getMarket() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
                         componentData.getUpdateMap().putAll(map);
                     }
                 }
@@ -600,11 +603,11 @@ public class SimulateInvestComponent extends ComponentML {
                     stockhistory.addAll(mystocks);
                     
                     Map<String, Object> map = new HashMap<>();
-                    map.put("history", history);
-                    map.put("stockhistory", stockhistory);
-                    map.put("score", score);
-                    map.put("startdate", TimeUtil.convertDate2(investStart));
-                    map.put("enddate", TimeUtil.convertDate2(investEnd));
+                    map.put(SimConstants.HISTORY, history);
+                    map.put(SimConstants.STOCKHISTORY, stockhistory);
+                    map.put(SimConstants.SCORE, score);
+                    map.put(SimConstants.STARTDATE, TimeUtil.convertDate2(investStart));
+                    map.put(SimConstants.ENDDATE, TimeUtil.convertDate2(investEnd));
                     //map.put("market", market.getConfig().getMarket());
                     resultMap.put("" + offset, map);
                 }
@@ -626,13 +629,13 @@ public class SimulateInvestComponent extends ComponentML {
         if (intervalwhole) {
             String stats = scores.stream().filter(Objects::nonNull).mapToDouble(e -> (Double) e).summaryStatistics().toString();
             Map<String, Object> map = new HashMap<>();
-            map.put("scores", scores);
-            map.put("stats", stats);
+            map.put(SimConstants.SCORES, scores);
+            map.put(SimConstants.STATS, stats);
             double min = Collections.min(scores);
             double max = Collections.max(scores);
             int minDay = scores.indexOf(min);
             int maxDay = scores.indexOf(max);
-            map.put("minmax", "min " + min + " at " + minDay + " and max " + max + " at " + maxDay);
+            map.put(SimConstants.MINMAX, "min " + min + " at " + minDay + " and max " + max + " at " + maxDay);
             param.getUpdateMap().putAll(map);
             componentData.getUpdateMap().putAll(map);
         }    
@@ -641,7 +644,7 @@ public class SimulateInvestComponent extends ComponentML {
             int jj = 0;
         }
         scoreMap.put("" + score, score);
-        scoreMap.put("score", score);
+        scoreMap.put(SimConstants.SCORE, score);
         componentData.setScoreMap(scoreMap);
         //componentData.setFuturedays(0);
 
@@ -1202,7 +1205,7 @@ public class SimulateInvestComponent extends ComponentML {
         // confmap
         ComponentData e = evolve.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, getPipeline(), this, confList);
         Map<String, Object> results = (Map<String, Object>) e.getResultMap();
-        e.getService().send("filterinvest", results);
+        e.getService().send(ServiceConstants.SIMFILTER, results);
         return e;
     }
 
@@ -1275,7 +1278,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     public Object[] calculateAccuracy(ComponentData componentparam) throws Exception {
-        return new Object[] { componentparam.getScoreMap().get("score") };
+        return new Object[] { componentparam.getScoreMap().get(SimConstants.SCORE) };
     }
 
     private double increase(List<SimulateStock> mystocks, int indexOffset, Map<String, List<List<Double>>> categoryValueMap, int prevIndexOffset) {
@@ -1369,7 +1372,7 @@ public class SimulateInvestComponent extends ComponentML {
             buyids.clear();
         }
         ids.removeAll(sellids);
-        map.put("lastbuysell", "Buy: " + buyids + " Sell: " + sellids + " Stocks: " +ids);
+        map.put(SimConstants.LASTBUYSELL, "Buy: " + buyids + " Sell: " + sellids + " Stocks: " +ids);
     }
 
     private double getReliability(List<SimulateStock> mystocks, Pair<Integer, Integer>[] hits, int findTimes, int up) {
