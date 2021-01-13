@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
+import roart.common.constants.ServiceConstants;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
@@ -87,7 +88,7 @@ public class ImproveProfitAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
             Map<String, Object> results = componentData.getResultMap();
-            componentData.getService().send("filterprofit", results);
+            componentData.getService().send(ServiceConstants.EVOLVEFILTERPROFIT, results);
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           
