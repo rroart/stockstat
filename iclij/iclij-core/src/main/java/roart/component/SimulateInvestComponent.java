@@ -370,11 +370,13 @@ public class SimulateInvestComponent extends ComponentML {
                 if (evolving || offset > 0) {
                     investEnd = lastInvestEnd;
                 }
+                boolean saveLastInvest = false;
                 while (date != null && investEnd != null && !date.isAfter(investEnd)) {
                     boolean lastInvest = offset == 0 && date.isAfter(lastInvestEnd);
                     if (lastInvest) {
                         // not with evolving?
                         savedStocks = copy(mystocks);
+                        saveLastInvest = true;
                     }
                     date = TimeUtil.getForwardEqualAfter2(date, 0 /* findTime */, stockDates);
                     String datestring = TimeUtil.convertDate2(date);
@@ -530,7 +532,7 @@ public class SimulateInvestComponent extends ComponentML {
             }
                  */
                 boolean lastInvest = offset == 0 && date != null && lastInvestEnd != null && date.isAfter(lastInvestEnd);
-                if (lastInvest) {
+                if (saveLastInvest) {
                     mystocks = savedStocks;
                 }
                 if (prevIndexOffset - extradelay - delay >= 0) {
