@@ -9,4 +9,8 @@ public abstract class Fitness {
     public String titleText() {
         return null;
     }
+    
+    public String subTitleText() {
+        return null;
+    }
 }

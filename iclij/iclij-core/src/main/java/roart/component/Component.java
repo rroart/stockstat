@@ -316,7 +316,9 @@ public abstract class Component {
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
-            String filename = evolution.print(param.getMarket() + " " + subcomponent, fitness.titleText(), individuals);
+            String mysubcomponent = nullString(subcomponent);
+            String title = action.getName() + " " + param.getMarket() + " " + getPipeline() + mysubcomponent;
+            String filename = evolution.print(title + nullString(fitness.titleText()), fitness.subTitleText(), individuals);
             Map<String, Object> confMap = new HashMap<>();
             double score = winner.handleWinner(param, best, confMap);
             //confMap.put("score", "" + score);
@@ -327,7 +329,7 @@ public abstract class Component {
             resultMap.put(filename, results);
             //resultMap.put("id", filename);
             param.setResultMap(resultMap);
-            //param.setFutureDate(LocalDate.now());
+            //param.setFutureDate(Lo1610910447946.txtcalDate.now());
             // fix mlmarket;
             TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);
@@ -338,6 +340,14 @@ public abstract class Component {
         return param;
     }
 
+    private String nullString(String string) {
+        if (string == null) {
+            return "";
+        } else {
+            return " " + string;
+        }
+    }
+    
     private void configSaves(ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
         for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = entry.getKey();

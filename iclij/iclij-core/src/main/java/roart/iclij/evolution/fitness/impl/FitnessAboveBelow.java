@@ -101,7 +101,7 @@ public class FitnessAboveBelow extends Fitness {
     }
 
     @Override
-    public String titleText() {
-        return "abovebelow" + " " + components + " " + subcomponents;
+    public String subTitleText() {
+        return components + " " + subcomponents;
     }
 }

@@ -144,12 +144,4 @@ public class FitnessNeuralNet extends Fitness {
         }
     }
 
-    @Override
-    public String titleText() {
-        titletext = ml;
-        if (titletext != null) {
-            return titletext;
-        }
-        return null;
-    }
 }

@@ -27,6 +27,7 @@ import roart.category.AbstractCategory;
 import roart.common.config.ConfigConstants;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.constants.EvolveConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
@@ -560,8 +561,8 @@ public class EvolutionService {
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
-            String filename = evolution.print(conf.getMarket() + " " + ml, "evolve" + " " + ml + " " + nnconfig.getClass().getSimpleName(), individuals);
-            
+            String filename = evolution.print(EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName(), null, individuals);
+                        
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
             NeuralNetConfig newnnconf = newnnconfgene.getConfig();
@@ -636,7 +637,7 @@ public class EvolutionService {
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, null);
-            String filename = evolution.print(conf.getMarket() + " " + ml, "evolve" + " " + ml + " " + nnconfig.getClass().getSimpleName(), individuals);
+            String filename = evolution.print(EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName(), null, individuals);
     
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();

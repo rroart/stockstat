@@ -138,11 +138,4 @@ public class FitnessConfigMap extends Fitness {
         return score;
     }
 
-    @Override
-    public String titleText() {
-        if (titletext != null) {
-            return titletext;
-        }
-        return null;
-    }
 }
