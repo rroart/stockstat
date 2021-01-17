@@ -563,7 +563,9 @@ public class NeuralNetConfigs {
         NeuralNetConfig nnconfig = null;
         Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
         Pair<Class<NeuralNetConfig>, String> nnstring = map.get(key);
-        nnconfig = JsonUtil.convert(nnstring.getRight(), nnstring.getLeft());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
+        nnconfig = JsonUtil.convert(nnstring.getRight(), nnstring.getLeft(), mapper);
         return nnconfig;
     }
 
