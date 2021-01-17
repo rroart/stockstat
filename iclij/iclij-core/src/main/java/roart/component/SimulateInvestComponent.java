@@ -593,7 +593,7 @@ public class SimulateInvestComponent extends ComponentML {
                         param.getUpdateMap().putIfAbsent("lastbuysell", "Not buying or selling today");
                         componentData.getUpdateMap().putAll(map);
                     } else {
-                        map.put(EvolveConstants.TITLETEXT, getPipeline() + " " + market.getConfig().getMarket() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                        map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
                         componentData.getUpdateMap().putAll(map);
                     }
                 }
