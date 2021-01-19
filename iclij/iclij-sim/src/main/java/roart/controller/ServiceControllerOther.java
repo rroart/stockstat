@@ -16,6 +16,7 @@ import roart.common.communication.model.Communication;
 import roart.common.constants.CommunicationConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.common.constants.ServiceConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.ServiceConnectionUtil;
 import roart.iclij.config.IclijConfig;
@@ -35,7 +36,7 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         IclijServiceResult r = null;
         System.out.println("Cserv"+c.getService());
         switch (c.getService()) {
-        case "filterinvest":
+        case ServiceConstants.SIMFILTER:
             new Sim().method((String) param);
             break;
         }
