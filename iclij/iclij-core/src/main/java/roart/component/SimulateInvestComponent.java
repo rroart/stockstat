@@ -594,6 +594,7 @@ public class SimulateInvestComponent extends ComponentML {
                         componentData.getUpdateMap().putAll(map);
                     } else {
                         map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                        map.put(EvolveConstants.SIMTEXT, market.getConfig().getMarket() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
                         componentData.getUpdateMap().putAll(map);
                     }
                 }
