@@ -460,7 +460,7 @@ public class SimulateInvestComponent extends ComponentML {
                             List<String> ids = mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                             if (!evolving) {
                                 if (offset == 0) {
-                                    sumHistory.add(datestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend);
+                                    sumHistory.add(historydatestring + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend);
                                     plotDates.add(historydatestring);
                                     plotDefault.add(resultavg);
                                     plotCapital.add(sum.amount + capital.amount);
