@@ -3,6 +3,7 @@ package roart.iclij.service;
 import roart.common.config.CacheConstants;
 import roart.common.config.ConfigTreeMap;
 import roart.common.config.MyMyConfig;
+import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
@@ -107,6 +108,10 @@ public class ControlService {
     }
 
     public void send(String service, Object object) {
+        if (object == null) {
+            log.error("Empty msg for {}", service);
+            return;
+        }
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         send(service, object, mapper);
