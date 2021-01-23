@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigConstants;
@@ -94,7 +95,9 @@ public abstract class MLClassifyModel {
 
     protected <T> T getDefault(Class<T> clazz) {
         try {
-            return new ObjectMapper().readValue((String) getConf().getDeflt().get(getKey()), clazz);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
+            return mapper.readValue((String) getConf().getDeflt().get(getKey()), clazz);
         } catch (IOException e) {
             log.error(Constants.EXCEPTION, e);
             return null;
