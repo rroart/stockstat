@@ -27,7 +27,7 @@ import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
-import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
+import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.iclij.config.Market;
 import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;

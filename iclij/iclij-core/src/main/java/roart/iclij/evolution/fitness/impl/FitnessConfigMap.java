@@ -23,7 +23,7 @@ import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.chromosome.impl.ConfigMapChromosome2;
+import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.evolution.fitness.Fitness;

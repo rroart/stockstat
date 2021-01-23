@@ -8,27 +8,16 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import roart.action.Action;
 import roart.action.MarketAction;
-import roart.common.config.ConfigConstants;
-import roart.common.constants.Constants;
-import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.evolution.fitness.Fitness;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
-import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
-import roart.iclij.factory.actioncomponentconfig.ActionComponentConfigFactory;
 import roart.iclij.filter.Memories;
-import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
-import roart.iclij.model.WebData;
-import roart.iclij.model.config.ActionComponentConfig;
 import roart.service.model.ProfitData;
-import roart.service.model.ProfitInputData;
 
 public class FitnessIclijConfigMap extends Fitness {
 
