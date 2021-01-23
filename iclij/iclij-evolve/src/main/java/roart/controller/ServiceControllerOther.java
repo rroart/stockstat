@@ -42,15 +42,15 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
             break;
         case ServiceConstants.EVOLVEFILTERPROFIT:
             r = new IclijServiceResult();
-            new Evolve().method((String) param);
+            new Evolve().method2((String) param);
             break;
         case ServiceConstants.EVOLVEFILTERFILTER:
             r = new IclijServiceResult();
-            new Evolve().method((String) param);
+            new Evolve().method3((String) param);
             break;
         case ServiceConstants.EVOLVEFILTERABOVEBELOW:
             r = new IclijServiceResult();
-            new Evolve().method((String) param);
+            new Evolve().method4((String) param);
             break;
         }
         if (param instanceof IclijServiceParam) {

@@ -10,6 +10,7 @@ module iclij.evolve {
     requires iclij.common.service;
     requires common.communication.model;
     requires iclij.common.config;
+    requires iclij.evolutionchromosome;
     requires common.constants;
     requires com.fasterxml.jackson.databind;
     requires common.communication.factory;
