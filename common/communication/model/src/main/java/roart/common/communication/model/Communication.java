@@ -99,34 +99,27 @@ public abstract class Communication {
     public abstract void send(String s);
 
     public void send(Object o) {
-        System.out.println("sendchn " + getSendService());
-        System.out.println("sendchn " + JsonUtil.convert(o));
+        log.info("Send service {}", getSendService());
         send(JsonUtil.convert(o, mapper));
     }
 
     public abstract String[] receiveString();
 
     public <T> T[] sendReceive2(Object param) {
-        System.out.println("xxyy00");
         long time = System.currentTimeMillis();
         send(param);
         T[] r = receive();
-        log.info("Rq time {}s for {} ", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), service);
+        log.info("Rq time {}s for {} class {}", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), service, r.getClass().getName());
         //destroy();
-        System.out.println("xxyy"+r);
-        System.out.println("xxyy"+r.getClass().getName());
         return r;
     }
 
     public <T> T[] sendReceive(Object param) {
-        System.out.println("xxyyzz00");
         long time = System.currentTimeMillis();
         send(param);
         T[] r = receive();
-        log.info("Rq time {}s for {} ", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), service);
+        log.info("Rq time {}s for {} class {}", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), service, r.getClass().getName());
         destroyTmp();
-        System.out.println("xxyy"+r);
-        System.out.println("xxyy"+r.getClass().getName());
         return r;
     }
 
@@ -134,21 +127,19 @@ public abstract class Communication {
     }
 
     public <T> T[] receive() {
-        System.out.println("recvchn " + getReceiveService());
+        log.info("Receive service {}", getReceiveService());
         Class<T> aclass = myclass;
         String[] receives = receiveString();
         //T[] ts = new T[receives.length];
         T[] ts = (T[]) Array.newInstance(myclass, receives.length);
         int count = 0;
         for (String aReceive : receives) {
-            System.out.println("t0"+aReceive);
             T t;
             if (aclass == String.class) {
                 t = (T) aReceive;
             } else {
                 t = JsonUtil.convertnostrip(aReceive, aclass);
             }
-            System.out.println("t"+t);
             ts[count++] = t;
         }
         return ts;
