@@ -18,6 +18,10 @@ public class MarketFilterGene extends AbstractGene {
         this.categories = categories;
     }
 
+    public MarketFilterGene() {
+        // Json
+    }
+
     public MarketFilter getMarketfilter() {
         return marketfilter;
     }

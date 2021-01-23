@@ -7,38 +7,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.ServiceConstants;
-import roart.common.model.MetaItem;
 import roart.common.util.JsonUtil;
-import roart.common.util.MetaUtil;
 import roart.common.util.TimeUtil;
 import roart.component.Component;
 import roart.component.Evolve;
 import roart.component.FilterEvolveFactory;
-import roart.component.SimulateInvestEvolveFactory;
 import roart.component.model.ComponentData;
 import roart.db.IclijDbDao;
-import roart.evolution.chromosome.AbstractChromosome;
-import roart.evolution.chromosome.winner.MarketFilterChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
-import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome;
-import roart.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
-import roart.evolution.marketfilter.genetics.gene.impl.MarketFilterGene;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.Market;
-import roart.iclij.evolution.fitness.impl.FitnessMarketFilter;
 import roart.iclij.filter.Memories;
 import roart.iclij.model.IncDecItem;
 import roart.iclij.model.MLMetricsItem;
@@ -46,11 +33,9 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
 import roart.iclij.model.WebData;
-import roart.iclij.model.action.EvolveActionData;
 import roart.iclij.model.action.ImproveFilterActionData;
 import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
-import roart.service.model.ProfitInputData;
 
 public class ImproveFilterAction extends MarketAction {
 

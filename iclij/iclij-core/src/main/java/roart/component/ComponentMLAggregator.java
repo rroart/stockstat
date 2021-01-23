@@ -1,6 +1,5 @@
 package roart.component;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
@@ -22,9 +20,8 @@ import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
 import roart.component.model.MLAggregatorData;
-import roart.evolution.chromosome.impl.ConfigMapChromosome;
-import roart.evolution.chromosome.impl.ConfigMapChromosome2;
-import roart.evolution.chromosome.winner.ConfigMapChromosomeWinner;
+import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
+import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.gene.impl.ConfigMapGene;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessConfigMap;

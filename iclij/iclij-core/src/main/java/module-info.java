@@ -53,6 +53,7 @@ module iclij.core {
     requires io.jenetics.base;
     requires iclij.evolutionmarketfilter;
     requires iclij.evolutioniclijconfigmap;
+    requires iclij.evolutionchromosome;
     requires db;
     requires common.communication.model;
     requires common.communication.factory;

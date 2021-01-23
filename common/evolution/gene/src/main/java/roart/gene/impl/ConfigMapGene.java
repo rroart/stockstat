@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import roart.common.config.MyMyConfig;
 import roart.common.util.MathUtil;
 import roart.gene.AbstractGene;
@@ -121,6 +123,7 @@ public class ConfigMapGene extends AbstractGene {
         return gene;
     }
     
+    @JsonIgnore
     public boolean isEmpty() {
         return confList == null || confList.isEmpty() || map == null || map.isEmpty();
     }

@@ -6,7 +6,7 @@ import java.util.Map;
 import roart.action.MarketAction;
 import roart.component.model.ComponentData;
 import roart.component.model.SimulateInvestData;
-import roart.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
+import roart.iclij.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;

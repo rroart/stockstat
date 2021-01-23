@@ -27,8 +27,9 @@ import roart.common.util.JsonUtil;
 import roart.common.util.TimeUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.RecommenderData;
-import roart.evolution.chromosome.impl.RecommenderChromosome;
-import roart.evolution.chromosome.winner.ConfigMapChromosomeWinner;
+import roart.iclij.evolution.chromosome.impl.RecommenderChromosome2;
+import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
+import roart.iclij.evolution.fitness.impl.FitnessConfigMap;
 import roart.evolution.fitness.AbstractScore;
 import roart.evolution.fitness.impl.ProportionScore;
 import roart.gene.impl.ConfigMapGene;
@@ -321,6 +322,7 @@ public class ComponentRecommender extends ComponentNoML {
 	ComponentData param = new ComponentData(componentparam);
         //Map<String, String> retMap = new HashMap<>();
         //List<String> list = getBuy();
+	buy = true;
         List<String> confList = buy ? getBuy() : getSell();      
 	Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
 	if (wantThree) {
@@ -349,11 +351,13 @@ public class ComponentRecommender extends ComponentNoML {
         }
 
         ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
-        RecommenderChromosome chromosome = new RecommenderChromosome(action, getConfList(), param, profitdata, market, new Memories(market), PipelineConstants.AGGREGATORRECOMMENDERINDICATOR, buy, subcomponent, gene, mlTests);
+        RecommenderChromosome2 chromosome = new RecommenderChromosome2(gene);
 
         //chromosome.setConfList(confList);
-        
-        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), null);
+
+        List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
+        FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
+        return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), chromosome.getBuy(), fit);
         //return handleBuySell(param, market, profitdata, profitdata.getInputdata().getListMap(), list);
         //list = getSell();
         //retMap.putAll(handleBuySell(param, market, profitdata, conf, profitdata.getInputdata().getListMap(), list));

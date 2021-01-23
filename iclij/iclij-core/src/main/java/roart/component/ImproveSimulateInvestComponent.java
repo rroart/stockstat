@@ -8,7 +8,7 @@ import roart.action.MarketAction;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
-import roart.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
+import roart.iclij.evolution.chromosome.winner.IclijConfigMapChromosomeWinner;
 import roart.evolution.config.EvolutionConfig;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
