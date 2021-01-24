@@ -24,8 +24,10 @@ import org.apache.kafka.common.TopicPartition;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.communication.message.model.MessageCommunication;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class Kafka extends MessageCommunication {
+    public static final int MSGSIZE = 5242880;
     public void method() {
         Properties config = new Properties();
         config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.122.219:9092");
@@ -83,6 +85,7 @@ public class Kafka extends MessageCommunication {
                "org.apache.kafka.common.serialization.StringDeserializer");
             props.put("value.deserializer", 
                "org.apache.kafka.common.serialization.StringDeserializer");
+            //props.put("fetch.message.max.bytes", MSGSIZE);
             consumer = new KafkaConsumer<>(props);
 
             List<TopicPartition> partitions = new ArrayList<>(); 
@@ -99,8 +102,8 @@ public class Kafka extends MessageCommunication {
     }
     
     public void send(String s) {
-              
-        producer.send(new ProducerRecord<>(getSendService(), s, s));
+        String md5Hex = DigestUtils.md5Hex(s).toUpperCase();      
+        producer.send(new ProducerRecord<>(getSendService(), md5Hex, s));
         System.out.println("Message sent successfully");
         producer.close();
     }
