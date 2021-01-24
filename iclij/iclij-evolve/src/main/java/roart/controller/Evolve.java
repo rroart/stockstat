@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import roart.common.constants.Constants;
 import roart.common.util.JsonUtil;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
@@ -26,6 +29,8 @@ import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 
 public class Evolve {
+
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void method(String param) {
         Map<String, List<Pair<Double, AbstractChromosome>>> myMap = convert(param);
@@ -68,13 +73,13 @@ public class Evolve {
             res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, NeuralNetChromosome2>>>>(){});
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         } catch (JsonMappingException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
         String id = res0.keySet().iterator().next();
         List<LinkedHashMap<Double, NeuralNetChromosome2>> res = res0.get(id);
@@ -123,13 +128,13 @@ public class Evolve {
             res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, ConfigMapChromosome2>>>>(){});
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         } catch (JsonMappingException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
         String id = res0.keySet().iterator().next();
         List<LinkedHashMap<Double, NeuralNetChromosome2>> res = res0.get(id);
@@ -177,13 +182,13 @@ public class Evolve {
             res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, MarketFilterChromosome2>>>>(){});
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         } catch (JsonMappingException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
         String id = res0.keySet().iterator().next();
         List<LinkedHashMap<Double, NeuralNetChromosome2>> res = res0.get(id);
@@ -231,13 +236,13 @@ public class Evolve {
             res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, AboveBelowChromosome>>>>(){});
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         } catch (JsonMappingException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(Constants.EXCEPTION, e);
         }
         String id = res0.keySet().iterator().next();
         List<LinkedHashMap<Double, AboveBelowChromosome>> res = res0.get(id);
