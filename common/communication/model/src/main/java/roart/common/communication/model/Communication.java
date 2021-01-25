@@ -14,7 +14,7 @@ import roart.common.util.MathUtil;
 
 public abstract class Communication {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     private String service;
     protected ObjectMapper mapper;

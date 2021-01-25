@@ -12,4 +12,5 @@ module common.communications.message.kafka {
     requires org.apache.commons.lang3;
     requires com.fasterxml.jackson.databind;
     requires org.apache.commons.codec;
+    requires org.slf4j;
 }
