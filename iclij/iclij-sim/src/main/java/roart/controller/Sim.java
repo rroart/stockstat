@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.OptionalDouble;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -51,66 +52,86 @@ public class Sim {
             //for ()
             Pair<Double, AbstractChromosome> winnerPair = myList.get(0);
             IclijConfigMapChromosome winnerChromosome = (IclijConfigMapChromosome) winnerPair.getValue();
-            Map<String, Object> winnerMap = winnerChromosome.getMap();
-            int adviser = (int) winnerMap.get(IclijConfigConstants.SIMULATEINVESTADVISER);
-            Map<String, Object> winnerResultMap = winnerChromosome.getResultMap();
-            Map<String, Object> aMap = (Map<String, Object>) winnerResultMap.get("0");
-            String simtext = (String) aMap.get(EvolveConstants.SIMTEXT);
-            //Map<String, Object> winnerMap = (Map<String, Object>) winnerResultMap.get("0");
+            int adviser = getAdviser(winnerChromosome);
+            String simtext = getSimtext(winnerChromosome);
             SimulateFilter[] filters = new SimulateFilter[10];
-            SimulateFilter filter = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[0] = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[1] = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[2] = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[3] = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[4] = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[5] = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[6] = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[7] = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[8] = new SimulateFilter(5, 0.2, true, true, 16);
-            filters[9] = new SimulateFilter(5, 0.2, true, true, 16);
+            SimulateFilter filter = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[0] = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[1] = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[2] = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[3] = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[4] = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[5] = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[6] = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[7] = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[8] = new SimulateFilter(5, 0.2, true, true, 16, true);
+            filters[9] = new SimulateFilter(5, 0.2, true, true, 16, true);
             filter = filters[adviser];
             List<String> output = new ArrayList<>();
             List<Summary> summary = new ArrayList<>();
-            
-            output.add("Sim " + simtext);
-            output.add("File: " + id);
+
+            //output.add("Sim " + simtext);
+            //output.add("File: " + id);
             // config compare always true
-            findCommon(myList, output);
             if (filter.getPopulationabove() > 0) {
                 getPopulationAbove(myList, filter, output, summary);
             }
-            if (filter.isAllabove()) {
-                getAllAbove(winnerResultMap, output, summary);
+            Map<Double, List<AbstractChromosome>> chromosomeMap = groupCommon(myList, output, summary);
+            getCommon(chromosomeMap, output, summary);
+            for (Entry<Double, List<AbstractChromosome>> entry : chromosomeMap.entrySet()) {
+                Double score = entry.getKey();
+                List<AbstractChromosome> chromosomes = entry.getValue();
+                IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
+                Map<String, Object> map = chromosome.getMap();
+                Map<String, Object> resultMap = chromosome.getResultMap();
+                if (filter.isUseclusters()) {
+                }
+                if (filter.isAllabove()) {
+                    getAllAbove(resultMap, output, summary);
+                }
+                if (filter.isStable()) {
+                    getStable(resultMap, output, summary);
+                }
+                if (filter.getLucky() > 0) {
+                    getLucky(resultMap, filter, output, summary);
+
+                }
+                if (filter.getShortrun() > 0) {
+                    getShortRun(resultMap, filter, output, summary);
+                }
+                if (true /*findcluster equal value*/) {
+                    // use config compare
+                }
+                String mysummary = "";
+                boolean success = true;
+                for (Summary aSummary : summary) {
+                    success &= aSummary.success;
+                    mysummary += ", ";
+                    mysummary += aSummary.success + " : " + aSummary.text + " ";
+                }
+                mysummary = "Summary : " + success + " " + mysummary;
+                output.add(mysummary);
             }
-            if (filter.isStable()) {
-                getStable(winnerResultMap, output, summary);
-            }
-            if (filter.getLucky() > 0) {
-                getLucky(winnerResultMap, filter, output, summary);
-                
-            }
-            if (filter.getShortrun() > 0) {
-                getShortRun(winnerResultMap, filter, output, summary);
-            }
-            if (true /*findcluster equal value*/) {
-                // use config compare
-            }
-            String mysummary = "";
-            boolean success = true;
-            for (Summary aSummary : summary) {
-                success &= aSummary.success;
-                mysummary += aSummary.success + " : " + aSummary.text + " ";
-            }
-            mysummary = "Summary : " + success + " " + mysummary;
-            output.add(mysummary);
-            print("Sim " + simtext, "File " + id, output);
+            print("sim " + simtext, "File " + id, output);
         }
     }
 
-    private void getShortRun(Map<String, Object> winnerResultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
+    private int getAdviser(IclijConfigMapChromosome chromosome) {
+        Map<String, Object> map = chromosome.getMap();
+        int adviser = (int) map.get(IclijConfigConstants.SIMULATEINVESTADVISER);
+        return adviser;
+    }
+
+    private String getSimtext(IclijConfigMapChromosome chromosome) {
+        Map<String, Object> resultMap = chromosome.getResultMap();
+        Map<String, Object> aMap = (Map<String, Object>) resultMap.get("0");
+        String simtext = (String) aMap.get(EvolveConstants.SIMTEXT);
+        return simtext;
+    }
+
+    private void getShortRun(Map<String, Object> resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
         boolean notshort = true;
-        Map<String, Object> aMap = (Map<String, Object>) winnerResultMap.get("0");
+        Map<String, Object> aMap = (Map<String, Object>) resultMap.get("0");
         List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
         if (history.size() < filter.getShortrun()) {
             notshort = false;
@@ -119,9 +140,9 @@ public class Sim {
         summary.add(new Summary(notshort, "Too short " + history.size()));
     }
 
-    private void getLucky(Map<String, Object> winnerResultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
-        boolean lucky = false;
-        for (Entry<String, Object> entry : winnerResultMap.entrySet()) {
+    private void getLucky(Map<String, Object> resultMap, SimulateFilter filter, List<String> output, List<Summary> summary) {
+        boolean notlucky = true;
+        for (Entry<String, Object> entry : resultMap.entrySet()) {
             Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
             List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
             StockHistory last = history.get(history.size() - 1);
@@ -140,17 +161,17 @@ public class Sim {
             }
             OptionalDouble max = priceMap.values().stream().mapToDouble(e -> e).max();
             if (max.getAsDouble() / total > filter.getLucky()) {
-                lucky = true;
+                notlucky = false;
                 break;
             }
-            output.add("Lucky " + max.getAsDouble() / total);
+            output.add("Lucky " + max.getAsDouble() + " " + total + max.getAsDouble() / total);
         }
-        summary.add(new Summary(lucky, "Lucky"));
+        summary.add(new Summary(notlucky, "Lucky"));
     }
 
-    private void getStable(Map<String, Object> winnerResultMap, List<String> output, List<Summary> summary) {
+    private void getStable(Map<String, Object> resultMap, List<String> output, List<Summary> summary) {
         boolean stable = true;
-        for (Entry<String, Object> entry : winnerResultMap.entrySet()) {
+        for (Entry<String, Object> entry : resultMap.entrySet()) {
             Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
             List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
             StockHistory last = history.get(history.size() - 1);
@@ -178,10 +199,10 @@ public class Sim {
         summary.add(new Summary(stable, "Stable"));
     }
 
-    private void getAllAbove(Map<String, Object> winnerResultMap, List<String> output, List<Summary> summary) {
+    private void getAllAbove(Map<String, Object> resultMap, List<String> output, List<Summary> summary) {
         boolean above = true;
         List<Double> scores = new ArrayList<>();
-        for (Entry<String, Object> entry : winnerResultMap.entrySet()) {
+        for (Entry<String, Object> entry : resultMap.entrySet()) {
             Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
             double score = (double) aMap.get(SimConstants.SCORE);
             scores.add(score);
@@ -210,27 +231,44 @@ public class Sim {
         summary.add(new Summary(above, "Populationabove " + max));
     }
 
-    private void findCommon(List<Pair<Double, AbstractChromosome>> myList, List<String> output) {
-        if (true/*filter.*/) {
-            Map<Double, List<AbstractChromosome>> chromosomeMap = new LinkedHashMap<>();
-            for (Pair<Double, AbstractChromosome> aPair : myList) {
-                new MiscUtil().listGetterAdder(chromosomeMap, aPair.getLeft(), aPair.getRight());
+    private Map<Double, List<AbstractChromosome>> groupCommon(List<Pair<Double, AbstractChromosome>> myList, List<String> output, List<Summary> summary) {
+        List<Pair<Double, List<AbstractChromosome>>> retlist = new ArrayList<>();
+        Map<Double, List<AbstractChromosome>> chromosomeMap = new LinkedHashMap<>();
+        for (Pair<Double, AbstractChromosome> aPair : myList) {
+            new MiscUtil().listGetterAdder(chromosomeMap, aPair.getLeft(), aPair.getRight());
+        }
+        return chromosomeMap;
+    }
+
+    private void getCommon(Map<Double, List<AbstractChromosome>> chromosomeMap, List<String> output, List<Summary> summary) {
+        for (Entry<Double, List<AbstractChromosome>> entry : chromosomeMap.entrySet()) {
+            Double score = entry.getKey();
+            List<AbstractChromosome> aList = entry.getValue();
+            if (aList.size() == 1) {
+                continue;
             }
-            for (Entry<Double, List<AbstractChromosome>> entry : chromosomeMap.entrySet()) {
-                List<AbstractChromosome> aList = entry.getValue();
-                if (aList.size() == 1) {
-                    continue;
-                }
-                IclijConfigMapChromosome firstChromosome = (IclijConfigMapChromosome) aList.get(0);
-                Map<String, Object> aMap = firstChromosome.getMap();
-                for (int i = 1; i < aList.size(); i++) {
-                    IclijConfigMapChromosome anotherChromosome = (IclijConfigMapChromosome) aList.get(i);
-                    Map<String, Object> anotherMap = anotherChromosome.getMap();
-                    MapDifference<String, Object> diff = Maps.difference(aMap, anotherMap);
-                    aMap = diff.entriesInCommon();
-                }
-                output.add(entry.getKey() + " " + aList.size() + " "+ aMap);
+            IclijConfigMapChromosome firstChromosome = (IclijConfigMapChromosome) aList.get(0);
+            Map<String, Object> aMap = firstChromosome.getMap();
+            for (int i = 1; i < aList.size(); i++) {
+                IclijConfigMapChromosome anotherChromosome = (IclijConfigMapChromosome) aList.get(i);
+                Map<String, Object> anotherMap = anotherChromosome.getMap();
+                MapDifference<String, Object> diff = Maps.difference(aMap, anotherMap);
+                aMap = diff.entriesInCommon();
             }
+            Set<String> keys = aMap.keySet();
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (AbstractChromosome chromosome : aList) {
+                IclijConfigMapChromosome anotherChromosome = (IclijConfigMapChromosome) chromosome;
+                Map<String, Object> anotherMap = new HashMap<>(anotherChromosome.getMap());
+                anotherMap.keySet().removeAll(keys);
+                list.add(anotherMap);
+            }
+            List<String> list2 = new ArrayList<>();
+            list2 = new ArrayList<>(firstChromosome.getMap().keySet());
+            list2.removeAll(keys);
+            output.add("Common " + score);
+            output.add(entry.getKey() + " " + aList.size() + " " + aMap);
+            output.add("" + list2);
         }
     }
 
@@ -279,12 +317,14 @@ public class Sim {
                     Double ascore = (Double) map4.get(SimConstants.SCORE);
                     String startdate = (String) map4.get(SimConstants.STARTDATE);
                     String enddate = (String) map4.get(SimConstants.ENDDATE);
+                    String simtext = (String) map4.get(EvolveConstants.SIMTEXT);
                     Map<String, Object> newMap = new HashMap<>();
                     newMap.put(SimConstants.HISTORY, history);
                     newMap.put(SimConstants.STOCKHISTORY, stockhistory);
                     newMap.put(SimConstants.SCORE, ascore);
                     newMap.put(SimConstants.STARTDATE, startdate);
                     newMap.put(SimConstants.ENDDATE, enddate);
+                    newMap.put(EvolveConstants.SIMTEXT, simtext);
                     resultMap.put(entry3.getKey(), newMap);
                 }
                 chromosome.setResultMap(resultMap);

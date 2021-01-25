@@ -12,13 +12,16 @@ public class SimulateFilter {
     
     private int populationabove;
     
-    public SimulateFilter(int shortrun, double lucky, boolean stable, boolean allabove, int populationabove) {
+    private boolean useclusters;
+    
+    public SimulateFilter(int shortrun, double lucky, boolean stable, boolean allabove, int populationabove, boolean useclusters) {
         super();
         this.shortrun = shortrun;
         this.lucky = lucky;
         this.stable = stable;
         this.allabove = allabove;
         this.populationabove = populationabove;
+        this.useclusters = useclusters;
     }
 
     public SimulateFilter() {
@@ -63,6 +66,14 @@ public class SimulateFilter {
 
     public void setPopulationabove(int populationabove) {
         this.populationabove = populationabove;
+    }
+
+    public boolean isUseclusters() {
+        return useclusters;
+    }
+
+    public void setUseclusters(boolean useclusters) {
+        this.useclusters = useclusters;
     }
     
 
