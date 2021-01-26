@@ -22,6 +22,8 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -70,10 +72,10 @@ public class Kafka extends MessageCommunication {
             props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
             
             props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, 
-               "org.apache.kafka.common.serialization.StringSerializer");
+               StringSerializer.class.getName());
                
             props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, 
-               "org.apache.kafka.common.serialization.StringSerializer");
+                    StringSerializer.class.getName());
             
             props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, MSGSIZE);
             producer = new KafkaProducer<>(props);
@@ -88,9 +90,9 @@ public class Kafka extends MessageCommunication {
             props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
             props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
             props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, 
-               "org.apache.kafka.common.serialization.StringDeserializer");
+                    StringDeserializer.class.getName());
             props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, 
-               "org.apache.kafka.common.serialization.StringDeserializer");
+                    StringDeserializer.class.getName());
             //props.put("fetch.message.max.bytes", MSGSIZE);
             props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MSGSIZE);
             consumer = new KafkaConsumer<>(props);
