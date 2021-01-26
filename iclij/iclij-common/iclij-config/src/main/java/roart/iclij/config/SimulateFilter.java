@@ -6,7 +6,7 @@ public class SimulateFilter {
     
     private double lucky;
     
-    private boolean stable;
+    private double stable;
     
     private boolean allabove;
     
@@ -14,7 +14,7 @@ public class SimulateFilter {
     
     private boolean useclusters;
     
-    public SimulateFilter(int shortrun, double lucky, boolean stable, boolean allabove, int populationabove, boolean useclusters) {
+    public SimulateFilter(int shortrun, double lucky, double stable, boolean allabove, int populationabove, boolean useclusters) {
         super();
         this.shortrun = shortrun;
         this.lucky = lucky;
@@ -44,11 +44,11 @@ public class SimulateFilter {
         this.lucky = lucky;
     }
 
-    public boolean isStable() {
+    public double getStable() {
         return stable;
     }
 
-    public void setStable(boolean stable) {
+    public void setStable(double stable) {
         this.stable = stable;
     }
 
