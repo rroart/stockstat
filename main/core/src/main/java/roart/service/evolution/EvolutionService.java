@@ -561,7 +561,8 @@ public class EvolutionService {
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
-            String filename = evolution.print(EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName(), null, individuals);
+            String title = EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
+            String filename = evolution.print(title, null, individuals);
                         
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
@@ -599,6 +600,8 @@ public class EvolutionService {
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
             resultMap.put(filename, results);
+            resultMap.put(EvolveConstants.ID, filename);
+            resultMap.put(EvolveConstants.TITLETEXT, title);
             //resultMap.put("id", filename);
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
@@ -637,7 +640,8 @@ public class EvolutionService {
             List<String> individuals = new ArrayList<>();
             List<Pair<Double, AbstractChromosome>> results = new ArrayList<>();
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, null);
-            String filename = evolution.print(EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName(), null, individuals);
+            String title = EvolveConstants.EVOLVE + " " + conf.getMarket() + " " + ml + " " + nnconfig.getClass().getSimpleName();
+            String filename = evolution.print(title, null, individuals);
     
             NeuralNetChromosome2 bestEval2 = (NeuralNetChromosome2) best.getEvaluation();
             NeuralNetConfigGene newnnconfgene = bestEval2.getNnConfig();
@@ -651,6 +655,8 @@ public class EvolutionService {
             updateMap.put(configKey, newNNConfigstring);
             scoreMap.put(configKey, best.getFitness());
             resultMap.put(filename, results);
+            resultMap.put(EvolveConstants.TITLETEXT, title);
+            resultMap.put(EvolveConstants.ID, filename);
             //resultMap.put("id", filename);
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
