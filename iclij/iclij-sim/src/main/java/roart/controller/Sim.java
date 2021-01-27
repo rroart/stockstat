@@ -47,15 +47,15 @@ public class Sim {
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void method(String param) {
-        Map<String, List<Pair<Double, AbstractChromosome>>> myMap = convert(param);
-        String id = myMap.keySet().iterator().next();
-        List<Pair<Double, AbstractChromosome>> myList = myMap.get(id);
+        Map<String, Object> myMap = convert(param);
+        String id = (String) myMap.get(EvolveConstants.ID);
+        List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
         if (myList.size() > 0) {
             //for ()
             Pair<Double, AbstractChromosome> winnerPair = myList.get(0);
             IclijConfigMapChromosome winnerChromosome = (IclijConfigMapChromosome) winnerPair.getValue();
             int adviser = getAdviser(winnerChromosome);
-            String simtext = getSimtext(winnerChromosome);
+            String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
             SimulateFilter[] filters = new SimulateFilter[10];
             SimulateFilter filter = new SimulateFilter(5, 0.8, 0.8, true, 16, true);
             filters[0] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
@@ -125,7 +125,7 @@ public class Sim {
                     summaries.add(new ImmutablePair<>(keyScore, mysummary));
                 }
             }
-            Double maxScore = summaries.stream().mapToDouble(e -> e.getKey()).max().getAsDouble();
+            Double maxScore = summaries.stream().mapToDouble(e -> e.getKey()).max().orElse(0);
             List<Pair<Double, String>> maxSummaries = summaries.stream().filter(e -> e.getKey().equals(maxScore)).collect(Collectors.toList());
             for (Pair<Double, String> aSummary : maxSummaries) {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
@@ -177,11 +177,11 @@ public class Sim {
                 double sum = list.stream().map(e -> e.getCount()*(e.getSellprice() - e.getBuyprice())).reduce(0.0, Double::sum);
                 priceMap.put(id2, sum);
             }
-            OptionalDouble max = priceMap.values().stream().mapToDouble(e -> e).max();
-            if (max.getAsDouble() / total > filter.getLucky()) {
+            double max = priceMap.values().stream().mapToDouble(e -> e).max().orElse(0);
+            if (max / total > filter.getLucky()) {
                 notlucky = false;
             }
-            output.add("Lucky " + MathUtil.round(max.getAsDouble(), 2) + " " + MathUtil.round(total, 2) + " " + MathUtil.round(max.getAsDouble() / total, 2));
+            output.add("Lucky " + MathUtil.round(max, 2) + " " + MathUtil.round(total, 2) + " " + MathUtil.round(max / total, 2));
         }
         summary.add(new Summary(notlucky, "Lucky"));
     }
@@ -292,13 +292,15 @@ public class Sim {
         }
     }
 
-    private Map<String, List<Pair<Double, AbstractChromosome>>> convert(String param) {
+    private Map<String, Object> convert(String param) {
+        Map<String, Object> map = new HashMap<>();
         List<Pair<Double, AbstractChromosome>> myList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        Map<String, List<Map<Double, AbstractChromosome>>> res0 = null;
+        Map<String, Object> res0 = null;
         try {
-            res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, IclijConfigMapChromosome>>>>(){});
+            //res0 = mapper.readValue(param, new TypeReference<Map<String, List<LinkedHashMap<Double, IclijConfigMapChromosome>>>>(){});
+            res0 = mapper.readValue(param, new TypeReference<Map<String, Object>>(){});
         } catch (JsonParseException e) {
             // TODO Auto-generated catch block
             log.error(Constants.EXCEPTION, e);
@@ -309,12 +311,23 @@ public class Sim {
             // TODO Auto-generated catch block
             log.error(Constants.EXCEPTION, e);
         }
-        String id = res0.keySet().iterator().next();
-        List<Map<Double, AbstractChromosome>> res = res0.get(id);
+        for (Entry<String, Object> entry : res0.entrySet()) {
+            System.out.println(entry.getKey() + " " + entry.getValue().getClass().getName());
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value.getClass() == String.class) {
+                //map.put(key, value);
+            } else {
+                value = mapper.convertValue(value, new TypeReference<List<LinkedHashMap<Double, IclijConfigMapChromosome>>>(){});
+            }
+            map.put(key, value);
+        }
+        String id = (String) map.get(EvolveConstants.ID);
+        List<Map<Double, AbstractChromosome>> res = (List<Map<Double, AbstractChromosome>>) map.get(id);
         //List<Map> list = JsonUtil.convert(param, List.class);
         SimulateStock s;
-        for (Map<Double, AbstractChromosome> map : res) {
-            for (Entry<Double, AbstractChromosome> entry : map.entrySet()) {
+        for (Map<Double, AbstractChromosome> aMap : res) {
+            for (Entry<Double, AbstractChromosome> entry : aMap.entrySet()) {
                 Double score = entry.getKey();
                 AbstractChromosome chromosome = entry.getValue();
                 Pair<Double, AbstractChromosome> pair = new ImmutablePair<>(score, chromosome);
@@ -351,7 +364,6 @@ public class Sim {
             }
         }
         //list.size();
-        Map<String, List<Pair<Double, AbstractChromosome>>> map = new HashMap<>();
         map.put(id, myList);
         return map;
     }
