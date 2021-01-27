@@ -268,11 +268,6 @@
       <version>1.9.3</version>
     </dependency>
     <dependency>
-      <groupId>net.sf.tweety</groupId>
-      <artifactId>beliefdynamics</artifactId>
-      <version>1.9</version>
-    </dependency>
-    <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger2</artifactId>
       <version>2.9.2</version>
@@ -302,11 +297,6 @@
       <groupId>javax.activation</groupId>
       <artifactId>activation</artifactId>
       <version>1.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenetics</groupId>
-      <artifactId>jenetics</artifactId>
-      <version>${jenetics.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>

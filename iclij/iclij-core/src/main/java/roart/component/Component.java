@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.action.MarketAction;
 import roart.common.constants.Constants;
+import roart.common.constants.EvolveConstants;
 import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.component.model.ComponentMLData;
@@ -294,6 +295,8 @@ public abstract class Component {
             param.setScoreMap(scoreMap);
             Map<String, Object> resultMap = new HashMap<>();
             resultMap.put(filename, results);
+            resultMap.put(EvolveConstants.TITLETEXT, title + nullString(fitness.titleText()));
+            resultMap.put(EvolveConstants.ID, filename);
             //resultMap.put("id", filename);
             param.setResultMap(resultMap);
             //param.setFutureDate(Lo1610910447946.txtcalDate.now());
