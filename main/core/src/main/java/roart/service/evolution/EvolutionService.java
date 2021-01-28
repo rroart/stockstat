@@ -602,6 +602,7 @@ public class EvolutionService {
             resultMap.put(filename, results);
             resultMap.put(EvolveConstants.ID, filename);
             resultMap.put(EvolveConstants.TITLETEXT, title);
+            resultMap.put(EvolveConstants.DEFAULT, nnconfig);
             //resultMap.put("id", filename);
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);
@@ -657,6 +658,7 @@ public class EvolutionService {
             resultMap.put(filename, results);
             resultMap.put(EvolveConstants.TITLETEXT, title);
             resultMap.put(EvolveConstants.ID, filename);
+            resultMap.put(EvolveConstants.DEFAULT, nnconfig);
             //resultMap.put("id", filename);
             ResultItemTableRow row = new ResultItemTableRow();
             row.add(myKey);

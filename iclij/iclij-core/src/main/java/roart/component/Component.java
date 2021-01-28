@@ -264,6 +264,10 @@ public abstract class Component {
     
     protected abstract List<String> getConfList();
     
+    public List<String> getConflist() {
+        return getConfList();
+    }
+    
     public abstract boolean wantEvolve(IclijConfig config);
     
     public abstract boolean wantImproveEvolve();

@@ -1,5 +1,6 @@
 package roart.common.ml;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -577,6 +578,39 @@ public class NeuralNetConfigs {
         mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
         nnconfig = JsonUtil.convert(config, nnstring.getLeft(), mapper);
         return nnconfig;
+    }
+
+    public NeuralNetConfig getClass(String aclass) {
+        NeuralNetConfig nnconfig = null;
+        Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
+        Collection<Pair<Class<NeuralNetConfig>, String>> values = map.values();
+        for (Pair<Class<NeuralNetConfig>, String> nnstring : values) {
+            if (aclass.equals(nnstring.getLeft().getSimpleName())) {
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true);
+                nnconfig = JsonUtil.convert(nnstring.getRight(), nnstring.getLeft(), mapper);
+                return nnconfig;                
+            }
+        }
+        return null;
+    }
+
+    public Pair<String, String> getSubcomponent(String aclass) {
+        NeuralNetConfig nnconfig = null;
+        Map<String, Pair<Class<NeuralNetConfig>, String>> map = getMap();
+        for (Entry<String, Pair<Class<NeuralNetConfig>, String>> entry : map.entrySet()) {
+            Pair<Class<NeuralNetConfig>, String> nnstring = entry.getValue();
+            if (aclass.equals(nnstring.getLeft().getSimpleName())) {
+                String key = entry.getKey();
+                Map<Pair<String, String>, String> mlmap = new MLMapsML().getMap();
+                for (Entry<Pair<String, String>, String> mlentry : mlmap.entrySet()) {
+                    if (key.equals(mlentry.getValue())) {
+                        return mlentry.getKey();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 }

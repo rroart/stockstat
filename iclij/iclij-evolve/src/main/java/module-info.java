@@ -32,4 +32,7 @@ module iclij.evolve {
     requires evolution.model;
     requires evolution.chromosome;
     requires common.config;
+    requires iclij.common.model;
+    requires iclij.common.util;
+    requires guava;
 }
