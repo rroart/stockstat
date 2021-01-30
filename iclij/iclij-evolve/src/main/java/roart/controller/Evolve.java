@@ -239,9 +239,28 @@ public class Evolve {
     }
 
     public void method4(String param) {
+        List<String> output = new ArrayList<>();
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, AboveBelowChromosome>>>(){});
         String id = (String) myMap.get(EvolveConstants.ID);
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
+        String title = (String) myMap.get(EvolveConstants.TITLETEXT);
+        String[] parts = title.split(" ");
+        String market = parts[1];
+        String subtitle = (String) myMap.get(EvolveConstants.SUBTITLETEXT);
+        System.out.println(subtitle);
+        List<List<String>> listlist = JsonUtil.convertnostrip(subtitle, List.class /* TypeReference<List<List<String>>>(){}*/);
+        List<String> components = listlist.get(0);
+        List<String> subcomponents = listlist.get(1);
+        System.out.println(components);
+        System.out.println(subcomponents);
+        int jj=0;
+        List<String> allcomponents = new ArrayList<>(components);
+        allcomponents.addAll(subcomponents);
+        Map<Double, List<AbstractChromosome>> chromosomeMap = groupCommon(myList, output);
+        getCommon(chromosomeMap, allcomponents, output);
+        //output.add("");
+        //output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
+        print(ServiceConstants.EVOLVEFILTERABOVEBELOW + " " + title, null, output);
      }
 
     private Map<String, Object> convert(String param, TypeReference typeref) {
@@ -344,4 +363,54 @@ public class Evolve {
         return path.getFileName().toString();
     }
     
+    private Map<Double, List<AbstractChromosome>> groupCommon(List<Pair<Double, AbstractChromosome>> myList, List<String> output) {
+        List<Pair<Double, List<AbstractChromosome>>> retlist = new ArrayList<>();
+        Map<Double, List<AbstractChromosome>> chromosomeMap = new LinkedHashMap<>();
+        for (Pair<Double, AbstractChromosome> aPair : myList) {
+            new MiscUtil().listGetterAdder(chromosomeMap, aPair.getLeft(), aPair.getRight());
+        }
+        return chromosomeMap;
+    }
+
+    private void getCommon(Map<Double, List<AbstractChromosome>> chromosomeMap, List<String> allcomponents, List<String> output) {
+        for (Entry<Double, List<AbstractChromosome>> entry : chromosomeMap.entrySet()) {
+            Double score = entry.getKey();
+            List<AbstractChromosome> aList = entry.getValue();
+            if (aList.size() == 1) {
+                continue;
+            }
+            AboveBelowChromosome firstChromosome = (AboveBelowChromosome) aList.get(0);
+            Map<String, Object> aMap = convert(allcomponents, firstChromosome.getGenes());
+            for (int i = 1; i < aList.size(); i++) {
+                AboveBelowChromosome anotherChromosome = (AboveBelowChromosome) aList.get(i);
+                Map<String, Object> anotherMap = convert(allcomponents, anotherChromosome.getGenes());
+                MapDifference<String, Object> diff = Maps.difference(aMap, anotherMap);
+                aMap = diff.entriesInCommon();
+            }
+            Set<String> keys = aMap.keySet();
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (AbstractChromosome chromosome : aList) {
+                AboveBelowChromosome anotherChromosome = (AboveBelowChromosome) chromosome;
+                Map<String, Object> anotherMap = new HashMap<>(convert(allcomponents, anotherChromosome.getGenes()));
+                anotherMap.keySet().removeAll(keys);
+                list.add(anotherMap);
+            }
+            List<String> list2 = new ArrayList<>();
+            list2 = new ArrayList<>(allcomponents);
+            list2.removeAll(keys);
+            output.add("Common");
+            output.add(entry.getKey() + " " + aList.size() + " " + aMap);
+            output.add("" + list2);
+            output.add("");
+        }
+    }
+
+    private Map<String, Object> convert(List<String> allcomponents, List<Boolean> genes) {
+        Map<String, Object> map = new HashMap<>();
+        for (int i = 0; i < allcomponents.size(); i++) {
+            map.put(allcomponents.get(i), genes.get(i));
+        }
+        return map;
+    }
+
 }

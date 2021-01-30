@@ -290,6 +290,7 @@ public abstract class Component {
             Individual best = evolution.getFittest(evolutionConfig, chromosome, individuals, results);
             String mysubcomponent = nullString(subcomponent);
             String title = action.getName() + " " + param.getMarket() + " " + getPipeline() + mysubcomponent;
+            String subtitle = fitness.subTitleText();
             String filename = evolution.print(title + nullString(fitness.titleText()), fitness.subTitleText(), individuals);
             Map<String, Object> confMap = new HashMap<>();
             double score = winner.handleWinner(param, best, confMap);
@@ -300,6 +301,7 @@ public abstract class Component {
             Map<String, Object> resultMap = new HashMap<>();
             resultMap.put(filename, results);
             resultMap.put(EvolveConstants.TITLETEXT, title + nullString(fitness.titleText()));
+            resultMap.put(EvolveConstants.SUBTITLETEXT, subtitle);
             resultMap.put(EvolveConstants.ID, filename);
             //resultMap.put("id", filename);
             param.setResultMap(resultMap);

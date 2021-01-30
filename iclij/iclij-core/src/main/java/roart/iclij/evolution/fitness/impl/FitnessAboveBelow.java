@@ -24,6 +24,7 @@ import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
+import roart.common.util.JsonUtil;
 import roart.component.model.ComponentData;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.fitness.Fitness;
@@ -102,6 +103,9 @@ public class FitnessAboveBelow extends Fitness {
 
     @Override
     public String subTitleText() {
-        return components + " " + subcomponents;
+        List retList = new ArrayList<>();
+        retList.add(components);
+        retList.add(subcomponents);
+        return JsonUtil.convert(retList);
     }
 }

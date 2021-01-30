@@ -5,6 +5,8 @@ public class EvolveConstants {
 
     public static final String TITLETEXT = "titletext";
     
+    public static final String SUBTITLETEXT = "subtitletext";
+    
     public static final String SIMTEXT = "simtext";
     
     public static final String ID = "id";
