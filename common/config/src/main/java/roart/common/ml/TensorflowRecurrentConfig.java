@@ -1,5 +1,17 @@
 package roart.common.ml;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = PytorchGRUConfig.class, name = "PytorchGRUConfig"),
+    @Type(value = PytorchLSTMConfig.class, name = "PytorchLSTMConfig"),
+    @Type(value = PytorchRNNConfig.class, name = "PytorchRNNConfig") })  
 public abstract class TensorflowRecurrentConfig extends TensorflowFeedConfig {
 
     protected int slide;
