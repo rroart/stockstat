@@ -63,7 +63,7 @@ public class Evolve {
         }
         //if (true) return;
         Map<String, Object> aconf = (Map) myMap.get(EvolveConstants.DEFAULT);
-        System.out.println("aconf" + aconf);
+        //System.out.println("aconf" + aconf);
         //if (true) return;
         String title = (String) myMap.get(EvolveConstants.TITLETEXT);
         String[] parts = title.split(" ");
@@ -156,12 +156,12 @@ public class Evolve {
         String id = (String) myMap.get(EvolveConstants.ID);
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
         for (Pair<Double, AbstractChromosome> my : myList) {
-            System.out.println(my.getKey() + " " + my.getRight());
+            //System.out.println(my.getKey() + " " + my.getRight());
         }
         Map<String, Object> aconf = (Map) myMap.get(EvolveConstants.DEFAULT);
-        System.out.println("aconf" + aconf);
+        //System.out.println("aconf" + aconf);
         String title = (String) myMap.get(EvolveConstants.TITLETEXT);
-        System.out.println(title);
+        //System.out.println(title);
         String[] parts = title.split(" ");
         String market = parts[1];
         String component = parts[2];
@@ -247,12 +247,12 @@ public class Evolve {
         String[] parts = title.split(" ");
         String market = parts[1];
         String subtitle = (String) myMap.get(EvolveConstants.SUBTITLETEXT);
-        System.out.println(subtitle);
+        //System.out.println(subtitle);
         List<List<String>> listlist = JsonUtil.convertnostrip(subtitle, List.class /* TypeReference<List<List<String>>>(){}*/);
         List<String> components = listlist.get(0);
         List<String> subcomponents = listlist.get(1);
-        System.out.println(components);
-        System.out.println(subcomponents);
+        //System.out.println(components);
+        //System.out.println(subcomponents);
         int jj=0;
         List<String> allcomponents = new ArrayList<>(components);
         allcomponents.addAll(subcomponents);
@@ -290,7 +290,7 @@ public class Evolve {
             //System.out.println(entry.getKey() + " " + entry.getValue().getClass().getName());
             String key = entry.getKey();
             Object value = entry.getValue();
-            System.out.println(value.getClass().getName());
+            //System.out.println(value.getClass().getName());
             if (value.getClass() == String.class) {
                 //map.put(key, value);
                 //System.out.println("kv"+key+value);
