@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -176,6 +177,26 @@ public class Sim {
                 List<SimulateStock> list = entry2.getValue();
                 double sum = list.stream().map(e -> e.getCount()*(e.getSellprice() - e.getBuyprice())).reduce(0.0, Double::sum);
                 priceMap.put(id2, sum);
+            }
+            List<Pair<String, Double>> list = new ArrayList<>();
+            for (Entry<String, Double> anEntry : priceMap.entrySet()) {
+                list.add(new ImmutablePair<>(anEntry.getKey(), anEntry.getValue()));
+            }
+            Comparator<Pair> comparator = new Comparator<>() {
+                @Override
+                public int compare(Pair o1, Pair o2) {
+                    return Double.valueOf((Double)o1.getRight()).compareTo(Double.valueOf((Double)o2.getRight()));
+                }
+            };
+            Collections.sort(list, comparator);
+            Collections.reverse(list);
+            int cnt = 3;
+            for (Pair<String, Double> anEntry : list) {
+                output.add(anEntry.getKey() + " " + MathUtil.round(anEntry.getValue(), 2) + " " + MathUtil.round(anEntry.getValue() / total, 2));
+                cnt--;
+                if (cnt <= 0) {
+                    break;
+                }
             }
             double max = priceMap.values().stream().mapToDouble(e -> e).max().orElse(0);
             if (max / total > filter.getLucky()) {
