@@ -291,6 +291,9 @@ public class Evolve {
             String key = entry.getKey();
             Object value = entry.getValue();
             //System.out.println(value.getClass().getName());
+            if (value == null) {
+                continue;
+            }
             if (value.getClass() == String.class) {
                 //map.put(key, value);
                 //System.out.println("kv"+key+value);
