@@ -312,9 +312,12 @@ public class Sim {
             log.error(Constants.EXCEPTION, e);
         }
         for (Entry<String, Object> entry : res0.entrySet()) {
-            System.out.println(entry.getKey() + " " + entry.getValue().getClass().getName());
+            //System.out.println(entry.getKey() + " " + entry.getValue().getClass().getName());
             String key = entry.getKey();
             Object value = entry.getValue();
+            if (value == null) {
+                continue;
+            }
             if (value.getClass() == String.class) {
                 //map.put(key, value);
             } else {
