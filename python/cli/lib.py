@@ -1298,6 +1298,8 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
         print(x)
     for x in updatemap['sumhistory']:
         print(x)
+    for x in updatemap['tradestocks'][:10]:
+        print(x)
     #print(webdata.keys())
     print(webdata['timingMap'])
     print(updatemap['startdate'])

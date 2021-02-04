@@ -1,4 +1,4 @@
-package roart.simulate;
+package roart.simulate.model;
 
 import java.time.LocalDate;
 

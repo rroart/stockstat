@@ -68,9 +68,10 @@ import roart.iclij.model.Trend;
 import roart.iclij.service.IclijServiceResult;
 import roart.iclij.verifyprofit.TrendUtil;
 import roart.service.model.ProfitData;
-import roart.simulate.SimulateStock;
-import roart.simulate.Capital;
-import roart.simulate.StockHistory;
+import roart.simulate.model.Capital;
+import roart.simulate.model.SimulateStock;
+import roart.simulate.model.StockHistory;
+import roart.simulate.util.SimUtil;
 
 public class SimulateInvestComponent extends ComponentML {
 
@@ -589,6 +590,8 @@ public class SimulateInvestComponent extends ComponentML {
                         map.put(SimConstants.PLOTCAPITAL, plotCapital);
                         map.put(SimConstants.STARTDATE, investStart);
                         map.put(SimConstants.ENDDATE, investEnd);
+                        List<Pair<String, Double>> tradeStocks = SimUtil.getTradeStocks(map);
+                        map.put(SimConstants.TRADESTOCKS, tradeStocks);
                         param.getUpdateMap().putAll(map);
                         param.getUpdateMap().putIfAbsent("lastbuysell", "Not buying or selling today");
                         componentData.getUpdateMap().putAll(map);

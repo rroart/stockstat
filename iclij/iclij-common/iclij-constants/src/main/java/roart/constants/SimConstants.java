@@ -14,4 +14,5 @@ public class SimConstants {
     public static final String PLOTDEFAULT = "plotdefault";
     public static final String PLOTDATES = "plotdates";
     public static final String PLOTCAPITAL = "plotcapital";
+    public static final String TRADESTOCKS = "tradestocks";
 }

@@ -39,8 +39,9 @@ import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosom
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.SimulateFilter;
 import roart.iclij.util.MiscUtil;
-import roart.simulate.SimulateStock;
-import roart.simulate.StockHistory;
+import roart.simulate.model.SimulateStock;
+import roart.simulate.model.StockHistory;
+import roart.simulate.util.SimUtil;
 import roart.constants.SimConstants;
 
 public class Sim {
@@ -166,30 +167,7 @@ public class Sim {
             List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
             StockHistory last = history.get(history.size() - 1);
             double total = last.getCapital().amount + last.getSum().amount;
-            List<SimulateStock> stockhistory = (List<SimulateStock>) aMap.get(SimConstants.STOCKHISTORY);
-            Map<String, List<SimulateStock>> stockMap = new HashMap<>();
-            for (SimulateStock aStock : stockhistory) {
-                new MiscUtil().listGetterAdder(stockMap, aStock.getId(), aStock);
-            }
-            Map<String, Double> priceMap = new HashMap<>();
-            for (Entry<String, List<SimulateStock>> entry2 : stockMap.entrySet()) {
-                String id2 = entry2.getKey();
-                List<SimulateStock> list = entry2.getValue();
-                double sum = list.stream().map(e -> e.getCount()*(e.getSellprice() - e.getBuyprice())).reduce(0.0, Double::sum);
-                priceMap.put(id2, sum);
-            }
-            List<Pair<String, Double>> list = new ArrayList<>();
-            for (Entry<String, Double> anEntry : priceMap.entrySet()) {
-                list.add(new ImmutablePair<>(anEntry.getKey(), anEntry.getValue()));
-            }
-            Comparator<Pair> comparator = new Comparator<>() {
-                @Override
-                public int compare(Pair o1, Pair o2) {
-                    return Double.valueOf((Double)o1.getRight()).compareTo(Double.valueOf((Double)o2.getRight()));
-                }
-            };
-            Collections.sort(list, comparator);
-            Collections.reverse(list);
+            List<Pair<String, Double>> list = SimUtil.getTradeStocks(aMap);
             int cnt = 3;
             for (Pair<String, Double> anEntry : list) {
                 output.add(anEntry.getKey() + " " + MathUtil.round(anEntry.getValue(), 2) + " " + MathUtil.round(anEntry.getValue() / total, 2));
@@ -198,7 +176,10 @@ public class Sim {
                     break;
                 }
             }
-            double max = priceMap.values().stream().mapToDouble(e -> e).max().orElse(0);
+            double max = 0;
+            if (!list.isEmpty()) {
+                max = list.get(0).getValue();
+            }
             if (max / total > filter.getLucky()) {
                 notlucky = false;
             }
