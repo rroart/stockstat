@@ -73,6 +73,19 @@ public class PeriodAdviser extends Adviser {
 
     @Override
     public List<String> getIncs(String aParameter, int buytop, int indexOffset, List<String> stockDates, List<String> excludes) {
+        int idx = stockDates.size() - 1 - indexOffset;
+        if (idx < 0) {
+            return new ArrayList<>();
+        }
+        List<Pair<String, Double>> valueList = valueMap.get(idx);
+        if (valueList == null) {
+            return new ArrayList<>();
+        }
+        return valueList.stream().map(Pair::getKey).collect(Collectors.toList());
+    }
+
+    //@Override
+    public List<String> getIncs1(String aParameter, int buytop, int indexOffset, List<String> stockDates, List<String> excludes) {
         //Map<String, List<List<Double>>> categoryValueMap = param.getCategoryValueMap();
         List<Pair<String, Double>> valueList = getValuePairs(categoryValueMap, indexOffset, excludes);
         if (valueList == null) {

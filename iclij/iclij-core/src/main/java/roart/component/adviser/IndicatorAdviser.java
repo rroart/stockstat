@@ -152,7 +152,7 @@ public abstract class IndicatorAdviser extends Adviser {
         return list;
     }
 
-    //@Override
+    @Override
     public List<String> getIncs(String aParameter, int buytop, int indexOffset, List<String> stockDates, List<String> excludes) {
         int idx = stockDates.size() - 1 - indexOffset;
         if (idx < 0) {
