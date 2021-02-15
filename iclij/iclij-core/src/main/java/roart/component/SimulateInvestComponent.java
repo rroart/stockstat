@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -959,7 +960,7 @@ public class SimulateInvestComponent extends ComponentML {
                 List<List<Object>> list = volumeMap.get(id);
                 if (mainList != null) {
                     int size = mainList.size();
-                    double[] newList = new double[size];
+                    MutablePair<Double, Integer>[] newList = new MutablePair[size];
                     int start = size - 1 - firstidx;
                     int end = size - 1 - lastidx;
                     for (int i = start; i <= end; i++) {
@@ -980,12 +981,18 @@ public class SimulateInvestComponent extends ComponentML {
                             if (idx > size - 1) {
                                 break;
                             }
-                            newList[idx] += price * volume;
+                            MutablePair<Double, Integer> pair = newList[idx];
+                            if (pair == null) {
+                                pair = new MutablePair(0.0, 0);
+                                newList[idx] = pair;
+                            }
+                            pair.setLeft(pair.getLeft() + price * volume);
+                            pair.setRight(pair.getRight() + 1);
                         }
                     }
                     // now make the skip lists
                     int count = len;
-                    double[] sums = newList; 
+                    Pair<Double, Integer>[] sums = newList; 
                     for (int i = start; i <= end; i++) {
                         List<String> datedlist = listlist.get(i);
                         if (datedlist == null) {
@@ -996,8 +1003,20 @@ public class SimulateInvestComponent extends ComponentML {
                         if (idx < count) {
                             count = idx;
                         }
-                        double sum = sums[idx];
-                        if (count > 0 && sum / count < limit) {
+                        Pair<Double, Integer> pair = sums[idx];
+                        if (pair == null) {
+                            datedlist.add(id);
+                            continue;
+                        }
+                        Double sum = pair.getLeft();
+                        Integer count2 = pair.getRight();
+                        if (count2 != null && count != count2) {
+                            int jj = 0;
+                        }
+                        if (count2 != null && count2 == 0) {
+                            int jj = 0;
+                        }
+                        if (count2 != 0 && sum / count2 < limit) {
                             datedlist.add(id);
                         }
                     }
@@ -1008,6 +1027,9 @@ public class SimulateInvestComponent extends ComponentML {
         List<Integer> keyl = new ArrayList<>(keys);
         Collections.sort(keyl);
         log.info("kkkk {}", keyl);
+        for (int key : keyl) {
+            log.info("kkksize {} {}", key, listlist.get(key).size());
+        }
         return listlist;
     }
 
