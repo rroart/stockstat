@@ -35,32 +35,32 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>3.6.0</version>
+      <version>${camel.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-stream</artifactId>
-      <version>3.6.0</version>
+      <version>${camel.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
-      <version>3.6.0</version>
+      <version>${camel.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-activemq</artifactId>
-      <version>3.6.0</version>
+      <version>${camel.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-rabbitmq</artifactId>
-      <version>3.6.0</version>
+      <version>${camel.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-amqp</artifactId>
-      <version>3.6.0</version>
+      <version>${camel.version}</version>
     </dependency>
     <!-->dependency>
       <groupId>org.apache.camel</groupId>
@@ -71,7 +71,7 @@
 	<dependency>
     	<groupId>org.apache.activemq</groupId>
     	<artifactId>activemq-camel</artifactId>
-    	<version>5.16.0</version>
+    	<version>${camelactivemq.version}</version>
 	</dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

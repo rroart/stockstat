@@ -114,5 +114,11 @@
     <talib.version>0.4.0</talib.version>
     <jenetics.version>5.2.0</jenetics.version>
     <guava.version>16.0.1</guava.version>
-  </properties>
+    <camel.version>3.6.0</camel.version>
+    <camelactivemq.version>5.16.0</camelactivemq.version>
+    <springintegration.version>5.4.0</springintegration.version>
+    <springrabbit.version>2.3.1</springrabbit.version>
+    <kafka.version>2.6.0</kafka.version> 
+    <pulsar.version>2.6.1</pulsar.version>
+ </properties>
 </project>
