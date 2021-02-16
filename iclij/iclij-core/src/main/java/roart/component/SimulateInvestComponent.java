@@ -584,6 +584,12 @@ public class SimulateInvestComponent extends ComponentML {
                 if (offset == 0) {
                     Map<String, Object> map = new HashMap<>();
                     if (!evolving) {
+                        for (SimulateStock stock : mystocks) {
+                            stock.setSellprice(stock.getPrice());
+                            stock.setStatus("END");
+                        }
+                        stockhistory.addAll(mystocks);
+
                         map.put(SimConstants.SUMHISTORY, sumHistory);
                         map.put(SimConstants.STOCKHISTORY, stockhistory);
                         map.put(SimConstants.PLOTDEFAULT, plotDefault);
