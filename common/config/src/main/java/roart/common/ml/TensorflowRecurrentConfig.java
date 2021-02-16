@@ -9,9 +9,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         include = JsonTypeInfo.As.PROPERTY,  
         property = "_class")  
 @JsonSubTypes({  
-    @Type(value = PytorchGRUConfig.class, name = "PytorchGRUConfig"),
-    @Type(value = PytorchLSTMConfig.class, name = "PytorchLSTMConfig"),
-    @Type(value = PytorchRNNConfig.class, name = "PytorchRNNConfig") })  
+    @Type(value = TensorflowGRUConfig.class, name = "TensorflowGRUConfig"),
+    @Type(value = TensorflowLSTMConfig.class, name = "TensorflowLSTMConfig"),
+    @Type(value = TensorflowRNNConfig.class, name = "TensorflowRNNConfig") })  
 public abstract class TensorflowRecurrentConfig extends TensorflowFeedConfig {
 
     protected int slide;
