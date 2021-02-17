@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,20 +58,36 @@ public class Sim {
             Pair<Double, AbstractChromosome> winnerPair = myList.get(0);
             IclijConfigMapChromosome winnerChromosome = (IclijConfigMapChromosome) winnerPair.getValue();
             int adviser = getAdviser(winnerChromosome);
+            Set<String> generalSimConfig = new HashSet<>();
+            generalSimConfig.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+            generalSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+            Set<String> periodSimConfig = new HashSet<>();
+            periodSimConfig.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+            periodSimConfig.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
+            periodSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+            Set<String> timeSimConfig = new HashSet<>();
+            timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+            timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTDAY);
+            timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+            Map<String, String> shortMap = new HashMap<>();
+            shortMap.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, "i");
+            shortMap.put(IclijConfigConstants.SIMULATEINVESTDAY, "d");
+            shortMap.put(IclijConfigConstants.SIMULATEINVESTPERIOD, "p");
+            shortMap.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, "ir");
             String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
             SimulateFilter[] filters = new SimulateFilter[10];
-            SimulateFilter filter = new SimulateFilter(5, 0.8, 0.8, true, 16, true);
-            filters[0] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            filters[1] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            filters[2] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            filters[3] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            filters[4] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            filters[5] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            filters[6] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            filters[7] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            filters[8] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            filters[9] = new SimulateFilter(5, 0.2, 0.2, true, 16, true);
-            //filter = filters[adviser];
+            SimulateFilter filter = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            filters[0] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            filters[1] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, periodSimConfig);
+            filters[2] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            filters[3] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            filters[4] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            filters[5] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            filters[6] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, timeSimConfig);
+            filters[7] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            filters[8] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            filters[9] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            filter = filters[adviser];
             List<String> output = new ArrayList<>();
 
             //output.add("Sim " + simtext);
@@ -92,7 +109,6 @@ public class Sim {
                 //output.add("Score " + score);
                 List<AbstractChromosome> chromosomes = entry.getValue();
                 IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
-                Map<String, Object> map = chromosome.getMap();
                 Map<String, Object> resultMap = chromosome.getResultMap();
                 if (filter.isUseclusters()) {
                 }
@@ -120,7 +136,12 @@ public class Sim {
                     mysummary += ", ";
                     mysummary += aSummary.text + " : " + aSummary.success + " ";
                 }
-                mysummary = "Summary : " + success + " Score " + MathUtil.round(score, 2) + " " + mysummary;
+                Map<String, Object> map = chromosome.getMap();
+                Map<String, Object> shorts = new HashMap<>();
+                for (String key : filter.getPrintconfig()) {
+                    shorts.put(shortMap.get(key), map.get(key));
+                }
+                mysummary = "Summary : " + success + " Score " + MathUtil.round(score, 2) + " " + mysummary + " Config : " + shorts;
                 output.add(mysummary);
                 output.add("");
                 if (success) {

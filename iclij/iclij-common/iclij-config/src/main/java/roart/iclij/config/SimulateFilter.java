@@ -1,5 +1,7 @@
 package roart.iclij.config;
 
+import java.util.Set;
+
 public class SimulateFilter {
 
     private int shortrun;
@@ -14,7 +16,9 @@ public class SimulateFilter {
     
     private boolean useclusters;
     
-    public SimulateFilter(int shortrun, double lucky, double stable, boolean allabove, int populationabove, boolean useclusters) {
+    private Set<String> printconfig;
+    
+    public SimulateFilter(int shortrun, double lucky, double stable, boolean allabove, int populationabove, boolean useclusters, Set<String> printconfig) {
         super();
         this.shortrun = shortrun;
         this.lucky = lucky;
@@ -22,6 +26,7 @@ public class SimulateFilter {
         this.allabove = allabove;
         this.populationabove = populationabove;
         this.useclusters = useclusters;
+        this.printconfig = printconfig;
     }
 
     public SimulateFilter() {
@@ -74,6 +79,14 @@ public class SimulateFilter {
 
     public void setUseclusters(boolean useclusters) {
         this.useclusters = useclusters;
+    }
+
+    public Set<String> getPrintconfig() {
+        return printconfig;
+    }
+
+    public void setPrintconfig(Set<String> printconfig) {
+        this.printconfig = printconfig;
     }
     
 
