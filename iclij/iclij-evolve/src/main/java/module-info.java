@@ -35,4 +35,6 @@ module iclij.evolve {
     requires iclij.common.model;
     requires iclij.common.util;
     requires guava;
+    requires common.inmemory.factory;
+    requires common.inmemory.model;
 }

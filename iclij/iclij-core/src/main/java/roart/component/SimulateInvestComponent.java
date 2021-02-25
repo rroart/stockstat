@@ -1239,7 +1239,7 @@ public class SimulateInvestComponent extends ComponentML {
         // confmap
         ComponentData e = evolve.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, getPipeline(), this, confList);
         Map<String, Object> results = (Map<String, Object>) e.getResultMap();
-        e.getService().send(ServiceConstants.SIMFILTER, results);
+        e.getService().send(ServiceConstants.SIMFILTER, results, param.getInput().getConfig());
         return e;
     }
 

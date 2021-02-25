@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Kafka extends MessageCommunication {
-    public static final int MSGSIZE = 5242880;
+    //public static final int MSGSIZE = 5242880;
     public void method() {
         Properties config = new Properties();
         config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.122.219:9092");
@@ -77,7 +77,7 @@ public class Kafka extends MessageCommunication {
             props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, 
                     StringSerializer.class.getName());
             
-            props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, MSGSIZE);
+            //props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, MSGSIZE);
             producer = new KafkaProducer<>(props);
 
         }
@@ -94,7 +94,7 @@ public class Kafka extends MessageCommunication {
             props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, 
                     StringDeserializer.class.getName());
             //props.put("fetch.message.max.bytes", MSGSIZE);
-            props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MSGSIZE);
+            //props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, MSGSIZE);
             consumer = new KafkaConsumer<>(props);
 
             List<TopicPartition> partitions = new ArrayList<>(); 
@@ -111,9 +111,11 @@ public class Kafka extends MessageCommunication {
     }
     
     public void send(String s) {
+        /*
         if (s.length() > MSGSIZE) {
             log.error("Too big for Kafka");
         }
+        */
         String md5Hex = DigestUtils.md5Hex(s).toUpperCase();      
         producer.send(new ProducerRecord<>(getSendService(), md5Hex, s));
         System.out.println("Message sent successfully");

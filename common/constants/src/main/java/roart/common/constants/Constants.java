@@ -68,4 +68,8 @@ public class Constants {
     
     public static final String LINEAR = "linear";
     public static final String FFILL = "ffill";
+    
+    public static final String REDIS = "redis";
+    public static final String HAZELCAST = "hazelcast";
+    public static final String HZ = "hz";
 }

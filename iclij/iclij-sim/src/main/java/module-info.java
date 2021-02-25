@@ -34,4 +34,6 @@ module iclij.sim {
     requires iclij.common.util;
     requires guava;
     requires iclij.common.constants;
+    requires common.inmemory.factory;
+    requires common.inmemory.model;
 }

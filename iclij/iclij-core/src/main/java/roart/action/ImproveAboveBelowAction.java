@@ -109,7 +109,7 @@ public class ImproveAboveBelowAction extends MarketAction {
                 param.getUpdateMap().putAll(updateMap);
             }
             Map<String, Object> results = componentData.getResultMap();
-            componentData.getService().send(ServiceConstants.EVOLVEFILTERABOVEBELOW, results);
+            componentData.getService().send(ServiceConstants.EVOLVEFILTERABOVEBELOW, results, param.getInput().getConfig());
             //component.calculateIncDec(componentData, profitdata, positions);
             //System.out.println("Buys: " + market.getMarket() + buys);
             //System.out.println("Sells: " + market.getMarket() + sells);           

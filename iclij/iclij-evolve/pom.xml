@@ -252,6 +252,16 @@
       <artifactId>stockstat-iclij-common-verifyprofit</artifactId>
       <version>${stockstat.version}</version>
     </dependency>
+     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-inmemory-factory</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
+     <dependency>
+      <groupId>roart</groupId>
+      <artifactId>stockstat-common-inmemory-model</artifactId>
+      <version>${stockstat.version}</version>
+    </dependency>
  	<dependency>
       <groupId>roart</groupId>
       <artifactId>stockstat-iclij-evolution-chromosome</artifactId>

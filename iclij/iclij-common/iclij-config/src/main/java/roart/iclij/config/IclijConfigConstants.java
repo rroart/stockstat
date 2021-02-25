@@ -115,6 +115,10 @@ public class IclijConfigConstants {
     public static final String MISCCOMMUNICATIONS = "misc.communications";
     public static final String MISCCACHE = "misc.cache";
     public static final String MISCCACHETTL = "misc.cache.ttl";
+    public static final String MISCINMEMORY = "misc.inmemory";
+    public static final String MISCINMEMORYSERVER = "misc.inmemory.server";
+    public static final String MISCINMEMORYHAZELCAST = "misc.inmemory.hazelcast";
+    public static final String MISCINMEMORYREDIS = "misc.inmemory.redis";
     public static final String MPSERVERCPU = "mp.server.cpu";
     public static final String MPCLIENTCPU = "mp.client.cpu";
     public static final String FINDPROFIT = "findprofit";

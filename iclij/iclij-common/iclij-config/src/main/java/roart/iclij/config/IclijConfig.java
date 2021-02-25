@@ -151,6 +151,18 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.MISCCACHETTL);
     }
 
+    public String getInmemoryServer() {
+        return (String) getValueOrDefault(IclijConfigConstants.MISCINMEMORYSERVER);
+    }
+
+    public String getInmemoryHazelcast() {
+        return (String) getValueOrDefault(IclijConfigConstants.MISCINMEMORYHAZELCAST);
+    }
+
+    public String getInmemoryRedis() {
+        return (String) getValueOrDefault(IclijConfigConstants.MISCINMEMORYREDIS);
+    }
+
     public double mpServerCpu() {
         return (Double) getValueOrDefault(IclijConfigConstants.MPSERVERCPU);
     }

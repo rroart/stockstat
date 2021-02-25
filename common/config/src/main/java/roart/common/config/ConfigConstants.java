@@ -211,6 +211,10 @@ public class ConfigConstants {
     public static final String MISCCOMMUNICATIONS = "misc.communications";
     public static final String MISCCACHE = "misc.cache[@enable]";
     public static final String MISCCACHETTL = "misc.cache.ttl";
+    public static final String MISCINMEMORY = "misc.inmemory";
+    public static final String MISCINMEMORYSERVER = "misc.inmemory.server";
+    public static final String MISCINMEMORYHAZELCAST = "misc.inmemory.hazelcast";
+    public static final String MISCINMEMORYREDIS = "misc.inmemory.redis";
     public static final String EVOLVEINDICATORRECOMMENDEREVOLUTIONCONFIG = "evolve.indicatorrecommender.evolutionconfig";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXFUTUREDAYS = "evolve.indicatorrecommender.complex.futuredays";
     public static final String EVOLVEINDICATORRECOMMENDERCOMPLEXTHRESHOLD = "evolve.indicatorrecommender.complex.threshold";

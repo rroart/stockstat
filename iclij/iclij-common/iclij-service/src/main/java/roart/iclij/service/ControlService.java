@@ -5,6 +5,9 @@ import roart.common.config.ConfigTreeMap;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.InmemoryMessage;
+import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
@@ -105,6 +108,12 @@ public class ControlService {
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
         Communication c = CommunicationFactory.get(sc.getLeft(), null, service, objectMapper, true, false, false, sc.getRight());
         c.send(object);
+    }
+
+    public void send(String service, Object object, IclijConfig config) {
+        Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
+        InmemoryMessage message = inmemory.send(object);
+        send(service, message);
     }
 
     public void send(String service, Object object) {

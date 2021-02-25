@@ -31,6 +31,9 @@ import roart.common.config.ConfigConstants;
 import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.constants.ServiceConstants;
+import roart.common.inmemory.factory.InmemoryFactory;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.model.InmemoryMessage;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.util.JsonUtil;
@@ -42,6 +45,8 @@ import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
 import roart.iclij.model.MLMetricsItem;
 import roart.iclij.util.MiscUtil;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 
 import com.google.common.collect.MapDifference;
@@ -53,6 +58,7 @@ public class Evolve {
 
     public void method(String param) {
         
+        param = getParam(param);
         List<String> output = new ArrayList<>();
         TypeReference ref = new TypeReference<List<LinkedHashMap<Double, AbstractChromosome>>>(){};
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, NeuralNetChromosome2>>>(){});
@@ -151,6 +157,7 @@ public class Evolve {
     }
 
     public void method2(String param) {
+        param = getParam(param);
         List<String> output = new ArrayList<>();
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, ConfigMapChromosome2>>>(){});
         String id = (String) myMap.get(EvolveConstants.ID);
@@ -233,12 +240,14 @@ public class Evolve {
     }
 
     public void method3(String param) {
+        param = getParam(param);
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, MarketFilterChromosome2>>>(){});
         String id = (String) myMap.get(EvolveConstants.ID);
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
     }
 
     public void method4(String param) {
+        param = getParam(param);
         List<String> output = new ArrayList<>();
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, AboveBelowChromosome>>>(){});
         String id = (String) myMap.get(EvolveConstants.ID);
@@ -414,6 +423,13 @@ public class Evolve {
             map.put(allcomponents.get(i), genes.get(i));
         }
         return map;
+    }
+
+    private String getParam(String param) {
+        InmemoryMessage message = JsonUtil.convert(param, InmemoryMessage.class);
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        Inmemory inmemory = InmemoryFactory.get(instance.getInmemoryServer(), instance.getInmemoryHazelcast(), instance.getInmemoryRedis());
+        return inmemory.read(message);
     }
 
 }

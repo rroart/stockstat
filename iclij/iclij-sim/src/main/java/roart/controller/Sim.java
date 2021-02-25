@@ -37,19 +37,25 @@ import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
+import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.SimulateFilter;
 import roart.iclij.util.MiscUtil;
 import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
 import roart.simulate.util.SimUtil;
 import roart.constants.SimConstants;
+import roart.common.inmemory.model.InmemoryMessage;
+import roart.common.inmemory.model.Inmemory;
+import roart.common.inmemory.factory.InmemoryFactory;
 
 public class Sim {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void method(String param) {
+        param = getParam(param);
         Map<String, Object> myMap = convert(param);
         String id = (String) myMap.get(EvolveConstants.ID);
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
@@ -155,6 +161,13 @@ public class Sim {
             }
             print("sim " + simtext, "File " + id, output);
         }
+    }
+
+    private String getParam(String param) {
+        InmemoryMessage message = JsonUtil.convert(param, InmemoryMessage.class);
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
+        Inmemory inmemory = InmemoryFactory.get(instance.getInmemoryServer(), instance.getInmemoryHazelcast(), instance.getInmemoryRedis());
+        return inmemory.read(message);
     }
 
     private int getAdviser(IclijConfigMapChromosome chromosome) {

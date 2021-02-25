@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import roart.common.config.ConfigConstants;
+import roart.common.constants.Constants;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLType;
 
@@ -143,6 +144,9 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.MISCCOMMUNICATIONS, String.class);
         map.put(IclijConfigConstants.MISCCACHE, Boolean.class);
         map.put(IclijConfigConstants.MISCCACHETTL, Integer.class);
+        map.put(IclijConfigConstants.MISCINMEMORYSERVER, String.class);
+        map.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, String.class);
+        map.put(IclijConfigConstants.MISCINMEMORYREDIS, String.class);
         map.put(IclijConfigConstants.MPSERVERCPU, Double.class);
         map.put(IclijConfigConstants.MPCLIENTCPU, Double.class);
         map.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.class);
@@ -409,6 +413,9 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.MPCLIENTCPU, 0.5);
         deflt.put(IclijConfigConstants.MISCCACHE, Boolean.TRUE);
         deflt.put(IclijConfigConstants.MISCCACHETTL, 3600);
+        deflt.put(IclijConfigConstants.MISCINMEMORYSERVER, Constants.REDIS);
+        deflt.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, null);
+        deflt.put(IclijConfigConstants.MISCINMEMORYREDIS, "localhost");
         deflt.put(IclijConfigConstants.FINDPROFITAUTORUN, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, Boolean.FALSE);
         deflt.put(IclijConfigConstants.FINDPROFITMLINDICATOR, Boolean.TRUE);
@@ -657,6 +664,9 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.MISCCOMMUNICATIONS, "Communications and connections");
         text.put(IclijConfigConstants.MISCCACHE, "Cache enable");
         text.put(IclijConfigConstants.MISCCACHETTL, "Cache TTL");
+        text.put(IclijConfigConstants.MISCINMEMORYSERVER, "In memory server");
+        text.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, "In memory Hazelcast connection");
+        text.put(IclijConfigConstants.MISCINMEMORYREDIS, "In memory Redis connection");
         text.put(IclijConfigConstants.MPCLIENTCPU, "Client cpu usage");
         text.put(IclijConfigConstants.FINDPROFITAUTORUN, "Enable find profit autorun");
         text.put(IclijConfigConstants.FINDPROFITMLDYNAMIC, "Do machine learning dynamically if no persistent present");
@@ -963,6 +973,9 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.MISCPOPULATE, new IclijXMLType(Boolean.class, Boolean.FALSE, "Populate history"));
         mymap.put(IclijConfigConstants.MISCMYSERVICES, new IclijXMLType( String.class, "{}", "Services starting"));
         mymap.put(IclijConfigConstants.MISCSERVICES, new IclijXMLType( String.class, "{}", "Services and communications"));
+        mymap.put(IclijConfigConstants.MISCINMEMORYSERVER, new IclijXMLType( String.class, Constants.REDIS, "In memory server"));
+        mymap.put(IclijConfigConstants.MISCINMEMORYHAZELCAST, new IclijXMLType( String.class, null, "In memory Hazelcast connection"));
+        mymap.put(IclijConfigConstants.MISCINMEMORYREDIS, new IclijXMLType( String.class, "localhost", "In memory Redis connection"));
         mymap.put(IclijConfigConstants.MISCCOMMUNICATIONS, new IclijXMLType( String.class, "{}", "Communications and connections"));
         mymap.put(IclijConfigConstants.MISCCACHE, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache enable"));
         mymap.put(IclijConfigConstants.MISCCACHETTL, new IclijXMLType( Boolean.class, Boolean.TRUE, "Cache TTL"));
