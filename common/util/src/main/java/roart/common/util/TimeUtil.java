@@ -173,6 +173,9 @@ public class TimeUtil {
     }
 
     public static LocalDate getBackEqualBefore2(LocalDate date, int back, List<String> stockDates) {
+        if (date == null) {
+            return null;
+        }
         String str = getBackEqualBefore(date, back, stockDates);
         if (str == null) { 
             return null;

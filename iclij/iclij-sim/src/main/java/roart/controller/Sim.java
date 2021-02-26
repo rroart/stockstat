@@ -199,6 +199,9 @@ public class Sim {
         for (Entry<String, Object> entry : resultMap.entrySet()) {
             Map<String, Object> aMap = (Map<String, Object>) entry.getValue();
             List<StockHistory> history = (List<StockHistory>) aMap.get(SimConstants.HISTORY);
+            if (history.isEmpty()) {
+                continue;
+            }
             StockHistory last = history.get(history.size() - 1);
             double total = last.getCapital().amount + last.getSum().amount;
             List<Pair<String, Double>> list = SimUtil.getTradeStocks(aMap);
