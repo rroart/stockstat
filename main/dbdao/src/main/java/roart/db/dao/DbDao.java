@@ -76,7 +76,7 @@ public class DbDao {
     */
 
     public static List<StockItem> getAll(String market, MyMyConfig conf) throws Exception {
-        String key = CacheConstants.STOCKS + conf.getMarket() + conf.getdate();
+        String key = CacheConstants.STOCKS + market + conf.getdate();
         List<StockItem> list =  (List<StockItem>) MyCache.getInstance().get(key);
         if (list != null) {
             return list;
