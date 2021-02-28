@@ -7,7 +7,9 @@
  */
 module stocketl {
     exports roart.etl;
+    exports roart.etl.db;
 
+    requires dbdao;
     requires common.config;
     requires common.constants;
     requires common.model;

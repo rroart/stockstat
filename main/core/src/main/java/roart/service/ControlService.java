@@ -1,6 +1,5 @@
 package roart.service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,17 +39,14 @@ import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
-import roart.common.util.ValidateUtil;
 import roart.db.dao.DbDao;
-import roart.db.dao.util.DbDaoUtil;
-import roart.etl.MarketDataETL;
 import roart.etl.PeriodDataETL;
+import roart.etl.db.Extract;
 import roart.graphcategory.GraphCategory;
 import roart.graphcategory.GraphCategoryIndex;
 import roart.graphcategory.GraphCategoryPeriod;
 import roart.graphcategory.GraphCategoryPeriodTopBottom;
 import roart.graphcategory.GraphCategoryPrice;
-import roart.indicator.util.IndicatorUtils;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 import roart.model.data.PeriodData;
@@ -64,7 +60,6 @@ import roart.result.model.GUISize;
 import roart.result.model.ResultItem;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
-import roart.service.evolution.EvolutionService;
 import roart.service.util.ServiceUtil;
 import roart.stockutil.StockUtil;
 import roart.util.Math3Util;
@@ -123,7 +118,7 @@ public class ControlService {
         log.info("mydate {}", conf.getdate());
         log.info("mydate {}", conf.getDays());
         //createOtherTables();
-        StockData stockData = getStockData(conf);
+        StockData stockData = new Extract().getStockData(conf);
         if (stockData == null) {
             return new ArrayList<>();
         }
@@ -230,106 +225,6 @@ public class ControlService {
         }
     }
 
-    public StockData getStockData(MyMyConfig conf) {
-        String market = conf.getMarket();
-        return getStockData(conf, market);
-    }
-
-    public StockData getStockData(MyMyConfig conf, String market) {
-        List<StockItem> stocks = null;
-        try {
-            stocks = DbDao.getAll(market, conf);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        if (stocks == null) {
-            return null;
-        }
-        log.info("stocks {}", stocks.size());
-        String[] periodText = DbDaoUtil.getPeriodText(market, conf);
-        MetaItem meta = null;
-        try {
-            meta = DbDao.getById(market, conf);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-
-        Map<String, List<StockItem>> stockidmap = StockUtil.splitId(stocks);
-        Map<String, List<StockItem>> stockdatemap = StockUtil.splitDate(stocks);
-        if (conf.getdate() == null) {
-            try {
-                new ServiceUtil().getCurrentDate(conf, stockdatemap);
-            } catch (ParseException e) {
-                log.error(Constants.EXCEPTION, e);
-            }
-        }
-
-        Integer days = conf.getDays();
-
-        if (days == 0) {
-            days = stockdatemap.keySet().size();
-        }
-        List<String> stockdates = new ArrayList<>(stockdatemap.keySet());
-        Collections.sort(stockdates);
-
-        Map<String, MarketData> marketdatamap = null;
-        try {
-            marketdatamap = new MarketDataETL().getMarketdatamap(days, market, conf, stocks, periodText, meta);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-
-        Integer cat = null;
-        try {
-            cat = IndicatorUtils.getWantedCategory(stocks, marketdatamap.get(market).meta);
-        } catch (Exception e) {
-            log.error(Constants.EXCEPTION, e);
-        }
-        
-        if (cat == null) {
-            return null;
-        }
-        
-        String catName = EvolutionService.getCatName(cat, periodText);
-
-        ValidateUtil.validateSizes(stocks, marketdatamap.get(market).stocks);
-        if (stocks.size() != marketdatamap.get(market).stocks.size()) {
-            log.error("Sizes {} {}", stocks.size(), marketdatamap.get(market).stocks.size());
-        }
-        // temp hack
-        Map<String, String> idNameMap = getIdNameMap(stockidmap);
-
-        // the main list, based on freshest or specific date.
-
-        /*
-         * For all days with intervals
-         * Make stock lists based on the intervals
-         */
-
-        List<StockItem>[] datedstocklists = StockUtil.getDatedstocklists(stockdatemap, conf.getdate(), 2, conf.getTableMoveIntervalDays());
-
-        List<StockItem> datedstocks = datedstocklists[0];
-        if (datedstocks == null) {
-            return null;
-        }
-        log.info("Datestocksize {}", datedstocks.size());
-
-        StockData stockData = new StockData();
-        stockData.marketdatamap = marketdatamap;
-        stockData.periodText = periodText;
-        stockData.datedstocklists = datedstocklists;
-        stockData.stockdates = stockdates;
-        stockData.stockidmap = stockidmap;
-        stockData.stockdatemap = stockdatemap;
-        stockData.idNameMap = idNameMap;
-        stockData.cat = cat;
-        stockData.catName = catName;
-        stockData.datedstocks = datedstocks;
-        stockData.days = days;
-        
-        return stockData;
-    }
-
     private void cleanRows(ResultItemTableRow headrow, ResultItemTable table) {
         ResultItemTableRow sum = null;
         if (table.rows.size() > 1) {
@@ -357,17 +252,6 @@ public class ControlService {
         if (table.rows.size() > 0) {
             log.info("Cols new {}",table.rows.get(0).cols.size());
         }
-    }
-
-    private Map<String, String> getIdNameMap(Map<String, List<StockItem>> stockidmap) {
-        Map<String, String> idNameMap = new HashMap<>();
-        // sort based on date
-        for (String key : stockidmap.keySet()) {
-            List<StockItem> stocklist = stockidmap.get(key);
-            stocklist.sort(StockUtil.StockDateComparator);
-            idNameMap.put(key, stocklist.get(0).getName());
-        }
-        return idNameMap;
     }
 
     private void addOtherTables(Aggregator[] aggregates) {
@@ -565,7 +449,7 @@ public class ControlService {
         try {
             log.info("mydate {}", conf.getdate());
             log.info("mydate {}", conf.getDays());
-            StockData stockData = new ControlService().getStockData(conf);
+            StockData stockData = new Extract().getStockData(conf);
             if (stockData == null) {
                 return new ArrayList<>();
             }
@@ -612,7 +496,7 @@ public class ControlService {
             Map<String, StockData> stockDataMap = new HashMap<>();
             Set<String> markets = new ServiceUtil().getMarkets(ids);
             for (String market : markets) {
-                StockData stockData = getStockData(conf, market);
+                StockData stockData = new Extract().getStockData(conf, market);
                 if (stockData == null) {
                     return new ArrayList<>();
                 }

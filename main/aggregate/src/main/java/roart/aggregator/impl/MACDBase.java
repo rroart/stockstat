@@ -13,6 +13,7 @@ import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.common.aggregate.Aggregator;
 import roart.result.model.ResultItemTableRow;
+import roart.stockutil.StockUtil;
 
 public class MACDBase extends Aggregator {
 
@@ -27,7 +28,7 @@ public class MACDBase extends Aggregator {
         super(conf, "macdb", cat);
         AbstractCategory cat2 = null;
         try {
-            cat2 = IndicatorUtils.getWantedCategory(categories, cat);
+            cat2 = StockUtil.getWantedCategory(categories, cat);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }

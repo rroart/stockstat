@@ -14,13 +14,13 @@ import roart.common.config.MyMyConfig;
 import roart.common.model.MetaItem;
 import roart.common.cache.MyCache;
 import roart.db.common.DbAccess;
+import roart.db.dao.util.StockETL;
 import roart.db.hibernate.DbHibernateAccess;
 import roart.db.model.Meta;
 import roart.db.model.Stock;
 import roart.db.spark.DbSpark;
 import roart.db.spark.DbSparkAccess;
 import roart.model.StockItem;
-import roart.etl.StockETL;
 
 public class DbDao {
     private static Logger log = LoggerFactory.getLogger(DbDao.class);

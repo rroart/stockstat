@@ -45,6 +45,7 @@ import roart.pipeline.Pipeline;
 import roart.pipeline.common.predictor.AbstractPredictor;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
+import roart.stockutil.StockUtil;
 
 public abstract class Predictor extends AbstractPredictor {
 
@@ -152,7 +153,7 @@ public abstract class Predictor extends AbstractPredictor {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
 
-        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, category);
+        AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
         if (cat == null) {
             return;
         }

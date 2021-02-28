@@ -32,6 +32,7 @@ import roart.indicator.util.IndicatorUtils;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
+import roart.stockutil.StockUtil;
 import roart.model.data.MarketData;
 import roart.talib.util.TaUtil;
 import roart.pipeline.common.aggregate.Aggregator;
@@ -51,7 +52,7 @@ public class AggregatorRecommenderIndicator extends Aggregator {
         if (!isEnabled()) {
             return;
         }
-        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
+        AbstractCategory cat = StockUtil.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
         if (cat == null) {
             return;
         }

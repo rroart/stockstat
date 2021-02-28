@@ -84,20 +84,6 @@ public class ServiceUtil {
         return eventTable;
     }
 
-    public void getCurrentDate(MyMyConfig conf, Map<String, List<StockItem>> stockdatemap) throws ParseException {
-        SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
-        String date = null;
-        TreeSet<String> set = new TreeSet<>(stockdatemap.keySet());
-        List<String> list = new ArrayList<>(set);
-        int size = list.size();
-        if (size == 0) {
-            int jj = 0;
-        }
-        date = list.get(size - 1);
-        conf.setdate(dt.parse(date));
-        log.info("mydate2 {}", conf.getdate());
-    }
-
     public Pipeline[] getDataReaders(MyMyConfig conf, String[] periodText,
             Map<String, MarketData> marketdatamap) throws Exception {
         Pipeline[] datareaders = new Pipeline[Constants.PERIODS + 3];

@@ -1,4 +1,4 @@
-package roart.etl;
+package roart.db.dao.util;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 import roart.common.config.MyMyConfig;
 import roart.common.util.TimeUtil;
 import roart.model.StockItem;
+
+// Impurity, should be in ETL, only temporarily here.
 
 public class StockETL {
     public static List<StockItem> filterWeekend(MyMyConfig conf, List<StockItem> stocks) {

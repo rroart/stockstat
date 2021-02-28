@@ -54,6 +54,7 @@ import roart.pipeline.common.aggregate.Aggregator;
 import roart.result.model.ResultItemTable;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
+import roart.stockutil.StockUtil;
 import roart.talib.util.TaConstants;
 
 public abstract class IndicatorAggregator extends Aggregator {
@@ -154,7 +155,7 @@ public abstract class IndicatorAggregator extends Aggregator {
 
     private void calculateMe(MyMyConfig conf,
             int category2, AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, category);
+        AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
         if (cat == null) {
             return;
         }

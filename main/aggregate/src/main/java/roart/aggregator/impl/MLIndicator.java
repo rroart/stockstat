@@ -54,6 +54,7 @@ import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.result.model.ResultItemTableRow;
 import roart.result.model.ResultMeta;
+import roart.stockutil.StockUtil;
 import roart.model.data.MarketData;
 import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
@@ -260,7 +261,7 @@ public class MLIndicator extends Aggregator {
 
     private void calculateMomentums(MyMyConfig conf, Map<String, MarketData> marketdatamap,
             AbstractCategory[] categories, Pipeline[] datareaders, NeuralNetCommand neuralnetcommand) throws Exception {
-        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, category);
+        AbstractCategory cat = StockUtil.getWantedCategory(categories, category);
         if (cat == null) {
             return;
         }

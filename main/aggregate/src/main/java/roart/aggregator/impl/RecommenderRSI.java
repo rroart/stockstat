@@ -18,6 +18,7 @@ import roart.model.StockItem;
 import roart.result.model.ResultItemTableRow;
 import roart.model.data.MarketData;
 import roart.stockutil.StockDao;
+import roart.stockutil.StockUtil;
 import roart.pipeline.common.aggregate.Aggregator;
 
 public class RecommenderRSI extends Aggregator {
@@ -37,7 +38,7 @@ public class RecommenderRSI extends Aggregator {
         String dateme = dt.format(conf.getdate());
         this.listMap = DatelistToMapETL.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         //this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
-        AbstractCategory cat = IndicatorUtils.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
+        AbstractCategory cat = StockUtil.getWantedCategory(categories, marketdatamap.get(conf.getMarket()).meta);
         if (cat == null) {
             return;
         }

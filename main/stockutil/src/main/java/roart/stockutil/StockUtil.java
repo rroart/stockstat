@@ -19,8 +19,10 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import roart.category.AbstractCategory;
 import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
+import roart.common.model.MetaItem;
 import roart.common.util.TimeUtil;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
@@ -538,6 +540,108 @@ public class StockUtil {
 
     void dummy() {
         // the comparator messes up indentation
+    }
+
+    public static AbstractCategory getWantedCategory(AbstractCategory[] categories, MetaItem meta) throws Exception {
+        String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
+        String[] priorities;
+        String priority = null;
+        if (meta != null) {
+            priority = meta.getPriority();
+        }
+        if (priority != null) {
+            priorities = priority.split(",");            
+        } else {
+            priorities = defaultPriorities;
+        }
+        AbstractCategory cat = null;
+        for (String aPriority : priorities) {
+            for (AbstractCategory category : categories) {
+                if (category.getTitle().equals(aPriority) && category.hasContent()) {
+                    return category;
+                }
+            }
+        }
+        return cat;
+    }
+
+    public static AbstractCategory getWantedCategory(AbstractCategory[] categories, int cat) throws Exception {
+        for (AbstractCategory category : categories) {
+            if (cat == category.getPeriod()) {
+                return category;
+            }
+        }
+        return null;
+    }
+
+    public static Integer getWantedCategory(List<StockItem> stocks, PeriodData periodData) throws Exception {
+        if (hasStockValue(stocks, Constants.PRICECOLUMN)) {
+            return Constants.PRICECOLUMN;
+        }
+        if (hasStockValue(stocks, Constants.INDEXVALUECOLUMN)) {
+            return Constants.INDEXVALUECOLUMN;
+        }
+        if (periodData == null) {
+            return null;
+        }
+        Set<Pair<String, Integer>> pairs = periodData.pairs;
+        for (Pair<String, Integer> pair : pairs) {
+            int cat = (int) pair.getRight();
+            if (hasStockValue(stocks, cat)) {
+                return cat;
+            }
+        }
+        return null;
+    }
+
+    public static Integer getWantedCategory(List<StockItem> stocks, MetaItem meta) throws Exception {
+        Integer[] defaultPris = { Constants.PRICECOLUMN, Constants.INDEXVALUECOLUMN };
+        String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
+        String[] priorities;
+        String priority = null;
+        if (meta != null) {
+            priority = meta.getPriority();
+        }
+        if (priority != null) {
+            priorities = priority.split(",");            
+        } else {
+            priorities = defaultPriorities;
+        }
+        for (String aPriority : priorities) {
+            for (int i = 0; i < defaultPriorities.length; i++) {
+                if (defaultPriorities[i].equals(aPriority)) {
+                    if (hasStockValue(stocks, defaultPris[i])) {
+                        return defaultPris[i];
+                    }
+                }
+            }
+            String[] periods = new String[0];
+            if (meta != null) {
+                periods = meta.getPeriod();
+            }
+            for (int i = 0; i < periods.length; i++) {
+                if (aPriority.equals(periods[i])) {
+                    if (hasStockValue(stocks, i)) {
+                        return i;
+                    }                    
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String getCatName(Integer cat, String[] periodText) {
+        String catName = null;
+        if (cat >= 0) {
+            catName = periodText[cat];
+        }
+        if (cat == Constants.INDEXVALUECOLUMN) {
+            catName = Constants.INDEX;
+        }
+        if (cat == Constants.PRICECOLUMN) {
+            catName = Constants.PRICE;
+        }
+        return catName;
     }
 
     /**

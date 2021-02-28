@@ -30,15 +30,12 @@ import roart.indicator.impl.IndicatorSTOCH;
 import roart.indicator.impl.IndicatorSTOCHRSI;
 import roart.common.constants.CategoryConstants;
 import roart.common.constants.Constants;
-import roart.common.model.MetaItem;
 import roart.model.StockItem;
 import roart.pipeline.Pipeline;
 import roart.pipeline.data.ExtraData;
 import roart.pipeline.impl.DataReader;
 import roart.pipeline.impl.ExtraReader;
 import roart.model.data.MarketData;
-import roart.model.data.PeriodData;
-import roart.stockutil.StockUtil;
 import roart.talib.util.TaUtil;
 import java.util.Objects;
 
@@ -250,6 +247,8 @@ public class IndicatorUtils {
         return retobj;
     }
 
+    // TODO return stockdate based on date
+    
     public static Object[] getDayIndicatorMap(MyMyConfig conf, TaUtil tu, List<AbstractIndicator> indicators, int futureDays, int tableDays, int intervalDays, ExtraData extraData, Pipeline[] datareaders) throws Exception {
         List<Map<String, Object[]>> objectMapsList = new ArrayList<>();
         List<Map<String, Double[][]>> listList = new ArrayList<>();
@@ -491,94 +490,6 @@ public class IndicatorUtils {
             pipelineMap.put(datareader.pipelineName(), datareader);
         }
         return pipelineMap;
-    }
-
-    public static AbstractCategory getWantedCategory(AbstractCategory[] categories, MetaItem meta) throws Exception {
-        String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
-        String[] priorities;
-        String priority = null;
-        if (meta != null) {
-            priority = meta.getPriority();
-        }
-        if (priority != null) {
-            priorities = priority.split(",");            
-        } else {
-            priorities = defaultPriorities;
-        }
-        AbstractCategory cat = null;
-        for (String aPriority : priorities) {
-            for (AbstractCategory category : categories) {
-                if (category.getTitle().equals(aPriority) && category.hasContent()) {
-                    return category;
-                }
-            }
-        }
-        return cat;
-    }
-
-    public static AbstractCategory getWantedCategory(AbstractCategory[] categories, int cat) throws Exception {
-        for (AbstractCategory category : categories) {
-            if (cat == category.getPeriod()) {
-                return category;
-            }
-        }
-        return null;
-    }
-
-    public static Integer getWantedCategory(List<StockItem> stocks, PeriodData periodData) throws Exception {
-        if (StockUtil.hasStockValue(stocks, Constants.PRICECOLUMN)) {
-            return Constants.PRICECOLUMN;
-        }
-        if (StockUtil.hasStockValue(stocks, Constants.INDEXVALUECOLUMN)) {
-            return Constants.INDEXVALUECOLUMN;
-        }
-        if (periodData == null) {
-            return null;
-        }
-        Set<Pair<String, Integer>> pairs = periodData.pairs;
-        for (Pair<String, Integer> pair : pairs) {
-            int cat = (int) pair.getRight();
-            if (StockUtil.hasStockValue(stocks, cat)) {
-                return cat;
-            }
-        }
-        return null;
-    }
-
-    public static Integer getWantedCategory(List<StockItem> stocks, MetaItem meta) throws Exception {
-        Integer[] defaultPris = { Constants.PRICECOLUMN, Constants.INDEXVALUECOLUMN };
-        String[] defaultPriorities = { Constants.PRICE, Constants.INDEX };
-        String[] priorities;
-        String priority = null;
-        if (meta != null) {
-            priority = meta.getPriority();
-        }
-        if (priority != null) {
-            priorities = priority.split(",");            
-        } else {
-            priorities = defaultPriorities;
-        }
-        for (String aPriority : priorities) {
-            for (int i = 0; i < defaultPriorities.length; i++) {
-                if (defaultPriorities[i].equals(aPriority)) {
-                    if (StockUtil.hasStockValue(stocks, defaultPris[i])) {
-                        return defaultPris[i];
-                    }
-                }
-            }
-            String[] periods = new String[0];
-            if (meta != null) {
-                periods = meta.getPeriod();
-            }
-            for (int i = 0; i < periods.length; i++) {
-                if (aPriority.equals(periods[i])) {
-                    if (StockUtil.hasStockValue(stocks, i)) {
-                        return i;
-                    }                    
-                }
-            }
-        }
-        return null;
     }
 
     public static void filterNonExistingClassifications(Map<Double, String> labelMapShort,
