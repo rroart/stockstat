@@ -28,4 +28,5 @@ module iclij.common.service {
     requires common.cache;
     requires common.inmemory.factory;
     requires common.inmemory.model;
+    requires common.webflux;
 }

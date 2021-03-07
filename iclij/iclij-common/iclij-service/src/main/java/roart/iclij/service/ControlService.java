@@ -25,6 +25,7 @@ import roart.common.util.ServiceConnectionUtil;
 import roart.common.communication.factory.CommunicationFactory;
 import roart.common.communication.model.Communication;
 import roart.common.cache.MyCache;
+import roart.common.webflux.WebFluxUtil;
 
 import java.util.List;
 import java.util.Set;
@@ -178,7 +179,7 @@ public class ControlService {
         param.setConfig(conf);
         param.setWantMaps(true);
         param.setMarket(market);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETDATES);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETDATES);
         list = (List<String>) result.getMaps().get(PipelineConstants.DATELIST).get(PipelineConstants.DATELIST);      
         MyCache.getInstance().put(key, list);
         return list;
