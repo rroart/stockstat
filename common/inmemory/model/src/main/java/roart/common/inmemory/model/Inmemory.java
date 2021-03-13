@@ -23,6 +23,9 @@ public abstract class Inmemory {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         String string = JsonUtil.convert(data, mapper);
+        if (string == null) {
+            string = "";
+        }
         int count = 1;
         int limit = string.length();
         if (getLimit() > 0) {
