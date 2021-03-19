@@ -82,17 +82,17 @@ public class Sim {
             shortMap.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, "ir");
             String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
             SimulateFilter[] filters = new SimulateFilter[10];
-            SimulateFilter filter = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
-            filters[0] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
-            filters[1] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, periodSimConfig);
-            filters[2] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
-            filters[3] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
-            filters[4] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
-            filters[5] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
-            filters[6] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, timeSimConfig);
-            filters[7] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
-            filters[8] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
-            filters[9] = new SimulateFilter(5, 0.8, 0.8, true, 16, true, generalSimConfig);
+            SimulateFilter filter = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+            filters[0] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+            filters[1] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, periodSimConfig);
+            filters[2] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+            filters[3] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+            filters[4] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+            filters[5] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+            filters[6] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, timeSimConfig);
+            filters[7] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+            filters[8] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+            filters[9] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
             filter = filters[adviser];
             List<String> output = new ArrayList<>();
 
@@ -203,7 +203,7 @@ public class Sim {
                 continue;
             }
             StockHistory last = history.get(history.size() - 1);
-            double total = last.getCapital().amount + last.getSum().amount;
+            double total = last.getCapital().amount + last.getSum().amount - 1;
             List<Pair<String, Double>> list = SimUtil.getTradeStocks(aMap);
             int cnt = 3;
             for (Pair<String, Double> anEntry : list) {
