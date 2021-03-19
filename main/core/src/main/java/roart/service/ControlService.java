@@ -40,6 +40,7 @@ import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
 import roart.common.util.TimeUtil;
 import roart.db.dao.DbDao;
+import roart.etl.CleanETL;
 import roart.etl.PeriodDataETL;
 import roart.etl.db.Extract;
 import roart.graphcategory.GraphCategory;
@@ -204,6 +205,7 @@ public class ControlService {
         for (ResultItemTable list : otherTables) {
             retlist.add(list);
         }
+        new CleanETL().fixmap((Map) maps);
         printmap(maps, 0);
         return retlist;
     }
