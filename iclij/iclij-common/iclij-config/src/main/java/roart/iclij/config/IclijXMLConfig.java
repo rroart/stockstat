@@ -38,6 +38,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import roart.common.config.ConfigTreeMap;
+import roart.common.config.Extra;
+import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
 import roart.config.IclijConfigConstantMaps;
 
@@ -667,17 +669,44 @@ public class IclijXMLConfig {
                 continue;
             }
             MarketFilter marketFilter = getConfig(configMap, "filter", MarketFilter.class, config);
+            SimulateFilter simulateFilter = getConfig(configMap, "simulatefilter", SimulateFilter.class, config);
             MLConfigs mlConfigs = getConfig(configMap, "mlconfig", MLConfigs.class, config);
             SimulateInvestConfig simulate = getConfig(configMap, "simulate", SimulateInvestConfig.class, config);
             //MLConfigs defaultMlConfigs = getDefaultMlConfigs(config, mapper, text);
             //defaultMlConfigs.merge(mlConfigs);
             market.setConfig(marketConfig);
             market.setFilter(marketFilter);
+            market.setSimulateFilter(simulateFilter);
             market.setMlconfig(mlConfigs);
             market.setSimulate(simulate);
             //String text2 = (String) config.getConfigValueMap().get(text);
             //MarketConfig market = mapper.readValue(text2, new TypeReference<MarketConfig>(){});
             retList.add(market);
+        }
+        return retList;
+    }
+
+    public static List<Extra> getMarketImportants(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
+        List<Extra> retList = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        ConfigTreeMap map = config.getConfigTreeMap().search("markets.importants");
+        if (map == null) {
+            return retList;
+        }
+        for (Entry<String, ConfigTreeMap> entry : map.getConfigTreeMap().entrySet()) {
+            String text = entry.getValue().getName();
+            ConfigTreeMap configMap = entry.getValue();
+            Market market = new Market();
+
+            Extra marketConfig = getConfig(configMap, "config", Extra.class, config);
+            if (marketConfig == null) {
+                int jj = 0;
+                log.error("Empty important config");
+                continue;
+            }
+            //String text2 = (String) config.getConfigValueMap().get(text);
+            //MarketConfig market = mapper.readValue(text2, new TypeReference<MarketConfig>(){});
+            retList.add(marketConfig);
         }
         return retList;
     }

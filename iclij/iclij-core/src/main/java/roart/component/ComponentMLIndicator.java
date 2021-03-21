@@ -1,5 +1,6 @@
 package roart.component;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +11,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import roart.action.MarketAction;
 import roart.common.config.ConfigConstants;
+import roart.common.config.Extra;
+import roart.common.config.MarketStockExpression;
 import roart.common.constants.Constants;
 import roart.common.constants.ResultMetaConstants;
 import roart.common.pipeline.PipelineConstants;
@@ -22,6 +28,9 @@ import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 import roart.iclij.evolution.chromosome.impl.MLIndicatorChromosome;
 import roart.iclij.evolution.chromosome.winner.ConfigMapChromosomeWinner;
 import roart.gene.impl.ConfigMapGene;
+import roart.gene.impl.MLIndicatorConfigMapGene;
+import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.evolution.fitness.impl.FitnessConfigMap;
@@ -202,15 +211,25 @@ public class ComponentMLIndicator extends ComponentML {
 
     @Override
     public ComponentData improve(MarketAction action, ComponentData componentparam, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests) {
+        IclijConfig conf = IclijXMLConfig.getConfigInstance();
+        List<Extra> mses = null;
+        try {
+            mses = IclijXMLConfig.getMarketImportants(conf);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            mses = new ArrayList<>();
+        }
         ComponentData param = new ComponentData(componentparam);
         List<String> confList = getConfList();
         Map<String, List<List<Double>>> listMap = param.getCategoryValueMap();
         if (wantThree) {
             confList.addAll(getThreeConfList());
         }
-        ConfigMapGene gene = new ConfigMapGene(confList, param.getService().conf);
+        ConfigMapGene gene = new MLIndicatorConfigMapGene(confList, param.getService().conf);
         ConfigMapChromosome2 chromosome = new MLIndicatorChromosome(gene);
         loadme(param, chromosome, market, confList, buy, subcomponent, action, parameters);
+        gene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, JsonUtil.convert(mses));
+        gene.getMap().put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, "1".repeat(mses.size()));
         List<String> stockDates = param.getService().getDates(market.getConfig().getMarket());
         FitnessConfigMap fit = new FitnessConfigMap(action, param, profitdata, market, null, getPipeline(), buy, subcomponent, parameters, gene, stockDates);
         return improve(action, param, chromosome, subcomponent, new ConfigMapChromosomeWinner(), buy, fit);
@@ -486,6 +505,8 @@ public class ComponentMLIndicator extends ComponentML {
         list.add(ConfigConstants.AGGREGATORSINDICATORINTERVALDAYS);
         list.add(ConfigConstants.AGGREGATORSINDICATORFUTUREDAYS);
         list.add(ConfigConstants.AGGREGATORSINDICATORTHRESHOLD);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST);
+        list.add(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS);
         return list;
     }
     

@@ -310,4 +310,5 @@ public class IclijConfigConstants {
     @Deprecated
     public static final String MARKETSFILTERMARKETSMARKET = "markets.filtermarkets.filtermarket[@id]";
     public static final String MARKETSIMPORTANTSIMPORTANT = "markets.importants.important[@id]";
+    public static final String MARKETSIMPORTANTSIMPORTANTCONFIG = "markets.importants.important[@id].config";
 }

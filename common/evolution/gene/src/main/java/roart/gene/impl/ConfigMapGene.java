@@ -6,11 +6,20 @@ import java.util.Map;
 import java.util.Random;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 
 import roart.common.config.MyMyConfig;
 import roart.common.util.MathUtil;
 import roart.gene.AbstractGene;
 
+@JsonTypeInfo(  
+        use = JsonTypeInfo.Id.NAME,  
+        include = JsonTypeInfo.As.PROPERTY,  
+        property = "_class")  
+@JsonSubTypes({  
+    @Type(value = MLIndicatorConfigMapGene.class, name = "MLIndicatorConfigMapGene") })  
 public class ConfigMapGene extends AbstractGene {
     private Map<String, Object> map = new HashMap<>();
 
@@ -70,6 +79,9 @@ public class ConfigMapGene extends AbstractGene {
         String confName = confList.get(confint);
         Double[] range = conf.getRange().get(confName);
         Class type = conf.getType().get(confName);
+        if (changedSpecial(map, confName, type)) {
+            return;
+        }
         if (type == Boolean.class) {
             Boolean b = rand.nextBoolean();
             map.put(confName, b);
@@ -94,9 +106,18 @@ public class ConfigMapGene extends AbstractGene {
         //log.error("Unknown type for {}", confName);
     }
 
+    protected boolean changedSpecial(Map<String, Object> map2, String confName, Class type) {
+        return false;
+    }
+
     @Override
     public AbstractGene crossover(AbstractGene other) {
         ConfigMapGene newGene = new ConfigMapGene();
+        crossoverInner(other, newGene);
+        return newGene;
+    }
+
+    protected void crossoverInner(AbstractGene other, ConfigMapGene newGene) {
         newGene.conf = this.conf;
         newGene.confList = this.confList;
         for (int conf = 0; conf < confList.size(); conf++) {
@@ -112,15 +133,18 @@ public class ConfigMapGene extends AbstractGene {
             chromosome.fixValidation();
         }
         */
-        return newGene;
     }
     
     public ConfigMapGene copy() {
         ConfigMapGene gene = new ConfigMapGene();
+        copyInner(gene);
+        return gene;
+    }
+
+    protected void copyInner(ConfigMapGene gene) {
         gene.map = new HashMap<>(this.map);
         gene.conf = this.conf;
         gene.confList = this.confList;
-        return gene;
     }
     
     @JsonIgnore

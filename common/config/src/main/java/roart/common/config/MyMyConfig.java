@@ -1371,6 +1371,14 @@ public class MyMyConfig extends MyConfig {
         return (String) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRAS);
     }
 
+    public String getAggregatorsIndicatorExtrasList() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST);
+    }
+
+    public String getAggregatorsIndicatorExtrasBits() {
+        return (String) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS);
+    }
+
     public Integer getAggregatorsIndicatorExtrasDeltas() {
         return (Integer) getValueOrDefault(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS);
     }

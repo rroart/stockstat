@@ -13,6 +13,8 @@ public class Market {
     
     private Extra extra;
     
+    private SimulateFilter simulateFilter;
+
     public MarketConfig getConfig() {
         return config;
     }
@@ -43,6 +45,14 @@ public class Market {
 
     public void setSimulate(SimulateInvestConfig simulate) {
         this.simulate = simulate;
+    }
+
+    public SimulateFilter getSimulateFilter() {
+        return simulateFilter;
+    }
+
+    public void setSimulateFilter(SimulateFilter simulateFilter) {
+        this.simulateFilter = simulateFilter;
     }
 
 }

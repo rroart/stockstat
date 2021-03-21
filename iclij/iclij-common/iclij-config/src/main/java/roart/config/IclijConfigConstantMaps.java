@@ -317,6 +317,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.MARKETSMARKETLISTMARKETMLCONFIG, String.class);
         map.put(IclijConfigConstants.MARKETSFILTERMARKETSMARKET, String.class);
         map.put(IclijConfigConstants.MARKETSIMPORTANTSIMPORTANT, String.class);
+        map.put(IclijConfigConstants.MARKETSIMPORTANTSIMPORTANTCONFIG, String.class);
         map.put(IclijConfigConstants.MARKETSMARKETLISTMARKET2, String.class);
         map.put(IclijConfigConstants.MARKETSTRADEMARKETSMARKET2, String.class);
         map.put(IclijConfigConstants.MARKETSIMPORTANTSIMPORTANT2, String.class);

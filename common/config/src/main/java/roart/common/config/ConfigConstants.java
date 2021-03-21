@@ -307,6 +307,9 @@ public class ConfigConstants {
     public static final String AGGREGATORSINDICATORSTOCH = "aggregators.indicator.stoch[@enable]";
     public static final String AGGREGATORSINDICATORSTOCHRSI = "aggregators.indicator.stochrsi[@enable]";
     public static final String AGGREGATORSINDICATOREXTRAS = "aggregators.indicator.extras";
+    // special two
+    public static final String AGGREGATORSINDICATOREXTRASLIST = "aggregators.indicator.extraslist";
+    public static final String AGGREGATORSINDICATOREXTRASBITS = "aggregators.indicator.extrasbits";
     public static final String AGGREGATORSINDICATOREXTRASDELTAS = "aggregators.indicator.extrasdeltas";
     public static final String AGGREGATORSINDICATOREXTRASMACD = "aggregators.indicator.extrasmacd[@enable]";
     public static final String AGGREGATORSINDICATOREXTRASRSI = "aggregators.indicator.extrasrsi[@enable]";

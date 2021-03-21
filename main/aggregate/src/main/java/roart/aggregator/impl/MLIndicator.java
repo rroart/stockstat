@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,6 +60,7 @@ import roart.model.data.MarketData;
 import roart.talib.Ta;
 import roart.talib.impl.TalibMACD;
 import roart.talib.util.TaUtil;
+import roart.pipeline.impl.ExtraReader;
 
 public class MLIndicator extends Aggregator {
 
@@ -168,7 +170,7 @@ public class MLIndicator extends Aggregator {
 
     private Map<Integer, String> mapTypes = new HashMap<>();
 
-    public void getEvaluations(MyMyConfig conf, int j, Object[] retObj, List<Date> dateList, Map<String, List<Pair<Object, Double>>> mergedCatMap, Double threshold) throws JsonParseException, JsonMappingException, IOException {
+    public void getEvaluations(MyMyConfig conf, int j, Object[] retObj, List<String> dateList, Map<String, List<Pair<Object, Double>>> mergedCatMap, Double threshold) throws JsonParseException, JsonMappingException, IOException {
         int listlen = conf.getTableDays();
         if (listlen == 0) {
             listlen = dateList.size();
@@ -208,7 +210,7 @@ public class MLIndicator extends Aggregator {
         return mapMap.computeIfAbsent(key, k -> new ArrayList<>());
     }
 
-    public void getEvaluations(MyMyConfig conf, int start, Object[] retObj, List<Date> dateList, Map<String, List<Pair<Object, Double>>> mergedCatArrayMap, Set<String> ids, Double threshold) throws JsonParseException, JsonMappingException, IOException {
+    public void getEvaluations(MyMyConfig conf, int start, Object[] retObj, List<String> dateList, Map<String, List<Pair<Object, Double>>> mergedCatArrayMap, Set<String> ids, Double threshold) throws JsonParseException, JsonMappingException, IOException {
         int days = conf.getAggregatorsIndicatorDays();
         if (days == 0) {
             days = dateList.size();
@@ -274,11 +276,16 @@ public class MLIndicator extends Aggregator {
         }
         Pipeline extrareader = pipelineMap.get(PipelineConstants.EXTRAREADER);
         Map<String, Object> localResults =  extrareader.getLocalResultMap();
-        Map<Pair<String, String>, List<StockItem>> pairStockMap = (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
-        Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
-        Map<Pair<String, String>, String> pairCatMap = (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
-
-        List<Date> dateList = (List<Date>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
+        /*
+        Map<Pair<String, String>, List<StockItem>> pairStockMap = null; // (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
+        Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = null; // (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
+        Map<Pair<String, String>, String> pairCatMap = null; // (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
+        */
+        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
+        if (!((ExtraReader)extrareader).allMarketStocks.isEmpty()) {
+            dateList = new ArrayList<>(((ExtraReader)extrareader).commonDates);
+            Collections.sort(dateList);
+        }
         Map<String, AbstractIndicator> newIndicatorMap = new HashMap<>();
         Map<String, AbstractIndicator> usedIndicatorMap = cat.getIndicatorMap();
 
@@ -319,9 +326,9 @@ public class MLIndicator extends Aggregator {
         if (days == 0) {
             days = dateList.size();
         }
-        ExtraData extraData = new ExtraData(dateList, pairStockMap, pairDateMap, cat.getPeriod(), pairCatMap, categories, datareaders);
+        ExtraData extraData = new ExtraData(dateList, cat.getPeriod(), categories, datareaders, extrareader);
         int tableDays = Math.min(days, dateList.size());
-        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, tu, indicators, 0, tableDays, 1, extraData, datareaders);
+        Object[] retObj2 = IndicatorUtils.getDayIndicatorMap(conf, indicators, 0, tableDays, 1, extraData, datareaders, marketdatamap);
         Map<Integer, Map<String, Double[]>> dayIndicatorMap = (Map<Integer, Map<String, Double[]>>) retObj2[0];
         //Map<Double, Pair> thresholdMap = new HashMap<>();
         Map<Double, Map<String, Map<String, Double[]>>> mapResult0 = new HashMap<>();
@@ -330,6 +337,7 @@ public class MLIndicator extends Aggregator {
             Map<String, List<Pair<Object, Double>>> mergedCatMap = new HashMap<>();
             Map<String, List<Pair<Object, Double>>> mergedCatArrayMap = new HashMap<>();
             for (int j = 0; j < days; j += conf.getAggregatorsIndicatorIntervaldays()) {
+                String d = dateList.get(j);
                 getEvaluations(conf, j, retObj2, dateList, mergedCatMap, threshold);
                 //mergedCatMap.putAll(retMap);
                 getEvaluations(conf, j, retObj2, dateList, mergedCatArrayMap, ids, threshold);

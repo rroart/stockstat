@@ -342,6 +342,8 @@ public class ConfigConstantMaps {
         map.put(ConfigConstants.AGGREGATORSINDICATORSTOCH, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, String.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, String.class);
+        map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, String.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, Integer.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, Boolean.class);
         map.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, Boolean.class);
@@ -723,6 +725,8 @@ public class ConfigConstantMaps {
         deflt.put(ConfigConstants.AGGREGATORSINDICATORSTOCH, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "");
+        deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, "");
+        deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, "");
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, 2);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, Boolean.FALSE);
         deflt.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, Boolean.FALSE);
@@ -1097,6 +1101,8 @@ public class ConfigConstantMaps {
         text.put(ConfigConstants.AGGREGATORSINDICATORSTOCH, "ML indicator STOCH enable");
         text.put(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI, "ML indicator STOCHRSI enable");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, "ML indicator extras");
+        text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, "ML indicator extras list");
+        text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, "ML indicator extras list bits");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, "ML indicator extras delta days");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, "ML indicator extras use MACD result");
         text.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, "ML indicator extras use RSI result");
@@ -1487,6 +1493,8 @@ public class ConfigConstantMaps {
         mymap.put(ConfigConstants.AGGREGATORSINDICATORSTOCH, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator STOCH enable"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATORSTOCHRSI, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator STOCHRSI enable"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRAS, new XMLType( String.class, "", "ML indicator extras"));
+        mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASLIST, new XMLType( String.class, "", "ML indicator extras list"));
+        mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASBITS, new XMLType( String.class, "", "ML indicator extras list bits"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASDELTAS, new XMLType( Integer.class, 2, "ML indicator extras delta days"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASMACD, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator extras use MACD result"));
         mymap.put(ConfigConstants.AGGREGATORSINDICATOREXTRASRSI, new XMLType( Boolean.class, Boolean.FALSE, "ML indicator extras use RSI result"));
