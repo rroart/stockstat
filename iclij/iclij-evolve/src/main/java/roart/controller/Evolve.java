@@ -160,6 +160,9 @@ public class Evolve {
         param = getParam(param);
         List<String> output = new ArrayList<>();
         Map<String, Object> myMap = convert(param, new TypeReference<List<LinkedHashMap<Double, ConfigMapChromosome2>>>(){});
+        if (myMap.isEmpty()) {
+            return;
+        }
         String id = (String) myMap.get(EvolveConstants.ID);
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
         for (Pair<Double, AbstractChromosome> my : myList) {
@@ -294,6 +297,9 @@ public class Evolve {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             log.error(Constants.EXCEPTION, e);
+        }
+        if (res0 == null) {
+            return map;
         }
         for (Entry<String, Object> entry : res0.entrySet()) {
             //System.out.println(entry.getKey() + " " + entry.getValue().getClass().getName());

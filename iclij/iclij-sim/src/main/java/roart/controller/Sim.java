@@ -57,6 +57,9 @@ public class Sim {
     public void method(String param) {
         param = getParam(param);
         Map<String, Object> myMap = convert(param);
+        if (myMap.isEmpty()) {
+            return;
+        }
         String id = (String) myMap.get(EvolveConstants.ID);
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
         if (myList.size() > 0) {
@@ -352,6 +355,9 @@ public class Sim {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             log.error(Constants.EXCEPTION, e);
+        }
+        if (res0 == null) {
+            return map;
         }
         for (Entry<String, Object> entry : res0.entrySet()) {
             //System.out.println(entry.getKey() + " " + entry.getValue().getClass().getName());
