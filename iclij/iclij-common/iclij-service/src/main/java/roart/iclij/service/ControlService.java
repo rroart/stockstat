@@ -195,6 +195,16 @@ public class ControlService {
     }
     
     public Map<String, Map<String, Object>> getContent(List<String> disableList) {
+        {
+            long heapSize = Runtime.getRuntime().totalMemory(); 
+
+         // Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
+         long heapMaxSize = Runtime.getRuntime().maxMemory();
+
+          // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
+         long heapFreeSize = Runtime.getRuntime().freeMemory(); 
+         log.info("MEM0 " + heapSize + " " + heapMaxSize + " " + heapFreeSize);
+        }
         String key = CacheConstants.CONTENT + conf.getMarket() + conf.getMLmarket() + conf.getdate() + conf.getConfigValueMap();
         Map<String, Map<String, Object>> list = (Map<String, Map<String, Object>>) MyCache.getInstance().get(key);
         if (list != null) {
@@ -211,8 +221,19 @@ public class ControlService {
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
         ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENT);
+        //log.info("blblbl" + JsonUtil.convert(result).length());
         list = result.getMaps();
         MyCache.getInstance().put(key, list);
+        {
+            long heapSize = Runtime.getRuntime().totalMemory(); 
+
+         // Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
+         long heapMaxSize = Runtime.getRuntime().maxMemory();
+
+          // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
+         long heapFreeSize = Runtime.getRuntime().freeMemory(); 
+         log.info("MEM1 " + heapSize + " " + heapMaxSize + " " + heapFreeSize);
+        }
         return list;
         //return result.getMaps();
         //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
