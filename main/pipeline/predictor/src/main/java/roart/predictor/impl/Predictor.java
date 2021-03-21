@@ -190,7 +190,7 @@ public abstract class Predictor extends AbstractPredictor {
         lossMap = new HashMap<>();
         resultMetaArray = new ArrayList<>();
 
-        List<Date> dateList = (List<Date>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
+        List<String> dateList = (List<String>) pipelineMap.get("" + this.category).getLocalResultMap().get(PipelineConstants.DATELIST);
         Integer days = conf.getDays();
         if (days == 0) {
             days = dateList.size();

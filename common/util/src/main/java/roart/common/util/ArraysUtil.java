@@ -572,6 +572,14 @@ public class ArraysUtil {
         return ret;
     }
 
+    public static Double[] convert(double[] doubles) {
+        Double[] ret = new Double[doubles.length];
+        for (int i = 0; i < doubles.length; i ++) {
+            ret[i] = doubles[i];
+        }
+        return ret;
+    }
+
     /**
      * Goes through the array, smoothes out missing values (by using the previous),
      * or nulls out, depending or whether a max number was passed

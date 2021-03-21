@@ -22,4 +22,5 @@ module stocketl {
     requires model;
     requires slf4j.api;
     requires org.apache.commons.lang3;
+    requires pipeline.model;
 }

@@ -41,7 +41,7 @@ public class DataReader extends Pipeline {
     protected Map<String, double[][]> truncBase100FillListMap;
     
     Map<String, String> nameMap;
-    List<Date> dateList;
+    List<String> dateList;
     String categoryTitle;
 
     private Map<String, Object[][]> volumeMap;
@@ -74,10 +74,14 @@ public class DataReader extends Pipeline {
         return map;
     }
     
-    public DataReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category) throws Exception {
+    public DataReader(MyMyConfig conf, int category) {
+        super(conf, category);
+    }
+    
+    public DataReader(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, String market) throws Exception {
         super(conf, category);
         this.setMarketdatamap(marketdatamap);
-        readData(conf, marketdatamap, category);        
+        readData(conf, marketdatamap, category, market);        
     }
 
     public Map<String, MarketData> getMarketdatamap() {
@@ -88,10 +92,10 @@ public class DataReader extends Pipeline {
         this.marketdatamap = marketdatamap;
     }
 
-    private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category) throws Exception {
+    private void readData(MyMyConfig conf, Map<String, MarketData> marketdatamap, int category, String market) throws Exception {
         SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
         String dateme = dt.format(conf.getdate());
-        MarketData marketData = marketdatamap.get(conf.getMarket());
+        MarketData marketData = marketdatamap.get(market);
         // note that there are nulls in the lists with sparse
         boolean currentYear = false;
         if (category >= 0) {
@@ -104,16 +108,17 @@ public class DataReader extends Pipeline {
         if (category == Constants.PRICECOLUMN) {
             categoryTitle = Constants.PRICE;
         }
-        this.dateList = StockDao.getDateList(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
-        this.nameMap = StockDao.getNameMap(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
-        this.listMap = DatelistToMapETL.getArrSparse(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+        this.dateList = StockDao.getDateList(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        //this.dateStringList = StockDao.getDateList(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
+        this.nameMap = StockDao.getNameMap(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, false);
         if (category == Constants.PRICECOLUMN) {
-            this.volumeMap = DatelistToMapETL.getVolumes(conf, conf.getMarket(), dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+            this.volumeMap = DatelistToMapETL.getVolumes(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
         }
-        Double[][] e = listMap.get("F00000ZHEV");
-        if (e != null) {
-            int jj = 0;
-        }
+        this.listMap = DatelistToMapETL.getArrSparse(conf, market, dateme, category, conf.getDays(), conf.getTableIntervalDays(), marketdatamap, currentYear);
+        calculateOtherListMaps(conf, category, marketData);
+    }
+
+    void calculateOtherListMaps(MyMyConfig conf, int category, MarketData marketData) {
         ValueETL.zeroPrice(this.listMap, category);
         this.fillListMap = ValueETL.getReverseArrSparseFillHolesArr(conf, listMap);
         this.truncListMap = ArraysUtil.getTruncListArr(this.listMap);
@@ -123,10 +128,6 @@ public class DataReader extends Pipeline {
             this.base100FillListMap = ValueETL.getBase100D(this.fillListMap);
             this.truncBase100ListMap = ValueETL.getBase100(this.truncListMap);
             this.truncBase100FillListMap = ValueETL.getBase100(this.truncFillListMap);
-        }
-        Double[][] f = listMap.get("F00000ZHEV");
-        if (f != null) {
-            int jj = 0;
         }
     }
 

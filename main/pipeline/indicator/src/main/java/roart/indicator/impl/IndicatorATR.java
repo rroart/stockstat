@@ -106,7 +106,7 @@ public class IndicatorATR extends Indicator {
     }
 
     @Override
-    protected boolean anythingHere(Map<String, Double[][]> listMap) {
+    public boolean anythingHere(Map<String, Double[][]> listMap) {
         return anythingHere3(listMap);
     }
 

@@ -131,7 +131,7 @@ public class ControlService {
 
         try {
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
-                    stockData.marketdatamap);
+                    stockData.marketdatamap, stockData);
 
             SimpleDateFormat dt = new SimpleDateFormat(Constants.MYDATEFORMAT);
             String mydate = dt.format(conf.getdate());

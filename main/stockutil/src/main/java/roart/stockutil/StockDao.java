@@ -16,6 +16,7 @@ import roart.common.config.MyMyConfig;
 import roart.common.constants.Constants;
 import roart.common.util.ArraysUtil;
 import roart.common.util.MapUtil;
+import roart.common.util.TimeUtil;
 import roart.model.StockItem;
 import roart.model.data.MarketData;
 
@@ -111,14 +112,27 @@ public class StockDao {
         return retMap;
     }
 
-    public static List<Date> getDateList(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
+    public static List<String> getDateList(MyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,
             Map<String, MarketData> marketdataMap, boolean currentyear) throws Exception {
-        List<Date> retList = new ArrayList<>();
+        List<String> retList = new ArrayList<>();
         List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
         for (int i = datedstocklists.length - 1; i >= 0; i--) {
             List<StockItem> list = datedstocklists[i];
             if (!list.isEmpty()) {
-                retList.add(list.get(0).getDate());
+                retList.add(TimeUtil.convertDate3(list.get(0).getDate()));
+            }
+        }
+        return retList;
+    }
+
+    public static List<String> getDateList(String market,
+            Map<String, MarketData> marketdataMap) throws Exception {
+        List<String> retList = new ArrayList<>();
+        List<StockItem> datedstocklists[] = marketdataMap.get(market).datedstocklists;
+        for (int i = datedstocklists.length - 1; i >= 0; i--) {
+            List<StockItem> list = datedstocklists[i];
+            if (!list.isEmpty()) {
+                retList.add(TimeUtil.convertDate3(list.get(0).getDate()));
             }
         }
         return retList;

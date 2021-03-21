@@ -3,19 +3,24 @@ package roart.indicator.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import roart.common.config.MarketStock;
 import roart.common.config.MyMyConfig;
 import roart.common.pipeline.PipelineConstants;
+import roart.common.util.ArraysUtil;
 import roart.db.common.DbAccess;
 import roart.db.dao.DbDao;
 import roart.indicator.AbstractIndicator;
 import roart.indicator.util.IndicatorUtils;
 import roart.model.StockItem;
+import roart.model.data.StockData;
 import roart.pipeline.Pipeline;
 
 public abstract class Indicator extends AbstractIndicator {
@@ -25,35 +30,16 @@ public abstract class Indicator extends AbstractIndicator {
     }
 
     protected void calculateForExtras(Pipeline[] datareaders) {
+        if (category != 42 && fieldSize == 0) {
+            return;
+        }
         Map<String, Pipeline> pipelineMap = IndicatorUtils.getPipelineMap(datareaders);
 
         Pipeline extrareader = pipelineMap.get(PipelineConstants.EXTRAREADER);
         if (extrareader == null) {
             return;
         }
-        Map<String, Object> localResults =  extrareader.getLocalResultMap();
-        Map<Pair<String, String>, List<StockItem>> pairStockMap = (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
-        Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
-        Map<Pair<String, String>, String> pairCatMap = (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
-        Map<Pair<String, String>, Double[][]> pairListMap = (Map<Pair<String, String>, Double[][]>) localResults.get(PipelineConstants.PAIRLIST);
-        Map<Pair<String, String>, List<Date>> pairDateListMap = (Map<Pair<String, String>, List<Date>>) localResults.get(PipelineConstants.PAIRDATELIST);
-        Map<Pair<String, String>, double[][]> pairTruncListMap = (Map<Pair<String, String>, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
-        log.info("lockeys {}", localResults.keySet());
-        Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
-        Map<String, Map<String, double[][]>> marketListMap = new HashMap<>();
-        for(Pair<String, String> pair : pairMap.keySet()) {
-            String market = pair.getLeft();
-            Map<String, double[][]> aListMap = marketListMap.get(market);
-            if (aListMap == null) {
-                aListMap = new HashMap<>();
-                marketListMap.put(market, aListMap);
-            }
-            String id = pair.getRight();
-            double[][] truncList = pairTruncListMap.get(pair);
-            if (truncList != null) {
-                aListMap.put(id, truncList);
-            }
-        }
+        Map<String, Map<String, double[][]>> marketListMap = getMarketListMap(extrareader);
         marketObjectMap = new HashMap<>();
         marketCalculatedMap = new HashMap<>();
         marketResultMap = new HashMap<>();
@@ -62,6 +48,10 @@ public abstract class Indicator extends AbstractIndicator {
         for (Entry<String, Map<String, double[][]>> entry : marketListMap.entrySet()) {
             String market = entry.getKey();
             Map<String, double[][]> myTruncListMap = entry.getValue();
+            Map<String, Double[][]> newMyTruncListMap = convert(myTruncListMap);
+            if (!anythingHere(newMyTruncListMap)) {
+                continue;
+            }
             List<Map> resultList = getMarketCalcResults(dbDao, myTruncListMap);
             if (resultList == null || resultList.isEmpty()) {
                 continue;
@@ -73,6 +63,76 @@ public abstract class Indicator extends AbstractIndicator {
             marketCalculatedMap.put(market, aCalculatedMap);
             marketResultMap.put(market, aResultMap);
         }
+    }
+
+    public Map<String, Map<String, double[][]>> getMarketListMap(Pipeline extrareader) {
+        Map<String, Map<String, double[][]>> marketListMap = new HashMap<>();
+        Map<String, Object> localResults =  extrareader.getLocalResultMap();
+        /*
+        Map<Pair<String, String>, List<StockItem>> pairStockMap = null; // (Map<Pair<String, String>, List<StockItem>>) localResults.get(PipelineConstants.PAIRSTOCK);
+        //Map<Pair<String, String>, Map<Date, StockItem>> pairDateMap = (Map<Pair<String, String>, Map<Date, StockItem>>) localResults.get(PipelineConstants.PAIRDATE);
+        //Map<Pair<String, String>, String> pairCatMap = (Map<Pair<String, String>, String>) localResults.get(PipelineConstants.PAIRCAT);
+        //Map<Pair<String, String>, Double[][]> pairListMap = (Map<Pair<String, String>, Double[][]>) localResults.get(PipelineConstants.PAIRLIST);
+        //Map<Pair<String, String>, List<Date>> pairDateListMap = (Map<Pair<String, String>, List<Date>>) localResults.get(PipelineConstants.PAIRDATELIST);
+        Map<Pair<String, String>, double[][]> pairTruncListMap = null; // (Map<Pair<String, String>, double[][]>) localResults.get(PipelineConstants.PAIRTRUNCLIST);
+        */
+        Set<String> commonDates = (Set<String>) localResults.get(PipelineConstants.DATELIST);
+        LinkedHashSet<MarketStock> marketStocks = (LinkedHashSet<MarketStock>) localResults.get(PipelineConstants.MARKETSTOCKS);
+        Map<String, Pipeline[]> dataReaderMap = (Map<String, Pipeline[]>) localResults.get(PipelineConstants.DATAREADER);
+        Map<String, StockData>  stockDataMap = (Map<String, StockData>) localResults.get(PipelineConstants.STOCKDATA);
+        log.info("lockeys {}", localResults.keySet());
+        //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
+        for(MarketStock ms : marketStocks) {
+            String market = ms.getMarket();
+            String id = ms.getId();
+            String catName = ms.getCategory();
+            Map<String, double[][]> aListMap = marketListMap.get(market);
+            if (aListMap == null) {
+                aListMap = new HashMap<>();
+                marketListMap.put(market, aListMap);
+            }
+            Pipeline[] datareaders2 = dataReaderMap.get(market);
+            Map<String, Pipeline> pipelineMap2 = IndicatorUtils.getPipelineMap(datareaders2);
+            int category = 0; // extraData.category;
+            String cat = ms.getCategory();
+            StockData stockData = stockDataMap.get(market);
+            if (cat == null) {
+                cat = stockData.catName;
+            }
+            int mycat = stockData.cat;
+            Pipeline[] mydatareaders = dataReaderMap.get(market);
+            Map<String, Pipeline> mypipelineMap = IndicatorUtils.getPipelineMap(mydatareaders);
+            Pipeline datareader = mypipelineMap.get("" + mycat);
+            //Pipeline datareader = pipelineMap.get("" + category);
+            Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
+            Map<String, double[][]> truncFillListMap = (Map<String, double[][]>) datareader.getLocalResultMap().get(PipelineConstants.TRUNCFILLLIST);
+            Object[] arr = null;
+            Double[][] fillList0 = fillListMap.get(ms.getId());
+            double[][] fillList = truncFillListMap.get(ms.getId());
+            if (fillList != null) {
+                aListMap.put(ms.getId(), fillList);
+            }
+        }
+        return marketListMap;
+    }
+
+    public Map<String, Double[][]> convert(Map<String, double[][]> myTruncListMap) {
+        Map<String, Double[][]> newMyTruncListMap = new HashMap<>();
+        for (Entry<String, double[][]> entry2 : myTruncListMap.entrySet()) {
+            double[][] val = entry2.getValue();
+            int length = 0;
+            for (int i = 0; i < val.length; i++) {
+                if (val[i] != null /*&& val[i].length > 0*/) {
+                    length++;
+                }
+            }
+            Double doubles[][] = new Double[length][];
+            for (int i = 0; i < length; i++) {
+                doubles[i] = ArraysUtil.convert(val[i]);
+            }
+            newMyTruncListMap.put(entry2.getKey(), doubles);
+        }
+        return newMyTruncListMap;
     }
 
     protected void calculateAll(int category, Pipeline[] datareaders) throws Exception {

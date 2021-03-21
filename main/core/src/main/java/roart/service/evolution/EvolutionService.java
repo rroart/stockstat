@@ -103,7 +103,7 @@ public class EvolutionService {
         table.add(headrow);
     
         try {
-            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat);
+            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getMarket());
             Pipeline[] datareaders = new Pipeline[1];
             datareaders[0] = dataReader;
     
@@ -299,10 +299,10 @@ public class EvolutionService {
     
         try {
 
-            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat);
+            DataReader dataReader = new DataReader(conf, stockData.marketdatamap, stockData.cat, conf.getMarket());
             //Pipeline[] datareaders = new Pipeline[1];
             Pipeline[] datareaders = new ServiceUtil().getDataReaders(conf, stockData.periodText,
-                    stockData.marketdatamap);
+                    stockData.marketdatamap, stockData);
     
             //datareaders[0] = dataReader;
     

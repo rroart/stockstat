@@ -9,5 +9,25 @@ public class MarketStockExpression {
     private List<MarketStock> items;
        
     private String expression;
+
+    public MarketStockExpression() {
+        super();
+    }
+
+    public List<MarketStock> getItems() {
+        return items;
+    }
+
+    public void setItems(List<MarketStock> items) {
+        this.items = items;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
    
 }
