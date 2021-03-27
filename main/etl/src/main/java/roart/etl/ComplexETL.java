@@ -47,8 +47,9 @@ public class ComplexETL {
                 Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
                 Double[][] fillList = fillListMap.get(id);
                 try {
-                    int dateIndex = datelist.indexOf(date);
-                Double value = fillList[0][dateIndex];
+                    int dateIndex = datelist.size() - datelist.indexOf(date);
+                    dateIndex = fillList[0].length - dateIndex;
+                    Double value = fillList[0][dateIndex];
                 values.add(value);
                 } catch (Exception e) {
                     int jj = 0;

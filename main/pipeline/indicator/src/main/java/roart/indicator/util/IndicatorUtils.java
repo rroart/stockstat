@@ -408,8 +408,11 @@ public class IndicatorUtils {
         try {
             if (!dayIndicatorMap.isEmpty()) {
                 for (int i = 0; i < arraySize; i++) {
-                    indicatorMinMax[i].add(Collections.min(indicatorLists[i]));
-                    indicatorMinMax[i].add(Collections.max(indicatorLists[i]));
+                    // null in here
+                    if (!indicatorLists[i].isEmpty()) {
+                        indicatorMinMax[i].add(Collections.min(indicatorLists[i]));
+                        indicatorMinMax[i].add(Collections.max(indicatorLists[i]));
+                    }
                 }
             }
         } catch (Exception e) {
@@ -545,7 +548,7 @@ public class IndicatorUtils {
                 //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
                 Map<String, Map<String, Object[]>> marketObjectMap = (Map<String, Map<String, Object[]>>) localIndicatorResults.get(PipelineConstants.MARKETOBJECT);
                 if (marketObjectMap == null) {
-                    int jj = 0;
+                    continue;
                 }
                 for (Entry<String, Map<String, Object[]>> marketEntry : marketObjectMap.entrySet()) {
                     String market = marketEntry.getKey();     
@@ -597,6 +600,8 @@ public class IndicatorUtils {
         Object[] arr = indicator.getDayResult(objsIndicator, j);
         if (arr != null && arr.length > 0) {
             result = (Double[]) ArrayUtils.addAll(result, arr);
+        } else {
+            int jj = 0;
         }
         return result;
     }

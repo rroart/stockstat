@@ -80,7 +80,7 @@ public abstract class Indicator extends AbstractIndicator {
         LinkedHashSet<MarketStock> marketStocks = (LinkedHashSet<MarketStock>) localResults.get(PipelineConstants.MARKETSTOCKS);
         Map<String, Pipeline[]> dataReaderMap = (Map<String, Pipeline[]>) localResults.get(PipelineConstants.DATAREADER);
         Map<String, StockData>  stockDataMap = (Map<String, StockData>) localResults.get(PipelineConstants.STOCKDATA);
-        log.info("lockeys {}", localResults.keySet());
+        log.debug("lockeys {}", localResults.keySet());
         //Map<Pair<String, String>, List<StockItem>> pairMap = pairStockMap;
         for(MarketStock ms : marketStocks) {
             String market = ms.getMarket();

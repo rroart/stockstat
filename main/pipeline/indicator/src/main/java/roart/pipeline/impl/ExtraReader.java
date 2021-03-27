@@ -382,11 +382,12 @@ public class ExtraReader extends Pipeline {
             int mycat = stockData.cat;
             Pipeline datareader = pipelineMap.get("" + mycat);
             List<String> dateList = (List<String>) datareader.getLocalResultMap().get(PipelineConstants.DATELIST);
-            int dateIndex = dateList.indexOf(commonDate);
+            int dateIndex = dateList.size() - dateList.indexOf(commonDate);
             int prevDateIndex = dateList.indexOf(prevDate);
             Map<String, Double[][]> fillListMap = (Map<String, Double[][]>) datareader.getLocalResultMap().get(PipelineConstants.FILLLIST);
             Object[] arr = null;
             Double[][] fillList = fillListMap.get(entry.getId());
+            dateIndex = fillList[0].length - dateIndex;
             Double value = fillList[0][dateIndex];
             Double prevValue = fillList[0][dateIndex - (deltas - 1)];
             if (value != null && prevValue != null) {
