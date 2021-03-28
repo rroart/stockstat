@@ -311,4 +311,8 @@ public class IclijConfigConstants {
     public static final String MARKETSFILTERMARKETSMARKET = "markets.filtermarkets.filtermarket[@id]";
     public static final String MARKETSIMPORTANTSIMPORTANT = "markets.importants.important[@id]";
     public static final String MARKETSIMPORTANTSIMPORTANTCONFIG = "markets.importants.important[@id].config";
+    public static final String MARKETSSIMULATE = "markets.simulate";
+    public static final String MARKETSSIMULATECONFIG = "markets.simulate.config";
+    public static final String MARKETSSIMULATE2 = "markets.simulate[@id]";
+    public static final String MARKETSSIMULATECONFIG2 = "markets.simulate[@id].config";
 }

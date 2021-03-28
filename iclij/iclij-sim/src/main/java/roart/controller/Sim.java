@@ -64,39 +64,22 @@ public class Sim {
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
         if (myList.size() > 0) {
             //for ()
+            Map<String, String> shortMap = getShortMap();
+            List<SimulateFilter[]> list = null;
+            IclijConfig instance = IclijXMLConfig.getConfigInstance();
+            try {
+                list = IclijXMLConfig.getSimulate(instance);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
             Pair<Double, AbstractChromosome> winnerPair = myList.get(0);
             IclijConfigMapChromosome winnerChromosome = (IclijConfigMapChromosome) winnerPair.getValue();
             int adviser = getAdviser(winnerChromosome);
-            Set<String> generalSimConfig = new HashSet<>();
-            generalSimConfig.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
-            generalSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
-            Set<String> periodSimConfig = new HashSet<>();
-            periodSimConfig.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
-            periodSimConfig.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
-            periodSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
-            Set<String> timeSimConfig = new HashSet<>();
-            timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
-            timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTDAY);
-            timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
-            Map<String, String> shortMap = new HashMap<>();
-            shortMap.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, "i");
-            shortMap.put(IclijConfigConstants.SIMULATEINVESTDAY, "d");
-            shortMap.put(IclijConfigConstants.SIMULATEINVESTPERIOD, "p");
-            shortMap.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, "ir");
-            String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
-            SimulateFilter[] filters = new SimulateFilter[10];
-            SimulateFilter filter = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-            filters[0] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-            filters[1] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, periodSimConfig);
-            filters[2] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-            filters[3] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-            filters[4] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-            filters[5] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-            filters[6] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, timeSimConfig);
-            filters[7] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-            filters[8] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-            filters[9] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
-            filter = filters[adviser];
+            SimulateFilter filter = getFilter(adviser);
+            if (!list.isEmpty()) {
+                SimulateFilter[] filters = list.get(0);
+                filter = filters[adviser];
+            }
             List<String> output = new ArrayList<>();
 
             //output.add("Sim " + simtext);
@@ -162,8 +145,47 @@ public class Sim {
             for (Pair<Double, String> aSummary : maxSummaries) {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
+            String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
             print("sim " + simtext, "File " + id, output);
         }
+    }
+
+    private SimulateFilter getFilter(int adviser) {
+        SimulateFilter filter;
+        Set<String> generalSimConfig = new HashSet<>();
+        generalSimConfig.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+        generalSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+        Set<String> periodSimConfig = new HashSet<>();
+        periodSimConfig.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+        periodSimConfig.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
+        periodSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+        Set<String> timeSimConfig = new HashSet<>();
+        timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
+        timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTDAY);
+        timeSimConfig.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
+        SimulateFilter[] filters = new SimulateFilter[10];
+        filter = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[0] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[1] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, periodSimConfig);
+        filters[2] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[3] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[4] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[5] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[6] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, timeSimConfig);
+        filters[7] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[8] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filters[9] = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        filter = filters[adviser];
+        return filter;
+    }
+
+    private Map<String, String> getShortMap() {
+        Map<String, String> shortMap = new HashMap<>();
+        shortMap.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, "i");
+        shortMap.put(IclijConfigConstants.SIMULATEINVESTDAY, "d");
+        shortMap.put(IclijConfigConstants.SIMULATEINVESTPERIOD, "p");
+        shortMap.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, "ir");
+        return shortMap;
     }
 
     private String getParam(String param) {

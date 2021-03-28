@@ -676,7 +676,7 @@ public class IclijXMLConfig {
             //defaultMlConfigs.merge(mlConfigs);
             market.setConfig(marketConfig);
             market.setFilter(marketFilter);
-            market.setSimulateFilter(simulateFilter);
+            //market.setSimulateFilter(simulateFilter);
             market.setMlconfig(mlConfigs);
             market.setSimulate(simulate);
             //String text2 = (String) config.getConfigValueMap().get(text);
@@ -699,6 +699,44 @@ public class IclijXMLConfig {
             Market market = new Market();
 
             Extra marketConfig = getConfig(configMap, "config", Extra.class, config);
+            if (marketConfig == null) {
+                int jj = 0;
+                log.error("Empty important config");
+                continue;
+            }
+            //String text2 = (String) config.getConfigValueMap().get(text);
+            //MarketConfig market = mapper.readValue(text2, new TypeReference<MarketConfig>(){});
+            retList.add(marketConfig);
+        }
+        return retList;
+    }
+
+    public static List<SimulateFilter[]> getSimulate(IclijConfig config) throws JsonParseException, JsonMappingException, IOException {
+        List<SimulateFilter[]> retList = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        ConfigTreeMap map = config.getConfigTreeMap().search("markets.simulate");
+        if (map == null) {
+            //return retList;
+        }
+        String value = (String) config.getValueOrDefault(IclijConfigConstants.MARKETSSIMULATECONFIG);
+        if (value != null) {
+            SimulateFilter[] marketConfig = null;
+            try {
+                marketConfig = mapper.readValue(value, SimulateFilter[].class);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            retList.add(marketConfig);
+        }
+        if (true) {
+            return retList;
+        }
+        for (Entry<String, ConfigTreeMap> entry : map.getConfigTreeMap().entrySet()) {
+            String text = entry.getValue().getName();
+            ConfigTreeMap configMap = entry.getValue();
+            Market market = new Market();
+
+            SimulateFilter[] marketConfig = getConfig(configMap, "config", SimulateFilter[].class, config);
             if (marketConfig == null) {
                 int jj = 0;
                 log.error("Empty important config");

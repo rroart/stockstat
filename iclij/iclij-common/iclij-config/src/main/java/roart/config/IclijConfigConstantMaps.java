@@ -321,6 +321,10 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.MARKETSMARKETLISTMARKET2, String.class);
         map.put(IclijConfigConstants.MARKETSTRADEMARKETSMARKET2, String.class);
         map.put(IclijConfigConstants.MARKETSIMPORTANTSIMPORTANT2, String.class);
+        map.put(IclijConfigConstants.MARKETSSIMULATE, String.class);
+        map.put(IclijConfigConstants.MARKETSSIMULATECONFIG, String.class);
+        map.put(IclijConfigConstants.MARKETSSIMULATE2, String.class);
+        map.put(IclijConfigConstants.MARKETSSIMULATECONFIG2, String.class);
     }
 
     public static Map<String, Object> deflt = new HashMap<>();
