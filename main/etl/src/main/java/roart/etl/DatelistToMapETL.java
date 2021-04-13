@@ -69,6 +69,12 @@ public class DatelistToMapETL {
                         }
                         if (value != null && ii == 0) {
                             lastnumberMap.put(stockid, value[ii]);
+                            if (value[ii] == null) {
+                                int jj = 0;
+                            }
+                        }
+                        if (value[ii] != null && ii == 0) {
+                            //lastnumberMap.put(stockid, value[ii]);
                         }
                     }
                     MapUtil.mapAdd(retMap, stockid, datedstocklists.length - 1 - i, value, datedstocklists.length);
