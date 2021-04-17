@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import math
 
 import myconfig as cf
 
@@ -35,8 +36,9 @@ def base100(myma, periodtext):
     lhigh = myma[2]
     if percentize:
       if periodtext == "Price" or periodtext == "Index":
-        first = l[0]
-        print("t1 ", type(myma))
+        #print("ty", type(l),l)
+        first = next(item for item in l if not math.isnan(item))
+        #print("t1 ", type(myma), type(first), first, math.isnan(first), math.isnan(l[0]))
         l = np.asarray(l) * (100 / first)
         l = pd.Series(data = l)
         llow = np.asarray(llow) * (100 / first)
