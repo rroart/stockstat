@@ -346,16 +346,16 @@ def getperiodmap(list1, list2):
     #print(values)
     for key in list2.keys():
         #print(key)
-        id = list2[key]
-        retlist[id] = None #np.NaN
-        i = np.where(values == id)
+        anid = list2[key]
+        retlist[anid] = None #np.NaN
+        i = np.where(values == anid)
         #print(type(i))
         #print(i)
         i = i[0]
         #print(type(i))
         #print(i)
         if not i is None:
-            retlist[id] = j - i
+            retlist[anid] = j - i
         j = j + 1
     
     return (retlist)
@@ -401,11 +401,11 @@ def myperiodtextslist(myperiodtexts, periodtexts):
 def getvalues(myid, start, end):
 #def getvalues(market, id, start, end, myperiodtexts):
     market = myid[0]
-    id = myid[1]
+    anid = myid[1]
     periodtext = myid[2]
     stockdata = StockData(market, allstocks, allmetas, start, end)
     #stocks = stockdata.stocks
-    #stocks = stocks.loc[(stocks.id == id)]
+    #stocks = stocks.loc[(stocks.id == anid)]
     myperiodtexts = myperiodtextslist( [ periodtext ], stockdata.periodtexts)
     print("here")
     print(len(myperiodtexts))
@@ -420,7 +420,7 @@ def getvalues(myid, start, end):
         print("here", stockdata.days)
         for j in range(stockdata.days):
             df = stockdata.stocklistperiod[period][j]
-            df = df[df.id == id]
+            df = df[df.id == anid]
             if len(df) == 1:
                 name = df.name.iloc[0]
                 list11 = df
@@ -720,14 +720,14 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
                 for i in range(len(ids)):
                     idpair = ids[i]
                     idmarket = idpair[0]
-                    id = idpair[1]
+                    anid = idpair[1]
                                         #           print("for")
-                    print(market, idmarket, id)
+                    print(market, idmarket, anid)
                     print("")
                     if market == idmarket:
-                        print("per", text, " ", id, " ", period, " ")
+                        print("per", text, " ", anid, " ", period, " ")
                         print("")
-                        bigretl = getelem3(id, stockdata.days, datedstocklists, period, topbottom, text == 'cy')
+                        bigretl = getelem3(anid, stockdata.days, datedstocklists, period, topbottom, text == 'cy')
                         l3 = bigretl[0]
                         l = l3[0]
                         llow = l3[1]
@@ -764,7 +764,7 @@ def getcontentgraph(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=
                                 lhigh = my.fixna(lhigh, interpolation)
                             
                         ls.append([l, llow, lhigh])
-                        listdf = getelem3tup(id, stockdata.days, datedstocklists, period, topbottom)
+                        listdf = getelem3tup(anid, stockdata.days, datedstocklists, period, topbottom)
                         df = listdf
                         mynames.append(df.name)
                         c = c + 1
@@ -882,8 +882,8 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, inte
     scalebeginning100 = 1
     
     markets = set()
-    for id in ids:
-        markets.add(id[0])
+    for anid in ids:
+        markets.add(anid[0])
     marketdatamap = {}
     stockdatamap = {}
     for market in markets:
@@ -934,7 +934,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, inte
             #        print(text)
             c = 0
             market = intuple[0]
-            id = intuple[1]
+            anid = intuple[1]
             periodtext = intuple[2]
             perioddata = perioddatamap[periodtext]
             periodtuples = perioddata["text"]
@@ -951,12 +951,12 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, inte
                 #for i in range(len(ids)):
                 if True:
                                         #           print("for")
-                    #print(market, idmarket, id)
+                    #print(market, idmarket, anid)
                     print("")
                     if True:
-                        #print("per", text, " ", id, " ", period, " ")
-                        print("Id", id)
-                        bigretl = getelem3(id, stockdata.days, datedstocklists, indexid, topbottom, text == 'cy')
+                        #print("per", text, " ", anid, " ", period, " ")
+                        print("Id", anid)
+                        bigretl = getelem3(anid, stockdata.days, datedstocklists, indexid, topbottom, text == 'cy')
                         l3 = bigretl[0]
                         l = l3[0]
                         llow = l3[1]
@@ -980,9 +980,9 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, inte
                             #l = l.interpolate(method='linear')
                             l = my.fixna(l, interpolation)
                         ls.append(l)
-                        listdf = getelem3tup(id, stockdata.days, datedstocklists, indexid, topbottom)
+                        listdf = getelem3tup(anid, stockdata.days, datedstocklists, indexid, topbottom)
                         df = listdf
-                        #print("Id " + id + " " + str((df.name.values[0])))
+                        #print("Id " + anid + " " + str((df.name.values[0])))
                         #print(df)
                         mynames.append(df.name.values[0])
                         c = c + 1
@@ -1079,37 +1079,24 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
     for alist in ids:
         for aalist in alist:
             # do not add the expression itself
-            print(type(aalist), aalist)
             if not type(aalist) is str:
-                print(1)
                 markets.add(aalist[0])
                 marketstocks.add(aalist)
         # if simple
         if len(alist) == 1:
             allmarketstocks[alist[0]] = None
     stockdatamap = {}
-    datareadermap = {}
     marketids = {}
     for marketstock in marketstocks:
         market = marketstock[0]
-        id = marketstock[1]
+        anid = marketstock[1]
         if not market in marketids:
-            marketids[market] = [ id ]
+            marketids[market] = [ anid ]
         else:
-            l = marketids[market].append(id)
-    for market in markets:
-        stockdatamap[market] = StockData(market, allstocks, allmetas, mystart, end, tableintervaldays = tableintervaldays)
-        marketdatamap = stockdatamap[market].marketdatamap
-        datareader = DataReader(stockdatamap[market].cat)
-        periodint = stockdatamap[market].cat
-        count = 0
-        mytableintervaldays = 0
-        currentyear = False
-        datareader.listmap = getseries(getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[market]))
-        datareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
-        datareader.datelist = getdatelist(market, stockdatamap[market].marketdatamap)
-        datareadermap[market] = [ datareader ]
-    newmap = {}
+            l = marketids[market].append(anid)
+    datareadermap = getDatareaderMap(end, interpolate, interpolation, marketids, markets, scalebeginning100, mystart,
+                                     stockdatamap, tableintervaldays)
+
     for alist in ids:
         # skip simple
         if len(alist) == 1:
@@ -1117,66 +1104,20 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         print(alist)
         mymarkets = set()
         mymarketstocks = set()
+        newmap = {}
         for aalist in alist:
             # do not add the expression itself
             print(type(aalist), aalist)
             if not type(aalist) is str:
-                print(1)
                 mymarkets.add(aalist[0])
                 mymarketstocks.add(aalist)
-        #commondates = set(stockdatamap[sorted(markets)[0]].listdates)
-        commondates = set(getdatelist(list(mymarkets)[0], stockdatamap[list(mymarkets)[0]].marketdatamap))
-        for marketstock in mymarketstocks:
-            #print("ccc", commondates)
-            market = marketstock[0]
-            stockdata = stockdatamap[market]
-            adateset = set(getdatelist(market, stockdata.marketdatamap))
-            commondates = commondates.intersection(adateset)
-        commondates = list(commondates)
-        commondates.sort()
+        commondates = getCommonDates(mymarkets, mymarketstocks, stockdatamap)
         method(alist, commondates, stockdatamap, datareadermap, newmap)
     
-    for id in newmap.keys():
-        alist = newmap[id]
-        listmap = {}
-        listmap[id] = [ alist, [], [] ]
-        newdatareader = DataReader(-3)
-        newdatareader.listmap = getseries(listmap)
-        newdatareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
-        newdatareader.datelist = commondates
-        datareadermap[id] = [ newdatareader ]
-        allmarketstocks[(id, id, None)] = None
+        addDatareaderComplex(allmarketstocks, commondates, datareadermap, interpolate, interpolation, newmap,
+                         scalebeginning100)
 
     perioddatamap = {}
-    for market in markets:
-        continue
-        stockdata = stockdatamap[market]
-        periodtexts = stockdata.periodtexts
-        for i in range(periods):
-            text = periodtexts[i]
-            pair = [market, i]
-            pairkey = str(1) + market
-                                        #            print(text)
-            if perioddatamap.get(text) is None:
-                                        #                print("new")
-                perioddata = {}
-                perioddata["text"] = {}
-                perioddatamap[text] = perioddata
-            perioddata = perioddatamap[text]
-            pairs = perioddata["text"]
-            pairs[pairkey] = pair
-            perioddata["text"] = pairs
-            perioddatamap[text] = perioddata
-        if False:
-            perioddata = []
-            pairs[paste(1, market)] = [market, pricetype]
-            perioddata["text"] = pairs
-            perioddatamap["price"] = perioddata
-        if False:
-            perioddata = []
-            pairs[paste(1, market)] = [market, indextype]
-            perioddata["text"] = pairs
-            perioddatamap["index"] = perioddata
     retl = []
     olddate = "old"
     newdate = "new"
@@ -1184,73 +1125,6 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
     dayset2 = []
     ls = []
     mynames = []
-    for text in perioddatamap:
-        continue
-        if text == periodtext:
-                                        #        print(text)
-            c = 0
-            perioddata = perioddatamap[text]
-            pairs = perioddata["text"]
-            for pairkey in pairs:
-                pair = pairs[pairkey]
-                market = pair[0]
-                period = pair[1]
-                stockdata = stockdatamap[market]
-                #print(type(marketdata))
-                #print(len(marketdata))
-                #print(marketdata)
-                datedstocklists = stockdata.datedstocklists
-                for i in range(len(ids)):
-                    idpair = ids[i]
-                    idmarket = idpair[0]
-                    id = idpair[1]
-                                        #           print("for")
-                    print(market, idmarket, id)
-                    print("")
-                    if market == idmarket:
-                        print("per", text, " ", id, " ", period, " ")
-                        print("")
-                        bigretl = getelem3(id, stockdata.days, datedstocklists, period, topbottom, text == 'cy')
-                        l3 = bigretl[0]
-                        l = l3[0]
-                        llow = l3[1]
-                        lhigh = l3[2]
-                        print("gaga")
-                        #print(l)
-                        print(type(l))
-                        print("scale", scalebeginning100)
-                        if scalebeginning100 == 1:
-                            print("minmax")
-                            print(l)
-                            mymin = abs(min(l))
-                            mymax = abs(max(l))
-                            if mymin > mymax:
-                                mymax = mymin
-                            for j in range(len(l)):
-                                l[j] = l[j] * 100 / mymax;
-                            print(l)
-                        
-                        dayset.extend(bigretl[1])
-                        dayset2.extend(bigretl[2])
-                        if interpolate:
-                            print(type(l))
-                            l = my.fixzero2(l)
-                            #l = l.interpolate(method='linear')
-                            l = my.fixna(l, interpolation)
-                            if not llow is None:
-                                llow = my.fixzero2(llow)
-                                #llow = llow.interpolate(method='linear')
-                                llow = my.fixna(llow, interpolation)
-                            if not lhigh is None:
-                                lhigh = my.fixzero2(lhigh)
-                                #lhigh = lhigh.interpolate(method='linear')
-                                lhigh = my.fixna(lhigh, interpolation)
-                            
-                        ls.append([l, llow, lhigh])
-                        listdf = getelem3tup(id, stockdata.days, datedstocklists, period, topbottom)
-                        df = listdf
-                        mynames.append(df.name)
-                        c = c + 1
     commonls = []
     for intuple in allmarketstocks:
     #for text in perioddatamap:
@@ -1260,7 +1134,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         #        print(text)
         c = 0
         market = intuple[0]
-        id = intuple[1]
+        anid = intuple[1]
         datareaders = datareadermap[market]
         pipelinemap = getpipelinemap(datareaders)
         if market in stockdatamap:
@@ -1268,10 +1142,10 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             datareader = pipelinemap[stockdata.cat]
             datelist = datareader.datelist
             datelist.sort()
-            df = stockdata.stocks[(stockdata.stocks.id == id)]
+            df = stockdata.stocks[(stockdata.stocks.id == anid)]
             name = df.name.values[0]
             if name is None or len(name) == 0:
-                name = id
+                name = anid
             mynames.append(name)
         else:
             datelist = datareaders[0].datelist
@@ -1280,7 +1154,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         #print("smalln", datelist)
         #print("small", smalldates)
         datareader = datareaders[0]
-        filllist = datareader.filllistmap[id]
+        filllist = datareader.filllistmap[anid]
         values = []
         #print("cds", commondates, datelist)
         print("cmd",len(datelist),len(filllist[0]))
@@ -1323,6 +1197,8 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
                 break;
         olddate = smalldates[0]
         print("lgrr", len(datelist), vallen)
+        print(mynames, type(mynames))
+        title = mynames[0] + " " + str(olddate) + " - " + str(newdate)
         #print(type(olddate))
         #print(len(olddate))
         #print("")
@@ -1330,6 +1206,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         #print("")
         plt.rc('axes', grid=True)
         plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
+        plt.ion()
 
         indicators = []
         if wantatr:
@@ -1346,29 +1223,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             indicators.append(stochrsi.STOCHRSI())
 
         rsi.doprint=True
-        textsize = 9
-        left, width = 0.1, 0.8
-        numindicators = len(indicators)
-        rect =  [ None for x in range(numindicators + 1) ]
-        others = 0
-        for i in range(numindicators):
-            others = others + 0.4 / numindicators
-            rect[i + 1] = [left, 0.5 - others, width, 0.4 / numindicators ]
-            #rect2 = [left, 0.3, width, 0.2]
-            #rect3 = [left, 0.1, width, 0.2]
-        rect[0] = [left, 0.1 + others, width, 0.8 - others ]
-        plt.ion()
-        print(mynames, type(mynames))
-        title = mynames[0] + " " + str(olddate) + " - " + str(newdate)
-        fig = plt.figure(facecolor='white')
-        axescolor = '#f6f6f6'  # the axes background color
-
-        ax =  [ None for x in range(numindicators + 1) ]
-        ax[0] = fig.add_axes(rect[0], facecolor=axescolor)  # left, bottom, width, height
-        for i in range(numindicators):
-            ax[i + 1] = fig.add_axes(rect[i + 1], facecolor=axescolor, sharex=ax[0])
-            #ax2t = ax2.twinx()
-            #ax3 = fig.add_axes(rect3, facecolor=axescolor, sharex=ax1)
+        ax = getContentGraphAx(indicators)
 
         ls = commonls
         print("ll ", len(ls))
@@ -1399,6 +1254,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         myma[0] = pd.Series(myma[0])
         myma[1] = pd.Series(myma[1])
         myma[2] = pd.Series(myma[2])
+        numindicators = len(indicators)
         for i in range(numindicators):
             indicator = indicators[i]
             lses = indicator.calculate(myma)
@@ -1421,18 +1277,45 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             title = indicator.title()
             displayax(ax[i + 1], lses, daynames2, mynames2, 3, text, newdate, olddate, days2, title)
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
-        wantrsi2 = None
-        if wantrsi2:
-            rsis = []
-            #for i in range(len(ls)):
-            myma = ls[i]
-            arsi = rsi.getmyrsi(myma)
-            rsis.append(arsi)
-            mynames = [ "rsi" ]
-            #displayax(ax3, rsis, daynames2, mynames, 5, periodtext, newdate, olddate, days, "RSI")
 #    displaychart(lses, mynames2, 3, periodtext, newdate, olddate2, days2)
     plt.show()
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
+
+
+def getContentGraphAx(indicators):
+    textsize = 9
+    left, width = 0.1, 0.8
+    numindicators = len(indicators)
+    rect = [None for x in range(numindicators + 1)]
+    others = 0
+    for i in range(numindicators):
+        others = others + 0.4 / numindicators
+        rect[i + 1] = [left, 0.5 - others, width, 0.4 / numindicators]
+        # rect2 = [left, 0.3, width, 0.2]
+        # rect3 = [left, 0.1, width, 0.2]
+    rect[0] = [left, 0.1 + others, width, 0.8 - others]
+    fig = plt.figure(facecolor='white')
+    axescolor = '#f6f6f6'  # the axes background color
+    ax = [None for x in range(numindicators + 1)]
+    ax[0] = fig.add_axes(rect[0], facecolor=axescolor)  # left, bottom, width, height
+    for i in range(numindicators):
+        ax[i + 1] = fig.add_axes(rect[i + 1], facecolor=axescolor, sharex=ax[0])
+        # ax2t = ax2.twinx()
+        # ax3 = fig.add_axes(rect3, facecolor=axescolor, sharex=ax1)
+    return ax
+
+
+def getCommonDates(markets, marketstocks, stockdatamap):
+    commondates = set(getdatelist(list(markets)[0], stockdatamap[list(markets)[0]].marketdatamap))
+    for marketstock in marketstocks:
+        market = marketstock[0]
+        stockdata = stockdatamap[market]
+        adateset = set(getdatelist(market, stockdata.marketdatamap))
+        commondates = commondates.intersection(adateset)
+    commondates = list(commondates)
+    commondates.sort()
+    return commondates
+
 
 # expressions: list of
 # expression: list of list(pair)
@@ -1464,46 +1347,24 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
     for alist in ids:
         for aalist in alist:
             # do not add the expression itself
-            print(type(aalist), aalist)
             if not type(aalist) is str:
-                print(1)
                 markets.add(aalist[0])
                 marketstocks.add(aalist)
         # if simple
         if len(alist) == 1:
             allmarketstocks[alist[0]] = None
     stockdatamap = {}
-    datareadermap = {}
     marketids = {}
     for marketstock in marketstocks:
         market = marketstock[0]
-        id = marketstock[1]
+        anid = marketstock[1]
         if not market in marketids:
-            marketids[market] = [ id ]
+            marketids[market] = [ anid ]
         else:
-            l = marketids[market].append(id)
-    for market in markets:
-        stockdatamap[market] = StockData(market, allstocks, allmetas, start, end, tableintervaldays = tableintervaldays)
-        marketdatamap = stockdatamap[market].marketdatamap
-        datareader = DataReader(stockdatamap[market].cat)
-        periodint = stockdatamap[market].cat
-        count = 0
-        mytableintervaldays = 0
-        currentyear = False
-        datareader.listmap = getseries(getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[market]))
-        datareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
-        datareader.datelist = getdatelist(market, stockdatamap[market].marketdatamap)
-        datareadermap[market] = [ datareader ]
-    #commondates = set(stockdatamap[sorted(markets)[0]].listdates)
-    commondates = set(getdatelist(list(markets)[0], stockdatamap[list(markets)[0]].marketdatamap))
-    for marketstock in marketstocks:
-        #print("ccc", commondates)
-        market = marketstock[0]
-        stockdata = stockdatamap[market]
-        adateset = set(getdatelist(market, stockdata.marketdatamap))
-        commondates = commondates.intersection(adateset)
-    commondates = list(commondates)
-    commondates.sort()
+            l = marketids[market].append(anid)
+    datareadermap = getDatareaderMap(end, interpolate, interpolation, marketids, markets, scalebeginning100, start,
+                                     stockdatamap, tableintervaldays)
+    commondates = getCommonDates(markets, marketstocks, stockdatamap)
     newmap = {}
     for alist in ids:
         # skip simple
@@ -1511,49 +1372,10 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             continue
         print(alist)
         method(alist, commondates, stockdatamap, datareadermap, newmap)
-    for id in newmap.keys():
-        alist = newmap[id]
-        listmap = {}
-        print("al",alist)
-        listmap[id] = [ alist, [], [] ]
-        newdatareader = DataReader(-3)
-        newdatareader.listmap = getseries(listmap)
-        newdatareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
-        newdatareader.datelist = commondates
-        datareadermap[id] = [ newdatareader ]
-        allmarketstocks[(id, id, None)] = None
+    addDatareaderComplex(allmarketstocks, commondates, datareadermap, interpolate, interpolation, newmap,
+                         scalebeginning100)
 
     perioddatamap = {}
-    for market in markets:
-        continue
-        stockdata = stockdatamap[market]
-        periodtexts = stockdata.periodtexts
-        listdates = stockdata.listdates
-        for i in range(periods):
-            text = periodtexts[i]
-            tuple = [market, i, listdates]
-            tuplekey = str(1) + market
-                                        #            print(text)
-            if perioddatamap.get(text) is None:
-                                        #                print("new")
-                perioddata = {}
-                perioddata["text"] = {}
-                perioddatamap[text] = perioddata
-            perioddata = perioddatamap[text]
-            tuples = perioddata["text"]
-            tuples[tuplekey] = tuple
-            perioddata["text"] = tuples
-            perioddatamap[text] = perioddata
-        if False:
-            perioddata = []
-            tuples[paste(1, market)] = [market, pricetype, listdates]
-            perioddata["text"] = tuples
-            perioddatamap["price"] = perioddata
-        if False:
-            perioddata = []
-            tuples[paste(1, market)] = [market, indextype, listdates]
-            perioddata["text"] = tuples
-            perioddatamap["index"] = perioddata
     retl = []
     olddate = "old"
     newdate = "new"
@@ -1570,7 +1392,7 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         #        print(text)
         c = 0
         market = intuple[0]
-        id = intuple[1]
+        anid = intuple[1]
         datareaders = datareadermap[market]
         pipelinemap = getpipelinemap(datareaders)
         if market in stockdatamap:
@@ -1578,10 +1400,10 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             datareader = pipelinemap[stockdata.cat]
             datelist = datareader.datelist
             datelist.sort()
-            df = stockdata.stocks[(stockdata.stocks.id == id)]
+            df = stockdata.stocks[(stockdata.stocks.id == anid)]
             name = df.name.values[0]
             if name is None or len(name) == 0:
-                name = id
+                name = anid
             mynames.append(name)
         else:
             datelist = commondates
@@ -1594,7 +1416,7 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             #print(datareader.listmap.keys())
             #print(datareader.filllistmap.keys())
             #print(datareaders.keys())
-            filllist = datareader.filllistmap100[id]
+            filllist = datareader.filllistmap100[anid]
             #print(filllist)
             #print(dateindex,len(filllist.iloc[0]))
             dateindex = len(filllist[0]) - dateindex
@@ -1604,56 +1426,6 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         print("vals", values)
         commonls.append(values)
         periodtext = intuple[2]
-        #perioddata = perioddatamap[periodtext]
-        #periodtuples = perioddata["text"]
-        if False:
-                tuplekey = str(1) + market
-                periodtuple = periodtuples[tuplekey]
-                market = periodtuple[0]
-                indexid = periodtuple[1]
-                stockdata = stockdatamap[market]
-                #print(type(marketdata))
-                #print(len(marketdata))
-                #print(marketdata)
-                datedstocklists = stockdata.datedstocklists
-                #for i in range(len(ids)):
-                if False:
-                    #           print("for")
-                    #print(market, idmarket, id)
-                    print("")
-                    if True:
-                        #print("per", text, " ", id, " ", period, " ")
-                        print("Id", id)
-                        bigretl = getelem3(id, stockdata.days, datedstocklists, indexid, topbottom, text == 'cy')
-                        l3 = bigretl[0]
-                        l = l3[0]
-                        llow = l3[1]
-                        lhigh = l3[2]
-                        print("gaga")
-                        #print(l)
-                        print(type(l))
-                        if scalebeginning100 == 1:
-                            #print("minmax")
-                            #print(l)
-                            first = l[0]
-                            l = l * 100 / first;
-                            #print(l)
-                        
-                        dayset.extend(bigretl[1])
-                        dayset2.extend(bigretl[2])
-                        #print(str(bigretl[2]))
-                        dayls.append(bigretl[2])
-                        if interpolate:
-                            print(type(l))
-                            #l = l.interpolate(method='linear')
-                            l = my.fixna(l, interpolation)
-                        ls.append(l)
-                        listdf = getelem3tup(id, stockdata.days, datedstocklists, indexid, topbottom)
-                        df = listdf
-                        #print("Id " + id + " " + str((df.name.values[0])))
-                        #print(df)
-                        mynames.append(df.name.values[0])
-                        c = c + 1
     print(dayls)
     commondays = commondates
     #print("dayls",0,dayls[0])
@@ -1664,19 +1436,6 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
     commondays.sort()
     print(commondays)
     #commonls = []
-    for i in range(len(dayls)):
-        continue
-        tmpdayls = dayls[i]
-        tmpls = ls[i]
-        #print("tmpls", tmpls)
-        newtmpls = []
-        for j in range(len(tmpls)):
-            if commondays.index(tmpdayls[j]) >= 0:
-                newtmpls.append(tmpls[j])
-                #print("has"+str(j) + str(tmpdayls[j]) + " " + str(commondays.index(tmpdayls[j])))
-            else:
-                print("hasnot")
-        commonls.append(newtmpls)    
     daynames = commondates
     daynames2 = commondates
     print("type(daynames)")
@@ -1691,6 +1450,7 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
     newdate = max(daynames)
     olddate = min(daynames2)
     newdate = max(daynames2)
+    title = str(mynames) + " " + str(olddate) + " - " + str(newdate)
     #print(type(olddate))
     #print(len(olddate))
     #print("")
@@ -1699,19 +1459,9 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
 
     plt.rc('axes', grid=True)
     plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
-
-    textsize = 9
-    left, width = 0.1, 0.8
-    rect1 = [left, 0.5, width, 0.4]
-    rect2 = [left, 0.3, width, 0.2]
-    rect3 = [left, 0.1, width, 0.2]
     plt.ion()
-    #print("TT" + str(type(mynames[0])))
-    title = str(mynames) + " " + str(olddate) + " - " + str(newdate)
-    fig = plt.figure(facecolor='white')
-    axescolor = '#f6f6f6'  # the axes background color
 
-    ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
+    ax1 = getCompareGraphAx()
     ls = commonls
     dayls = ls
     print("ll", ls)
@@ -1728,19 +1478,55 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
     print("daes", olddate, newdate)
     print(type(commondays[0]))
     displayax(ax1, commonls, commondays, mynames, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
-    percentize = True
-    if percentize:
-      if periodtext == "Price" or periodtext == "Index":
-          first = []
-        #first = myma[0]
-        #print("t1 ", type(myma))
-        #myma = np.asarray(myma) * (100 / first)
-        #myma = pd.Series(data = myma)
-        #print("t2 ", type(myma))
-    #print("tmyma3 ", type(myma))
-    #print(myma)
     plt.show()
-        
+
+
+def getCompareGraphAx():
+    textsize = 9
+    left, width = 0.1, 0.8
+    rect1 = [left, 0.5, width, 0.4]
+    rect2 = [left, 0.3, width, 0.2]
+    rect3 = [left, 0.1, width, 0.2]
+    # print("TT" + str(type(mynames[0])))
+    fig = plt.figure(facecolor='white')
+    axescolor = '#f6f6f6'  # the axes background color
+    ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
+    return ax1
+
+
+def addDatareaderComplex(allmarketstocks, commondates, datareadermap, interpolate, interpolation, newmap,
+                         scalebeginning100):
+    for anid in newmap.keys():
+        alist = newmap[anid]
+        listmap = {}
+        listmap[anid] = [alist, [], []]
+        newdatareader = DataReader(-3)
+        newdatareader.listmap = getseries(listmap)
+        newdatareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
+        newdatareader.datelist = commondates
+        datareadermap[anid] = [newdatareader]
+        allmarketstocks[(anid, anid, None)] = None
+
+
+def getDatareaderMap(end, interpolate, interpolation, marketids, markets, scalebeginning100, start, stockdatamap,
+                     tableintervaldays):
+    datareadermap = {}
+    for market in markets:
+        stockdatamap[market] = StockData(market, allstocks, allmetas, start, end, tableintervaldays=tableintervaldays)
+        marketdatamap = stockdatamap[market].marketdatamap
+        datareader = DataReader(stockdatamap[market].cat)
+        periodint = stockdatamap[market].cat
+        count = 0
+        mytableintervaldays = 0
+        currentyear = False
+        datareader.listmap = getseries(
+            getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[market]))
+        datareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
+        datareader.datelist = getdatelist(market, stockdatamap[market].marketdatamap)
+        datareadermap[market] = [datareader]
+    return datareadermap
+
+
 def getseries(amap):
     for key in amap:
         print("ama", type(amap[key]), amap[key])
@@ -1764,15 +1550,15 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
         if index >= 0:
             for i in range(len(datedstocklists)):
                 #print("i",i)
-                for id in ids:
+                for anid in ids:
                         stocklist = datedstocklists[i]
-                        stock = stocklist.loc[(stocklist.id == id)]
+                        stock = stocklist.loc[(stocklist.id == anid)]
                         if stock.empty:
                             continue
                         #for stock in stocklist:
-                        #id = stock.id
+                        #anid = stock.id
                         df = stock
-                        el = df.loc[(df.id == id)]
+                        el = df.loc[(df.id == anid)]
                         if not len(el) == 1:
                             continue
                         #print("da", el.date)
@@ -1787,7 +1573,7 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
                         #print(len(dfarr[0].values), len(dfarr[1].values), len(dfarr[2].values))
                         values = [ dfarr[0].values[0], dfarr[1].values[0], dfarr[2].values[0] ]
                         #print("vs ", values)
-                        mapadd(retmap, id, i, values , len(datedstocklists))
+                        mapadd(retmap, anid, i, values , len(datedstocklists))
                         #len(datedstocklists) - 1 - 
     else:
         basenumbermap = {}
@@ -1797,32 +1583,32 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
             #print("i",i)
             stocklist = datedstocklists[i]
             #print(type(stocklist), stocklist)
-            for id in ids:
-                    stock = stocklist.loc[(stocklist.id == id)]
+            for anid in ids:
+                    stock = stocklist.loc[(stocklist.id == anid)]
                     if stock.empty:
                         continue
                     #for stock in stocklist:
                     #print(type(stock), stock)
-                    #id = stock.id
+                    #anid = stock.id
                     #print(stock.date, type(stock.date))
-                    #print(id, stock, stocklist)
+                    #print(anid, stock, stocklist)
                     curyear = stock.date.iloc[0].year
-                    if not id in yearmap.keys():
+                    if not anid in yearmap.keys():
                         thisyear = curyear;
-                        yearmap[id] = thisyear
+                        yearmap[anid] = thisyear
                     if curyear != thisyear:
-                        if not id in basenumbermap.keys():
+                        if not anid in basenumbermap.keys():
                             basenumber = 1.0
                         else:
-                            basenumber = basenumbermap[id]
-                        if not id in lastnumbermap.keys():
-                            basenumbermap[id] = basenumber
+                            basenumber = basenumbermap[anid]
+                        if not anid in lastnumbermap.keys():
+                            basenumbermap[anid] = basenumber
                         else:
-                            lastnumber = lastnumbermap[id]
-                        basenumbermap[id] = lastnumber
-                        yearmap[id] = curyear
+                            lastnumber = lastnumbermap[anid]
+                        basenumbermap[anid] = lastnumber
+                        yearmap[anid] = curyear
                     df = stock
-                    el = df.loc[(df.id == id)]
+                    el = df.loc[(df.id == anid)]
                     #print("da", el.date, el.price, i)
                     dfarr = pdu.getonedfvaluearr(el, periodint)
                     value = dfarr[0].values
@@ -1830,29 +1616,29 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
                     for ii in range(len(value)):
                         if not value[ii] is None:
                             value[ii] = 0.01 * value[ii] + 1
-                            if not id in basenumbermap.keys():
+                            if not anid in basenumbermap.keys():
                                 basenumber = 1.0
                             else:
-                                basenumber = basenumbermap[id]
+                                basenumber = basenumbermap[anid]
                             value[ii] = value[ii] * basenumber
                         # TODO
                         if not value[ii] is None and ii == 0:
-                            lastnumbermap[id] = value[ii]
-                    mapadd(retmap, id, i, value, len(datedstocklists))
+                            lastnumbermap[anid] = value[ii]
+                    mapadd(retmap, anid, i, value, len(datedstocklists))
                     #len(datedstocklists) - 1 - 
     #print("rrr", retmap)
     return retmap
 
-def mapadd(amap, id, index, value, length):
-    found = id in amap.keys()
+def mapadd(amap, anid, index, value, length):
+    found = anid in amap.keys()
     #print("lens",length,len(value))
     if not found:
         w, h = length, len(value)
         array = [[None for x in range(w)] for y in range(h)]
         print("aaaa", type(array), w, h)
-        amap[id] = array
+        amap[anid] = array
     else:
-        array = amap[id]
+        array = amap[anid]
     for i in range(len(value)):
         array[i][index] = value[i]
 
@@ -1890,7 +1676,7 @@ def method(alist: list, commondates: set, stockdatamap, datareadermap, newmap):
         #print("mses", marketstocks)
         for marketstock in marketstocks:
             market = marketstock[0]
-            id = marketstock[1]
+            anid = marketstock[1]
             catname = marketstock[2]
             stockdata = stockdatamap[market]
             if (catname is None):
@@ -1899,10 +1685,10 @@ def method(alist: list, commondates: set, stockdatamap, datareadermap, newmap):
             datareaders = datareadermap[market]
             datareader = datareaders[0]
             datelist = datareader.datelist
-            filllist = datareader.filllistmap[id]
+            filllist = datareader.filllistmap[anid]
             dateindex = len(datelist) - datelist.index(date)
             print("dv", date, dateindex)
-            #print(id, filllist)
+            #print(anid, filllist)
             #[0]
             dateindex = len(filllist[0]) - dateindex
             dateindex = datelist.index(date)
@@ -1928,9 +1714,9 @@ def method(alist: list, commondates: set, stockdatamap, datareadermap, newmap):
     newid = "";
     for ms in marketstocks:
         market = ms[0]
-        id = ms[1]
+        anid = ms[1]
         cat = ms[2]
-        newid = newid + market + "." + id + "." + cat + " "
+        newid = newid + market + "." + anid + "." + cat + " "
     newid = newid + expression
     newmap[newid] = newvalues
     return newmap
@@ -2075,7 +1861,7 @@ def displayax(ax, ls, daynames, mynames, topbottom, periodtext, maindate, olddat
 def intersection(a, b):
     return list(set(a) & set(b))
     
-def getelem3(id, days, datedstocklist, period, size, handlecy):
+def getelem3(anid, days, datedstocklist, period, size, handlecy):
     dayset = []
     dayset2 = []
     retl1 = [ None for x in range(days) ]
@@ -2101,7 +1887,7 @@ def getelem3(id, days, datedstocklist, period, size, handlecy):
         #print(len(l))
         #print(l)
         df = l
-        el = df.loc[(df.id == id)]
+        el = df.loc[(df.id == anid)]
         if len(el) == 1:
             dfarr = pdu.getonedfvaluearr(el, period)
             if len(dfarr) == 1:
@@ -2154,52 +1940,52 @@ def getelem3(id, days, datedstocklist, period, size, handlecy):
     print("l ", len(retls1), len(dayset), len(dayset2))
     return([ [ retls1, retls2, retls3 ], dayset,dayset2])
 
-def getelem3tup(id, days, datedstocklist, period, size):
+def getelem3tup(anid, days, datedstocklist, period, size):
     retl = []
     c = 0
     for i in range(days):
         retl.append(np.NaN)
         l = datedstocklist[i]
         df = l
-        el = df.loc[(df.id == id)]
+        el = df.loc[(df.id == anid)]
         if len(el) == 1:
             return(el)
         else:
-            print("err3",len(el),id)
+            print("err3",len(el),anid)
         c = c + 1
     return(retl)
 
-def gettopyear(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+def gettopyear(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
-    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1y", wantchart=False)
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1y", wantchart=False)
 
-def gettop3m(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+def gettop3m(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
-    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "3m", wantchart=False)
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "3m", wantchart=False)
 
-def gettopmonth(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+def gettopmonth(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
-    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
 
-def getbottommonth(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+def getbottommonth(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
-    getbottomgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1m", wantchart=False)
 
-def gettopweek(id, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
+def gettopweek(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
-    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
 
-def gettopday(id, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
+def gettopday(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
-    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1d", wantchart=False)
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1d", wantchart=False)
 
-def getbottomweek(id, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
+def getbottomweek(anid, numberdays = 5, tablemoveintervaldays = 5, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
-    getbottomgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
+    getbottomgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "1w", wantchart=False)
 
-def gettopcy(id, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
+def gettopcy(anid, numberdays = 5, tablemoveintervaldays = 20, topbottom = 10):
     start = (numberdays - 1) * tablemoveintervaldays
-    gettopgraph(id, start, None, numberdays, tablemoveintervaldays, topbottom, "cy", wantchart=False)
+    gettopgraph(anid, start, None, numberdays, tablemoveintervaldays, topbottom, "cy", wantchart=False)
 
 def prevNonNan(alist, pos):
   l = pos
