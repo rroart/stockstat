@@ -127,6 +127,7 @@ class MyDates:
         if isinstance(start, str):
             pdstart = np.datetime64(start)
             startdateindex = np.where(listdates == pdstart)
+            #print(startdateindex, pdstart, listdates)
             startdateindex = startdateindex[0][0]
         if end is None:
             enddateindex = len(listdates) - 1
@@ -207,7 +208,7 @@ class DataReader:
             n = {}
             for k in self.listmap:
                 l0 = self.listmap[k]
-                print("l00", l0, type(l0), len(l0))
+                #print("l00", l0, type(l0), len(l0))
                 #print("l0k", l0.keys())
                 #l2 = []
                 #for ll in range(len(l0.iloc[0])):
@@ -216,21 +217,21 @@ class DataReader:
                 #        l2.append(None)
                 #    else:
                 #        l2.append(lll)
-                print("l0", l0[0][0:20].tolist())
+                #print("l0", l0[0][0:20].tolist())
                 #l2 = pd.Series(data = l0, dtype = np.float64)
                 #self.listmap[k] = l2
                 l2 = self.seriesCopy(l0)
-                print(type(l0[0]), type(l2[0]))
+                #print(type(l0[0]), type(l2[0]))
                 for i in range(len(l2)):
                     l2[i] = my.fixzero2(l2[i])
                 #l = l.interpolate(method='linear')
                 m2 = self.seriesCopy(l2)
                 if interpolate:
-                    print("interpolating")
+                    #print("interpolating")
                     l2 = my.fixnaarr(l2, interpolation)
-                print("l2", l2[0][0:20].tolist())
+                #print("l2", l2[0][0:20].tolist())
                 n2 = self.seriesCopy(l2)
-                print("cccat", self.cat, scalebeginning100, len(l2))
+                #print("cccat", self.cat, scalebeginning100, len(l2))
                 if scalebeginning100 == 1 and len(l2) > 0 and (self.cat > 8 or self.cat == -3):
                     # print("minmax")
                     # print(l)
@@ -244,23 +245,51 @@ class DataReader:
                     n2 = my.base100(n2, "Price")
                     #n2 = n2 * 100 / first;
                     # print(l)
-                print("l2",type(l),type(m),type(n))
-                print("l2",type(l2),type(m2),type(n2))
+                #print("l2",type(l),type(m),type(n))
+                #print("l2",type(l2),type(m2),type(n2))
                 l[k] = l2
                 m[k] = m2
                 n[k] = n2
-                print("l2", l2[0][0:300].tolist())
-                print("m2", m2[0][0:300].tolist())
-                print("n2", n2[0][0:300].tolist())
+                #print("l2", l2[0][0:300].tolist())
+                #print("m2", m2[0][0:300].tolist())
+                #print("n2", n2[0][0:300].tolist())
             self.filllistmap = l
             self.listmap100 = m
             self.filllistmap100 = n
 
-def adls(market, period, days = 180):
-    stockdata = StockData(market, allstocks, allmetas, days, None)
-    print(adl.getadl(stockdata.datedstocklists, period, days))
-    print(adl.getadl2(stockdata.stocks, period, days, stockdata.listdates))
-
+def adls(start, end, market, period):
+    start0 = time.time()
+    stockdata = StockData(market, allstocks, allmetas, start, end)
+    #if days == 0:
+    #    days = stockdata.dates.endindex - stockdata.dates.startindex + 1
+    #print("days", days)
+    marketdatamap = stockdata.marketdatamap
+    datareader = DataReader(stockdata.cat)
+    periodint = stockdata.cat
+    count = 0
+    mytableintervaldays = 0
+    currentyear = False
+    marketids = stockdata.stocks.id.unique()
+    datareader.listmap = getseries(
+        getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids))
+    interpolate = False
+    interpolation = None
+    scalebeginning100 = 0
+    datareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
+    datareader.datelist = getdatelist(market, stockdata.marketdatamap)
+    #datareadermap[market] = [datareader]
+    print("time", time.time() - start0)
+    adl1 = adl.getadl(stockdata.datedstocklists, period)
+    #adl2 = adl.getadl2(stockdata.stocks, period, stockdata.listdates)
+    adl3 = adl.getadl3(stockdata, datareader)
+    print(adl1)
+    #print(adl2)
+    print(adl3)
+    amap = {}
+    amap["ADL"] = [ [0] + adl3, [], []]
+    return getseries(amap)
+    #return datareader
+    
 def getdatedstocklists(listdate, listdates, dates, numberdays, tableintervaldays):
     datedstocklists = []
     #print(len(listdate))
@@ -1084,6 +1113,8 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
                 marketstocks.add(aalist)
         # if simple
         if len(alist) == 1:
+            #if "ADL" == alist[1]:
+            #    jj = 1
             allmarketstocks[alist[0]] = None
     stockdatamap = {}
     marketids = {}
@@ -1135,6 +1166,9 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         c = 0
         market = intuple[0]
         anid = intuple[1]
+        if "ADL" == anid:
+            jj = 1
+            
         datareaders = datareadermap[market]
         pipelinemap = getpipelinemap(datareaders)
         if market in stockdatamap:
@@ -1143,7 +1177,10 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             datelist = datareader.datelist
             datelist.sort()
             df = stockdata.stocks[(stockdata.stocks.id == anid)]
-            name = df.name.values[0]
+            if df.empty:
+                name = anid
+            else:
+                name = df.name.values[0]
             if name is None or len(name) == 0:
                 name = anid
             mynames.append(name)
@@ -1157,7 +1194,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         filllist = datareader.filllistmap[anid]
         values = []
         #print("cds", commondates, datelist)
-        print("cmd",len(datelist),len(filllist[0]))
+        print("cmd",len(datelist),len(filllist[0]),len(smalldates))
         for commondate in smalldates:
             dateindex = datelist.index(commondate)
             #print(datareader.listmap.keys())
@@ -1324,6 +1361,7 @@ def getCommonDates(markets, marketstocks, stockdatamap):
 # item: list(pair)
 # formula: string
 
+# [ [ ( "tradcomm", "ADL", "Price" ) ] ]
 # [ [ ( "tradcomm", "XAUUSD:CUR", "Price" ) ] ]
 # [ [ ( "tradcomm", "XAUUSD:CUR" ), ( "tradcomm", "XAUUSD:CUR", "Price" ) , "\1 / \2" ] ]
 # [ [ ( "tradcomm", "XAUUSD:CUR", "Price" ) ] , [ ( "tradcomm", "XAUUSD:CUR", "Price" ), ( "tradcomm", "HG1:COM", "Price" ), "1 2 /"  ] ]
@@ -1401,7 +1439,10 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             datelist = datareader.datelist
             datelist.sort()
             df = stockdata.stocks[(stockdata.stocks.id == anid)]
-            name = df.name.values[0]
+            if df.empty:
+                name = anid
+            else:
+                name = df.name.values[0]
             if name is None or len(name) == 0:
                 name = anid
             mynames.append(name)
@@ -1464,8 +1505,8 @@ def getcomparegraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
     ax1 = getCompareGraphAx()
     ls = commonls
     dayls = ls
-    print("ll", ls)
-    print("ll ", len(ls), len(ls[0]))
+    #print("ll", ls)
+    #print("ll ", len(ls), len(ls[0]))
     #print("ll ", len(ls), len(ls[1]))
     print("ll ", len(dayls), len(dayls[0]))
     #print("ll ", len(dayls), len(dayls[1]))
@@ -1523,20 +1564,26 @@ def getDatareaderMap(end, interpolate, interpolation, marketids, markets, scaleb
             getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[market]))
         datareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
         datareader.datelist = getdatelist(market, stockdatamap[market].marketdatamap)
+        if "ADL" in marketids[market]:
+            jj = 1
+            datareader.listmap = adls(start, end, market, periodint)
+            datareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
         datareadermap[market] = [datareader]
+            
     return datareadermap
 
 
 def getseries(amap):
     for key in amap:
-        print("ama", type(amap[key]), amap[key])
+        #print("ama", amap.keys())
+        #print("ama", type(amap[key]), amap[key])
         alist = amap[key]
         for i in range(len(alist)):
             #print("al1", alist[i])
             alist[i] = pd.Series(alist[i])
             #print("al2", alist[i].tolist())
         amap[key] = alist
-        print("ama", type(amap[key]), amap[key])
+        #print("ama", type(amap[key]), amap[key])
     return amap
 
 def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, ids):
@@ -1635,7 +1682,7 @@ def mapadd(amap, anid, index, value, length):
     if not found:
         w, h = length, len(value)
         array = [[None for x in range(w)] for y in range(h)]
-        print("aaaa", type(array), w, h)
+        #print("aaaa", type(array), w, h)
         amap[anid] = array
     else:
         array = amap[anid]
@@ -1729,7 +1776,7 @@ def getwantedcategory(stocks: list, meta):
     priority = None
     if meta is not None:
         priority = meta.priority
-    if priority.iloc[0] is not None:
+    if len(priority) > 0 and priority.iloc[0] is not None:
         priorities = priority.tolist()
     else:
         priorities = defaultpriorities
@@ -1744,6 +1791,9 @@ def getwantedcategory(stocks: list, meta):
         if meta is not None:
             periods = [ meta.period1, meta.period2, meta.period3, meta.period4, meta.period5, meta.period6, meta.period7, meta.period8 ]
         for i in range(len(periods)):
+            if len(periods[i]) == 0:
+                continue
+            print("b", apriority, i, len(periods[i]), periods[i])
             print("b", apriority, periods[i].iloc[0])
             if apriority == periods[i].iloc[0]:
                 if hasstockvalue(stocks, i):

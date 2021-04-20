@@ -34,6 +34,7 @@ def base100(myma, periodtext):
     l = myma[0]
     llow = myma[1]
     lhigh = myma[2]
+    #print("per", percentize, periodtext)
     if percentize:
       if periodtext == "Price" or periodtext == "Index":
         #print("ty", type(l),l)
@@ -41,10 +42,14 @@ def base100(myma, periodtext):
         #print("t1 ", type(myma), type(first), first, math.isnan(first), math.isnan(l[0]))
         l = np.asarray(l) * (100 / first)
         l = pd.Series(data = l)
-        llow = np.asarray(llow) * (100 / first)
-        llow = pd.Series(data = llow)
-        lhigh = np.asarray(lhigh) * (100 / first)
-        lhigh = pd.Series(data = lhigh)
+        print(llow)
+        # check for none
+        if not None in llow.tolist():
+            llow = np.asarray(llow) * (100 / first)
+            llow = pd.Series(data = llow)
+        if not None in lhigh.tolist():
+            lhigh = np.asarray(lhigh) * (100 / first)
+            lhigh = pd.Series(data = lhigh)
         #print("t2 ", type(myma))
     #print("tmyma3 ", type(myma))
     #print(myma)
