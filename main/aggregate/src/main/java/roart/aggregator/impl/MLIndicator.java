@@ -337,7 +337,7 @@ public class MLIndicator extends Aggregator {
             Map<String, List<Pair<Object, Double>>> mergedCatMap = new HashMap<>();
             Map<String, List<Pair<Object, Double>>> mergedCatArrayMap = new HashMap<>();
             for (int j = 0; j < days; j += conf.getAggregatorsIndicatorIntervaldays()) {
-                String d = dateList.get(j);
+                //String d = dateList.get(j);
                 getEvaluations(conf, j, retObj2, dateList, mergedCatMap, threshold);
                 //mergedCatMap.putAll(retMap);
                 getEvaluations(conf, j, retObj2, dateList, mergedCatArrayMap, ids, threshold);

@@ -125,6 +125,9 @@ public class ComponentMLIndicator extends ComponentML {
             //return;
         }
         Map<String, Object> resultMap = param.getResultMap();
+        if (resultMap == null) {
+            return;
+        }
         Map<String, List<Object>> aResultMap =  (Map<String, List<Object>>) resultMap.get(PipelineConstants.RESULT);
         int resultIndex = 0;
         int count = 0;
