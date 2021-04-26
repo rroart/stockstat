@@ -1096,7 +1096,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, inte
     #print(myma)
     plt.show()
 
-def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = [], interpolation = 'linear'):
+def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = [], interpolation = 'linear', wantohlc=False):
     scalebeginning100 = 0
     if not end is None:
         mystart = None
@@ -1192,7 +1192,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         #print("small", smalldates)
         datareader = datareaders[0]
         filllist = datareader.filllistmap[anid]
-        values = []
+        values = [[], [], []]
         #print("cds", commondates, datelist)
         print("cmd",len(datelist),len(filllist[0]),len(smalldates))
         for commondate in smalldates:
@@ -1205,10 +1205,12 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             #dateindex = len(filllist) - dateindex
             print(commondate, dateindex)
             value = filllist[0][dateindex]
-            values.append(value)
+            values[0].append(value)
+            values[1].append(filllist[1][dateindex])
+            values[2].append(filllist[2][dateindex])
         print("vals", values)
         commonls = []
-        commonls.append(values)
+        commonls.append(pd.Series(values[0]))
     
         daynames = smalldates
         daynames2 = smalldates
@@ -1226,10 +1228,10 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         newdate = max(daynames)
         olddate = min(daynames2)
         newdate = max(daynames2)
-        vallen = len(values)
+        vallen = len(values[0])
         #olddate = datelist[len(datelist) - vallen]
-        for i in range(len(values)):
-            if not values[i] is None:
+        for i in range(len(values[0])):
+            if not values[0][i] is None:
                 olddate = datelist[i]
                 break;
         olddate = smalldates[0]
@@ -1274,6 +1276,19 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         periodtext = 'bla'
         print("mn", mynames)
         displayax(ax[0], myma0, daynames2, mynames, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
+        if wantohlc:
+            import mplfinance as mpf
+            frame = {}
+            frame['Date']=daynames
+            frame['Close']=values[0]
+            print(type(values[0]),type(values[0][:-1]))
+            frame['Open']=pd.Series([ values[0][0] ] + values[0][:-1])
+            frame['Low']=pd.Series(values[1])
+            frame['High']=values[2]
+            df = pd.DataFrame(frame)
+            df = df.set_index('Date')
+            print(df)
+            mpf.plot(df, type='candle', style='charles', title=title)
         myma = ls[0]
         #print("tmyma ", type(myma))
         #print(myma)
