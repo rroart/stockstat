@@ -656,7 +656,7 @@ public class ArraysUtil {
             }
             retMap.put(entry.getKey(), newArray);
         }
-        return retMap;
+        return Collections.unmodifiableMap(retMap);
     }
 
     public static Map<Pair<String, String>, double[]> getTruncList2(Map<Pair<String, String>, Double[]> listMap) {
