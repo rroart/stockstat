@@ -48,9 +48,14 @@ public class ComplexETL {
                 Double[][] fillList = fillListMap.get(id);
                 try {
                     int dateIndex = datelist.size() - datelist.indexOf(date);
+                    if (fillList == null) {
+                        values.add(null);
+                        continue;
+                    }
                     dateIndex = fillList[0].length - dateIndex;
+                    //dateIndex = datelist.indexOf(date);
                     Double value = fillList[0][dateIndex];
-                values.add(value);
+                    values.add(value);
                 } catch (Exception e) {
                     int jj = 0;
                 }
