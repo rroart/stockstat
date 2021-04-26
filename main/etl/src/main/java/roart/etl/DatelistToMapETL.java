@@ -1,5 +1,6 @@
 package roart.etl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +82,7 @@ public class DatelistToMapETL {
                 }
             }
         }
-        return retMap;
+        return Collections.unmodifiableMap(retMap);
     }
 
     public static Map<String, Object[][]> getVolumes(MyMyConfig conf, String market, String date, Integer periodInt, int count, int mytableintervaldays,

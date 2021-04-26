@@ -25,7 +25,7 @@ public class CleanETL {
         m.remove(PipelineConstants.TRUNCBASE100FILLLIST);
         for (Entry<String, Object> e : m.entrySet()) {
             Object value = e.getValue();
-            if (value instanceof Map) {
+            if (value instanceof Map && !value.getClass().getSimpleName().equals("UnmodifiableMap")) {
                 //System.out.println("" + i + " " + e.getKey() + " " + value.hashCode());
                 fixmap((Map<String, Object>) value);
             } else {

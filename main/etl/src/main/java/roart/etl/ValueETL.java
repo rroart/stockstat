@@ -1,5 +1,6 @@
 package roart.etl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,7 +60,7 @@ public class ValueETL {
                 aMap.put(entry.getKey(), newValue);
             }
         }
-        return aMap;
+        return Collections.unmodifiableMap(aMap);
     }
 
     public static Map<String, Double[][]> getReverseArrSparseFillHolesArr(MyMyConfig conf, Map<String, Double[][]> listMap) {
@@ -76,8 +77,8 @@ public class ValueETL {
                 newArray[i] = ArraysUtil.fixMapHoles(array[i], newArray[i], maxHoleNumber(conf), interpolationmethod);
             }
             retMap.put(entry.getKey(), newArray);
-        }      
-        return retMap;
+        }
+        return Collections.unmodifiableMap(retMap);
     }
 
     public static Map<String, Double[]> getReverseArrSparseFillHoles(MyMyConfig conf, Map<String, Double[]> listMap) {
