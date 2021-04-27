@@ -1098,7 +1098,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, inte
     #print(myma)
     plt.show()
 
-def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = [], interpolation = 'linear', wantohlc=False):
+def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = [], interpolation = 'linear', wantohlc=False, wantma=False, matype = 0, matimeperiod = 30):
     scalebeginning100 = 0
     if not end is None:
         mystart = None
@@ -1253,6 +1253,10 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
         plt.ion()
 
+        indicators2 = []
+        if wantma:
+            indicators2.append(ma.MA(matype, matimeperiod))
+
         indicators = []
         if wantatr:
             indicators.append(atr.ATR())
@@ -1280,6 +1284,29 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         #myma0 = [ my.fixzero(myma0[0]), my.fixzero(myma0[0]), my.fixzero(myma0[0]) ]
         #myma0 = my.fixnaarr(myma0, interpolation)
 
+        titles = [ title ]
+        numindicators = len(indicators2)
+        for i in range(numindicators):
+            indicator = indicators2[i]
+            lses = indicator.calculate(filllist)
+            idxstart = datelist.index(smalldates[0])
+            idxend = datelist.index(smalldates[-1])
+            print("l0", lses[0], idxstart, idxend)
+            for j in range(len(lses)):
+                lses[j] = lses[j][idxstart:idxend + 1]
+            print("l0", lses[0])
+            #type(lses[0]))
+            #lsesl = lses[0].tolist()
+            #lsesr = [ round(num, 1) for num in lsesl ]
+            #print(lsesr)
+            days2 = len(lses[0])
+            #olddate2 = daynames[stockdata.days - days2]
+            mynames2 = indicator.names()
+            text = ''.join(mynames2)
+            atitle = indicator.title()
+            mynames = mynames + atitle
+            myma0 = myma0 + lses
+            
         periodtext = 'bla'
         print("mn", mynames)
         print(len(myma0), myma0[1])
