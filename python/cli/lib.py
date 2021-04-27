@@ -1284,29 +1284,8 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         #myma0 = [ my.fixzero(myma0[0]), my.fixzero(myma0[0]), my.fixzero(myma0[0]) ]
         #myma0 = my.fixnaarr(myma0, interpolation)
 
-        titles = [ title ]
-        numindicators = len(indicators2)
-        for i in range(numindicators):
-            indicator = indicators2[i]
-            lses = indicator.calculate(filllist)
-            idxstart = datelist.index(smalldates[0])
-            idxend = datelist.index(smalldates[-1])
-            print("l0", lses[0], idxstart, idxend)
-            for j in range(len(lses)):
-                lses[j] = lses[j][idxstart:idxend + 1]
-            print("l0", lses[0])
-            #type(lses[0]))
-            #lsesl = lses[0].tolist()
-            #lsesr = [ round(num, 1) for num in lsesl ]
-            #print(lsesr)
-            days2 = len(lses[0])
-            #olddate2 = daynames[stockdata.days - days2]
-            mynames2 = indicator.names()
-            text = ''.join(mynames2)
-            atitle = indicator.title()
-            mynames = mynames + atitle
-            myma0 = myma0 + lses
-            
+        myma0, mynames = getOverlapIndicatorData(datelist, filllist, indicators2, myma0, mynames, smalldates)
+
         periodtext = 'bla'
         print("mn", mynames)
         print(len(myma0), myma0[1])
@@ -1368,6 +1347,21 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
 #    displaychart(lses, mynames2, 3, periodtext, newdate, olddate2, days2)
     plt.show()
                                         #    displaymacd(lses, mynames[1], 1, periodtext, maindate, olddate, days)
+
+
+def getOverlapIndicatorData(datelist, filllist, overlapIndicators, mydata, mynames, smalldates):
+    numindicators = len(overlapIndicators)
+    for i in range(numindicators):
+        indicator = overlapIndicators[i]
+        indicatorData = indicator.calculate(filllist)
+        idxstart = datelist.index(smalldates[0])
+        idxend = datelist.index(smalldates[-1])
+        for j in range(len(indicatorData)):
+            indicatorData[j] = indicatorData[j][idxstart:idxend + 1]
+        atitle = indicator.title()
+        mynames = mynames + atitle
+        mydata = mydata + indicatorData
+    return mydata, mynames
 
 
 def getContentGraphAx(indicators):
