@@ -15,6 +15,7 @@ import multiprocessing as mp
 
 import rise
 import day
+import ma
 import atr
 import cci
 import macd
@@ -191,6 +192,7 @@ class DataReader:
         self.listmap100 = None
         self.filllistmap100 = None
         self.datelist = None
+        self.volumelistmap = None
         
     def readData(self, marketdatamap, category, market):
         marketdata = marketdatamap[market]
@@ -1192,9 +1194,12 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         #print("small", smalldates)
         datareader = datareaders[0]
         filllist = datareader.filllistmap[anid]
+        volumelist = datareader.volumelistmap[anid]
         values = [[], [], []]
+        volume = []
         #print("cds", commondates, datelist)
-        print("cmd",len(datelist),len(filllist[0]),len(smalldates))
+        print("cmd",len(datelist),len(filllist[0]),len(smalldates),len(volumelist[0]))
+        print(type(volumelist),volumelist)
         for commondate in smalldates:
             dateindex = datelist.index(commondate)
             #print(datareader.listmap.keys())
@@ -1208,6 +1213,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             values[0].append(value)
             values[1].append(filllist[1][dateindex])
             values[2].append(filllist[2][dateindex])
+            volume.append(volumelist[0][dateindex])
         print("vals", values)
         commonls = []
         commonls.append(pd.Series(values[0]))
@@ -1273,8 +1279,10 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         print(mynames, type(myma0), len(myma0))
         #myma0 = [ my.fixzero(myma0[0]), my.fixzero(myma0[0]), my.fixzero(myma0[0]) ]
         #myma0 = my.fixnaarr(myma0, interpolation)
+
         periodtext = 'bla'
         print("mn", mynames)
+        print(len(myma0), myma0[1])
         displayax(ax[0], myma0, daynames2, mynames, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
         if wantohlc:
             import mplfinance as mpf
@@ -1285,10 +1293,11 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             frame['Open']=pd.Series([ values[0][0] ] + values[0][:-1])
             frame['Low']=pd.Series(values[1])
             frame['High']=values[2]
+            frame['Volume'] = volume
             df = pd.DataFrame(frame)
             df = df.set_index('Date')
             print(df)
-            mpf.plot(df, type='candle', style='charles', title=title)
+            mpf.plot(df, type='candle', style='charles', title=title, volume=True)
         myma = ls[0]
         #print("tmyma ", type(myma))
         #print(myma)
@@ -1579,6 +1588,7 @@ def getDatareaderMap(end, interpolate, interpolation, marketids, markets, scaleb
             getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[market]))
         datareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
         datareader.datelist = getdatelist(market, stockdatamap[market].marketdatamap)
+        datareader.volumelistmap = getvolumes(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[market])
         if "ADL" in marketids[market]:
             jj = 1
             datareader.listmap = adls(start, end, market, periodint)
@@ -1688,6 +1698,36 @@ def getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, c
                             lastnumbermap[anid] = value[ii]
                     mapadd(retmap, anid, i, value, len(datedstocklists))
                     #len(datedstocklists) - 1 - 
+    #print("rrr", retmap)
+    return retmap
+
+def getvolumes(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, ids):
+    # TODO filter only wanted ids...
+    retmap = {}
+    print("mkeys", marketdatamap.keys(), ids)
+    datedstocklists = marketdatamap[market][2]
+    index = 0
+    #print("ids", ids, len(datedstocklists), currentyear)
+    if not currentyear:
+        if index >= 0:
+            for i in range(len(datedstocklists)):
+                #print("i",i)
+                for anid in ids:
+                        stocklist = datedstocklists[i]
+                        stock = stocklist.loc[(stocklist.id == anid)]
+                        if stock.empty:
+                            continue
+                        #for stock in stocklist:
+                        #anid = stock.id
+                        df = stock
+                        el = df.loc[(df.id == anid)]
+                        if not len(el) == 1:
+                            continue
+                        dfarr = [ el.volume ]
+                        values = [ dfarr[0].values[0] ]
+                        mapadd(retmap, anid, i, values , len(datedstocklists))
+    else:
+        basenumbermap = {}
     #print("rrr", retmap)
     return retmap
 
