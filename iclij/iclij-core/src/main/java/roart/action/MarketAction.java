@@ -166,6 +166,9 @@ public abstract class MarketAction extends Action {
         List<MarketComponentTime> marketTimes = new ArrayList<>();
         Map<String, ComponentData> componentDataMap = new HashMap<>();
         for (Market market : markets) {
+            if (market.getConfig().getEnable() != null && !market.getConfig().getEnable()) {
+                continue;
+            }
             String marketName = market.getConfig().getMarket();
             MetaItem meta = new MetaUtil().findMeta(metas, marketName);
             boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());

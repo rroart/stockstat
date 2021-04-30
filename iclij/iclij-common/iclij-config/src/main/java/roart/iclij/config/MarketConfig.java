@@ -39,6 +39,8 @@ public class MarketConfig {
     
     private String interpolate;
     
+    private Boolean enable;
+    
     public MarketConfig() {
         super();
     }
@@ -193,6 +195,14 @@ public class MarketConfig {
 
     public void setInterpolate(String interpolate) {
         this.interpolate = interpolate;
+    }
+
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
     }
 
 }

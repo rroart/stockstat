@@ -38,6 +38,9 @@ public class PopulateThread extends Thread {
         if (instance.populate()) {
             List<Market> markets = new MarketUtil().getMarkets(false);
             for (Market market : markets) {
+                if (market.getConfig().getEnable() != null && !market.getConfig().getEnable()) {
+                    continue;
+                }                
                 IclijConfig config = new IclijConfig(instance);
                 config.setMarket(market.getConfig().getMarket());
                 Short populate = market.getConfig().getPopulate();
