@@ -83,6 +83,8 @@ public class SimulateInvestConfig {
     
     private Boolean indicatorDirectionUp;
     
+    private List<SimulateFilter> filters;
+    
     public SimulateInvestConfig() {
         super();
     }
@@ -359,6 +361,14 @@ public class SimulateInvestConfig {
         this.indicatorDirectionUp = indicatorDirectionUp;
     }
 
+    public List<SimulateFilter> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(List<SimulateFilter> filters) {
+        this.filters = filters;
+    }
+
     public void merge(SimulateInvestConfig other) {
         if (other == null) {
             return;
@@ -462,6 +472,9 @@ public class SimulateInvestConfig {
         if (other.indicatorDirectionUp != null) {
             this.indicatorDirectionUp = other.indicatorDirectionUp;
         }
+        if (other.filters != null) {
+            this.filters = other.filters;
+        }
     }
     
     public Map<String, Object> asMap() {
@@ -501,6 +514,11 @@ public class SimulateInvestConfig {
             volumelimitString = convert(volumelimits);
         }
         map.put(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS, volumelimitString);
+        String simfilterString = null;
+        if (filters != null) {
+            simfilterString = convert(filters);
+        }
+        map.put(IclijConfigConstants.SIMULATEINVESTFILTERS, simfilterString);
         return map;
     }
     

@@ -4,21 +4,21 @@ import java.util.Set;
 
 public class SimulateFilter {
 
-    private int shortrun;
+    private Integer shortrun;
     
-    private double lucky;
+    private Double lucky;
     
-    private double stable;
+    private Double stable;
     
-    private boolean allabove;
+    private Boolean allabove;
     
-    private int populationabove;
+    private Integer populationabove;
     
-    private boolean useclusters;
+    private Boolean useclusters;
     
     private Set<String> printconfig;
     
-    public SimulateFilter(int shortrun, double lucky, double stable, boolean allabove, int populationabove, boolean useclusters, Set<String> printconfig) {
+    public SimulateFilter(Integer shortrun, Double lucky, Double stable, Boolean allabove, Integer populationabove, Boolean useclusters, Set<String> printconfig) {
         super();
         this.shortrun = shortrun;
         this.lucky = lucky;
@@ -33,51 +33,51 @@ public class SimulateFilter {
         super();
     }
 
-    public int getShortrun() {
+    public Integer getShortrun() {
         return shortrun;
     }
 
-    public void setShortrun(int shortrun) {
+    public void setShortrun(Integer shortrun) {
         this.shortrun = shortrun;
     }
 
-    public double getLucky() {
+    public Double getLucky() {
         return lucky;
     }
 
-    public void setLucky(double lucky) {
+    public void setLucky(Double lucky) {
         this.lucky = lucky;
     }
 
-    public double getStable() {
+    public Double getStable() {
         return stable;
     }
 
-    public void setStable(double stable) {
+    public void setStable(Double stable) {
         this.stable = stable;
     }
 
-    public boolean isAllabove() {
+    public Boolean isAllabove() {
         return allabove;
     }
 
-    public void setAllabove(boolean allabove) {
+    public void setAllabove(Boolean allabove) {
         this.allabove = allabove;
     }
 
-    public int getPopulationabove() {
+    public Integer getPopulationabove() {
         return populationabove;
     }
 
-    public void setPopulationabove(int populationabove) {
+    public void setPopulationabove(Integer populationabove) {
         this.populationabove = populationabove;
     }
 
-    public boolean isUseclusters() {
+    public Boolean isUseclusters() {
         return useclusters;
     }
 
-    public void setUseclusters(boolean useclusters) {
+    public void setUseclusters(Boolean useclusters) {
         this.useclusters = useclusters;
     }
 
@@ -89,5 +89,30 @@ public class SimulateFilter {
         this.printconfig = printconfig;
     }
     
-
+    public void merge(SimulateFilter other) {
+        if (other == null) {
+            return;
+        }
+        if (other.shortrun != null) {
+            this.shortrun = other.shortrun;
+        }
+        if (other.lucky != null) {
+            this.lucky = other.lucky;
+        }
+        if (other.stable != null) {
+            this.stable = other.stable;
+        }
+        if (other.allabove != null) {
+            this.allabove = other.allabove;
+        }
+        if (other.populationabove != null) {
+            this.populationabove = other.populationabove;
+        }
+        if (other.useclusters != null) {
+            this.useclusters = other.useclusters;
+        }
+        if (other.printconfig != null) {
+            this.printconfig = other.printconfig;
+        }
+    }
 }

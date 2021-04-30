@@ -74,8 +74,22 @@ public class Sim {
             }
             Pair<Double, AbstractChromosome> winnerPair = myList.get(0);
             IclijConfigMapChromosome winnerChromosome = (IclijConfigMapChromosome) winnerPair.getValue();
+            String filterString = getFilter(winnerChromosome);
             int adviser = getAdviser(winnerChromosome);
             SimulateFilter filter = getFilter(adviser);
+            {
+                SimulateFilter[] listoverrides = null;
+                Object o = myMap.get(SimConstants.FILTER);
+                SimulateFilter[] listoverrides2 = JsonUtil.convert((String)o, SimulateFilter[].class);
+                SimulateFilter[] listoverride = listoverrides2;
+                if (listoverride != null) {
+                for (int i = 0; i < listoverride.length; i++) {
+                    SimulateFilter afilter = list.get(0)[i];
+                    SimulateFilter otherfilter = listoverride[i];
+                    afilter.merge(otherfilter);
+                }
+                }
+            }
             if (!list.isEmpty()) {
                 SimulateFilter[] filters = list.get(0);
                 filter = filters[adviser];
@@ -198,6 +212,12 @@ public class Sim {
     private int getAdviser(IclijConfigMapChromosome chromosome) {
         Map<String, Object> map = chromosome.getMap();
         int adviser = (int) map.get(IclijConfigConstants.SIMULATEINVESTADVISER);
+        return adviser;
+    }
+
+    private String getFilter(IclijConfigMapChromosome chromosome) {
+        Map<String, Object> map = chromosome.getMap();
+        String adviser = (String) map.get(IclijConfigConstants.SIMULATEINVESTFILTERS);
         return adviser;
     }
 

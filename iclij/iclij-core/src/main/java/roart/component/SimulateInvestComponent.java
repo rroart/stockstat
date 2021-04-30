@@ -58,6 +58,7 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
+import roart.iclij.config.SimulateFilter;
 import roart.iclij.config.SimulateInvestConfig;
 import roart.iclij.evolution.fitness.impl.FitnessIclijConfigMap;
 import roart.iclij.filter.Memories;
@@ -131,6 +132,8 @@ public class SimulateInvestComponent extends ComponentML {
                 extradelay = localSimConfig.getExtradelay();
             }
         }
+        List<SimulateFilter> filter = simConfig.getFilters();
+        simConfig.setFilters(null);
         List<String> stockDates;
         if (simulateParam.getStockDates() != null) {
             stockDates = simulateParam.getStockDates();
@@ -597,6 +600,7 @@ public class SimulateInvestComponent extends ComponentML {
                         map.put(SimConstants.PLOTCAPITAL, plotCapital);
                         map.put(SimConstants.STARTDATE, investStart);
                         map.put(SimConstants.ENDDATE, investEnd);
+                        map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         List<Pair<String, Double>> tradeStocks = SimUtil.getTradeStocks(map);
                         map.put(SimConstants.TRADESTOCKS, tradeStocks);
                         param.getUpdateMap().putAll(map);
@@ -604,6 +608,7 @@ public class SimulateInvestComponent extends ComponentML {
                         componentData.getUpdateMap().putAll(map);
                     } else {
                         map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                        map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         componentData.getUpdateMap().putAll(map);
                     }
                 }
@@ -621,6 +626,7 @@ public class SimulateInvestComponent extends ComponentML {
                     map.put(SimConstants.STARTDATE, TimeUtil.convertDate2(investStart));
                     map.put(SimConstants.ENDDATE, TimeUtil.convertDate2(investEnd));
                     map.put(EvolveConstants.SIMTEXT, market.getConfig().getMarket() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                    map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                     //map.put("market", market.getConfig().getMarket());
                     resultMap.put("" + offset, map);
                 }
@@ -1235,10 +1241,13 @@ public class SimulateInvestComponent extends ComponentML {
         //evolutionConfig.setGenerations(3);
         //evolutionConfig.setSelect(6);
 
+        Object filters = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
+        filters = param.getInput().getValuemap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
         Map<String, Object> confMap = new HashMap<>();
         // confmap
         ComponentData e = evolve.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, getPipeline(), this, confList);
         Map<String, Object> results = (Map<String, Object>) e.getResultMap();
+        results.put(SimConstants.FILTER, filters);
         e.getService().send(ServiceConstants.SIMFILTER, results, param.getInput().getConfig());
         return e;
     }
