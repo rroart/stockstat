@@ -22,6 +22,7 @@ import macd
 import rsi
 import stoch
 import stochrsi
+import obv
 import adl
 import etl
 
@@ -1098,7 +1099,7 @@ def getcomparegraph(start, end, tableintervaldays, ids, interpolate = True, inte
     #print(myma)
     plt.show()
 
-def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, interpolate = True, expressions = [], interpolation = 'linear', wantohlc=False, wantma=False, matype = 0, matimeperiod = 30):
+def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantrsi=False, wantatr=False, wantcci=False, wantstoch=False, wantstochrsi=False, wantobv=False, interpolate = True, expressions = [], interpolation = 'linear', wantohlc=False, wantma=False, matype = 0, matimeperiod = 30):
     scalebeginning100 = 0
     if not end is None:
         mystart = None
@@ -1270,6 +1271,8 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             indicators.append(stoch.STOCH())
         if wantstochrsi:
             indicators.append(stochrsi.STOCHRSI())
+        if wantobv:
+            indicators.append(obv.OBV(volumelist[0]))
 
         rsi.doprint=True
         ax = getContentGraphAx(indicators)
@@ -1288,7 +1291,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
 
         periodtext = 'bla'
         print("mn", mynames)
-        print(len(myma0), myma0[1])
+        #print(len(myma0), myma0[1])
         displayax(ax[0], myma0, daynames2, mynames, 5, periodtext, newdate, olddate, stockdata.days, title, periodtext)
         if wantohlc:
             import mplfinance as mpf
@@ -1299,7 +1302,7 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
             frame['Open']=pd.Series([ values[0][0] ] + values[0][:-1])
             frame['Low']=pd.Series(values[1])
             frame['High']=values[2]
-            frame['Volume'] = volume
+            frame['Volume'] = pd.Series(volume)
             df = pd.DataFrame(frame)
             df = df.set_index('Date')
             print(df)
@@ -1318,9 +1321,9 @@ def getcontentgraphnew(start, end, tableintervaldays, ids, wantmacd=False, wantr
         #print(myma)
         myma = filllist
         print("myma0", myma[0])
-        myma[0] = pd.Series(myma[0])
-        myma[1] = pd.Series(myma[1])
-        myma[2] = pd.Series(myma[2])
+        #myma[0] = pd.Series(myma[0])
+        #myma[1] = pd.Series(myma[1])
+        #myma[2] = pd.Series(myma[2])
         numindicators = len(indicators)
         for i in range(numindicators):
             indicator = indicators[i]
@@ -1609,7 +1612,7 @@ def getDatareaderMap(end, interpolate, interpolation, marketids, markets, scaleb
             getarrsparse(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[market]))
         datareader.calculateotherlistmaps(interpolate, interpolation, scalebeginning100)
         datareader.datelist = getdatelist(market, stockdatamap[market].marketdatamap)
-        datareader.volumelistmap = getvolumes(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[market])
+        datareader.volumelistmap = getseries(getvolumes(market, periodint, count, mytableintervaldays, marketdatamap, currentyear, marketids[market]))
         if "ADL" in marketids[market]:
             jj = 1
             datareader.listmap = adls(start, end, market, periodint)
