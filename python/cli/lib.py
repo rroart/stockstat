@@ -2338,6 +2338,115 @@ def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adv
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 
+def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1):
+    mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw, ch, nch, nctd, nctdt, cti, ctit, id, idu, vl)).start()
+
+def autosimulateinvest2Gwrap(market, startdate, enddate, interval):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):
+        autosimulateinvest2(market, startdate, enddate, interval)
+    output = file.getvalue()
+    myfile = open("/tmp/" + str(time.time()) + ".txt", "w")
+    myfile.write(output)
+    myfile.close()
+    gui.view(output)
+
+def autosimulateinvest2(market, startdate = None, enddate = None, interval = 1):
+    autosimulateinvest(market, startdate, enddate, interval)
+    
+def autosimulateinvest(market, startdate = None, enddate = None, interval = 1):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'interval' : interval }
+    print(market, data)
+    response = request.request3(market, data)
+    resp = response.json()
+    webdata = resp['webdatajson']
+    updatemap = webdata['updateMap']
+    dates = updatemap['plotdates']
+    commondays = dates
+    default = updatemap['plotdefault']
+    capital = updatemap['plotcapital']
+    commonls = [ default, capital ]
+    mynames = [ "default", "capital" ]
+    plt.rc('axes', grid=True)
+    plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
+
+    mynames=["default","my"]
+    olddate = dates[0]
+    newdate = dates[len(dates) - 1]
+    
+    textsize = 9
+    left, width = 0.1, 0.8
+    rect1 = [left, 0.5, width, 0.4]
+    #rect2 = [left, 0.3, width, 0.2]
+    #rect3 = [left, 0.1, width, 0.2]
+    plt.ion()
+    #print("TT" + str(type(mynames[0])))
+    title = market + " " + str(mynames) + " " + str(olddate) + " - " + str(newdate)
+    fig = plt.figure(facecolor='white')
+    axescolor = '#f6f6f6'  # the axes background color
+
+    ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
+    print(type(commondays[0]))
+    #print(commondays)
+    commondays = [ w.replace('.', '-') for w in commondays ]
+    commondays = [ np.datetime64(x) for x in commondays ]
+    #print(type(commondays[0]))
+    displayax(ax1, commonls, commondays, mynames, None, None, newdate, olddate, None, title, "Value")
+    plt.show()
+    for x in updatemap['stockhistory']:
+        print(x)
+    for x in updatemap['sumhistory']:
+        print(x)
+    for x in updatemap['tradestocks'][:10]:
+        print(x)
+    #print(webdata.keys())
+    print(webdata['timingMap'])
+    print(updatemap['startdate'])
+    print(updatemap['enddate'])
+    if intervalwhole:
+      print(updatemap['scores'])
+      print(updatemap['stats'])
+      print(updatemap['minmax'])
+    print(updatemap['lastbuysell'])
+    return
+
+def improveautosimulateinvest(market = None, startdate = None, enddate = None, ga = 0, stocks = 5):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'ga' : ga, 'stocks' : stocks }
+    from datetime import datetime
+    tsstart = datetime.now().timestamp()
+    response = request.request4(market, data)
+    tsend = datetime.now().timestamp()
+    time = tsend - tsstart
+    resp = response.json()
+    webdata = resp['webdatajson']
+    updatemap = webdata['updateMap']
+    #timingmap = webdata['timingMap']
+    #key = list(timingmap.keys())[0]
+    #timing = timingmap[key]
+    #print(timing)
+    #print(type(timing))
+    #print(timing.keys)
+    #print(updatemap.keys())
+    #print(updatemap['scores'])
+    #print(updatemap['stats'])
+    #print(updatemap['minmax'])
+    print("improve complete", market, startdate, enddate, time)
+    #print(response.text)
+
+def improveautosimulateinvestGwrap(market, startdate, enddate, ga, stocks):
+    import io
+    from contextlib import redirect_stdout
+    file = io.StringIO()
+    with redirect_stdout(file):                                                
+        improveautosimulateinvest(market, startdate, enddate, ga, stocks)
+    output = file.getvalue()
+    gui.view(output)
+
+def improveautosimulateinvestG(market, startdate = None, enddate = None, ga = 0):
+    mp.Process(target=improveautosimulateinvestGwrap, args=(market, startdate, enddate, ga, stocks)).start()
+
 if not 'allstocks' in globals():
     allstocks = getstocks(conn)
     if filterweekend:

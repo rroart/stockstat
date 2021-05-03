@@ -7,6 +7,8 @@ if aport is None:
 
 url1 = 'http://localhost:' + aport + '/action/simulateinvest'
 url2 = 'http://localhost:' + aport + '/action/improvesimulateinvest'
+url3 = 'http://localhost:' + aport + '/action/autosimulateinvest'
+url4 = 'http://localhost:' + aport + '/action/improveautosimulateinvest'
 
 #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 #headers={'Content-type':'application/json', 'Accept':'application/json'}
@@ -16,6 +18,12 @@ def request1(market, data):
 
 def request2(market, data):
     return requests.post(url2 + '/market/' + str(market), json=data, headers=headers)
+
+def request3(market, data):
+    return requests.post(url3 + '/market/' + str(market), json=data, headers=headers)
+
+def request4(market, data):
+    return requests.post(url4 + '/market/' + str(market), json=data, headers=headers)
 
 def request0(data):
     return requests.post(url, data='', headers=headers)
