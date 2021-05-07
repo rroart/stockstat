@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
 import java.util.OptionalDouble;
 import java.util.Set;
 
@@ -35,12 +38,14 @@ import roart.common.constants.Constants;
 import roart.common.constants.EvolveConstants;
 import roart.common.util.JsonUtil;
 import roart.common.util.MathUtil;
+import roart.common.util.TimeUtil;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapChromosome;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.SimulateFilter;
+import roart.iclij.model.SimDataItem;
 import roart.iclij.util.MiscUtil;
 import roart.simulate.model.SimulateStock;
 import roart.simulate.model.StockHistory;
@@ -105,6 +110,7 @@ public class Sim {
             }
             Map<Double, List<AbstractChromosome>> chromosomeMap = groupCommon(myList, output);
             getCommon(chromosomeMap, output);
+            Set<Double> scores = new HashSet<>();
             List<Pair<Double, String>> summaries = new ArrayList<>();
             for (Entry<Double, List<AbstractChromosome>> entry : chromosomeMap.entrySet()) {
                 List<Summary> summary = new ArrayList<>();
@@ -152,6 +158,7 @@ public class Sim {
                 output.add("");
                 if (success) {
                     summaries.add(new ImmutablePair<>(keyScore, mysummary));
+                    scores.add(score);
                 }
             }
             Double maxScore = summaries.stream().mapToDouble(e -> e.getKey()).max().orElse(0);
@@ -161,6 +168,56 @@ public class Sim {
             }
             String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
             print("sim " + simtext, "File " + id, output);
+            
+            //Map<String, Object> resultMap = winnerChromosome.getResultMap();
+            String[] parts = simtext.split(" ");
+            String market = parts[1];
+            String dates = parts[3];
+            String startdateStr = dates.substring(0, 10);
+            String enddateStr = dates.substring(11);
+            LocalDate startdate = null; 
+            try {
+                startdateStr = startdateStr.replace('-', '.');
+                startdate = TimeUtil.convertDate(startdateStr);
+            } catch (ParseException e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            LocalDate enddate = null;
+            if ("end".equals(enddateStr)) {
+                enddate = LocalDate.now();
+                if (enddate.getDayOfMonth() > 1) {
+                    enddate = enddate.withDayOfMonth(1);
+                    if (enddate.getMonthValue() == 12) {
+                        enddate = enddate.withMonth(1);
+                        enddate = enddate.withYear(enddate.getYear() + 1);
+                    }
+                }
+            } else {
+                try {
+                    enddateStr = enddateStr.replace('-', '.');
+                    enddate = TimeUtil.convertDate(enddateStr);
+                } catch (ParseException e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
+            Double max = Collections.max(scores);
+            List<AbstractChromosome> chromosomes = chromosomeMap.get(max);            
+            IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
+            //String adviser = parts[4];
+            SimDataItem data = new SimDataItem();
+            data.setRecord(LocalDate.now());
+            data.setScore(max);
+            data.setMarket(market);
+            //data.setAdviser(adviser);
+            data.setStartdate(startdate);
+            data.setEnddate(enddate);
+            data.setFilter(filterString);
+            data.setConfig(JsonUtil.convert(chromosome.getMap()));
+            try {
+                data.save();
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
         }
     }
 

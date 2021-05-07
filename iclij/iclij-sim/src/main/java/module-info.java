@@ -36,4 +36,6 @@ module iclij.sim {
     requires iclij.common.constants;
     requires common.inmemory.factory;
     requires common.inmemory.model;
+    requires iclij.common.model;
+    requires db;
 }
