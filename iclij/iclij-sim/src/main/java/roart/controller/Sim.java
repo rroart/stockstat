@@ -211,7 +211,7 @@ public class Sim {
             //data.setAdviser(adviser);
             data.setStartdate(startdate);
             data.setEnddate(enddate);
-            data.setFilter(filterString);
+            data.setFilter(JsonUtil.convert(myMap.get(SimConstants.FILTER)));
             data.setConfig(JsonUtil.convert(chromosome.getMap()));
             try {
                 data.save();
