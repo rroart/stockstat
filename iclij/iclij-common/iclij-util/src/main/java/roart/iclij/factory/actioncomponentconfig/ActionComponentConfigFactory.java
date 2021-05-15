@@ -28,6 +28,8 @@ public abstract class ActionComponentConfigFactory {
             return new SimulateInvestActionComponentConfigFactory();
         case IclijConfigConstants.IMPROVESIMULATEINVEST:
             return new ImproveSimulateInvestActionComponentConfigFactory();
+        case IclijConfigConstants.IMPROVEAUTOSIMULATEINVEST:
+            return new ImproveAutoSimulateInvestActionComponentConfigFactory();
         default:
             return null;
         }                

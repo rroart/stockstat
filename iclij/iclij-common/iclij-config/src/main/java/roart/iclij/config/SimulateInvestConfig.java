@@ -418,6 +418,9 @@ public class SimulateInvestConfig {
         if (other.interpolate != null) {
             this.interpolate = other.interpolate;
         }
+        if (other.day != null) {
+            this.day = other.day;
+        }
         if (other.adviser != null) {
             this.adviser = other.adviser;
         }

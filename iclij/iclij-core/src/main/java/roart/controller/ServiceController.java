@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
+import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
@@ -168,6 +169,54 @@ public class ServiceController {
         }
         */
         return ServiceUtil.getImproveSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), map));
+    }
+
+    @RequestMapping(value = "action/autosimulateinvest/market/{market}",
+            method = RequestMethod.POST)
+    public IclijServiceResult getAutoSimulateInvestMarket(@PathVariable("market") String market, @RequestBody AutoSimulateInvestConfig simConfig)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        IclijConfig config = new IclijConfig(IclijXMLConfig.getConfigInstance());
+        Map<String, Object> map = simConfig.asMap();
+        config.getConfigValueMap().putAll(map);
+        return ServiceUtil.getAutoSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), new HashMap<>()));
+    }
+
+    @RequestMapping(value = "action/improveautosimulateinvest/market/{market}",
+            method = RequestMethod.POST)
+    public IclijServiceResult getImproveAutoSimulateInvest(@PathVariable("market") String market, @RequestBody AutoSimulateInvestConfig simConfig)
+            throws Exception {
+        //MainAction.goals.add(new ImproveProfitAction());
+        //int result = new ImproveProfitAction().goal(param.getIclijConfig(), );
+        if ("null".equals(market) || "None".equals(market)) {
+            market = null;
+        }
+        IclijConfig config = new IclijConfig(IclijXMLConfig.getConfigInstance());
+        Map<String, Object> map = simConfig.asValuedMap();
+        config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, simConfig.getStartdate());
+        config.getConfigValueMap().put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, simConfig.getEnddate());
+        map.remove(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE);
+        map.remove(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE);
+        if (simConfig.getGa() != null) {
+            int ga = simConfig.getGa();
+            simConfig.setGa(null);
+            config.getConfigValueMap().put(IclijConfigConstants.EVOLVEGA, ga);
+        }
+        /*
+        config.getConfigValueMap().putAll(map);
+        if (simConfig.getAdviser() != null) {
+            int adviser = simConfig.getAdviser();
+            simConfig.setAdviser(null);
+            config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTADVISER, adviser);
+        }
+        if (simConfig.getIndicatorPure() != null) {
+            boolean adviser = simConfig.getIndicatorPure();
+            simConfig.setIndicatorPure(null);
+            config.getConfigValueMap().put(IclijConfigConstants.SIMULATEINVESTINDICATORPURE, adviser);
+        }
+        */
+        return ServiceUtil.getImproveAutoSimulateInvest(new ComponentInput(config, null, market, null, null, false, false, new ArrayList<>(), map));
     }
 
     @RequestMapping(value = "action/improvefilter/market/{market}/ga/{ga}",

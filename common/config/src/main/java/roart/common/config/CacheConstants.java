@@ -23,4 +23,7 @@ public class CacheConstants {
 
     public static final String MEMORIES = "memories";
     
+    public static final String AUTOSIMCONFIG = "autosimconfig";
+    
+    public static final String SIMDATA = "simdata";
 }

@@ -109,9 +109,11 @@ public class SimDataItem {
     
     private static SimDataItem getSimDataItem(SimData data) {
         SimDataItem item = new SimDataItem();
-        item.setConfig(data.getConfig().toString());
+        item.setConfig(new String(data.getConfig()));
         item.setEnddate(data.getEnddate());
-        item.setFilter(data.getFilter().toString());
+        if (data.getFilter() != null) {
+            item.setFilter(new String(data.getFilter()));
+        }
         item.setMarket(data.getMarket());
         item.setRecord(data.getRecord());
         item.setScore(data.getScore());

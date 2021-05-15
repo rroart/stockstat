@@ -11,11 +11,11 @@ import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.Market;
 
-public class ImproveSimulateInvestActionData extends MarketActionData {
+public class ImproveAutoSimulateInvestActionData extends MarketActionData {
 
     @Override
     public String getName() {
-        return IclijConstants.IMPROVESIMULATEINVEST;
+        return IclijConstants.IMPROVEAUTOSIMULATEINVEST;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ImproveSimulateInvestActionData extends MarketActionData {
     @Override
     public List<String> getComponents(IclijConfig config, boolean wantThree) {
         List<String> components = new ArrayList<>();
-        components.add(PipelineConstants.IMPROVESIMULATEINVEST);
+        components.add(PipelineConstants.IMPROVEAUTOSIMULATEINVEST);
         return components;
     }
 
@@ -47,7 +47,7 @@ public class ImproveSimulateInvestActionData extends MarketActionData {
 
     @Override
     public String getPriority() {
-        return IclijConfigConstants.IMPROVESIMULATEINVEST;
+        return IclijConfigConstants.IMPROVEAUTOSIMULATEINVEST;
     }
 
     public String getMlDate(Market market, List<String> stockDates) {

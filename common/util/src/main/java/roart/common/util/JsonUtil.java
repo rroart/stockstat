@@ -103,4 +103,8 @@ public class JsonUtil {
         return null;
     }
 
+    public static <T> T copy(Object object) {
+        String text = convert(object);
+        return (T) convert(text, object.getClass());
+    }
 }

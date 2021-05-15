@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import roart.action.FindProfitAction;
 import roart.action.ImproveAboveBelowAction;
+import roart.action.ImproveAutoSimulateInvestAction;
 import roart.action.ImproveFilterAction;
 import roart.action.ImproveProfitAction;
 import roart.action.ImproveSimulateInvestAction;
@@ -152,6 +153,25 @@ public class ServiceUtil {
         return result;
     }
 
+    public static IclijServiceResult getAutoSimulateInvest(ComponentInput componentInput) {
+        IclijServiceResult result = new IclijServiceResult();
+        ComponentData param = null;
+        try {
+            param = ComponentData.getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+
+        MarketAction simulateInvestAction = new SimulateInvestAction();
+        Market market = new MarketUtil().findMarket(param.getInput().getMarket());
+        param.setMarket(market);
+        WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebDataJson webDataJson = convert(webData);
+        result.setWebdatajson(webDataJson);
+        return result;
+    }
+
     public static IclijServiceResult getImproveSimulateInvest(ComponentInput componentInput) {
         IclijServiceResult result = new IclijServiceResult();
         ComponentData param = null;
@@ -163,6 +183,28 @@ public class ServiceUtil {
         }
 
         MarketAction simulateInvestAction = new ImproveSimulateInvestAction();
+        Market market = null;
+        if (param.getInput().getMarket() != null) {
+            market = new MarketUtil().findMarket(param.getInput().getMarket());
+        }
+        param.setMarket(market);
+        WebData webData = simulateInvestAction.getMarket(null, param, market, null, null, new ArrayList<>());        
+        WebDataJson webDataJson = convert(webData);
+        result.setWebdatajson(webDataJson);
+        return result;
+    }
+
+    public static IclijServiceResult getImproveAutoSimulateInvest(ComponentInput componentInput) {
+        IclijServiceResult result = new IclijServiceResult();
+        ComponentData param = null;
+        try {
+            param = ComponentData.getParam(componentInput, 0);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+            return result;
+        }
+
+        MarketAction simulateInvestAction = new ImproveAutoSimulateInvestAction();
         Market market = null;
         if (param.getInput().getMarket() != null) {
             market = new MarketUtil().findMarket(param.getInput().getMarket());

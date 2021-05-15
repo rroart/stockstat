@@ -112,7 +112,7 @@ public class SimData implements Serializable {
     @Transactional
     public static List<SimData> getAll(String market, LocalDate startDate, LocalDate endDate) throws Exception {
         HibernateUtil hu = new HibernateUtil(false);
-        String queryString = "from Sim where ";
+        String queryString = "from SimData where ";
         if (market != null) {
             queryString += " market = :market";
         } else {

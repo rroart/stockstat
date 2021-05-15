@@ -140,7 +140,7 @@ public abstract class Component {
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
         long time0 = System.currentTimeMillis();
-        if (!IclijConstants.EVOLVE.equals(param.getAction()) && !IclijConstants.DATASET.equals(param.getAction()) && !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction()) && !IclijConstants.SIMULATEINVEST.equals(param.getAction()) && !IclijConstants.IMPROVESIMULATEINVEST.equals(param.getAction())) {
+        if (!IclijConstants.EVOLVE.equals(param.getAction()) && !IclijConstants.DATASET.equals(param.getAction()) && !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction()) && !IclijConstants.SIMULATEINVEST.equals(param.getAction()) && !IclijConstants.IMPROVESIMULATEINVEST.equals(param.getAction()) && !IclijConstants.IMPROVEAUTOSIMULATEINVEST.equals(param.getAction())) {
             Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
             param.setCategory(resultMaps);
             param.getAndSetCategoryValueMap();
@@ -175,7 +175,7 @@ public abstract class Component {
                     log.error(Constants.EXCEPTION, e);
                 }
             }
-            if (IclijConstants.SIMULATEINVEST.equals(param.getAction()) ) {
+            if (IclijConstants.SIMULATEINVEST.equals(param.getAction())) {
                 Map<String, Double> scoreMap2 = param.getScoreMap();
                 try {
                     score = scoreMap2

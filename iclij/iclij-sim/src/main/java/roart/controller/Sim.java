@@ -185,13 +185,7 @@ public class Sim {
             LocalDate enddate = null;
             if ("end".equals(enddateStr)) {
                 enddate = LocalDate.now();
-                if (enddate.getDayOfMonth() > 1) {
-                    enddate = enddate.withDayOfMonth(1);
-                    if (enddate.getMonthValue() == 12) {
-                        enddate = enddate.withMonth(1);
-                        enddate = enddate.withYear(enddate.getYear() + 1);
-                    }
-                }
+                enddate = dateRound(enddate);
             } else {
                 try {
                     enddateStr = enddateStr.replace('-', '.');
@@ -199,6 +193,9 @@ public class Sim {
                 } catch (ParseException e) {
                     log.error(Constants.EXCEPTION, e);
                 }
+            }
+            if (scores.isEmpty()) {
+                return;
             }
             Double max = Collections.max(scores);
             List<AbstractChromosome> chromosomes = chromosomeMap.get(max);            
@@ -211,7 +208,7 @@ public class Sim {
             //data.setAdviser(adviser);
             data.setStartdate(startdate);
             data.setEnddate(enddate);
-            data.setFilter(JsonUtil.convert(myMap.get(SimConstants.FILTER)));
+            data.setFilter(JsonUtil.convert(filter));
             data.setConfig(JsonUtil.convert(chromosome.getMap()));
             try {
                 data.save();
@@ -219,6 +216,19 @@ public class Sim {
                 log.error(Constants.EXCEPTION, e);
             }
         }
+    }
+
+    private LocalDate dateRound(LocalDate enddate) {
+        if (enddate.getDayOfMonth() > 1) {
+            enddate = enddate.withDayOfMonth(1);
+            if (enddate.getMonthValue() == 12) {
+                enddate = enddate.withMonth(1);
+                enddate = enddate.withYear(enddate.getYear() + 1);
+            } else {
+                enddate = enddate.withMonth(enddate.getMonthValue() + 1);                
+            }
+        }
+        return enddate;
     }
 
     private SimulateFilter getFilter(int adviser) {

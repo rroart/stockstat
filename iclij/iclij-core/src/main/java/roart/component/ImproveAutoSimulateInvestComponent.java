@@ -33,7 +33,7 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.service.model.ProfitData;
 
-public class ImproveSimulateInvestComponent extends ComponentML {
+public class ImproveAutoSimulateInvestComponent extends ComponentML {
 
     @Override
     public void enable(Map<String, Object> valueMap) {
@@ -83,7 +83,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
 
         int ga = param.getInput().getConfig().getEvolveGA();
         Evolve evolve = SimulateInvestEvolveFactory.factory(ga);
-        String evolutionConfigString = param.getInput().getConfig().getImproveSimulateInvestEvolutionConfig();
+        String evolutionConfigString = param.getInput().getConfig().getImproveAutoSimulateInvestEvolutionConfig();
         EvolutionConfig evolutionConfig = JsonUtil.convert(evolutionConfigString, EvolutionConfig.class);
         //evolutionConfig.setGenerations(3);
         //evolutionConfig.setSelect(6);
@@ -116,38 +116,16 @@ public class ImproveSimulateInvestComponent extends ComponentML {
 
     @Override
     public String getPipeline() {
-        return PipelineConstants.IMPROVESIMULATEINVEST;
+        return PipelineConstants.IMPROVEAUTOSIMULATEINVEST;
     }
 
     @Override
     protected List<String> getConfList() {
         List<String> confList = new ArrayList<>();
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEVALUE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEFINDTIMES);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCEHOLDINCREASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCEHOLDINCREASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTCONFIDENCETRENDINCREASETIMES);
-        confList.add(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTNOCONFIDENCETRENDDECREASETIMES);
-        confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSS);
-        confList.add(IclijConfigConstants.SIMULATEINVESTSTOPLOSSVALUE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSS);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVALSTOPLOSSVALUE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORPURE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREBASE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTION);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINDICATORDIRECTIONUP);
-        confList.add(IclijConfigConstants.SIMULATEINVESTMLDATE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTSTOCKS);
-        confList.add(IclijConfigConstants.SIMULATEINVESTBUYWEIGHT);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINTERVAL);
-        confList.add(IclijConfigConstants.SIMULATEINVESTINTERPOLATE);
-        confList.add(IclijConfigConstants.SIMULATEINVESTADVISER);
-        confList.add(IclijConfigConstants.SIMULATEINVESTPERIOD);
-        confList.add(IclijConfigConstants.SIMULATEINVESTDAY);
+        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL);
+        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD);
+        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT);
+        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT);
         return confList;
     }
 
@@ -163,7 +141,7 @@ public class ImproveSimulateInvestComponent extends ComponentML {
 
     @Override
     protected EvolutionConfig getImproveEvolutionConfig(IclijConfig config) {
-        String evolveString = config.getImproveSimulateInvestEvolutionConfig();
+        String evolveString = config.getImproveAutoSimulateInvestEvolutionConfig();
         return JsonUtil.convert(evolveString, EvolutionConfig.class);
     }
 

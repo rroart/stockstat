@@ -40,6 +40,10 @@ public class ComponentFactory {
             return new FilterComponent();
         case PipelineConstants.SIMULATEINVEST:
             return new SimulateInvestComponent();
+        case PipelineConstants.IMPROVESIMULATEINVEST:
+            return new ImproveSimulateInvestComponent();
+        case PipelineConstants.IMPROVEAUTOSIMULATEINVEST:
+            return new ImproveAutoSimulateInvestComponent();
         default:
             return null;
         }        

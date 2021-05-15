@@ -283,8 +283,22 @@ public class IclijConfigConstants {
     public static final String SIMULATEINVESTSTARTDATE = "simulateinvest.startdate";
     public static final String SIMULATEINVESTENDDATE = "simulateinvest.enddate";
     public static final String IMPROVESIMULATEINVEST = "improvesimulateinvest";
+    public static final String IMPROVEAUTOSIMULATEINVEST = "improveautosimulateinvest";
+    public static final String IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG = "improveautosimulateinvest.evolutionconfig";
     public static final String IMPROVESIMULATEINVESTAUTORUN = "improvesimulateinvest.autorun";
     public static final String IMPROVESIMULATEINVESTEVOLUTIONCONFIG = "improvesimulateinvest.evolutionconfig";
+    public static final String AUTOSIMULATEINVESTINTERVAL = "autosimulateinvest.interval";
+    public static final String AUTOSIMULATEINVESTINTERVALWHOLE = "autosimulateinvest.intervalwhole";
+    public static final String AUTOSIMULATEINVESTPERIOD = "autosimulateinvest.period";
+    public static final String AUTOSIMULATEINVESTLASTCOUNT = "autosimulateinvest.lastcount";
+    public static final String AUTOSIMULATEINVESTDELLIMIT = "autosimulateinvest.dellimit";
+    // special
+    public static final String AUTOSIMULATEINVESTSTARTDATE = "autosimulateinvest.startdate";
+    public static final String AUTOSIMULATEINVESTENDDATE = "autosimulateinvest.enddate";
+    // special
+    public static final String AUTOSIMULATEINVESTVOLUMELIMITS = "autosimulateinvest.volumelimits";
+    // special
+    public static final String AUTOSIMULATEINVESTFILTERS = "autosimulateinvest.filters";
     public static final String SINGLEMARKETEVOLVEFIRSTONLY = "singlemarket.evolvefirstonly";
     public static final String SINGLEMARKETLOOPS = "singlemarket.loops";
     public static final String SINGLEMARKETLOOPINTERVAL = "singlemarket.loopinterval";

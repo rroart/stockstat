@@ -210,4 +210,10 @@ public class TimeUtil {
         }
     }
 
+    public static String replace(String date) {
+        if (date == null) {
+            return null;
+        }
+        return date.replace('-', '.');
+    }
 }

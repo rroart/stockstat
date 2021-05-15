@@ -763,12 +763,44 @@ public class IclijConfig {
         return (Integer) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTDAY);
     }
 
+    public int getAutoSimulateInvestInterval() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL);
+    }
+
+    public boolean getAutoSimulateInvestIntervalwhole() {
+        return (Boolean) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTINTERVALWHOLE);
+    }
+
+    public int getAutoSimulateInvestPeriod() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD);
+    }
+
+    public int getAutoSimulateInvestLastCount() {
+        return (Integer) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT);
+    }
+
+    public double getAutoSimulateInvestDelLimit() {
+        return (Double) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT);
+    }
+
+    public String getAutoSimulateInvestStartdate() {
+        return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE);
+    }
+
+    public String getAutoSimulateInvestEnddate() {
+        return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE);
+    }
+
     public boolean wantsImproveSimulateInvestAutorun() {
         return (Boolean) getValueOrDefault(IclijConfigConstants.IMPROVESIMULATEINVESTAUTORUN);
     }
     
     public String getImproveSimulateInvestEvolutionConfig() {
         return (String)getValueOrDefault(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG);
+    }
+    
+    public String getImproveAutoSimulateInvestEvolutionConfig() {
+        return (String)getValueOrDefault(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG);
     }
     
     public boolean singlemarketEvolveFirstOnly() {

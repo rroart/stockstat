@@ -55,4 +55,9 @@ public class MapUtil {
         array[index] = value;
     }
 
+    public static <K, V> void mapAddMe(Map<K, List<V>> aMap, K id, V value) {
+        List<V> aList = aMap.computeIfAbsent(id, k -> new ArrayList<>());
+        aList.add(value);
+    }
+
 }
