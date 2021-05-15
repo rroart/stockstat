@@ -126,6 +126,7 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         confList.add(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD);
         confList.add(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT);
         confList.add(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT);
+        confList.add(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT);
         return confList;
     }
 

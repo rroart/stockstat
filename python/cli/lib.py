@@ -2396,23 +2396,23 @@ conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password
 def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, f = None, vl = None):
     mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, i, p, l, d, f, vl)).start()
 
-def autosimulateinvest2Gwrap(market, startdate, enddate, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, filters = None, volumelimits = None):
+def autosimulateinvest2Gwrap(market, startdate, enddate, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, filters = None, volumelimits = None):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):
-        autosimulateinvest2(market, startdate, enddate, interval, period, lastcount, dellimit, filters, volumelimits)
+        autosimulateinvest2(market, startdate, enddate, interval, period, lastcount, dellimit, scorelimit, filters, volumelimits)
     output = file.getvalue()
     myfile = open("/tmp/" + str(time.time()) + ".txt", "w")
     myfile.write(output)
     myfile.close()
     gui.view(output)
 
-def autosimulateinvest2(market, startdate = None, enddate = None, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, intervalwhole = False, filters = None, volumelimits = None):
-    autosimulateinvest(market, startdate, enddate, interval, period, lastcount, dellimit, intervalwhole, filters, volumelimits)
+def autosimulateinvest2(market, startdate = None, enddate = None, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, intervalwhole = False, filters = None, volumelimits = None):
+    autosimulateinvest(market, startdate, enddate, interval, period, lastcount, dellimit, scorelimit, intervalwhole, filters, volumelimits)
     
-def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, intervalwhole = False, filters = None, volumelimtits = None):
-    data = { 'startdate' : startdate, 'enddate' : enddate, 'interval' : interval, 'intervalwhole' : intervalwhole, 'period' : period, 'lastcount' : lastcount, 'dellimit' : dellimit, 'volumelimits' : volumelimits, 'filters' : filters }
+def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, intervalwhole = False, filters = None, volumelimits = None):
+    data = { 'startdate' : startdate, 'enddate' : enddate, 'interval' : interval, 'intervalwhole' : intervalwhole, 'period' : period, 'lastcount' : lastcount, 'dellimit' : dellimit, 'scorelimit' : scorelimit, 'volumelimits' : volumelimits, 'filters' : filters }
     print(market, data)
     response = request.request3(market, data)
     resp = response.json()

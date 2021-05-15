@@ -110,7 +110,9 @@ public class Sim {
             }
             Map<Double, List<AbstractChromosome>> chromosomeMap = groupCommon(myList, output);
             getCommon(chromosomeMap, output);
+            Map<Double, List<AbstractChromosome>> minChromosomeMap = new HashMap<>(chromosomeMap);
             Set<Double> scores = new HashSet<>();
+            Set<Double> minScores = new HashSet<>();
             List<Pair<Double, String>> summaries = new ArrayList<>();
             for (Entry<Double, List<AbstractChromosome>> entry : chromosomeMap.entrySet()) {
                 List<Summary> summary = new ArrayList<>();
@@ -159,6 +161,10 @@ public class Sim {
                 if (success) {
                     summaries.add(new ImmutablePair<>(keyScore, mysummary));
                     scores.add(score);
+                    if (score != keyScore) {
+                        minScores.add(keyScore);
+                        minChromosomeMap.put(keyScore, chromosomes);
+                    }
                 }
             }
             Double maxScore = summaries.stream().mapToDouble(e -> e.getKey()).max().orElse(0);
@@ -198,12 +204,13 @@ public class Sim {
                 return;
             }
             Double max = Collections.max(scores);
-            List<AbstractChromosome> chromosomes = chromosomeMap.get(max);            
+            Double min = Collections.max(minScores);
+            List<AbstractChromosome> chromosomes = minChromosomeMap.get(min);            
             IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
             //String adviser = parts[4];
             SimDataItem data = new SimDataItem();
             data.setRecord(LocalDate.now());
-            data.setScore(max);
+            data.setScore(min);
             data.setMarket(market);
             //data.setAdviser(adviser);
             data.setStartdate(startdate);

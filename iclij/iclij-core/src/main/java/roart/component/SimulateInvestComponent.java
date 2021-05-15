@@ -329,12 +329,16 @@ public class SimulateInvestComponent extends ComponentML {
                         List<Triple<SimulateInvestConfig, OneRun, Results>> newSimTriplets = getTriples(market, param, simConfig,
                                 data, investStart, investEnd, mydate, simsConfigs);
                         if (newSimTriplets.size() > 0) {
+                            List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().capital.amount + getSum(o.getMiddle().mystocks).amount)).collect(Collectors.toList());
+                            log.info("alist {}", alist);
                             double autolimit = autoSimConfig.getDellimit();
                             simTriplets = simTriplets.stream().filter(o -> (o.getMiddle().capital.amount + getSum(o.getMiddle().mystocks).amount) > autolimit).collect(Collectors.toList());
                         }
                         simTriplets.addAll(newSimTriplets);
                     }
                     if (autoSimConfig != null && !simTriplets.isEmpty()) {
+                        List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
+                        log.info("alist {}", alist);
                         OneRun oneRun = simTriplets.get(0).getMiddle();
                         currentOneRun.adviser = oneRun.adviser;
                         currentOneRun.hits = oneRun.hits;
@@ -615,6 +619,9 @@ public class SimulateInvestComponent extends ComponentML {
         }
         retMap = new HashMap<>();
         for (SimDataItem data : all) {
+            if (autoSimConf.getScorelimit().doubleValue() > data.getScore().doubleValue()) {
+                continue;
+            }
             Integer period = null;
             int months = Period.between(data.getStartdate(), data.getEnddate()).getMonths();
             switch (months) {
@@ -644,13 +651,15 @@ public class SimulateInvestComponent extends ComponentML {
                     String filterStr = data.getFilter();
                     SimulateFilter myFilter = JsonUtil.convert((String)filterStr, SimulateFilter.class);
                     List<SimulateFilter> autoSimConfFilters = autoSimConf.getFilters();
-                    SimulateFilter autoSimConfFilter = autoSimConfFilters.get(adviser);
-                    if (myFilter != null && autoSimConfFilter != null) {
-                        if (autoSimConfFilter.getLucky() < myFilter.getLucky()) {
-                            continue;
-                        }
-                        if (autoSimConfFilter.getStable() < myFilter.getStable()) {
-                            continue;
+                    if (autoSimConfFilters != null) {
+                        SimulateFilter autoSimConfFilter = autoSimConfFilters.get(adviser);
+                        if (myFilter != null && autoSimConfFilter != null) {
+                            if (autoSimConfFilter.getLucky() < myFilter.getLucky()) {
+                                continue;
+                            }
+                            if (autoSimConfFilter.getStable() < myFilter.getStable()) {
+                                continue;
+                            }
                         }
                     }
                     Pair<LocalDate, LocalDate> aKey = new ImmutablePair(data.getStartdate(), data.getEnddate());
@@ -904,7 +913,7 @@ public class SimulateInvestComponent extends ComponentML {
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 if (!evolving) {
                     if (offset == 0) {
-                        results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend);
+                        results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend + " Adv" + simConfig.getAdviser());
                         results.plotDates.add(historydatestring);
                         results.plotDefault.add(onerun.resultavg);
                         results.plotCapital.add(sum.amount + onerun.capital.amount);
@@ -1482,6 +1491,7 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setPeriod(config.getAutoSimulateInvestPeriod());
         simConfig.setLastcount(config.getAutoSimulateInvestLastCount());
         simConfig.setDellimit(config.getAutoSimulateInvestDelLimit());
+        simConfig.setScorelimit(config.getAutoSimulateInvestScoreLimit());
         try {
             simConfig.setEnddate(config.getAutoSimulateInvestEnddate());
         } catch (Exception e) {

@@ -27,6 +27,8 @@ public class AutoSimulateInvestConfig {
     
     private Double dellimit;
     
+    private Double scorelimit;
+    
     private Boolean intervalwhole;
     
     private Map<String, Double> volumelimits;
@@ -83,6 +85,14 @@ public class AutoSimulateInvestConfig {
         this.dellimit = dellimit;
     }
 
+    public Double getScorelimit() {
+        return scorelimit;
+    }
+
+    public void setScorelimit(Double scorelimit) {
+        this.scorelimit = scorelimit;
+    }
+
     public Boolean getIntervalwhole() {
         return intervalwhole;
     }
@@ -125,6 +135,7 @@ public class AutoSimulateInvestConfig {
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL, interval);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD, period);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, dellimit);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, scorelimit);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, lastcount);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE, startdate);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE, enddate);
