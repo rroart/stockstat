@@ -522,7 +522,6 @@ public class SimulateInvestComponent extends ComponentML {
             Triple<SimulateInvestConfig, OneRun, Results> aTriple = new ImmutableTriple(aConfig, onerun, results);
             simPairs.add(aTriple);
         }
-        mydate.prevIndexOffset = 0;
 
        return simPairs;
     }
@@ -596,7 +595,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter) {
-        String key = CacheConstants.AUTOSIMCONFIG + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
+        String key = CacheConstants.AUTOSIMCONFIG + market + autoSimConf.getStartdate() + autoSimConf.getEnddate() + "_" + autoSimConf.getInterval() + "_" + autoSimConf.getPeriod() + "_" + autoSimConf.getScorelimit().doubleValue();
         Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> retMap =  (Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>>) MyCache.getInstance().get(key);
         if (retMap != null) {
             return retMap;
@@ -647,6 +646,9 @@ public class SimulateInvestComponent extends ComponentML {
                     IclijConfig dummy = new IclijConfig();
                     dummy.setConfigValueMap(map);
                     SimulateInvestConfig simConf = getSimConfig(dummy);
+                    if (simConf.getInterval().intValue() != autoSimConf.getInterval().intValue()) {
+                        continue;
+                    }
                     int adviser = simConf.getAdviser();
                     String filterStr = data.getFilter();
                     SimulateFilter myFilter = JsonUtil.convert((String)filterStr, SimulateFilter.class);
@@ -683,6 +685,7 @@ public class SimulateInvestComponent extends ComponentML {
             }
         }
         mydate.date = TimeUtil.getForwardEqualAfter2(mydate.date, offset, data.stockDates);
+        mydate.prevIndexOffset = 0;
     }
 
     private void setDataVolumeAndTrend(Market market, ComponentData param, SimulateInvestConfig simConfig, Data data,

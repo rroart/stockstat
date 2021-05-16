@@ -2393,8 +2393,8 @@ def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adv
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 
-def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, f = None, vl = None):
-    mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, i, p, l, d, f, vl)).start()
+def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, s = 1.0, f = None, vl = None):
+    mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, i, p, l, d, s, f, vl)).start()
 
 def autosimulateinvest2Gwrap(market, startdate, enddate, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, filters = None, volumelimits = None):
     import io
