@@ -751,6 +751,10 @@ public class IclijConfig {
         return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTVOLUMELIMITS);
     }
 
+    public String getSimulateInvestFilters() {
+        return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTFILTERS);
+    }
+
     public String getSimulateInvestStartdate() {
         return (String) getValueOrDefault(IclijConfigConstants.SIMULATEINVESTSTARTDATE);
     }
@@ -793,6 +797,14 @@ public class IclijConfig {
 
     public String getAutoSimulateInvestEnddate() {
         return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTENDDATE);
+    }
+
+    public String getAutoSimulateInvestVolumelimits() {
+        return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS);
+    }
+
+    public String getAutoSimulateInvestFilters() {
+        return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTFILTERS);
     }
 
     public boolean wantsImproveSimulateInvestAutorun() {

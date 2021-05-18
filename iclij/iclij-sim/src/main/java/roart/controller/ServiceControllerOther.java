@@ -39,6 +39,9 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         case ServiceConstants.SIMFILTER:
             new Sim().method((String) param);
             break;
+        case ServiceConstants.SIMAUTO:
+            new Sim().method2((String) param);
+            break;
         }
         if (param instanceof IclijServiceParam) {
             sendReply(((IclijServiceParam) param).getWebpath(), c, r);

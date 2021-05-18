@@ -110,6 +110,11 @@ public class SimulateInvestComponent extends ComponentML {
 	// simconfig from siminvest
 	// localsimconfig from market config file
 	// simconfig and localsimconfig merges, with simconfig values win
+        // four cases
+        // sim: vl
+        // imp: vl filt
+        // auto: vl filt
+        // impauto: vl filt
         AutoSimulateInvestConfig autoSimConfig = getAutoSimConfig(config);
         SimulateInvestConfig simConfig = getSimConfig(config);
         //Integer overrideAdviser = null;
@@ -444,7 +449,11 @@ public class SimulateInvestComponent extends ComponentML {
                             param.getUpdateMap().putIfAbsent("lastbuysell", "Not buying or selling today");
                             componentData.getUpdateMap().putAll(map);
                         } else {
-                            map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                            if (autoSimConfig != null) {
+                                map.put(EvolveConstants.TITLETEXT, emptyNull(autoSimConfig.getStartdate(), "start") + "-" + emptyNull(autoSimConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                            } else {
+                                map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                            }
                             map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                             componentData.getUpdateMap().putAll(map);
                         }
@@ -649,6 +658,7 @@ public class SimulateInvestComponent extends ComponentML {
                     if (simConf.getInterval().intValue() != autoSimConf.getInterval().intValue()) {
                         continue;
                     }
+                    simConf.setVolumelimits(autoSimConf.getVolumelimits());
                     int adviser = simConf.getAdviser();
                     String filterStr = data.getFilter();
                     SimulateFilter myFilter = JsonUtil.convert((String)filterStr, SimulateFilter.class);
@@ -660,6 +670,12 @@ public class SimulateInvestComponent extends ComponentML {
                                 continue;
                             }
                             if (autoSimConfFilter.getStable() < myFilter.getStable()) {
+                                continue;
+                            }
+                            if (autoSimConfFilter.getShortrun() > myFilter.getShortrun()) {
+                                continue;
+                            }
+                            if (autoSimConfFilter.getPopulationabove() > myFilter.getPopulationabove()) {
                                 continue;
                             }
                         }
@@ -722,7 +738,7 @@ public class SimulateInvestComponent extends ComponentML {
         data.lastidx = lastidx;
         
         // vol lim w/ adviser?
-        String key = CacheConstants.SIMULATEINVESTVOLUMELIMITS + market.getConfig().getMarket() + "Adv" + simConfig.getAdviser() + "_" + simConfig.getInterval() + investStart + investEnd + simConfig.getInterpolate();
+        String key = CacheConstants.SIMULATEINVESTVOLUMELIMITS + market.getConfig().getMarket() + "Adv" + simConfig.getAdviser() + "_" + simConfig.getInterval() + investStart + investEnd + simConfig.getInterpolate() + simConfig.getVolumelimits();
         data.volumeExcludeMap = (Map<Integer, List<String>>) MyCache.getInstance().get(key);
         Map<Integer, List<String>> newVolumeExcludeMap = null;
         if (data.volumeExcludeMap == null || VERIFYCACHE) {
@@ -1110,6 +1126,7 @@ public class SimulateInvestComponent extends ComponentML {
         return trendMap;
     }
 
+    @Deprecated
     private void getVolumeExcludes(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
             int interval, Map<String, List<List<Double>>> categoryValueMap,
             Map<String, List<List<Object>>> volumeMap, int delay, int indexOffset, List<String> volumeExcludes) {
@@ -1167,6 +1184,7 @@ public class SimulateInvestComponent extends ComponentML {
         }
     }
 
+    @Deprecated
     private Map<String, double[]> getVolumeExcludesFull(SimulateInvestConfig simConfig, List<String> stockDates, int interval,
             Map<String, List<List<Double>>> categoryValueMap, Map<String, List<List<Object>>> volumeMap) {
         Map<String, double[]> newVolumeMap = new HashMap<>(); 
@@ -1212,6 +1230,7 @@ public class SimulateInvestComponent extends ComponentML {
         return newVolumeMap;
     }
 
+    @Deprecated
     private void getVolumeExcludes(SimulateInvestConfig simConfig, int extradelay, List<String> stockDates,
             int interval, Map<String, List<List<Double>>> categoryValueMap,
             Map<String, List<List<Object>>> volumeMap, int delay, int indexOffset, List<String> volumeExcludes, Map<String, double[]> newVolumeMap) {
@@ -1495,6 +1514,14 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setLastcount(config.getAutoSimulateInvestLastCount());
         simConfig.setDellimit(config.getAutoSimulateInvestDelLimit());
         simConfig.setScorelimit(config.getAutoSimulateInvestScoreLimit());
+        Map<String, Double> map = JsonUtil.convert(config.getAutoSimulateInvestVolumelimits(), Map.class);
+        simConfig.setVolumelimits(map);
+        SimulateFilter[] array = JsonUtil.convert(config.getAutoSimulateInvestFilters(), SimulateFilter[].class);
+        List<SimulateFilter> list = null;
+        if (array != null) {
+            list = Arrays.asList(array);
+        }
+        simConfig.setFilters(list);
         try {
             simConfig.setEnddate(config.getAutoSimulateInvestEnddate());
         } catch (Exception e) {

@@ -88,14 +88,14 @@ public class ImproveAutoSimulateInvestComponent extends ComponentML {
         //evolutionConfig.setGenerations(3);
         //evolutionConfig.setSelect(6);
 
-        Object filters = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
-        filters = param.getInput().getValuemap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
+        //Object filters = param.getConfigValueMap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
+        //filters = param.getInput().getValuemap().remove(IclijConfigConstants.SIMULATEINVESTFILTERS);
         Map<String, Object> confMap = new HashMap<>();
         // confmap
         ComponentData e = evolve.evolve(action, param, market, profitdata, buy, subcomponent, parameters, mlTests, confMap , evolutionConfig, getPipeline(), this, confList);
         Map<String, Object> results = (Map<String, Object>) e.getResultMap();
-        results.put(SimConstants.FILTER, filters);
-        e.getService().send(ServiceConstants.SIMFILTER, results, param.getInput().getConfig());
+        //results.put(SimConstants.FILTER, filters);
+        e.getService().send(ServiceConstants.SIMAUTO, results, param.getInput().getConfig());
         return e;
     }
 

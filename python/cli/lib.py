@@ -2378,30 +2378,30 @@ t = True
 def simulateinvestsG(market, startdate = None, enddate = None, c = f, cv = 0.7, ct = 4, st = t, stv = 0.9, ip = t, ib = f, ir = f, m = f, s = 3, b = t, i = 7, a = 0, p = 0, f = t, ist = t, istv = 0.9, d = 1, w = 1, iw = f, ch = f, nch = t, nctd = f, nctdt = 1, cti = f, ctit = 1, id = f, idu = t, vl = None):
     mp.Process(target=simulateinvest2Gwrap, args=(market, startdate, enddate, c, cv, ct, st, stv, ip, ib, ir, m, s, b, i, a, p, f, ist, istv, d, w, iw, ch, nch, nctd, nctdt, cti, ctit, id, idu, vl)).start()
 
-def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks):
+def improvesimulateinvestGwrap(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):                                                
-        improvesimulateinvest(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks)
+        improvesimulateinvest(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters)
     output = file.getvalue()
     gui.view(output)
 
-def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1, intervalwhole = True, stocks = None):
-    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks)).start()
+def improvesimulateinvestG(market, startdate = None, enddate = None, ga = 0, adviser = None, indicatorPure = None, delay = 1, intervalwhole = True, stocks = None, volumelimits = None, filters = None):
+    mp.Process(target=improvesimulateinvestGwrap, args=(market, startdate, enddate, ga, adviser, indicatorpure, delay, intervalwhole, stocks, volumelimits, filters)).start()
 
 #engine = create_engine('postgresql://stockread@localhost:5432/stockstat')
 conn = psycopg2.connect("host=localhost dbname=stockstat user=stockread password=password")
 
-def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, s = 1.0, f = None, vl = None):
-    mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, i, p, l, d, s, f, vl)).start()
+def autosimulateinvestsG(market, startdate = None, enddate = None, i = 1, p = 0, l = 5, d = 0.5, s = 1.0, iw = False, f = None, vl = None):
+    mp.Process(target=autosimulateinvest2Gwrap, args=(market, startdate, enddate, i, p, l, d, s, iw, f, vl)).start()
 
-def autosimulateinvest2Gwrap(market, startdate, enddate, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, filters = None, volumelimits = None):
+def autosimulateinvest2Gwrap(market, startdate, enddate, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, intervalwhole = False, filters = None, volumelimits = None):
     import io
     from contextlib import redirect_stdout
     file = io.StringIO()
     with redirect_stdout(file):
-        autosimulateinvest2(market, startdate, enddate, interval, period, lastcount, dellimit, scorelimit, filters, volumelimits)
+        autosimulateinvest2(market, startdate, enddate, interval, period, lastcount, dellimit, scorelimit, intervalwhole, filters, volumelimits)
     output = file.getvalue()
     myfile = open("/tmp/" + str(time.time()) + ".txt", "w")
     myfile.write(output)
@@ -2414,6 +2414,8 @@ def autosimulateinvest2(market, startdate = None, enddate = None, interval = 1, 
 def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, period = 0, lastcount = 5, dellimit = 0.5, scorelimit = 1.0, intervalwhole = False, filters = None, volumelimits = None):
     data = { 'startdate' : startdate, 'enddate' : enddate, 'interval' : interval, 'intervalwhole' : intervalwhole, 'period' : period, 'lastcount' : lastcount, 'dellimit' : dellimit, 'scorelimit' : scorelimit, 'volumelimits' : volumelimits, 'filters' : filters }
     print(market, data)
+    #if True:
+    #    return
     response = request.request3(market, data)
     resp = response.json()
     webdata = resp['webdatajson']
@@ -2428,8 +2430,11 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
     plt.rc('grid', color='0.75', linestyle='-', linewidth=0.5)
 
     mynames=["default","my"]
-    olddate = dates[0]
-    newdate = dates[len(dates) - 1]
+    olddate = None
+    newdate = None
+    if len(dates) > 0:
+        olddate = dates[0]
+        newdate = dates[len(dates) - 1]
     
     textsize = 9
     left, width = 0.1, 0.8

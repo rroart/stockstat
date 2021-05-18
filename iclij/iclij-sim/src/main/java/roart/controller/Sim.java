@@ -109,7 +109,7 @@ public class Sim {
                 output.add("");
             }
             Map<Double, List<AbstractChromosome>> chromosomeMap = groupCommon(myList, output);
-            getCommon(chromosomeMap, output);
+            Double[] commonScore = getCommon(chromosomeMap, output, filter.isAllabove());
             Map<Double, List<AbstractChromosome>> minChromosomeMap = new HashMap<>(chromosomeMap);
             Set<Double> scores = new HashSet<>();
             Set<Double> minScores = new HashSet<>();
@@ -124,8 +124,6 @@ public class Sim {
                 List<AbstractChromosome> chromosomes = entry.getValue();
                 IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
                 Map<String, Object> resultMap = chromosome.getResultMap();
-                if (filter.isUseclusters()) {
-                }
                 Double keyScore = score;
                 if (filter.isAllabove()) {
                     keyScore = getAllAbove(resultMap, output, summary);
@@ -161,13 +159,13 @@ public class Sim {
                 if (success) {
                     summaries.add(new ImmutablePair<>(keyScore, mysummary));
                     scores.add(score);
-                    if (score != keyScore) {
+                    if (score.doubleValue() != keyScore.doubleValue()) {
                         minScores.add(keyScore);
                         minChromosomeMap.put(keyScore, chromosomes);
                     }
                 }
             }
-            Double maxScore = summaries.stream().mapToDouble(e -> e.getKey()).max().orElse(0);
+            Double maxScore = summaries.stream().mapToDouble(Pair::getKey).max().orElse(0);
             List<Pair<Double, String>> maxSummaries = summaries.stream().filter(e -> e.getKey().equals(maxScore)).collect(Collectors.toList());
             for (Pair<Double, String> aSummary : maxSummaries) {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
@@ -203,6 +201,23 @@ public class Sim {
             if (scores.isEmpty()) {
                 return;
             }
+            if (filter.isUseclusters()) {
+                IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomeMap.get(commonScore[0]);
+                SimDataItem data = new SimDataItem();
+                data.setRecord(LocalDate.now());
+                data.setScore(commonScore[1]);
+                data.setMarket(market);
+                //data.setAdviser(adviser);
+                data.setStartdate(startdate);
+                data.setEnddate(enddate);
+                data.setFilter(JsonUtil.convert(filter));
+                data.setConfig(JsonUtil.convert(chromosome.getMap()));
+                try {
+                    data.save();
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+            }
             Double max = Collections.max(scores);
             Double min = Collections.max(minScores);
             List<AbstractChromosome> chromosomes = minChromosomeMap.get(min);            
@@ -222,6 +237,57 @@ public class Sim {
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
             }
+        }
+    }
+
+    public void method2(String param) {
+        param = getParam(param);
+        Map<String, Object> myMap = convert(param);
+        if (myMap.isEmpty()) {
+            return;
+        }
+        String id = (String) myMap.get(EvolveConstants.ID);
+        List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
+        if (myList.size() > 0) {
+            List<String> output = new ArrayList<>();
+
+            Map<Double, List<AbstractChromosome>> chromosomeMap = groupCommon(myList, output);
+            getCommon(chromosomeMap, output, false);
+            Map<Double, List<AbstractChromosome>> minChromosomeMap = new HashMap<>(chromosomeMap);
+            Set<Double> scores = new HashSet<>();
+            Set<Double> minScores = new HashSet<>();
+            List<Pair<Double, String>> summaries = new ArrayList<>();
+            for (Entry<Double, List<AbstractChromosome>> entry : chromosomeMap.entrySet()) {
+                List<Summary> summary = new ArrayList<>();
+                Double score = entry.getKey();
+                List<AbstractChromosome> chromosomes = entry.getValue();
+                Double keyScore = score;
+                String mysummary = "";
+                boolean success = true;
+                for (Summary aSummary : summary) {
+                    success &= aSummary.success;
+                    mysummary += ", ";
+                    mysummary += aSummary.text + " : " + aSummary.success + " ";
+                }
+                mysummary = "Summary : " + success + " Score " + MathUtil.round(score, 2) + " " + mysummary;
+                output.add(mysummary);
+                output.add("");
+                if (success) {
+                    summaries.add(new ImmutablePair<>(keyScore, mysummary));
+                    scores.add(score);
+                    if (score.doubleValue() != keyScore.doubleValue()) {
+                        minScores.add(keyScore);
+                        minChromosomeMap.put(keyScore, chromosomes);
+                    }
+                }
+            }
+            Double maxScore = summaries.stream().mapToDouble(Pair::getKey).max().orElse(0);
+            List<Pair<Double, String>> maxSummaries = summaries.stream().filter(e -> e.getKey().equals(maxScore)).collect(Collectors.toList());
+            for (Pair<Double, String> aSummary : maxSummaries) {
+                output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
+            }
+            String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
+            print("simauto " + simtext, "File " + id, output);
         }
     }
 
@@ -420,7 +486,8 @@ public class Sim {
         return chromosomeMap;
     }
 
-    private void getCommon(Map<Double, List<AbstractChromosome>> chromosomeMap, List<String> output) {
+    private Double[] getCommon(Map<Double, List<AbstractChromosome>> chromosomeMap, List<String> output, Boolean isAllabove) {
+        Double[] commonScore = { null, null };
         for (Entry<Double, List<AbstractChromosome>> entry : chromosomeMap.entrySet()) {
             Double score = entry.getKey();
             List<AbstractChromosome> aList = entry.getValue();
@@ -450,7 +517,24 @@ public class Sim {
             output.add(entry.getKey() + " " + aList.size() + " " + aMap);
             output.add("" + list2);
             output.add("");
+            for (AbstractChromosome aChromosome : aList) {
+                IclijConfigMapChromosome anotherChromosome = (IclijConfigMapChromosome) aChromosome;
+                Map<String, Object> resultMap = anotherChromosome.getResultMap();
+                Double keyScore = score;
+                if (isAllabove) {
+                    keyScore = getAllAbove(resultMap, new ArrayList<String>(), new ArrayList<Summary>());
+                    if (keyScore < 1) {
+                        continue;
+                    }
+                    if (commonScore[0] == null) {
+                        commonScore[0] = score;
+                        commonScore[1] = keyScore;
+                        break;
+                    }
+                }
+            }
         }
+        return commonScore;
     }
 
     private Map<String, Object> convert(String param) {
