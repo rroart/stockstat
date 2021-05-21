@@ -1,5 +1,6 @@
 package roart.iclij.config;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class SimulateFilter {
@@ -115,4 +116,30 @@ public class SimulateFilter {
             this.printconfig = other.printconfig;
         }
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        System.out.println("eee");
+        if (o == null) {
+            return false;
+        }
+        
+        if (o == this) {
+            return true;
+        }
+  
+        if (!(o instanceof SimulateInvestConfig)) {
+            return false;
+        }        
+        
+        SimulateFilter s = (SimulateFilter) o;
+        
+        return Objects.equals(shortrun, s.shortrun)
+                && Objects.equals(lucky, s.lucky)
+                && Objects.equals(stable, s.stable)
+                && Objects.equals(allabove, s.allabove)
+                && Objects.equals(populationabove, s.populationabove)
+                && Objects.equals(useclusters, s.useclusters)
+                && Objects.equals(printconfig, s.printconfig);
+    } 
 }

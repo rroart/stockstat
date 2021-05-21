@@ -19,12 +19,14 @@ public class StockHistory {
 
     private String trend;
 
+    private Integer adviser;
+    
     public StockHistory() {
         
     }
     
     public StockHistory(String date, Capital capital, Capital sum, double resultavg, String confidence,
-            List<String> stocks, String trend) {
+            List<String> stocks, String trend, Integer adv) {
         super();
         this.date = date;
         this.capital = capital;
@@ -33,6 +35,7 @@ public class StockHistory {
         this.confidence = confidence;
         this.stocks = stocks;
         this.trend = trend;
+        this.adviser = adv;
     }
 
     public String getDate() {
@@ -91,8 +94,17 @@ public class StockHistory {
         this.trend = trend;
     }
 
+    public Integer getAdviser() {
+        return adviser;
+    }
+
+    public void setAdviser(Integer adviser) {
+        this.adviser = adviser;
+    }
+
     @Override
     public String toString() {
-        return date + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + confidence + " " + stocks + " " + trend;
+        String adv = adviser != null ? " Adv" + adviser : "";
+        return date + " " + capital.toString() + " " + sum.toString() + " " + new MathUtil().round(resultavg, 2) + " " + confidence + " " + stocks + " " + trend + adv;
     }
 }

@@ -1,9 +1,11 @@
 package roart.iclij.config;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -545,5 +547,58 @@ public class SimulateInvestConfig {
             }
         }
         return null;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        
+        if (o == this) {
+            return true;
+        }
+  
+        if (!(o instanceof SimulateInvestConfig)) {
+            return false;
+        }        
+        
+        SimulateInvestConfig s = (SimulateInvestConfig) o;
+        
+        return Objects.equals(confidence, s.confidence)
+                && Objects.equals(confidenceValue, s.confidenceValue)
+                && Objects.equals(confidenceFindTimes, s.confidenceFindTimes)
+                && Objects.equals(stoploss, s.stoploss)
+                && Objects.equals(stoplossValue, s.stoplossValue)
+                && Objects.equals(indicatorPure, s.indicatorPure)
+                && Objects.equals(indicatorRebase, s.indicatorRebase)
+                && Objects.equals(indicatorReverse, s.indicatorReverse)
+                && Objects.equals(mldate, s.mldate)
+                && Objects.equals(stocks, s.stocks)
+                && Objects.equals(buyweight, s.buyweight)
+                && Objects.equals(interval, s.interval)
+                && Objects.equals(adviser, s.adviser)
+                && Objects.equals(period, s.period)
+                && Arrays.equals(excludes, s.excludes)
+                && Objects.equals(startdate, s.startdate)
+                && Objects.equals(enddate, s.enddate)
+                && Objects.equals(intervalStoploss, s.intervalStoploss)
+                && Objects.equals(intervalStoplossValue, s.intervalStoplossValue)
+                && Objects.equals(interpolate, s.interpolate)
+                && Objects.equals(day, s.day)
+                && Objects.equals(ga, s.ga)
+                && Objects.equals(delay, s.delay)
+                && Objects.equals(extradelay, s.extradelay)
+                && Objects.equals(intervalwhole, s.intervalwhole)
+                && Objects.equals(confidenceholdincrease, s.confidenceholdincrease)
+                && Objects.equals(noconfidenceholdincrease, s.noconfidenceholdincrease)
+                && Objects.equals(volumelimits, s.volumelimits)
+                && Objects.equals(confidencetrendincrease, s.confidencetrendincrease)
+                && Objects.equals(confidencetrendincreaseTimes, s.confidencetrendincreaseTimes)
+                && Objects.equals(noconfidencetrenddecrease, s.noconfidencetrenddecrease)
+                && Objects.equals(noconfidencetrenddecreaseTimes, s.noconfidencetrenddecreaseTimes)
+                && Objects.equals(indicatorDirection, s.indicatorDirection)
+                && Objects.equals(indicatorDirectionUp, s.indicatorDirectionUp)
+                && Objects.equals(filters, s.filters);
     }
 }

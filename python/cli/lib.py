@@ -2448,7 +2448,7 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
     axescolor = '#f6f6f6'  # the axes background color
 
     ax1 = fig.add_axes(rect1, facecolor=axescolor)  # left, bottom, width, height
-    print(type(commondays[0]))
+    #print(type(commondays[0]))
     #print(commondays)
     commondays = [ w.replace('.', '-') for w in commondays ]
     commondays = [ np.datetime64(x) for x in commondays ]

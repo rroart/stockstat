@@ -19,6 +19,7 @@ import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -60,6 +61,7 @@ import roart.evolution.iclijconfigmap.genetics.gene.impl.IclijConfigMapGene;
 import roart.iclij.config.AutoSimulateInvestConfig;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijConfigConstants;
+import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.config.MLConfigs;
 import roart.iclij.config.Market;
 import roart.iclij.config.SimulateFilter;
@@ -159,8 +161,11 @@ public class SimulateInvestComponent extends ComponentML {
             }
             simConfig = localSimConfig;
         }
-        if (autoSimConfig != null && !evolving) {
+        if (autoSimConfig != null/* && !evolving*/) {
+            simConfig.setStartdate(autoSimConfig.getStartdate());
+            simConfig.setEnddate(autoSimConfig.getEnddate());
             simConfig.setInterval(autoSimConfig.getInterval());
+            simConfig.setVolumelimits(autoSimConfig.getVolumelimits());
         }
         int extradelay = 0;
         if (simConfig.getExtradelay() != null) {
@@ -213,7 +218,7 @@ public class SimulateInvestComponent extends ComponentML {
             log.error(Constants.EXCEPTION, e1);
         }
 
-        Map<String, List<List<Double>>> filteredCategoryValueMap = setExclusions(market, data, simConfig);
+        setExclusions(market, data, simConfig);
 
         boolean intervalwhole;
         if (autoSimConfig != null) {
@@ -223,7 +228,7 @@ public class SimulateInvestComponent extends ComponentML {
         }
         int end = 1;
         if (intervalwhole) {
-            end = simConfig.getInterval();
+            end = autoSimConfig != null ? autoSimConfig.getInterval() : simConfig.getInterval();
         }
 
         List<String> parametersList = new ArrayList<>(); //adviser.getParameters();
@@ -241,7 +246,7 @@ public class SimulateInvestComponent extends ComponentML {
             investEnd = getAdjustedInvestEnd(extradelay, data, investEnd);
             LocalDate lastInvestEnd = getAdjustedLastInvestEnd(data, investEnd, simConfig.getDelay());
 
-            setDataVolumeAndTrend(market, param, simConfig, data, investStart, investEnd, filteredCategoryValueMap, lastInvestEnd);
+            setDataVolumeAndTrend(market, param, simConfig, data, investStart, investEnd, lastInvestEnd);
 
             long time0 = System.currentTimeMillis();
             Map<String, Object> resultMap = new HashMap<>();
@@ -257,8 +262,8 @@ public class SimulateInvestComponent extends ComponentML {
                     simsConfigs = getSimConfigs(simConfigs, mydate, keys, market);
                     simConfigs.keySet().removeAll(keys);
                 }
-                List<Triple<SimulateInvestConfig, OneRun, Results>> simTriplets = getTriples(market, param, simConfig,
-                        data, investStart, investEnd, mydate, simsConfigs);
+                List<Triple<SimulateInvestConfig, OneRun, Results>> simTriplets = getTriples(market, param, data,
+                        investStart, investEnd, mydate, simsConfigs);
                 if (evolving || offset > 0) {
                     investEnd = lastInvestEnd;
                 }
@@ -271,7 +276,7 @@ public class SimulateInvestComponent extends ComponentML {
                 if (autoSimConfig == null) {
                     int adviserId = simConfig.getAdviser();
                     currentOneRun.adviser = new AdviserFactory().get(adviserId, market, investStart, investEnd, param, simConfig);
-                    currentOneRun.adviser.getValueMap(data.stockDates, data.firstidx, data.lastidx, data.categoryValueMap);
+                    currentOneRun.adviser.getValueMap(data.stockDates, data.firstidx, data.lastidx, data.getCatValMap(simConfig.getInterpolate()));
                 }
                 Results mainResult = new Results();
 
@@ -283,7 +288,7 @@ public class SimulateInvestComponent extends ComponentML {
                     mydate.indexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, datestring);
                     if (currentSimConfig != null) {
                         doOneRun(param, currentSimConfig, extradelay, evolving, aParameter, offset, currentOneRun, mainResult,
-                                data, lastInvest, mydate);
+                                data, lastInvest, mydate, autoSimConfig != null);
                     }
                     if (autoSimConfig != null) {
                         for (Triple<SimulateInvestConfig, OneRun, Results> aPair : simTriplets) {
@@ -292,7 +297,7 @@ public class SimulateInvestComponent extends ComponentML {
                             Results aResult = aPair.getRight();
 
                             doOneRun(param, aSimConfig, extradelay, evolving, aParameter, offset, aOneRun, aResult,
-                                    data, lastInvest, mydate);
+                                    data, lastInvest, mydate, autoSimConfig != null);
                         }
                     }
                     if (autoSimConfig != null) {
@@ -331,8 +336,8 @@ public class SimulateInvestComponent extends ComponentML {
                         Set<Pair<LocalDate, LocalDate>> keys = new HashSet<>();
                         simsConfigs = getSimConfigs(simConfigs, mydate, keys, market);
                         simConfigs.keySet().removeAll(keys);
-                        List<Triple<SimulateInvestConfig, OneRun, Results>> newSimTriplets = getTriples(market, param, simConfig,
-                                data, investStart, investEnd, mydate, simsConfigs);
+                        List<Triple<SimulateInvestConfig, OneRun, Results>> newSimTriplets = getTriples(market, param, data,
+                                investStart, investEnd, mydate, simsConfigs);
                         if (newSimTriplets.size() > 0) {
                             List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().capital.amount + getSum(o.getMiddle().mystocks).amount)).collect(Collectors.toList());
                             log.info("alist {}", alist);
@@ -345,14 +350,19 @@ public class SimulateInvestComponent extends ComponentML {
                         List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
                         log.info("alist {}", alist);
                         OneRun oneRun = simTriplets.get(0).getMiddle();
-                        currentOneRun.adviser = oneRun.adviser;
-                        currentOneRun.hits = oneRun.hits;
-                        currentOneRun.trendDec = oneRun.trendDec;
-                        currentOneRun.trendInc = oneRun.trendInc;
-                        //oneRun.
-                        currentSimConfig = simTriplets.get(0).getLeft();
+                        if (oneRun.autoscore > 0) {
+                            currentOneRun.adviser = oneRun.adviser;
+                            currentOneRun.hits = SerializationUtils.clone(oneRun.hits);
+                            currentOneRun.trendDec = SerializationUtils.clone(oneRun.trendDec);
+                            currentOneRun.trendInc = SerializationUtils.clone(oneRun.trendInc);
+                            //oneRun.
+                            currentSimConfig = simTriplets.get(0).getLeft();
+                        } else {
+                            int jj = 0; // TODO selloff?
+                        }
                     }
                     mydate.prevIndexOffset = mydate.indexOffset;
+                    //int interval = autoSimConfig != null ? autoSimConfig.getInterval() : simConfig.getInterval();
                     if (mydate.indexOffset - simConfig.getInterval() < 0) {
                         break;
                     }
@@ -383,7 +393,7 @@ public class SimulateInvestComponent extends ComponentML {
                         aOneRun.mystocks = aOneRun.savedStocks;
                     }
                     if (mydate.prevIndexOffset - extradelay - simConfig.getDelay() >= 0) {
-                        update(data.categoryValueMap, aOneRun.mystocks, mydate.indexOffset - extradelay - simConfig.getDelay(), new ArrayList<>(), mydate.prevIndexOffset - extradelay - simConfig.getDelay());
+                        update(data.getCatValMap(simConfig.getInterpolate()), aOneRun.mystocks, mydate.indexOffset - extradelay - aSimConfig.getDelay(), new ArrayList<>(), mydate.prevIndexOffset - extradelay - aSimConfig.getDelay());
                     }
                     Capital sum = getSum(aOneRun.mystocks);
                     sum.amount += aOneRun.capital.amount;
@@ -420,13 +430,6 @@ public class SimulateInvestComponent extends ComponentML {
                     }
 
                     if (offset == 0) {
-                        int myIndexOffset = data.stockDates.size() - 1 - TimeUtil.getIndexEqualAfter(data.stockDates, mldate);
-                        Trend trend = new TrendUtil().getTrend(myIndexOffset - mydate.prevIndexOffset, null /*TimeUtil.convertDate2(olddate)*/, mydate.prevIndexOffset, data.stockDates /*, findTime*/, param, market, filteredCategoryValueMap);
-                        log.info(trend.toString());
-                        log.info("" + simConfig.asMap());
-                    }
-
-                    if (offset == 0) {
                         Map<String, Object> map = new HashMap<>();
                         if (!evolving) {
                             for (SimulateStock stock : aOneRun.mystocks) {
@@ -452,7 +455,7 @@ public class SimulateInvestComponent extends ComponentML {
                             if (autoSimConfig != null) {
                                 map.put(EvolveConstants.TITLETEXT, emptyNull(autoSimConfig.getStartdate(), "start") + "-" + emptyNull(autoSimConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
                             } else {
-                                map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                                map.put(EvolveConstants.TITLETEXT, emptyNull(aSimConfig.getStartdate(), "start") + "-" + emptyNull(aSimConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
                             }
                             map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                             componentData.getUpdateMap().putAll(map);
@@ -471,7 +474,11 @@ public class SimulateInvestComponent extends ComponentML {
                         map.put(SimConstants.SCORE, score);
                         map.put(SimConstants.STARTDATE, TimeUtil.convertDate2(investStart));
                         map.put(SimConstants.ENDDATE, TimeUtil.convertDate2(investEnd));
-                        map.put(EvolveConstants.SIMTEXT, market.getConfig().getMarket() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                        if (autoSimConfig != null) {
+                            map.put(EvolveConstants.TITLETEXT, emptyNull(autoSimConfig.getStartdate(), "start") + "-" + emptyNull(autoSimConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                        } else {
+                            map.put(EvolveConstants.SIMTEXT, market.getConfig().getMarket() + " " + emptyNull(aSimConfig.getStartdate(), "start") + "-" + emptyNull(aSimConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                        }
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());
                         resultMap.put("" + offset, map);
@@ -519,8 +526,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private List<Triple<SimulateInvestConfig, OneRun, Results>> getTriples(Market market, ComponentData param,
-            SimulateInvestConfig simConfig, Data data, LocalDate investStart, LocalDate investEnd, Mydate mydate,
-            List<SimulateInvestConfig> simsConfigs) {
+            Data data, LocalDate investStart, LocalDate investEnd, Mydate mydate, List<SimulateInvestConfig> simsConfigs) {
         List<Triple<SimulateInvestConfig, OneRun, Results>> simPairs = new ArrayList<>();
         for (SimulateInvestConfig aConfig : simsConfigs) {
             int adviserId = aConfig.getAdviser();
@@ -587,7 +593,7 @@ public class SimulateInvestComponent extends ComponentML {
         return JsonUtil.copy(simulate);
     }
 
-    private Map<String, List<List<Double>>> setExclusions(Market market, Data data, SimulateInvestConfig simConfig) {
+    private void setExclusions(Market market, Data data, SimulateInvestConfig simConfig) {
         String[] excludes = null;
         if (market.getSimulate() != null) {
             excludes = market.getSimulate().getExcludes();
@@ -598,17 +604,15 @@ public class SimulateInvestComponent extends ComponentML {
         data.configExcludeList = Arrays.asList(excludes);
         Set<String> configExcludeSet = new HashSet<>(data.configExcludeList);
 
-        Map<String, List<List<Double>>> filteredCategoryValueMap = new HashMap<>(data.getCatValMap(simConfig.getInterpolate()));
-        filteredCategoryValueMap.keySet().removeAll(configExcludeSet);
-        return filteredCategoryValueMap;
+        data.filteredCategoryValueMap = new HashMap<>(data.getCatValMap(false));
+        data.filteredCategoryValueMap.keySet().removeAll(configExcludeSet);
+        data.filteredCategoryValueFillMap = new HashMap<>(data.getCatValMap(true));
+        data.filteredCategoryValueFillMap.keySet().removeAll(configExcludeSet);
     }
 
     private Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> getSimConfigs(String market, AutoSimulateInvestConfig autoSimConf, List<SimulateFilter> filter) {
         String key = CacheConstants.AUTOSIMCONFIG + market + autoSimConf.getStartdate() + autoSimConf.getEnddate() + "_" + autoSimConf.getInterval() + "_" + autoSimConf.getPeriod() + "_" + autoSimConf.getScorelimit().doubleValue();
-        Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> retMap =  (Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>>) MyCache.getInstance().get(key);
-        if (retMap != null) {
-            return retMap;
-        }
+        Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> retMap = (Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>>) MyCache.getInstance().get(key);
         List<SimDataItem> all = new ArrayList<>();
         try {
             String simkey = CacheConstants.SIMDATA + market + autoSimConf.getStartdate() + autoSimConf.getEnddate();
@@ -622,10 +626,39 @@ public class SimulateInvestComponent extends ComponentML {
                 all = SimDataItem.getAll(market, null, null); // fix later: , startDate, endDate);
                 MyCache.getInstance().put(simkey, all);
             }
+            /*
+            if (VERIFYCACHE && trendMap != null) {
+                for (Entry<Integer, Trend> entry : newTrendMap.entrySet()) {
+                    int key2 = entry.getKey();
+                    Trend v2 = entry.getValue();
+                    Trend v = trendMap.get(key2);
+                    if (v2 != null && !v2.toString().equals(v.toString())) {
+                        log.error("Difference with cache");
+                    }
+                }
+            }
+            */
         } catch (Exception e) {
             log.error(Constants.ERROR, e);
         }
-        retMap = new HashMap<>();
+        List<SimulateFilter[]> list = null;
+        if (autoSimConf != null) {
+            IclijConfig instance = IclijXMLConfig.getConfigInstance();
+            try {
+                list = IclijXMLConfig.getSimulate(instance);
+            } catch (Exception e) {
+                log.error(Constants.EXCEPTION, e);
+            }
+            List<SimulateFilter> listoverride = autoSimConf.getFilters();
+            if (listoverride != null) {
+                for (int i = 0; i < listoverride.size(); i++) {
+                    SimulateFilter afilter = list.get(0)[i];
+                    SimulateFilter otherfilter = listoverride.get(i);
+                    afilter.merge(otherfilter);
+                }
+            }
+        }
+        Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> newRetMap = new HashMap<>();
         for (SimDataItem data : all) {
             if (autoSimConf.getScorelimit().doubleValue() > data.getScore().doubleValue()) {
                 continue;
@@ -662,9 +695,9 @@ public class SimulateInvestComponent extends ComponentML {
                     int adviser = simConf.getAdviser();
                     String filterStr = data.getFilter();
                     SimulateFilter myFilter = JsonUtil.convert((String)filterStr, SimulateFilter.class);
-                    List<SimulateFilter> autoSimConfFilters = autoSimConf.getFilters();
+                    SimulateFilter[] autoSimConfFilters = list.get(0);
                     if (autoSimConfFilters != null) {
-                        SimulateFilter autoSimConfFilter = autoSimConfFilters.get(adviser);
+                        SimulateFilter autoSimConfFilter = autoSimConfFilters[adviser];
                         if (myFilter != null && autoSimConfFilter != null) {
                             if (autoSimConfFilter.getLucky() < myFilter.getLucky()) {
                                 continue;
@@ -681,10 +714,30 @@ public class SimulateInvestComponent extends ComponentML {
                         }
                     }
                     Pair<LocalDate, LocalDate> aKey = new ImmutablePair(data.getStartdate(), data.getEnddate());
-                    MapUtil.mapAddMe(retMap, aKey, simConf);
+                    MapUtil.mapAddMe(newRetMap, aKey, simConf);
                 }
             }
         }
+        if (VERIFYCACHE && retMap != null) {
+            for (Entry<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> entry : newRetMap.entrySet()) {
+                Pair<LocalDate, LocalDate> key2 = entry.getKey();
+                List<SimulateInvestConfig> v2 = entry.getValue();
+                List<SimulateInvestConfig> v = retMap.get(key2);
+                if (v == null || v2 == null || v.size() != v2.size()) {
+                    log.error("Difference with cache");
+                    continue;
+                }
+                for (int i = 0; i < v.size(); i++) {
+                    if (!v.get(i).equals(v2.get(i))) {
+                        log.error("Difference with cache");
+                    }
+                }
+            }
+        }
+        if (retMap != null) {
+            return retMap;
+        }
+        retMap = newRetMap;
         MyCache.getInstance().put(key, retMap);
         return retMap;
     }
@@ -705,8 +758,7 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private void setDataVolumeAndTrend(Market market, ComponentData param, SimulateInvestConfig simConfig, Data data,
-            LocalDate investStart, LocalDate investEnd, Map<String, List<List<Double>>> filteredCategoryValueMap,
-            LocalDate lastInvestEnd) {
+            LocalDate investStart, LocalDate investEnd, LocalDate lastInvestEnd) {
         LocalDate date = investStart;
 
         date = TimeUtil.getEqualBefore(data.stockDates, date);
@@ -738,37 +790,51 @@ public class SimulateInvestComponent extends ComponentML {
         data.lastidx = lastidx;
         
         // vol lim w/ adviser?
-        String key = CacheConstants.SIMULATEINVESTVOLUMELIMITS + market.getConfig().getMarket() + "Adv" + simConfig.getAdviser() + "_" + simConfig.getInterval() + investStart + investEnd + simConfig.getInterpolate() + simConfig.getVolumelimits();
-        data.volumeExcludeMap = (Map<Integer, List<String>>) MyCache.getInstance().get(key);
+        data.volumeExcludeMap = getVolumeExcludeMap(market, simConfig, data, investStart, investEnd, firstidx, lastidx, false);
+        data.volumeExcludeFillMap = getVolumeExcludeMap(market, simConfig, data, investStart, investEnd, firstidx, lastidx, true);
+
+        long time00 = System.currentTimeMillis();
+        log.info("timeee0 {}", System.currentTimeMillis() - time00);
+        
+        data.trendMap = getTrendIncDec(market, param, data.stockDates, simConfig.getInterval(), firstidx, lastidx, simConfig, data, false);
+        data.trendFillMap = getTrendIncDec(market, param, data.stockDates, simConfig.getInterval(), firstidx, lastidx, simConfig, data, true);
+        Set<Integer> keys = data.trendMap.keySet();
+        List<Integer> keyl = new ArrayList<>(keys);
+        Collections.sort(keyl);
+        log.info("keyl {}", keyl);
+    }
+
+    private Map<Integer, List<String>> getVolumeExcludeMap(Market market, SimulateInvestConfig simConfig, Data data, LocalDate investStart,
+            LocalDate investEnd, int firstidx, int lastidx, boolean interpolate) {
+        String key = CacheConstants.SIMULATEINVESTVOLUMELIMITS + market.getConfig().getMarket() + "_" + simConfig.getInterval() + investStart + investEnd + interpolate + simConfig.getVolumelimits();
+        Map<Integer, List<String>> verifyVolumeExcludeMap = data.getVolumeExcludeMap(interpolate);
+        Map<Integer, List<String>> volumeExcludeMap = (Map<Integer, List<String>>) MyCache.getInstance().get(key);
         Map<Integer, List<String>> newVolumeExcludeMap = null;
-        if (data.volumeExcludeMap == null || VERIFYCACHE) {
+        if (volumeExcludeMap == null || VERIFYCACHE) {
             long time00 = System.currentTimeMillis();
-            newVolumeExcludeMap = getVolumeExcludesFull(simConfig, simConfig.getInterval(), data.getCatValMap(simConfig.getInterpolate()), data.volumeMap, firstidx, lastidx);
+            newVolumeExcludeMap = getVolumeExcludesFull(simConfig, simConfig.getInterval(), data.getCatValMap(interpolate), data.volumeMap, firstidx, lastidx);
             log.info("timee0 {}", System.currentTimeMillis() - time00);
         }
-        if (VERIFYCACHE && data.volumeExcludeMap != null) {
+        verifyVolumeExcludeMap(newVolumeExcludeMap, verifyVolumeExcludeMap);
+        if (volumeExcludeMap == null) {
+            volumeExcludeMap = newVolumeExcludeMap;
+            MyCache.getInstance().put(key, volumeExcludeMap);
+        }
+        return volumeExcludeMap;
+    }
+
+    private void verifyVolumeExcludeMap(Map<Integer, List<String>> newVolumeExcludeMap,
+            Map<Integer, List<String>> aVolumeExcludeMap) {
+        if (VERIFYCACHE && aVolumeExcludeMap != null) {
             for (Entry<Integer, List<String>> entry : newVolumeExcludeMap.entrySet()) {
                 int key2 = entry.getKey();
                 List<String> v2 = entry.getValue();
-                List<String> v = data.volumeExcludeMap.get(key2);
+                List<String> v = aVolumeExcludeMap.get(key2);
                 if (v2 != null && !v2.equals(v)) {
                     log.error("Difference with cache");
                 }
             }
         }
-        if (data.volumeExcludeMap == null) {
-            data.volumeExcludeMap = newVolumeExcludeMap;
-            MyCache.getInstance().put(key, data.volumeExcludeMap);
-        }
-
-        long time00 = System.currentTimeMillis();
-        log.info("timeee0 {}", System.currentTimeMillis() - time00);
-        
-        data.trendMap = getTrendIncDec(market, param, data.stockDates, simConfig.getInterval(), filteredCategoryValueMap, firstidx, lastidx, simConfig);
-        Set<Integer> keys = data.trendMap.keySet();
-        List<Integer> keyl = new ArrayList<>(keys);
-        Collections.sort(keyl);
-        log.info("keyl {}", keyl);
     }
 
     private LocalDate getAdjustedLastInvestEnd(Data data, LocalDate investEnd, int delay) {
@@ -848,18 +914,18 @@ public class SimulateInvestComponent extends ComponentML {
     private void doOneRun(ComponentData param, SimulateInvestConfig simConfig, int extradelay, boolean evolving,
             String aParameter, int offset, OneRun onerun,
             Results results, Data data, boolean lastInvest,
-            Mydate mydate) {
+            Mydate mydate, boolean auto) {
         if (lastInvest) {
             // not with evolving?
             onerun.savedStocks = copy(onerun.mystocks);
             onerun.saveLastInvest = true;
         }
         //Trend trend = getTrendIncDec(market, param, stockDates, interval, filteredCategoryValueMap, trendInc, trendDec, indexOffset);
-        Trend trend = getTrendIncDec(data.stockDates, onerun.trendInc, onerun.trendDec, mydate.indexOffset, data.trendMap);
+        Trend trend = getTrendIncDec(data.stockDates, onerun.trendInc, onerun.trendDec, mydate.indexOffset, data.getTrendMap(simConfig.getInterpolate()));
         // get recommendations
 
         List<String> myExcludes = getExclusions(simConfig, extradelay, data.stockDates, simConfig.getInterval(), data.getCatValMap(simConfig.getInterpolate()),
-                data.volumeMap, data.configExcludeList, simConfig.getDelay(), mydate.indexOffset, data.volumeExcludeMap);
+                data.volumeMap, data.configExcludeList, simConfig.getDelay(), mydate.indexOffset, data.getVolumeExcludeMap(simConfig.getInterpolate()));
 
         double myavg = increase(onerun.mystocks, mydate.indexOffset - extradelay, data.getCatValMap(simConfig.getInterpolate()), mydate.prevIndexOffset);
 
@@ -932,7 +998,8 @@ public class SimulateInvestComponent extends ComponentML {
                 List<String> ids = onerun.mystocks.stream().map(SimulateStock::getId).collect(Collectors.toList());
                 if (!evolving) {
                     if (offset == 0) {
-                        results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend + " Adv" + simConfig.getAdviser());
+                        String adv = auto ? " Adv" + simConfig.getAdviser() : "";
+                        results.sumHistory.add(historydatestring + " " + onerun.capital.toString() + " " + sum.toString() + " " + new MathUtil().round(onerun.resultavg, 2) + " " + hasNoConf + " " + ids + " " + trend + adv);
                         results.plotDates.add(historydatestring);
                         results.plotDefault.add(onerun.resultavg);
                         results.plotCapital.add(sum.amount + onerun.capital.amount);
@@ -941,7 +1008,11 @@ public class SimulateInvestComponent extends ComponentML {
                     }
                 } else {
                     results.plotDates.add(historydatestring);
-                    StockHistory aHistory = new StockHistory(historydatestring, onerun.capital, sum, onerun.resultavg, hasNoConf, ids, trend.toString());
+                    results.plotCapital.add(sum.amount + onerun.capital.amount);
+                    Integer adv = auto ? simConfig.getAdviser() : null;
+                    Capital aCapital = new Capital();
+                    aCapital.amount = onerun.capital.amount;
+                    StockHistory aHistory = new StockHistory(historydatestring, aCapital, sum, onerun.resultavg, hasNoConf, ids, trend.toString(), adv);
                     results.history.add(aHistory);
                 }
 
@@ -1094,15 +1165,15 @@ public class SimulateInvestComponent extends ComponentML {
     }
 
     private Map<Integer, Trend> getTrendIncDec(Market market, ComponentData param, List<String> stockDates, int interval,
-            Map<String, List<List<Double>>> filteredCategoryValueMap, int firstidx, int lastidx, SimulateInvestConfig simConfig) {
+            int firstidx, int lastidx, SimulateInvestConfig simConfig, Data data, boolean interpolate) {
         Map<Integer, Trend> trendMap = null;
-        String key = CacheConstants.SIMULATEINVESTTREND + market.getConfig().getMarket() + "_" + simConfig.getAdviser() + "_" + interval + "_" + simConfig.getStartdate() + simConfig.getEnddate() + simConfig.getInterpolate();
+        String key = CacheConstants.SIMULATEINVESTTREND + market.getConfig().getMarket() + "_" + interval + "_" + simConfig.getStartdate() + simConfig.getEnddate() + interpolate;
         trendMap = (Map<Integer, Trend>) MyCache.getInstance().get(key);
         Map<Integer, Trend> newTrendMap = null;
         if (trendMap == null || VERIFYCACHE) {
             long time0 = System.currentTimeMillis();
             try {
-                newTrendMap = new TrendUtil().getTrend(interval, null, stockDates, param, market, filteredCategoryValueMap, firstidx, lastidx);
+                newTrendMap = new TrendUtil().getTrend(interval, null, stockDates, param, market, data.getFilterCatValMap(interpolate), firstidx, lastidx);
             } catch (Exception e) {
                 log.error(Constants.ERROR, e);
             }
@@ -1968,16 +2039,41 @@ public class SimulateInvestComponent extends ComponentML {
         int firstidx;
         Map<String, List<List<Double>>> categoryValueMap;
         Map<String, List<List<Double>>> categoryValueFillMap;
+        Map<String, List<List<Double>>> filteredCategoryValueMap;
+        Map<String, List<List<Double>>> filteredCategoryValueFillMap;
         List<String> stockDates;
         Map<Integer, List<String>> volumeExcludeMap;
+        Map<Integer, List<String>> volumeExcludeFillMap;
         List<String> configExcludeList;
         Map<String, List<List<Object>>> volumeMap;
         Map<Integer, Trend> trendMap;
+        Map<Integer, Trend> trendFillMap;
         public Map<String, List<List<Double>>> getCatValMap(boolean interpolate) {
             if (interpolate) {
                 return categoryValueFillMap;
             } else {
                 return categoryValueMap;
+            }                
+        }
+        public Map<String, List<List<Double>>> getFilterCatValMap(boolean interpolate) {
+            if (interpolate) {
+                return filteredCategoryValueFillMap;
+            } else {
+                return filteredCategoryValueMap;
+            }                
+        }
+        public Map<Integer, List<String>> getVolumeExcludeMap(boolean interpolate) {
+            if (interpolate) {
+                return volumeExcludeFillMap;
+            } else {
+                return volumeExcludeMap;
+            }                
+        }
+        public Map<Integer, Trend> getTrendMap(boolean interpolate) {
+            if (interpolate) {
+                return trendFillMap;
+            } else {
+                return trendMap;
             }                
         }
     }
