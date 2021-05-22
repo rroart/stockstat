@@ -192,7 +192,8 @@ public class SimulateInvestComponent extends ComponentML {
         if (!TimeUtil.rangeCheck(data.stockDates, TimeUtil.replace(simConfig.getStartdate()), TimeUtil.replace(simConfig.getEnddate()))) {
             Map<String, Object> map = new HashMap<>();
             map.put(SimConstants.EMPTY, true);
-            componentData.getUpdateMap().putAll(map);
+            map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + ("any"));
+                     componentData.getUpdateMap().putAll(map);
             if (evolving) {
                 componentData.setResultMap(new HashMap<>());
             }
