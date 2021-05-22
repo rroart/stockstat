@@ -216,4 +216,23 @@ public class TimeUtil {
         }
         return date.replace('-', '.');
     }
+    
+    public static boolean rangeCheck(List<String> stockDates, String startdate, String enddate) {
+        if (startdate == null) {
+            return false;
+        }
+        int startindex = Collections.binarySearch(stockDates, startdate);
+        if (enddate != null) {
+            int endindex = Collections.binarySearch(stockDates, enddate);
+            return startindex != endindex;
+        }
+        if (startindex == -1) {
+            return false;
+        }
+        if (startindex == -1 - stockDates.size()) {
+            return false;
+        }
+        return true;
+    }
+
 }

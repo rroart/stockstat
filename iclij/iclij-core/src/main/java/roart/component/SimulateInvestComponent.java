@@ -189,6 +189,25 @@ public class SimulateInvestComponent extends ComponentML {
         } else {
             data.stockDates = param.getService().getDates(market.getConfig().getMarket());           
         }
+        if (!TimeUtil.rangeCheck(data.stockDates, TimeUtil.replace(simConfig.getStartdate()), TimeUtil.replace(simConfig.getEnddate()))) {
+            Map<String, Object> map = new HashMap<>();
+            map.put(SimConstants.EMPTY, true);
+            componentData.getUpdateMap().putAll(map);
+            if (evolving) {
+                componentData.setResultMap(new HashMap<>());
+            }
+            Double score = 0.0;
+            Map<String, Double> scoreMap = new HashMap<>();
+            if (score.isNaN()) {
+                int jj = 0;
+            }
+            scoreMap.put("" + score, score);
+            scoreMap.put(SimConstants.SCORE, score);
+            componentData.setScoreMap(scoreMap);
+
+            handle2(action, market, componentData, profitdata, positions, evolve, aMap, subcomponent, mlmarket, parameters);
+            return componentData;
+        }
         data.categoryValueFillMap = param.getFillCategoryValueMap();
         data.categoryValueMap = param.getCategoryValueMap();
         data.volumeMap = param.getVolumeMap();
@@ -393,7 +412,7 @@ public class SimulateInvestComponent extends ComponentML {
                         aOneRun.mystocks = aOneRun.savedStocks;
                     }
                     if (mydate.prevIndexOffset - extradelay - simConfig.getDelay() >= 0) {
-                        update(data.getCatValMap(simConfig.getInterpolate()), aOneRun.mystocks, mydate.indexOffset - extradelay - aSimConfig.getDelay(), new ArrayList<>(), mydate.prevIndexOffset - extradelay - aSimConfig.getDelay());
+                        update(data.getCatValMap(simConfig.getInterpolate()), aOneRun.mystocks, mydate.indexOffset - extradelay - simConfig.getDelay(), new ArrayList<>(), mydate.prevIndexOffset - extradelay - simConfig.getDelay());
                     }
                     Capital sum = getSum(aOneRun.mystocks);
                     sum.amount += aOneRun.capital.amount;
@@ -455,7 +474,7 @@ public class SimulateInvestComponent extends ComponentML {
                             if (autoSimConfig != null) {
                                 map.put(EvolveConstants.TITLETEXT, emptyNull(autoSimConfig.getStartdate(), "start") + "-" + emptyNull(autoSimConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
                             } else {
-                                map.put(EvolveConstants.TITLETEXT, emptyNull(aSimConfig.getStartdate(), "start") + "-" + emptyNull(aSimConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                                map.put(EvolveConstants.TITLETEXT, emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
                             }
                             map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                             componentData.getUpdateMap().putAll(map);
@@ -477,7 +496,7 @@ public class SimulateInvestComponent extends ComponentML {
                         if (autoSimConfig != null) {
                             map.put(EvolveConstants.TITLETEXT, emptyNull(autoSimConfig.getStartdate(), "start") + "-" + emptyNull(autoSimConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
                         } else {
-                            map.put(EvolveConstants.SIMTEXT, market.getConfig().getMarket() + " " + emptyNull(aSimConfig.getStartdate(), "start") + "-" + emptyNull(aSimConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
+                            map.put(EvolveConstants.SIMTEXT, market.getConfig().getMarket() + " " + emptyNull(simConfig.getStartdate(), "start") + "-" + emptyNull(simConfig.getEnddate(), "end") + " " + (emptyNull(origAdviserId, "all")));
                         }
                         map.put(SimConstants.FILTER, JsonUtil.convert(filter));
                         //map.put("market", market.getConfig().getMarket());

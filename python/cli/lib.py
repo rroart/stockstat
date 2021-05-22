@@ -2203,6 +2203,8 @@ def simulateinvest(market, startdate = None, enddate = None, confidence = False,
     updatemap = webdata['updateMap']
     #print(updatemap)
     #print(updatemap.keys())
+    if 'empty' in updatemap:
+        return
     dates = updatemap['plotdates']
     commondays = dates
     #print(type(dates))
@@ -2420,6 +2422,8 @@ def autosimulateinvest(market, startdate = None, enddate = None, interval = 1, p
     resp = response.json()
     webdata = resp['webdatajson']
     updatemap = webdata['updateMap']
+    if 'empty' in updatemap:
+        return
     dates = updatemap['plotdates']
     commondays = dates
     default = updatemap['plotdefault']
