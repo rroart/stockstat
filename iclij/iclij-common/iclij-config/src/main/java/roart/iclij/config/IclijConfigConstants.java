@@ -293,6 +293,7 @@ public class IclijConfigConstants {
     public static final String AUTOSIMULATEINVESTLASTCOUNT = "autosimulateinvest.lastcount";
     public static final String AUTOSIMULATEINVESTDELLIMIT = "autosimulateinvest.dellimit";
     public static final String AUTOSIMULATEINVESTSCORELIMIT = "autosimulateinvest.scorelimit";
+    public static final String AUTOSIMULATEINVESTAUTOSCORELIMIT = "autosimulateinvest.scorelimit";
     // special
     public static final String AUTOSIMULATEINVESTSTARTDATE = "autosimulateinvest.startdate";
     public static final String AUTOSIMULATEINVESTENDDATE = "autosimulateinvest.enddate";

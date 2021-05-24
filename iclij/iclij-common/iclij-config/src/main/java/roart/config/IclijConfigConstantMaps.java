@@ -303,6 +303,7 @@ public class IclijConfigConstantMaps {
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, Integer.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, Double.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, Double.class);
+        map.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, Double.class);
         map.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, String.class);
         map.put(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG, String.class);
         map.put(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG, String.class);
@@ -551,6 +552,7 @@ public class IclijConfigConstantMaps {
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, 5);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, 0.5);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, 1.0);
+        deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, 0.0);
         deflt.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, null);
         deflt.put(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG, OTHEREVOLUTIONCONFIG);
         deflt.put(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG, OTHEREVOLUTIONCONFIG);
@@ -844,6 +846,7 @@ public class IclijConfigConstantMaps {
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, "Auto simulate invest score last count");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, "Auto simulate invest list delete limit");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, "Auto simulate invest list delete limit");
+        text.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, "Auto simulate invest auto score limit");
         text.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, "Auto Simulate invest volume limits");
         text.put(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG, "Improve simulate invest evolution config");
         text.put(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG, "Improve auto simulate invest evolution config");
@@ -887,6 +890,7 @@ public class IclijConfigConstantMaps {
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, new Double[] { 0.0, 10.0 } );
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, new Double[] { 0.0, 1.0 } );
         range.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, new Double[] { 1.0, 5.0 } );
+        range.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, new Double[] { -0.5, 0.0 } );
     }
     
     public static Map<String, String> conv = new HashMap<>();
@@ -1167,6 +1171,7 @@ public class IclijConfigConstantMaps {
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTLASTCOUNT, new IclijXMLType(Integer.class, 5, "Auto Simulate invest score last count"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTDELLIMIT, new IclijXMLType(Double.class, 0.5, "Auto Simulate invest list delete limit"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT, new IclijXMLType(Double.class, 1.0, "Auto Simulate invest list score limit"));
+        mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT, new IclijXMLType(Double.class, 0.0, "Auto Simulate invest list auto score limit"));
         mymap.put(IclijConfigConstants.AUTOSIMULATEINVESTVOLUMELIMITS, new IclijXMLType(String.class, null, "Auto Simulate invest volume limits"));
         mymap.put(IclijConfigConstants.IMPROVESIMULATEINVESTEVOLUTIONCONFIG, new IclijXMLType(String.class, OTHEREVOLUTIONCONFIG, "Improve simulate invest evolution config"));
         mymap.put(IclijConfigConstants.IMPROVEAUTOSIMULATEINVESTEVOLUTIONCONFIG, new IclijXMLType(String.class, OTHEREVOLUTIONCONFIG, "Improve auto simulate invest evolution config"));

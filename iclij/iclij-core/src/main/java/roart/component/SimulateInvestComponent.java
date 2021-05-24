@@ -293,10 +293,17 @@ public class SimulateInvestComponent extends ComponentML {
                     currentSimConfig = simConfig;
                 }
                 OneRun currentOneRun = getOneRun(market, param, simConfig, data, investStart, investEnd, null);
+                Adviser selladviser = null;
+                SimulateInvestConfig sell = null;
                 if (autoSimConfig == null) {
                     int adviserId = simConfig.getAdviser();
                     currentOneRun.adviser = new AdviserFactory().get(adviserId, market, investStart, investEnd, param, simConfig);
                     currentOneRun.adviser.getValueMap(data.stockDates, data.firstidx, data.lastidx, data.getCatValMap(simConfig.getInterpolate()));
+                } else {
+                    selladviser = new AdviserFactory().get(-1, market, investStart, investEnd, param, simConfig);
+                    sell = JsonUtil.copy(simConfig);
+                    sell.setConfidence(true);
+                    sell.setConfidenceValue(2.0);                    
                 }
                 Results mainResult = new Results();
 
@@ -370,7 +377,7 @@ public class SimulateInvestComponent extends ComponentML {
                         List<Double> alist = simTriplets.stream().map(o -> (o.getMiddle().autoscore)).collect(Collectors.toList());
                         log.info("alist {}", alist);
                         OneRun oneRun = simTriplets.get(0).getMiddle();
-                        if (oneRun.autoscore > 0) {
+                        if (oneRun.autoscore != null && oneRun.autoscore > autoSimConfig.getAutoscorelimit()) {
                             currentOneRun.adviser = oneRun.adviser;
                             currentOneRun.hits = SerializationUtils.clone(oneRun.hits);
                             currentOneRun.trendDec = SerializationUtils.clone(oneRun.trendDec);
@@ -378,7 +385,11 @@ public class SimulateInvestComponent extends ComponentML {
                             //oneRun.
                             currentSimConfig = simTriplets.get(0).getLeft();
                         } else {
-                            int jj = 0; // TODO selloff?
+                            currentOneRun.adviser = selladviser;
+                            currentOneRun.hits = SerializationUtils.clone(oneRun.hits);
+                            currentOneRun.trendDec = SerializationUtils.clone(oneRun.trendDec);
+                            currentOneRun.trendInc = SerializationUtils.clone(oneRun.trendInc);
+                            currentSimConfig = sell;
                         }
                     }
                     mydate.prevIndexOffset = mydate.indexOffset;
@@ -1635,6 +1646,7 @@ public class SimulateInvestComponent extends ComponentML {
         simConfig.setLastcount(config.getAutoSimulateInvestLastCount());
         simConfig.setDellimit(config.getAutoSimulateInvestDelLimit());
         simConfig.setScorelimit(config.getAutoSimulateInvestScoreLimit());
+        simConfig.setAutoscorelimit(config.getAutoSimulateInvestAutoScoreLimit());
         Map<String, Double> map = JsonUtil.convert(config.getAutoSimulateInvestVolumelimits(), Map.class);
         simConfig.setVolumelimits(map);
         SimulateFilter[] array = JsonUtil.convert(config.getAutoSimulateInvestFilters(), SimulateFilter[].class);

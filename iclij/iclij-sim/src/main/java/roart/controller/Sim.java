@@ -59,7 +59,7 @@ public class Sim {
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public void method(String param) {
+    public void method(String param, String string, boolean b) {
         param = getParam(param);
         Map<String, Object> myMap = convert(param);
         if (myMap.isEmpty()) {
@@ -171,7 +171,7 @@ public class Sim {
                 output.add("Max " + MathUtil.round(aSummary.getKey(), 2) + " " + aSummary.getValue());
             }
             String simtext = (String) myMap.get(EvolveConstants.TITLETEXT); // getSimtext(winnerChromosome);
-            print("sim " + simtext, "File " + id, output);
+            print(string + " " + simtext, "File " + id, output);
             
             //Map<String, Object> resultMap = winnerChromosome.getResultMap();
             String[] parts = simtext.split(" ");
@@ -188,6 +188,9 @@ public class Sim {
             }
             LocalDate enddate = null;
             if ("end".equals(enddateStr)) {
+                if (true) {
+                    return;
+                }
                 enddate = LocalDate.now();
                 enddate = dateRound(enddate);
             } else {
@@ -201,7 +204,7 @@ public class Sim {
             if (scores.isEmpty()) {
                 return;
             }
-            if (filter.isUseclusters()) {
+            if (filter.isUseclusters() && b) {
                 IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomeMap.get(commonScore[0]);
                 SimDataItem data = new SimDataItem();
                 data.setRecord(LocalDate.now());
@@ -223,6 +226,9 @@ public class Sim {
             List<AbstractChromosome> chromosomes = minChromosomeMap.get(min);            
             IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
             //String adviser = parts[4];
+            if (!b) {
+                return;
+            }
             SimDataItem data = new SimDataItem();
             data.setRecord(LocalDate.now());
             data.setScore(min);

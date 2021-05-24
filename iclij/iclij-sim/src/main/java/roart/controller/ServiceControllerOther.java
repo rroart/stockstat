@@ -37,10 +37,10 @@ public class ServiceControllerOther extends ServiceControllerOtherAbstract {
         System.out.println("Cserv"+c.getService());
         switch (c.getService()) {
         case ServiceConstants.SIMFILTER:
-            new Sim().method((String) param);
+            new Sim().method((String) param, "sim", true);
             break;
         case ServiceConstants.SIMAUTO:
-            new Sim().method2((String) param);
+            new Sim().method((String) param, "simauto", false);
             break;
         }
         if (param instanceof IclijServiceParam) {

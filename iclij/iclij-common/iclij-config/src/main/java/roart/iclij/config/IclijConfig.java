@@ -791,6 +791,10 @@ public class IclijConfig {
         return (Double) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTSCORELIMIT);
     }
 
+    public double getAutoSimulateInvestAutoScoreLimit() {
+        return (Double) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTAUTOSCORELIMIT);
+    }
+
     public String getAutoSimulateInvestStartdate() {
         return (String) getValueOrDefault(IclijConfigConstants.AUTOSIMULATEINVESTSTARTDATE);
     }
