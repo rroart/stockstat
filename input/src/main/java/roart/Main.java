@@ -145,6 +145,7 @@ public class Main {
                 //System.out.println(json.substring(0,10));
                 json = json.replaceAll("<a href=[^<]*>", "");
                 json = json.replaceAll(".humanynotifications.:\\[[^\\[]*\\],", "");
+                json = json.replaceAll(".\\{searchQuery\\}.", "");
                 try {
                 jsonNode = mapper.readTree(json);
                 } catch (Exception e) {
