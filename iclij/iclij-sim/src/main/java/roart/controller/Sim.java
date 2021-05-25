@@ -81,6 +81,9 @@ public class Sim {
             IclijConfigMapChromosome winnerChromosome = (IclijConfigMapChromosome) winnerPair.getValue();
             String filterString = getFilter(winnerChromosome);
             int adviser = getAdviser(winnerChromosome);
+            if (adviser == -1) {
+                adviser = 0;
+            }
             SimulateFilter filter = getFilter(adviser);
             {
                 SimulateFilter[] listoverrides = null;
@@ -357,6 +360,9 @@ public class Sim {
 
     private int getAdviser(IclijConfigMapChromosome chromosome) {
         Map<String, Object> map = chromosome.getMap();
+        if (!map.containsKey(IclijConfigConstants.SIMULATEINVESTADVISER)) {
+            return -1;
+        }
         int adviser = (int) map.get(IclijConfigConstants.SIMULATEINVESTADVISER);
         return adviser;
     }

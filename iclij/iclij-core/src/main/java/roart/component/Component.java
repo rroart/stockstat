@@ -309,7 +309,9 @@ public abstract class Component {
             // fix mlmarket;
             TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);
+            if (!(this instanceof ImproveSimulateInvestComponent) && !(this instanceof ImproveAutoSimulateInvestComponent)) {
             configSaves(param, confMap, subcomponent);
+            }
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
