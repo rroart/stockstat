@@ -174,15 +174,6 @@ public class SimulateInvestComponent extends ComponentML {
         // coming from improvesim
         List<SimulateFilter> filter = simConfig.getFilters();
         simConfig.setFilters(null);
-        Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> simConfigs;
-        if (autoSimConfig == null) {
-            simConfigs = new HashMap<>();
-            //simConfigs = new ArrayList<>();
-            //simConfigs.add(getSimConfig(config));
-        } else {
-            simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, filter);
-            simConfigs = new HashMap<>(simConfigs);
-        }
         Data data = new Data();
         if (simulateParam.getStockDates() != null) {
             data.stockDates = simulateParam.getStockDates();
@@ -274,6 +265,15 @@ public class SimulateInvestComponent extends ComponentML {
                 Integer origAdviserId = (Integer) param.getInput().getValuemap().get(IclijConfigConstants.SIMULATEINVESTADVISER);
                 Mydate mydate = new Mydate();
                 getAdjustedDate(data, investStart, offset, mydate);
+                Map<Pair<LocalDate, LocalDate>, List<SimulateInvestConfig>> simConfigs;
+                if (autoSimConfig == null) {
+                    simConfigs = new HashMap<>();
+                    //simConfigs = new ArrayList<>();
+                    //simConfigs.add(getSimConfig(config));
+                } else {
+                    simConfigs = getSimConfigs(market.getConfig().getMarket(), autoSimConfig, filter);
+                    simConfigs = new HashMap<>(simConfigs);
+                }
                 List<SimulateInvestConfig> simsConfigs = new ArrayList<>();
                 if (autoSimConfig == null) {
                     simsConfigs.add(simConfig);
@@ -303,7 +303,8 @@ public class SimulateInvestComponent extends ComponentML {
                     selladviser = new AdviserFactory().get(-1, market, investStart, investEnd, param, simConfig);
                     sell = JsonUtil.copy(simConfig);
                     sell.setConfidence(true);
-                    sell.setConfidenceValue(2.0);                    
+                    sell.setConfidenceValue(2.0);
+                    sell.setConfidenceFindTimes(0);
                 }
                 Results mainResult = new Results();
 
