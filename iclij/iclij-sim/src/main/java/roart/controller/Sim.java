@@ -69,7 +69,12 @@ public class Sim {
         List<Pair<Double, AbstractChromosome>> myList = (List<Pair<Double, AbstractChromosome>>) myMap.get(id);
         if (myList.size() > 0) {
             //for ()
-            Map<String, String> shortMap = getShortMap();
+            Map<String, String> shortMap;
+            if (!b) {
+                shortMap = getAutoShortMap();
+            } else {
+                shortMap = getShortMap();
+            }
             List<SimulateFilter[]> list = null;
             IclijConfig instance = IclijXMLConfig.getConfigInstance();
             try {
@@ -84,7 +89,12 @@ public class Sim {
             if (adviser == -1) {
                 adviser = 0;
             }
-            SimulateFilter filter = getFilter(adviser);
+            SimulateFilter filter;
+            if (!b) {
+                filter = getFilter();
+            } else {
+                filter = getFilter(adviser);
+            }
             {
                 SimulateFilter[] listoverrides = null;
                 Object o = myMap.get(SimConstants.FILTER);
@@ -98,7 +108,7 @@ public class Sim {
                 }
                 }
             }
-            if (!list.isEmpty()) {
+            if (!list.isEmpty() && b) {
                 SimulateFilter[] filters = list.get(0);
                 filter = filters[adviser];
             }
@@ -342,12 +352,28 @@ public class Sim {
         return filter;
     }
 
+    private SimulateFilter getFilter() {
+        SimulateFilter filter;
+        Set<String> generalSimConfig = new HashSet<>();
+        generalSimConfig.add(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL);
+        generalSimConfig.add(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD);
+        filter = new SimulateFilter(5, 0.5, 0.8, true, 16, true, generalSimConfig);
+        return filter;
+    }
+
     private Map<String, String> getShortMap() {
         Map<String, String> shortMap = new HashMap<>();
         shortMap.put(IclijConfigConstants.SIMULATEINVESTINTERVAL, "i");
         shortMap.put(IclijConfigConstants.SIMULATEINVESTDAY, "d");
         shortMap.put(IclijConfigConstants.SIMULATEINVESTPERIOD, "p");
         shortMap.put(IclijConfigConstants.SIMULATEINVESTINDICATORREVERSE, "ir");
+        return shortMap;
+    }
+
+    private Map<String, String> getAutoShortMap() {
+        Map<String, String> shortMap = new HashMap<>();
+        shortMap.put(IclijConfigConstants.AUTOSIMULATEINVESTINTERVAL, "i");
+        shortMap.put(IclijConfigConstants.AUTOSIMULATEINVESTPERIOD, "p");
         return shortMap;
     }
 

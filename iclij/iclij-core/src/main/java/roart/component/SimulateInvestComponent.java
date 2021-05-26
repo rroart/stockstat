@@ -279,8 +279,10 @@ public class SimulateInvestComponent extends ComponentML {
                     simsConfigs.add(simConfig);
                 } else {
                     Set<Pair<LocalDate, LocalDate>> keys = new HashSet<>();
-                    simsConfigs = getSimConfigs(simConfigs, mydate, keys, market);
-                    simConfigs.keySet().removeAll(keys);
+                    if (mydate.date != null) {
+                        simsConfigs = getSimConfigs(simConfigs, mydate, keys, market);
+                        simConfigs.keySet().removeAll(keys);
+                    }
                 }
                 List<Triple<SimulateInvestConfig, OneRun, Results>> simTriplets = getTriples(market, param, data,
                         investStart, investEnd, mydate, simsConfigs);
