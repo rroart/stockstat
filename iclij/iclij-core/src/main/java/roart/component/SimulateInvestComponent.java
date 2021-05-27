@@ -117,6 +117,10 @@ public class SimulateInvestComponent extends ComponentML {
         // imp: vl filt
         // auto: vl filt
         // impauto: vl filt
+        // extradelay: delay for getting prices
+        // extradelay: buy and sell is on the same date, just an approx
+        // delay: days after buy/sell decision.
+        
         AutoSimulateInvestConfig autoSimConfig = getAutoSimConfig(config);
         SimulateInvestConfig simConfig = getSimConfig(config);
         //Integer overrideAdviser = null;
@@ -1534,7 +1538,7 @@ public class SimulateInvestComponent extends ComponentML {
         anExcludeList.addAll(ids2);
         Set<String> anExcludeSet = new LinkedHashSet<>(anExcludeList);
         // full list
-        List<String> myincl = adviser.getIncs(aParameter, simConfig.getStocks(), indexOffset, stockDates, anExcludeList);
+        List<String> myincl = adviser.getIncs(aParameter, simConfig.getStocks(), indexOffset + extradelay, stockDates, anExcludeList);
         Set<String> myincs = new LinkedHashSet<>(myincl);
         //myincs = new ArrayList<>(myincs);
         myincs.removeAll(anExcludeSet);
