@@ -217,8 +217,8 @@ public class Sim {
             if (scores.isEmpty()) {
                 return;
             }
-            if (filter.isUseclusters() && b) {
-                IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomeMap.get(commonScore[0]);
+            if (filter.isUseclusters() && b && commonScore[0] != null) {
+                IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomeMap.get(commonScore[0]).get(0);
                 SimDataItem data = new SimDataItem();
                 data.setRecord(LocalDate.now());
                 data.setScore(commonScore[1]);
@@ -235,6 +235,9 @@ public class Sim {
                 }
             }
             Double max = Collections.max(scores);
+            if (minScores.isEmpty()) {
+                minScores = scores;
+            }
             Double min = Collections.max(minScores);
             List<AbstractChromosome> chromosomes = minChromosomeMap.get(min);            
             IclijConfigMapChromosome chromosome = (IclijConfigMapChromosome) chromosomes.get(0);
@@ -427,6 +430,9 @@ public class Sim {
             }
             StockHistory last = history.get(history.size() - 1);
             double total = last.getCapital().amount + last.getSum().amount - 1;
+            if (total == 0.0) {
+                continue;
+            }
             List<Pair<String, Double>> list = SimUtil.getTradeStocks(aMap);
             int cnt = 3;
             for (Pair<String, Double> anEntry : list) {
