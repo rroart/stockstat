@@ -501,6 +501,9 @@ public class Sim {
             }
         }
         //output.add("Score " + Collections.min(scores));
+        if (scores.isEmpty()) {
+            return 0.0;
+        }
         output.add("Allabove " + MathUtil.round(Collections.min(scores), 2) + " . " + MathUtil.round(Collections.max(scores), 2) + " " + above);
         summary.add(new Summary(above, "MinScore (" + MathUtil.round(Collections.min(scores), 2) + ")"));
         return Collections.min(scores);
