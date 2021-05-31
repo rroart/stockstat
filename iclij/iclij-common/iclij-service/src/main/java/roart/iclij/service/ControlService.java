@@ -113,7 +113,8 @@ public class ControlService {
 
     public void send(String service, Object object, IclijConfig config) {
         Inmemory inmemory = InmemoryFactory.get(config.getInmemoryServer(), config.getInmemoryHazelcast(), config.getInmemoryRedis());
-        InmemoryMessage message = inmemory.send(object);
+        String id = "" + System.currentTimeMillis();
+        InmemoryMessage message = inmemory.send(id, object);
         send(service, message);
     }
 

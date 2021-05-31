@@ -110,6 +110,9 @@ public class Evolve {
         output.add("");
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
         print(ServiceConstants.EVOLVEFILTEREVOLVE + " " + title, null, output);
+        if (!better) {
+            return;
+        }
     }
 
     // dup
@@ -435,7 +438,9 @@ public class Evolve {
         InmemoryMessage message = JsonUtil.convert(param, InmemoryMessage.class);
         IclijConfig instance = IclijXMLConfig.getConfigInstance();
         Inmemory inmemory = InmemoryFactory.get(instance.getInmemoryServer(), instance.getInmemoryHazelcast(), instance.getInmemoryRedis());
-        return inmemory.read(message);
+        String newparam = inmemory.read(message);
+        inmemory.delete(message);
+        return newparam;
     }
 
 }

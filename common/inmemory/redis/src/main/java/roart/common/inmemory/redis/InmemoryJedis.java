@@ -31,7 +31,11 @@ public class InmemoryJedis extends Inmemory {
     @Override
     protected String get(String key) {
         String string = jedis.get(key);
-        jedis.del(key);
         return string;
+    }
+
+    @Override
+    protected void del(String key) {
+        jedis.del(key);
     }
 }

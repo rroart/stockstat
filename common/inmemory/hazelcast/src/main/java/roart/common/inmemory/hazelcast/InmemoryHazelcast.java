@@ -66,7 +66,11 @@ public class InmemoryHazelcast  extends Inmemory {
     @Override
     protected String get(String key) {
         String string = map.get(key);
-        map.remove(key);
         return string;
+    }
+
+    @Override
+    protected void del(String key) {
+        map.remove(key);
     }
 }
