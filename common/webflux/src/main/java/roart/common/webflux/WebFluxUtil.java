@@ -58,7 +58,7 @@ public class WebFluxUtil {
         return sendMeInner(myclass, param, url, null);
     }
     
-    private static <T> T sendMeInner(Class<T> myclass, Object param, String url, ObjectMapper objectMapper) {
+    public static <T> T sendMeInner(Class<T> myclass, Object param, String url, ObjectMapper objectMapper) {
         long time = System.currentTimeMillis();
         if (objectMapper != null) {
             ExchangeStrategies jacksonStrategy = ExchangeStrategies.builder()
