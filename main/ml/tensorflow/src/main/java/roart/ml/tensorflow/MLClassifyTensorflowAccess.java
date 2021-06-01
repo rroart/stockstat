@@ -30,7 +30,7 @@ import roart.common.ml.TensorflowLSTMConfig;
 import roart.common.ml.TensorflowMLPConfig;
 import roart.common.ml.TensorflowRNNConfig;
 import roart.common.util.InetUtil;
-import roart.eureka.util.EurekaUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
@@ -153,7 +153,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/learntest");
+        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/learntest");
         return test.getAccuracy();
     }
 
@@ -183,7 +183,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/eval");
+        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/eval");
         return test.getAccuracy();
     }
 
@@ -212,7 +212,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/classify");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServers.get(0) + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -286,7 +286,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         for (String tensorflowServer : tensorflowServers) {
         try {
             LearnTestClassify ret = null;
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/filename");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/filename");
             boolean exists = ret.getExists();
             if (!exists && (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMlclassify())) {
                 return result;
@@ -328,7 +328,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         LearnTestClassify ret = null;
         for (String tensorflowServer : tensorflowServers) {
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/learntestclassify");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean cudnn = ret.getCudnn() != null && ret.getCudnn();
@@ -393,7 +393,7 @@ public class MLClassifyTensorflowAccess extends MLClassifyAccess {
         LearnTestClassify ret = null;
         for (String tensorflowServer : tensorflowServers) {
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/dataset");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, tensorflowServer + "/dataset");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean cudnn = ret.getCudnn() != null && ret.getCudnn();

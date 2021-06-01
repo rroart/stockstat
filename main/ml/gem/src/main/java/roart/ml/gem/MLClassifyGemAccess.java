@@ -33,7 +33,7 @@ import roart.common.ml.GemSConfig;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
-import roart.eureka.util.EurekaUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
@@ -113,7 +113,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntest");
+        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntest");
         return test.getAccuracy();
     }
 
@@ -147,7 +147,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/eval");
+        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/eval");
         return test.getAccuracy();
     }
 
@@ -176,7 +176,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/classify");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -251,7 +251,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         param.setNeuralnetcommand(neuralnetcommand);
         try {
             LearnTestClassify ret = null;
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/filename");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/filename");
             boolean exists = ret.getExists();
             if (neuralnetcommand.isMldynamic() == true) {
                 return result;
@@ -335,7 +335,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntestclassify");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/learntestclassify");
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
             return result;
@@ -428,7 +428,7 @@ public class MLClassifyGemAccess extends MLClassifyAccess {
         param.setZero(true);
         LearnTestClassify ret = null;
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, gemServer + "/dataset");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, gemServer + "/dataset");
         } catch (Exception e) {
             log.error("Exception", e);
             return result;

@@ -9,7 +9,7 @@ module ml.tensorflow {
     exports roart.ml.tensorflow;
 
     requires common.config;
-    requires common.eureka;
+    requires common.webflux;
     requires ehcache;
     requires slf4j.api;
     requires ml.common;

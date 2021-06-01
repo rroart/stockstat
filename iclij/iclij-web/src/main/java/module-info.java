@@ -8,7 +8,7 @@
 module iclij.web {
     requires common.config;
     requires common.constants;
-    requires common.eureka;
+    requires common.webflux;
     requires common.model;
     requires common.service;
     requires commons.math3;
@@ -33,4 +33,5 @@ module iclij.web {
     requires com.sun.xml.bind;
     requires javax.servlet.api;
     requires myexecutor;
+    //requires jakarta.activation;
 }

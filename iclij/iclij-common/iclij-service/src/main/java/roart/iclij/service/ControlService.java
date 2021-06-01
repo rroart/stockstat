@@ -11,7 +11,7 @@ import roart.common.inmemory.model.Inmemory;
 import roart.common.ml.NeuralNetCommand;
 import roart.common.model.MetaItem;
 import roart.common.pipeline.PipelineConstants;
-import roart.eureka.util.EurekaUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.model.WebData;
@@ -63,12 +63,12 @@ public class ControlService {
         /*
         IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(EurekaConstants.GETCONFIG, iclijConfig.getServices(), iclijConfig.getCommunications());
-        ServiceResult result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
+        ServiceResult result;// = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG);
         Communication c = CommunicationFactory.get(sc.getLeft(), ServiceResult.class, EurekaConstants.GETCONFIG, objectMapper, true, true, true, sc.getRight());
         param.setWebpath(c.getReturnService());
         result = (ServiceResult) c.sendReceive(param);
         */
-        //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
+        //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONFIG);
         conf = new MyMyConfig(result.getConfig());
         Map<String, Object> map = conf.getConfigValueMap();
         for (String key : map.keySet()) {
@@ -87,7 +87,7 @@ public class ControlService {
     private <T> T sendCMe(Class<T> myclass, ServiceParam param, String service) {
         IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
-        T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
+        T[] result;// = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
         Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight());
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
@@ -97,7 +97,7 @@ public class ControlService {
     private <T> T sendAMe(Class<T> myclass, IclijServiceParam param, String service, ObjectMapper objectMapper) {
         IclijConfig iclijConfig = IclijXMLConfig.getConfigInstance();
         Pair<String, String> sc = new ServiceConnectionUtil().getCommunicationConnection(service, iclijConfig.getServices(), iclijConfig.getCommunications());
-        T[] result;// = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
+        T[] result;// = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONFIG        
         Communication c = CommunicationFactory.get(sc.getLeft(), myclass, service, objectMapper, true, true, true, sc.getRight());
         param.setWebpath(c.getReturnService());
         result = c.sendReceive(param);
@@ -144,7 +144,7 @@ public class ControlService {
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMARKETS);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMARKETS);
         return result.getMarkets();    	
     }
     
@@ -156,7 +156,7 @@ public class ControlService {
         }
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMETAS);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMETAS);
         list = result.getMetas();
         MyCache.getInstance().put(key, list);
         return list;
@@ -166,7 +166,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setMarket(market);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETSTOCKS);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETSTOCKS);
         return result.getStocks();   	
     }
     
@@ -221,7 +221,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(conf.wantMLDynamic());
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENT);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENT);
         //log.info("blblbl" + JsonUtil.convert(result).length());
         list = result.getMaps();
         MyCache.getInstance().put(key, list);
@@ -237,7 +237,7 @@ public class ControlService {
         }
         return list;
         //return result.getMaps();
-        //ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
+        //ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "http://localhost:12345/" + EurekaConstants.GETCONTENT);
 	/*
         for (Object o : (List)((List)result.list2)) {
 			//for (Object o : (List)((List)result.list).get(0)) {
@@ -261,7 +261,7 @@ public class ControlService {
     public List getContentGraph() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
         return result.getList();
     }
 
@@ -281,7 +281,7 @@ public class ControlService {
     	ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setIds(idset);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
         return result.getList();
     }
 
@@ -296,7 +296,7 @@ public class ControlService {
         neuralnetcommand.setMldynamic(conf.wantMLDynamic());
         neuralnetcommand.setMlcross(conf.wantMLCross());
         param.setNeuralnetcommand(neuralnetcommand);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, "/findprofit");
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, "/findprofit");
         return result.getMaps();
     }
 
@@ -313,14 +313,14 @@ public class ControlService {
     public List getContentStat() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.SETCONFIG);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.SETCONFIG);
         getConfig();
     }
 
@@ -328,7 +328,7 @@ public class ControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setConfList(disableList);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             //conf = new MyMyConfig(result.getConfig());
             updateMap.putAll(result.getMaps().get("update"));
@@ -350,7 +350,7 @@ public class ControlService {
         // where is this reset?
         neuralnetcommand.setMldynamic(true);
         param.setNeuralnetcommand(neuralnetcommand);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETEVOLVENN);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETEVOLVENN);
         if (doSet) {
             updateMap.putAll(result.getMaps().get("update"));
             scoreMap.putAll(result.getMaps().get("score"));
@@ -368,7 +368,7 @@ public class ControlService {
         param.setIclijConfig(componentInput.getConfig());
         param.setWebpath(EurekaConstants.ACTION + "/" + action);
         param.setOffset(componentInput.getLoopoffset());
-        IclijServiceResult result = EurekaUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+        IclijServiceResult result = WebFluxUtil.sendAMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
 
         WebDataJson dataJson = result.getWebdatajson();
         WebData data = convert(dataJson);

@@ -16,5 +16,6 @@ module common.communication.rest {
     requires spring.web;
     requires common.constants;
     requires common.util;
+    requires common.webflux;
     requires org.apache.commons.lang3;
 }

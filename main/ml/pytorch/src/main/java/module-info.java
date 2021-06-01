@@ -9,7 +9,7 @@ module ml.pytorch {
     exports roart.ml.pytorch;
 
     requires common.config;
-    requires common.eureka;
+    requires common.webflux;
     requires ehcache;
     requires slf4j.api;
     requires ml.common;

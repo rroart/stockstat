@@ -11,7 +11,7 @@ import roart.common.constants.Constants;
 import roart.common.constants.EurekaConstants;
 import roart.common.service.ServiceParam;
 import roart.common.service.ServiceResult;
-import roart.eureka.util.EurekaUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.service.IclijServiceParam;
 import roart.iclij.service.IclijServiceResult;
@@ -88,7 +88,7 @@ public class IclijWebControlService {
     public void getConfig() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        IclijServiceResult result = EurekaUtil.sendIMe(IclijServiceResult.class, param, EurekaConstants.GETCONFIG);
+        IclijServiceResult result = WebFluxUtil.sendIMe(IclijServiceResult.class, param, WebFluxConstants.GETCONFIG);
         iclijConf = result.getIclijConfig();
         Map<String, Object> map = iclijConf.getConfigValueMap();
         for (Entry<String, Object> entry : map.entrySet()) {
@@ -120,7 +120,7 @@ public class IclijWebControlService {
     public List<String> getMarkets() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendCMe(ServiceResult.class, param, EurekaConstants.GETMARKETS);
+        ServiceResult result = WebFluxUtil.sendCMe(ServiceResult.class, param, WebFluxConstants.GETMARKETS);
         return result.getMarkets();    	
     }
 
@@ -128,7 +128,7 @@ public class IclijWebControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setMarket(market);
-        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETSTOCKS);
+        ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETSTOCKS);
         return result.getStocks();   	
     }
 
@@ -141,70 +141,70 @@ public class IclijWebControlService {
     public void getContent(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETCONTENT);
+        param.setWebpath(WebFluxConstants.GETCONTENT);
         new IclijThread(ui, param).start();
     }
 
     public void getContentImprove(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETCONTENTIMPROVE);
+        param.setWebpath(WebFluxConstants.GETCONTENTIMPROVE);
         new IclijThread(ui, param).start();
     }
 
     public void getContentEvolve(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETCONTENTEVOLVE);
+        param.setWebpath(WebFluxConstants.GETCONTENTEVOLVE);
         new IclijThread(ui, param).start();
     }
 
     public void getContentMachineLearning(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETCONTENTMACHINELEARNING);
+        param.setWebpath(WebFluxConstants.GETCONTENTMACHINELEARNING);
         new IclijThread(ui, param).start();
     }
 
     public void getContentDataset(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETCONTENTDATASET);
+        param.setWebpath(WebFluxConstants.GETCONTENTDATASET);
         new IclijThread(ui, param).start();
     }
 
     public void getContentFilter(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETCONTENTFILTER);
+        param.setWebpath(WebFluxConstants.GETCONTENTFILTER);
         new IclijThread(ui, param).start();
     }
 
     public void getContentAboveBelow(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETCONTENTABOVEBELOW);
+        param.setWebpath(WebFluxConstants.GETCONTENTABOVEBELOW);
         new IclijThread(ui, param).start();
     }
 
     public void getContentCrosstest(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETCONTENTCROSSTEST);
+        param.setWebpath(WebFluxConstants.GETCONTENTCROSSTEST);
         new IclijThread(ui, param).start();
     }
 
     public void getImproveAboveBelowMarket(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETIMPROVEABOVEBELOW);
+        param.setWebpath(WebFluxConstants.GETIMPROVEABOVEBELOW);
         new IclijThread(ui, param).start();
     }
 
     public void getSingleMarket(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETSINGLEMARKET);
+        param.setWebpath(WebFluxConstants.GETSINGLEMARKET);
         new IclijThread(ui, param).start();
     }
 
@@ -212,7 +212,7 @@ public class IclijWebControlService {
         for (int i = 0; i < iclijConf.singlemarketLoops(); i++) {
             IclijServiceParam param = new IclijServiceParam();
             param.setIclijConfig(getIclijConf());
-            param.setWebpath(EurekaConstants.GETSINGLEMARKET);
+            param.setWebpath(WebFluxConstants.GETSINGLEMARKET);
             param.setOffset(i * getIclijConf().singlemarketLoopInterval());
             IclijThread thread = new IclijThread(ui, param);
             MyExecutors.run(thread, 0);
@@ -227,7 +227,7 @@ public class IclijWebControlService {
     public void getImproveProfit(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETIMPROVEPROFIT);
+        param.setWebpath(WebFluxConstants.GETIMPROVEPROFIT);
         new IclijThread(ui, param).start();
     }
 
@@ -240,7 +240,7 @@ public class IclijWebControlService {
     public void getVerify(MyIclijUI ui) {
         IclijServiceParam param = new IclijServiceParam();
         param.setIclijConfig(getIclijConf());
-        param.setWebpath(EurekaConstants.GETVERIFY);
+        param.setWebpath(WebFluxConstants.GETVERIFY);
         IclijThread thread = new IclijThread(ui, param);
         MyExecutors.run(thread, 0);
     }
@@ -249,7 +249,7 @@ public class IclijWebControlService {
         for (int i = 0; i < iclijConf.verificationLoops(); i++) {
             IclijServiceParam param = new IclijServiceParam();
             param.setIclijConfig(getIclijConf());
-            param.setWebpath(EurekaConstants.GETVERIFY);
+            param.setWebpath(WebFluxConstants.GETVERIFY);
             param.setOffset(i * getIclijConf().verificationLoopInterval());
             IclijThread thread = new IclijThread(ui, param);
             MyExecutors.run(thread, 0);
@@ -272,7 +272,7 @@ public class IclijWebControlService {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
         param.setGuiSize(guiSize);
-        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH);
+        ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETCONTENTGRAPH);
         return result.getList();
     }
 
@@ -294,12 +294,12 @@ public class IclijWebControlService {
         param.setConfig(conf);
         param.setIds(idset);
         param.setGuiSize(guiSize);
-        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETCONTENTGRAPH2);
+        ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETCONTENTGRAPH2);
         return result.getList();
     }
 
     public String getAppName() {
-        return EurekaConstants.ICLIJ;
+        return WebFluxConstants.ICLIJ;
     }
 
     /**
@@ -311,21 +311,21 @@ public class IclijWebControlService {
     public List getContentStat() {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETCONTENTSTAT);
+        ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETCONTENTSTAT);
         return result.getList();
     }
 
     public void dbengine(Boolean useSpark) throws Exception {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.SETCONFIG);
+        ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.SETCONFIG);
         getConfig();
     }
 
     public List<ResultItem> getTestRecommender(boolean doSet) {
         ServiceParam param = new ServiceParam();
         param.setConfig(conf);
-        ServiceResult result = EurekaUtil.sendIMe(ServiceResult.class, param, EurekaConstants.GETEVOLVERECOMMENDER);
+        ServiceResult result = WebFluxUtil.sendIMe(ServiceResult.class, param, WebFluxConstants.GETEVOLVERECOMMENDER);
         if (doSet) {
             conf = result.getConfig();
         }
@@ -360,7 +360,7 @@ public class IclijWebControlService {
 
         @Override
         public void run() {
-            IclijServiceResult result = EurekaUtil.sendIMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
+            IclijServiceResult result = WebFluxUtil.sendIMe(IclijServiceResult.class, param, param.getWebpath(), objectMapper);
             ui.access(() -> {
                 VerticalLayout layout = new VerticalLayout();
                 layout.setCaption("Results");

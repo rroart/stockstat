@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import roart.common.constants.EurekaConstants;
 import roart.common.util.MathUtil;
 import roart.common.communication.model.Communication;
+import roart.common.webflux.WebFluxUtil;
 
 public class REST extends Communication {
 
@@ -33,6 +34,7 @@ public class REST extends Communication {
         super(myname, myclass, service, mapper, send, receive, sendreceive, connection);
     }
     
+    /*
     public <T> T sendMe(Class<T> myclass, Object param, String host, String port, String path) {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String url = "http://" + host + ":" + port + "/" + path;
@@ -76,6 +78,7 @@ public class REST extends Communication {
         String url = null; //getUrl();
         return sendMeInner(myclass, param, url, mapper);
     }
+    */
 
     private String getUrl() {
         /*
@@ -90,7 +93,7 @@ public class REST extends Communication {
     @Override
     public <T> T[] sendReceive(Object param) {
         String url = connection; // getUrl();
-        T t = (T) sendMeInner(myclass, param, url, mapper);
+        T t = (T) WebFluxUtil.sendMeInner(myclass, param, url, mapper);
         T[] ts = (T[]) Array.newInstance(myclass, 1);
         //Object[] ts = new Object[1];
         ts[0] = t;
@@ -120,11 +123,12 @@ public class REST extends Communication {
         }
         ResponseEntity<T> regr = rt.postForEntity(url, request, myclass);
         T result = regr.getBody();
-        log.info("resultme " + regr.getHeaders().size() + " " + regr.toString());
+        log.info("resultme " + regr.getHeaders().size() + " " + regr.getHeaders().getContentLength() + " " + regr.toString());
         log.info("Rq time {}s for {} ", MathUtil.round((double) (System.currentTimeMillis() - time) / 1000, 1), url);
         return result;
     }
 
+    /*
     public String getAHostname() {
         String hostname = System.getenv(EurekaConstants.MYASERVER.toUpperCase());
         if (hostname == null) {
@@ -190,6 +194,7 @@ public class REST extends Communication {
         }
         return port;
     }
+    */
 
     @Override
     public void send(String s) {

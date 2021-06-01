@@ -185,7 +185,7 @@
     </dependency>
     <dependency>
       <groupId>roart</groupId>
-      <artifactId>stockstat-common-eureka</artifactId>
+      <artifactId>stockstat-common-webflux</artifactId>
       <version>${stockstat.version}</version>
       <exclusions>
         <exclusion>  <!-- declare the exclusion here -->

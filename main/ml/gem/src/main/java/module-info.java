@@ -9,7 +9,7 @@ module ml.gem {
     exports roart.ml.gem;
 
     requires common.config;
-    requires common.eureka;
+    requires common.webflux;
     requires ehcache;
     requires slf4j.api;
     requires ml.common;

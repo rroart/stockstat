@@ -27,7 +27,7 @@ import roart.common.ml.PytorchLSTMConfig;
 import roart.common.ml.PytorchMLPConfig;
 import roart.common.ml.PytorchRNNConfig;
 import roart.common.util.InetUtil;
-import roart.eureka.util.EurekaUtil;
+import roart.common.webflux.WebFluxUtil;
 import roart.ml.common.MLClassifyAccess;
 import roart.ml.common.MLClassifyModel;
 import roart.ml.common.MLMeta;
@@ -132,7 +132,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         param.setSize(size);
         param.setClasses(classes);
         log.info("evalin {} {} {}", param.getModelInt());
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/learntest");
+        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/learntest");
         return test.getAccuracy();
     }
 
@@ -162,7 +162,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         LearnTestClassify param = new LearnTestClassify();
         param.setModelInt(modelInt);
         log.info("evalout {}", modelInt);
-        LearnTestClassify test = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/eval");
+        LearnTestClassify test = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/eval");
         return test.getAccuracy();
     }
 
@@ -191,7 +191,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         }
         LearnTestClassify ret = null;
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/classify");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServers.get(0) + "/classify");
         } catch (Exception e) {
             log.error("Exception", e);
         }
@@ -265,7 +265,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         for (String pytorchServer : pytorchServers) {
         try {
             LearnTestClassify ret = null;
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/filename");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/filename");
             boolean exists = ret.getExists();
             if (!exists && (!neuralnetcommand.isMldynamic() && neuralnetcommand.isMlclassify())) {
                 return result;
@@ -307,7 +307,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         LearnTestClassify ret = null;
         for (String pytorchServer : pytorchServers) {
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/learntestclassify");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/learntestclassify");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean memory = ret.getMemory() != null && ret.getMemory();
@@ -365,7 +365,7 @@ public class MLClassifyPytorchAccess extends MLClassifyAccess {
         LearnTestClassify ret = null;
         for (String pytorchServer : pytorchServers) {
         try {
-            ret = EurekaUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/dataset");
+            ret = WebFluxUtil.sendMe(LearnTestClassify.class, param, pytorchServer + "/dataset");
             boolean exception = ret.getException() != null && ret.getException();
             boolean gpu = ret.getGpu() != null && ret.getGpu();
             boolean memory = ret.getMemory() != null && ret.getMemory();

@@ -16,7 +16,6 @@ module iclij.common.service {
     requires slf4j.api;
     requires common.model;
     requires common.constants;
-    requires common.eureka;
     requires common.communication.factory;
     requires org.apache.commons.lang3;
     requires iclij.common.model;
