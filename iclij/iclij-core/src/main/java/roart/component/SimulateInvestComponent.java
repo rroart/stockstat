@@ -1005,7 +1005,11 @@ public class SimulateInvestComponent extends ComponentML {
                         aParameter, onerun.mystocks, mydate.indexOffset, sells, buys, holdIncrease, extradelay, adelay);
             }
         } else {
-            if (mydate.indexOffset - extradelay - simConfig.getDelay() >= 0) {
+            int adelay = simConfig.getDelay();
+            if (lastInvest) {
+                adelay = 0;
+            }
+            if (mydate.indexOffset - extradelay - adelay >= 0) {
                 onerun.mystocks = noConfidenceHoldSell(onerun.mystocks, holdIncrease, sells, simConfig);
             }
         }
