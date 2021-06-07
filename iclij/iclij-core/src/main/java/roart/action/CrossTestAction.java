@@ -157,4 +157,31 @@ public class CrossTestAction extends MarketAction {
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
     }
 
+    @Override
+    public Object[] getScoreDescription(Component component, ComponentData param, Map<String, Object> scoreMap) {
+        Double score = null;
+        String description = null;
+        try {
+            Object[] result = component.calculateAccuracy(param);
+            score = (Double) result[0];
+            description = (String) result[1];
+            if (result[2] != null) {
+                description =  (String) result[2] + " " + description;
+            }
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new Object[] { score, description };
+    }
+
+    @Override
+    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
+        handleMLMetaCommon(component, param, valueMap, pipeline);
+    }
+    
+    @Override
+    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
+            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
+        saveTimingCommon(component, param, mlmarket, mlmarket, parameters, scoreMap, time0, evolve);
+    }
 }

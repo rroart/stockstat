@@ -246,6 +246,8 @@ public abstract class MarketAction extends Action {
         List<MarketComponentTime> run = marketTimes.stream().filter(m -> m.haverun).collect(Collectors.toList());
         List<MarketComponentTime> notrun = marketTimes.stream().filter(m -> !m.haverun).collect(Collectors.toList());
 
+        // Event-ish
+        
         for (MarketComponentTime marketTime : marketTimes) {
             log.info("MarketTime {}", marketTime);
         }
@@ -905,6 +907,36 @@ public abstract class MarketAction extends Action {
             }
         }
     }
+    
+    public Object[] getScoreDescription(Component component, ComponentData data, Map<String, Object> scoreMap) {
+        return new Object[] { null, null };
+    }
 
+    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
+        
+    }
+
+    protected void handleMLMetaCommon(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
+        Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
+        param.setCategory(resultMaps);
+        param.getAndSetCategoryValueMap();
+        Map resultMaps2 = param.getResultMap();
+        component.handleMLMeta(param, resultMaps2);        
+    }
+    
+    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
+            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
+        
+    }
+    
+    protected void saveTimingCommon(Component component, ComponentData param, String subcomponent, String mlmarket,
+            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
+        Object[] scoreDescription;
+        scoreDescription = this.getScoreDescription(component, param, scoreMap);
+        Double score = (Double) scoreDescription[0];
+        String description = (String) scoreDescription[1];
+        TimingItem timing = component.saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters, this.getParent() != null);
+        param.getTimings().add(timing);
+    }
 }
 

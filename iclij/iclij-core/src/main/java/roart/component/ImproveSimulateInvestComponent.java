@@ -236,4 +236,8 @@ public class ImproveSimulateInvestComponent extends ComponentML {
         return new ArrayList<>();
     }
 
+    @Override
+    protected void configSaves(ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
+    }
+    
 }

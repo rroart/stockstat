@@ -135,4 +135,27 @@ public class SimulateInvestAction extends MarketAction {
 
     }
 
+    @Override
+    public Object[] getScoreDescription(Component component, ComponentData param, Map<String, Object> scoreMap) {
+        Double score = null;
+        String description = null;
+        Map<String, Double> scoreMap2 = param.getScoreMap();
+        try {
+            score = scoreMap2
+                    .values()
+                    .stream()
+                    .mapToDouble(e -> (Double) e)
+                    .max()
+                    .orElse(-1);
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        return new Object[] { score, description };
+    }
+    
+    @Override
+    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
+            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
+        saveTimingCommon(component, param, mlmarket, mlmarket, parameters, scoreMap, time0, evolve);
+    }
 }

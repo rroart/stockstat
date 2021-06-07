@@ -184,7 +184,7 @@ public abstract class ComponentML extends Component {
     }
 
     @Override
-    protected void handleMLMeta(ComponentData componentparam, Map<String, List<Object>> mlMaps) {
+    public void handleMLMeta(ComponentData componentparam, Map<String, List<Object>> mlMaps) {
         if (mlMaps == null) {
             return;
         }

@@ -187,5 +187,10 @@ public class ImproveFilterAction extends MarketAction {
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
     }
 
+    @Override
+    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
+        handleMLMetaCommon(component, param, valueMap, pipeline);
+    }
+
 }
 

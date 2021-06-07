@@ -156,4 +156,20 @@ public class EvolveAction extends MarketAction {
         return new MiscUtil().getCurrentTimings(olddate, timings, market, getName(), time, false);
     }
 
+    @Override
+    public Object[] getScoreDescription(Component component, ComponentData param, Map<String, Object> scoreMap) {
+        Double score = null;
+        String description = null;
+        score = scoreMap
+                .values()
+                .stream()
+                .mapToDouble(e -> (Double) e)
+                .max()
+                .orElse(-1);
+        if (scoreMap.size() > 1) {
+            description = scoreMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics().toString();
+        }
+        return new Object[] { score, description };
+    }
+
 }

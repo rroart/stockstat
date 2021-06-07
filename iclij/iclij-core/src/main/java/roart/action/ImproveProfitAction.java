@@ -169,5 +169,10 @@ public class ImproveProfitAction extends MarketAction {
         return new Integer[1];
     }
 
+    @Override
+    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
+        handleMLMetaCommon(component, param, valueMap, pipeline);
+    }
+
 }
 

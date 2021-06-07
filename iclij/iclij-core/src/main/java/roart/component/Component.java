@@ -81,8 +81,27 @@ public abstract class Component {
     
     public abstract ComponentData improve(MarketAction action, ComponentData param, Market market, ProfitData profitdata, Memories positions, Boolean buy, String subcomponent, Parameters parameters, boolean wantThree, List<MLMetricsItem> mlTests);
 
-    protected abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
+    public abstract void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps);
 
+    /*
+     * We need to handle 11 actions
+     * 
+     * Ordinary:
+     * CrossTest
+     * FindProfit
+     * MachineLearning
+     * 
+     * Evolving:
+     * Evolve: Uses ML in core
+     * Dataset (goes external)
+     * ImproveAboveBelow (saves in improve)
+     * ImproveAutoSimulateInvest (manual)
+     * ImproveFilter (saves in improve)
+     * ImproveProfit (saves in improve)
+     * ImproveSimulateInvest (manual)
+     * SimulateInvest (manual)
+     */
+    
     public void handle2(MarketAction action, Market market, ComponentData param, ProfitData profitdata, Memories positions, boolean evolve, Map<String, Object> aMap, String subcomponent, String mlmarket, Parameters parameters) {
         /*
         try {
@@ -116,81 +135,18 @@ public abstract class Component {
         String pipeline = getPipeline();
         param.getService().conf.getConfigValueMap().putAll(valueMap);
         Map<String, Object> scoreMap = new HashMap<>();
+        Object[] scoreDescription = new Object[] { null, null };
+        long time0 = System.currentTimeMillis();
         if (evolve) {   
-            long time0 = System.currentTimeMillis();
             evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters);
-            if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) || !IclijConstants.IMPROVEFILTER.equals(param.getAction()) || !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction())) {
-                Double score = null;
-                String description = null;
-                if (IclijConstants.EVOLVE.equals(param.getAction()) || IclijConstants.DATASET.equals(param.getAction())) {
-                    score = scoreMap
-                            .values()
-                            .stream()
-                            .mapToDouble(e -> (Double) e)
-                            .max()
-                            .orElse(-1);
-                    if (scoreMap.size() > 1) {
-                        description = scoreMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics().toString();
-                    }
-                }
-                TimingItem timing = saveTiming(param, evolve, time0, score, null, subcomponent, mlmarket, description, parameters, action.getParent() != null);
-                param.getTimings().add(timing);
+            if (IclijConstants.EVOLVE.equals(param.getAction())) {
+                action.saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            }
         }
         valueMap.putAll(evolveMap);
         valueMap.putAll(aMap);
-        long time0 = System.currentTimeMillis();
-        if (!IclijConstants.EVOLVE.equals(param.getAction()) && !IclijConstants.DATASET.equals(param.getAction()) && !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction()) && !IclijConstants.SIMULATEINVEST.equals(param.getAction()) && !IclijConstants.IMPROVESIMULATEINVEST.equals(param.getAction()) && !IclijConstants.IMPROVEAUTOSIMULATEINVEST.equals(param.getAction())) {
-            Map<String, Object> resultMaps = param.getResultMap(pipeline, valueMap);
-            param.setCategory(resultMaps);
-            param.getAndSetCategoryValueMap();
-            Map resultMaps2 = param.getResultMap();
-            handleMLMeta(param, resultMaps2);
-        }
-        if (!IclijConstants.IMPROVEPROFIT.equals(param.getAction()) && !IclijConstants.IMPROVEFILTER.equals(param.getAction()) && !IclijConstants.IMPROVEABOVEBELOW.equals(param.getAction()) && !IclijConstants.EVOLVE.equals(param.getAction())) {
-            Double score = null;
-            String description = null;
-            if (IclijConstants.MACHINELEARNING.equals(param.getAction()) ) {
-                try {
-                    saveAccuracy(param);
-                    Object[] result = calculateAccuracy(param);
-                    score = (Double) result[0];
-                    description = (String) result[1];
-                    if (result[2] != null) {
-                        description =  (String) result[2] + " " + description;
-                    }
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
-            }
-            if (IclijConstants.CROSSTEST.equals(param.getAction()) ) {
-                try {
-                    Object[] result = calculateAccuracy(param);
-                    score = (Double) result[0];
-                    description = (String) result[1];
-                    if (result[2] != null) {
-                        description =  (String) result[2] + " " + description;
-                    }
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
-            }
-            if (IclijConstants.SIMULATEINVEST.equals(param.getAction())) {
-                Map<String, Double> scoreMap2 = param.getScoreMap();
-                try {
-                    score = scoreMap2
-                            .values()
-                            .stream()
-                            .mapToDouble(e -> (Double) e)
-                            .max()
-                            .orElse(-1);
-                } catch (Exception e) {
-                    log.error(Constants.EXCEPTION, e);
-                }
-            }
-            TimingItem timing = saveTiming(param, false, time0, score, null, subcomponent, mlmarket, description, parameters, action.getParent() != null);
-            param.getTimings().add(timing);
-        }
+        action.handleMLMeta(this, param, valueMap, pipeline);
+        action.saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, false);
     }
 
     protected void subenable(Map<String, Object> valueMap, String subcomponent) {
@@ -208,7 +164,7 @@ public abstract class Component {
         log.info("Disable {}", disableML);
     }
 
-    private TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description, Parameters parameters, boolean save) {
+    public TimingItem saveTiming(ComponentData param, boolean evolve, long time0, Double score, Boolean buy, String subcomponent, String mlmarket, String description, Parameters parameters, boolean save) {
         TimingItem timing = new TimingItem();
         timing.setAction(param.getAction());
         timing.setBuy(buy);
@@ -309,9 +265,9 @@ public abstract class Component {
             // fix mlmarket;
             TimingItem timing = saveTiming(param, true, time0, score, buy, subcomponent, null, null, null, action.getParent() != null);
             param.getTimings().add(timing);
-            if (!(this instanceof ImproveSimulateInvestComponent) && !(this instanceof ImproveAutoSimulateInvestComponent)) {
+            //if (!(this instanceof ImproveSimulateInvestComponent) && !(this instanceof ImproveAutoSimulateInvestComponent)) {
             configSaves(param, confMap, subcomponent);
-            }
+            //}
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
@@ -326,7 +282,7 @@ public abstract class Component {
         }
     }
     
-    private void configSaves(ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
+    protected void configSaves(ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
         for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = entry.getKey();
             Object object = entry.getValue();

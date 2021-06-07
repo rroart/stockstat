@@ -121,7 +121,7 @@ public abstract class ComponentNoML extends Component {
     }
 
     @Override
-    protected void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps) {        
+    public void handleMLMeta(ComponentData param, Map<String, List<Object>> mlMaps) {        
     }
 
 }

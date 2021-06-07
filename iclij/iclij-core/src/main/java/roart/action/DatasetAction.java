@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import roart.common.config.ConfigConstants;
+import roart.common.constants.Constants;
 import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
@@ -116,4 +117,26 @@ public class DatasetAction extends MarketAction {
         return null;
     }
     
+    @Override
+    public Object[] getScoreDescription(Component component, ComponentData param, Map<String, Object> scoreMap) {
+        Double score = null;
+        String description = null;
+        score = scoreMap
+                .values()
+                .stream()
+                .mapToDouble(e -> (Double) e)
+                .max()
+                .orElse(-1);
+        if (scoreMap.size() > 1) {
+            description = scoreMap.values().stream().mapToDouble(e -> (Double) e).summaryStatistics().toString();
+        }
+        return new Object[] { score, description };
+    }
+    
+    @Override
+    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
+            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
+        saveTimingCommon(component, param, mlmarket, mlmarket, parameters, scoreMap, time0, evolve);
+    }
+
 }

@@ -301,4 +301,14 @@ public class FindProfitAction extends MarketAction {
         return skipSubcomponent;
     }
 
+    @Override
+    public void handleMLMeta(Component component, ComponentData param, Map<String, Object> valueMap, String pipeline) {
+        handleMLMetaCommon(component, param, valueMap, pipeline);
+    }
+    
+    @Override
+    public void saveTiming(Component component, ComponentData param, String subcomponent, String mlmarket,
+            Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
+        saveTimingCommon(component, param, mlmarket, mlmarket, parameters, scoreMap, time0, evolve);
+    }
 }
