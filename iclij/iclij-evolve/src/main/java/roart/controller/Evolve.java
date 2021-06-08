@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -34,6 +35,7 @@ import roart.common.constants.ServiceConstants;
 import roart.common.inmemory.factory.InmemoryFactory;
 import roart.common.inmemory.model.Inmemory;
 import roart.common.inmemory.model.InmemoryMessage;
+import roart.common.ml.MLMapsML;
 import roart.common.ml.NeuralNetConfig;
 import roart.common.ml.NeuralNetConfigs;
 import roart.common.util.JsonUtil;
@@ -41,11 +43,15 @@ import roart.common.util.MathUtil;
 import roart.db.IclijDbDao;
 import roart.evolution.chromosome.AbstractChromosome;
 import roart.evolution.chromosome.impl.NeuralNetChromosome2;
+import roart.gene.NeuralNetConfigGene;
 import roart.iclij.evolution.marketfilter.chromosome.impl.AboveBelowChromosome;
 import roart.iclij.evolution.marketfilter.chromosome.impl.MarketFilterChromosome2;
+import roart.iclij.model.ConfigItem;
 import roart.iclij.model.MLMetricsItem;
+import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.util.MiscUtil;
 import roart.iclij.config.IclijConfig;
+import roart.iclij.config.IclijConfigConstants;
 import roart.iclij.config.IclijXMLConfig;
 import roart.iclij.evolution.chromosome.impl.ConfigMapChromosome2;
 
@@ -110,8 +116,45 @@ public class Evolve {
         output.add("");
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
         print(ServiceConstants.EVOLVEFILTEREVOLVE + " " + title, null, output);
-        if (!better) {
-            return;
+        if (better) {
+            saveBetter(myList, market, component, subcomponent, IclijConfigConstants.MACHINELEARNING);
+        }
+    }
+
+    private void saveBetter(List<Pair<Double, AbstractChromosome>> myList, String market, String component,
+            Pair<String, String> subcomponent, String action) {
+        ConfigItem i = new ConfigItem();
+        i.setMarket(market);
+        i.setComponent(component);
+        i.setSubcomponent(subcomponent.getLeft() + " " + subcomponent.getRight());
+        String ml = new MLMapsML().getMap().get(subcomponent);
+        String key = new NeuralNetConfigs().getConfigMap().get(ml);
+        i.setId(key);
+        i.setAction(action);
+        i.setRecord(LocalDate.now());
+        i.setDate(LocalDate.now());
+        i.setScore(myList.get(0).getLeft());
+        NeuralNetChromosome2 c = (NeuralNetChromosome2) myList.get(0).getRight();
+        NeuralNetConfigGene conf2 = c.getNnConfig();
+        String value = JsonUtil.convert(conf2.getConfig());
+        i.setValue(value);            
+        try {
+            i.save();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
+        }
+        // save to markettime
+        ActionComponentItem mct = new ActionComponentItem();
+        mct.setAction(action);
+        mct.setMarket(market);
+        mct.setComponent(component);
+        mct.setSubcomponent(subcomponent.getLeft() + " " + subcomponent.getRight());
+        mct.setRecord(LocalDate.now());
+        mct.setPriority(-10);
+        try {
+            mct.save();
+        } catch (Exception e) {
+            log.error(Constants.EXCEPTION, e);
         }
     }
 
@@ -180,6 +223,7 @@ public class Evolve {
         String component = parts[2];
         String subcomponent = parts[3];
         String subsubcomponent = parts[4];
+        //String subsubcomponent2 = parts[5];
         
         
         
@@ -242,7 +286,10 @@ public class Evolve {
         }
         output.add("");
         output.add("Summary: " + better + " " + MathUtil.round(avg, 2) + " vs " + newer);
-        print(ServiceConstants.EVOLVEFILTEREVOLVE + " " + title, null, output);
+        print(ServiceConstants.EVOLVEFILTERPROFIT + " " + title, null, output);
+        if (better) {
+            saveBetter(myList, market, component, subComponent, IclijConfigConstants.MACHINELEARNING);
+        }
     }
 
     public void method3(String param) {
