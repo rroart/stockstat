@@ -140,7 +140,7 @@ public abstract class Component {
         if (evolve) {   
             evolveMap = handleEvolve(market, pipeline, evolve, param, subcomponent, scoreMap, null, parameters);
             if (IclijConstants.EVOLVE.equals(param.getAction())) {
-                action.saveTiming(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
+                action.saveTimingCommon(this, param, subcomponent, mlmarket, parameters, scoreMap, time0, evolve);
            }
         }
         valueMap.putAll(evolveMap);
@@ -283,6 +283,7 @@ public abstract class Component {
     }
     
     protected void configSaves(ComponentData param, Map<String, Object> anUpdateMap, String subcomponent) {
+        // TODO save whole?
         for (Entry<String, Object> entry : anUpdateMap.entrySet()) {
             String key = entry.getKey();
             Object object = entry.getValue();
