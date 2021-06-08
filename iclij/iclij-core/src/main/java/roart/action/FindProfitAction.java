@@ -34,6 +34,7 @@ import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
+import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.action.FindProfitActionData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.util.MarketUtil;
@@ -126,9 +127,10 @@ public class FindProfitAction extends MarketAction {
         myData.getDecs().addAll(profitdata.getSells().values());
     }
 
-    public List<MemoryItem> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, MarketComponentTime marketTime, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap) {
+    public List<MemoryItem> findAllMarketComponentsToCheck(WebData myData, ComponentData param, int days, IclijConfig config, ActionComponentItem marketTime, boolean evolve, Map<String, ComponentData> dataMap, Map<String, Component> componentMap) {
         List<MemoryItem> allMemories = new ArrayList<>();
-        Short startOffset = marketTime.market.getConfig().getStartoffset();
+        Market market = new MarketUtil().findMarket(marketTime.getMarket());
+        Short startOffset = market.getConfig().getStartoffset();
         if (startOffset != null) {
             System.out.println("Using offset " + startOffset);
             log.info("Using offset {}", startOffset);
@@ -146,7 +148,7 @@ public class FindProfitAction extends MarketAction {
             aMap.put(ConfigConstants.MACHINELEARNINGMLLEARN, config.wantsFindProfitMLDynamic());
             aMap.put(ConfigConstants.MACHINELEARNINGMLCROSS, false);
 
-            Parameters parameters = marketTime.parameters;
+            Parameters parameters = marketTime.getParameters();
             String key = component.getThreshold();
             aMap.put(key, "[" + parameters.getThreshold() + "]");
             String key2 = component.getFuturedays();
@@ -154,13 +156,13 @@ public class FindProfitAction extends MarketAction {
                         
             aMap.put(ConfigConstants.MISCTHRESHOLD, null);
             
-            ComponentData componentData = component.handle(this, marketTime.market, param, profitdata, new Memories(marketTime.market), evolve, aMap, marketTime.subcomponent, null, marketTime.parameters);
+            ComponentData componentData = component.handle(this, market, param, profitdata, new Memories(market), evolve, aMap, marketTime.getSubcomponent(), null, marketTime.getParameters());
             dataMap.put(entry.getKey(), componentData);
             componentData.setUsedsec(time0);
             myData.getUpdateMap().putAll(componentData.getUpdateMap());
             List<MemoryItem> memories;
             try {
-                memories = component.calculateMemory(componentData, marketTime.parameters);
+                memories = component.calculateMemory(componentData, marketTime.getParameters());
                 allMemories.addAll(memories);
            } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
@@ -196,16 +198,15 @@ public class FindProfitAction extends MarketAction {
     }
     
     @Override
-    protected List<MemoryItem> getMemItems(MarketComponentTime marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
-        Map<String, Component> componentMap = new HashMap<>();
-        componentMap.put(marketTime.componentName, marketTime.component);
+    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
+        Market market = new MarketUtil().findMarket(marketTime.getMarket());
         
         try {
             evolve = false;
             //List<MemoryItem> newMemories = findAllMarketComponentsToCheck(myData, param, 0, config, marketTime, evolve, dataMap, componentMap);
-            LocalDate prevdate = getPrevDate(param, marketTime.market);
-            LocalDate olddate = prevdate.minusDays(((int) MarketAction.AVERAGE_SIZE) * getActionData().getTime(marketTime.market));
-            List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(marketTime.market, getName(), marketTime.componentName, marketTime.subcomponent, JsonUtil.convert(marketTime.parameters), olddate, prevdate);
+            LocalDate prevdate = getPrevDate(param, market);
+            LocalDate olddate = prevdate.minusDays(((int) MarketAction.AVERAGE_SIZE) * getActionData().getTime(market));
+            List<MemoryItem> marketMemory = new MarketUtil().getMarketMemory(market, getName(), marketTime.getComponent(), marketTime.getSubcomponent(), JsonUtil.convert(marketTime.getParameters()), olddate, prevdate);
             return marketMemory;
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);

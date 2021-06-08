@@ -40,6 +40,16 @@ public class DatabaseThread extends Thread {
                 }
                 object = Queues.queue.poll();
             }
+            String string = null;
+            string = Queues.queuedelete.poll();
+            while (string != null) {
+                try {
+                    hu.delete(string);
+                } catch (Exception e) {
+                    log.error(Constants.EXCEPTION, e);
+                }
+                string = Queues.queuedelete.poll();
+            }
             try {
                 hu.commit();
             } catch (Exception e) {

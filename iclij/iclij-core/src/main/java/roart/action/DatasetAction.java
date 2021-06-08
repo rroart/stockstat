@@ -25,6 +25,7 @@ import roart.iclij.model.MLMetricsItem;
 import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.WebData;
+import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.action.DatasetActionData;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
@@ -96,7 +97,7 @@ public class DatasetAction extends MarketAction {
     }
 
     @Override
-    protected List<MemoryItem> getMemItems(MarketComponentTime marketTime, WebData myData, ComponentData param,
+    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param,
             IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         return new ArrayList<>();
     }

@@ -164,4 +164,9 @@ public class HibernateUtil {
             return result;
         }
     }
+
+    public void delete(String string) {
+        Query query = sessionRead.createQuery(string);
+        query.executeUpdate();
+    }
 }

@@ -34,6 +34,7 @@ import roart.iclij.model.MemoryItem;
 import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
 import roart.iclij.model.WebData;
+import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.action.EvolveActionData;
 import roart.iclij.model.action.ImproveProfitActionData;
 import roart.iclij.util.MiscUtil;
@@ -125,7 +126,7 @@ public class ImproveProfitAction extends MarketAction {
     }
     
     @Override
-    protected List<MemoryItem> getMemItems(MarketComponentTime marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
+    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         return new ArrayList<>();
     }
 

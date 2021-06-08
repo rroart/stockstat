@@ -54,6 +54,7 @@ import roart.iclij.model.Parameters;
 import roart.iclij.model.TimingItem;
 import roart.iclij.model.Trend;
 import roart.iclij.model.WebData;
+import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.action.MarketActionData;
 import roart.iclij.model.component.ComponentInput;
 import roart.iclij.model.config.ActionComponentConfig;
@@ -97,7 +98,7 @@ public abstract class MarketAction extends Action {
 
     protected abstract boolean getEvolve(Component component, ComponentData param);
 
-    protected abstract List<MemoryItem> getMemItems(MarketComponentTime marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap);
+    protected abstract List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param, IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap);
 
     protected abstract LocalDate getPrevDate(ComponentData param, Market market);
 
@@ -150,20 +151,14 @@ public abstract class MarketAction extends Action {
         // memory is with date, confidence %, inc/dec, semantic item
         // find recommended picks
         this.parent = parent;
-        WebData myData = new WebData();
-        myData.setIncs(new ArrayList<>());
-        myData.setDecs(new ArrayList<>());
-        myData.setUpdateMap(new HashMap<>());
-        myData.setTimingMap(new HashMap<>());
-        myData.setUpdateMap2(new HashMap<>());
-        myData.setTimingMap2(new HashMap<>());
+        WebData myData = getWebData();
 
         markets = new MarketUtil().filterMarkets(markets, getActionData().isDataset());
         
         List<MetaItem> metas = paramTemplate.getService().getMetas();
             
         IclijConfig config = paramTemplate.getInput().getConfig();
-        List<MarketComponentTime> marketTimes = new ArrayList<>();
+        List<ActionComponentItem> marketTimes = new ArrayList<>();
         Map<String, ComponentData> componentDataMap = new HashMap<>();
         for (Market market : markets) {
             if (market.getConfig().getEnable() != null && !market.getConfig().getEnable()) {
@@ -236,68 +231,79 @@ public abstract class MarketAction extends Action {
                         componentMapFiltered.put(entry.getKey(),  entry.getValue());
                     }
                 }
-                List<MarketComponentTime> marketTime = getList(getName(), componentMapFiltered, timings, market, param, currentTimings, timingsdone);
+                List<ActionComponentItem> marketTime = getList(getName(), componentMapFiltered, timings, market, param, currentTimings, timingsdone);
                 marketTimes.addAll(marketTime);
             } else {
                 int jj = 0;
             }
         }
-        Collections.sort(marketTimes, (o1, o2) -> (Double.valueOf(o2.time).compareTo(Double.valueOf(o1.time))));
-        List<MarketComponentTime> run = marketTimes.stream().filter(m -> m.haverun).collect(Collectors.toList());
-        List<MarketComponentTime> notrun = marketTimes.stream().filter(m -> !m.haverun).collect(Collectors.toList());
+        Collections.sort(marketTimes, (o1, o2) -> (Double.valueOf(o2.getTime()).compareTo(Double.valueOf(o1.getTime()))));
+        List<ActionComponentItem> run = marketTimes.stream().filter(m -> m.isHaverun()).collect(Collectors.toList());
+        List<ActionComponentItem> notrun = marketTimes.stream().filter(m -> !m.isHaverun()).collect(Collectors.toList());
 
         // Event-ish
         
-        for (MarketComponentTime marketTime : marketTimes) {
+        for (ActionComponentItem marketTime : marketTimes) {
             log.info("MarketTime {}", marketTime);
         }
-        for (MarketComponentTime marketTime : notrun) {
-            if (marketTime.time == 0.0) {
-                ComponentData param = componentDataMap.get(marketTime.market.getConfig().getMarket());
-                MetaItem meta = new MetaUtil().findMeta(metas, marketTime.market.getConfig().getMarket());
+        for (ActionComponentItem marketTime : notrun) {
+            if (marketTime.getTime() == 0.0) {
+                ComponentData param = componentDataMap.get(marketTime.getMarket());
+                MetaItem meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
                 getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
             }
         }
-        for (MarketComponentTime marketTime : notrun) {
-            if (marketTime.time > 0.0) {
+        for (ActionComponentItem marketTime : notrun) {
+            if (marketTime.getTime() > 0.0) {
                 if (config.serverShutdownHour() != null) {
                     int shutdown = config.serverShutdownHour();
                     shutdown --;
                     LocalTime now = LocalTime.now();
                     int minutes = 60 * now.getHour() + now.getMinute();
-                    minutes += marketTime.time / 60;
+                    minutes += marketTime.getTime() / 60;
                     if (minutes >= shutdown * 60) {
                         continue;
                     }
                 }
-                ComponentData param = componentDataMap.get(marketTime.market.getConfig().getMarket());
-                MetaItem meta = new MetaUtil().findMeta(metas, marketTime.market.getConfig().getMarket());
+                ComponentData param = componentDataMap.get(marketTime.getMarket());
+                MetaItem meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
                 getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
             }            
         }       
-        for (MarketComponentTime marketTime : run) {
-            if (marketTime.time == 0.0) {
+        for (ActionComponentItem marketTime : run) {
+            if (marketTime.getTime() == 0.0) {
                 log.error("should not be here");
             }
-            if (marketTime.time > 0.0) {
+            if (marketTime.getTime() > 0.0) {
                 if (config.serverShutdownHour() != null) {
                     int shutdown = config.serverShutdownHour();
                     shutdown --;
                     LocalTime now = LocalTime.now();
                     int minutes = 60 * now.getHour() + now.getMinute();
-                    minutes += marketTime.time / 60;
+                    minutes += marketTime.getTime() / 60;
                     if (minutes >= shutdown * 60) {
                         continue;
                     }
                 }
-                ComponentData param = componentDataMap.get(marketTime.market.getConfig().getMarket());
-                MetaItem meta = new MetaUtil().findMeta(metas, marketTime.market.getConfig().getMarket());
+                ComponentData param = componentDataMap.get(marketTime.getMarket());
+                MetaItem meta = new MetaUtil().findMeta(metas, marketTime.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
                 getPicksFiltered(myData, param, config, marketTime, evolve, wantThree);                
             }            
         }       
+        return myData;
+    }
+
+    public WebData getWebData() {
+        WebData myData = new WebData();
+        myData.setIncs(new ArrayList<>());
+        myData.setDecs(new ArrayList<>());
+        myData.setUpdateMap(new HashMap<>());
+        myData.setTimingMap(new HashMap<>());
+        myData.setUpdateMap2(new HashMap<>());
+        myData.setTimingMap2(new HashMap<>());
         return myData;
     }
     
@@ -312,14 +318,14 @@ public abstract class MarketAction extends Action {
 
     protected static final int AVERAGE_SIZE = 5;
 
-    private List<MarketComponentTime> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings, List<TimingItem> timingsdone) {
+    private List<ActionComponentItem> getList(String action, Map<String, Component> componentMapFiltered, List<TimingItem> timings, Market market, ComponentData param, List<TimingItem> currentTimings, List<TimingItem> timingsdone) {
         List<MLMetricsItem> mltests = null;
         try {
             mltests = IclijDbDao.getAllMLMetrics(market.getConfig().getMarket(), null, null);
         } catch (Exception e) {
             log.error(Constants.EXCEPTION, e);
         }
-        List<MarketComponentTime> marketTimes = new ArrayList<>();
+        List<ActionComponentItem> marketTimes = new ArrayList<>();
         String marketName = market.getConfig().getMarket();
         Double confidence = null;
         if (!isDataset()) {
@@ -376,14 +382,14 @@ public abstract class MarketAction extends Action {
                                 continue;
                             }
                             //List<TimingItem> timingToDo = new ArrayList<>();
-                            MarketComponentTime marketTime = new MarketComponentTime();
-                            marketTime.market = market;
-                            marketTime.componentName = componentName;
-                            marketTime.component = component;
-                            marketTime.subcomponent = subComponent;
-                            marketTime.parameters = parameters;
+                            ActionComponentItem marketTime = new ActionComponentItem();
+                            marketTime.setMarket(market.getConfig().getMarket());
+                            //marketTime.componentName = componentName;
+                            marketTime.setComponent(componentName);
+                            marketTime.setSubcomponent(subComponent);
+                            marketTime.setParameters(parameters);
                             //marketTime.timings = timingToDo;
-                            marketTime.buy = buy;
+                            marketTime.setBuy(buy);
                             List<TimingItem> filterTimingsEvolution = getMyTimings(timings, marketName, action, componentName, true, buy, subComponent, parameters);
                             if (evolve) {
                                 handleFilterTimings(action, market, marketTime, componentName, filterTimingsEvolution, evolve, param.getInput().getEnddate(), buy, timings, subComponent, parameters);               
@@ -419,7 +425,7 @@ public abstract class MarketAction extends Action {
         return false;
     }
     
-    private void handleFilterTimings(String action, Market market, MarketComponentTime marketTime,
+    private void handleFilterTimings(String action, Market market, ActionComponentItem marketTime,
             String component, List<TimingItem> filterTimings, boolean evolve, LocalDate date, Boolean buy, List<TimingItem> timings, String subComponent, Parameters parameters) {
         if (!filterTimings.isEmpty()) {
             Collections.sort(filterTimings, (o1, o2) -> (o2.getDate().compareTo(o1.getDate())));
@@ -428,11 +434,11 @@ public abstract class MarketAction extends Action {
 
             if (olddate.isBefore(filterTimings.get(0).getDate())) {
                 // no recent enough is found
-                marketTime.time += average.orElse(0);
+                marketTime.setTime(marketTime.getTime() + average.orElse(0));
                 if (!evolve) {
-                    marketTime.time += average.orElse(0);
+                    marketTime.setTime(marketTime.getTime() + average.orElse(0));
                 }
-                marketTime.haverun = true;
+                marketTime.setHaverun(true);
             } else {
                 // recent enough is found
                 // nothing to do
@@ -441,11 +447,11 @@ public abstract class MarketAction extends Action {
         } else {
             List<TimingItem> filterTimingsEvolution = getMyTimings(timings, action, component, evolve, buy, subComponent, parameters);
             OptionalDouble average = getAverage(filterTimingsEvolution);
-            marketTime.time += average.orElse(0);
+            marketTime.setTime(marketTime.getTime() + average.orElse(0));
             if (!evolve) {
-                marketTime.time += average.orElse(0);
+                marketTime.setTime(marketTime.getTime() + average.orElse(0));
             }
-            marketTime.haverun = false;
+            marketTime.setHaverun(false);
         }
     }
 
@@ -459,16 +465,16 @@ public abstract class MarketAction extends Action {
                 .average();
     }
     
-    public MarketComponentTime getMCT(String componentName, Component component, String subcomponent, Market market, double time, boolean haverun, Boolean buy, Parameters parameters) {
-        MarketComponentTime mct = new MarketComponentTime();
-        mct.componentName = componentName;
-        mct.component = component;
-        mct.subcomponent = subcomponent;
-        mct.market = market;
-        mct.time = time;
-        mct.haverun = haverun;
-        mct.buy = buy;
-        mct.parameters = parameters;
+    public ActionComponentItem getMCT(String componentName, Component component, String subcomponent, Market market, double time, boolean haverun, Boolean buy, Parameters parameters) {
+        ActionComponentItem mct = new ActionComponentItem();
+        //mct.componentName = componentName;
+        mct.setComponent(componentName);
+        mct.setSubcomponent(subcomponent);
+        mct.setMarket(market.getConfig().getMarket());
+        mct.setTime(time);
+        mct.setHaverun(haverun);
+        mct.setBuy(buy);
+        mct.setParameters(parameters);
         return mct;
     }
     
@@ -518,9 +524,9 @@ public abstract class MarketAction extends Action {
         return filterTimings;
     }
 
-    public void getPicksFiltered(WebData myData, ComponentData param, IclijConfig config, MarketComponentTime marketTime, Boolean evolve, boolean wantThree) {
+    public void getPicksFiltered(WebData myData, ComponentData param, IclijConfig config, ActionComponentItem marketTime, Boolean evolve, boolean wantThree) {
         log.info("Getting picks for date {}", param.getInput().getEnddate());
-        Market market = marketTime.market;
+        Market market = new MarketUtil().findMarket(marketTime.getMarket());
         Map<String, ComponentData> dataMap = new HashMap<>();
         ProfitData profitdata = new ProfitData();
         Memories listComponentMap = new Memories(market);
@@ -528,11 +534,14 @@ public abstract class MarketAction extends Action {
         LocalDate prevdate = getPrevDate(param, market);
         LocalDate olddate = prevdate.minusDays(((int) AVERAGE_SIZE) * getActionData().getTime(market));
         ProfitInputData inputdata = new ProfitInputData();
-        getListComponents(myData, param, config, marketTime.parameters, evolve, market, dataMap, listComponentMap, olddate, prevdate);
+        getListComponents(myData, param, config, marketTime.getParameters(), evolve, market, dataMap, listComponentMap, olddate, prevdate);
         profitdata.setInputdata(inputdata);
         
         Map<String, Component> componentMap = new HashMap<>();
-        componentMap.put(marketTime.componentName, marketTime.component);
+        Component acomponent = getComponentFactory().factory(marketTime.getComponent());
+        ActionComponentConfig aconfig = ActionComponentConfigFactory.factoryfactory(getName()).factory(acomponent.getPipeline());
+        acomponent.setConfig(aconfig);
+        componentMap.put(marketTime.getComponent(), acomponent);
 
         setValMap(param);
         Map<String, Map<String, Object>> maps = param.getResultMaps();
@@ -557,7 +566,7 @@ public abstract class MarketAction extends Action {
         if (true || config.getFindProfitMemoryFilter()) {
         mlTests = getMLMetrics(timings, mltests, market.getFilter().getConfidence());
         }
-        handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.buy, marketTime.subcomponent, myData, config, marketTime.parameters, wantThree, mlTests);
+        handleComponent(this, market, profitdata, param, listComponentMap, componentMap, dataMap, marketTime.getBuy(), marketTime.getSubcomponent(), myData, config, marketTime.getParameters(), wantThree, mlTests);
         
         if (!getActionData().isDataset()) {
         filterIncDecs(param, market, profitdata, maps, true, null);
@@ -569,7 +578,7 @@ public abstract class MarketAction extends Action {
 
         Map<String, List<TimingItem>> timingMap = new HashMap<>();
         timingMap.put(market.getConfig().getMarket(), param.getTimings());
-        if (marketTime.buy == null || marketTime.buy) {
+        if (marketTime.getBuy() == null || marketTime.getBuy()) {
             myData.setTimingMap(timingMap);
             if (param.getUpdateMap() != null) {
                 myData.getUpdateMap().putAll(param.getUpdateMap());
@@ -929,7 +938,7 @@ public abstract class MarketAction extends Action {
         
     }
     
-    protected void saveTimingCommon(Component component, ComponentData param, String subcomponent, String mlmarket,
+    public void saveTimingCommon(Component component, ComponentData param, String subcomponent, String mlmarket,
             Parameters parameters, Map<String, Object> scoreMap, long time0, boolean evolve) {
         Object[] scoreDescription;
         scoreDescription = this.getScoreDescription(component, param, scoreMap);

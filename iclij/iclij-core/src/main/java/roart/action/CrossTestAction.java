@@ -35,6 +35,7 @@ import roart.iclij.model.action.CrossTestActionData;
 import roart.iclij.util.MiscUtil;
 import roart.service.model.ProfitData;
 import roart.service.model.ProfitInputData;
+import roart.iclij.model.action.ActionComponentItem;
 
 public class CrossTestAction extends MarketAction {
 
@@ -117,7 +118,7 @@ public class CrossTestAction extends MarketAction {
     }
 
     @Override
-    protected List<MemoryItem> getMemItems(MarketComponentTime marketTime, WebData myData, ComponentData param,
+    protected List<MemoryItem> getMemItems(ActionComponentItem marketTime, WebData myData, ComponentData param,
             IclijConfig config, Boolean evolve, Map<String, ComponentData> dataMap) {
         return new ArrayList<>();
     }

@@ -5,4 +5,5 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class Queues {
     public static volatile Deque<Object> queue = new ConcurrentLinkedDeque<Object>();
+    public static volatile Deque<String> queuedelete = new ConcurrentLinkedDeque<>();
 }
