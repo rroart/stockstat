@@ -128,7 +128,7 @@ public class ActionComponentItem {
     @Override
     public String toString() {
         String paramString = JsonUtil.convert(parameters);
-        return record != null ? record.toString() : "" + " " + " " + action + " " + component + " " + subcomponent + " " + paramString + " " + buy + " " + time + " " + haverun;
+        return record != null ? record.toString() : "" + " " + " " + action + " " + component + " " + subcomponent + " " + paramString + " " + buy + " " + priority + " " + time + " " + haverun;
     }
 
     public static List<ActionComponentItem> getAll() throws Exception {

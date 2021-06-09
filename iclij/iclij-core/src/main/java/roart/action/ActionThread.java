@@ -20,15 +20,17 @@ import roart.component.Component;
 import roart.component.model.ComponentData;
 import roart.iclij.config.IclijConfig;
 import roart.iclij.config.IclijXMLConfig;
+import roart.iclij.config.Market;
 import roart.iclij.model.WebData;
 import roart.iclij.model.action.ActionComponentItem;
 import roart.iclij.model.component.ComponentInput;
+import roart.iclij.util.MarketUtil;
 
 public class ActionThread extends Thread {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public static volatile Deque<ActionComponentItem> queue = new ConcurrentLinkedDeque<>();
+    public static volatile List<ActionComponentItem> queue = Collections.synchronizedList(new ArrayList<>());
 
     public void run() {
         try {
@@ -36,35 +38,52 @@ public class ActionThread extends Thread {
         } catch (InterruptedException e) {
             log.error(Constants.EXCEPTION, e);
         }
-        IclijConfig config = IclijXMLConfig.getConfigInstance();
+        IclijConfig instance = IclijXMLConfig.getConfigInstance();
         while (true) {
             ActionComponentItem ac = null;
-            List<ActionComponentItem> list = null;
+            List<ActionComponentItem> list = new ArrayList<>();
             try {
                  list = ac.getAll();
             } catch (Exception e) {
                 log.info(Constants.EXCEPTION, e);
             }
-            Comparator<ActionComponentItem> comparator = (ActionComponentItem i1, ActionComponentItem i2) -> i1.getPriority() - i2.getPriority();
+            List<ActionComponentItem> copy = new ArrayList<>(queue);
+            queue.removeAll(copy);
+            list.addAll(copy);
+            Comparator<ActionComponentItem> comparator = (ActionComponentItem i1, ActionComponentItem i2) -> getScore(i1) - getScore(i2);
             Collections.sort(list, comparator);
             for (ActionComponentItem item : list) {
+                if (!MarketAction.enoughTime(instance, item)) {
+                    continue;
+                }
+                IclijConfig config = new IclijConfig(instance);
+                config.setMarket(item.getMarket());
                 MarketAction action = ActionFactory.get(item.getAction());
-                ComponentInput input = new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>());
+                action.setParent(action);
+                Market market = new MarketUtil().findMarket(item.getMarket());
+                //ComponentInput input = new ComponentInput(new IclijConfig(IclijXMLConfig.getConfigInstance()), null, null, null, null, true, false, new ArrayList<>(), new HashMap<>());
+                ComponentInput input = new ComponentInput(config, null, item.getMarket(), null, null, true, false, new ArrayList<>(), new HashMap<>());
                 ComponentData param = null;
                 try {
-                    param = ComponentData.getParam(input, 0);
+                    param = ComponentData.getParam(input, 0, market);
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
+                param.setAction(action.getName());
+                List<String> stockDates = param.getService().getDates(item.getMarket());
+                action.getParamDates(market, param, stockDates);
                 List<MetaItem> metas = param.getService().getMetas();
                 MetaItem meta = new MetaUtil().findMeta(metas, item.getMarket());
                 boolean wantThree = meta != null && Boolean.TRUE.equals(meta.isLhc());
-                boolean evolve = false;
+                Component component = action.getComponentFactory().factory(item.getComponent());
+                boolean evolve = action.getEvolve(component, param);
                 WebData myData = action.getWebData();
                 action.getPicksFiltered(myData, param, config, item, evolve, wantThree);                
 
                 try {
-                    item.delete();
+                    if (item.getDbid() != null) {
+                        item.delete();
+                    }
                 } catch (Exception e) {
                     log.error(Constants.EXCEPTION, e);
                 }
@@ -77,5 +96,10 @@ public class ActionThread extends Thread {
                 log.error(Constants.EXCEPTION, e);
             }
         }
+    }
+
+    private int getScore(ActionComponentItem i) {
+        int run = i.isHaverun() ? 1 : 0;
+        return (int) (100000 * (i.getPriority() + run) + i.getTime());
     }
 }
